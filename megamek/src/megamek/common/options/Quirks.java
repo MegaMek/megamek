@@ -36,13 +36,13 @@ import megamek.common.Tank;
  */
 public class Quirks extends AbstractOptions {
     private static final long serialVersionUID = 7618380522964885740L;
-    public static final String POS_QUIRKS = "PosQuirks"; //$NON-NLS-1$
-    public static final String NEG_QUIRKS = "NegQuirks"; //$NON-NLS-1$
+    public static final String POS_QUIRKS = "PosQuirks";
+    public static final String NEG_QUIRKS = "NegQuirks";
 
     @Override
     public synchronized void initialize() {
         //positive quirks
-        IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
+        IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ANIMALISTIC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ANTI_AIR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_ATMO_FLYER, false);
@@ -75,23 +75,23 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_INTERNAL_BOMB, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_NIMBLE_JUMPER,false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_NIMBLE_JUMPER, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_POWER_REVERSE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_PRO_ACTUATOR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1,false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2,false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); 	
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_IS,false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN,false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_IS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false); 
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false); 
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
         
@@ -105,7 +105,7 @@ public class Quirks extends AbstractOptions {
         //Compact Mech
 
         // negative quirks
-        IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
+        IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP_IS, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP_CLAN, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false);
@@ -144,7 +144,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_4, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_5, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_LEGS, false);
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE,false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_OVERSIZED, false);
         
@@ -178,23 +178,23 @@ public class Quirks extends AbstractOptions {
             return true;
         }
 
-		if (en instanceof Mech) {
-			if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)) {
-				// Mechs with a hand actuator can have battlefists
-				if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
-					return true;
-				} else {
-					return false;
-				}		
-			}
-	         if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
-	                // Mechs with a hand actuator can have battlefists
-	                if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
-	                    return true;
-	                } else {
-	                    return false;
-	                }       
-	            }
+        if (en instanceof Mech) {
+            if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)) {
+                // Mechs with a hand actuator can have battlefists
+                if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+             if (qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)) {
+                    // Mechs with a hand actuator can have battlefists
+                    if (en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
             if (qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)) {
                 if (en.hasSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)
                         && !en.hasSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
@@ -212,7 +212,7 @@ public class Quirks extends AbstractOptions {
                 }
             }
             
-            if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)
@@ -227,25 +227,25 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-        	if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
-        		return false;
-        	}
-        	
-        	if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
-        		return false;
-        	}
+            if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
+                return false;
+            }
+
+            if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
+                return false;
+            }
             
             return true;
         }
-		        
-		// Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
-		// made sense to him. Uncertain at this time if CGL would adopt them but
-		// including them since Quirks is already an option. Hammer
-        if(en instanceof GunEmplacement) {
-        	if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
-        	        || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
-        	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
-        	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
+
+        // Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
+        // made sense to him. Uncertain at this time if CGL would adopt them but
+        // including them since Quirks is already an option. Hammer
+        if (en instanceof GunEmplacement) {
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+                    || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
@@ -311,11 +311,11 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_VESTIGIAL_HANDS_RA)) {
                 return false;
-        	}
+            }
             return true;
         }
 
-        if(en instanceof Tank) {
+        if (en instanceof Tank) {
 
             // Power reverse only legal for wheeled or tracked combat vehicles
             if (qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
@@ -329,7 +329,7 @@ public class Quirks extends AbstractOptions {
                 }
             } else if (en.hasEngine() && en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                 return false;
-            } else if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+            } else if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_RA)
@@ -381,12 +381,12 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-            if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
+            if (qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.HOVER)) {
                 return false;
             }
             
-            if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
+            if (qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
             }
@@ -394,8 +394,8 @@ public class Quirks extends AbstractOptions {
             return true;
         }
               
-        if(en instanceof BattleArmor) {
-            if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+        if (en instanceof BattleArmor) {
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
@@ -461,8 +461,8 @@ public class Quirks extends AbstractOptions {
             return true;
         }
 
-        if(en instanceof Jumpship) {
-            if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
+        if (en instanceof Jumpship) {
+            if (qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANIMALISTIC)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
@@ -691,7 +691,7 @@ public class Quirks extends AbstractOptions {
         }
 
         protected QuirksInfo() {
-            super("QuirksInfo"); //$NON-NLS-1$
+            super("QuirksInfo");
         }
     }
 }

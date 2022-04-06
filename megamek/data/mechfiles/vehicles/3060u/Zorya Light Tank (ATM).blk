@@ -15,6 +15,10 @@ Zorya Light Tank
 <Model>
 (ATM)
 </Model>
+
+<mul id:>
+3653
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

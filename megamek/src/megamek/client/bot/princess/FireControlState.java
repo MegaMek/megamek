@@ -50,7 +50,7 @@ public class FireControlState {
     }
     
     public void clearEntityIDFStates() {
-    	entityIDFStates.clear();
+        entityIDFStates.clear();
     }
     
     /**
@@ -58,15 +58,15 @@ public class FireControlState {
      * they have indirect fire capability as in LRMs.
      */
     public Map<Integer, Boolean> getEntityIDFStates() {
-    	return entityIDFStates;
+        return entityIDFStates;
     }
     
     public LinkedList<Entity> getOrderedFiringEntities() {
-    	return orderedFiringEntities;
+        return orderedFiringEntities;
     }
     
     public void clearOrderedFiringEntities() {
-    	this.orderedFiringEntities.clear();
+        this.orderedFiringEntities.clear();
     }
     
     public Map<Integer, Integer> getWeaponRanges(boolean airborneTarget) {
@@ -101,11 +101,11 @@ public class FireControlState {
      * Clears data that shouldn't persist phase-to-phase
      */
     public void clearTransientData() {
-    	clearEntityIDFStates();
-    	clearOrderedFiringEntities();
-    	weaponRanges.clear();
-    	airborneTargetWeaponRanges.clear();
-    	isCommander.clear();
-    	isSubCommander.clear();
+        clearEntityIDFStates();
+        clearOrderedFiringEntities();
+        weaponRanges.clear();
+        airborneTargetWeaponRanges.clear();
+        isCommander.clear();
+        isSubCommander.clear();
     }
 }

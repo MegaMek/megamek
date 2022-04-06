@@ -1,6 +1,7 @@
 Version:1.0
 Talos
 TLS-1B
+mul id:5175
 
 Config:Biped
 TechBase:Inner Sphere

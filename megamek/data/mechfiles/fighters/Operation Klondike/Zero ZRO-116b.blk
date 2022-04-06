@@ -20,6 +20,10 @@ Zero
 ZRO-116b
 </Model>
 
+<mul id:>
+3637
+</mul id:>
+
 <year>
 2707
 </year>
@@ -107,3 +111,39 @@ H:Operation Klondyke - Star League
 <tonnage>
 35.0
 </tonnage>
+
+<capabilities>
+It was designed with heavy firepower at a variety of ranges, while also being faster and better-armored than other light fighters. In particular, the Zero's wings are mounted in front of the pilot, along with the engine cooling system, as a means of providing protection against ground fire during an assault. The wings of the Zero can also fold back, saving hangar space, but also enabling a couple of unique tactics. During atmospheric operations, folding the wings can allow for an extra burst of speed, especially in a dive. Another tactic used by Zero pilots is to fold the wings while approaching the atmospheric interface. By deploying the wings at just the right moment, the Zero can literally bounce off the atmosphere. The Zero's only drawback is its dispersed fuel system, with five separate tanks holding a ton each of fuel. Should the battle computer malfunction or one of the myriad fuel lines connecting them be severed, the Zero can easily lose most of its fuel in a matter of seconds. Though the fuel lines, and the craft itself, are well-protected with ten tons of standard armor, Zero pilots must be well aware of this potential problem.
+</capabilities>
+
+<overview>
+The Zero debuted in 2703 as a light, well-armed and armored Aerospace Fighter for the SLDF.
+</overview>
+
+<deployment>
+This variant introduced in 2707 traded all of the standard weaponry for a nose-mounted Large Pulse Laser and three Medium Pulse Lasers for support. One Medium Pulse laser was mounted in the nose, while the others were mounted in each wing. The single heat sinks were replaced with ten double strength freezers to keep the heat under control.
+</deployment>
+
+<history>
+Zeroes disappeared from the Inner Sphere during the Succession Wars, though ComStar was able to maintain, and later upgrade, their stock of fighters for use during the Battle of Tukayyid, and the Clans maintained a few for use by disreputable, or solahma, units. Since then, ComStar and Word of Blake have begun deploying upgraded versions of the fighter more frequently in the Chaos March.
+</history>
+
+<manufacturer>
+Blow/Hookson Technologies
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Saroyan Cavalier
+ENGINE:Bangkock 140
+ARMOR:SlabPanzer V
+COMMUNICATIONS:Orbitcom Model 11
+TARGETING:PS/1/12
+</systemManufacturers>
+
+
+
+

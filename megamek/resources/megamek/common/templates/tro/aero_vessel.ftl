@@ -54,7 +54,7 @@ Armor
 Cargo
 <#list bays>
     <#items as bay>
-    ${formatBayRow("Bay " + bay?counter + ":", bay.name + " (" + bay.size + ")", bay.doors + (bay.doors == 1)?string(" Door", " Doors"))}
+    ${formatBayRow("Bay " + bay?counter + ":", bay.name + " (" + bay.size + ")", bay.doors + (bay.doors == 1) ? string(" Door", " Doors"))}
 	</#items>
 <#else>
     None

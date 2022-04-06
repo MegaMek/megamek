@@ -107,7 +107,7 @@ public final class ProtomechBay extends Bay {
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)totalSpace * 6;
+        return (int) totalSpace * 6;
     }
 
     @Override

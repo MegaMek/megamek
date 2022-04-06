@@ -1,26 +1,30 @@
 package megamek.server.victory;
 
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.IPlayer;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.server.Server;
-import megamek.common.IGame;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Vector;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class ServerTest {
 
-    protected IGame createMockedGame() {
-        IGame testGame = Mockito.mock(IGame.class);
+    protected Game createMockedGame() {
+        Game testGame = Mockito.mock(Game.class);
         Forces testForces = new Forces(testGame);
         Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
         Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
@@ -38,7 +42,7 @@ public class ServerTest {
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
 
         //test whether the server.victory() returns false when mocking VictoryResult as false
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
@@ -55,20 +59,20 @@ public class ServerTest {
     public void testVictoryDrawReport() throws IOException {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
         testServer.victory();
-        Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(IPlayer.PLAYER_NONE);
-        Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(IPlayer.TEAM_NONE);
+        Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(Player.PLAYER_NONE);
+        Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(Player.TEAM_NONE);
     }
 
     @Test
     public void testVictoryFalseReport() throws IOException {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
@@ -82,7 +86,7 @@ public class ServerTest {
     public void testCancelVictory() throws IOException {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         Mockito.when(testGame.isForceVictory()).thenReturn(true);
 
@@ -101,16 +105,16 @@ public class ServerTest {
 
         // Mock a win victory result
         // Only 1 report should be generated as the team is set to TEAM_NONE
-        IGame testGame = createMockedGame();
+        Game testGame = createMockedGame();
         VictoryResult victoryResult = Mockito.mock(VictoryResult.class);
         Mockito.when(victoryResult.processVictory(testGame)).thenCallRealMethod();
         Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());
         Mockito.when(victoryResult.victory()).thenReturn(true);
         Mockito.when(victoryResult.isDraw()).thenReturn(false);
         Mockito.when(victoryResult.getWinningPlayer()).thenReturn(winner);
-        Mockito.when(victoryResult.getWinningTeam()).thenReturn(IPlayer.TEAM_NONE);
+        Mockito.when(victoryResult.getWinningTeam()).thenReturn(Player.TEAM_NONE);
 
-        IPlayer mockedPlayer = Mockito.mock(IPlayer.class);
+        Player mockedPlayer = Mockito.mock(Player.class);
         Mockito.when(mockedPlayer.getName()).thenReturn("The champion");
         Mockito.when(mockedPlayer.getColour()).thenReturn(PlayerColour.BLUE);
 

@@ -20,6 +20,10 @@ Thunderbird
 TRB-D36
 </Model>
 
+<mul id:>
+5231
+</mul id:>
+
 <year>
 2480
 </year>
@@ -109,3 +113,31 @@ TRO 3075 - Age of War
 <tonnage>
 100.0
 </tonnage>
+
+<overview>
+While sporting a large and rather unconventional look, the Thunderbird is an old standby design, one of the most common if dated heavy Aerospace Fighters in use across the Inner Sphere in the mid 31st century.
+</overview>
+
+<deployment>
+Mounting a laser-intensive weapons load, the Thunderbird is well suited to both dogfighting and strafing runs. A FarFire Maxi-Rack LRM-20 in each wing is supplemented by a RAMTech 1200 Large and Maxwell Medium Laser, with further large and medium lasers mounted in the fighter's awkward nose. Four tons of missile reloads give the LRM launchers reasonable combat endurance, while two aft mounted medium lasers discourage pursuit.
+</deployment>
+
+<history>
+Created in 2487 as part of an alliance between the Lockheed Corporation of Gibbs and CBM Aerospace of Donegal, the original Thunderbird was built for the LCAF as an assault fighter, well suited to air-to-ground attack and DropShip escort missions in the so-called Age of War. Despite its less than sleek look, the sturdy and dependable Thunderbird spread across the Star League as a number of other manufacturers were able to precisely duplicate the fighter, ensuring the design survived the centuries.
+</history>
+
+<manufacturer>
+Wangker AeroSpace,Caliphate Airfield Alpha,Lockheed/CBM Corp.,Alliance Aerospace Group,Pinard Protectorates Limited,Taurus Territorial Industries
+</manufacturer>
+
+<primaryFactory>
+Axton,Granada,Gibbs,Marantha,Perdition,Taurus
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockheed/CBM 300-TRB
+ENGINE:Vlar 300
+ARMOR:L/CBM AeroSteel
+COMMUNICATIONS:Neil 6000-a
+TARGETING:N&D Longreach
+</systemManufacturers>

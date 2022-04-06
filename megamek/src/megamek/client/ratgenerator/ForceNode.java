@@ -1,34 +1,31 @@
 /*
  * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
+
+import megamek.common.EntityMovementMode;
+import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import megamek.MegaMek;
-import megamek.common.EntityMovementMode;
-
 /**
- * 
  * A force node contains the rules for generating a force when the ForceDescriptor matches the
  * characteristics defined by the force node.
  *
  * @author Neoancient
- *
  */
 public class ForceNode extends RulesetNode {
     protected Integer eschelon;
@@ -46,17 +43,17 @@ public class ForceNode extends RulesetNode {
         super();
         eschelon = null;
         eschelonName = null;
-        nameNodes = new ArrayList<ValueNode>();
-        coNodes = new ArrayList<CommanderNode>();
-        xoNodes = new ArrayList<CommanderNode>();
-        ruleGroups = new ArrayList<ArrayList<OptionGroupNode>>();
-        subforces = new ArrayList<SubforcesNode>();
-        attached = new ArrayList<SubforcesNode>();
+        nameNodes = new ArrayList<>();
+        coNodes = new ArrayList<>();
+        xoNodes = new ArrayList<>();
+        ruleGroups = new ArrayList<>();
+        subforces = new ArrayList<>();
+        attached = new ArrayList<>();
     }
 
     public boolean apply(ForceDescriptor fd) {
         for (ArrayList<OptionGroupNode> group : ruleGroups) {
-            ArrayList<OptionGroupNode> toApply = new ArrayList<OptionGroupNode>();
+            ArrayList<OptionGroupNode> toApply = new ArrayList<>();
             for (OptionGroupNode rule : group) {
                 if (rule.matches(fd)) {
                     toApply.add(rule);
@@ -136,7 +133,7 @@ public class ForceNode extends RulesetNode {
                             if (content != null) {
                                 FormationType ft = FormationType.getFormationType(content);
                                 if (null == ft) {
-                                    MegaMek.getLogger().error("Could not parse formation type " + content);
+                                    LogManager.getLogger().error("Could not parse formation type " + content);
                                 }
                                 fd.setFormationType(ft);
                             }
@@ -167,7 +164,7 @@ public class ForceNode extends RulesetNode {
                             if (role != null) {
                                 fd.getRoles().add(role);
                             } else {
-                                MegaMek.getLogger().error("Force generator could not parse mission role " + p);
+                                LogManager.getLogger().error("Force generator could not parse mission role " + p);
                             }
                         }
                         break;
@@ -332,9 +329,7 @@ public class ForceNode extends RulesetNode {
         try {
             eschelon = Integer.parseInt(assertions.getProperty("eschelon"));
             assertions.remove("eschelon");
-        } catch (NullPointerException ex) {
-            throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
-        } catch (NumberFormatException ex) {
+        } catch (Exception ex) {
             throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
         }
 
@@ -367,13 +362,13 @@ public class ForceNode extends RulesetNode {
                 case "flags":
                 case "changeEschelon":
                     if (currentRuleGroup == null) {
-                        currentRuleGroup = new ArrayList<OptionGroupNode>();
+                        currentRuleGroup = new ArrayList<>();
                         ruleGroups.add(currentRuleGroup);
                     }
                     ruleGroups.get(0).add(OptionGroupNode.createFromXml(wn));
                     break;
                 case "ruleGroup":
-                    currentRuleGroup = new ArrayList<OptionGroupNode>();
+                    currentRuleGroup = new ArrayList<>();
                     ruleGroups.add(currentRuleGroup);
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
                         Node wn2 = wn.getChildNodes().item(y);

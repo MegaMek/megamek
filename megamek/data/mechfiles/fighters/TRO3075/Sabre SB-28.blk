@@ -20,6 +20,10 @@ Sabre
 SB-28
 </Model>
 
+<mul id:>
+4960
+</mul id:>
+
 <year>
 2753
 </year>
@@ -106,3 +110,35 @@ TRO 3075 - Star League
 <tonnage>
 25.0
 </tonnage>
+
+<capabilities>
+While extremely short-ranged when first developed, the Sabre was well-regarded for its exceptional speed and maneuverability. The original manufacturer, Raimei, continued to upgrade the fighter as technology advanced; the final version produced by Raimei was the SB-27 model which featured a Nissan 225 Fusion Engine, double the fuel capacity of the previous model and replace the previous primitive armor with four tons of BattleMech grade armor, giving the same protection for less weight.
+</capabilities>
+
+<overview>
+The longest-serving Aerospace Fighter design in the Draconis Combine, the Sabre is a sturdy garrison fighter, now infamous for its role in one of the greatest intelligence projects in Combine history, the "Raimei Ring".
+</overview>
+
+<deployment>
+Originally an advanced model produced exclusively for the Terran Hegemony by the Raimei/Lockheed plant on Outreach from 2753, the -28 variant has been revived during the Jihad and produced for the Kell Hounds thanks to design specs supplied to Lockheed/CBM by Clan Wolf-in-Exile. Mounting an XL Engine, the SB-28 has enough space to switch the nose laser for an ER Large Laser, while the addition of Ferro-Aluminum armor boosts protection
+</deployment>
+
+<history>
+Part of the reason the Sabre is such a common design in planetary garrisons across the Inner Sphere is because Raimei had established semi-independent factories in all five of the other Great Houses and two Periphery states by 2572. Due to close links between the company and House Kurita, each newly built facility also became a clearing house for ISF spies funneling intelligence back to the Combine. The ring would prove invaluable to the Combine and operate right up until Raimei's financial collapse in 2814, when the surviving Sabre assembly lines fell to other manufacturers. One of the revelations coming to light during the Word of Blake's White-out of the HPG grid during the Jihad, the existence of the so-called "Raimei Ring" has brought into question the loyalties of many multinational corporations.
+</history>
+
+<manufacturer>
+Lockheed CBM Corp,Raimei Lockheed,Jalastar Aerospace
+</manufacturer>
+
+<primaryFactory>
+Donegal,Outreach,Panpour
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Inazuma SI-32
+ENGINE:Nissan 225 XL
+ARMOR:Nimakachi Type 3 Ferro-Aluminum
+COMMUNICATIONS:BipStar 49-G
+TARGETING:Ki-II TTS
+</systemManufacturers>

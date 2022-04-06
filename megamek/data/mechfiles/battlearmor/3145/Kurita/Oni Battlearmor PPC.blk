@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,17 +20,28 @@ Oni Battle Armor
 [PPC]
 </Model>
 
+<mul id:>
+6366
+</mul id:>
+
 <year>
 3134
 </year>
 
+<originalBuildYear>
+3134
+</originalBuildYear>
+
 <type>
-Mixed (IS Chassis) Experimental
+Mixed (IS Chassis) Advanced
 </type>
 
 <motion_type>
 Jump
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -41,20 +52,24 @@ Jump
 </armor_type>
 
 <armor_tech>
-7
+2
 </armor_tech>
 
 <Squad Equipment>
-BA Support PPC:RA
 BAHeavyBattleClawVibro:LA
 BABasicManipulator:RA
 IS BA ECM:Body
-ISBAExtendedLifeSupport:Body
-Clan BA Fire Resistant:Body
-Clan BA Fire Resistant:Body
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:LA
+BAExtendedLifeSupport:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+ISBASupportPPC:RA
+BA Fire Resistant:LA
+BA Fire Resistant:LA
+BA Fire Resistant:Body
+BA Fire Resistant:Body
+BA Fire Resistant:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -92,3 +107,4 @@ biped
 <weightclass>
 2
 </weightclass>
+

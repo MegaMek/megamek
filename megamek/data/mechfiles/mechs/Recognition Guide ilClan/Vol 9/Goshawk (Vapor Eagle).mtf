@@ -1,11 +1,12 @@
 Version:1.0
 Goshawk (Vapor Eagle)
 (Standard)
+mul id:1243
 
 Config:Biped
 techbase:Clan
 era:2863
-source:TRO 3055 - Succession Wars
+source:Rec Guide:ilClan #9 - Early Succession Wars
 rules level:2
 
 mass:55

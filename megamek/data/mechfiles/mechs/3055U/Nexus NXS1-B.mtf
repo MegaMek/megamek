@@ -1,6 +1,7 @@
 Version:1.0
 Nexus
 NXS1-B
+mul id:2260
 
 Config:Biped
 TechBase:Inner Sphere

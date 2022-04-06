@@ -1,6 +1,7 @@
 Version:1.0
 Hammer
 HMR-3C 'Claw-Hammer'
+mul id:1365
 
 Config:Biped
 TechBase:Inner Sphere

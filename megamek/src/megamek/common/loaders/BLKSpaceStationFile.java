@@ -11,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author taharqa
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
 
     public BLKSpaceStationFile(BuildingBlock bb) {
@@ -48,7 +40,9 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         } else {
             a.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         setTechLevel(a);
         setFluff(a);
         checkManualBV(a);
@@ -363,7 +357,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
                         }
                         newmount.setSize(size);
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
                 }
             }

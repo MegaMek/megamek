@@ -1,29 +1,36 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * MegaMek - Copyright (C) 2020-2021 - The MegaMek Team
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.client.ui.trees;
-
-import java.util.Iterator;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 
 import megamek.client.ui.swing.tileset.MMStaticDirectoryManager;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
-import megamek.common.util.StringUtil;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+
+/**
+ * StandardForceIconChooserTree is an implementation of AbstractIconChooserTree that initializes the
+ * tree using the Camouflage Directory, with the additional and external category of Colour
+ * Camouflage added before any of the Camouflage Directory categories.
+ * @see AbstractIconChooserTree
+ */
 public class CamoChooserTree extends AbstractIconChooserTree {
     //region Constructors
     public CamoChooserTree() {
@@ -35,17 +42,8 @@ public class CamoChooserTree extends AbstractIconChooserTree {
     @Override
     protected DefaultTreeModel createTreeModel() {
         final DefaultMutableTreeNode root = new DefaultMutableTreeNode(AbstractIcon.ROOT_CATEGORY);
-        if (MMStaticDirectoryManager.getCamouflage() != null) {
-            root.add(new DefaultMutableTreeNode(Camouflage.COLOUR_CAMOUFLAGE));
-            final Iterator<String> categoryNames = MMStaticDirectoryManager.getCamouflage().getCategoryNames();
-            while (categoryNames.hasNext()) {
-                final String categoryName = categoryNames.next();
-                if (!StringUtil.isNullOrEmpty(categoryName)) {
-                    addCategoryToTree(root, categoryName.split("/"));
-                }
-            }
-        }
-        return new DefaultTreeModel(root);
+        root.add(new DefaultMutableTreeNode(Camouflage.COLOUR_CAMOUFLAGE));
+        return createTreeModel(root, MMStaticDirectoryManager.getCamouflage());
     }
     //endregion Initialization
 }

@@ -1,11 +1,13 @@
 Version:1.0
 Awesome
 AWS-11H
+mul id:7501
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3142
 rules level:3
+source:Rec Guide:ilClan #4 - Dark Age
 
 mass:80
 engine:240 Fusion Engine(IS)

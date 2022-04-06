@@ -1,11 +1,12 @@
 Version:1.0
 Shadow Cat
 D
+mul id:7704
 
 Config:Biped Omnimech
 techbase:Clan
 era:3062
-source:Civil War
+source:Rec Guide:ilClan #9 - Civil War
 rules level:2
 
 mass:45

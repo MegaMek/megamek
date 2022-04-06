@@ -15,6 +15,10 @@ Von Luckner Heavy Tank
 <Model>
 VNL-K75N
 </Model>
+
+<mul id:>
+3454
+</mul id:>
 <Tonnage>
 75
 </Tonnage>

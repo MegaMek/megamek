@@ -20,6 +20,10 @@ Union
 (2710) (CV)
 </Model>
 
+<mul id:>
+5323
+</mul id:>
+
 <year>
 2710
 </year>
@@ -185,3 +189,36 @@ TRO 3057R - Star League
 <escape_pod>
 7
 </escape_pod>
+
+<capabilities>
+The ubiquitous example of the company-sized BattleMech combat transport, the Union class is a venerable and capable member of the DropShip unit type. Capable of carrying twelve 'Mechs and two aerospace fighters (a standard 'Mech company including one air lance under classic SLDF doctrine), it is among the smaller dedicated military deployment vehicles, dwarfed by its larger cousin Overlord and especially the massive troop transports such as the Excalibur, Lee, or Colossus. The Union, while not as heavily armed as Assault DropShips, carries a formidable array of weapons. The semi-automated weaponry is significant enough to defend the ship from light ground forces and cause single and paired aerospace fighters pause.
+</capabilities>
+
+<overview>
+The Union is the archetypical DropShip, widely used in military and civilian roles and described as the yardstick against which all other DropShips are measured.
+</overview>
+
+<deployment>
+Unions have been known to be refitted into aerospace fighter carriers, implicitly removing their 'Mech cubicles. The bulk of its firepower is provided by six LRM-20s backed up by six Large Lasers and three PPCs. Six AC/5s and twelve Medium Lasers round out the normal weapons loadout. The Union also features good armor protection, allowing it to deliver or retrieve its payload while under fire. 
+</deployment>
+
+<history>
+The smaller but much more numerous, and implicitly also more cost-efficient and easier to manufacture, Union class weathered Lostech throughout the Succession Wars era better than the much larger vessels, and has been in continuous production ever since its inception. The ship was designed as a 'Mech deployment vehicle, not for prolonged comfortable travel. The interior personnel spaces aboard the Union are infamous for being very cramped on most Unions, and the air circulation system is often found lacking. The command and control facilities aboard Unions consisted of a Tactical Operations Room (TOR) sufficient to operate as a coordination point for smaller lance-sized combat transports partaking in company or larger sized operations. Likewise, it operates well in larger operations, where it may conduct missions of a surprise, diversionary or raiding role. The TOR was frequently removed from Union Class Dropships during refurbishment by the Clans.
+</history>
+
+<manufacturer>
+Bowie Industries - Port Sydney,Earthwerks Ltd,Matabushi Inc,Irian Naval Systems of Clipperton,Federated-Boeing Interstellar - Port Simon Shipyards,Vandenberg Mechanized Industries,Boeing Interstellar,Taurus Territorial Industries,Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Alarion,Ares,Avon,Clipperton,Galax,Illiushin,New Earth,Sterope,Terra
+</primaryFactory>
+
+
+<systemManufacturers>
+ENGINE:Star League V250
+</systemManufacturers>
+
+<use>
+'Mech/ASF carrier
+</use>

@@ -11,23 +11,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
-/*
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- */
-
-/**
- *
- * @author taharqa
- * @version
- */
 package megamek.common.loaders;
 
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 
+/**
+ * @author taharqa
+ * @since April 6, 2002, 2:06 AM
+ */
 public class BLKWarshipFile extends BLKFile implements IMechLoader {
 
     public BLKWarshipFile(BuildingBlock bb) {
@@ -48,7 +40,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
         } else {
             a.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         if (dataFile.exists("source")) {
             a.setSource(dataFile.getDataAsString("source")[0]);
         }
@@ -170,9 +164,9 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
             a.setSail(dataFile.getDataAsInt("sail")[0] != 0);
         }
 
-		if (dataFile.exists("overview")) {
-			a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
-		}
+        if (dataFile.exists("overview")) {
+            a.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
+        }
         // Grav Decks - two approaches
         // First, the old method, where a number of grav decks for each category is specified
         //  This doesn't allow us to specify precise size
@@ -415,7 +409,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                         }
                         newmount.setSize(size);
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     a.addFailedEquipment(equipName);
                 }
             }

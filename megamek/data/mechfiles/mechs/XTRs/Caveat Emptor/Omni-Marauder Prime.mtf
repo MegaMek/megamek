@@ -1,6 +1,7 @@
 Version:1.1
 OmniMarauder
 MAD-BR-O
+mul id:8110
 
 Config:Biped Omnimech
 techbase:Mixed (IS Chassis)

@@ -15,6 +15,10 @@ Po Heavy Tank
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+2547
+</mul id:>
 <Tonnage>
 60
 </Tonnage>

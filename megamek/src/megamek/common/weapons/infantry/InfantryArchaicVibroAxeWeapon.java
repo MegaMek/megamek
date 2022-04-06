@@ -24,30 +24,30 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicVibroAxeWeapon() {
-		super();
+    public InfantryArchaicVibroAxeWeapon() {
+        super();
 
-		name = "Blade (Vibro-axe)";
-		setInternalName(name);
-		addLookupName("InfantryVibroAxe");
-		addLookupName("Vibro Axe");
-		ammoType = AmmoType.T_NA;
-		cost = 150;
-		bv = 0.39;
+        name = "Blade (Vibro-axe)";
+        setInternalName(name);
+        addLookupName("InfantryVibroAxe");
+        addLookupName("Vibro Axe");
+        ammoType = AmmoType.T_NA;
+        cost = 150;
+        bv = 0.39;
         tonnage = .005; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.42;
-		infantryRange = 0;
-		rulesRefs = "272,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2435, 2445, 2600, DATE_NONE, DATE_NONE)
-				.setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-				.setProductionFactions(F_LC).setTechRating(RATING_E)
-				.setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.42;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2435, 2445, 2600, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+                .setProductionFactions(F_LC).setTechRating(RATING_E)
+                .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
 
-	}
+    }
 }

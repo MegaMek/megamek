@@ -15,6 +15,10 @@ AC/2 Carrier
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+4
+</mul id:>
 <Tonnage>
 60
 </Tonnage>

@@ -12,19 +12,15 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common.loaders;
 
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.util.BuildingBlock;
+import org.apache.logging.log4j.LogManager;
 
 /**
- * BLkFile.java
- *
- * Created on April 6, 2002, 2:06 AM
- *
  * @author njrkrynn
+ * @since April 6, 2002, 2:06 AM
  */
 public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
     public BLKLargeSupportTankFile(BuildingBlock bb) {
@@ -70,7 +66,9 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
         } else {
             t.setModel("");
         }
-
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            t.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
         setTechLevel(t);
         setFluff(t);
         checkManualBV(t);
@@ -227,7 +225,7 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
             try {
                 t.setICEFuelType(FuelType.valueOf(dataFile.getDataAsString("fuelType")[0]));
             } catch (IllegalArgumentException ex) {
-                MegaMek.getLogger().error("While loading " + t.getShortNameRaw()
+                LogManager.getLogger().error("While loading " + t.getShortNameRaw()
                                 + ": Could not parse ICE fuel type "
                                 + dataFile.getDataAsString("fuelType")[0]);
                 t.setICEFuelType(FuelType.PETROCHEMICALS);

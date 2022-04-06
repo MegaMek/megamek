@@ -1,51 +1,52 @@
-Version:1.1
+Version:1.0
 Firefly
 FFL-3PP3
+mul id:1085
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2801
-Rules Level:2
+techbase:Inner Sphere
+era:2801
+rules level:2
 
-Mass:30
-Engine:150 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:30
+engine:150 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:5
-Jump MP:4
+heat sinks:10 IS Double
+walk mp:5
+jump mp:4
 
-Armor:Standard Armor
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:15
-HD Armor:8
-LL Armor:14
-RL Armor:14
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+armor:Standard(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:15
+HD armor:8
+LL armor:14
+RL armor:14
+RTL armor:3
+RTR armor:3
+RTC armor:5
 
 Weapons:8
-1 ISMediumLaser, Center Torso
-1 ISMediumLaser, Left Torso
-1 ISMediumLaser, Right Torso
-1 ISSmallLaser, Left Torso
-1 ISSmallLaser, Center Torso
-1 ISSmallLaser, Right Arm
-1 ISSmallLaser, Left Arm
-1 ISLRM5, Right Torso, Ammo:48
+Small Laser, Left Arm
+Small Laser, Right Arm
+Medium Laser, Left Torso
+Small Laser, Left Torso
+Medium Laser, Right Torso
+LRM 5, Right Torso
+Medium Laser, Center Torso
+Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISSmallLaser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Small Laser
 -Empty-
 -Empty-
 -Empty-
@@ -56,10 +57,10 @@ ISSmallLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISSmallLaser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Small Laser
 -Empty-
 -Empty-
 -Empty-
@@ -68,46 +69,46 @@ ISSmallLaser
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMediumLaser
-ISSmallLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+Small Laser
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMediumLaser
-ISLRM5
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Medium Laser
+LRM 5
 ISArtemisIV
-ISLRM5 Ammo Artemis-capable
-ISLRM5 Ammo Artemis-capable
--Empty-
+IS Ammo LRM-5 Artemis-capable
+IS Ammo LRM-5 Artemis-capable
+ISCASE
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISMediumLaser
-ISSmallLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Small Laser
 
 Head:
 Life Support
@@ -116,6 +117,12 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -124,6 +131,12 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -132,3 +145,11 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

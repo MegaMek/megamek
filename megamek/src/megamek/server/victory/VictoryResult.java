@@ -1,37 +1,38 @@
 /*
  * MegaMek - Copyright (C) 2007-2008 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.victory;
+
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.Report;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.Report;
+import java.util.List;
+import java.util.Map;
 
 /**
- * quick implementation of a Victory.Result stores player scores and a flag if
- * game-ending victory is achieved or not
+ * A Victory Result stores player scores and a flag if a game-ending victory is achieved or not
  */
-public class VictoryResult implements IResult {
+public class VictoryResult {
     protected boolean victory;
     protected Throwable tr;
-    protected ArrayList<Report> reports = new ArrayList<>();
-    protected HashMap<Integer, Double> playerScore = new HashMap<>();
-    protected HashMap<Integer, Double> teamScore = new HashMap<>();
+    protected List<Report> reports = new ArrayList<>();
+    protected Map<Integer, Double> playerScore = new HashMap<>();
+    protected Map<Integer, Double> teamScore = new HashMap<>();
     protected double hiScore = 0;
 
     protected VictoryResult(boolean win) {
@@ -40,29 +41,29 @@ public class VictoryResult implements IResult {
     }
     
     protected VictoryResult(boolean win, int player, int team) {
-    	this.victory = win;
-    	tr = new Throwable();
-        if (player != IPlayer.PLAYER_NONE) {
+        this.victory = win;
+        tr = new Throwable();
+        if (player != Player.PLAYER_NONE) {
             addPlayerScore(player, 1.0);
         }
-        if (team != IPlayer.TEAM_NONE) {
+        if (team != Player.TEAM_NONE) {
             addTeamScore(team, 1.0);
         }
     }
     
     protected static VictoryResult noResult() {
-    	return new VictoryResult(false, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
+        return new VictoryResult(false, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
     
     protected static VictoryResult drawResult() {
-        return new VictoryResult(true, IPlayer.PLAYER_NONE, IPlayer.TEAM_NONE);
+        return new VictoryResult(true, Player.PLAYER_NONE, Player.TEAM_NONE);
     }
 
-    private int getWinningPlayerOrTeam(HashMap<Integer, Double> entities, int defaultEntity) {
+    private int getWinningPlayerOrTeam(Map<Integer, Double> entities, int defaultEntity) {
         double max = Double.MIN_VALUE;
         int maxEntity = defaultEntity;
         boolean draw = false;
-        for (HashMap.Entry<Integer, Double> entry : entities.entrySet()) {
+        for (Map.Entry<Integer, Double> entry : entities.entrySet()) {
             if (entry.getValue() == max) {
                 draw = true;
             }
@@ -77,12 +78,18 @@ public class VictoryResult implements IResult {
         return maxEntity;
     }
 
+    /**
+     * @return the id of the winning player, or Player.TEAM_NONE if it's a draw
+     */
     public int getWinningPlayer() {
-        return getWinningPlayerOrTeam(playerScore, IPlayer.PLAYER_NONE);
+        return getWinningPlayerOrTeam(playerScore, Player.PLAYER_NONE);
     }
 
+    /**
+     * @return the id of the winning team, or Player.TEAM_NONE if it's a draw
+     */
     public int getWinningTeam() {
-        return getWinningPlayerOrTeam(teamScore, IPlayer.TEAM_NONE);
+        return getWinningPlayerOrTeam(teamScore, Player.TEAM_NONE);
     }
 
     protected void updateHiScore() {
@@ -92,6 +99,7 @@ public class VictoryResult implements IResult {
             if (d > hiScore)
                 hiScore = d;
         }
+
         for (Double d : teamScore.values()) {
             if (d > hiScore)
                 hiScore = d;
@@ -108,18 +116,28 @@ public class VictoryResult implements IResult {
         updateHiScore();
     }
 
+    /**
+     * @return true if this is a winning player id (draw == win in this case)
+     */
     public boolean isWinningPlayer(int id) {
         double d = getPlayerScore(id);
         // two decimal compare..
         return ((d * 100) % 100) == ((hiScore * 100) % 100);
     }
 
+    /**
+     * @return true if this is a winning team id (draw == win in this case)
+     */
     public boolean isWinningTeam(int id) {
         double d = getTeamScore(id);
         // two decimal compare..
         return ((d * 100) % 100) == ((hiScore * 100) % 100);
     }
 
+    /**
+     * @return true if the game is about to end since someone has completed
+     *         the victory conditions
+     */
     public boolean victory() {
         return victory;
     }
@@ -152,31 +170,46 @@ public class VictoryResult implements IResult {
         reports.add(r);
     }
 
-    public ArrayList<Report> getReports() {
+    /**
+     * @return List of reports generated by the victory checking. This is usually empty when no
+     * victory occurs, but might contain reports about VictoryConditions which are about to be
+     * filled or are time triggered
+     */
+    public List<Report> getReports() {
         return reports;
     }
 
-    public ArrayList<Report> processVictory(IGame game) {
-        ArrayList<Report> someReports = getReports();
+    /**
+     * Process the victory results.
+     * It generates reports based on the victory conditions.
+     * This method uses getReports and generates new reports as well.
+     * @param game The current {@link Game} for which the victory needs to be processed
+     * @return a list of reports generated by victory checking (@see getReports) and by the actual
+     * processing of the victory
+     */
+    public List<Report> processVictory(Game game) {
+        List<Report> someReports = getReports();
         if (victory()) {
             boolean draw = isDraw();
             int wonPlayer = getWinningPlayer();
             int wonTeam = getWinningTeam();
 
-            if (wonPlayer != IPlayer.PLAYER_NONE) {
+            if (wonPlayer != Player.PLAYER_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add(game.getPlayer(wonPlayer).getColorForPlayer());
                 someReports.add(r);
             }
-            if (wonTeam != IPlayer.TEAM_NONE) {
+
+            if (wonTeam != Player.TEAM_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add("Team " + wonTeam);
                 someReports.add(r);
             }
+
             if (draw) {
                 // multiple-won draw
-                game.setVictoryPlayerId(IPlayer.PLAYER_NONE);
-                game.setVictoryTeam(IPlayer.TEAM_NONE);
+                game.setVictoryPlayerId(Player.PLAYER_NONE);
+                game.setVictoryTeam(Player.TEAM_NONE);
             } else {
                 // nobody-won draw or
                 // single player won or
@@ -198,7 +231,7 @@ public class VictoryResult implements IResult {
         return sw.toString();
     }
 
-    private int[] intify(Integer[] ar) {
+    private int[] intify(Integer... ar) {
         int[] ret = new int[ar.length];
         for (int i = 0; i < ar.length; i++)
             ret[i] = ar[i];
@@ -211,6 +244,6 @@ public class VictoryResult implements IResult {
     }
 
     public boolean isDraw() {
-        return (getWinningPlayer() == IPlayer.PLAYER_NONE && getWinningTeam() == IPlayer.TEAM_NONE);
+        return (getWinningPlayer() == Player.PLAYER_NONE) && (getWinningTeam() == Player.TEAM_NONE);
     }
 }

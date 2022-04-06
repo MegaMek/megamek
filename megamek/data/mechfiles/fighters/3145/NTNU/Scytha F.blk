@@ -20,6 +20,10 @@ Scytha
 F
 </Model>
 
+<mul id:>
+6808
+</mul id:>
+
 <year>
 3138
 </year>
@@ -126,3 +130,27 @@ TRO 3145 NTNU - Late Republic
 <tonnage>
 90.0
 </tonnage>
+
+<overview>
+Developed when Clan Jade Falcon warriors demanded their own super-heavy OmniFighter to compete against Clan Ghost Bear's Kirghiz, the Scytha favors speed and pod space over that venerable fighter's preference for armor.
+</overview>
+
+<deployment>
+This Dark Age configuration carries two Improved Heavy Large Lasers in the nose, supported by an Ultra AC/20 and Streak SRM-6. The lasers and autocannon are tied into a Targeting Computer and a Watchdog CEWS disrupts enemy communications and targeting systems. 
+</deployment>
+
+<manufacturer>
+Complex VI, Falcon's Roost Orbital Assembly Plant
+</manufacturer>
+
+<primaryFactory>
+Ironhold,Sudeten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Falcon Hollowbone
+ENGINE:360 XL
+ARMOR:Ironhold Series III Ferro-Aluminum
+COMMUNICATIONS:System VII
+TARGETING:TTS Model 3
+</systemManufacturers>

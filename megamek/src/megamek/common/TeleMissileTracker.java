@@ -36,7 +36,7 @@ public class TeleMissileTracker implements Serializable {
      * Creates new instance of the tracker
      */
     public TeleMissileTracker() {
-        missiles = new Hashtable<Integer, Integer>();
+        missiles = new Hashtable<>();
     }
 
     public void addMissile(int wId, int missileId) {
@@ -57,8 +57,8 @@ public class TeleMissileTracker implements Serializable {
     
     public Vector<Integer> getMissiles() {
         //I could probably do this more directly with a Collection
-        //but I don't know how to work with collections
-        Vector<Integer> m = new Vector<Integer>();
+        // but I don't know how to work with collections
+        Vector<Integer> m = new Vector<>();
         for (Enumeration<Integer> k = missiles.keys() ; k.hasMoreElements();) {
             int wId = k.nextElement();
             int missileId = missiles.get(wId);

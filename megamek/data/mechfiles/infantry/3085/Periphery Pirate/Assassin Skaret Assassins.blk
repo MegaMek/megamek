@@ -15,6 +15,10 @@ Skaret Assassins
 <Model>
 JàrnFòlk
 </Model>
+
+<mul id:>
+5466
+</mul id:>
 <squad_size>
 7
 </squad_size>

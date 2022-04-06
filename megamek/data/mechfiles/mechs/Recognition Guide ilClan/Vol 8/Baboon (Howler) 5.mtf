@@ -1,11 +1,12 @@
 Version:1.0
 Baboon (Howler)
 5
+mul id:7569
 
 Config:Biped
 techbase:Clan
 era:3053
-source:Clan Invasion
+source:Rec Guide:ilClan #8 - Clan Invasion
 rules level:2
 
 mass:20

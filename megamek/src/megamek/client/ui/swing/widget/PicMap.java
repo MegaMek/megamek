@@ -1,17 +1,16 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+/*
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.AWTEvent;
@@ -37,7 +36,7 @@ import javax.swing.JComponent;
  * 2) Hot areas<br>
  * 3) Labels<br> * Hot areas and labels can be grouped handled together by
  * AreasGroup class. Content of PicMap - Areas group that includes all areas on
- * the stage. <p/> Added Elements are placed into several layers within PicMap
+ * the stage. <p> Added Elements are placed into several layers within PicMap
  * engine.
  * <ul>
  * <li>Bottom layer is BackgroundDrawers.
@@ -50,12 +49,9 @@ import javax.swing.JComponent;
  * Within single layer elements are drawing in the order they added to PicMap.
  */
 public abstract class PicMap extends JComponent {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -1718106533001806675L;
     // Vector of Background Drawers
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     // Group of other areas which does not implement PMHotArea or PMLAbel
     private PMAreasGroup otherAreas = new PMAreasGroup();
     // Hot areas

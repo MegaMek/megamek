@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Scarab Medium Drone Fighter
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+2812
+</mul id:>
 
 <year>
 3072
@@ -48,7 +52,7 @@ Aerodyne
 </cockpit_type>
 
 <heatsinks>
-10
+17
 </heatsinks>
 
 <sink_type>
@@ -68,7 +72,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+7
 </armor_tech>
 
 <armor>
@@ -82,7 +86,6 @@ Aerodyne
 ISMediumVSPLaser
 ISMediumVSPLaser
 ISGuardianECMSuite
-BeagleActiveProbe
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -100,6 +103,7 @@ ISLargePulseLaser
 </Wings Equipment>
 
 <Fuselage Equipment>
+ImprovedSmartRoboticControlSystem
 </Fuselage Equipment>
 
 <source>
@@ -109,3 +113,8 @@ JHS Terra - Jihad
 <tonnage>
 70.0
 </tonnage>
+
+<notes>
+Aerospace Smart Robotic Control System (Improved) gives the Scarab a Piloting Skill of 5 and a Gunnery Skill of 4
+</notes>
+

@@ -15,6 +15,10 @@ Partisan Air Defense Tank
 <Model>
 (Lance Command)
 </Model>
+
+<mul id:>
+2436
+</mul id:>
 <Tonnage>
 80
 </Tonnage>

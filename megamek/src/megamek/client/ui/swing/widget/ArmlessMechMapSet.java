@@ -1,18 +1,17 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -38,7 +37,6 @@ import megamek.common.util.fileUtils.MegaMekFile;
  * Very cumbersome class that handles set of polygonal areas and labels for
  * PicMap component to represent single mech unit in MechDisplay
  */
-
 public class ArmlessMechMapSet implements DisplayMapSet {
 
     // Because of keeping all areas of single type in one array
@@ -57,7 +55,7 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     // Heat control area
     private PMPicPolygonalArea heatHotArea;
     // Set of Background Drawers
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     // Main areas group that keeps everything in itself and is passed to PicMap
     // component
     private PMAreasGroup content = new PMAreasGroup();
@@ -132,10 +130,10 @@ public class ArmlessMechMapSet implements DisplayMapSet {
 
     private Image heatImage;
 
-    private static final Font FONT_LABEL = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public ArmlessMechMapSet(JComponent c, UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -146,14 +144,17 @@ public class ArmlessMechMapSet implements DisplayMapSet {
         setBackGround();
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         Mech m = (Mech) e;
         boolean mtHeat = false;
@@ -192,18 +193,12 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay,
-                Mech.LOC_HEAD);
-        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay,
-                Mech.LOC_CT);
-        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay,
-                Mech.LOC_RT);
-        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay,
-                Mech.LOC_LT);
-        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay,
-                Mech.LOC_RLEG);
-        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay,
-                Mech.LOC_LLEG);
+        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, Mech.LOC_HEAD);
+        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay, Mech.LOC_CT);
+        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay, Mech.LOC_RT);
+        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay, Mech.LOC_LT);
+        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay, Mech.LOC_RLEG);
+        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay, Mech.LOC_LLEG);
         areas[REAR_AREA_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
                 rearCentralTorso, unitDisplay, Mech.LOC_CT);
         areas[REAR_AREA_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
@@ -231,80 +226,63 @@ public class ArmlessMechMapSet implements DisplayMapSet {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
         // Labels for Front view
-        labels[Mech.LOC_HEAD] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_H"), fm, Color.black, 62, 6); //$NON-NLS-1$
-        labels[Mech.LOC_LT] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_LT"), fm, Color.black, 41, 52); //$NON-NLS-1$
-        labels[Mech.LOC_CT] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_CT"), fm, Color.black, 62, 42); //$NON-NLS-1$
-        labels[Mech.LOC_RT] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_RT"), fm, Color.black, 84, 52); //$NON-NLS-1$
-        labels[Mech.LOC_LLEG] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_LL"), fm, Color.black, 28, 92); //$NON-NLS-1$
-        labels[Mech.LOC_RLEG] = WidgetUtils.createLabel(Messages
-                .getString("MechMapSet.l_RL"), fm, Color.black, 98, 92); //$NON-NLS-1$
+        labels[Mech.LOC_HEAD] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_H"),
+                fm, Color.black, 62, 6);
+        labels[Mech.LOC_LT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LT"),
+                fm, Color.black, 41, 52);
+        labels[Mech.LOC_CT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_CT"),
+                fm, Color.black, 62, 42);
+        labels[Mech.LOC_RT] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RT"),
+                fm, Color.black, 84, 52);
+        labels[Mech.LOC_LLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_LL"),
+                fm, Color.black, 28, 92);
+        labels[Mech.LOC_RLEG] = WidgetUtils.createLabel(Messages.getString("MechMapSet.l_RL"),
+                fm, Color.black, 98, 92);
         // Labels for Back view
-        labels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.l_LT"), fm, Color.black, 133, 39); //$NON-NLS-1$
-        labels[REAR_AREA_OFFSET + Mech.LOC_CT] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.l_CT"), fm, Color.black, 156, 25); //$NON-NLS-1$
-        labels[REAR_AREA_OFFSET + Mech.LOC_RT] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.l_RT"), fm, Color.black, 178, 39); //$NON-NLS-1$
+        labels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.l_LT"), fm, Color.black, 133, 39);
+        labels[REAR_AREA_OFFSET + Mech.LOC_CT] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.l_CT"), fm, Color.black, 156, 25);
+        labels[REAR_AREA_OFFSET + Mech.LOC_RT] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.l_RT"), fm, Color.black, 178, 39);
         // Labels for Internal Structure
         labels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = WidgetUtils.createLabel(
-                Messages.getString("MechMapSet.l_H"), fm, Color.black, 63, 130); //$NON-NLS-1$
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.l_LT"), fm, Color.black, 42, 166); //$NON-NLS-1$
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.L_CT"), fm, Color.black, 63, 168); //$NON-NLS-1$
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.l_RT"), fm, Color.black, 85, 166); //$NON-NLS-1$
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.l_LL"), fm, Color.black, 33, 210); //$NON-NLS-1$
-        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils
-                .createLabel(
-                        Messages.getString("MechMapSet.l_RL"), fm, Color.black, 93, 210); //$NON-NLS-1$
+                Messages.getString("MechMapSet.l_H"), fm, Color.black, 63, 130);
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.l_LT"), fm, Color.black, 42, 166);
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.L_CT"), fm, Color.black, 63, 168);
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.l_RT"), fm, Color.black, 85, 166);
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.l_LL"), fm, Color.black, 33, 210);
+        labels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils.createLabel(
+                Messages.getString("MechMapSet.l_RL"), fm, Color.black, 93, 210);
 
         // Value labels for all parts of mek
         // front
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[Mech.LOC_HEAD] = WidgetUtils.createValueLabel(62, 22, "", fm); //$NON-NLS-1$
-        vLabels[Mech.LOC_LT] = WidgetUtils.createValueLabel(38, 44, "", fm); //$NON-NLS-1$
-        vLabels[Mech.LOC_CT] = WidgetUtils.createValueLabel(62, 57, "", fm); //$NON-NLS-1$
-        vLabels[Mech.LOC_RT] = WidgetUtils.createValueLabel(86, 44, "", fm); //$NON-NLS-1$
-        vLabels[Mech.LOC_LLEG] = WidgetUtils.createValueLabel(23, 113, "", fm); //$NON-NLS-1$
-        vLabels[Mech.LOC_RLEG] = WidgetUtils.createValueLabel(102, 113, "", fm); //$NON-NLS-1$
+        vLabels[Mech.LOC_HEAD] = WidgetUtils.createValueLabel(62, 22, "", fm);
+        vLabels[Mech.LOC_LT] = WidgetUtils.createValueLabel(38, 44, "", fm);
+        vLabels[Mech.LOC_CT] = WidgetUtils.createValueLabel(62, 57, "", fm);
+        vLabels[Mech.LOC_RT] = WidgetUtils.createValueLabel(86, 44, "", fm);
+        vLabels[Mech.LOC_LLEG] = WidgetUtils.createValueLabel(23, 113, "", fm);
+        vLabels[Mech.LOC_RLEG] = WidgetUtils.createValueLabel(102, 113, "", fm);
 
         // back
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils.createValueLabel(
-                132, 28, "", fm); //$NON-NLS-1$
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_CT] = WidgetUtils.createValueLabel(
-                156, 39, "", fm); //$NON-NLS-1$
-        vLabels[REAR_AREA_OFFSET + Mech.LOC_RT] = WidgetUtils.createValueLabel(
-                177, 28, "", fm); //$NON-NLS-1$
+        vLabels[REAR_AREA_OFFSET + Mech.LOC_LT] = WidgetUtils.createValueLabel(132, 28, "", fm);
+        vLabels[REAR_AREA_OFFSET + Mech.LOC_CT] = WidgetUtils.createValueLabel(156, 39, "", fm);
+        vLabels[REAR_AREA_OFFSET + Mech.LOC_RT] = WidgetUtils.createValueLabel(177, 28, "", fm);
 
         // Internal structure
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = WidgetUtils
-                .createValueLabel(63, 142, "", fm); //$NON-NLS-1$
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils
-                .createValueLabel(42, 180, "", fm); //$NON-NLS-1$
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils
-                .createValueLabel(63, 182, "", fm); //$NON-NLS-1$
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils
-                .createValueLabel(85, 180, "", fm); //$NON-NLS-1$
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils
-                .createValueLabel(33, 223, "", fm); //$NON-NLS-1$
-        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils
-                .createValueLabel(92, 223, "", fm); //$NON-NLS-1$
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = WidgetUtils.createValueLabel(63, 142, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = WidgetUtils.createValueLabel(42, 180, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = WidgetUtils.createValueLabel(63, 182, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = WidgetUtils.createValueLabel(85, 180, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = WidgetUtils.createValueLabel(33, 223, "", fm);
+        vLabels[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = WidgetUtils.createValueLabel(92, 223, "", fm);
         // heat
-        vLabels[19] = WidgetUtils.createValueLabel(155, 90, "", fm); //$NON-NLS-1$
+        vLabels[19] = WidgetUtils.createValueLabel(155, 90, "", fm);
     }
 
     private void setGroups() {
@@ -322,8 +300,6 @@ public class ArmlessMechMapSet implements DisplayMapSet {
             frontArmor.addArea(labels[i]);
             frontArmor.addArea(vLabels[i]);
         }
-        // content.addArea(new PMSimplePolygonArea(new Polygon(new
-        // int[]{-7,-6,-7}, new int[]{18,19,19},3)));
 
         for (int i = 0; i < 3; i++) {
             rearArmor.addArea(areas[8 + i]);
@@ -363,19 +339,15 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline()).toString());
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER
                 | BackGroundDrawer.HALIGN_CENTER;

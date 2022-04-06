@@ -1,6 +1,7 @@
 Version:1.0
 Fennec
 FEC-5CM
+mul id:6900
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

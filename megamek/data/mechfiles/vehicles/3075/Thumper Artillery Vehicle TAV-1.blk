@@ -20,6 +20,10 @@ Thumper Artillery Vehicle
 TAV-1
 </Model>
 
+<mul id:>
+3212
+</mul id:>
+
 <year>
 3072
 </year>

@@ -1,12 +1,13 @@
 Version:1.0
 Dragonfly (Viper)
 K
+mul id:7585
 
 Config:Biped Omnimech
 techbase:Clan
 era:3147
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #8 - Dark Age
+rules level:2
 
 mass:40
 engine:320 XL (Clan) Engine(IS)

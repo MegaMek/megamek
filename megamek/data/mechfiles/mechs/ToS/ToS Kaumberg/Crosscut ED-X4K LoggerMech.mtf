@@ -1,6 +1,7 @@
 Version:1.0
 Crosscut
 ED-X4K LoggerMech
+mul id:7466
 
 Config:Biped
 techbase:Inner Sphere

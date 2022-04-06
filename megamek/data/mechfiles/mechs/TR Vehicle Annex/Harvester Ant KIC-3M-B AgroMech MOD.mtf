@@ -1,57 +1,70 @@
-Version:1.1
+Version:1.0
 Harvester Ant
 KIC-3M-B AgroMech MOD
+mul id:7153
 
 Config:Quad
-TechBase:Inner Sphere
-Era:2801
-Source:RS:VA - Early Succession War
-Rules Level:2
+techbase:Inner Sphere
+era:2801
+source:RS:VA - Early Succession War
+rules level:2
 
-Mass:20
-Engine:60 I.C.E. Engine
-Structure:Industrial
-Myomer:Standard
+mass:20
+engine:60 ICE Engine(IS)
+structure:IS Industrial
+myomer:Standard
 
-Heat Sinks:2 Single
-Walk MP:3
-Jump MP:0
+heat sinks:2 Single
+walk mp:3
+jump mp:0
 
-Armor:Commercial(Inner Sphere)
-LA Armor:3
-RA Armor:3
-LT Armor:7
-RT Armor:7
-CT Armor:8
-HD Armor:8
-LL Armor:3
-RL Armor:3
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+armor:Commercial(Inner Sphere)
+FLL armor:3
+FRL armor:3
+LT armor:7
+RT armor:7
+CT armor:8
+HD armor:8
+RLL armor:3
+RRL armor:3
+RTL armor:2
+RTR armor:2
+RTC armor:2
 
 Weapons:2
-1 ISLRM5, Left Torso, Ammo:24
-1 ISLRM5, Right Torso
+LRM 5, Left Torso
+LRM 5, Right Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-ISLRM5
+LRM 5
 -Empty-
 -Empty-
 -Empty-
@@ -65,7 +78,7 @@ ISLRM5
 -Empty-
 
 Right Torso:
-ISLRM5
+LRM 5
 -Empty-
 -Empty-
 -Empty-
@@ -79,17 +92,17 @@ ISLRM5
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISLRM5 Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo LRM-5
 -Empty-
 
 Head:
@@ -99,19 +112,39 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

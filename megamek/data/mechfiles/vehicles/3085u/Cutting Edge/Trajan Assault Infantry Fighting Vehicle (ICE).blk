@@ -20,6 +20,10 @@ Trajan Assault Infantry Fighting Vehicle
 (ICE)
 </Model>
 
+<mul id:>
+3281
+</mul id:>
+
 <Tonnage>
 85
 </Tonnage>

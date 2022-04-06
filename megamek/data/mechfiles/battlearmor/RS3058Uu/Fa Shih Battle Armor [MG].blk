@@ -19,6 +19,10 @@ Fa Shih Battle Armor
 [MG]
 </Model>
 
+<mul id:>
+1017
+</mul id:>
+
 <chassis>
 biped
 </chassis>

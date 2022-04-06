@@ -1,6 +1,6 @@
 package megamek.common;
 
-import megamek.common.loaders.EntityLoadingException;
+import org.apache.logging.log4j.LogManager;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class EquipmentTypeLookupTest {
 
@@ -46,8 +46,8 @@ public class EquipmentTypeLookupTest {
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("", e);
             }
         }
 
@@ -56,8 +56,8 @@ public class EquipmentTypeLookupTest {
                 Entity entity = new MechFileParser(ms.getSourceFile(),
                         ms.getEntryName()).getEntity();
                 failedEquipment.addAll(entity.failedEquipmentList);
-            } catch (EntityLoadingException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("", e);
             }
         }
 

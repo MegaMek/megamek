@@ -1,6 +1,7 @@
 Version:1.0
 Thunderbolt IIC
 (Standard)
+mul id:5239
 
 Config:Biped
 TechBase:Clan

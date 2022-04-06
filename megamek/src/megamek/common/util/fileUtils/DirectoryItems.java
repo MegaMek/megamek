@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,72 +19,65 @@
  */
 package megamek.common.util.fileUtils;
 
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
-import java.util.Objects;
 
 /**
- * This class represents a collection of files present within a directory
- * hierarchy, categorized according to their directories. This collection will
- * include all files inside of JAR and ZIP files that are located in the
- * directory hierarchy.
+ * This class represents a collection of files present within a directory hierarchy, categorized
+ * according to their directories.
  *
  * @author James Damour (original)
  * @author Justin "Windchild" Bowen
- * @version 2
  */
 public class DirectoryItems extends AbstractDirectory {
+    public DirectoryItems(final File root, final ItemFileFactory itemFactory)
+            throws IllegalArgumentException, NullPointerException {
+        this(root, "", "", itemFactory);
+    }
+
     /**
      * Create a categorized collection of all files beneath the given directory.
-     * Please note, the name of any sub-directories will be added to the root
-     * category name to create the name of the sub-directories' category name.
+     * Please note, the name of any sub-directories will be added to the root category name to
+     * create the name of the sub-directories' category path.
      *
-     * @param rootDir - the <code>File</code> object for the root directory of
-     *            the image files. All files in this root, or in any sub-
-     *            directory of this root will be included in this collection.
-     *            This value must not be <code>null</code> and it must be a
-     *            directory.
-     * @param categoryName - the <code>String</code> root category name for
-     *            this collection. All sub-categories will include this name.
-     *            This value may be <code>null</code> (it will be replaced).
-     * @param itemFactory - the <code>ItemFileFactory</code> that will create
-     *            <code>ItemFile</code>s for the contents of the directory.
-     *            This value must not be <code>null</code>.
-     * @throws AssertionError if <code>rootDir</code> is null or if it is not a directory, or if a
-     *             <code>null</code> is passed for <code>itemFactory</code>.
+     * @param root the <code>File</code> object for the root directory of the image files. All files
+     *             in this root will be included in this collection. This value must not be
+     *             <code>null</code> and it must be a directory.
+     * @param categoryName the <code>String</code> root category name for this directory
+     * @param categoryPath the <code>String</code> root category path for this collection. All
+     *                     sub-categories will include this as part of their path.
+     * @param itemFactory the <code>ItemFileFactory</code> that will create <code>ItemFile</code>s
+     *                    for the contents of the directory. This value must not be <code>null</code>.
+     * @throws AssertionError if <code>root</code> is null or if it is not a directory, or if a
+     * <code>null</code> is passed for <code>itemFactory</code>.
      */
-    public DirectoryItems(File rootDir, String categoryName, ItemFileFactory itemFactory)
-            throws AssertionError {
-        super(rootDir, categoryName, itemFactory);
-        assert rootDir.isDirectory() : "The passed file is not a directory.";
+    private DirectoryItems(final File root, final String categoryName, final String categoryPath,
+                           final ItemFileFactory itemFactory)
+            throws IllegalArgumentException, NullPointerException {
+        super(root, categoryName, categoryPath, itemFactory);
 
-        // Walk through the contents of the root directory. It will NPE if the folder in question has
-        // any illegal paths noted by File::list
-        for (String content : Objects.requireNonNull(rootDir.list())) {
-            // Get the entry's file.
-            File file = new File(rootDir, content);
+        if (!root.isDirectory()) {
+            throw new IllegalArgumentException("The passed file is not a directory.");
+        }
 
-            if (file.isDirectory()) { // Is this entry a sub-directory?
+        final String[] children = root.list();
+        if (children == null) {
+            LogManager.getLogger().error("Failed to parse the " + categoryName + " directory, getting null children calling root.list()");
+            return;
+        }
+
+        for (final String content : children) {
+            final File file = new File(root, content);
+
+            if (file.isDirectory()) {
                 // Construct the category name for this sub-directory, and add it to the map
-                addCategory(new DirectoryItems(file,
-                        getRootName() + content + "/", itemFactory));
-            } else if (isZipName(content)) { // Is this entry a ZIP or JAR file?
-                // Try to parse the ZIP file, and add it to the map.
-                try {
-                    addCategory(new ZippedItems(file, getRootName() + content, itemFactory));
-                } catch (Exception e) {
-                    MegaMek.getLogger().error("Could not parse " + content, e);
-                }
-            } else if (itemFactory.accept(rootDir, content)) { // Does the factory accept this entry?
+                getCategories().put(content,
+                        new DirectoryItems(file, content, getRootPath() + content + "/", itemFactory));
+            } else if (itemFactory.accept(root, content)) {
                 // Save the ItemFile for this entry.
-                items.put(content, itemFactory.getItemFile(file));
+                getItems().put(content, itemFactory.getItemFile(file));
             }
-        } // Get the next entry in the root directory.
-
-        // If the root directory has any item files, add it to the map.
-        if (!items.isEmpty()) {
-            categories.put(getRootName(), this);
         }
     }
 }

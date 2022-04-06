@@ -1,6 +1,7 @@
 Version:1.0
 Assassin
 ASN-21
+mul id:127
 
 Config:Biped
 TechBase:Inner Sphere

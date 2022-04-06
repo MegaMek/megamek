@@ -1,10 +1,11 @@
 Version:1.1
 Excalibur
 EXC-B2b-EC
+mul id:7683
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
-era:2822
+era:2825
 source:Succession Wars
 rules level:4
 

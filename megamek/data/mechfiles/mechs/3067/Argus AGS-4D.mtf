@@ -1,6 +1,7 @@
 Version:1.0
 Argus
 AGS-4D
+mul id:3730
 
 Config:Biped
 TechBase:Inner Sphere

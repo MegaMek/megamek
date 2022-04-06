@@ -1,24 +1,19 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
-
-/*
- * MMRandom.java
  *
- * Created on April 27, 2003, 11:29 PM
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
+
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Random;
 
@@ -28,9 +23,9 @@ import java.util.Random;
  * using the generate() method.
  * 
  * @author Ben
+ * @since April 27, 2003, 11:29 PM
  */
 public abstract class MMRandom {
-
     public static final int R_DEFAULT = 1;
 
     public static final int R_SUN = 0;
@@ -42,23 +37,20 @@ public abstract class MMRandom {
      * errors.
      */
     static MMRandom generate(int type) {
-        System.err.println("MMRandom: generating RNG type #" + type);
+        LogManager.getLogger().info("Generating RNG type #" + type);
         try {
             switch (type) {
                 case R_CRYPTO:
-                    return new MMRandom.CryptoRandom();
+                    return new CryptoRandom();
                 case R_POOL36:
-                    return new MMRandom.Pool36Random();
+                    return new Pool36Random();
                 case R_SUN:
                 default:
-                    return new MMRandom.SunRandom();
+                    return new SunRandom();
             }
         } catch (Exception ex) {
-            System.err.println("MMRandom: could not create desired RNG #"
-                    + type);
-            System.err.println("MMRandom: using SunRandom (#0) instead");
-
-            return new MMRandom.SunRandom();
+            LogManager.getLogger().error("Failed to create desired RNG " + type + ", using SunRandom instead.", ex);
+            return new SunRandom();
         }
     }
 
@@ -69,13 +61,11 @@ public abstract class MMRandom {
      *            value is less than or equal to zero, an
      *            <code>IllegalArgumentException</code> will be thrown.
      * @return a <code>Roll</code> object containing the roll results.
-     * @throws IllegalArgumentException will be thrown if the
-     *             input is <= 0.
+     * @throws IllegalArgumentException will be thrown if the input is &lt;= 0.
      */
     public Roll d6(int nDice) {
         if (0 >= nDice) {
-            throw new IllegalArgumentException(
-                    "Must ask for a positive number of rolls, not " + nDice);
+            throw new IllegalArgumentException("Must ask for a positive number of rolls, not " + nDice);
         }
 
         // Use the Roll object to record the rolls.
@@ -88,12 +78,10 @@ public abstract class MMRandom {
 
     public Roll d6(int nDice, int keep) {
         if (0 >= nDice) {
-            throw new IllegalArgumentException(
-                    "Must ask for a positive number of rolls, not " + nDice);
+            throw new IllegalArgumentException("Must ask for a positive number of rolls, not " + nDice);
         }
-        if(keep >= nDice) {
-            throw new IllegalArgumentException(
-                    "the number of dice to keep must be less than the number rolled");
+        if (keep >= nDice) {
+            throw new IllegalArgumentException("the number of dice to keep must be less than the number rolled");
         }
         // Use the Roll object to record the rolls.
         MMRoll roll = new MMRoll(this, 6, 1, keep);
@@ -122,7 +110,7 @@ public abstract class MMRandom {
 
     /**
      * Returns a random <code>float</code> in the range of 0 to 1
-     * @return a random <code>float</code> from the value set [0,1]
+     * @return a random <code>float</code> from the value set [0, 1]
      */
     public abstract float randomFloat();
 

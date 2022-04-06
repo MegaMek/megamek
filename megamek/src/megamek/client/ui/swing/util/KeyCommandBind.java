@@ -20,74 +20,102 @@
  */
 package megamek.client.ui.swing.util;
 
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.swing.KeyStroke;
+
+import static java.awt.event.KeyEvent.*;
 
 /**
  * This enum is a collection of commands that can be bound to a particular key.
  * @author arlith
  */
 public enum KeyCommandBind {
-    SCROLL_NORTH("scrollN", true, KeyEvent.VK_W), 
-    SCROLL_SOUTH("scrollS", true, KeyEvent.VK_S), 
-    SCROLL_EAST("scrollE", true, KeyEvent.VK_D),  
-    SCROLL_WEST("scrollW", true, KeyEvent.VK_A),  
-    // Toggles isometric view on/off
-    TOGGLE_ISO("toggleIso", false, KeyEvent.VK_T),
+    
+    SCROLL_NORTH("scrollN", true, VK_W), 
+    SCROLL_SOUTH("scrollS", true, VK_S), 
+    SCROLL_EAST("scrollE", true, VK_D),  
+    SCROLL_WEST("scrollW", true, VK_A),  
     // Activates chat box
-    TOGGLE_CHAT("toggleChat", false, KeyEvent.VK_BACK_QUOTE), // Default: ` (back quote/grave)
+    TOGGLE_CHAT("toggleChat", VK_ENTER), 
     // Activates chat box and adds the command character (/)
-    TOGGLE_CHAT_CMD("toggleChatCmd", false, KeyEvent.VK_SLASH),
+    TOGGLE_CHAT_CMD("toggleChatCmd", VK_SLASH),
     // Change facing one hexside to the left
-    TURN_LEFT("turnLeft", false, KeyEvent.VK_A, InputEvent.SHIFT_DOWN_MASK),
+    TURN_LEFT("turnLeft", VK_A, SHIFT_DOWN_MASK),
     // Change facing one hexside to the right
-    TURN_RIGHT("turnRight", false, KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK),
+    TURN_RIGHT("turnRight", VK_D, SHIFT_DOWN_MASK),
     // Change facing one hexside to the left
-    TWIST_LEFT("twistLeft", false, KeyEvent.VK_A, InputEvent.SHIFT_DOWN_MASK),
+    TWIST_LEFT("twistLeft", VK_A, SHIFT_DOWN_MASK),
     // Change facing one hexside to the right
-    TWIST_RIGHT("twistRight", false, KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK),
+    TWIST_RIGHT("twistRight", VK_D, SHIFT_DOWN_MASK),
     // Fire the currently selected weapon
-    FIRE("fire", false, KeyEvent.VK_F),
-    NEXT_WEAPON("nextWeapon", false, KeyEvent.VK_E),
-    PREV_WEAPON("prevWeapon", false, KeyEvent.VK_Q),
-    NEXT_UNIT("nextUnit", false, KeyEvent.VK_E, InputEvent.SHIFT_DOWN_MASK),
-    PREV_UNIT("prevUnit", false, KeyEvent.VK_Q, InputEvent.SHIFT_DOWN_MASK),
-    NEXT_TARGET("nextTarget", false, KeyEvent.VK_C),
-    PREV_TARGET("prevTarget", false, KeyEvent.VK_Z),
-    NEXT_TARGET_VALID("nextTargetValid", false, KeyEvent.VK_C, InputEvent.SHIFT_DOWN_MASK),
-    PREV_TARGET_VALID("prevTargetValid", false, KeyEvent.VK_Z, InputEvent.SHIFT_DOWN_MASK),
-    NEXT_TARGET_NOALLIES("nextTargetNoAllies", false, KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK),
-    PREV_TARGET_NOALLIES("prevTargetNoAllies", false, KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK),
-    NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", false, KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK & InputEvent.SHIFT_DOWN_MASK),
-    PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", false, KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK & InputEvent.SHIFT_DOWN_MASK),
-    // Undo an action, such as a move step in the movement phase
-    UNDO("undo", false, KeyEvent.VK_BACK_SPACE),
-    MOVE_ENVELOPE("movementEnvelope", false, KeyEvent.VK_R),
-    CENTER_ON_SELECTED("centerOnSelected", false, KeyEvent.VK_SPACE),
-    AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone", false, KeyEvent.VK_Z, InputEvent.SHIFT_DOWN_MASK),
-    FIELD_FIRE("fieldOfFire", false, KeyEvent.VK_R, InputEvent.SHIFT_DOWN_MASK),
-    // Used to cancel moves/fires/chatterbox
-    CANCEL("cancel", false, KeyEvent.VK_ESCAPE, 0, true),
-    DONE("done", false, KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK, true),
+    FIRE("fire", VK_F),
+    NEXT_WEAPON("nextWeapon", VK_DOWN),
+    PREV_WEAPON("prevWeapon", VK_UP),
+    NEXT_UNIT("nextUnit", VK_TAB),
+    PREV_UNIT("prevUnit", VK_TAB, SHIFT_DOWN_MASK),
+    NEXT_TARGET("nextTarget", VK_RIGHT),
+    PREV_TARGET("prevTarget", VK_LEFT),
+    NEXT_TARGET_VALID("nextTargetValid", VK_RIGHT, SHIFT_DOWN_MASK),
+    PREV_TARGET_VALID("prevTargetValid", VK_LEFT, SHIFT_DOWN_MASK),
+    NEXT_TARGET_NOALLIES("nextTargetNoAllies", VK_RIGHT, CTRL_DOWN_MASK),
+    PREV_TARGET_NOALLIES("prevTargetNoAllies", VK_LEFT, CTRL_DOWN_MASK),
+    NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", VK_RIGHT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", VK_LEFT, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    // Changes unit display to view acting unit and sets current viewed unit as target
+    VIEW_ACTING_UNIT("viewActingUnit", VK_V),
+    // Remove the last move step or the last added weapon fire
+    UNDO_LAST_STEP("undoLastStep", VK_BACK_SPACE),
+    // General Undo and Redo, e.g. for the Board Editor
+    UNDO("undo", VK_Z, CTRL_DOWN_MASK),
+    REDO("redo", VK_Y, CTRL_DOWN_MASK),
+    /** Center on the currently selected unit. */
+    CENTER_ON_SELECTED("centerOnSelected", VK_SPACE),
+    AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone", VK_Z, SHIFT_DOWN_MASK),
+    /** Used to cancel moves/fires/chatterbox */
+    CANCEL("cancel", false, VK_ESCAPE, 0, true),
+    DONE("done", false, VK_ENTER, CTRL_DOWN_MASK, true),
     // Used to select the tab in the unit display
-    UD_GENERAL("udGeneral", false, KeyEvent.VK_F1),
-    UD_PILOT("udPilot", false, KeyEvent.VK_F2),
-    UD_ARMOR("udArmor", false, KeyEvent.VK_F3),
-    UD_SYSTEMS("udSystems", false, KeyEvent.VK_F4),
-    UD_WEAPONS("udWeapons", false, KeyEvent.VK_F5),
-    UD_EXTRAS("udExtras", false, KeyEvent.VK_F6),
+    UD_GENERAL("udGeneral", VK_F1),
+    UD_PILOT("udPilot", VK_F2),
+    UD_ARMOR("udArmor", VK_F3),
+    UD_SYSTEMS("udSystems", VK_F4),
+    UD_WEAPONS("udWeapons", VK_F5),
+    UD_EXTRAS("udExtras", VK_F6),
     /** Toggles between Jumping and Walk/Run, also acts as a reset when a unit cannot jump */
-    TOGGLE_MOVEMODE("toggleJump", false, KeyEvent.VK_J),
-    TOGGLE_CONVERSIONMODE("toggleConversion", false, KeyEvent.VK_M),
-    PREV_MODE("prevMode", false, KeyEvent.VK_TAB, InputEvent.CTRL_DOWN_MASK),
-    NEXT_MODE("nextMode", false, KeyEvent.VK_TAB),
-    TOGGLE_DRAW_LABELS("toggleDrawLabels", false, KeyEvent.VK_Y),
-    TOGGLE_KEYBIND_DISPLAY("toggleKeyBindDisplay", false, KeyEvent.VK_K, InputEvent.CTRL_DOWN_MASK),
-    TOGGLE_HEX_COORDS("toggleHexCoords", false, KeyEvent.VK_G, InputEvent.CTRL_DOWN_MASK);
+    TOGGLE_MOVEMODE("toggleJump", VK_J),
+    TOGGLE_CONVERSIONMODE("toggleConversion", VK_M),
+    PREV_MODE("prevMode", VK_KP_DOWN),
+    NEXT_MODE("nextMode", VK_KP_UP),
 
+    // --------- The following binds are used by the CommonMenuBar:
+    // Toggles isometric view on/off
+    TOGGLE_ISO(true, "toggleIso", VK_T),
+    MOVE_ENVELOPE(true, "movementEnvelope", VK_Q, CTRL_DOWN_MASK),
+    FIELD_FIRE(true, "fieldOfFire", VK_R),
+    DRAW_LABELS(true, "toggleDrawLabels", VK_B, CTRL_DOWN_MASK),
+    HEX_COORDS(true, "toggleHexCoords", VK_G, CTRL_DOWN_MASK),
+    MINIMAP(true, "toggleMinimap", VK_M, CTRL_DOWN_MASK),
+    LOS_SETTING(true, "viewLosSetting", VK_L, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    UNIT_DISPLAY(true, "toggleUnitDisplay", VK_D, CTRL_DOWN_MASK),
+    UNIT_OVERVIEW(true, "toggleUnitOverview", VK_U, CTRL_DOWN_MASK),
+    KEY_BINDS(true, "toggleKeybinds", VK_K, CTRL_DOWN_MASK),
+    CLIENT_SETTINGS(true, "clientSettings", VK_C, ALT_DOWN_MASK),
+    INC_GUISCALE(true, "incGuiScale", VK_ADD, CTRL_DOWN_MASK),
+    DEC_GUISCALE(true, "decGuiScale", VK_SUBTRACT, CTRL_DOWN_MASK),
+    ROUND_REPORT(true, "roundReport", VK_R, CTRL_DOWN_MASK),
+    ZOOM_IN(true, "zoomIn", VK_ADD),
+    ZOOM_OUT(true, "zoomOut", VK_SUBTRACT),
+    QUICK_LOAD(true, "quickLoad", VK_L, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    QUICK_SAVE(true, "quickSave", VK_S, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    LOCAL_LOAD(true, "localLoad", VK_L, CTRL_DOWN_MASK),
+    LOCAL_SAVE(true, "localSave", VK_S, CTRL_DOWN_MASK),
+    REPLACE_PLAYER(true, "replacePlayer", VK_R, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    MOD_ENVELOPE(true, "viewModEnvelope", VK_W, CTRL_DOWN_MASK);
+    
+    
     /** The command associated with this binding. */
     public String cmd;
     
@@ -100,7 +128,8 @@ public enum KeyCommandBind {
     /**
      * Defines if an action is exclusive, which means that only one
      * CommandAction will be performed for each key press. The CommandAction
-     * that is performed will be the first one encountered.
+     * that is performed will be the first one encountered. Exclusive binds can't share their key
+     * with other binds.
      */
     public boolean isExclusive = false;
 
@@ -110,15 +139,40 @@ public enum KeyCommandBind {
      */
     public boolean isRepeatable;
     
-    private KeyCommandBind(String c, boolean r, int k){
+    /** 
+     * When true, this keybind is used by the CommonMenuBar. Binding it with the MegaMekController like the other
+     * keybinds is not necessary (and will not work, as the command will not be recognized in this way).
+     */
+    public boolean isMenuBar = false;
+    
+    private KeyCommandBind(String c, int k) {
+        this(c, false, k, 0, false);
+    }
+    
+    private KeyCommandBind(String c, int k, int m) {
+        this(c, false, k, m, false);
+    }
+    
+    private KeyCommandBind(String c, boolean r, int k) {
         this(c, r, k, 0, false);
     }
     
-    private KeyCommandBind(String c, boolean r, int k, int m){
+    private KeyCommandBind(String c, boolean r, int k, int m) {
         this(c, r, k, m, false);
     }
     
-    private KeyCommandBind(String c, boolean r, int k, int m, boolean e){
+    // CommonMenuBar keybinds - these are exclusive, as multiple menu items on the same key don't work
+    private KeyCommandBind(boolean n, String c, int k, int m) {
+        this(c, false, k, m, true);
+        isMenuBar = n;
+    }
+    
+    private KeyCommandBind(boolean n, String c, int k) {
+        this(c, false, k, 0, true);
+        isMenuBar = n;
+    }
+    
+    private KeyCommandBind(String c, boolean r, int k, int m, boolean e) {
         cmd = c;
         key = k;
         modifiers = m;
@@ -126,9 +180,13 @@ public enum KeyCommandBind {
         isExclusive = e;
     }
 
-    /** Returns a list of binds using the given keycode and modifier. */
+    /** 
+     * Returns a list of binds using the given keycode and modifier. Only lists those
+     * that are not used by the CommonMenuBar!
+     */
     public static List<KeyCommandBind> getBindByKey(int keycode, int modifiers) {
         return Stream.of(values())
+                .filter(bind -> !bind.isMenuBar)
                 .filter(bind -> bind.key == keycode)
                 .filter(bind -> bind.modifiers == modifiers)
                 .collect(Collectors.toList());
@@ -139,4 +197,8 @@ public enum KeyCommandBind {
         return Stream.of(values()).filter(bind -> bind.cmd.equals(cmd)).findAny().orElse(null);
     }
     
+    /** Returns a KeyStroke for a given KeyCommandBind. */
+    public static KeyStroke keyStroke(KeyCommandBind bind) {
+        return KeyStroke.getKeyStroke(bind.key, bind.modifiers);
+    }
 }

@@ -13,12 +13,16 @@ BattleArmor
 </UnitType>
 
 <Name>
-Tunnel Rat Mining Exoskeleton IV
+Tunnel Rat IV Mining Exoskeleton
 </Name>
 
 <Model>
 [Battle Claw/LMG]
 </Model>
+
+<mul id:>
+7217
+</mul id:>
 
 <year>
 3079

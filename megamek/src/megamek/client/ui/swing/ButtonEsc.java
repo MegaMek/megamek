@@ -33,7 +33,7 @@ public class ButtonEsc extends DialogButton {
 
     private static final long serialVersionUID = -1259826896841611521L;
 
-    private static final String MYACTION = "ButtonEscAction"; //$NON-NLS-1$
+    private static final String MYACTION = "ButtonEscAction";
 
     /** 
      * Constructs a {@link javax.swing.JButton JButton} that will react

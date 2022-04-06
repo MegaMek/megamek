@@ -1,34 +1,35 @@
 Version:1.0
 Ostroc
 OSR-2C
+mul id:2348
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2511
-Source:TRO 3039 - Age of War
-Rules Level:1
+techbase:Inner Sphere
+era:2511
+source:TRO 3039 - Age of War
+rules level:1
 
-Mass:60
-Engine:300 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:60
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:15 Single
-Walk MP:5
-Jump MP:0
+heat sinks:15 Single
+walk mp:5
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:8
-RA Armor:8
-LT Armor:22
-RT Armor:22
-CT Armor:22
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:4
-RTR Armor:4
-RTC Armor:6
+armor:Standard(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:22
+RT armor:22
+CT armor:22
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:4
+RTR armor:4
+RTC armor:6
 
 Weapons:5
 Large Laser, Left Torso
@@ -149,20 +150,19 @@ Heat Sink
 -Empty-
 -Empty-
 
+overview:The Ostroc is a heavy 'Mech, weighing in at the lower end of its weight class, originally designed to act as an urban combatant during the Age of War.
 
-Overview: As a product of, unsurprisingly, Ostmann Industries, the Ostroc was created to fight in urban environments. First appearing in 2511, the low profile of the BattleMech made it a difficult target when surrounded by buildings and trees, making it a popular 'Mech in the SLDF's garrison units. The 'Mech was slow to spread beyond the Hegemony; Ostmann Industries' production on Terra was limited, and largely served to feed the massive demand of the SLDF. Even so, the fall of the Star League would spread the design throughout the Successor States where it would become a popular component of many regiments.
+capabilities:Its unique walker/pod profile, later seen in the Stalker and Marauder, combined with a low silhouette similar to the UrbanMech makes the Ostroc difficult to spot in an urban environment. Fast for its size, well-armored and boasting good medium- and short-range firepower, the Ostroc was also capable when fighting outside a cityscape, particularly as a heavy scout/raider.
 
-Capabilities: With a wide array of weaponry and reasonable cooling capabilities, Ostrocs make for powerful heavy BattleMechs. Their above-average speed for their weight class also makes them well suited to cavalry or quick reaction roles. While their armor is mostly adequate, Ostroc arms are notoriously fragile and are often destroyed in combat. Indeed, in ComStar's original 3025 Technical Readout, their holo of the Ostroc featured repurposed Ostwar arms instead of the original limbs.
+deployment:The Ostroc carries as its primary weapons two Fuersturm-C Large Lasers in the left and right torsos. These give the Ostroc good medium to long range damage capabilities. The Ostroc's secondary weapons are two Fuersturm-b Medium Lasers also mounted in the side torsos and a Totschlagen SRM-4 launcher in the right torso for close-range combat, with one ton of reloads carried in the center torso. While the Ostroc's laser-heavy weapons payload allows it to operate well as a guerrilla fighter since it has limited dependency on supply lines, its short arms are a handicap in close combat, and the shocks of hand-to-hand fighting can easily damage the Fuersturm systems. The nineteen-ton Vlar 300 fusion engine propels the Ostroc to a cruising speed of 86.4 km/h, fast for its size, while fifteen heat sinks provide adequate heat management. Although nine tons of armor provide good protection for the 'Mech, very little is used to protect the arms, meaning the loss of one or both in battle is likely.
 
-Deployment: While not a numerous design, the Ostroc is widespread. Production originally ceased after the destruction of Ostmann's facilities on Terra in 2777, and the Ostroc did not reenter full production until the rediscovery of the Helm Core. Kong Interstellar, owning a century-old license to the design, would be the first to reintroduce the BattleMech.
+history:he best-known of Ostman Industries' Ost Class of 'Mechs, the Ostroc debuted in 2511 and proved so successful in this role production continued for approximately 200 years. While a quality 'Mech, the low production capacity of Ostman Industries made the Ostroc a rarity; indeed the company licensed their other Ost 'Mechs out to Kong Interstellar just to maintain their rate of production, and the majority of those produced were assigned garrison duties within the Terran Hegemony. Still, the 'Mech saw action in every major conflict of the Star League, especially towards the end in the civil war and subsequent First Succession War. The destruction of Ostman Industries meant an end to any new Ostrocs, although all sides of the Succession Wars continued to field these 'Mechs in combat, particularly the Draconis Combine. It was because of the small number and wide dispersal of surviving Ostrocs that the design was largely passed over while others were being updated after the Helm Memory Core discovery. A major revitalization of the design took place within the Capellan Confederation after the Clan Invasion. Having largely rebuilt their forces after the previous decades' setbacks, the Strategios wanted to update the ancient 'Mech, but rather than reverse-engineering the original they ordered all Capellan 'Mech manufacturers to submit bids for a replacement. Ceres Metals was the only one to send in a proposal which matched exactly what they wanted and won the contract, completing the first production run in January 3067. Versions of these new Ostrocs also started showing up in the Taurian Concordat and Circinus Federation, a result of espionage according to Capellan charges.
 
-systemmanufacturer:CHASSIS:Ost
-systemmode:CHASSIS:-II
-systemmanufacturer:ENGINE:Vlar
-systemmode:ENGINE:300
-systemmanufacturer:ARMOR:Riese
-systemmode:ARMOR:475
-systemmanufacturer:COMMUNICATIONS:Ostmann
-systemmode:COMMUNICATIONS:-L
-systemmanufacturer:TARGETING:Ferdinand
-systemmode:TARGETING:-a
+manufacturer:Diplass BattleMechs,Kong Interstellar Corporation,Kong Interstellar Corporation,Ostmann Industries
+primaryfactory:Apollo,Connaught,Loxley,Terra
+systemmanufacturer:CHASSIS:Ost II
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:Riese 475
+systemmanufacturer:COMMUNICATIONS:Ostmann-L
+systemmanufacturer:TARGETING:Ferdinand-a
+

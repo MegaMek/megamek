@@ -15,6 +15,10 @@ Partisan Air Defense Tank
 <Model>
 (XL)
 </Model>
+
+<mul id:>
+2441
+</mul id:>
 <Tonnage>
 80
 </Tonnage>

@@ -117,7 +117,7 @@ JVMMaxVersion=""
 # @param1  the Plist key with leading colon ':'
 # @return  the value as String or Array
 ################################################################################
-plist_get(){
+plist_get() {
 	/usr/libexec/PlistBuddy -c "print $1" "${InfoPlistFile}" 2> /dev/null
 }
 
@@ -129,7 +129,7 @@ plist_get(){
 # @param1  the Plist :Java(X):Key with leading colon ':'
 # @return  the value as String or Array
 ################################################################################
-plist_get_java(){
+plist_get_java() {
 	plist_get ${JavaKey:-":Java"}$1
 }
 

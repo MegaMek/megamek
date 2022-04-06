@@ -1,28 +1,18 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.util.Vector;
-
-import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -32,10 +22,13 @@ import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.util.fileUtils.MegaMekFile;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
+
 /**
  * Set of areas for PicMap to represent infantry platoon in MechDisplay
  */
-
 public class InfantryMapSet implements DisplayMapSet {
 
     // Picture to represent single trooper
@@ -51,11 +44,11 @@ public class InfantryMapSet implements DisplayMapSet {
     private PMValueLabel label;   
     // JLabel
     private PMValueLabel armorLabel;
-    // Set of Backgrownd drawers
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    // Set of Background drawers
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorMediumFontSize")); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorMediumFontSize"));
 
     public InfantryMapSet(JComponent c) {
         comp = c;
@@ -63,14 +56,17 @@ public class InfantryMapSet implements DisplayMapSet {
         setBackGround();
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         Infantry inf = (Infantry) e;
         int men;
@@ -92,17 +88,14 @@ public class InfantryMapSet implements DisplayMapSet {
             }
         }
 
-        label
-                .setValue(Messages
-                        .getString(
-                                "InfantryMapSet.InfantryPlatoon", new Object[] { Integer.toString(men) })); //$NON-NLS-1$
+        label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", Integer.toString(men)));
         armorLabel.setValue(Messages.getString("InfantryMapSet.Armor") + inf.getArmorDesc());
     }
 
     private void setAreas() {
         int stepX = 30;
         int stepY = 42;
-        infImage = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), "inf.gif").toString()); //$NON-NLS-1$
+        infImage = comp.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), "inf.gif").toString());
         PMUtil.setImage(infImage, comp);
         for (int i = 0; i < EjectedCrew.EJ_CREW_MAX_MEN; i++) {
             int shiftX = (i % 5) * stepX;
@@ -114,16 +107,14 @@ public class InfantryMapSet implements DisplayMapSet {
 
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
         armorLabel = new PMValueLabel(fm, Color.white);
-        armorLabel.setValue(Messages.getString(
-                "InfantryMapSet.Armor") + "XXXXXXXXXXXX"); //$NON-NLS-1$//$NON-NLS-2$
+        armorLabel.setValue(Messages.getString("InfantryMapSet.Armor") + "XXXXXXXXXXXX");
         Dimension d = armorLabel.getSize();
         content.translate(0, d.height + 5);
         armorLabel.moveTo(0, d.height);
         content.addArea(armorLabel);
         
         label = new PMValueLabel(fm, Color.white);
-        label.setValue(Messages.getString(
-                "InfantryMapSet.InfantryPlatoon", new Object[] { "00" })); //$NON-NLS-1$//$NON-NLS-2$
+        label.setValue(Messages.getString("InfantryMapSet.InfantryPlatoon", "00"));
         d = label.getSize();
         content.translate(0, d.height + 5);
         label.moveTo(0, d.height);

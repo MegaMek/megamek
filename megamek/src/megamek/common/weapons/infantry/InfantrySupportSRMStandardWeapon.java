@@ -37,6 +37,7 @@ public class InfantrySupportSRMStandardWeapon extends InfantryWeapon {
 		addLookupName(name);
 		addLookupName("Infantry2ShotSRM");
 		addLookupName("Infantry Two-Shot SRM Launcher");
+		sortingName = "SRM Launcher C";
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 1500;
 		bv = 5.83;
@@ -49,7 +50,7 @@ public class InfantrySupportSRMStandardWeapon extends InfantryWeapon {
 		ammoCost = 450;
 		shots = 2;
 		tonnage = .030;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)

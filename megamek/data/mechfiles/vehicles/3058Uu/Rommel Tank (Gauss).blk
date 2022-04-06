@@ -15,6 +15,10 @@ Rommel Tank
 <Model>
 (Gauss)
 </Model>
+
+<mul id:>
+2735
+</mul id:>
 <Tonnage>
 65
 </Tonnage>

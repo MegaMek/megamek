@@ -13,52 +13,28 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Set;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.VerifyInRange;
 import megamek.client.ui.swing.widget.VerifiableTextField;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.MapSettings;
-import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/13/14 2:41 PM
  */
 public class ResizeMapDialog extends JDialog implements ActionListener, KeyListener {
@@ -130,16 +106,19 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         setResizable(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) { 
+            @Override
+            public void windowClosing(WindowEvent e) {
                 doCancel(); 
             }
             
             // Hide the west edge warning when some other program is brought to foreground
+            @Override
             public void windowDeactivated(WindowEvent e) {
                 westNotice.setVisible(false);
                 super.windowDeactivated(e);
             }
 
+            @Override
             public void windowIconified(WindowEvent e) {
                 westNotice.setVisible(false);
                 super.windowIconified(e);
@@ -310,7 +289,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
 
         // A warning notice when the west edge expansion is an odd number and the south expansion < 1
         westNotice.add(new JLabel(Messages.getString("ExpandMapDialog.mapWestField.note")));
-        westNotice.setBorder(new EmptyBorder(10,10,10,10));
+        westNotice.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         return panel;
 
@@ -344,14 +323,14 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         // Create a new instance of the file chooser.
         JFileChooser fileChooser = new JFileChooser(targetDir);
 
-        // Only allow selectoin of one file.
+        // Only allow selection of one file.
         fileChooser.setMultiSelectionEnabled(false);
 
         // Give the file chooser a title.
         fileChooser.setDialogTitle(title);
 
         // If we have a file to start with, select it.
-        if (!StringUtil.isNullOrEmpty(fileName)) {
+        if (!StringUtility.isNullOrEmpty(fileName)) {
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 
@@ -399,10 +378,10 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Load the file.  If there is an error, log it and return.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
             return;
         }
 
@@ -428,10 +407,10 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Load the changed settings into the existing map settings object.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
         }
         return true;
     }
@@ -453,9 +432,9 @@ public class ResizeMapDialog extends JDialog implements ActionListener, KeyListe
         }
 
         // Get the general settings from this panel.
-        newMapSettings.setBoardSize(mapWestField.getAsInt()+mapEastField.getAsInt()+mapSettings.getBoardWidth(),
-                mapNorthField.getAsInt()+mapSouthField.getAsInt()+mapSettings.getBoardHeight());
-        newMapSettings.setTheme((String)choTheme.getSelectedItem());
+        newMapSettings.setBoardSize(mapWestField.getAsInt() + mapEastField.getAsInt() + mapSettings.getBoardWidth(),
+                mapNorthField.getAsInt() + mapSouthField.getAsInt() + mapSettings.getBoardHeight());
+        newMapSettings.setTheme((String) choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.

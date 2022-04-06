@@ -20,6 +20,10 @@ Union-X
 (3065)
 </Model>
 
+<mul id:>
+5326
+</mul id:>
+
 <year>
 3065
 </year>
@@ -201,3 +205,35 @@ TRO 3067 - Civil War
 <escape_pod>
 5
 </escape_pod>
+
+<capabilities>
+The ubiquitous example of the company-sized BattleMech combat transport, the Union class is a venerable and capable member of the DropShip unit type. Capable of carrying twelve 'Mechs and two aerospace fighters (a standard 'Mech company including one air lance under classic SLDF doctrine), it is among the smaller dedicated military deployment vehicles, dwarfed by its larger cousin Overlord and especially the massive troop transports such as the Excalibur, Lee, or Colossus. The Union, while not as heavily armed as Assault DropShips, carries a formidable array of weapons. The semi-automated weaponry is significant enough to defend the ship from light ground forces and cause single and paired aerospace fighters pause.
+</capabilities>
+
+<overview>
+The Union is the archetypical DropShip, widely used in military and civilian roles and described as the yardstick against which all other DropShips are measured.
+</overview>
+
+<deployment>
+Called the "Extended Union" (Union-X), this evolution of the Union design was developed in 3065 as part of a diversification effort by Shipil Company of Skye. The slightly heavier Union-X strips out four 'Mech cubicles in favor of two additional fighters and berths for five squads of Battle Armor troops, its revised weapon array consisting of six ER PPCs, two Gauss Rifles, six Artemis enhanced LRM-20's, ten ER Large Lasers, fourteen ER Medium Lasers, and four Ultra AC/5s.
+</deployment>
+
+<history>
+The smaller but much more numerous, and implicitly also more cost-efficient and easier to manufacture, Union class weathered Lostech throughout the Succession Wars era better than the much larger vessels, and has been in continuous production ever since its inception. The ship was designed as a 'Mech deployment vehicle, not for prolonged comfortable travel. The interior personnel spaces aboard the Union are infamous for being very cramped on most Unions, and the air circulation system is often found lacking. The command and control facilities aboard Unions consisted of a Tactical Operations Room (TOR) sufficient to operate as a coordination point for smaller lance-sized combat transports partaking in company or larger sized operations. Likewise, it operates well in larger operations, where it may conduct missions of a surprise, diversionary or raiding role. The TOR was frequently removed from Union Class Dropships during refurbishment by the Clans.
+</history>
+
+<manufacturer>
+Shipil Company
+</manufacturer>
+
+<primaryFactory>
+Skye
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Star League V250
+</systemManufacturers>
+
+<use>
+'Mech/ASF carrier
+</use>

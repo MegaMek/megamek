@@ -15,7 +15,7 @@ package megamek.common.weapons.srms;
 
 import megamek.common.AmmoType;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -28,9 +28,6 @@ import megamek.server.Server;
 
 public abstract class StreakSRMWeapon extends SRMWeapon {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 9157660680598071296L;
 
     public StreakSRMWeapon() {
@@ -47,17 +44,10 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
             return super.getTonnage(entity, location, size);
         }
     }
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new StreakHandler(toHit, waa, game, server);
     }
 
@@ -73,5 +63,14 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_STANDARD;
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS ";
+        }
+        return "SRM Streak " + oneShotTag + rackSize;
     }
 }

@@ -38,7 +38,7 @@ public class MechWarrior extends EjectedCrew {
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
     
-    public MechWarrior(Crew crew, IPlayer owner, IGame game) {
+    public MechWarrior(Crew crew, Player owner, Game game) {
         super(crew, owner, game);
         setChassis(EjectedCrew.PILOT_EJECT_NAME);
     }
@@ -99,27 +99,21 @@ public class MechWarrior extends EjectedCrew {
         this.pickedUpById = pickedUpById;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Infantry#calculateBattleValue()
-     */
     @Override
-    public int calculateBattleValue() {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
         return 0;
     }
-
 
     /**
      * Ejected pilots do not get killed by ammo/fusion engine explosions
      * so that means they are still up in the air and do not land until the end of the turn.
      * @param landed
      */
-    public void setLanded(boolean landed){
+    public void setLanded(boolean landed) {
         this.landed = landed;
     }
 
-    public boolean hasLanded(){
+    public boolean hasLanded() {
         return landed;
     }
 
@@ -134,12 +128,13 @@ public class MechWarrior extends EjectedCrew {
         return (game.getEntity(getOriginalRideId()) != null && !game.getEntity(getOriginalRideId()).isAero());
     }
 
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_INFANTRY | Entity.ETYPE_MECHWARRIOR;
     }
     
     @Override
     public boolean canSpot() {
-    	return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
+        return super.canSpot() && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT);
     }
 }

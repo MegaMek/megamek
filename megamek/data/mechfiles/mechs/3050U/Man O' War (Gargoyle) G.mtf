@@ -1,6 +1,7 @@
 Version:1.1
 Man O' War (Gargoyle)
 G
+mul id:2007
 
 Config:Biped Omnimech
 techbase:Clan
@@ -49,7 +50,7 @@ CLAPGaussRifle (omnipod)
 CLAPGaussRifle (omnipod)
 CLAPGaussRifle (omnipod)
 CLAPGaussRifle Ammo (omnipod)
--Empty-
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,7 +69,7 @@ CLLBXAC20 (omnipod)
 CLLBXAC20 (omnipod)
 CLLBXAC20 (omnipod)
 CLLBXAC20 (omnipod)
--Empty-
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
@@ -131,7 +132,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -145,7 +146,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Ferro-Fibrous
+-Empty-
 -Empty-
 -Empty-
 -Empty-

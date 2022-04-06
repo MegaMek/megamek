@@ -20,6 +20,10 @@ Prowler Multi-Terrain Vehicle
 (WoB)
 </Model>
 
+<mul id:>
+2589
+</mul id:>
+
 <Tonnage>
 55
 </Tonnage>

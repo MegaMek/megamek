@@ -1,0 +1,163 @@
+Version:1.0
+Crusader
+CRD-9S
+mul id:8263
+
+Config:Biped
+techbase:Inner Sphere
+era:3086
+source:Shrapnel #5 - Republic Era
+rules level:3
+
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:17
+RA armor:17
+LT armor:19
+RT armor:19
+CT armor:25
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:6
+RTR armor:6
+RTC armor:8
+
+Weapons:5
+LRM 10, Left Arm
+LRM 10, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+Improved Heavy Gauss Rifle, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+LRM 10
+LRM 10
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+LRM 10
+LRM 10
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+IS Ammo LRM-10
+IS Ammo LRM-10
+ISCASE
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Crusader was initially designed as a close combat BattleMech for the Star League Defense Force, but soon proved itself to be a very adaptable, multi-role design. This reliable workhorse of the SLDF, while not excelling in any one job, was quite capable of accomplishing just about any mission, whether it be close assault, anti-aircraft, counter-insurgency, or even reconnaissance. Its versatility and large number of manufacturers ensured the Crusader its place as one of the most common heavy 'Mechs in the Inner Sphere.
+capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away.
+history:The Crusader received its baptism of fire during the Reunification War and remained a common fixture in the regiments of the SLDF for many centuries. Even after the fall of the Star League, the various Successor States continued to field large numbers of Crusaders in their armies, thanks to factories located on Tharkad, Oliver, Asuncion and Bernardo. House Steiner in particular was a notable Crusader user, thanks in part to their well-trained technicians who could have damaged units turned around and ready to fight in a single day. A variety of new production variants and field modification kits were turned out for the Crusader after the recovery of the Helm Memory Core, just in time for the Clan Invasion. In the wake of the Clan Invasion, one of the first new Crusader variants was built by the Cosby BattleMech Research Firm, the (in)famous producer of the No-Dachi 'Mech. Hoping to overcome the lack of prestige of their previous design and win the favor of the Coordinator, the company acquired manufacturing rights to the Crusader through the hostile takeover of another company and unveiled an updated variant of the 'Mech around the start of the FedCom Civil War. Additional variants would continue to be produced in the years since, including models utilized by the Word of Blake during the Jihad.
+manufacturer:TharHes Industries
+primaryfactory:Tharkad
+systemmanufacturer:CHASSIS:Crucis-C Endo Steel
+systemmanufacturer:ENGINE:Defiance Exalto 325 XL
+systemmanufacturer:ARMOR:Durallex Medium with CASE
+systemmanufacturer:COMMUNICATIONS:TharHes Melpomene HM-33
+systemmanufacturer:TARGETING:TharHes Ares-9 with Artemis IV FCS
+

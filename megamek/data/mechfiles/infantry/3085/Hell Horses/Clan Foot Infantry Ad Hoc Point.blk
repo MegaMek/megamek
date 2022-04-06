@@ -15,6 +15,10 @@ Clan Foot Infantry
 <Model>
 Ad Hoc Point
 </Model>
+
+<mul id:>
+601
+</mul id:>
 <squad_size>
 5
 </squad_size>

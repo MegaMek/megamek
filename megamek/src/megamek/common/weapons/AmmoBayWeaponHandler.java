@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
@@ -39,7 +39,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * @param g
      * @param s
      */
-    public AmmoBayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public AmmoBayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }

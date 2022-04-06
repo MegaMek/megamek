@@ -1,7 +1,7 @@
 3075 Medium Mechs - Free Rasalhague Republic
 Daimyo DMO-1K,1
 Scorpion SCP-1N,2
-Raijin RJN101-C,3
+Raijin RJN-101-C,3
 Griffin GRF-3M,4
 Crab CRB-27,5
 Beowulf BEO-12,6

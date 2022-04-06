@@ -1,6 +1,7 @@
 Version:1.0
 Vulpes
 VLP-1DX 'Beast'
+mul id:8382
 
 Config:Biped
 techbase:Mixed (IS Chassis)

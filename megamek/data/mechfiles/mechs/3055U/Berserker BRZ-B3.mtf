@@ -1,6 +1,7 @@
 Version:1.0
 Berserker
 BRZ-B3
+mul id:330
 
 Config:Biped
 TechBase:Inner Sphere

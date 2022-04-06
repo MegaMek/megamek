@@ -14,29 +14,18 @@
  */
 package megamek.client.commands;
 
-import java.util.Enumeration;
-import java.util.Vector;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IAimingModes;
-import megamek.common.IGame;
-import megamek.common.Mounted;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
-import megamek.common.actions.AbstractEntityAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.TorsoTwistAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.*;
+import megamek.common.actions.*;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * @author dirk
@@ -51,7 +40,7 @@ public class FireCommand extends ClientCommand {
      */
     public FireCommand(Client client) {
         super(client, "fire", "used to shoot. See #fire HELP for more details.");
-        attacks = new Vector<AbstractEntityAction>();
+        attacks = new Vector<>();
     }
 
     /*
@@ -70,20 +59,19 @@ public class FireCommand extends ClientCommand {
                     clearAttacks();
                     cen = Integer.parseInt(args[2]);
 
-                    return "Entity " + ce().toString()
-                           + " selected for firing.";
+                    return "Entity " + ce().toString() + " selected for firing.";
                 } catch (Exception e) {
-                    return "Not an entity ID or valid number." + e.toString();
+                    return "Not an entity ID or valid number." + e;
                 }
             } else if (args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n"
-                       + "#fire ABORT = aborts planed fireing and deselect unit.\n"
-                       + "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite " +
+                       + "#fire ABORT = aborts planed firing and deselect unit.\n"
+                       + "#fire SELECT unitID = Selects the unit named unit ID for firing. This is a prerequisite " +
                        "for all commands listed after this.\n"
-                       + "#fire COMMIT = executs the current fireing plan.\n"
+                       + "#fire COMMIT = executes the current firing plan.\n"
                        + "#fire LIST unitID = List targeting information for all weapons at the specified target. " +
                        "This is currently the only way to get weapon IDs.\n"
-                       + "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, " +
+                       + "#fire TWIST heading = used for torso twisting, the heading being to which direction (N, " +
                        "NE, SE, etc) to try and turn.\n"
                        + "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified" +
                        " target. Any number of weapons may be specified.\n"
@@ -96,18 +84,14 @@ public class FireCommand extends ClientCommand {
                     if (args[1].equalsIgnoreCase("TARGET")) {
                         String str = "";
                         try {
-                            Targetable target = getClient().getEntity(Integer
-                                                                              .parseInt(args[2]));
-                            if (args.length == 4
-                                && args[3].equalsIgnoreCase("ALL")) {
+                            Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
+                            if ((args.length == 4) && args[3].equalsIgnoreCase("ALL")) {
                                 for (Mounted weapon : ce().getWeaponList()) {
                                     if (weapon.canFire() && !weapon.isFired()) {
-                                        fire(ce().getEquipmentNum(weapon),
-                                             target);
+                                        fire(ce().getEquipmentNum(weapon), target);
                                     }
                                 }
-                                return "Fireing all remaining weapons at "
-                                       + target.toString() + ".";
+                                return "Firing all remaining weapons at " + target.toString() + ".";
                             } else {
                                 for (int i = 3; i < args.length; i++) {
                                     fire(Integer.parseInt(args[i]), target);
@@ -115,17 +99,16 @@ public class FireCommand extends ClientCommand {
                                            + target.toString() + "\n";
                                 }
                             }
-                        } catch (NumberFormatException nfe) {
+                        } catch (Exception ignored) {
+
                         }
 
                         return str + " Invalid arguments.";
                     } else if (args[1].equalsIgnoreCase("LIST")) {
                         try {
-                            Targetable target = getClient().getEntity(Integer
-                                                                              .parseInt(args[2]));
+                            Targetable target = getClient().getEntity(Integer.parseInt(args[2]));
                             if (target != null) {
-                                String str = " Weapons for " + ce() + " at "
-                                             + target.toString() + ":\n";
+                                String str = " Weapons for " + ce() + " at " + target + ":\n";
 
                                 for (Mounted weapon : ce().getWeaponList()) {
                                     str += "("
@@ -133,21 +116,19 @@ public class FireCommand extends ClientCommand {
                                            + ") "
                                            + weapon.getName()
                                            + " = "
-                                           + calculateToHit(ce()
-                                                                    .getEquipmentNum(weapon),
-                                                            target) + "\n";
+                                           + calculateToHit(ce().getEquipmentNum(weapon), target) + "\n";
                                 }
 
                                 return str;
                             }
-                        } catch (NumberFormatException nfe) {
+                        } catch (Exception ignored) {
+
                         }
 
                         return "Invalid Target ID.";
-                    } else if (args[1].equalsIgnoreCase("TWIST")
-                               && args.length > 2) {
+                    } else if (args[1].equalsIgnoreCase("TWIST")) {
                         torsoTwist(getDirection(args[2]));
-                        return "Torso-twisted (or rotated turret). All attacks planned until now have been clearned.";
+                        return "Torso-twisted (or rotated turret). All attacks planned until now have been cleared.";
                     }
                 }
             } else {
@@ -217,8 +198,7 @@ public class FireCommand extends ClientCommand {
         // validate
         if (ce() == null || target == null || mounted == null
             || !(mounted.getType() instanceof WeaponType)) {
-            throw new IllegalArgumentException(
-                    "current fire parameters are invalid"); //$NON-NLS-1$
+            throw new IllegalArgumentException("current fire parameters are invalid");
         }
 
         // declare searchlight, if possible
@@ -246,7 +226,7 @@ public class FireCommand extends ClientCommand {
         }
 
         waa.setAimedLocation(Entity.LOC_NONE);
-        waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
+        waa.setAimingMode(AimingMode.NONE);
 
         // add the attack to our temporary queue
         attacks.addElement(waa);
@@ -261,16 +241,15 @@ public class FireCommand extends ClientCommand {
     private void doSearchlight(Targetable target) {
         // validate
         if (ce() == null || target == null) {
-            throw new IllegalArgumentException(
-                    "current searchlight parameters are invalid"); //$NON-NLS-1$
+            throw new IllegalArgumentException("current searchlight parameters are invalid");
         }
 
         if (!SearchlightAttackAction.isPossible(getClient().getGame(), cen, target, null))
             return;
 
         // create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target
-                .getTargetType(), target.getTargetId());
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(),
+                target.getTargetId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -282,8 +261,8 @@ public class FireCommand extends ClientCommand {
         String str = "No Data";
         if (target != null && weaponId != -1 && ce() != null) {
             str = "";
-            toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target,
-                                             weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false);
+            toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target, weaponId,
+                    Entity.LOC_NONE, AimingMode.NONE, false);
             // str += "Target: " + target.toString();
 
             str += " Range: "
@@ -294,10 +273,10 @@ public class FireCommand extends ClientCommand {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-            			|| (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
+                        || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
-            } else if (getClient().getGame().getPhase() == IGame.Phase.PHASE_FIRING 
+            } else if (getClient().getGame().getPhase() == GamePhase.FIRING
                         && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
@@ -322,9 +301,8 @@ public class FireCommand extends ClientCommand {
     private void commit() {
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
-        Vector<EntityAction> newAttacks = new Vector<EntityAction>();
-        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-                .hasMoreElements(); ) {
+        Vector<EntityAction> newAttacks = new Vector<>();
+        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements(); ) {
             AbstractEntityAction o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
@@ -334,9 +312,8 @@ public class FireCommand extends ClientCommand {
                                                         attacker.getSecondaryFacing(), target,
                                                         attacker.getForwardArc());
                 if (curInFrontArc) {
-                    WeaponAttackAction waa2 = new WeaponAttackAction(waa
-                                                                             .getEntityId(), waa.getTargetType(), waa
-                                                                             .getTargetId(), waa.getWeaponId());
+                    WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(),
+                            waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
@@ -346,8 +323,7 @@ public class FireCommand extends ClientCommand {
                 newAttacks.addElement(o);
             }
         }
-        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e
-                .hasMoreElements(); ) {
+        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements(); ) {
             Object o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Basilisk ProtoMech (Quad)
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+3796
+</mul id:>
 
 <year>
 3072
@@ -55,6 +59,18 @@ false
 0
 </engine_type>
 
+<clan_engine>
+false
+</clan_engine>
+
+<armor_type>
+18
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
 <internal_type>
 -1
 </internal_type>
@@ -77,6 +93,7 @@ Clan Ammo SRM-4 (10)
 <Torso Equipment>
 CLSRM4
 ProtoQuadMeleeSystem
+CLEDPArmor
 </Torso Equipment>
 
 <Right Arm Equipment>
@@ -95,3 +112,4 @@ WoRS - Jihad
 <tonnage>
 7.0
 </tonnage>
+

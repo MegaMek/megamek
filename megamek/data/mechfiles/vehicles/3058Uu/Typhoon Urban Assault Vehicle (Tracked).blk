@@ -15,6 +15,10 @@ Typhoon Urban Assault Vehicle
 <Model>
 (Tracked)
 </Model>
+
+<mul id:>
+3338
+</mul id:>
 <Tonnage>
 70
 </Tonnage>

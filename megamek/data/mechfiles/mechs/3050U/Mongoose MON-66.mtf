@@ -1,92 +1,92 @@
 Version:1.0
 Mongoose
 MON-66
+mul id:2208
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2660
-Source:TRO 3050 - Star League
-Rules Level:2
+techbase:Inner Sphere
+era:2660
+source:TRO 3050 - Star League
+rules level:2
 
-Mass:25
-Engine:200 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:25
+engine:200 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:8
-Jump MP:0
+heat sinks:10 Single
+walk mp:8
+jump mp:0
 
-Armor:Ferro-Fibrous
-LA Armor:8
-RA Armor:8
-LT Armor:10
-RT Armor:10
-CT Armor:12
-HD Armor:9
-LL Armor:12
-RL Armor:12
-RTL Armor:2
-RTR Armor:2
-RTC Armor:4
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:10
+RT armor:10
+CT armor:12
+HD armor:9
+LL armor:12
+RL armor:12
+RTL armor:2
+RTR armor:2
+RTC armor:4
 
-Weapons:5
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Left Arm
-1 ISMediumLaser, Center Torso
-1 ISSmallLaser, Head
-1 ISBeagleActiveProbe, Left Torso
+Weapons:4
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Center Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Medium Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Medium Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
-ISBeagleActiveProbe
-ISBeagleActiveProbe
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+BeagleActiveProbe
+BeagleActiveProbe
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumLaser
+Medium Laser
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISSmallLaser
+Small Laser
 Sensors
 Life Support
 -Empty-
@@ -148,4 +148,20 @@ Heat Sink
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Mongoose BattleMech was introduced in 2660 as a deep recon 'Mech and a direct competitor (and hopeful replacement) for the Locust. 
+
+capabilities:The Kell/D Chassis around which the Mongoose is built uses Endo Steel construction techniques that, combined with an all energy weapon armament and standard engine, made the Mongoose very sturdy for its size. This also allows it to mount five tons of Ferro-Fibrous armor, much more than other light 'Mechs and gives the Mongoose the capability to survive a direct PPC hit to the chest without suffering internal damage. A top speed of 129 km/h and cruising speed of 86 km/h, one of the fastest of any 'Mech, makes up for the lack of jump jets on the design. Only ten heat sinks means the 'Mech is liable to run hot if the pilot is not careful, especially when the cooling jacket protecting the center torso laser fails
+
+deployment:The weaponry of the Mongoose consists of three Sorenstein Medium Lasers split between the left arm, right arm and center torso, and one Starflash Plus Small Laser in the head. This light laser array, while not as deadly as most pilots would prefer, is typical of light 'Mechs and makes the Mongoose a highly independent unit that does not need to rely on a supply chain of ammunition for its survival when on recon duties. The centerline lasers in particular are extremely accurate thanks to special internal compensators, allowing precise fire even at a full run. Unfortunately the center torso laser rests right atop the Nissan 200 fusion engine, requiring replacement of the cooling jackets after a hundred firings. While not a difficult item to replace it can become an issue during extended campaigns. The extra heat from both laser and engine can also sometimes interfere with the sensor system and makes the cockpit uncomfortable.
+
+history:As the 'Mech reached Star League Defense Force units though, it was found that the Beagle Active Probe on the Mongoose gave it extremely good command and control features that endeared it to light 'Mech command lances. Within eight years of its introduction the Mongoose was the standard command 'Mech for all light and recon lances. Due to its advanced electronics the Mongoose was capable of coordinating the maneuverings of an entire company of light 'Mechs and at the same time could engage medium 'Mechs with some success thanks to its weaponry and armoring. Its popularity ensured that the Mongoose had a target on its back after the dissolution of the Star League. The start of the Succession Wars went poorly for the Mongoose when its factory on Ozawa was destroyed in 2837. The loss of the factory meant the 'Mech was already becoming a rarity by the Second Succession War and with many of its components now lostech surviving Mongooses were forced to make-do with inferior spare parts. This was especially true for the Beagle Active Probe, and by the end of the Succession Wars not a single operational Mongoose serving the Great Houses had a functioning example. This trend was reversed with the recovery of the Helm Memory Core and many Mongooses were rebuilt to their former glory. ComStar was also revealed to have kept many Mongooses in their secret storage facilities which they used to outfit the Com Guards. Diplan 'MechYards eventually restarted Mongoose production from their factory on Aix-la-Chapelle and the design would continue to see use for years to come, including during the Jihad.
+
+manufacturer:Diplan 'Mechyards
+primaryfactory:Ozawa
+systemmanufacturer:CHASSIS:Kell/D Endo Steel
+systemmanufacturer:ENGINE:Nissan 200
+systemmanufacturer:ARMOR:Mitchell GA3 Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:ON-5
+systemmanufacturer:TARGETING:ON-6 with Beagle Active Probe
 

@@ -4,7 +4,7 @@ Carbine CON-1 ConstructionMech (RL), 2
 Harvester HVR-99 AgroMech (Standard), 3
 CattleMaster CTL-3R 'Herder' IndustrialMech, 4
 DemolitionMech WI-DM2, 5
-Powerman XI LoaderMech (Standard), 6
+Powerman SC XI LoaderMech (Standard), 6
 Buster BC XV-M-W HaulerMech MOD, 5
 Hyena HYN-4A SalvageMech, 4
 Kiso ConstructionMech K-3N-KR4, 3

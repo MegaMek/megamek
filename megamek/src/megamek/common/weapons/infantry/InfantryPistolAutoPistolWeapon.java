@@ -24,34 +24,34 @@ import megamek.common.AmmoType;
  */
 public class InfantryPistolAutoPistolWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryPistolAutoPistolWeapon() {
-		super();
+    public InfantryPistolAutoPistolWeapon() {
+        super();
 
-		name = "Auto-Pistol";
-		setInternalName(name);
-		addLookupName("InfantryAutopistol");
-		addLookupName("Auto Pistol");
-		ammoType = AmmoType.T_INFANTRY;
-		cost = 50;
-		bv = 0.19;
-		tonnage = .0005;
-		ammoWeight = 0.00014;
-		ammoCost = 2;
-		shots = 10;
-		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-		infantryDamage = 0.21;
-		infantryRange = 0;
-		rulesRefs = " 273,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+        name = "Auto-Pistol";
+        setInternalName(name);
+        addLookupName("InfantryAutopistol");
+        addLookupName("Auto Pistol");
+        ammoType = AmmoType.T_INFANTRY;
+        cost = 50;
+        bv = 0.19;
+        tonnage = .0005;
+        ammoWeight = 0.00014;
+        ammoCost = 2;
+        shots = 10;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.21;
+        infantryRange = 0;
+        rulesRefs = " 273, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
 
-	}
+    }
 }

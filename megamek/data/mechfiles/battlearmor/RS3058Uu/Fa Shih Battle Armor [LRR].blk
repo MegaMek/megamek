@@ -19,6 +19,10 @@ Fa Shih Battle Armor
 [LRR]
 </Model>
 
+<mul id:>
+1016
+</mul id:>
+
 <chassis>
 biped
 </chassis>

@@ -1,24 +1,17 @@
-/**
- * 
- */
 package megamek.server.commands;
 
 import megamek.common.Entity;
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson (Taharqa)
  */
-
 public class ListEntitiesCommand extends ServerCommand {
 
     public ListEntitiesCommand(Server server) {
-        super(
-                server,
-                "listEntities",
-                "Show the ids of all entities owned by this player. " +
-                "Usage: /listEntities");
+        super(server, "listEntities",
+                "Show the ids of all entities owned by this player. Usage: /listEntities");
     }
 
     /**
@@ -28,19 +21,18 @@ public class ListEntitiesCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        IPlayer p = server.getGame().getPlayer(connId);
-        if(null == p) {
+        Player p = server.getGame().getPlayer(connId);
+        if (null == p) {
             return;
         }
+
         for (Entity ent : server.getGame().getEntitiesVector()) {
             try {
-                if(ent.getOwnerId() == connId) {
-                    server.sendServerChat(connId,
-                            ent.getId() + " - " + ent.getDisplayName());
+                if (ent.getOwnerId() == connId) {
+                    server.sendServerChat(connId, ent.getId() + " - " + ent.getDisplayName());
                 }
-            } catch (NumberFormatException nfe) {
-            } catch (NullPointerException npe) {
-            } catch (IndexOutOfBoundsException ioobe) {
+            } catch (Exception ignored) {
+
             }
         }
     }

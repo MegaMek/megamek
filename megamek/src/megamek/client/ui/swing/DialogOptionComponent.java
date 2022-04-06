@@ -28,9 +28,7 @@ import javax.swing.*;
 import megamek.client.ui.swing.util.UIUtil.FixedYPanel;
 import megamek.common.options.*;
 
-/**
- * @author Cord Awtry
- */
+/** @author Cord Awtry */
 public class DialogOptionComponent extends FixedYPanel implements ItemListener, Comparable<DialogOptionComponent> {
 
     private static final long serialVersionUID = -4190538980884459746L;
@@ -40,8 +38,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     private JCheckBox checkbox;
     private JComboBox<String> choice;
     private JTextField textField;
-    private JLabel label;
-    private DialogOptionListener dialogOptionListener;
+    private final DialogOptionListener dialogOptionListener;
     
     /** Value used to force a change */
     private boolean hasOptionChanged = false;
@@ -67,7 +64,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                 checkbox.addItemListener(this);
                 checkbox.setToolTipText(convertToHtml(option.getDescription()));
                 checkbox.setEnabled(editable);
-                label = new JLabel(option.getDisplayableName());
+                JLabel label = new JLabel(option.getDisplayableName());
                 label.setLabelFor(checkbox);
                 label.setToolTipText(convertToHtml(option.getDescription()));
                 label.addMouseListener(new MouseAdapter() {
@@ -83,7 +80,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                 add(label);
                 break;
             case IOption.CHOICE:
-                choice = new JComboBox<String>();
+                choice = new JComboBox<>();
                 label = new JLabel(option.getDisplayableName());
                 label.setLabelFor(choice);
                 label.setToolTipText(convertToHtml(option.getDescription()));
@@ -112,28 +109,25 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
                     }
                 });
                 textField.setEnabled(editable);
-                if (option.isLabelBeforeTextField()) {
-                    add(textField);
-                    add(label);
-                } else {
+                if (!option.isLabelBeforeTextField()) {
                     add(Box.createHorizontalStrut(2));
-                    add(textField);
-                    add(label);
                 }
+                add(textField);
+                add(label);
                 break;
         }
     }
 
     public static String convertToHtml(String source) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("<html>");
+        StringBuilder result = new StringBuilder();
+        result.append("<html>");
         StringTokenizer tok = new StringTokenizer(source, "\n");
         while (tok.hasMoreTokens()) {
-            sb.append(tok.nextToken());
-            sb.append("<br>");
+            result.append(tok.nextToken());
+            result.append("<br>");
         }
-        sb.append("</html>");
-        return sb.toString();
+        result.append("</html>");
+        return result.toString();
     }
     
     public boolean hasChanged() {
@@ -145,22 +139,13 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     }
 
     public Object getValue() {
-        String text = "";
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                return Boolean.valueOf(checkbox.isSelected());
+                return checkbox.isSelected();
             case IOption.INTEGER:
-                text = textField.getText();
-                if (text.trim().equals("")) {
-                    text = "0";
-                }
-                return Integer.valueOf(textField.getText());
+                return textField.getText().isBlank() ? 0 : Integer.parseInt(textField.getText());
             case IOption.FLOAT:
-                text = textField.getText();
-                if (text.trim().equals("")) {
-                    text = "0";
-                }
-                return Float.valueOf(textField.getText());
+                return textField.getText().isBlank() ? 0 : Float.parseFloat(textField.getText());
             case IOption.STRING:
                 return textField.getText();
             case IOption.CHOICE:
@@ -173,12 +158,12 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     public void setValue(Object v) {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                checkbox.setSelected((Boolean)v);
+                checkbox.setSelected((Boolean) v);
                 break;
             case IOption.INTEGER:
             case IOption.FLOAT:
             case IOption.STRING:
-                textField.setText((String)v);
+                textField.setText((String) v);
                 break;
             case IOption.CHOICE:
                 choice.setSelectedItem(v);
@@ -238,7 +223,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     public boolean isDefaultValue() {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                return checkbox.isSelected() == ((Boolean) option.getDefault()).booleanValue();
+                return checkbox.isSelected() == (boolean) option.getDefault();
             case IOption.CHOICE:
                 // Assume first choice is always default
                 return choice.getSelectedIndex() == 0;
@@ -250,7 +235,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
     public void resetToDefault() {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                checkbox.setSelected(((Boolean) option.getDefault()).booleanValue());
+                checkbox.setSelected((boolean) option.getDefault());
                 break;
             case IOption.CHOICE:
                 choice.setSelectedIndex(0); // Assume first choice is always default
@@ -266,6 +251,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
         return new BasicOption(option.getName(), getValue());
     }
 
+    @Override
     public void itemStateChanged(ItemEvent itemEvent) {
         dialogOptionListener.optionClicked(this, option, checkbox.isSelected());
     }
@@ -275,6 +261,7 @@ public class DialogOptionComponent extends FixedYPanel implements ItemListener, 
         return option.getDisplayableName().compareTo(doc.option.getDisplayableName());
     }
 
+    @Override
     public String toString() {
         return option.getDisplayableName();
     }

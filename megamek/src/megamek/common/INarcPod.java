@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -25,12 +24,7 @@ import java.util.Objects;
  *         entity. This class is immutable. Once it is created, it can not be
  *         changed. An iNarc pod can be targeted for a "brush off" attack.
  */
-
 public class INarcPod implements Serializable, Targetable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3566809840132774242L;
     public static final int HOMING = 1;
     public static final int ECM = 2;
@@ -64,7 +58,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     /**
-     * Determine if the other object is an equivalent INarc pod. <p/> Overrides
+     * Determine if the other object is an equivalent INarc pod. <p> Overrides
      * <code>Object#equals(Object)</code>.
      *
      * @param obj the other <code>Object</code> which may be an equivalent
@@ -74,10 +68,10 @@ public class INarcPod implements Serializable, Targetable {
      */
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         final INarcPod other = (INarcPod) obj;
@@ -90,7 +84,7 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     /**
-     * Get a <code>String</code> representing this INarc pod. <p/> Overrides
+     * Get a <code>String</code> representing this INarc pod. <p> Overrides
      * <code>Object#toString()</code>.
      *
      * @return a <code>String</code> that represents this INarc pod.
@@ -130,54 +124,63 @@ public class INarcPod implements Serializable, Targetable {
 
     // Implementation of Targetable interface.
 
+    @Override
     public int getTargetType() {
         return Targetable.TYPE_INARC_POD;
     }
 
+    @Override
     public int getTargetId() {
         // All INarcPods of the same type from the
         // same team are interchangable targets.
         return ((team << 4) + type);
     }
 
+    @Override
     public Coords getPosition() {
         // Hopefully, this will **never** get called.
-        throw new IllegalStateException(
-                "Never ask for the coords of an INarcPod.");
+        throw new IllegalStateException("Never ask for the coords of an INarcPod.");
     }
 
+    @Override
     public Map<Integer, Coords> getSecondaryPositions() {
         // Hopefully, this will **never** get called.
-        throw new IllegalStateException(
-                "Never ask for the coords of an INarcPod.");
+        throw new IllegalStateException("Never ask for the coords of an INarcPod.");
     }
 
 
+    @Override
     public int relHeight() {
         return 0;
     }
 
+    @Override
     public int getHeight() {
         return 0;
     }
 
+    @Override
     public int getElevation() {
         return 0;
     }
 
+    @Override
     public boolean isImmobile() {
         // No -4 to-hit bonus.
         return false;
     }
 
+    @Override
     public String getDisplayName() {
         return toString();
     }
 
+    @Override
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
 
+    @Override
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -186,6 +189,7 @@ public class INarcPod implements Serializable, Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isOffBoard()
      */
+    @Override
     public boolean isOffBoard() {
         return false;
     }
@@ -194,6 +198,7 @@ public class INarcPod implements Serializable, Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
      */
+    @Override
     public boolean isAirborne() {
         return false;
     }
@@ -202,14 +207,17 @@ public class INarcPod implements Serializable, Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
      */
+    @Override
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
 
+    @Override
     public int getAltitude() {
         return 0;
     }
 
+    @Override
     public boolean isEnemyOf(Entity other) {
         return true;
     }

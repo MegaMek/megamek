@@ -19,6 +19,10 @@ Tornado PA(L)
 P12 'Hurricane'
 </Model>
 
+<mul id:>
+5264
+</mul id:>
+
 <chassis>
 biped
 </chassis>

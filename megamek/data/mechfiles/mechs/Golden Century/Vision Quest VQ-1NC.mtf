@@ -1,6 +1,7 @@
 Version:1.1
 Vision Quest
 VQ-1NC
+mul id:5355
 
 Config:Biped
 techbase:Mixed (IS Chassis)

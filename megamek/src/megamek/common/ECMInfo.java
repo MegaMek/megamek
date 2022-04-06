@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.util.Comparator;
@@ -22,14 +21,12 @@ import java.util.Objects;
 /**
  * A class that keeps track of information related to an ECM field.
  * @author arlith
- *
  */
 public class ECMInfo {
 
     /**
      * Compares two ECMInfo to determine which should take precedence, assuming
      * that the goal is to find the strongest ECM field.
-     *
      */
     static public class ECMComparator implements Comparator<ECMInfo> {
 
@@ -102,10 +99,8 @@ public class ECMInfo {
     /**
      * Compares two ECMInfo to determine which should take precedence, assuming
      * that the goal is to find the strongest ECCM field.
-     *
      */
     static public class ECCMComparator implements Comparator<ECMInfo> {
-
         @Override
         public int compare(ECMInfo o1, ECMInfo o2) {
             // Compare two ECCMs
@@ -192,7 +187,7 @@ public class ECMInfo {
      * The id of the owning player, used to determine information about who
      * are allies and enemies when looking at other <code>ECMInfo</code>s.
      */
-    IPlayer owner = null;
+    Player owner = null;
 
     /**
      * The Entity that is generating the ECM field.
@@ -237,7 +232,7 @@ public class ECMInfo {
     public ECMInfo() {
     }
 
-    public ECMInfo(int range, double strength, IPlayer o, Coords p) {
+    public ECMInfo(int range, double strength, Player o, Coords p) {
         owner = o;
         pos = p;
         this.range = range;
@@ -252,8 +247,7 @@ public class ECMInfo {
         this.strength = strength;
     }
 
-    public ECMInfo(int range, Coords pos, IPlayer owner, double strength,
-            int angelStrength) {
+    public ECMInfo(int range, Coords pos, Player owner, double strength, int angelStrength) {
         this.range = range;
         this.pos = pos;
         this.owner = owner;
@@ -274,8 +268,8 @@ public class ECMInfo {
     public boolean isAngel() {
         return angelStrength > 0;
     }
+
     /**
-     *
      * @param r
      * @param p
      * @param s
@@ -357,6 +351,7 @@ public class ECMInfo {
         }
     }
 
+    @Override
     public String toString() {
         String ownerString;
         String strengthString = "";
@@ -369,7 +364,7 @@ public class ECMInfo {
         }
         if (angelStrength != 0) {
             strengthString = ", aS: " + angelStrength;
-        } else if (strength != 0){
+        } else if (strength != 0) {
             if (isECMNova) {
                 strengthString = ", nS: " + strength;
             } else {
@@ -379,7 +374,7 @@ public class ECMInfo {
 
         if (angelECCMStrength != 0) {
             eccmString = ", cAS: " + angelECCMStrength;
-        } else if (eccmStrength != 0){
+        } else if (eccmStrength != 0) {
             eccmString = ", cS: " + eccmStrength;
         }
         return "(" + pos.toString() + ", " + ownerString + ", r:" + range
@@ -392,8 +387,7 @@ public class ECMInfo {
      * @return
      */
     public boolean isOpposed(ECMInfo other) {
-        return (owner == null) || (other.getOwner() == null)
-                || owner.isEnemyOf(other.getOwner());
+        return (owner == null) || (other.getOwner() == null) || owner.isEnemyOf(other.getOwner());
     }
 
     /**
@@ -401,9 +395,8 @@ public class ECMInfo {
      * @param other
      * @return
      */
-    public boolean isOpposed(IPlayer other) {
-        return (owner == null) || (other == null)
-                || owner.isEnemyOf(other);
+    public boolean isOpposed(Player other) {
+        return (owner == null) || (other == null) || owner.isEnemyOf(other);
     }
 
     /**
@@ -414,14 +407,13 @@ public class ECMInfo {
      * @return
      */
     @Override
-    public boolean equals(Object obj){
-        if(this == obj) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
-        }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        } else if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        final ECMInfo other = (ECMInfo)obj;
+        final ECMInfo other = (ECMInfo) obj;
         return Objects.equals(owner, other.owner) && Objects.equals(pos, other.pos) && (strength == other.strength)
                 && (angelStrength == other.angelStrength) && (eccmStrength == other.eccmStrength)
                 && (angelECCMStrength == other.angelECCMStrength) && (isECMNova == other.isECMNova) && (range == other.range);
@@ -448,11 +440,11 @@ public class ECMInfo {
         this.pos = pos;
     }
 
-    public IPlayer getOwner() {
+    public Player getOwner() {
         return owner;
     }
 
-    public void setOwner(IPlayer owner) {
+    public void setOwner(Player owner) {
         this.owner = owner;
     }
 

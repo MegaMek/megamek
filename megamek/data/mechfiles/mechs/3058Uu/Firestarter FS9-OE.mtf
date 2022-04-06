@@ -1,6 +1,7 @@
 Version:1.0
 Firestarter
 FS9-OE
+mul id:1104
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

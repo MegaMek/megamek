@@ -19,6 +19,10 @@ Phalanx Battle Armor
 (B)
 </Model>
 
+<mul id:>
+4814
+</mul id:>
+
 <chassis>
 biped
 </chassis>

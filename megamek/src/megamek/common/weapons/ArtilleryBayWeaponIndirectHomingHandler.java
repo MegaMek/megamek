@@ -1,17 +1,22 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common.weapons;
 
 import java.util.ArrayList;
@@ -26,7 +31,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Report;
@@ -37,16 +42,12 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
-public class ArtilleryBayWeaponIndirectHomingHandler extends
-        ArtilleryBayWeaponIndirectFireHandler {
-
-    /**
-     *
-     */
+public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponIndirectFireHandler {
     private static final long serialVersionUID = -7243477723032010917L;
     boolean advancedPD = false;
     boolean advancedAMS = false;
@@ -58,7 +59,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      * @param g
      */
     public ArtilleryBayWeaponIndirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, IGame g, Server s) {
+            WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
         advancedAMS = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
@@ -71,12 +72,12 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == IGame.Phase.PHASE_TARGETING) {
+        if (phase == GamePhase.TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
@@ -281,13 +282,13 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                         nCluster, bldgAbsorbs);
                 server.creditKill(entityTarget, ae);
             } else if (!bMissed && // The attack is targeting a specific building
-                    (target.getTargetType() == Targetable.TYPE_BLDG_TAG)){
+                    (target.getTargetType() == Targetable.TYPE_BLDG_TAG)) {
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 vPhaseReport.addAll(server.damageBuilding(bldg,
                         nDamPerHit, target.getPosition()));
-            } else if (!bMissed){ // Hex is targeted, need to report a hit
+            } else if (!bMissed) { // Hex is targeted, need to report a hit
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
@@ -356,30 +357,29 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         Targetable newTarget = null;
 
         Vector<TagInfo> v = game.getTagInfo();
-        Vector<TagInfo> allowed = new Vector<TagInfo>();
+        Vector<TagInfo> allowed = new Vector<>();
         // get only TagInfo on the same side
         for (TagInfo ti : v) {
-            switch (ti.targetType){
-            case Targetable.TYPE_BLDG_TAG:
-            case Targetable.TYPE_HEX_TAG:
-                allowed.add(ti);
-                break;
-            case Targetable.TYPE_ENTITY:
-                if (ae.isEnemyOf((Entity) ti.target)
-                        || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
+            switch (ti.targetType) {
+                case Targetable.TYPE_BLDG_TAG:
+                case Targetable.TYPE_HEX_TAG:
                     allowed.add(ti);
-                }
-                break;
+                    break;
+                case Targetable.TYPE_ENTITY:
+                    if (ae.isEnemyOf((Entity) ti.target)
+                            || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
+                        allowed.add(ti);
+                    }
+                    break;
             }
         }
-        if (allowed.size() == 0) {
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "no targets tagged this turn");
+        if (allowed.isEmpty()) {
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "no targets tagged this turn");
             return;
         }
 
         // get TAGs that hit
-        v = new Vector<TagInfo>();
+        v = new Vector<>();
         for (TagInfo ti : allowed) {
             newTarget = ti.target;
             if (!ti.missed && (newTarget != null)) {
@@ -396,7 +396,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             return;
         }
         // get TAGs that are on the same map
-        allowed = new Vector<TagInfo>();
+        allowed = new Vector<>();
         for (TagInfo ti : v) {
             newTarget = ti.target;
             // homing target area is 8 hexes
@@ -419,8 +419,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             aaa.setTargetType(target.getTargetType());
         } else {
             //The player gets to select the target
-            List<Integer> targetIds = new ArrayList<Integer>();
-            List<Integer> targetTypes = new ArrayList<Integer>();
+            List<Integer> targetIds = new ArrayList<>();
+            List<Integer> targetTypes = new ArrayList<>();
             for (TagInfo target : allowed) {
                 targetIds.add(target.target.getTargetId());
                 targetTypes.add(target.target.getTargetType());
@@ -478,7 +478,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
             }
             //PD/AMS bays should engage using AV and missile armor per SO Errata
             if (amsBayEngagedCap || pdBayEngagedCap) {
-                CapMissileArmor = ((WeaponType)ammoUsed.getLinkedBy().getType()).getMissileArmor() - CounterAV;
+                CapMissileArmor = ((WeaponType) ammoUsed.getLinkedBy().getType()).getMissileArmor() - CounterAV;
                 CapMissileAMSMod = calcCapMissileAMSMod();
                 Report r = new Report(3235);
                 r.subject = subjectId;

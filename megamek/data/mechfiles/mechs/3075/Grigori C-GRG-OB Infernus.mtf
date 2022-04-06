@@ -1,37 +1,38 @@
 Version:1.1
 Grigori
 C-GRG-OB Infernus
+mul id:1322
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3069
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:3069
+source:TRO 3075
+rules level:2
 
-Mass:60
-Engine:240 Light Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:XL Gyro
+mass:60
+engine:240 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
 
-Heat Sinks:10 Double
-Base Chassis Heat Sinks:9
-Walk MP:4
-Jump MP:4
+heat sinks:10 IS Double
+base chassis heat sinks:9
+walk mp:4
+jump mp:4
 
-Armor:Light Ferro-Fibrous(Inner Sphere)
-LA Armor:19
-RA Armor:19
-LT Armor:20
-RT Armor:20
-CT Armor:26
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:6
-RTR Armor:6
-RTC Armor:9
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:19
+RA armor:19
+LT armor:20
+RT armor:20
+CT armor:26
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:6
+RTR armor:6
+RTC armor:9
 
 Weapons:5
 MML 7, Left Arm
@@ -44,53 +45,53 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISArtemisIV (omnipod)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISArtemisIV (OMNIPOD)
+-Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISMML7 (omnipod)
-ISArtemisIV (omnipod)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISMML7 (OMNIPOD)
+ISArtemisIV (OMNIPOD)
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
+-Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-ISERSmallLaser (R) (omnipod)
-IS Ammo MML-7 LRM Artemis-capable (omnipod)
-IS Ammo MML-7 SRM Artemis-capable (omnipod)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+ISERSmallLaser (R) (OMNIPOD)
+IS Ammo MML-7 LRM Artemis-capable (OMNIPOD)
+IS Ammo MML-7 SRM Artemis-capable (OMNIPOD)
 ISC3iUnit
 ISC3iUnit
-ISCASE (omnipod)
+ISCASE (OMNIPOD)
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-Jump Jet (omnipod)
-ISPlasmaRifle (omnipod)
-ISPlasmaRifle (omnipod)
-ISPlasmaRifleAmmo (omnipod)
-ISPlasmaRifleAmmo (omnipod)
+Jump Jet (OMNIPOD)
+Jump Jet (OMNIPOD)
+ISPlasmaRifle (OMNIPOD)
+ISPlasmaRifle (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
+ISPlasmaRifleAmmo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -115,7 +116,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -153,13 +154,9 @@ IS Light Ferro-Fibrous
 -Empty-
 
 overview:The Grigori is one of the Word of Blake's new Celestial series OmniMechs designed by Doctor Devon Cortland.
-
 capabilities:It is constructed on a standard chassis, but makes use of eleven tons of Light Ferro-Fibrous armor, a light fusion engine, and an XL Gyro; as well as the small cockpit that is common to all of the Celestials. Like the other Celestials, the Grigori has a C3i Computer to help direct its fire.
-
 deployment:Another missile-heavy variant, the Grigori B mounts an Artemis IV-guided MML 7 in each arm. A Plasma Rifle provides respectable firepower and forces conventional units to reconsider attacking the Infernus variant. A Medium Pulse Laser provides a more accurate weapon. A rear-mounted ER Small Laser makes small units think twice about attacking the 'Mech's rear. Like the Invictus, this configuration can also jump up to 120 meters.
-
 history:The Grigori (named after fallen angels from Christianity) was added to the Word of Blake Militia's arsenal in late 3069 as Doctor Cortland oversaw the final production personally.
-
 manufacturer:Gibson Federated BattleMechs, Martinson Armaments
 primaryfactory:Gibson (Gibson Federated), Terra (Martinson)
 systemmanufacturer:CHASSIS:Celestial Series GG1
@@ -167,3 +164,4 @@ systemmanufacturer:ENGINE:GM 240 Light Fusion
 systemmanufacturer:ARMOR:Divine Shield-B Light Ferro
 systemmanufacturer:COMMUNICATIONS:Master’s Voice Cel-Alpha
 systemmanufacturer:TARGETING:Master’s Sight 1-Omega
+

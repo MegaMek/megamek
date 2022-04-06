@@ -15,6 +15,10 @@ Ceremonial Guard
 <Model>
 Otomo Guard
 </Model>
+
+<mul id:>
+531
+</mul id:>
 <squad_size>
 7
 </squad_size>

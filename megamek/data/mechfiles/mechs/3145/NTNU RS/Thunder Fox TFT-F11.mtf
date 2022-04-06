@@ -1,36 +1,37 @@
 Version:1.1
 Thunder Fox
 TFT-F11
+mul id:6892
 
 Config:Quad
-TechBase:Mixed (IS Chassis)
-Era:3119
-Source:RS 3145 NT NU
-Rules Level:4
+techbase:Mixed (IS Chassis)
+era:3119
+source:RS 3145 NT NU
+rules level:4
 
-Mass:55
-Engine:275 XXL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Torso-Mounted Cockpit
-Gyro:Compact Gyro
+mass:55
+engine:275 XXL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Compact Gyro
 
-Heat Sinks:11 Double
-Walk MP:5
-Jump MP:5
+heat sinks:11 IS Double
+walk mp:5
+jump mp:5
 
-Armor:Hardened(Inner Sphere)
-FLL Armor:26
-FRL Armor:26
-LT Armor:21
-RT Armor:21
-CT Armor:31
-HD Armor:9
-RLL Armor:26
-RRL Armor:26
-RTL Armor:5
-RTR Armor:5
-RTC Armor:5
+armor:Hardened(Inner Sphere)
+FLL armor:26
+FRL armor:26
+LT armor:21
+RT armor:21
+CT armor:31
+HD armor:9
+RLL armor:26
+RRL armor:26
+RTL armor:5
+RTR armor:5
+RTC armor:5
 
 Weapons:1
 ER PPC, Head

@@ -16,6 +16,10 @@ Thunderbird Battle Armor
 (Upgrade)[LBX]
 </Model>
 
+<mul id:>
+6737
+</mul id:>
+
 <chassis>
 biped
 </chassis>

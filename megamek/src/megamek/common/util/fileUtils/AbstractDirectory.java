@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,31 +18,29 @@
  */
 package megamek.common.util.fileUtils;
 
-import megamek.common.util.StringUtil;
+import megamek.common.annotations.Nullable;
+import megamek.common.util.sorter.NaturalOrderComparator;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
- * AbstractDirectory is a class that is used to
+ * AbstractDirectory is a class that is used to define a directory.
  */
-public abstract class AbstractDirectory implements Categorized {
+public abstract class AbstractDirectory {
     //region Variable Declarations
     private String rootName; // The root category name
+    private String rootPath; // The root path
 
     /**
-     * A map of the category names to the sub-categories. Please note that this
-     * map includes the root category, if the root category contains any items.
+     * A map of the category names to the direct sub-categories
      */
-    protected TreeMap<String, Categorized> categories = new TreeMap<>(StringUtil.stringComparator());
+    private Map<String, AbstractDirectory> categories = new TreeMap<>(new NaturalOrderComparator());
 
     /**
-     * A map of item names to the <code>ItemFile</code>s in the root
-     * category
+     * A map of item names to the <code>ItemFile</code>s in the root category
      */
-    protected TreeMap<String, Object> items = new TreeMap<>(StringUtil.stringComparator());
+    private Map<String, ItemFile> items = new TreeMap<>(new NaturalOrderComparator());
     //endregion Variable Declarations
 
     //region Constructors
@@ -52,12 +50,14 @@ public abstract class AbstractDirectory implements Categorized {
      * @param itemFileFactory this is included to ensure that it is not null, as that is required
      *                        for the files to be processed
      */
-    protected AbstractDirectory(File file, String rootName, ItemFileFactory itemFileFactory) {
-        // Validate input.
-        assert file != null : "A null root directory was passed.";
-        assert itemFileFactory != null : "A null item factory was passed.";
+    protected AbstractDirectory(final File file, final @Nullable String rootName,
+                                final @Nullable String rootPath,
+                                final ItemFileFactory itemFileFactory) throws NullPointerException {
+        Objects.requireNonNull(file, "A null root directory was passed.");
+        Objects.requireNonNull(itemFileFactory, "A null item factory was passed.");
 
-        this.rootName = (rootName == null) ? "" : rootName;
+        setRootName((rootName == null) ? "" : rootName);
+        setRootPath((rootPath == null) ? "" : rootPath);
     }
     //endregion Constructors
 
@@ -66,109 +66,86 @@ public abstract class AbstractDirectory implements Categorized {
         return rootName;
     }
 
-    public void setRootName(String rootName) {
+    public void setRootName(final String rootName) {
         this.rootName = rootName;
     }
 
-    /**
-     * Get the names of all the categories.
-     *
-     * @return an <code>Enumeration</code> of <code>String</code> names.
-     *         This value will not be <code>null</code>, but it may be empty.
-     */
-    @Override
-    public Iterator<String> getCategoryNames() {
-        return categories.keySet().iterator();
+    public String getRootPath() {
+        return rootPath;
     }
 
-    /**
-     * Helper function to file away new categories. It adds one entry in the map
-     * for each sub-category in the passed category.
-     *
-     * @param category - the <code>AbstractDirectory</code> files.
-     */
-    protected void addCategory(AbstractDirectory category) {
-        Iterator<String> names = category.getCategoryNames();
-        while (names.hasNext()) {
-            categories.put(names.next(), category);
+    public void setRootPath(final String rootPath) {
+        this.rootPath = rootPath;
+    }
+
+    public Map<String, AbstractDirectory> getCategories() {
+        return categories;
+    }
+
+    public @Nullable AbstractDirectory getCategory(final String categoryPath) {
+        return categoryPath.isBlank() ? this : getCategory(categoryPath.split("/"), 0);
+    }
+
+    private @Nullable AbstractDirectory getCategory(final String[] categories, final int index) {
+        if (categories.length == 0) {
+            return null;
+        } else if (index >= categories.length) {
+            return getRootName().equals(categories[index - 1]) ? this : null;
+        } else if (getRootName().equals(categories[index])) {
+            return this;
         }
+
+        final AbstractDirectory category = getCategories().get(categories[index]);
+        return (category == null) ? null : category.getCategory(categories, index + 1);
     }
 
-    @Override
-    public TreeMap<String, Object> getItems(){
+    public List<String> getNonEmptyCategoryPaths() {
+        // This needs to be a list because the same name can be found twice, in different paths
+        final List<String> categoryNames = new ArrayList<>();
+        for (final AbstractDirectory directory : getCategories().values()) {
+            categoryNames.addAll(directory.getNonEmptyCategoryPaths());
+        }
+
+        if (!getItems().isEmpty()) {
+            categoryNames.add(getRootPath());
+        }
+
+        return categoryNames;
+    }
+
+    public Map<String, ItemFile> getItems() {
         return items;
     }
 
     /**
      * Get the names of all the items in one of the categories.
      *
-     * @param categoryName - the <code>String</code> name of the category
-     *            whose item names are required.
+     * @param categoryName the <code>String</code> name of the category whose item names are required.
      * @return an <code>Iterator</code> of <code>String</code> names.
      *         This value will not be <code>null</code>, but it may be empty.
      */
-    @Override
-    public Iterator<String> getItemNames(String categoryName) {
-        // Get the category with the given name.
-        Categorized category = categories.get(categoryName);
-
-        if (category == null) { // ensure the category exists first
-            // Return an empty Iterator if we couldn't find the category
-            return Collections.emptyIterator();
-        } else if (!this.equals(category)) { // then check if it is a subcategory
-            // Yup. Pass the request on.
-            return category.getItemNames(categoryName);
-        }
-
-        // Return the names of this directory's items.
-        return items.keySet().iterator();
+    public Iterator<String> getItemNames(final @Nullable String categoryName) {
+        final AbstractDirectory category = getCategory(categoryName);
+        return (category == null) ? Collections.emptyIterator() : category.getItems().keySet().iterator();
     }
 
     /**
      * Get the indicated item from the correct category.
      *
-     * @param categoryName - the <code>String</code> name of the category
-     *            whose item names are required. This value may be
-     *            <code>null</code>.
-     * @param itemName - the <code>String</code> name of the indicated item.
-     * @return the <code>Object<code> in the given category with the given
-     *          name. This value may be <code>null</code>.
-     * @throws Exception if there's any error getting the item.
+     * @param categoryName the <code>String</code> name of the category whose item names are required
+     * @param itemName the <code>String</code> name of the indicated item
+     * @return the <code>Object</code> in the given category with the given name
+     * @throws Exception if there's any error getting the item
      */
-    @Override
-    public Object getItem(String categoryName, String itemName) throws Exception {
-        // Get the category with the given name.
-        Categorized category = categories.get(categoryName);
-
-        if (category == null) { // ensure the category exists first
-            return null; // return null if that is the case
-        } else if (!this.equals(category)) { // then check if it is a subcategory
-            // Yup. Pass the request on.
-            return category.getItem(categoryName, itemName);
+    public @Nullable Object getItem(final @Nullable String categoryName,
+                                    final String itemName) throws Exception {
+        final AbstractDirectory category = getCategory(categoryName);
+        if (category == null) {
+            return null;
         }
 
-        // Find the named entry.
-        ItemFile entry = (ItemFile) items.get(itemName);
-
-        // Return the item.
+        final ItemFile entry = category.getItems().get(itemName);
         return (entry == null) ? null : entry.getItem();
     }
     //endregion Getters/Setters
-
-    //region Utility Methods
-    /**
-     * Identify when a name belongs to a ZIP or JAR file (both are processed as being equal)
-     *
-     * @param name - the <code>String</code> which may be a ZIP file name. This value must not
-     *             be <code>null</code>.
-     * @return <code>true</code> if the name is for a ZIP file.
-     *         <code>false</code> if the name is not for a ZIP file.
-     */
-    public boolean isZipName(String name) {
-        // Convert the file name to upper case, and compare it to image
-        // file extensions. Yeah, it's a bit of a hack, but whatever.
-        String ucName = name.toUpperCase();
-        return (ucName.endsWith("ZIP") || ucName.endsWith("JAR"));
-    }
-    //endregion Utility Methods
 }

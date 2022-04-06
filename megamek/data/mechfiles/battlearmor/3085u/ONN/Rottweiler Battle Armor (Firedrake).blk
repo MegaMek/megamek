@@ -20,6 +20,10 @@ Rottweiler Battle Armor
 (Firedrake)
 </Model>
 
+<mul id:>
+2744
+</mul id:>
+
 <chassis>
 quad
 </chassis>

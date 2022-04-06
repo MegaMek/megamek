@@ -15,6 +15,10 @@ Maxim Heavy Hover Transport
 <Model>
 (Anti-Infantry)
 </Model>
+
+<mul id:>
+2118
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

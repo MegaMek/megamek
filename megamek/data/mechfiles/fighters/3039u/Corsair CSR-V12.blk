@@ -20,6 +20,10 @@ Corsair
 CSR-V12
 </Model>
 
+<mul id:>
+693
+</mul id:>
+
 <year>
 2779
 </year>
@@ -103,3 +107,35 @@ TRO 3039 - Star League
 <tonnage>
 50.0
 </tonnage>
+
+<capabilities>
+It was well protected by thirteen and a half tons of armor, while sixteen heat sinks kept the all-energy weapon loadout from overheating. It carried a fuel load of five tons and its GM 200 power plant could achieve a maximum thrust of four and a half gravities, with a safe thrust factor of three gravities.
+</capabilities>
+
+<overview>
+The compact laser system and sleek design of the Corsair made it a superior aerospace fighter in an atmosphere, rivaling the capabilities of Conventional Fighters.
+</overview>
+
+<deployment>
+Geared towards short range combat, the Corsair carries a a total of two Martell Medium Lasers and four Exostar Small Lasers, while two Exostar Large Lasers gives it some additional reach. Both medium lasers are located in each wing, with the large lasers and two of the small lasers filling the nose. For coverage to the stern, the remaining two small lasers are mounted to the rear and tied directly into the targeting systems, giving the pilot extreme accuracy in his rear field of fire. The compact laser systems are also well-suited for a ground-attack role, while the presence of sixteen heat sinks means the Corsair can continuously fire both large lasers and fire the medium and small lasers with negligible heat buildup.[4
+</deployment>
+
+<history>
+The Corsair was originally introduced as a means to replace the horrific losses suffered by the Star League Defense Force following the end of the Amaris Civil War. A working prototype of the Corsair had already been produced when the SLDF approached Wangker Aerospace for an easy-to-refit Aerospace Fighter, which allowed them to begin full-scale production within months. Unfortunately the original V1 series had serious flaws: the fuel tank would rupture when the craft made turns operating in an atmosphere, the landing gear could not support its weight in an emergency landing, and the life support system in the cockpit was easily shattered. While such faults would have killed most other designs, the positive aspects of the Corsair were so impressive the Star League permitted its continuation while Wangker fixed the issues. The fuel tank problem would be corrected in the V2 series, while the life support issues were hashed out in the V3 through V8 series, with continuing improvements up to the V12 series. Most of Wangker's Corsair factories were located in the Federated Suns, and so when the Star League fell five years after its introduction House Davion managed to seize control of them, with the Free Worlds League capturing a single production line on Connaught. Within five years of the start of the First Succession War however all of these factories had been destroyed, though through salvage efforts Wangker managed to piece together a new line on Axton and keep it open over the centuries of constant raiding. When the Connaught facility was destroyed in the opening shots of the war only a few hundred had been produced for the FWLM, and these eventually fell into the hands of the Principality of Regulus. When the Federated Commonwealth was formed debate raged on whether the Corsair or the Lucifer should be the AFFC's standard medium fighter, and in mock combat trials the Corsair won more often than not.
+</history>
+
+<manufacturer>
+Wangker AeroSpace
+</manufacturer>
+
+<primaryFactory>
+Axton,Connaught,Lee,Orbisonia,Ramen II
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Wangker II
+ENGINE:GM 200
+ARMOR:Wangker Corsair Standard
+COMMUNICATIONS:Ranker 100B
+TARGETING:Ranker TA800
+</systemManufacturers>

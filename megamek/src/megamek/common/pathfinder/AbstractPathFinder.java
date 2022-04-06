@@ -1,35 +1,26 @@
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import org.apache.logging.log4j.LogManager;
 
-import megamek.MegaMek;
+import java.util.*;
 
 /**
- * This class provides a skeletal implementation of path finder algorithm in a
+ * This class provides a skeletal implementation of pathfinder algorithm in a
  * given directed graph.
  * 
  * It uses a generalisation of Dijkstra algorithm. User must provide methods
  * that allow traversing the graph and evaluating paths. All needed methods have
  * been encapsulated and separated in classes:
  * <ul>
- * <li/>DeestinationNodeFactory and EdgeNeighborsFactory - responsible for
- * representing graph
- * <li/>Filter - Filters edges that are produced by EdgeNeighborsFactory. It
- * allows EdgeNeighborsFactory to be a general use class.
- * <li/>Comparator - compares paths according to generated cost.
- * <li/>EdgeRelaxer - relaxes node cost.
- * <li/>StopCondition - responsible for halting if user does not want to
- * traverse whole graph.
+ * <li>DestinationNodeFactory and EdgeNeighborsFactory - responsible for
+ * representing graph</li>
+ * <li>Filter - Filters edges that are produced by EdgeNeighborsFactory. It
+ * allows EdgeNeighborsFactory to be a general use class.</li>
+ * <li>Comparator - compares paths according to generated cost.</li>
+ * <li>EdgeRelaxer - relaxes node cost.</li>
+ * <li>StopCondition - responsible for halting if user does not want to
+ * traverse whole graph.</li>
  * </ul>
- * 
- * 
  * 
  * @author Saginatio
  * 
@@ -37,12 +28,10 @@ import megamek.MegaMek;
  * @param <C> the type of computed lowest cost for a node. If needed this type
  *            can contain information for recreating the path.
  * @param <E> the type of directed edges used by the graph.
- * 
- * @see PathFinderUtility
  */
 public class AbstractPathFinder<N, C, E> {
 
-    //after switching to java 8 and including java.util.function some of this
+    // after switching to java 8 and including java.util.function some of this
     //subclasses should be removed
 
     /**
@@ -79,10 +68,6 @@ public class AbstractPathFinder<N, C, E> {
      * 
      * @param <C> the type of computed lowest cost for a node
      * @param <E> the type of directed edges used by the graph
-     * 
-     * @see <a
-     *      href=http://masters.donntu.edu.ua/2006/ggeo/ganushchak/library/art8
-     *      .htm> Description of relaxation </a>
      */
     public interface EdgeRelaxer<C, E> {
         /**
@@ -97,14 +82,12 @@ public class AbstractPathFinder<N, C, E> {
     }
 
     /**
-     * Represents a function that allows removing unwanted objects from a
-     * collection.
-     * 
+     * Represents a function that allows removing unwanted objects from a collection.
      */
     public static abstract class Filter<T> {
         /**
          * Returns filtered collection by removing those objects that fail
-         * {@link #shouldStay(T)} test.
+         * {@link #shouldStay} test.
          * 
          * @param collection collection to be filtered
          * @return filtered collection
@@ -233,7 +216,7 @@ public class AbstractPathFinder<N, C, E> {
                 || edgeRelaxer == null
                 || edgeAdjacencyMap == null
                 || edgeComparator == null) {
-            throw new IllegalArgumentException("Arguments must be non null:" ////$NON-NLS-1$
+            throw new IllegalArgumentException("Arguments must be non null:"
                     + stopCondition + edgeDestinationMap + edgeRelaxer + edgeAdjacencyMap + edgeComparator);
         }
         this.destinationMap = edgeDestinationMap;
@@ -241,7 +224,7 @@ public class AbstractPathFinder<N, C, E> {
         this.adjacencyMap = edgeAdjacencyMap;
         this.comparator = edgeComparator;
 
-        candidates = new PriorityQueue<E>(100, edgeComparator);
+        candidates = new PriorityQueue<>(100, edgeComparator);
     }
 
     /**
@@ -303,13 +286,13 @@ public class AbstractPathFinder<N, C, E> {
                     break;
             }
         } catch (OutOfMemoryError e) {
-            final String memoryMessage = "Not enough memory to analyse all options."//$NON-NLS-1$
-                    + " Try setting time limit to lower value, or "//$NON-NLS-1$
+            final String memoryMessage = "Not enough memory to analyse all options."
+                    + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
             
-            MegaMek.getLogger().error(memoryMessage, e);
-        } catch(Exception e) {
-            MegaMek.getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(memoryMessage, e);
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
         }
     }
 
@@ -342,7 +325,7 @@ public class AbstractPathFinder<N, C, E> {
      * Returns the cost map. <b>Important:</b> Neither the returned map, nor its
      * elements, should be modified.
      * 
-     * @return map Node -> LowestCost
+     * @return map Node to LowestCost
      */
     protected Map<N, C> getPathCostMap() {
         return pathsCosts;
@@ -372,7 +355,7 @@ public class AbstractPathFinder<N, C, E> {
         if (comparator == null)
             throw new NullPointerException();
         this.comparator = comparator;
-        this.candidates = new PriorityQueue<E>(100, comparator);
+        this.candidates = new PriorityQueue<>(100, comparator);
     }
 
     /**

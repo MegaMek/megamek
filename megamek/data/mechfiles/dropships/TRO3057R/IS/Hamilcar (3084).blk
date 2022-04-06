@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Hamilcar
 <Model>
 (3084)
 </Model>
+
+<mul id:>
+4259
+</mul id:>
 
 <year>
 3084
@@ -38,13 +42,13 @@ Aerodyne
 
 <transporters>
 mechbay:4.0:4
-battlearmorbay:5.0:0:2
+battlearmorbay:5.0:1:2
 asfbay:2.0:2:3
-smallcraftbay:2.0:0:4
-cargobay:131.0:1:5
+cargobay:131.0:0:4
 2ndclassquarters:0.0:0
 1stclassquarters:60.0:0
 crewquarters:210.0:0
+smallcraftbay:2.0:1:5
 </transporters>
 
 <SafeThrust>
@@ -138,6 +142,54 @@ IS Streak SRM 4 Ammo:25
 9
 </structural_integrity>
 
+<capabilities>
+The Hamilcar recovered technology arsenal is almost exclusively forward facing, consisting of a Gauss Rifle, ER Large Laser, Artemis IV FCS enhanced LRM-20 and SRM-4 racks mounted in the nose, backed up by an ER large laser, LRM-20, ER PPC and Large Pulse Laser in each wing. Aft weaponry consists of a another ER large laser backed up by a LRM-15 and SRM-4, complemented by further rear-facing LRM-15's in each wing.
+</capabilities>
+
+<overview>
+Developed by a Marik think tank, the Hamilcar-class DropShip is a unique and hard to classify space assault vessel.
+</overview>
+
+<deployment>
+The Hamilcar features a mere 90 tons of cargo, devoting most of its available space toward carrying two Lances of BattleMechs and two AeroSpace Fighter Lances. The bays for the four fighters are deserving of note for their unusual placement directly below the engines. This is rather eccentric, but allows the fighters to be removed or loaded on the ground via simple ramps, which is generally not possible on most other DropShips.
+</deployment>
+
+<history>
+When first revealed, many observers wrote the design off as a poorly designed raider, neither a fighter or 'Mech carrier. Opinions changed when the Hamilcar first saw action, defeating a group of terrorists in a showpiece of integrated action between the DropShip, Jump Jet equipped BattleMechs and Aerospace Fighters, with the ship and its cargo geared towards acting as a zero-g combat unit. However, beyond its rather niche role and unusual design features, the Hamilcar is a relatively mediocre design at best, hampered by a mere 80 tons of fuel, scant cargo space, limited weapons array and a paltry 35 tons of armor. The vessel is so focused on operating in concert with its 'Mechs and fighter screen that it isn't a viable combatant without them.[
+</history>
+
+<manufacturer>
+Irian Naval Technologies
+</manufacturer>
+
+<primaryFactory>
+Clipperton
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Space Assault Ship
+</use>
+
+<length>
+132 meters
+</length>
+
+<width>
+98 meters
+</width>
+
+<height>
+34 meters
+</height>
+
 <tonnage>
 3600.0
 </tonnage>
@@ -181,3 +233,4 @@ IS Streak SRM 4 Ammo:25
 <escape_pod>
 4
 </escape_pod>
+

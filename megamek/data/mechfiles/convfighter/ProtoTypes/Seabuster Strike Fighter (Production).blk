@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ SeaBuster Strike Fighter
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+5010
+</mul id:>
 
 <year>
 3081
@@ -84,9 +88,11 @@ ISReconCamera
 </Nose Equipment>
 
 <Left Wing Equipment>
+Medium Laser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
+Medium Laser
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -110,3 +116,4 @@ TRO Prototypes - Jihad
 <tonnage>
 50.0
 </tonnage>
+

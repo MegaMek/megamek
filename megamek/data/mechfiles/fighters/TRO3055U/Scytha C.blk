@@ -20,6 +20,10 @@ Scytha
 C
 </Model>
 
+<mul id:>
+2851
+</mul id:>
+
 <year>
 2968
 </year>
@@ -118,3 +122,27 @@ TRO 3055u - Succession Wars
 <tonnage>
 90.0
 </tonnage>
+
+<overview>
+Developed when Clan Jade Falcon warriors demanded their own super-heavy OmniFighter to compete against Clan Ghost Bear's Kirghiz, the Scytha favors speed and pod space over that venerable fighter's preference for armor.
+</overview>
+
+<deployment>
+A ranged combat variant, the Scytha C mounts a Gauss Rifle and ER PPC underslug on each wing, support by twin nose-mounted Medium Pulse Lasers. A single ER small laser defends the aft of the craft, while two tons of Gauss Rifle reloads allows the C variant to keep its heat in check at least in the early stages of an engagement.
+</deployment>
+
+<manufacturer>
+Complex VI, Falcon's Roost Orbital Assembly Plant
+</manufacturer>
+
+<primaryFactory>
+Ironhold,Sudeten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Falcon Hollowbone
+ENGINE:360 XL
+ARMOR:Ironhold Series III Ferro-Aluminum
+COMMUNICATIONS:System VII
+TARGETING:TTS Model 3
+</systemManufacturers>

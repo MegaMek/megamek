@@ -1,13 +1,14 @@
 package megamek.client.bot.princess;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import megamek.MegaMek;
 import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GET;
 import static megamek.client.bot.princess.FiringPlanCalculationParameters.FiringPlanCalculationType.GUESS;
 
@@ -17,7 +18,7 @@ import static megamek.client.bot.princess.FiringPlanCalculationParameters.Firing
 public final class FiringPlanCalculationParameters {
 
     //The type of firing plan calculation to carry out
-	public enum FiringPlanCalculationType {
+    public enum FiringPlanCalculationType {
         /**
          * We're guessing the firing plan based on our estimate of enemy movement
          */
@@ -26,15 +27,15 @@ public final class FiringPlanCalculationParameters {
          * We're getting a firing plan based on exact known enemy movement results
          */
         GET
-	}
-	
-	private final Entity shooter;
-	private final EntityState shooterState; 
-	private final Targetable target;
-	private final EntityState targetState; 
-	private final int maxHeat; 
-	private final Map<Mounted, Double> ammoConservation;
-	private final FiringPlanCalculationType calculationType;
+    }
+
+    private final Entity shooter;
+    private final EntityState shooterState;
+    private final Targetable target;
+    private final EntityState targetState;
+    private final int maxHeat;
+    private final Map<Mounted, Double> ammoConservation;
+    private final FiringPlanCalculationType calculationType;
 
     public static class Builder {
         private Entity shooter = null;
@@ -85,11 +86,11 @@ public final class FiringPlanCalculationParameters {
 
         /**
          * How much heat we're willing to tolerate.
-         * Defaults to {@link FireControl#DOES_NOT_TRACK_HEAT}
+         * Defaults to {@link Entity#DOES_NOT_TRACK_HEAT}
          */
         public Builder setMaxHeat(final int value) {
             if (value < 0) {
-                MegaMek.getLogger().warning("Invalid max heat: " + value);
+                LogManager.getLogger().warn("Invalid max heat: " + value);
                 maxHeat = 0;
                 return this;
             }

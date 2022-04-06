@@ -1,6 +1,7 @@
 Version:1.0
 Guard SecurityMech
 GS-107X 
+mul id:7823
 
 Config:Quad
 techbase:Inner Sphere
@@ -108,7 +109,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ejection Seat
+Ejection Seat (Industrial Mech)
 Sensors
 Life Support
 -Empty-

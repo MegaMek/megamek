@@ -1,25 +1,24 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.actions;
 
 import megamek.common.Compute;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
 import megamek.common.Tank;
@@ -32,16 +31,13 @@ import megamek.common.options.OptionsConstants;
  * The attacker punches the target.
  */
 public class PunchAttackAction extends PhysicalAttackAction {
-    /**
-     *
-     */
     private static final long serialVersionUID = 3684646558944678180L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
     public static final int RIGHT = 2;
 
     private int arm;
-    //booleans for retractable blade extension
+    // booleans for retractable blade extension
     private boolean leftBlade = false;
     private boolean rightBlade = false;
     private boolean zweihandering = false;
@@ -94,7 +90,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         return false;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return PunchAttackAction.toHit(game, getEntityId(), game.getTarget(getTargetType(),
                                                                            getTargetId()), getArm(), isZweihandering());
     }
@@ -103,20 +99,20 @@ public class PunchAttackAction extends PhysicalAttackAction {
      * punches are impossible when physical attacks are impossible, or a
      * retractable blade is extended
      *
-     * @param game
+     * @param game The current {@link Game}
      * @param ae
      * @param target
      * @return
      */
-    protected static String toHitIsImpossible(IGame game, Entity ae,
+    protected static String toHitIsImpossible(Game game, Entity ae,
                                               Targetable target, int arm) {
         String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
                 game, ae, target);
         if (physicalImpossible != null) {
             return physicalImpossible;
         }
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         if (ae.isHullDown()) {
             attackerHeight--;
@@ -154,7 +150,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Arm missing";
         }
 
-        //check for no/minimal arms quirk
+        // check for no/minimal arms quirk
         if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
             return "No/minimal arms";
         }
@@ -184,7 +180,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified arm to punch
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, int arm, boolean zweihandering) {
         final Entity ae = game.getEntity(attackerId);
 
@@ -196,8 +192,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, impossible);
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerHeight = ae.relHeight() + attHex.getLevel(); // The absolute level of the attacker's arms
         final int targetElevation = target.getElevation()
                                     + targHex.getLevel(); // The absolute level of the target's arms
@@ -259,7 +255,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
         
-        if(zweihandering) {
+        if (zweihandering) {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, otherArm)) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
             }
@@ -356,7 +352,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         
         //CamOps, pg. 82
-        if(zweihandering) {
+        if (zweihandering) {
             damage += (int) Math.floor(entity.getWeight() / 10.0);
         }
 

@@ -20,6 +20,10 @@ Goblin Medium Tank
 (MG)
 </Model>
 
+<mul id:>
+1224
+</mul id:>
+
 <year>
 2500
 </year>

@@ -15,6 +15,10 @@ Motorized Infantry
 <Model>
 Dark Caste Bandits
 </Model>
+
+<mul id:>
+2233
+</mul id:>
 <squad_size>
 5
 </squad_size>

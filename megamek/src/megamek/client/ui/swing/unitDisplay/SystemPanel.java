@@ -1,12 +1,19 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import megamek.client.Client;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ChoiceDialog;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -14,64 +21,18 @@ import java.awt.event.ItemListener;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import megamek.client.Client;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ChoiceDialog;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Configuration;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.IGame;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.Tank;
-import megamek.common.WeaponType;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-
 /**
  * This class shows the critical hits and systems for a mech
  */
-class SystemPanel extends PicMap implements ItemListener, ActionListener,
-        ListSelectionListener {
+class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSelectionListener {
     
     private static int LOC_ALL_EQUIP = 0;
     private static int LOC_ALL_WEAPS = 1;
     private static int LOC_SPACER = 2;
     private static int LOC_OFFSET = 3;
-    
-    /**
-     * 
-     */
+
     private final UnitDisplay unitDisplay;
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 6660316427898323590L;
 
     private JLabel locLabel;
@@ -86,52 +47,46 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
     private JButton m_bDumpAmmo;
 
     private Entity en;
-    private Vector<Entity> entities = new Vector<Entity>();
+    private Vector<Entity> entities = new Vector<>();
 
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
 
     SystemPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
-        locLabel = new JLabel(
-                Messages.getString("MechDisplay.Location"), SwingConstants.CENTER); //$NON-NLS-1$
+        locLabel = new JLabel(Messages.getString("MechDisplay.Location"), SwingConstants.CENTER);
         locLabel.setOpaque(false);
         locLabel.setForeground(Color.WHITE);
-        slotLabel = new JLabel(
-                Messages.getString("MechDisplay.Slot"), SwingConstants.CENTER); //$NON-NLS-1$
+        slotLabel = new JLabel(Messages.getString("MechDisplay.Slot"), SwingConstants.CENTER);
         slotLabel.setOpaque(false);
         slotLabel.setForeground(Color.WHITE);
 
-        unitLabel = new JLabel(
-                Messages.getString("MechDisplay.Unit"), SwingConstants.CENTER); //$NON-NLS-1$
+        unitLabel = new JLabel(Messages.getString("MechDisplay.Unit"), SwingConstants.CENTER);
         unitLabel.setOpaque(false);
         unitLabel.setForeground(Color.WHITE);
 
-        locList = new JList<String>(new DefaultListModel<String>());
+        locList = new JList<>(new DefaultListModel<>());
         locList.setOpaque(false);
         locList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        slotList = new JList<String>(new DefaultListModel<String>());
+        slotList = new JList<>(new DefaultListModel<>());
         slotList.setOpaque(false);
         slotList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        unitList = new JList<String>(new DefaultListModel<String>());
+        unitList = new JList<>(new DefaultListModel<>());
         unitList.setOpaque(false);
 
-        m_chMode = new JComboBox<String>();
-        m_chMode.addItem("   "); //$NON-NLS-1$
+        m_chMode = new JComboBox<>();
+        m_chMode.addItem("   ");
         m_chMode.setEnabled(false);
 
-        m_bDumpAmmo = new JButton(
-                Messages.getString("MechDisplay.m_bDumpAmmo")); //$NON-NLS-1$
+        m_bDumpAmmo = new JButton(Messages.getString("MechDisplay.m_bDumpAmmo"));
         m_bDumpAmmo.setEnabled(false);
-        m_bDumpAmmo.setActionCommand("dump"); //$NON-NLS-1$
+        m_bDumpAmmo.setActionCommand("dump");
 
-        modeLabel = new JLabel(
-                Messages.getString("MechDisplay.modeLabel"), SwingConstants.RIGHT); //$NON-NLS-1$
+        modeLabel = new JLabel(Messages.getString("MechDisplay.modeLabel"), SwingConstants.RIGHT);
         modeLabel.setOpaque(false);
         modeLabel.setForeground(Color.WHITE);
-        // modeLabel.setEnabled(false);
 
         // layout main panel
         GridBagLayout gridbag = new GridBagLayout();
@@ -398,15 +353,15 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
             final CriticalSlot cs = en.getCritical(loc, i);
             StringBuffer sb = new StringBuffer(32);
             if (cs == null) {
-                sb.append("---"); //$NON-NLS-1$
+                sb.append("---");
             } else {
                 switch (cs.getType()) {
                     case CriticalSlot.TYPE_SYSTEM:
                         if (cs.isDestroyed() || cs.isMissing()) {
-                            sb.append("*"); //$NON-NLS-1$
+                            sb.append("*");
                         }
                         if (cs.isBreached()) {
-                            sb.append("x"); //$NON-NLS-1$
+                            sb.append("x");
                         }
                         // Protomechs have different system names.
                         if (en instanceof Protomech) {
@@ -422,7 +377,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     default:
                 }
                 if (cs.isArmored()) {
-                    sb.append(" (armored)");  //$NON-NLS-1$
+                    sb.append(" (armored)"); 
                 }
             }
             slotModel.addElement(sb.toString());
@@ -435,36 +390,32 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
     }
     
     private String getMountedDisplay(Mounted m, int loc, CriticalSlot cs) {
-        String hotLoaded = Messages.getString("MechDisplay.isHotLoaded"); //$NON-NLS-1$
+        String hotLoaded = Messages.getString("MechDisplay.isHotLoaded");
         StringBuffer sb = new StringBuffer();
         
         sb.append(m.getDesc());
 
         if ((cs != null) && cs.getMount2() != null) {
-            sb.append(" "); //$NON-NLS-1$
-            sb.append(cs.getMount2().getDesc()); //$NON-NLS-1$
+            sb.append(" ");
+            sb.append(cs.getMount2().getDesc());
         }
         if (m.isHotLoaded()) {
             sb.append(hotLoaded);
         }
         if (m.getType().hasModes()) {
             if (m.curMode().getDisplayableName().length() > 0) {
-                sb.append(" ("); //$NON-NLS-1$
+                sb.append(" (");
                 sb.append(m.curMode().getDisplayableName());
-                sb.append(')'); //$NON-NLS-1$
+                sb.append(')');
             }
-            if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
-                sb.append(" (next turn, "); //$NON-NLS-1$
+            if (!m.pendingMode().equals("None")) {
+                sb.append(" (next turn, ");
                 sb.append(m.pendingMode().getDisplayableName());
-                sb.append(')'); //$NON-NLS-1$
+                sb.append(')');
             }
-            if ((m.getType() instanceof MiscType)
-                    && ((MiscType) m.getType()).isShield()) {
-                sb.append(" " //$NON-NLS-1$
-                        + m.getDamageAbsorption(en, m.getLocation())
-                        + '/' //$NON-NLS-1$
-                        + m.getCurrentDamageCapacity(en,
-                                m.getLocation()) + ')'); //$NON-NLS-1$
+            if ((m.getType() instanceof MiscType) && ((MiscType) m.getType()).isShield()) {
+                sb.append(" ").append(m.getDamageAbsorption(en, m.getLocation())).append('/')
+                        .append(m.getCurrentDamageCapacity(en, m.getLocation())).append(')');
             }
         }
         return sb.toString();
@@ -473,6 +424,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
     //
     // ItemListener
     //
+    @Override
     public void itemStateChanged(ItemEvent ev) {
         removeListeners();
         try {
@@ -490,27 +442,22 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
-                                && (clientgui.getClient().getGame()
-                                        .getPhase() != IGame.Phase.PHASE_FIRING)) {
-                            clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.ShieldModePhase"));//$NON-NLS-1$
+                                && !clientgui.getClient().getGame().getPhase().isFiring()) {
+                            clientgui.systemMessage(Messages.getString("MechDisplay.ShieldModePhase"));
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && (clientgui.getClient().getGame().getPhase()
-                                != IGame.Phase.PHASE_PHYSICAL)) {
-                            clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.VibrobladeModePhase"));//$NON-NLS-1$
+                                && !clientgui.getClient().getGame().getPhase().isPhysical()) {
+                            clientgui.systemMessage(Messages.getString("MechDisplay.VibrobladeModePhase"));
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
                                 && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
-                            clientgui.systemMessage(Messages.getString(
-                                                    "MechDisplay.RetractableBladeModePhase"));//$NON-NLS-1$
+                                && (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT)) {
+                            clientgui.systemMessage(Messages.getString("MechDisplay.RetractableBladeModePhase"));
                             return;
                         }
 
@@ -518,12 +465,10 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         // been fired.
                         if ((m.getType() instanceof MiscType)
                                 && (m.getLinked() != null)
-                                && ((MiscType) m.getType())
-                                        .hasFlag(MiscType.F_PPC_CAPACITOR)
+                                && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
                                 && m.getLinked().isUsedThisRound()
                                 && (nMode == 1)) {
-                            clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.CapacitorCharging"));//$NON-NLS-1$
+                            clientgui.systemMessage(Messages.getString("MechDisplay.CapacitorCharging"));
                             return;
                         }
                         m.setMode(nMode);
@@ -539,7 +484,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                             this.unitDisplay.wPan.selectWeapon(weap);
                             // displaySlots();
                         } else {
-                            if (IGame.Phase.PHASE_DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
+                            if (GamePhase.DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart",
                                         m.getName(), m.pendingMode().getDisplayableName()));
                             } else {
@@ -556,31 +501,17 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     int nMode = m_chMode.getSelectedIndex();
                     if (nMode >= 0) {
                         if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit()
-                                && (en instanceof Mech)) {
+                                && en.hasEiCockpit() && (en instanceof Mech)) {
                             Mech mech = (Mech) en;
                             mech.setCockpitStatus(nMode);
                             clientgui.getClient().sendSystemModeChange(
                                     en.getId(), Mech.SYSTEM_COCKPIT, nMode);
-                            if (mech.getCockpitStatus() == mech
-                                    .getCockpitStatusNextRound()) {
-                                clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.switched",
-                                                        new Object[] {
-                                                                "Cockpit",
-                                                                m_chMode.getSelectedItem() }));
-                                //$NON-NLS-1$
+                            if (mech.getCockpitStatus() == mech.getCockpitStatusNextRound()) {
+                                clientgui.systemMessage(Messages.getString("MechDisplay.switched",
+                                        "Cockpit", m_chMode.getSelectedItem()));
                             } else {
-                                clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtEnd",
-                                                        new Object[] {
-                                                                "Cockpit",
-                                                                m_chMode.getSelectedItem() }));
-                                //$NON-NLS-1$
+                                clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd",
+                                        "Cockpit", m_chMode.getSelectedItem()));
                             }
                         }
                     }
@@ -592,7 +523,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         }
     }
 
-    // ActionListener
+    @Override
     public void actionPerformed(ActionEvent ae) {
         removeListeners();
         try {
@@ -600,10 +531,9 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
             if (clientgui == null) {
                 return;
             }
-            if ("dump".equals(ae.getActionCommand())) { //$NON-NLS-1$
+            if ("dump".equals(ae.getActionCommand())) {
                 Mounted m = getSelectedEquipment();
-                boolean bOwner = clientgui.getClient().getLocalPlayer()
-                        .equals(en.getOwner());
+                boolean bOwner = clientgui.getClient().getLocalPlayer().equals(en.getOwner());
                 if ((m == null) || !bOwner) {
                     return;
                 }
@@ -623,9 +553,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     slotList.setSelectedIndex(selIdx);
                 }
 
-                if (((!(m.getType() instanceof AmmoType) || (m
-                        .getUsableShotsLeft() <= 0)) && !m.isDWPMounted())
-                        || (m.isDWPMounted() && (m.isMissing() == true))) {
+                if (((!(m.getType() instanceof AmmoType) || (m.getUsableShotsLeft() <= 0))
+                        && !m.isDWPMounted()) || (m.isDWPMounted() && m.isMissing())) {
                     return;
                 }
 
@@ -635,38 +564,25 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                 if (m.isPendingDump()) {
                     bDumping = false;
                     if (m.getType() instanceof AmmoType) {
-                        String title = Messages
-                                .getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        String title = Messages.getString("MechDisplay.CancelDumping.title");
+                        String body = Messages.getString("MechDisplay.CancelDumping.message", m.getName());
                         bConfirmed = clientgui.doYesNoDialog(title, body);
                     } else {
-                        String title = Messages
-                                .getString("MechDisplay.CancelJettison.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.CancelJettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        String title = Messages.getString("MechDisplay.CancelJettison.title");
+                        String body = Messages.getString("MechDisplay.CancelJettison.message", m.getName());
                         bConfirmed = clientgui.doYesNoDialog(title, body);
                     }
                 } else {
                     bDumping = true;
                     if (m.getType() instanceof AmmoType) {
-                        String title = Messages
-                                .getString("MechDisplay.Dump.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        String title = Messages.getString("MechDisplay.Dump.title");
+                        String body = Messages.getString("MechDisplay.Dump.message", m.getName());
                         bConfirmed = clientgui.doYesNoDialog(title, body);
                     } else {
-                        String title = Messages
-                                .getString("MechDisplay.Jettison.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.Jettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                        String title = Messages.getString("MechDisplay.Jettison.title");
+                        String body = Messages.getString("MechDisplay.Jettison.message", m.getName());
                         bConfirmed = clientgui.doYesNoDialog(title, body);
                     }
-
                 }
 
                 if (bConfirmed) {
@@ -704,23 +620,17 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString()); //$NON-NLS-1$
+        tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
-        tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString()); //$NON-NLS-1$
+        tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+        tile = getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
@@ -759,6 +669,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;
@@ -810,8 +721,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                 if ((m != null)
                         && bOwner
                         && (m.getType() instanceof AmmoType)
-                        && (client.getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                        && (client.getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
+                        && (client.getGame().getPhase() != GamePhase.DEPLOYMENT)
+                        && (client.getGame().getPhase() != GamePhase.MOVEMENT)
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
@@ -858,7 +769,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                             .getModes(); e.hasMoreElements();) {
                         EquipmentMode em = e.nextElement();
                         //Hack to prevent showing an option that is disabled by the server, but would
-                        //be overwritten by every entity update if made also in the client
+                        // be overwritten by every entity update if made also in the client
                         if (em.equals("HotLoad") && en instanceof Mech
                                 && !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
                             continue;
@@ -888,8 +799,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");
                             m_chMode.addItem("Aimed shot");
-                            m_chMode.setSelectedItem(Integer.valueOf(
-                                    ((Mech) en).getCockpitStatusNextRound()));
+                            m_chMode.setSelectedItem(((Mech) en).getCockpitStatusNextRound());
                         }
                     }
                 }

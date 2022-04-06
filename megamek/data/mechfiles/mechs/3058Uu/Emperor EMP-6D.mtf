@@ -1,6 +1,7 @@
 Version:1.0
 Emperor
 EMP-6D
+mul id:966
 
 Config:Biped
 TechBase:Inner Sphere

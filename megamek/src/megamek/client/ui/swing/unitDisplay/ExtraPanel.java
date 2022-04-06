@@ -1,67 +1,32 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.MMComboBox;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.HeatEffects;
+import megamek.client.ui.swing.Slider;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.enums.GamePhase;
+import megamek.common.options.OptionsConstants;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.common.weapons.other.TSEMPWeapon;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.HeatEffects;
-import megamek.client.ui.swing.Slider;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.client.ui.swing.widget.UnitDisplaySkinSpecification;
-import megamek.common.BattleArmor;
-import megamek.common.ComputeECM;
-import megamek.common.Configuration;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Sensor;
-import megamek.common.Tank;
-import megamek.common.options.OptionsConstants;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.other.TSEMPWeapon;
-
 /**
  * This class shows information about a unit that doesn't belong elsewhere.
  */
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
-
-    /**
-     * 
-     */
-    private final UnitDisplay unitDisplay;
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4907296187995261075L;
+
+    private final UnitDisplay unitDisplay;
 
     private JLabel lblLastTarget;
     private JLabel curSensorsL;
@@ -90,39 +55,32 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
 
-    JButton activateHidden = new JButton(
-            Messages.getString("MechDisplay.ActivateHidden.Label"));
+    JButton activateHidden = new JButton(Messages.getString("MechDisplay.ActivateHidden.Label"));
 
-    JComboBox<String> activateHiddenPhase = new JComboBox<>();
+    MMComboBox<GamePhase> comboActivateHiddenPhase = new MMComboBox<>("comboActivateHiddenPhase");
 
     ExtraPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
         prompt = null;
 
-        narcLabel = new JLabel(
-                Messages.getString("MechDisplay.AffectedBy"), SwingConstants.CENTER); //$NON-NLS-1$
+        narcLabel = new JLabel(Messages.getString("MechDisplay.AffectedBy"), SwingConstants.CENTER);
         narcLabel.setOpaque(false);
         narcLabel.setForeground(Color.WHITE);
 
-        narcList = new JList<String>(new DefaultListModel<String>());
+        narcList = new JList<>(new DefaultListModel<>());
 
-        // transport stuff
-        // unusedL = new JLabel( "Unused Space:", JLabel.CENTER );
-
-        unusedL = new JLabel(
-                Messages.getString("MechDisplay.UnusedSpace"), SwingConstants.CENTER); //$NON-NLS-1$
+        unusedL = new JLabel(Messages.getString("MechDisplay.UnusedSpace"), SwingConstants.CENTER);
         unusedL.setOpaque(false);
         unusedL.setForeground(Color.WHITE);
-        unusedR = new JTextArea("", 2, 25); //$NON-NLS-1$
+        unusedR = new JTextArea("", 2, 25);
         unusedR.setEditable(false);
         unusedR.setOpaque(false);
         unusedR.setForeground(Color.WHITE);
 
-        carrysL = new JLabel(
-                Messages.getString("MechDisplay.Carryng"), SwingConstants.CENTER); //$NON-NLS-1$
+        carrysL = new JLabel(Messages.getString("MechDisplay.Carryng"), SwingConstants.CENTER);
         carrysL.setOpaque(false);
         carrysL.setForeground(Color.WHITE);
-        carrysR = new JTextArea("", 4, 25); //$NON-NLS-1$
+        carrysR = new JTextArea("", 4, 25);
         carrysR.setEditable(false);
         carrysR.setOpaque(false);
         carrysR.setForeground(Color.WHITE);
@@ -142,53 +100,52 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         sinks2B.setActionCommand("changeSinks");
         sinks2B.addActionListener(this);
 
-        dumpBombs = new JButton(
-                Messages.getString("MechDisplay.DumpBombsLabel"));
+        dumpBombs = new JButton(Messages.getString("MechDisplay.DumpBombsLabel"));
         dumpBombs.setActionCommand("dumpBombs");
         dumpBombs.addActionListener(this);
 
-        heatL = new JLabel(
-                Messages.getString("MechDisplay.HeatEffects"), SwingConstants.CENTER); //$NON-NLS-1$
+        heatL = new JLabel(Messages.getString("MechDisplay.HeatEffects"), SwingConstants.CENTER);
         heatL.setOpaque(false);
         heatL.setForeground(Color.WHITE);
-        heatR = new JTextArea("", 4, 25); //$NON-NLS-1$
+        heatR = new JTextArea("", 4, 25);
         heatR.setEditable(false);
         heatR.setOpaque(false);
         heatR.setForeground(Color.WHITE);
         
-        lblLastTarget = new JLabel(
-                Messages.getString("MechDisplay.LastTarget"),
+        lblLastTarget = new JLabel(Messages.getString("MechDisplay.LastTarget"),
                 SwingConstants.CENTER);
         lblLastTarget.setForeground(Color.WHITE);
         lblLastTarget.setOpaque(false);
-        lastTargetR = new JTextArea("", 4, 25); //$NON-NLS-1$
+        lastTargetR = new JTextArea("", 4, 25);
         lastTargetR.setEditable(false);
         lastTargetR.setOpaque(false);
         lastTargetR.setForeground(Color.WHITE);
 
-        curSensorsL = new JLabel(
-                (Messages.getString("MechDisplay.CurrentSensors"))
-                        .concat(" "),
+        curSensorsL = new JLabel(Messages.getString("MechDisplay.CurrentSensors").concat(" "),
                 SwingConstants.CENTER);
         curSensorsL.setForeground(Color.WHITE);
         curSensorsL.setOpaque(false);
 
-        chSensors = new JComboBox<String>();
+        chSensors = new JComboBox<>();
         chSensors.addItemListener(this);
 
-        activateHidden.setToolTipText(Messages
-                .getString("MechDisplay.ActivateHidden.ToolTip"));
-        activateHiddenPhase.setToolTipText(Messages
-                .getString("MechDisplay.ActivateHiddenPhase.ToolTip"));
+        activateHidden.setToolTipText(Messages.getString("MechDisplay.ActivateHidden.ToolTip"));
+        comboActivateHiddenPhase.setToolTipText(Messages.getString("MechDisplay.ActivateHiddenPhase.ToolTip"));
         activateHidden.addActionListener(this);
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_MOVEMENT));
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_FIRING));
-        activateHiddenPhase.addItem(IGame.Phase
-                .getDisplayableName(IGame.Phase.PHASE_PHYSICAL));
-        activateHiddenPhase.addItem(Messages
-                .getString("MechDisplay.ActivateHidden.StopActivating"));
+        comboActivateHiddenPhase.addItem(GamePhase.UNKNOWN);
+        comboActivateHiddenPhase.addItem(GamePhase.MOVEMENT);
+        comboActivateHiddenPhase.addItem(GamePhase.FIRING);
+        comboActivateHiddenPhase.addItem(GamePhase.PHYSICAL);
+        comboActivateHiddenPhase.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                return super.getListCellRendererComponent(list,
+                        (((value instanceof GamePhase) && ((GamePhase) value).isUnknown())
+                                ? Messages.getString("MechDisplay.ActivateHidden.StopActivating")
+                                : value),
+                        index, isSelected, cellHasFocus);
+            }
+        });
 
         // layout choice panel
         GridBagLayout gridbag;
@@ -215,8 +172,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         c.insets = new Insets(1, 9, 1, 9);
         JScrollPane scrollPane = new JScrollPane(narcList);
-        scrollPane
-                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         gridbag.setConstraints(scrollPane, c);
         add(scrollPane);
 
@@ -262,9 +218,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         c.insets = new Insets(1, 9, 1, 9);
         gridbag.setConstraints(activateHidden, c);
         c.insets = new Insets(1, 9, 6, 9);
-        gridbag.setConstraints(activateHiddenPhase, c);
+        gridbag.setConstraints(comboActivateHiddenPhase, c);
         add(activateHidden);
-        add(activateHiddenPhase);
+        add(comboActivateHiddenPhase);
 
         setBackGround();
         onResize();
@@ -286,75 +242,59 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
-        tile = getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
-        PMUtil.setImage(tile, this);
-        addBgDrawer(new BackGroundDrawer(tile, b));
-
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
+        PMUtil.setImage(tile, this);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_RIGHT;
+        tile = getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
@@ -369,8 +309,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         sinks = 0;
         myMechId = en.getId();
         ClientGUI clientgui = unitDisplay.getClientGUI();
-        if ((clientgui != null) && (clientgui.getClient().getLocalPlayer().getId() != en
-                .getOwnerId())) {
+        if ((clientgui != null) && (clientgui.getClient().getLocalPlayer().getId() != en.getOwnerId())) {
             sinks2B.setEnabled(false);
             dumpBombs.setEnabled(false);
             chSensors.setEnabled(false);
@@ -385,140 +324,121 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         // can't be more teams than players.
         StringBuffer buff;
         if (clientgui != null) {
-            Enumeration<IPlayer> loop = clientgui.getClient().getGame().getPlayers();
+            Enumeration<Player> loop = clientgui.getClient().getGame().getPlayers();
             while (loop.hasMoreElements()) {
-                IPlayer player = loop.nextElement();
+                Player player = loop.nextElement();
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) && !player.isObserver()) {
-                    buff = new StringBuffer(
-                            Messages.getString("MechDisplay.NARCedBy")); //$NON-NLS-1$
-                    buff.append(player.getName());
-                    buff.append(" [")//$NON-NLS-1$
-                            .append(IPlayer.teamNames[team]).append(']');
-                    ((DefaultListModel<String>) narcList.getModel())
-                            .addElement(buff.toString());
+                    buff = new StringBuffer(Messages.getString("MechDisplay.NARCedBy"));
+                    buff.append(player.getName())
+                            .append(" [").append(Player.TEAM_NAMES[team]).append(']');
+                    ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
+
                 if (en.isINarcedBy(team) && !player.isObserver()) {
-                    buff = new StringBuffer(
-                            Messages.getString("MechDisplay.INarcHoming")); //$NON-NLS-1$
-                    buff.append(player.getName());
-                    buff.append(" [")//$NON-NLS-1$
-                            .append(IPlayer.teamNames[team]).append("] ")//$NON-NLS-1$
-                            .append(Messages.getString("MechDisplay.attached"))//$NON-NLS-1$
+                    buff = new StringBuffer(Messages.getString("MechDisplay.INarcHoming"));
+                    buff.append(player.getName()).append(" [")
+                            .append(Player.TEAM_NAMES[team]).append("] ")
+                            .append(Messages.getString("MechDisplay.attached"))
                             .append('.');
-                    ((DefaultListModel<String>) narcList.getModel())
-                            .addElement(buff.toString());
+                    ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
             }
+
             if (en.isINarcedWith(INarcPod.ECM)) {
-                buff = new StringBuffer(
-                        Messages.getString("MechDisplay.iNarcECMPodAttached")); //$NON-NLS-1$
-                ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(buff.toString());
+                buff = new StringBuffer(Messages.getString("MechDisplay.iNarcECMPodAttached"));
+                ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
+
             if (en.isINarcedWith(INarcPod.HAYWIRE)) {
-                buff = new StringBuffer(
-                        Messages.getString("MechDisplay.iNarcHaywirePodAttached")); //$NON-NLS-1$
-                ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(buff.toString());
+                buff = new StringBuffer(Messages.getString("MechDisplay.iNarcHaywirePodAttached"));
+                ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
+
             if (en.isINarcedWith(INarcPod.NEMESIS)) {
-                buff = new StringBuffer(
-                        Messages.getString("MechDisplay.iNarcNemesisPodAttached")); //$NON-NLS-1$
-                ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(buff.toString());
+                buff = new StringBuffer(Messages.getString("MechDisplay.iNarcNemesisPodAttached"));
+                ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
 
             // Show inferno track.
             if (en.infernos.isStillBurning()) {
-                buff = new StringBuffer(
-                        Messages.getString("MechDisplay.InfernoBurnRemaining")); //$NON-NLS-1$
+                buff = new StringBuffer(Messages.getString("MechDisplay.InfernoBurnRemaining"));
                 buff.append(en.infernos.getTurnsLeftToBurn());
-                ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(buff.toString());
+                ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
             }
+
             if ((en instanceof Tank) && ((Tank) en).isOnFire()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".OnFire")); //$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.OnFire"));
             }
 
             // Show electromagnic interference.
             if (en.isSufferingEMI()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".IsEMId")); //$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.IsEMId"));
             }
 
             // Show ECM affect.
             Coords pos = en.getPosition();
             if (ComputeECM.isAffectedByAngelECM(en, pos, pos)) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".InEnemyAngelECMField")); //$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.InEnemyAngelECMField"));
             } else if (ComputeECM.isAffectedByECM(en, pos, pos)) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".InEnemyECMField")); //$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.InEnemyECMField"));
             }
 
             // Active Stealth Armor? If yes, we're under ECM
             if (en.isStealthActive()
                     && ((en instanceof Mech) || (en instanceof Tank))) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".UnderStealth")); //$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.UnderStealth"));
             }
 
             // burdened due to unjettisoned body-mounted missiles on BA?
             if ((en instanceof BattleArmor) && ((BattleArmor) en).isBurdened()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".Burdened")); //$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.Burdened"));
             }
 
             // suffering from taser feedback?
             if (en.getTaserFeedBackRounds() > 0) {
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(en.getTaserFeedBackRounds()
-                                + " " + Messages.getString("MechDisplay.TaserFeedBack"));//$NON-NLS-1$
+                                + " " + Messages.getString("MechDisplay.TaserFeedBack"));
             }
 
             // taser interference?
             if (en.getTaserInterference() > 0) {
-                ((DefaultListModel<String>) narcList.getModel()).addElement("+" //$NON-NLS-1$
-                        + en.getTaserInterference()
-                        + " "
-                        + Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".TaserInterference"));//$NON-NLS-1$
+                ((DefaultListModel<String>) narcList.getModel()).addElement("+"
+                        + en.getTaserInterference() + " "
+                        + Messages.getString("MechDisplay.TaserInterference"));
             }
 
             // suffering from TSEMP Interference?
             if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay.TSEMPInterference"));//$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.TSEMPInterference"));
             }
 
             if (en.hasDamagedRHS()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay.RHSDamaged"));//$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.RHSDamaged"));
             }
 
             // Show Turret Locked.
             if ((en instanceof Tank) && !((Tank) en).hasNoTurret()
                     && !en.canChangeSecondaryFacing()) {
                 ((DefaultListModel<String>) narcList.getModel())
-                        .addElement(Messages.getString("MechDisplay" //$NON-NLS-1$
-                                + ".Turretlocked")); //$NON-NLS-1$
+                        .addElement(Messages.getString("MechDisplay.Turretlocked"));
             }
 
             // Show jammed weapons.
             for (Mounted weapon : en.getWeaponList()) {
                 if (weapon.isJammed()) {
                     buff = new StringBuffer(weapon.getName());
-                    buff.append(Messages.getString("MechDisplay.isJammed")); //$NON-NLS-1$
-                    ((DefaultListModel<String>) narcList.getModel())
-                            .addElement(buff.toString());
+                    buff.append(Messages.getString("MechDisplay.isJammed"));
+                    ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
             }
 
@@ -526,48 +446,47 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             for (int loc = 0; loc < en.locations(); loc++) {
                 if (en.getLocationStatus(loc) == ILocationExposureStatus.BREACHED) {
                     buff = new StringBuffer(en.getLocationName(loc));
-                    buff.append(Messages.getString("MechDisplay.Breached")); //$NON-NLS-1$
-                    ((DefaultListModel<String>) narcList.getModel())
-                            .addElement(buff.toString());
+                    buff.append(Messages.getString("MechDisplay.Breached"));
+                    ((DefaultListModel<String>) narcList.getModel()).addElement(buff.toString());
                 }
             }
 
             if (narcList.getModel().getSize() == 0) {
-                ((DefaultListModel<String>) narcList.getModel()).addElement(" "); //$NON-NLS-1$
+                ((DefaultListModel<String>) narcList.getModel()).addElement(" ");
             }
         }
 
 
         // transport values
         String unused = en.getUnusedString();
-        if ("".equals(unused)) {
-            unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$
+        if (unused.isBlank()) {
+            unused = Messages.getString("MechDisplay.None");
         }
         unusedR.setText(unused);
         carrysR.setText(null);
         // boolean hasText = false;
         for (Entity other : en.getLoadedUnits()) {
             carrysR.append(other.getShortName());
-            carrysR.append("\n"); //$NON-NLS-1$
+            carrysR.append("\n");
         }
 
         // Show club(s).
         for (Mounted club : en.getClubs()) {
             carrysR.append(club.getName());
-            carrysR.append("\n"); //$NON-NLS-1$
+            carrysR.append("\n");
         }
 
         // Show searchlight
         if (en.hasSearchlight()) {
             if (en.isUsingSearchlight()) {
-                carrysR.append(Messages.getString("MechDisplay.SearchlightOn")); //$NON-NLS-1$
+                carrysR.append(Messages.getString("MechDisplay.SearchlightOn"));
             } else {
-                carrysR.append(Messages.getString("MechDisplay.SearchlightOff")); //$NON-NLS-1$
+                carrysR.append(Messages.getString("MechDisplay.SearchlightOff"));
             }
         }
 
         // Show Heat Effects, but only for Mechs.
-        heatR.setText(""); //$NON-NLS-1$
+        heatR.setText("");
         sinksR.setText("");
 
         if (en instanceof Mech) {
@@ -576,14 +495,10 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             sinks2B.setEnabled(!dontChange);
             sinks = m.getActiveSinksNextRound();
             if (m.hasDoubleHeatSinks()) {
-                sinksR.append(Messages.getString(
-                        "MechDisplay.activeSinksTextDouble", //$NON-NLS-1$
-                        new Object[]{Integer.valueOf(sinks),
-                                     Integer.valueOf(sinks * 2)}));
+                sinksR.append(Messages.getString("MechDisplay.activeSinksTextDouble",
+                        sinks, sinks * 2));
             } else {
-                sinksR.append(Messages.getString(
-                        "MechDisplay.activeSinksTextSingle", //$NON-NLS-1$
-                        new Object[]{Integer.valueOf(sinks)}));
+                sinksR.append(Messages.getString("MechDisplay.activeSinksTextSingle", sinks));
             }
 
             boolean hasTSM = false;
@@ -594,46 +509,37 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             if ((clientgui != null)
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) { //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 mtHeat = true;
             }
             heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
         } else {
-            // Non-Mechs cannot configure their heatsinks
+            // Non-Mechs cannot configure their heat sinks
             sinks2B.setEnabled(false);
         }
-        /*
-         * if (en instanceof Aero && ((Aero) en).hasBombs() &&
-         * IGame.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
-         * .getPhase()) { // TODO: I should at some point check and make
-         * sure that this // unit has any bombs that it could dump
-         * dumpBombs.setEnabled(!dontChange); } else {
-         */
+
         dumpBombs.setEnabled(false);
-        // }
 
         refreshSensorChoices(en);
 
         if (null != en.getActiveSensor()) {
-            curSensorsL.setText((Messages
-                    .getString("MechDisplay.CurrentSensors")).concat(" ") //$NON-NLS-1$
+            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" ")
                     .concat(en.getSensorDesc()));
         } else {
-            curSensorsL.setText((Messages
-                    .getString("MechDisplay.CurrentSensors")).concat(" ")); //$NON-NLS-1$
+            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
         }
         
         if (en.getLastTarget() != Entity.NONE) {
             lastTargetR.setText(en.getLastTargetDisplayName());
         } else {
-            lastTargetR.setText(Messages.getString("MechDisplay.None")); //$NON-NLS-1$
+            lastTargetR.setText(Messages.getString("MechDisplay.None"));
         }
 
         activateHidden.setEnabled(!dontChange && en.isHidden());
-        activateHiddenPhase.setEnabled(!dontChange && en.isHidden());
+        comboActivateHiddenPhase.setEnabled(!dontChange && en.isHidden());
 
         onResize();
-    } // End public void displayMech( Entity )
+    }
 
     private void refreshSensorChoices(Entity en) {
         chSensors.removeItemListener(this);
@@ -652,6 +558,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         chSensors.addItemListener(this);
     }
 
+    @Override
     public void itemStateChanged(ItemEvent ev) {
         ClientGUI clientgui = unitDisplay.getClientGUI();
         if (clientgui == null) {
@@ -667,25 +574,24 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             Sensor s = en.getSensors().elementAt(sensorIdx);
             en.setNextSensor(s);
             refreshSensorChoices(en);
-            String sensorMsg = Messages.getString(
-                    "MechDisplay.willSwitchAtEnd", new Object[] { //$NON-NLS-1$
-                            "Active Sensors", s.getDisplayName() }); //$NON-NLS-1$
+            String sensorMsg = Messages.getString("MechDisplay.willSwitchAtEnd",
+                    "Active Sensors", s.getDisplayName());
             clientgui.systemMessage(sensorMsg);
             clientgui.getClient().sendSensorChange(myMechId, sensorIdx);
         }
     }
 
+    @Override
     public void actionPerformed(ActionEvent ae) {
         ClientGUI clientgui = unitDisplay.getClientGUI();
         if (clientgui == null) {
             return;
         }
-        if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) { //$NON-NLS-1$
+        if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) {
             prompt = new Slider(clientgui.frame,
-                    Messages.getString("MechDisplay.changeSinks"), //$NON-NLS-1$
-                    Messages.getString("MechDisplay.changeSinks"), sinks, //$NON-NLS-1$
-                    0, ((Mech) clientgui.getClient().getGame()
-                            .getEntity(myMechId)).getNumberOfSinks());
+                    Messages.getString("MechDisplay.changeSinks"),
+                    Messages.getString("MechDisplay.changeSinks"), sinks,
+                    0, ((Mech) clientgui.getClient().getGame().getEntity(myMechId)).getNumberOfSinks());
             if (!prompt.showDialog()) {
                 return;
             }
@@ -697,10 +603,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             clientgui.getClient().sendSinksChange(myMechId, numActiveSinks);
             displayMech(clientgui.getClient().getGame().getEntity(myMechId));
         } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
-            IGame.Phase activationPhase = IGame.Phase
-                    .getPhaseFromName((String) activateHiddenPhase
-                            .getSelectedItem());
-            clientgui.getClient().sendActivateHidden(myMechId, activationPhase);
+            final GamePhase phase = comboActivateHiddenPhase.getSelectedItem();
+            clientgui.getClient().sendActivateHidden(myMechId, (phase == null) ? GamePhase.UNKNOWN : phase);
         }
     }
 }

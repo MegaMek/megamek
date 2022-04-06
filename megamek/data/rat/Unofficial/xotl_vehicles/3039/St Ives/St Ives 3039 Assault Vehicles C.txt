@@ -29,7 +29,7 @@ Partisan Heavy Tank (LRM),11
 Devastator Heavy Tank (Standard),56
 Ontos Heavy Tank (LRM),37
 Behemoth Heavy Tank (Standard),130
-Sturmfeur Heavy Tank (Standard),19
+SturmFeur Heavy Tank (Standard),19
 Rhino Fire Support Tank (Flamer),56
 Rhino Fire Support Tank (MG),56
 Rhino Fire Support Tank (Standard),150

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Lightning
 LTN-G14
 </Model>
 
+<mul id:>
+4512
+</mul id:>
+
 <year>
 2465
 </year>
@@ -33,7 +37,7 @@ IS Level 4
 </type>
 
 <motion_type>
-None
+Aerodyne
 </motion_type>
 
 <transporters>
@@ -80,19 +84,19 @@ None
 
 <Nose Equipment>
 Autocannon/10
+Medium Laser
 </Nose Equipment>
 
 <Left Wing Equipment>
-Medium Laser
 Medium Laser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 Medium Laser
-Medium Laser
 </Right Wing Equipment>
 
 <Aft Equipment>
+Medium Laser
 </Aft Equipment>
 
 <Wings Equipment>
@@ -110,3 +114,4 @@ TRO 3075 - Age of War
 <tonnage>
 50.0
 </tonnage>
+

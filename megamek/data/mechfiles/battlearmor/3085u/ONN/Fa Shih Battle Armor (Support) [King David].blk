@@ -20,6 +20,10 @@ Fa Shih Battle Armor
 (Support) [King David]
 </Model>
 
+<mul id:>
+1012
+</mul id:>
+
 <chassis>
 biped
 </chassis>

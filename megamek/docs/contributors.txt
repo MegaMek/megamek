@@ -6,14 +6,17 @@
   Current Maintainer:
      MegaMek GitHub Organization <https://github.com/MegaMek>
 
-  Lead Developers:
+ Website:
+    megamek.org
+
+   Active Developers:
 	 Carl "Neoancient" Spain
 	 NickAragua
-	 Christopher Watford
 	 Juliez
+	 Justin "Windchild" Bowen
 
   Data Lead
-	 Dave Nawton 
+	 Dave "Hammer" Nawton 
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -130,6 +133,7 @@
 	 Norman "Flynn" Zinner
 	 Kaji
 	 UlyssesSockdrawer
+	 Stonewall072
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -250,8 +254,8 @@
 	 Bloodwolf
 	 SLDF_gunslinger
 	 
-  Mech Data:
-  	Drawn from Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direct copy.
+  Mech (Fluff) Data:
+  	From Sarna.net. A GNU FDL 1.2 Wiki, text compared to original TRO text for direct copy.
   	
   Translations
      Jörg Harder <joergharder@t-online.de>
@@ -264,6 +268,7 @@
  	 Nicholas Walczak <arlith@users.sourceforge.net>
 	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
      Dylan Myers <https://github.com/Dylan-M>
+     Christopher Watford
 
   Icons and Images
       FatCow (http://www.fatcow.com), licensed under CC Attribution (http://creativecommons.org/licenses/by/3.0/)

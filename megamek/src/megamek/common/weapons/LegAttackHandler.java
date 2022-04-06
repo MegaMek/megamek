@@ -1,19 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 23, 2004
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
@@ -25,7 +27,7 @@ import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -35,20 +37,12 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * @since Sept 23, 2004
  */
 public class LegAttackHandler extends WeaponHandler {
-    /**
-     *
-     */
     private static final long serialVersionUID = 4429993211361286138L;
 
-    /**
-     * @param toHit
-     * @param waa
-     * @param g
-     */
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
     }
 

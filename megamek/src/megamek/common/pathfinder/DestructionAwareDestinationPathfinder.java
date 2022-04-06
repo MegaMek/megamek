@@ -24,17 +24,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Building;
-import megamek.common.BulldozerMovePath;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Terrains;
 
 /**
  * Handles the generation of ground-based move paths that contain information relating to the destruction 
@@ -74,7 +65,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             return null;
         // can't "climb into" anything while jumping
         } else { 
-            if(entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
+            if (entity.hasETypeFlag(Entity.ETYPE_INFANTRY)) {
                 startPath.addStep(MoveStepType.CLIMB_MODE_OFF);
             } else {
                 startPath.addStep(MoveStepType.CLIMB_MODE_ON);
@@ -82,11 +73,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         }
         
         // if we're on the ground, let's try to get up first before moving 
-        if(entity.isProne() || entity.isHullDown()) {
+        if (entity.isProne() || entity.isHullDown()) {
             startPath.addStep(MoveStepType.GET_UP);
             
             // if we can't even get up, no need to do anything else
-            if(!startPath.isMoveLegal()) {
+            if (!startPath.isMoveLegal()) {
                 return null;
             }
         }
@@ -108,12 +99,12 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         shortestPathsToCoords.put(startPath.getFinalCoords(), startPath);
         BulldozerMovePath bestPath = null;
 
-        while(!candidates.isEmpty()) {
+        while (!candidates.isEmpty()) {
             BulldozerMovePath currentPath = candidates.pollFirst();
             
             candidates.addAll(generateChildNodes(currentPath, shortestPathsToCoords, clusterTracker, closest));      
             
-            if(destinationCoords.contains(currentPath.getFinalCoords()) &&
+            if (destinationCoords.contains(currentPath.getFinalCoords()) &&
                     ((bestPath == null) || (movePathComparator.compare(bestPath, currentPath) > 0))) {
                 bestPath = currentPath;
                 maximumCost = bestPath.getMpUsed() + bestPath.getLevelingCost();
@@ -131,17 +122,17 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
         Coords bestCoords = null;
         int bestDistance = Integer.MAX_VALUE;
         
-        for(Coords coords : destinationRegion) {
-            if(!entity.getGame().getBoard().contains(coords)) {
+        for (Coords coords : destinationRegion) {
+            if (!entity.getGame().getBoard().contains(coords)) {
                 continue;
             }
             
             int levelingCost = BulldozerMovePath.calculateLevelingCost(coords, entity);
             boolean canLevel = levelingCost > BulldozerMovePath.CANNOT_LEVEL;
             
-            if(!entity.isLocationProhibited(coords) || canLevel) {
+            if (!entity.isLocationProhibited(coords) || canLevel) {
                 int distance = coords.distance(entity.getPosition()) + (canLevel ? levelingCost : 0);
-                if(distance < bestDistance) {
+                if (distance < bestDistance) {
                     bestDistance = distance;
                     bestCoords = coords;
                 }
@@ -155,19 +146,20 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Function that generates all possible "legal" moves resulting from the given path
      * and updates the set of visited coordinates so we don't visit them again.
      * @param parentPath The path for which to generate child nodes
-     * @param visitedCoords Set of visited coordinates so we don't loop around
      * @return List of valid children. Between 0 and 3 inclusive.
      */
-    protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath, Map<Coords, BulldozerMovePath> shortestPathsToCoords,
-            BoardClusterTracker clusterTracker, Coords destinationCoords) {
+    protected List<BulldozerMovePath> generateChildNodes(BulldozerMovePath parentPath,
+                                                         Map<Coords, BulldozerMovePath> shortestPathsToCoords,
+                                                         BoardClusterTracker clusterTracker,
+                                                         Coords destinationCoords) {
         List<BulldozerMovePath> children = new ArrayList<>();
 
         // there are six possible children of a move path, defined in AeroPathUtil.TURNS
-        for(List<MoveStepType> turns : AeroPathUtil.TURNS) {
+        for (List<MoveStepType> turns : AeroPathUtil.TURNS) {
             BulldozerMovePath childPath = (BulldozerMovePath) parentPath.clone();
             
             // apply the list of turn steps
-            for(MoveStepType stepType : turns) {
+            for (MoveStepType stepType : turns) {
                 childPath.addStep(stepType);
             }
             
@@ -239,6 +231,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             return;
         }
         
+        // if we have a leg armor breach and are not jumping, let's not consider it
+        if (!child.isJumping() && underwaterLegBreachCheck(child)) {
+            return;
+        }
+        
         if ((!shortestPathsToCoords.containsKey(child.getFinalCoords()) ||
                 // shorter path to these coordinates
                 (movePathComparator.compare(shortestPathsToCoords.get(child.getFinalCoords()), child) > 0)) &&
@@ -255,7 +252,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      * Utility function that returns true if an attack on the building in the given coordinates
      * will result in damage to friendly units. Computation is cached as it is somewhat expensive to perform for each possible path node.
      */
-    private boolean friendlyFireCheck(Entity shooter, IGame game, Coords position, boolean includeMobileUnits) {
+    private boolean friendlyFireCheck(Entity shooter, Game game, Coords position, boolean includeMobileUnits) {
         if (friendlyFireCheckResults.containsKey(position)) {
             return friendlyFireCheckResults.get(position);
         }
@@ -283,6 +280,21 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
     }
     
     /**
+     * Simplified logic for whether a mech going into the given hex will flood 
+     * breached legs and effectively immobilize it.
+     */
+    private boolean underwaterLegBreachCheck(BulldozerMovePath path) {        
+        Hex hex = path.getGame().getBoard().getHex(path.getFinalCoords());
+        
+        // investigate: do we want quad mechs with a single breached leg
+        // to risk this move? Currently not, but if we did, this is probably where
+        // this logic would go.
+        return path.getCachedEntityState().getNumBreachedLegs() > 0 && 
+                hex != null &&
+                hex.terrainLevel(Terrains.WATER) > 0;
+    }
+    
+    /**
      * Comparator implementation useful in comparing how much closer a given path is to the internal
      * "destination edge" than the other.
      * @author NickAragua
@@ -305,7 +317,7 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
          */
         @Override
         public int compare(BulldozerMovePath first, BulldozerMovePath second) {
-            IBoard board = first.getGame().getBoard();
+            Board board = first.getGame().getBoard();
             boolean backwards = false;
             int h1 = first.getFinalCoords().distance(destination)
                     + ShortestPathFinder.getLevelDiff(first, destination, board, false)

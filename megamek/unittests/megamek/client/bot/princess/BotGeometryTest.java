@@ -35,7 +35,7 @@ public class BotGeometryTest {
         expectedCoords.add(new Coords(-1, -1));
         
         Assert.assertEquals(6, resultingCoords.size());
-        for(int x = 0; x < expectedCoords.size(); x++) {
+        for (int x = 0; x < expectedCoords.size(); x++) {
             Assert.assertEquals(true, resultingCoords.contains(expectedCoords.get(x)));
         }
         
@@ -56,7 +56,7 @@ public class BotGeometryTest {
         expectedCoords.add(new Coords(0, 2));
         expectedCoords.add(new Coords(-1, 1));
         Assert.assertEquals(12, resultingCoords.size());
-        for(int x = 0; x < expectedCoords.size(); x++) {
+        for (int x = 0; x < expectedCoords.size(); x++) {
             Assert.assertEquals(true, resultingCoords.contains(expectedCoords.get(x)));
         }
         

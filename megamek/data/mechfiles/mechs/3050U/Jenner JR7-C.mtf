@@ -1,6 +1,7 @@
 Version:1.0
 Jenner
 JR7-C
+mul id:1688
 
 Config:Biped
 TechBase:Inner Sphere
@@ -148,3 +149,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre.
+
+capabilities:Five Smithson Lifter jump jets, two in each side torso and one in the center torso gave it a jumping distance of 150 meters, while its 245-rated Magna fusion engine allowed for a top speed of over 118 km/h, making it faster than most other 'Mechs. A favorite tactic of Jenner lances was to gang up on larger 'Mechs and unleash a devastating alpha strike. One or two of the 'Mechs would be equipped with inferno rounds, so even if the enemy survived the first strike they were badly damaged and running hot, allowing the Jenners to jump to safety and cool down themselves. A few seconds later the attack would be repeated until finally, the enemy was dead. It was also common practice to pair the Jenner with another Combine 'Mech, the Panther, creating a deadly combination of sheer speed and firepower with the slower Panther provided cover fire for the Jenner's flanking attack. The Jenner was such a favorite among Kurita MechWarriors that it became the benchmark against which all other newly designed Combine 'Mechs were compared.
+
+deployment:The JR7-C was a basic upgrade of the JR7-K, removing one of the Medium Lasers and replacing it with a C3 Slave Unit. Combined with its speed this made the Jenner an ideal spotter for a C3 company.
+
+history:The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre. The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre. Construction of new Jenners continued at Diplan MechYard's factory on Ozawa until a raw mineral shortage caused a halt in 2815, though they continued to produce new chassis. In 2823 production resumed on Ozawa, with some three thousand chassis shipped to Diplan's subsidiary on Luthien for final assembly, which itself was retooling to begin full-scale production; by 2830 both production lines were producing 1,350 Jenners a year. The sheer destruction of the Succession Wars finally took their toll when the last Jenner factory was destroyed in 2848, though so many Jenners had been produced by then that nearly every DCMS battalion had at least one of these 'Mechs well into the War of 3039. While the other Successor States eventually managed to procure operational Jenners (every AFFS regiment along the Combine border had at least one), the design remained in predominant use by House Kurita.
+
+manufacturer:Luthien Armor Works, Diplan 'Mechyards, Luthien Armor Works, Luthien Armor Works, Diplan 'Mechyards
+primaryfactory:Luthien, Abiy Adi, New Samarkand, Ozawa
+
+systemmanufacturer:CHASSIS:Diplan Scout-A
+systemmanufacturer:ENGINE:Magna 245
+systemmanufacturer:ARMOR:Starshield
+systemmanufacturer:JUMPJET:Smithson Lifters
+systemmanufacturer:COMMUNICATIONS:Dawson III
+systemmanufacturer:TARGETING:Bk-309

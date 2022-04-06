@@ -22,8 +22,9 @@ package megamek.common.util.fileUtils;
 import java.awt.*;
 
 /**
- * This interface represents a categorizable file. Created on January 18, 2004
+ * This interface represents a categorizable file.
  * @author James Damour
+ * @since January 18, 2004
  */
 public abstract class ItemFile {
     protected Object item = null; // allows us to cache the item

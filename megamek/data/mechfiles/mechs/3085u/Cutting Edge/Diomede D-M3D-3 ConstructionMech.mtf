@@ -1,6 +1,7 @@
 Version:1.0
 Diomede
 D-M3D-3 ConstructionMech
+mul id:901
 
 Config:Biped
 techbase:Inner Sphere
@@ -14,8 +15,6 @@ structure:IS Industrial
 myomer:Standard
 
 heat sinks:10 Single
-nocrit:Industrial:None
-nocrit:IS Heavy Industrial:None
 walk mp:2
 jump mp:0
 
@@ -41,7 +40,6 @@ MML 7, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
 Heavy-Duty Pile Driver
 Heavy-Duty Pile Driver
 Heavy-Duty Pile Driver
@@ -50,6 +48,7 @@ Heavy-Duty Pile Driver
 Heavy-Duty Pile Driver
 Heavy-Duty Pile Driver
 Heavy-Duty Pile Driver
+-Empty-
 -Empty-
 
 Right Arm:
@@ -105,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Liquid Storage (1 ton)
-Liquid Storage (1 ton)
+Liquid Storage:SIZE:1.0
+Liquid Storage:SIZE:1.0
 
 Head:
 Life Support

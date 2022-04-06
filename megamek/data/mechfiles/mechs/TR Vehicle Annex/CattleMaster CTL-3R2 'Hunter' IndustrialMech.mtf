@@ -1,6 +1,7 @@
 Version:1.0
 CattleMaster
 CTL-3R2 'Hunter' IndustrialMech
+mul id:3906
 
 Config:Biped
 TechBase:Inner Sphere

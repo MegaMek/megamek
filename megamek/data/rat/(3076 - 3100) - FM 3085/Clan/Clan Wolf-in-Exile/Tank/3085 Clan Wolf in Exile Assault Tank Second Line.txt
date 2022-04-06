@@ -1,10 +1,10 @@
 3085 Clan Wolf in Exile Assault Tank Second Line
-Sturmfeur Heavy Tank (Standard),1
+SturmFeur Heavy Tank (Standard),1
 Demolisher Heavy Tank (Clan),2
 Fensalir Combat WiGE (HAG),3
 Alacorn Heavy Tank Mk VII,4
 Heimdall Ground Monitor Tank Prime,5
-Sturmfeur Heavy Tank (Heavy Gauss),6
+SturmFeur Heavy Tank (Heavy Gauss),6
 Heimdall Ground Monitor Tank Prime,5
 Carnivore Assault Tank (Second Line),4
 Fensalir Combat WiGE (HAG),3

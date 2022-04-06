@@ -11,14 +11,12 @@ import megamek.server.Server;
 public class ShowValidTargetsCommand extends ServerCommand {
 
     public ShowValidTargetsCommand(Server server) {
-        super(
-                server,
-                "validTargets",
+        super(server, "validTargets",
                 "Shows a list of entity id's that are valid targets for the current entity. Usage: /validTargets # where # is the id number of the entity you are shooting from.");
     }
 
     @Override
-    public void run(int connId, String[] args) {
+    public void run(int connId, String... args) {
         try {
             int id = Integer.parseInt(args[1]);
             Entity ent = server.getGame().getEntity(id);
@@ -47,7 +45,7 @@ public class ShowValidTargetsCommand extends ServerCommand {
                                 + " at a to hit penalty of ";
                         str = str
                                 + thd.getValue()
-                                + ", at range " + ent.getPosition().distance(entList.get(i).getPosition()) + thd.getTableDesc() + ";\n"; //$NON-NLS-1$
+                                + ", at range " + ent.getPosition().distance(entList.get(i).getPosition()) + thd.getTableDesc() + ";\n";
                     }
 
                 }
@@ -56,9 +54,8 @@ public class ShowValidTargetsCommand extends ServerCommand {
             } else {
                 server.sendServerChat(connId, "No such entity.");
             }
-        } catch (NumberFormatException nfe) {
-        } catch (NullPointerException npe) {
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (Exception ignored) {
+
         }
     }
 }

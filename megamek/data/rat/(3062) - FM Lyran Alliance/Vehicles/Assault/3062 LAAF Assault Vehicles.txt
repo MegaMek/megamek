@@ -5,8 +5,8 @@ Schrek PPC Carrier (Standard),3
 Alacorn Heavy Tank Mk VI,4
 Demolisher Heavy Tank (Gauss),5
 Ontos Heavy Tank (3053 Upgrade),6
-Sturmfeur Heavy Tank (Standard),5
+SturmFeur Heavy Tank (Standard),5
 Demolisher II Heavy Tank (Standard),4
-Sturmfeur Heavy Tank (Standard),3
+SturmFeur Heavy Tank (Standard),3
 Partisan Heavy Tank (Standard),2
 Behemoth Heavy Tank (Standard),1

@@ -21,7 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.Tank;
@@ -39,7 +39,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
      * @param g
      */
     public PopUpMineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+            Game g, Server s) {
         super(toHit, waa, g, s);
         sSalvoType = " mine(s) ";
     }

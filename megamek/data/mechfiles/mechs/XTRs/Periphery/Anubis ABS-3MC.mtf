@@ -1,40 +1,41 @@
 Version:1.0
 Anubis
 ABS-3MC
+mul id:5562
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3081
-Source:XTRO Periphery - Jihad
-Rules Level:4
+techbase:Inner Sphere
+era:3081
+source:XTRO Periphery - Jihad
+rules level:4
 
-Mass:30
-Engine:240 XL Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:30
+engine:240 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:8
+jump mp:0
 
-Armor:Stealth(Inner Sphere)
-LA Armor:8
-RA Armor:8
-LT Armor:9
-RT Armor:9
-CT Armor:11
-HD Armor:9
-LL Armor:12
-RL Armor:12
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+armor:Stealth(Inner Sphere)
+LA armor:8
+RA armor:8
+LT armor:9
+RT armor:9
+CT armor:11
+HD armor:9
+LL armor:12
+RL armor:12
+RTL armor:3
+RTR armor:3
+RTC armor:4
 
 Weapons:4
-Enhanced LRM 5, Left Torso
-Enhanced LRM 5, Right Torso
 ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
+Enhanced LRM 5, Left Torso
+Enhanced LRM 5, Right Torso
 
 Left Arm:
 Shoulder
@@ -42,12 +43,12 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
 
 Right Arm:
@@ -56,14 +57,13 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
 -Empty-
-
 
 Left Torso:
 Fusion Engine
@@ -75,9 +75,9 @@ ISDoubleHeatSink
 Enhanced LRM 5
 Enhanced LRM 5
 ISEnhancedLRM5 Ammo
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Stealth
+IS Stealth
 
 Right Torso:
 Fusion Engine
@@ -85,12 +85,13 @@ Fusion Engine
 Fusion Engine
 Enhanced LRM 5
 Enhanced LRM 5
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Stealth
-Stealth
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Stealth
+IS Stealth
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Stealth
-Stealth
+IS Stealth
+IS Stealth
 -Empty-
 -Empty-
 -Empty-

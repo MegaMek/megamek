@@ -20,6 +20,10 @@ Heavy Hover APC
 (Scout Tank)
 </Model>
 
+<mul id:>
+1433
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>

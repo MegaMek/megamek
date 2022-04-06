@@ -45,7 +45,7 @@ public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		ammoWeight = 0.0003;
 		shots = 3;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3057, 3059, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

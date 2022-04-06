@@ -19,6 +19,10 @@ Grenadier Battle Armor
 (Hunter-Killer)[C3/HRR]
 </Model>
 
+<mul id:>
+6740
+</mul id:>
+
 <chassis>
 biped
 </chassis>

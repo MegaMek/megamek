@@ -1,6 +1,7 @@
 Version:1.0
 Warhammer
 WHM-7CS
+mul id:7599
 
 Config:Biped
 TechBase:Inner Sphere

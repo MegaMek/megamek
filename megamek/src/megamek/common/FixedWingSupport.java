@@ -9,9 +9,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on 10/31/2010
- */
 package megamek.common;
 
 import megamek.common.verifier.SupportVeeStructure;
@@ -23,22 +20,16 @@ import java.util.Map;
 
 /**
  * @author Jason Tighe
+ * @since 10/31/2010
  */
 public class FixedWingSupport extends ConvFighter {
-
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 347113432982248518L;
 
 
     public static final int LOC_BODY = 5;
 
-    private static String[] LOCATION_ABBRS =
-        { "NOS", "LWG", "RWG", "AFT", "WNG", "BOD" };
-    private static String[] LOCATION_NAMES =
-        { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LWG", "RWG", "AFT", "WNG", "BOD" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Wing", "Right Wing", "Aft", "Wings", "Body" };
     private int[] barRating;
 
     public FixedWingSupport() {
@@ -126,9 +117,9 @@ public class FixedWingSupport extends ConvFighter {
      * The mass of each point of fuel in kg, based on weight class and engine tech rating.
      */
     private static final int[][] KG_PER_FUEL_POINT = {
-            {50, 30, 23, 15, 13, 10}, // small
-            {63, 38, 25, 20, 18, 15}, // medium
-            {83, 50, 35, 28, 23, 20} // large
+            { 50, 30, 23, 15, 13, 10 }, // small
+            { 63, 38, 25, 20, 18, 15 }, // medium
+            { 83, 50, 35, 28, 23, 20 } // large
     };
 
     /**
@@ -266,6 +257,7 @@ public class FixedWingSupport extends ConvFighter {
         }
     }
 
+    @Override
     public double getBaseEngineValue() {
         if (getWeight() < 5) {
             return 0.005;
@@ -276,6 +268,7 @@ public class FixedWingSupport extends ConvFighter {
         }
     }
 
+    @Override
     public double getBaseChassisValue() {
         if (getWeight() < 5) {
             return 0.08;
@@ -348,13 +341,11 @@ public class FixedWingSupport extends ConvFighter {
         } else {
             if (hasPatchworkArmor()) {
                 for (int loc = 0; loc < locations(); loc++) {
-                    costs[i++] = getArmorWeight(loc)
-                            * EquipmentType.getArmorCost(armorType[loc]);
+                    costs[i++] = getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
                 }
 
             } else {
-                costs[i++] = getArmorWeight()
-                        * EquipmentType.getArmorCost(armorType[0]);
+                costs[i++] = getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
             }
         }
 
@@ -449,7 +440,6 @@ public class FixedWingSupport extends ConvFighter {
         bvText.append(startTable);
         // find the maximum length of the columns.
         for (int l = 0; l < left.size(); l++) {
-
             if (l == 6) {
                 getWeaponsAndEquipmentCost(true);
             } else {
@@ -507,7 +497,8 @@ public class FixedWingSupport extends ConvFighter {
         return 1.0;
     }
 
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER | Entity.ETYPE_FIXED_WING_SUPPORT;
     }
 }

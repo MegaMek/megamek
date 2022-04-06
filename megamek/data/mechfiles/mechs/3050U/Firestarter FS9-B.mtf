@@ -1,56 +1,55 @@
 Version:1.0
 Firestarter
 FS9-B
+mul id:1094
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3070
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Inner Sphere
+era:3070
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:35
-Engine:210 Light Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:35
+engine:210 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:6
-Jump MP:8
+heat sinks:10 Single
+walk mp:6
+jump mp:8
 
-Armor:Light Ferro-Fibrous
-LA Armor:9
-RA Armor:9
-LT Armor:9
-RT Armor:9
-CT Armor:14
-HD Armor:8
-LL Armor:12
-RL Armor:12
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:9
+RA armor:9
+LT armor:9
+RT armor:9
+CT armor:14
+HD armor:8
+LL armor:12
+RL armor:12
+RTL armor:3
+RTR armor:3
+RTC armor:5
 
-Weapons:7
-1 ISFlamer, Left Arm
-1 ISERMediumLaser, Right Arm
-1 ISImprovedC3CPU, Left Torso
-1 ISFlamer, Center Torso (R)
-1 ISFlamer, Center Torso
-
+Weapons:4
+Flamer, Left Arm
+ER Medium Laser, Right Arm
+Flamer, Center Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Heat Sink
-ISFlamer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+Flamer
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -58,41 +57,41 @@ Upper Arm Actuator
 Lower Arm Actuator
 Heat Sink
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-ISImprovedC3CPU
-ISImprovedC3CPU
-Endo Steel
-Endo Steel
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+ISC3iUnit
+ISC3iUnit
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-ImprovedJump Jet
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -105,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISFlamer
-ISFlamer (R)
+Flamer
+Flamer (R)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -127,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ImprovedJump Jet
-ImprovedJump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +140,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ImprovedJump Jet
-ImprovedJump Jet
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

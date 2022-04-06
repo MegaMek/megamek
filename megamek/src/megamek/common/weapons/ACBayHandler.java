@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -37,7 +37,7 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
      * @param g
      * @param s
      */
-    public ACBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ACBayHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

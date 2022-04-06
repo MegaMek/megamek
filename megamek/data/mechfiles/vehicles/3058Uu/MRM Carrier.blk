@@ -15,6 +15,10 @@ MRM Carrier
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+2243
+</mul id:>
 <Tonnage>
 60
 </Tonnage>

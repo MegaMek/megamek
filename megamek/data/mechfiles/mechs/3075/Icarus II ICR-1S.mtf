@@ -1,6 +1,7 @@
 Version:1.0
 Icarus II
 ICR-1S
+mul id:1600
 
 Config:Biped
 TechBase:Inner Sphere

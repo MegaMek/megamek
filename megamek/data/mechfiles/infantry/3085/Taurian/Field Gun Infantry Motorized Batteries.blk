@@ -15,6 +15,10 @@ Field Gun Infantry
 <Model>
 (Motorized Batteries)
 </Model>
+
+<mul id:>
+1061
+</mul id:>
 <squad_size>
 10
 </squad_size>

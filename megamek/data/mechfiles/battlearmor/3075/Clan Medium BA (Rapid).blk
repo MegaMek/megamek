@@ -19,6 +19,10 @@ Clan Medium Battle Armor
 (Rabid)
 </Model>
 
+<mul id:>
+3957
+</mul id:>
+
 <chassis>
 biped
 </chassis>

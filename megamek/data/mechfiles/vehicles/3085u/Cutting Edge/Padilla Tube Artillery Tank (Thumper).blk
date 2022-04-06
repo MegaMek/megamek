@@ -15,6 +15,10 @@ Padilla Tube Artillery Tank
 <Model>
 (Thumper)
 </Model>
+
+<mul id:>
+2407
+</mul id:>
 <Tonnage>
 55
 </Tonnage>

@@ -20,6 +20,10 @@ Raiden Battle Armor
 (Original)
 </Model>
 
+<mul id:>
+2620
+</mul id:>
+
 <chassis>
 biped
 </chassis>

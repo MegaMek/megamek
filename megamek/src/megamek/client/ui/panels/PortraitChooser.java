@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -23,52 +23,36 @@ import megamek.client.ui.trees.PortraitChooserTree;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
-import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.AbstractDirectory;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import javax.swing.*;
 
+/**
+ * PortraitChooser is an implementation of AbstractIconChooser that is used to select a Portrait
+ * from the Portrait Directory.
+ * @see AbstractIconChooser
+ */
 public class PortraitChooser extends AbstractIconChooser {
     //region Constructors
-    public PortraitChooser(final AbstractIcon icon) {
-        super(new PortraitChooserTree(), icon);
+    public PortraitChooser(final JFrame frame, final AbstractIcon icon) {
+        super(frame, "PortraitChooser", new PortraitChooserTree(), icon);
     }
     //endregion Constructors
 
     @Override
-    protected DirectoryItems getDirectory() {
+    protected @Nullable AbstractDirectory getDirectory() {
         return MMStaticDirectoryManager.getPortraits();
     }
 
     @Override
-    protected Portrait createIcon(String category, String filename) {
+    protected Portrait createIcon(String category, final String filename) {
         return new Portrait(category, filename);
     }
 
     @Override
     public @Nullable Portrait getSelectedItem() {
-        return (Portrait) getImageList().getSelectedValue();
-    }
-
-    @Override
-    protected List<AbstractIcon> getItems(String category) {
-        List<AbstractIcon> result = new ArrayList<>();
-
-        // The portraits of the selected category are presented.
-        // When the includeSubDirs flag is true, all categories
-        // below the selected one are also presented.
-        if (includeSubDirs) {
-            for (Iterator<String> catNames = getDirectory().getCategoryNames(); catNames.hasNext(); ) {
-                String tcat = catNames.next();
-                if (tcat.startsWith(category)) {
-                    addCategoryItems(tcat, result);
-                }
-            }
-        } else {
-            addCategoryItems(category, result);
-        }
-        return result;
+        final AbstractIcon icon = super.getSelectedItem();
+        return (icon instanceof Portrait) ? (Portrait) icon : null;
     }
 
     @Override

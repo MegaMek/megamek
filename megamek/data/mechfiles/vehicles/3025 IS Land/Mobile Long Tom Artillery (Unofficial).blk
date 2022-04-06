@@ -20,6 +20,10 @@ Mobile Long Tom Artillery (Unofficial)
 (+ Carriage)
 </Model>
 
+<mul id:>
+2202
+</mul id:>
+
 <Tonnage>
 95
 </Tonnage>

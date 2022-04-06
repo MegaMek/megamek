@@ -20,6 +20,10 @@ Chippewa
 CHP-W5b
 </Model>
 
+<mul id:>
+585
+</mul id:>
+
 <year>
 2731
 </year>
@@ -119,3 +123,40 @@ H:Operation Klondyke - Star League
 <tonnage>
 90.0
 </tonnage>
+
+<overview>
+Designed by the Star League, the heavy Chippewa isn't extremely fast, but it has an impressive array of armament.
+</overview>
+
+<deployment>
+This version of the Chippewa drops the SRM-6 and upgrades the Large Lasers to extended range models. It also adds Artemis IV to the LRM racks and carries twenty-five double heat sinks.
+</deployment>
+
+<history>
+Mostly used in the Lyran Commonwealth, the Chippewa has become House Steiner's main heavy fighter. Prior to the start of the First Succession War Steiner captured the Bowie Industries plant on Dell, where W5 models were produced until House Kurita successfully destroyed the plant in a raid. Another major production site was the Bowie Industries in the planet Wyatt, untill 3068, when the Word of Blake nuked it during the Jihad. A heavy fighter, the Chippewa utilizes its large wings to provide added maneuverability when fighting in an atmosphere. The outer portions of each wing can retract inward, allowing for the fighter to be stored aboard transports more easily.
+</history>
+
+<manufacturer>
+Bowie Industries,Bowie Industries
+</manufacturer>
+
+<primaryFactory>
+Dell,Wasat
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Bowie 50
+ENGINE:PlasmaStar 270
+ARMOR:Wyatt Coresteel Standard
+COMMUNICATIONS:Rander 200
+TARGETING:Rander TAS
+</systemManufacturers>
+
+<source>
+Hist Operation Klondike - Succession Wars
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

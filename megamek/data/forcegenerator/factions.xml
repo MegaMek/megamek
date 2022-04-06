@@ -25,6 +25,10 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.R,PIR</parentFaction>
 	</faction>
+	<faction key='Blessed Order' name='Blessed Order' minor='false' clan='false' periphery='false'>
+		<years>3128-3141</years>
+		<parentFaction>CS</parentFaction>
+	</faction>
 	<faction key='BH' name='Butte Hold' minor='true' clan='false' periphery='true'>
 		<years>3018-3028</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -63,7 +67,6 @@
 	<faction key='CLAN' name='Clan - General' minor='false' clan='true' periphery='false'>
 		<years>2807-</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='CBS' name='Clan Blood Spirit' minor='false' clan='true' periphery='false'>
 		<years>2807-3082</years>
@@ -174,7 +177,7 @@
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CWIE' name='Clan Wolf-in-Exile' minor='false' clan='true' periphery='false'>
-		<years>3057-</years>
+		<years>3057-3151</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
@@ -232,8 +235,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.DD</parentFaction>
 	</faction>
-	<faction key='CEI' name='Escorpión Imperio' minor='false' clan='true' periphery='false'>
-		<years>3080-3085</years>
+	<faction key='CEI' name='Escorpión Imperio' minor='false' clan='true' periphery='true'>
+		<years>3080-3141</years>
 		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CGS</parentFaction>
 	</faction>
@@ -286,7 +289,7 @@
 		<parentFaction>Periphery.R,PIR</parentFaction>
 	</faction>
 	<faction key='HL' name='Hanseatic League' minor='true' clan='false' periphery='true'>
-		<years>2891-3085</years>
+		<years>2891-3141</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.Deep</parentFaction>
 	</faction>
@@ -298,7 +301,6 @@
 	<faction key='IS' name='Inner Sphere - General' minor='false' clan='false' periphery='false'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='KP' name='Kittery Prefecture' minor='true' clan='false' periphery='false'>
 		<years>3072-3081</years>
@@ -397,7 +399,6 @@
 	<faction key='Periphery' name='Periphery' minor='false' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='PIR' name='Pirate' minor='false' clan='false' periphery='true'>
 		<years>-</years>
@@ -477,6 +478,11 @@
 		<years>3057-3068</years>
 		<parentFaction>CM</parentFaction>
 	</faction>
+	<faction key='SE' name='Scorpion Empire' minor='false' clan='true' periphery='true'>
+		<years>3141-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CEI</parentFaction>
+	</faction>
 	<faction key='SA' name='Senatorial Alliance' minor='true' clan='false' periphery='false'>
 		<years>3135-3138</years>
 		<parentFaction>ROS</parentFaction>
@@ -497,7 +503,6 @@
 	<faction key='SL' name='Star League' minor='false' clan='false' periphery='false'>
 		<years>2571-2780</years>
 		<ratingLevels>C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='SLIE' name='Star League-in-Exile' minor='false' clan='false' periphery='false'>
 		<years>2786-2801</years>
@@ -796,7 +801,6 @@
 	<faction key='Periphery.Deep' name='Deep Periphery' minor='false' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
 	</faction>
 	<faction key='FWL.DA' name='Defenders of Andurien' minor='false' clan='false' periphery='false'>
 		<years>2514-3039</years>

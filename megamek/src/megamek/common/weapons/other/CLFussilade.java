@@ -20,23 +20,20 @@ import megamek.common.weapons.CLIATMWeapon;
 
 /**
  * @author beerockxs
- * 
  */
 public class CLFussilade extends CLIATMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1237937853765733086L;
 
     public CLFussilade() {
         super();
         //TODO Game Rules.
-        this.name = "Fusillade";
+        this.name = "Fusillade Launcher";
         setInternalName("Fusillade");
         addLookupName("Fussilade");
         flags = flags.or(WeaponType.F_PROTO_WEAPON).or(WeaponType.F_MISSILE)
-                .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT);
+                .or(WeaponType.F_ONESHOT).or(WeaponType.F_DOUBLE_ONESHOT)
+                .andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON)
+                .andNot(F_TANK_WEAPON);
         rackSize = 3;
         minimumRange = 4;
         shortRange = 5;
@@ -52,11 +49,15 @@ public class CLFussilade extends CLIATMWeapon {
         tonnage = 1.5;
         criticals = 1;
         bv = 11;
-        rulesRefs = "65,IO";
-        techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
-            .setClanAdvancement(3072).setPrototypeFactions(F_CCY)
-            .setProductionFactions(F_CCY).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        rulesRefs = "65, IO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+                .setClanAdvancement(3072,DATE_NONE,DATE_NONE, 3075,DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CCY)
+                .setProductionFactions(F_CCY)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override

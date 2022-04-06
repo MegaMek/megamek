@@ -15,6 +15,10 @@ Minion Advanced Tactical Vehicle
 <Model>
 (TAG)
 </Model>
+
+<mul id:>
+4641
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

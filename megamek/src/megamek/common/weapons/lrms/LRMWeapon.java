@@ -1,21 +1,27 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -39,9 +45,6 @@ import megamek.server.Server;
  */
 public abstract class LRMWeapon extends MissileWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 8755275511561446251L;
 
     public LRMWeapon() {
@@ -64,17 +67,10 @@ public abstract class LRMWeapon extends MissileWeapon {
             return super.getTonnage(entity, location, size);
         }
     }
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
+
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
@@ -132,6 +128,19 @@ public abstract class LRMWeapon extends MissileWeapon {
         } else {
             removeMode("");
             removeMode("Indirect");
+        }
+    }
+
+    @Override
+    public String getSortingName() {
+        if (sortingName != null) {
+            return sortingName;
+        } else {
+            String oneShotTag = hasFlag(F_ONESHOT) ? "OS " : "";
+            if (name.contains("I-OS")) {
+                oneShotTag = "XIOS ";
+            }
+            return "LRM " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
         }
     }
 }

@@ -1,6 +1,7 @@
 Version:1.1
 Woodsman
 A
+mul id:3586
 
 Config:Biped Omnimech
 techbase:Clan
@@ -151,4 +152,18 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+overview:The first heavy OmniMech developed by Clan Wolf, the Woodsman was one of the most heavily tested weapons ever produced by the Clan.
+ 
+capabilities:Heavy armor provided excellent protection, while a standard fusion engine improved longevity on the battlefield. The light Endo Steel chassis allowed the Woodsman to devote 27 tons to pod space, allowing many mission specific loadouts and prototype weapon configurations. The permanently installed MASC system allowed a pilot to briefly exceed 80 km/h to either withdraw or capitalize on breaches in enemy ranks. The Woodsman was so versatile that it was often used by Wolf scientists to test new weapons and weapon configurations. The Naga's dual Arrow IV launcher configuration, for example, was tested on the Woodsman chassis.
 
+deployment:The most common alternate configuration in the Woodsman's long career mounted two ER PPCs, two Medium Pulse Lasers, and a Large Pulse Laser and ER Small Laser for backup. It keeps the same number of double heat sinks as the primary configuration, but relocates them across the torso.
+
+history:Every last detail was considered and problems were eliminated before production began. This resulted in a chassis that would not only function well in the Clan's front line forces for nearly a century, but also inspire the Timber Wolf, Gargoyle, and Naga OmniMechs. Though it served the Wolf Clan well, it was eventually surpassed by newer designs. The Woodsman was relegated to second-line units, and then eventually phased out of service completely by the time of Operation Revival. There are some rumors that a few Dark Caste bandits may have a Woodsman, but these reports remain unconfirmed. In 3149 the Woodsman was returned to production in the Wolf Empire to quickly rebuild the touman.
+
+manufacturer:Wolf Clan Site #2, Earthwerks Inc.
+primaryfactory:Strana Mechty, Keystone
+systemmanufacturer:CHASSIS:WOD-1
+systemmanufacturer:ENGINE:Wolf 300
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:COMMUNICATIONS:WolfCom 3-4
+systemmanufacturer:TARGETING:CW3

@@ -1,6 +1,7 @@
 Version:1.1
 Dig Lord
 RCL-Z1 Armed MiningMech
+mul id:5565
 
 Config:Biped
 TechBase:Inner Sphere

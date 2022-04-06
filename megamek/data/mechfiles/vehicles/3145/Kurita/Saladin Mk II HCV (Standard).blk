@@ -20,6 +20,10 @@ Saladin Mk II HCV
 (Standard)
 </Model>
 
+<mul id:>
+6371
+</mul id:>
+
 <year>
 3137
 </year>

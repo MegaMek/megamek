@@ -15,6 +15,10 @@ Fox Armored Car
 <Model>
 (Flamer)
 </Model>
+
+<mul id:>
+1150
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

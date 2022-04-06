@@ -20,6 +20,10 @@ Armored Personnel Carrier
 (Tracked SRM)
 </Model>
 
+<mul id:>
+119
+</mul id:>
+
 <year>
 2500
 </year>

@@ -1,11 +1,12 @@
 Version:1.0
 Baboon (Howler)
 4
+mul id:7568
 
 Config:Biped
 techbase:Clan
 era:2877
-source:Succession Wars
+source:Rec Guide:ilClan #8 - Early Succession Wars
 rules level:2
 
 mass:20

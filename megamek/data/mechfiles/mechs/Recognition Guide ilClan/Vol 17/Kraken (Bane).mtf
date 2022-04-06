@@ -1,0 +1,175 @@
+Version:1.0
+Kraken (Bane)
+(Standard)
+mul id:1841
+
+Config:Biped
+techbase:Clan
+era:2827
+source:Rec Guide:ilClan #17 - Succession Wars
+rules level:2
+
+mass:100
+engine:300 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Clan Double
+walk mp:3
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:13
+
+Weapons:14
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLMG
+CLMG
+CLMG
+CLMG
+Clan Machine Gun Ammo - Half
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Bane is a BattleMech that is based upon a Star League prototype that was never put into production. Tagged the Kraken by Inner Sphere forces who opposed it.
+
+capabilities:The Bane was first built in 2827. It was originally a significant part of many Clan toumans, but was gradually relegated to second-line status following the introduction of the OmniMech. As such, it is still critical to many defensive units. The design uses a lightweight XL Engine so that it can mount the arsenal that it does. Nineteen tons of armor protects this venerable assault 'Mech.
+
+deployment:This long-range, direct-fire support 'Mech is armed with ten Ultra Autocannon/2s. This weapon has one of the longest ranges in the Clan arsenal, so the Bane can stand back at extreme range and pepper an enemy unit with impunity. Four tons of ammunition keep the 'Mech well-supplied. It runs into problems up close, however, stemming from the minimum range of the autocannons. To keep enemies at bay, especially unarmored infantry, the Bane mounts four Machine Guns. Ten double heat sinks are sufficient to keep the 'Mech cool.
+
+manufacturer:Tokasha MechWorks Alpha, Olivetti Weapons
+primaryfactory:Tokasha, Sudetan
+systemmanufacturer:CHASSIS:Type AXT, Mk. XX
+systemmanufacturer:ENGINE:Fusion 300 XL
+systemmanufacturer:ARMOR:Forging C745
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:Series VI TTS
+

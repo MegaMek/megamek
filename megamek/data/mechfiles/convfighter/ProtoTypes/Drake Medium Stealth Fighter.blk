@@ -20,6 +20,10 @@ Drake Medium Stealth Fighter
 (Standard)
 </Model>
 
+<mul id:>
+4096
+</mul id:>
+
 <year>
 3087
 </year>

@@ -1,6 +1,7 @@
 Version:1.0
 Blackjack
 BJ2-OB
+mul id:380
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

@@ -1,6 +1,7 @@
 Version:1.0
 Bombardier
 BMB-14K
+mul id:425
 
 Config:Biped
 TechBase:Inner Sphere
@@ -33,7 +34,7 @@ RTC Armor:10
 Weapons:5
 3 ISMachine Gun, Right Arm, Ammo:100
 1 ISMGA, Right Arm
-2 ISMML7, Reft Torso, Ammo:85
+2 ISMML7, Right Torso, Ammo:85
 2 ISMML7, Left Torso
 1 ISC3SlaveUnit, Head
 

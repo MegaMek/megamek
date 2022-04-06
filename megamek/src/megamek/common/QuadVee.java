@@ -23,7 +23,7 @@ public class QuadVee extends QuadMech {
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
     
-    public static final String systemNames[] = { "Life Support", "Sensors",
+    public static final String[] systemNames = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
             "Conversion Gear"};
@@ -113,6 +113,7 @@ public class QuadVee extends QuadMech {
     /**
      * This is used to identify Mechs that have tracks mounted as industrial equipment.
      */
+    @Override
     public boolean hasTracks() {
         return false;
     }
@@ -144,7 +145,7 @@ public class QuadVee extends QuadMech {
         
         //If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
         //which we are interpreting as a cumulative 1/2 MP.
-        //bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
+        // bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
 
         int badTracks = 0;
         for (int loc = 0; loc < locations(); loc++) {
@@ -160,8 +161,8 @@ public class QuadVee extends QuadMech {
             wmp = wmp / (1 << badTracks);
         }
 
-        //Now apply modifiers
-        if (!ignoremodulararmor && hasModularArmor() ) {
+        // Now apply modifiers
+        if (!ignoremodulararmor && hasModularArmor()) {
             wmp--;
         }
 
@@ -251,6 +252,7 @@ public class QuadVee extends QuadMech {
         }
     }
 
+    @Override
     public int getOriginalSprintMPwithoutMASC() {
         if (getConversionMode() == CONV_MODE_VEHICLE && (game == null || !game.getOptions()
                 .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
@@ -262,6 +264,7 @@ public class QuadVee extends QuadMech {
     /*
      * No jumping in vehicle mode.
      */
+    @Override
     public int getJumpMP(boolean gravity, boolean ignoremodulararmor) {
         if (getConversionMode() == CONV_MODE_VEHICLE || convertingNow) {
             return 0;
@@ -272,6 +275,7 @@ public class QuadVee extends QuadMech {
     /*
      * In a QuadVee they're all torso jump jets. But they still don't work in vehicle mode.
      */
+    @Override
     public int torsoJumpJets() {
         if (getConversionMode() == CONV_MODE_VEHICLE || convertingNow) {
             return 0;
@@ -282,6 +286,7 @@ public class QuadVee extends QuadMech {
     /**
      * UMUs do not function in vehicle mode
      */
+    @Override
     public int getActiveUMUCount() {
         if (getConversionMode() == CONV_MODE_VEHICLE || convertingNow) {
             return 0;
@@ -290,33 +295,22 @@ public class QuadVee extends QuadMech {
     }    
     
     /**
-     * QuadVees cannot benefit from MASC in vehicle mode, so in that case we only return true if there
-     * is an armed supercharger.
+     * QuadVees cannot benefit from MASC in vehicle mode
      */
     @Override
-    public boolean hasArmedMASC() {
-        boolean superchargerOnly = getConversionMode() == CONV_MODE_VEHICLE;
-        for (Mounted m : getEquipment()) {
-            if (!m.isDestroyed() && !m.isBreached()
-                    && (m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_MASC)
-                    && (!superchargerOnly || m.getType().getSubType() == MiscType.S_SUPERCHARGER)
-                    && m.curMode().equals("Armed")) {
-                return true;
-            }
+    public MPBoosters getArmedMPBoosters() {
+        MPBoosters mpBoosters = super.getArmedMPBoosters();
+        if (getConversionMode() != CONV_MODE_VEHICLE) {
+            return  mpBoosters;
         }
-        return false;        
-    }
-    
-    /**
-     * Cannot benefit from MASC in vehicle mode.
-     */
-    @Override
-    public boolean hasArmedMASCAndSuperCharger() {
-        if (getConversionMode() == CONV_MODE_VEHICLE) {
-            return false;
+        switch (mpBoosters) {
+            case MASC_AND_SUPERCHARGER:
+                return MPBoosters.SUPERCHARGER_ONLY;
+            case MASC_ONLY:
+                return MPBoosters.NONE;
+            default:
+                return mpBoosters;
         }
-        return super.hasArmedMASCAndSuperCharger();
     }
 
     /**
@@ -444,6 +438,7 @@ public class QuadVee extends QuadMech {
     /**
      * In vehicle mode the QuadVee is at the same level as the terrain.
      */
+    @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_VEHICLE) {
             return 0;
@@ -515,7 +510,7 @@ public class QuadVee extends QuadMech {
                 }
             }
             // are we wheeled and in light snow?
-            IHex hex = game.getBoard().getHex(getPosition());
+            Hex hex = game.getBoard().getHex(getPosition());
             if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
                     && (hex.terrainLevel(Terrains.SNOW) == 1)) {
                 roll.addModifier(1, "thin snow");
@@ -557,7 +552,7 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean canGoHullDown() {
         if (getConversionMode() == CONV_MODE_VEHICLE != convertingNow) {
-            IHex occupiedHex = game.getBoard().getHex(getPosition());
+            Hex occupiedHex = game.getBoard().getHex(getPosition());
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         }

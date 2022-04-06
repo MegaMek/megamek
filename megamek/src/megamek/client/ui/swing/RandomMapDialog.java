@@ -13,52 +13,30 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Set;
-
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.filechooser.FileFilter;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.MapSettings;
-import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/13/14 2:41 PM
  */
 public class RandomMapDialog extends JDialog implements ActionListener {
@@ -142,6 +120,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         setResizable(true);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) { closeWithoutNewMap(); }
         });
 
@@ -326,7 +305,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         fileChooser.setDialogTitle(title);
 
         // If we have a file to start with, select it.
-        if (!StringUtil.isNullOrEmpty(fileName)) {
+        if (!StringUtility.isNullOrEmpty(fileName)) {
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 
@@ -380,10 +359,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // Cache the selected boards, so we can restore them
         ArrayList<String> selectedBoards = mapSettings.getBoardsSelectedVector();
         // Load the file.  If there is an error, log it and return.
-        try(InputStream is = new FileInputStream(selectedFile)) {
+        try (InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
             return;
         }
         mapSettings.setBoardsSelectedVector(selectedBoards);
@@ -412,10 +391,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         }
 
         // Load the changed settings into the existing map settings object.
-        try(OutputStream os = new FileOutputStream(selectedFile)) {
+        try (OutputStream os = new FileOutputStream(selectedFile)) {
             mapSettings.save(os);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
         }
         return true;
     }
@@ -439,7 +418,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Get the general settings from this panel.
         newMapSettings.setBoardSize(mapWidthField.getAsInt(), mapHeightField.getAsInt());
-        newMapSettings.setTheme((String)choTheme.getSelectedItem());
+        newMapSettings.setTheme((String) choTheme.getSelectedItem());
         this.mapSettings = newMapSettings;
 
         // Sent the map settings to either the server or the observer as needed.

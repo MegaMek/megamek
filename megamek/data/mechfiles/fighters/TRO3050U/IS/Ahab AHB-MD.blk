@@ -20,6 +20,10 @@ Ahab
 AHB-MD
 </Model>
 
+<mul id:>
+19
+</mul id:>
+
 <year>
 3061
 </year>
@@ -100,6 +104,46 @@ IS MRM 40 Ammo
 
 <source>
 TRO 3050u - Clan Invasion
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+
+<capabilities>
+Poor acceleration and maneuverability, likened by pilots to "a moose in molasses", is compensated by fifteen and a half tons of standard armor and a staggering array of weaponry: a full squadron of Ahabs is capable of shooting down light and medium DropShips in a single pass. The design would be modified once, in 2703, to accommodate a Narc Missile Beacon.
+</capabilities>
+
+<overview>
+The Ahab debuted in 2697 as the heaviest Aerospace Fighter ever produced, a devastating missile boat for the SLDF and other Great House armies.
+</overview>
+
+<deployment>
+The most recent and deadly variant mounts a Large Pulse Laser and two Medium lasers in the nose, guided by a Targeting computer, making it a surprisingly deadly dogfighter. A MRM-40 rack under each wing with four tons of ammunition, as well as hardpoints for two Alamo nuclear weapons, turns this bird into a DropShip killer.
+</deployment>
+
+<history>
+Originally manufactured by Harvard Company, Inc., BBA would pick up production in the early 3000s when financial malfeasance brought down the company. BBA would build only a limited number of new Ahabs and spare parts, and only to ComStar, allowing the fighters in service to the other Inner Sphere powers to fall into disrepair. In 3061 the company began production of two new variants, which were sold only to the Word of Blake.
+</history>
+
+<manufacturer>
+Bannock-Braigh Aerospace
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Wakazashi Heavy Unlimited
+ENGINE:PlasmaStar 270
+ARMOR:Force Plus
+COMMUNICATIONS:MyComm LVR
+TARGETING:Antron 7
+</systemManufacturers>
+
+<source>
+TRO 3050u - Star League
 </source>
 
 <tonnage>

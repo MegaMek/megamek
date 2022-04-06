@@ -1,6 +1,7 @@
 Version:1.0
 Warhammer
 WHM-6R
+mul id:3488
 
 Config:Biped
 TechBase:Inner Sphere

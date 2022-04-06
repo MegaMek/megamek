@@ -15,6 +15,10 @@ Kestrel VTOL
 <Model>
 (MedEvac)
 </Model>
+
+<mul id:>
+1765
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

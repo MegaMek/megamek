@@ -9,4 +9,4 @@ Hunchback HBK-5N,5
 Assassin ASN-23,4
 Firestarter FS9-O,3
 Kintaro KTO-19,2
-Raijin RJN101-A,1
+Raijin RJN-101-A,1

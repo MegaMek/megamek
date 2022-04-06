@@ -2,7 +2,7 @@
 Behemoth Heavy Tank (Standard),1
 Ontos Heavy Tank (Standard),2
 Morrigu Fire Support Vehicle (Standard),3
-Sturmfeur Heavy Tank (Standard),4
+SturmFeur Heavy Tank (Standard),4
 Heimdall Ground Monitor Tank Prime,5
 Morrigu Fire Support Vehicle (Standard),6
 Morrigu Fire Support Vehicle (Laser),5

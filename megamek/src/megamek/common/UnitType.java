@@ -100,6 +100,6 @@ public class UnitType {
      * @return True or false
      */
     public static boolean isSpheroidDropship(Entity e) {
-    	return e.isAero() && ((IAero) e).isSpheroid();
+        return e.isAero() && ((IAero) e).isSpheroid();
     }
 }

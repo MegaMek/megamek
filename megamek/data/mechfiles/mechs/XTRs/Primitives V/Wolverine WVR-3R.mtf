@@ -1,41 +1,42 @@
 Version:1.1
 Wolverine
 WVR-3R
+mul id:7408
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2490
-Source:XTRO Primitives V - Age of War
-Rules Level:4
+techbase:Inner Sphere
+era:2490
+source:XTRO Primitives V - Age of War
+rules level:4
 
-Mass:55
-Engine:265 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
+mass:55
+engine:265 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:4
+heat sinks:10 Single
+walk mp:4
+jump mp:4
 
-Armor:Primitive(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:15
-RT Armor:15
-CT Armor:20
-HD Armor:9
-LL Armor:14
-RL Armor:14
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Primitive(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:15
+RT armor:15
+CT armor:20
+HD armor:9
+LL armor:14
+RL armor:14
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:3
-Medium Laser, Head
 AC/5, Right Arm
 SRM 6, Left Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
@@ -149,4 +150,20 @@ ISPrototypeJumpJet
 -Empty-
 -Empty-
 
+overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
+
+capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
+
+deployment:Entering production in 2490, the primitive 3R was built in response to the Terran Hegemony creating new versions of the 'Mechs the Wolverine was originally based on. It traded in 3 tons of armor and a ton of autocannon ammunition for a shoulder-mounted six-pack SRM launcher with one ton of reloads - a loadout that would remain essentially unchanged for the later "modernized" 6R.
+
+history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
+
+manufacturer:Norse BattleMech Works
+primaryfactory:Marduk 
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

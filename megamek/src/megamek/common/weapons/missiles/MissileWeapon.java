@@ -1,21 +1,27 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons.missiles;
 
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -48,11 +54,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
     }
     
@@ -68,11 +74,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
         }
         int clusterRoll = 7;
         if (fcs != null && fcs.getType() instanceof MiscType) {
-            if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS)) {
+            if (fcs.getType().hasFlag(MiscType.F_ARTEMIS)) {
                 clusterRoll = 9;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
                 clusterRoll = 8;
-            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_V)) {
+            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                 clusterRoll = 10;
             }
         }

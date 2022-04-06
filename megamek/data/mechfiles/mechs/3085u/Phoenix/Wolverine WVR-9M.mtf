@@ -1,6 +1,7 @@
 Version:1.0
 Wolverine
 WVR-9M
+mul id:3582
 
 Config:Biped
 TechBase:Inner Sphere
@@ -147,4 +148,19 @@ Jump Jet
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\Wolverine3050.jpg
+overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
+
+capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
+
+deployment:The Wolverine 9M introduced in 3073 is powered by a Nissan XL Engine that allows the 'Mech to move at speeds of up to 86.4 km/h while sacrificing durability. The 9M can also jump up to one hundred and fifty meters, as with most other variants. The 9M is armed with a Fusigon Strongtooth Heavy PPC as its primary weapon, which has a similar damage profile to a Clan ER PPC, but at reduced ranges. This is backed up by a Diverse Optics ER medium laser and a Guided Technologies Second Generation Streak SRM-6 launcher for close combat.
+
+history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
+
+manufacturer:Kallon Weapon Industries
+primaryfactory:Thermopolis
+systemmanufacturer:CHASSIS:Crucia-A
+systemmanufacturer:ENGINE:Nissan 275XL
+systemmanufacturer:ARMOR:Starshield A with CASE
+systemmanufacturer:JUMPJET:Northrup 12000
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:Cat Eyes 5

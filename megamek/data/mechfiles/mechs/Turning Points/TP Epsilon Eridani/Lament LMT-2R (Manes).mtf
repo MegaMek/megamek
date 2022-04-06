@@ -1,6 +1,7 @@
 Version:1.1
 Lament
 LMT-2R (Manes)
+mul id:7400
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

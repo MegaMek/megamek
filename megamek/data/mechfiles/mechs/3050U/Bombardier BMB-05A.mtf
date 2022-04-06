@@ -1,6 +1,7 @@
 Version:1.0
 Bombardier
 BMB-05A
+mul id:421
 
 Config:Biped
 TechBase:Inner Sphere

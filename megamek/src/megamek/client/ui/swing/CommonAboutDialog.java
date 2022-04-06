@@ -1,41 +1,29 @@
 /*
- * MegaMek - Copyright (C) 2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  * MegaMek - Copyright (C) 2020 - The MegaMek Team  
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
-import static megamek.MegaMek.TIMESTAMP;
-import static megamek.MegaMek.VERSION;
-
-import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.util.Date;
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
+import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
@@ -43,7 +31,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 public class CommonAboutDialog extends JDialog {
     private static final long serialVersionUID = -9019180090528719535L;
     
-    private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif"; //$NON-NLS-1$
+    private static final String FILENAME_MEGAMEK_SPLASH2 = "megamek-splash2.gif";
     /** We only need a single copy of the "about" title image. */
     private static Image imgTitleImage;
 
@@ -66,10 +54,10 @@ public class CommonAboutDialog extends JDialog {
             try {
                 tracker.waitForID(0);
                 imgTitleImage = image;
-            } catch (InterruptedException exp) {
-                exp.printStackTrace();
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
-        } // End load-imgTitleImage
+        }
 
         return imgTitleImage;
     }
@@ -80,35 +68,24 @@ public class CommonAboutDialog extends JDialog {
      * @param parentFrame - the parent <code>JFrame</code> for this dialog.
      */
     public CommonAboutDialog(JFrame parentFrame) {
-        super(parentFrame, Messages.getString("CommonAboutDialog.title"), true); //$NON-NLS-1$
+        super(parentFrame, Messages.getString("CommonAboutDialog.title"), true);
 
         // Splash image
         Image imgSplash = getTitleImage(parentFrame);
         JLabel panTitle = new JLabel(new ImageIcon(imgSplash));
 
         // Version text
-        StringBuffer buff = new StringBuffer();
-        buff.append(Messages.getString("CommonAboutDialog.version"))//$NON-NLS-1$
-                .append(VERSION).append(
-                        Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
-                .append(new Date(TIMESTAMP).toString()).append(
-                        Messages.getString("CommonAboutDialog.javaVendor"))//$NON-NLS-1$
-                .append(System.getProperty("java.vendor"))//$NON-NLS-1$
-                .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
-                .append(System.getProperty("java.version")); //$NON-NLS-1$
-        JTextArea lblVersion = new JTextArea(buff.toString());
+        JTextArea lblVersion = new JTextArea(MegaMek.getUnderlyingInformation(MMConstants.PROJECT_NAME));
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);
         
         // Copyright notice
-        JTextArea lblCopyright = new JTextArea(Messages
-                .getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
+        JTextArea lblCopyright = new JTextArea(Messages.getString("CommonAboutDialog.copyright"));
         lblCopyright.setEditable(false);
         lblCopyright.setOpaque(false);
         
         // MegaMek About message
-        JTextArea lblAbout = new JTextArea(Messages
-                .getString("CommonAboutDialog.about")); //$NON-NLS-1$
+        JTextArea lblAbout = new JTextArea(Messages.getString("CommonAboutDialog.about"));
         lblAbout.setEditable(false);
         lblAbout.setOpaque(false);
 

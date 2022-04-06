@@ -1,6 +1,7 @@
 Version:1.0
 Archer
 ARC-6W
+mul id:83
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,40 +1,41 @@
 Version:1.0
 Victor
 VTR-9B
+mul id:3409
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2510
-Source:TRO 3039 - Age of War
-Rules Level:1
+techbase:Inner Sphere
+era:2510
+source:TRO 3039 - Age of War
+rules level:1
 
-Mass:80
-Engine:320 Fusion Engine
-Structure:Standard
-Myomer:Standard
+mass:80
+engine:320 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:15 Single
-Walk MP:4
-Jump MP:4
+heat sinks:15 Single
+walk mp:4
+jump mp:4
 
-Armor:Standard(Inner Sphere)
-LA Armor:15
-RA Armor:15
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-LL Armor:20
-RL Armor:20
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:4
 Medium Laser, Left Arm
 Medium Laser, Left Arm
+AC/20, Right Arm
 SRM 4, Left Torso
-Autocannon/20, Right Arm
 
 Left Arm:
 Shoulder
@@ -148,4 +149,21 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Victor was built in 2508 under contract to the Terran Hegemony as a support 'Mech with jump capabilities.
+
+capabilities:Standing at 14 meters tall, the Victor approaches the concept of support in an unorthodox way for a 'Mech of its weight class. While only possessing a ground speed of 64.8 km/h, the Victor achieves a high degree of mobility instead through the use of four jump jets, allowing it to jump up to one hundred and twenty meters. A Victor can therefore "support" friendly units by jumping directly into the fray and bringing its deadly close range arsenal to bear, an ability which can surprise inexperienced MechWarriors and prove advantageous in mountainous terrain. One sacrifice made for this superb mobility is the 'Mech's relatively light armor of only eleven and a half tons, while the lack of proper anti-infantry capabilities is a minor problem.
+
+deployment:The Victor's primary weapon is a Pontiac 100 Autocannon/20 in its right arm; though some models reported problems with the ammunition feed, this was not a common issue. The left arm contained the 'Mech's close-range backup of two Sorenstein V Medium Lasers with a Holly SRM-4 located in the left torso. The autocannon alone is capable of downing most light 'Mechs in a single shot and stripping off the armor of any location on most heavier 'Mechs, leaving its other weapons to take advantage of any weak points in the enemy's armor. These weapons were originally aimed by a Standus 20 Targeting and Tracking System, but its tendency to project "ghost" targets saw the Standus replaced with the MaLandry 34.
+
+history:An estimated one thousand Victors had been produced by the time the Star League fell. Many of these left with Aleksandr Kerensky during the Exodus, and when HildCo Interplanetary's three Victor factories were destroyed during the First Succession War, the 'Mech became a prized target with all sides scrambling to salvage serviceable units. Only Independence Weaponry retained the ability to build new Victors, and with their capture by the Federated Suns during the Second Succession War it became the AFFS' primary assault 'Mech and a favorite command model for battalion and regimental commanders. Though the Draconis Combine would eventually retake the company following the War of 3039, most Kurita samurai were too proud to adopt a 'Mech now associated with their enemy, while the Davions made do with purchasing new models from the rebuilt HildCo factory in the St. Ives Compact and funding the construction of Styk's Tao MechWorks.
+By the time of the Clan Invasion new models of Victors were being produced which incorporated new-found lostech into their design. The formation of the Second Star League and destruction of Clan Smoke Jaguar would finally win the design acceptance by Combine warriors, while the conquest of Styk and St. Ives by the Capellan Confederation forced the Federated Commonwealth to contract General Motors to build more Victors. Though it had officially fallen out of favor, during the FedCom Civil War the Victor remained the favorite of Allied forces, with newer variants seeing use in the years afterwards
+
+manufacturer:HildCo Interplanetary, HildCo Interplanetary, General Motors/Blackwell Corporation, Independence Weaponry, Robinson Standard BattleWorks, Tao 'Mechworks, TharHes Industries
+primaryfactory:St. Ives, Carver V/Liberty, New Valencia, Quentin, Robinson, Styk, Tharkad
+systemmanufacturer:CHASSIS:HildCo Type V
+systemmanufacturer:ENGINE:Pitban 340
+systemmanufacturer:ARMOR:Durallex Heavy
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Opus III Highbeam
+systemmanufacturer:TARGETING:MaLandry 34
 

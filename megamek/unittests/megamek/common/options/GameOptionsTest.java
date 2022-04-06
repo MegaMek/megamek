@@ -1,16 +1,16 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.options;
 
@@ -26,7 +26,6 @@ import org.junit.rules.TemporaryFolder;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author nderwin
  */
 public class GameOptionsTest {
@@ -54,7 +53,7 @@ public class GameOptionsTest {
             switch (io.getType()) {
                 case IOption.STRING:
                 case IOption.CHOICE:
-                    io.setValue(""+count);
+                    io.setValue("" + count);
                     break;
 
                 case IOption.BOOLEAN:
@@ -70,7 +69,7 @@ public class GameOptionsTest {
                     break;
 
                 case IOption.FLOAT:
-                    io.setValue(Float.valueOf(""+count));
+                    io.setValue(Float.valueOf("" + count));
                     break;
             }
             
@@ -93,7 +92,7 @@ public class GameOptionsTest {
                 case IOption.STRING:
                 case IOption.CHOICE:
                 case IOption.INTEGER:
-                    assertTrue(io.getValue().toString().equals(""+count));
+                    assertEquals(io.getValue().toString(), "" + count);
                     break;
                 case IOption.BOOLEAN:
                     if (count%2==0) {
@@ -103,7 +102,7 @@ public class GameOptionsTest {
                     }
                     break;
                 case IOption.FLOAT:
-                    assertEquals(Float.valueOf(""+count), io.floatValue(), 0.0f);
+                    assertEquals(Float.parseFloat("" + count), io.floatValue(), 0.0f);
                     break;
             }
             

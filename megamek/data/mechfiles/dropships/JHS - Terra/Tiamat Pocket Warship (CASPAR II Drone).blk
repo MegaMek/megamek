@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Tiamat Pocket Warship
 <Model>
 (CASPAR II Drone)
 </Model>
+
+<mul id:>
+3256
+</mul id:>
 
 <year>
 3079
@@ -37,12 +41,12 @@ Spheroid
 </motion_type>
 
 <transporters>
-asfbay:6.0:6:1
+cargobay:258.0:1:1
 2ndclassquarters:0.0:0
-cargobay:258.0:1:3
 crewquarters:0.0:0
 steeragequarters:285.0:0
 1stclassquarters:0.0:0
+artsasfbay:5.0:6:2
 </transporters>
 
 <SafeThrust>
@@ -231,17 +235,16 @@ Ammo Piranha:30
 
 <Hull Equipment>
 CasparIIDroneControlSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
-AdvRoboticTransportSystem
 </Hull Equipment>
 
 <structural_integrity>
 75
 </structural_integrity>
+
+<notes>
+Caspar II Advanced Smart Robotic Control System (Gunnery 4,
+Piloting 5).
+</notes>
 
 <source>
 Jihad Hot Spots: Terra - Jihad
@@ -256,7 +259,7 @@ Jihad Hot Spots: Terra - Jihad
 </designtype>
 
 <crew>
-63
+51
 </crew>
 
 <officers>
@@ -290,3 +293,51 @@ Jihad Hot Spots: Terra - Jihad
 <escape_pod>
 0
 </escape_pod>
+
+<capabilities>
+The ship is protected by 219 tons worth of Heavy Ferro Aluminum armor, which provides a considerable amount of protection for the ship. The ship is equipped with 10 Life boats to allow for the ship's crew to evacuate the vessel.
+</capabilities>
+
+<overview>
+The Tiamat was designed as a command and control vessel for the Manei Domini, intended to take on and destroy multiple Star League era WarShips in an engagement.
+</overview>
+
+<deployment>
+Introduced in 3079, the experimental Drone version of the Tiamat was a faster vessel. The ship's CASPAR II Advanced Smart Robotic Control System was able to move at its maximum speed factor of 8 while providing for decent robotic gunnery capacity. The ship shares same armor protection as with Republic's manned version, but has considerably less weaponry. The ship has same similar standard & Sub-Capital weaponry loadout, but lacks any of the Capital Weaponry, Multi-Missile Launchers or Laser AMS which is substitued for standard ballistic version. The ship has an ARTS-equipped fighter bay for Drone fighters, and has considerably smaller cargo capacity.
+</deployment>
+
+<history>
+The ship was originally conceived by order of the Manei Domini commanding officer, Apollyon, in 3066. It was later redesigned for use with the Republic of the Sphere's armed forces after the Jihad. Its designers made the original model able to withstand considerable punishment. The first ship was operational by 3076. The Tiamat was exclusive to the Manei Domini's use. However, escalating pressures of the war prompted the design to be employed by regular Word of Blake forces, but only under certain conditions. Apollyon had ordered that no "frail" human should be allowed to control the vessels. Eventually, Precentor Martial Cameron St. Jamais managed to convince Apollyon to release the design for regular Blakist use. Apollyon suggested the vessels be converted with the new Caspar II drone technology. These vessels were used effectively in the defense of the last of the Word of Blake Protectorate worlds, including the Liberation of Terra. After the war, the newly formed Republic of the Sphere, needing to build up its Black Water Navy, used the designs for a manned version of the Tiamat. The ship was put into production at Terra's badly damaged O'Neil Shipyards by 3085.
+</history>
+
+<manufacturer>
+O'Neil Yards - Titan Yards
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Pocket WarShip
+</use>
+
+<length>
+90 meters
+</length>
+
+<width>
+90 meters
+</width>
+
+<height>
+170 meters
+</height>

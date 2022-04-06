@@ -2,7 +2,6 @@ package megamek.client.bot.princess;
 
 /**
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
- * @version %Id%
  * @since 10/24/2014 9:57 AM
  */
 public enum ChatCommands {
@@ -24,7 +23,8 @@ public enum ChatCommands {
     PRIORITIZE("pr", "princessName: prioritize : unitId", "Adds the specified unit to princess's Priority Targets " +
                                                           "list."),
     SHOW_BEHAVIOR("sh", "princessName: showBehavior", "Princess will state the name of her current behavior."),
-    LIST__COMMANDS("li", "princessName: listCommands", "Displays this list of commands.");
+    LIST__COMMANDS("li", "princessName: listCommands", "Displays this list of commands."),
+    IGNORE_TARGET("ig", "princessName: ignoreTarget: unitId", "Will not fire on the entity with this ID.");
 
     private final String abbreviation;
     private final String syntax;

@@ -40,12 +40,12 @@ public class MekTreeTopLevelSorter implements Comparator<Object> {
             throw new IllegalArgumentException("Can only compare Entities/Forces");
         }
         
-        IGame game = client.getGame();
+        Game game = client.getGame();
         Forces forces = game.getForces();
 
-        IPlayer localPlayer = client.getLocalPlayer();
-        IPlayer ownerA;
-        IPlayer ownerB;
+        Player localPlayer = client.getLocalPlayer();
+        Player ownerA;
+        Player ownerB;
         int idA;
         int idB;
         if (a instanceof Force) {

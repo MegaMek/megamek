@@ -20,6 +20,10 @@ Typhoon
 TFN-3A
 </Model>
 
+<mul id:>
+5311
+</mul id:>
+
 <year>
 2469
 </year>
@@ -100,3 +104,27 @@ IS Ammo AC/10
 <tonnage>
 90.0
 </tonnage>
+
+<capabilities>
+The Typhoon features a simple flying wing design, intended to provide both excellent glide characteristics and ample room for bomb ports. Though slow compared to more modern designs, the heavily armored Typhoons speed was more than adequate for its ground attack role when compared with contemporaries of the era.
+</capabilities>
+
+<overview>
+In its heyday the Typhoon was the pre-Star League era Lyran Commonwealth's ground attack AeroSpace Fighter of choice.
+</overview>
+
+<deployment>
+This version of the Typhoon introduced in 2469 trades the Large Lasers for 2 AC/10s with 2 tons of ammunition. The cooler running ACs allow the removal of 6 heat sinks.
+</deployment>
+
+<history>
+Developed by CBM Aerospace of Donegal, and a vital part of the Lyran military's AeroSpace forces for many years, technology marched on and CBM ultimately discontinued the Typhoon in 2485 as it was entering into a business alliance with Lockheed Corporation of Tharkad to develop the Thunderbird that would ultimately trigger their merger into the powerful Lockheed/CBM Corporation.
+</history>
+
+<systemManufacturers>
+CHASSIS:CBM T02-A
+ENGINE:PlasmaStar 270
+ARMOR:Lexington Lite Standard
+COMMUNICATIONS:CBM COMSET 3
+TARGETING:CBM TRAK-2
+</systemManufacturers>

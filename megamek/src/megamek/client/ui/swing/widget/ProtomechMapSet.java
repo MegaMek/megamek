@@ -67,10 +67,10 @@ public class ProtomechMapSet implements DisplayMapSet {
     // Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     // Set of Backgrpund drawers which will be sent to PicMap component
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     /**
      * This constructor have to be called anly from addNotify() method

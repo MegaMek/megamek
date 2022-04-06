@@ -20,6 +20,10 @@ Hobgoblin Ultraheavy ProtoMech
 (Standard)
 </Model>
 
+<mul id:>
+4326
+</mul id:>
+
 <year>
 3075
 </year>

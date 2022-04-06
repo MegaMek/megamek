@@ -19,6 +19,10 @@ Se'irim Medium Battle Armor
 (Anti-Infantry)
 </Model>
 
+<mul id:>
+5015
+</mul id:>
+
 <chassis>
 biped
 </chassis>

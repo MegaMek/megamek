@@ -44,7 +44,7 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
 		infantryDamage = 0.23;
 		infantryRange = 1;
 		crew = 1;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2490, 2500, 2590, 2790, 3056)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2490, 2500, 2590, DATE_NONE, 3056)

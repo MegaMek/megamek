@@ -29,8 +29,8 @@ Demolisher Heavy Tank (Standard Mk. I),163
 Partisan Heavy Tank (LRM),10
 Devastator Heavy Tank (Standard),49
 Behemoth Heavy Tank (Standard),114
-Sturmfeur Heavy Tank (SRM),16
-Sturmfeur Heavy Tank (Standard),98
+SturmFeur Heavy Tank (SRM),16
+SturmFeur Heavy Tank (Standard),98
 Rhino Fire Support Tank (Flamer),49
 Rhino Fire Support Tank (MG),49
 Rhino Fire Support Tank (Standard),181

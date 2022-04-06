@@ -13,15 +13,10 @@
  */
 package megamek.common;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 public class LandAirMech extends BipedMech implements IAero, IBomber {
     private static final long serialVersionUID = -8118673802295814548L;
@@ -54,24 +49,25 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      */
     public static int getAeroLocation(int loc) {
         switch (loc) {
-        case LOC_HEAD:
-        case LOC_CT:
-        case LOC_CAPITAL_NOSE:
-            return Aero.LOC_NOSE;
-        case LOC_RT:
-        case LOC_RARM:
-            return Aero.LOC_RWING;
-        case LOC_LT:
-        case LOC_LARM:
-            return Aero.LOC_LWING;
-        case LOC_RLEG:
-        case LOC_LLEG:
-        case LOC_CAPITAL_AFT:
-            return Aero.LOC_AFT;
-        case LOC_CAPITAL_WINGS:
-            return Aero.LOC_WINGS;
+            case LOC_HEAD:
+            case LOC_CT:
+            case LOC_CAPITAL_NOSE:
+                return Aero.LOC_NOSE;
+            case LOC_RT:
+            case LOC_RARM:
+                return Aero.LOC_RWING;
+            case LOC_LT:
+            case LOC_LARM:
+                return Aero.LOC_LWING;
+            case LOC_RLEG:
+            case LOC_LLEG:
+            case LOC_CAPITAL_AFT:
+                return Aero.LOC_AFT;
+            case LOC_CAPITAL_WINGS:
+                return Aero.LOC_WINGS;
+            default:
+                return LOC_NONE;
         }
-        return LOC_NONE;
     }
 
     private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm",
@@ -140,7 +136,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int capitalArmor_orig = 2;
     private int fatalThresh = 0;
     private int currentDamage = 0;
-    private Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
+    private Map<String, Integer> weaponGroups = new HashMap<>();
 
     public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
@@ -200,7 +196,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public String getLAMTypeString(int lamType) {
         if (lamType < 0 || lamType >= LAM_STRING.length) {
-            return LAM_STRING[LAM_UNKNOWN];
+            LogManager.getLogger().error("Attempted to get LAM Type string for unknown type " + lamType + " returning standard.");
+            return LAM_STRING[LAM_STANDARD];
         }
         return LAM_STRING[lamType];
     }
@@ -301,8 +298,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
-            return (int) Math
-                    .ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * (hasArmedMASC() ? 2.5 : 2.0));
+            return getArmedMPBoosters().calcSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
     }
@@ -426,11 +422,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      * a supercharger.
      */
     @Override
-    public boolean hasArmedMASC() {
+    public MPBoosters getMPBoosters() {
         if (getConversionMode() == CONV_MODE_MECH) {
-            return super.hasArmedMASC();
+            return super.getMPBoosters();
         } else {
-            return false;
+            return MPBoosters.NONE;
+        }
+    }
+
+    @Override
+    public MPBoosters getArmedMPBoosters() {
+        if (getConversionMode() == CONV_MODE_MECH) {
+            return super.getArmedMPBoosters();
+        } else {
+            return MPBoosters.NONE;
         }
     }
 
@@ -497,14 +502,14 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public int getPreviousConversionMode() {
         switch (previousMovementMode) {
-        case AERODYNE:
-        case WHEELED:
-            return CONV_MODE_FIGHTER;
-        case WIGE:
-            return CONV_MODE_AIRMECH;
-        case BIPED:
-        default:
-            return CONV_MODE_MECH;
+            case AERODYNE:
+            case WHEELED:
+                return CONV_MODE_FIGHTER;
+            case WIGE:
+                return CONV_MODE_AIRMECH;
+            case BIPED:
+            default:
+                return CONV_MODE_MECH;
         }
     }
 
@@ -571,7 +576,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (isAirborne()) {
                 return false;
             }
-            IHex hex = game.getBoard().getHex(c);
+            Hex hex = game.getBoard().getHex(c);
 
             // Additional restrictions for hidden units
             if (isHidden()) {
@@ -599,7 +604,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             // Cannot enter woods or a building hex in AirMech mode unless using
             // ground movement
             // or flying over the terrain.
-            IHex hex = game.getBoard().getHex(c);
+            Hex hex = game.getBoard().getHex(c);
             return (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)
                     || hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > currElevation;
         } else {
@@ -612,58 +617,58 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-        case MOVE_WALK:
-            if (getConversionMode() == CONV_MODE_FIGHTER) {
+            case MOVE_WALK:
+                if (getConversionMode() == CONV_MODE_FIGHTER) {
+                    return "Cruised";
+                } else {
+                    return "Walked";
+                }
+            case MOVE_RUN:
+                if (getConversionMode() == CONV_MODE_FIGHTER) {
+                    return "Flanked";
+                } else {
+                    return "Ran";
+                }
+            case MOVE_VTOL_WALK:
                 return "Cruised";
-            } else {
-                return "Walked";
-            }
-        case MOVE_RUN:
-            if (getConversionMode() == CONV_MODE_FIGHTER) {
+            case MOVE_VTOL_RUN:
                 return "Flanked";
-            } else {
-                return "Ran";
-            }
-        case MOVE_VTOL_WALK:
-            return "Cruised";
-        case MOVE_VTOL_RUN:
-            return "Flanked";
-        case MOVE_SAFE_THRUST:
-            return "Safe Thrust";
-        case MOVE_OVER_THRUST:
-            return "Over Thrust";
-        default:
-            return super.getMovementString(mtype);
+            case MOVE_SAFE_THRUST:
+                return "Safe Thrust";
+            case MOVE_OVER_THRUST:
+                return "Over Thrust";
+            default:
+                return super.getMovementString(mtype);
         }
     }
 
     @Override
     public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-        case MOVE_WALK:
-            if (getConversionMode() == CONV_MODE_FIGHTER) {
+            case MOVE_WALK:
+                if (getConversionMode() == CONV_MODE_FIGHTER) {
+                    return "C";
+                } else {
+                    return "W";
+                }
+            case MOVE_RUN:
+                if (getConversionMode() == CONV_MODE_FIGHTER) {
+                    return "F";
+                } else {
+                    return "R";
+                }
+            case MOVE_VTOL_WALK:
                 return "C";
-            } else {
-                return "W";
-            }
-        case MOVE_RUN:
-            if (getConversionMode() == CONV_MODE_FIGHTER) {
+            case MOVE_VTOL_RUN:
                 return "F";
-            } else {
-                return "R";
-            }
-        case MOVE_VTOL_WALK:
-            return "C";
-        case MOVE_VTOL_RUN:
-            return "F";
-        case MOVE_NONE:
-            return "N";
-        case MOVE_SAFE_THRUST:
-            return "S";
-        case MOVE_OVER_THRUST:
-            return "O";
-        default:
-            return super.getMovementAbbr(mtype);
+            case MOVE_NONE:
+                return "N";
+            case MOVE_SAFE_THRUST:
+                return "S";
+            case MOVE_OVER_THRUST:
+                return "O";
+            default:
+                return super.getMovementAbbr(mtype);
         }
     }
 
@@ -1042,7 +1047,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
                 .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) //bimodal
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL) // bimodal
     };
     
     @Override
@@ -1050,6 +1055,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return TA_LAM[lamType];
     }
     
+    @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_MECH) {
             return super.height();
@@ -1262,15 +1268,15 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public int getLocationStatus(int loc) {
         switch (loc) {
-        case LOC_CAPITAL_NOSE:
-            return Math.max(super.getLocationStatus(LOC_HEAD), super.getLocationStatus(LOC_CT));
-        case LOC_CAPITAL_AFT:
-            return Math.max(super.getLocationStatus(LOC_RLEG), super.getLocationStatus(LOC_LLEG));
-        case LOC_CAPITAL_WINGS:
-            return Math.max(Math.max(super.getLocationStatus(LOC_RT), super.getLocationStatus(LOC_RARM)),
-                    Math.max(super.getLocationStatus(LOC_LT), super.getLocationStatus(LOC_LARM)));
-        default:
-            return super.getLocationStatus(loc);
+            case LOC_CAPITAL_NOSE:
+                return Math.max(super.getLocationStatus(LOC_HEAD), super.getLocationStatus(LOC_CT));
+            case LOC_CAPITAL_AFT:
+                return Math.max(super.getLocationStatus(LOC_RLEG), super.getLocationStatus(LOC_LLEG));
+            case LOC_CAPITAL_WINGS:
+                return Math.max(Math.max(super.getLocationStatus(LOC_RT), super.getLocationStatus(LOC_RARM)),
+                        Math.max(super.getLocationStatus(LOC_LT), super.getLocationStatus(LOC_LARM)));
+            default:
+                return super.getLocationStatus(loc);
         }
     }
 
@@ -1344,31 +1350,34 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
     
     //Landing mods for partial repairs
+    @Override
     public int getLandingGearPartialRepairs() {
-    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
+        if (getPartialRepairs().booleanOption("aero_gear_crit")) {
         return 2;
-    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
+        } else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
         return 1;
-    	} else {
-    	return 0;
-    	}
+        } else {
+        return 0;
+        }
     }
     
     //Avionics mods for partial repairs
+    @Override
     public int getAvionicsMisreplaced() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
+        if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
         return 1;
-    	} else {
-    	return 0;
-    	}
+        } else {
+        return 0;
+        }
     }
     
+    @Override
     public int getAvionicsMisrepaired() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
+        if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
         return 1;
-    	} else {
-    	return 0;
-    	}
+        } else {
+        return 0;
+        }
     }    
 
     /**
@@ -1391,42 +1400,43 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
-        case LOC_HEAD:
-            arc = Compute.ARC_NOSE;
-            break;
-        case LOC_CT:
-            if (mounted.isRearMounted()) {
-                arc = Compute.ARC_AFT;
-            } else {
+            case LOC_HEAD:
                 arc = Compute.ARC_NOSE;
-            }
-            break;
-        case LOC_RT:
-            if (mounted.isRearMounted()) {
-                arc = Compute.ARC_RWINGA;
-            } else {
+                break;
+            case LOC_CT:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_AFT;
+                } else {
+                    arc = Compute.ARC_NOSE;
+                }
+                break;
+            case LOC_RT:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_RWINGA;
+                } else {
+                    arc = Compute.ARC_RWING;
+                }
+                break;
+            case LOC_LT:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_LWINGA;
+                } else {
+                    arc = Compute.ARC_LWING;
+                }
+                break;
+            case LOC_RARM:
                 arc = Compute.ARC_RWING;
-            }
-            break;
-        case LOC_LT:
-            if (mounted.isRearMounted()) {
-                arc = Compute.ARC_LWINGA;
-            } else {
+                break;
+            case LOC_LARM:
                 arc = Compute.ARC_LWING;
-            }
-            break;
-        case LOC_RARM:
-            arc = Compute.ARC_RWING;
-            break;
-        case LOC_LARM:
-            arc = Compute.ARC_LWING;
-            break;
-        case LOC_RLEG:
-        case LOC_LLEG:
-            arc = Compute.ARC_AFT;
-            break;
-        default:
-            arc = Compute.ARC_360;
+                break;
+            case LOC_RLEG:
+            case LOC_LLEG:
+                arc = Compute.ARC_AFT;
+                break;
+            default:
+                arc = Compute.ARC_360;
+                break;
         }
 
         return rollArcs(arc);
@@ -1455,113 +1465,112 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 legloc = LOC_LLEG;
             }
             switch (roll) {
-            case 2:
-            case 6:
-                return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
-            case 3:
-            case 4:
-            case 10:
-            case 11:
-                return new HitData(armloc, false, HitData.EFFECT_NONE);
-            case 5:
-            case 9:
-                return new HitData(legloc, false, HitData.EFFECT_NONE);
-            case 7:
-                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-            case 8:
-            case 12:
-                return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                case 2:
+                case 6:
+                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                case 3:
+                case 4:
+                case 10:
+                case 11:
+                    return new HitData(armloc, false, HitData.EFFECT_NONE);
+                case 5:
+                case 9:
+                    return new HitData(legloc, false, HitData.EFFECT_NONE);
+                case 7:
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 8:
+                case 12:
+                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
             }
         }
 
         if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch (roll) {
-            case 2:
-            case 12:
-                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-            case 3:
-            case 6:
-                return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
-            case 4:
-            case 5:
-                return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
-            case 7:
-                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-            case 8:
-            case 11:
-                return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
-            case 9:
-            case 10:
-                return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+                case 2:
+                case 7:
+                case 12:
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 3:
+                case 6:
+                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                case 4:
+                case 5:
+                    return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
+                case 8:
+                case 11:
+                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                case 9:
+                case 10:
+                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
             // normal left-side hits
             switch (roll) {
-            case 2:
-                return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
-            case 3:
-            case 7:
-            case 11:
-                return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
-            case 4:
-            case 5:
-                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-            case 6:
-            case 8:
-                return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
-            case 9:
-            case 10:
-            case 12:
-                return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
+                case 2:
+                    return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
+                case 3:
+                case 7:
+                case 11:
+                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+                case 4:
+                case 5:
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 6:
+                case 8:
+                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                case 9:
+                case 10:
+                case 12:
+                    return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
             // normal right-side hits
             switch (roll) {
-            case 2:
-                return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
-            case 3:
-            case 7:
-            case 11:
-                return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
-            case 4:
-            case 5:
-                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-            case 6:
-            case 8:
-                return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
-            case 9:
-            case 10:
-            case 12:
-                return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
+                case 2:
+                    return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
+                case 3:
+                case 7:
+                case 11:
+                    return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
+                case 4:
+                case 5:
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 6:
+                case 8:
+                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                case 9:
+                case 10:
+                case 12:
+                    return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_REAR) {
             // rear torso locations are only hit on a roll of 5-6 on d6
             boolean rear = Compute.d6() > 4;
             switch (roll) {
-            case 2:
-            case 12:
-                return new HitData(LOC_CT, rear, HitData.EFFECT_NONE);
-            case 3:
-            case 4:
-                return new HitData(LOC_RT, rear, HitData.EFFECT_NONE);
-            case 5:
-                return new HitData(LOC_RARM, rear, HitData.EFFECT_NONE);
-            case 6:
-                return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
-            case 7:
-                if (Compute.d6() > 3) {
-                    return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
-                } else {
+                case 2:
+                case 12:
+                    return new HitData(LOC_CT, rear, HitData.EFFECT_NONE);
+                case 3:
+                case 4:
+                    return new HitData(LOC_RT, rear, HitData.EFFECT_NONE);
+                case 5:
+                    return new HitData(LOC_RARM, rear, HitData.EFFECT_NONE);
+                case 6:
                     return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
-                }
-            case 8:
-                return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
-            case 9:
-                return new HitData(LOC_LARM, rear, HitData.EFFECT_NONE);
-            case 10:
-            case 11:
-                return new HitData(LOC_LT, rear, HitData.EFFECT_NONE);
+                case 7:
+                    if (Compute.d6() > 3) {
+                        return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
+                    } else {
+                        return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
+                    }
+                case 8:
+                    return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
+                case 9:
+                    return new HitData(LOC_LARM, rear, HitData.EFFECT_NONE);
+                case 10:
+                case 11:
+                    return new HitData(LOC_LT, rear, HitData.EFFECT_NONE);
             }
         }
         return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
@@ -1570,17 +1579,18 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-        	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
-        	return (int) (fuel * 0.9);
+            || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+            return (int) (fuel * 0.9);
         } else {
         return fuel;
         }
     }
     
+    @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-            	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
-            	return (int) (currentfuel * 0.9);
+                || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+                return (int) (currentfuel * 0.9);
         } else {
         return currentfuel;
         }
@@ -1598,8 +1608,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         currentfuel = gas;
     }
     
+    @Override
     public void setCurrentFuel(int gas) {
-    	currentfuel = gas;
+        currentfuel = gas;
     }
 
     @Override
@@ -1724,8 +1735,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public int getFuelUsed(int thrust) {
         int overThrust = Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
-        int used = safeThrust + (2 * overThrust);
-        return used;
+        return safeThrust + (2 * overThrust);
     }
 
     @Override
@@ -1818,11 +1828,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 loc = LOC_CAPITAL_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
-            if (null == groups.get(key)) {
-                groups.put(key, mounted.getNWeapons());
-            } else {
-                groups.put(key, groups.get(key) + mounted.getNWeapons());
-            }
+            groups.merge(key, mounted.getNWeapons(), Integer::sum);
         }
         return groups;
     }
@@ -1836,28 +1842,28 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         // Check for critical threshold and if so damage one facing of the
         // fighter completely.
         if (isDestroyed() || isDoomed()) {
-            // Note starting armor + internal so we can compute how many damage
+            // Note starting armor + internal, so we can compute how many damage
             // points were allocated
             // in this step.
             int start = getTotalArmor() + getTotalInternal();
             int side = Compute.randomInt(4);
             switch (side) {
-            case 0: // Nose
-                destroyLocation(LOC_HEAD);
-                destroyLocation(LOC_CT);
-                break;
-            case 1: // Left wing
-                destroyLocation(LOC_LT);
-                destroyLocation(LOC_LARM);
-                break;
-            case 2: // Right wing
-                destroyLocation(LOC_RT);
-                destroyLocation(LOC_RARM);
-                break;
-            case 3: // Aft
-                destroyLocation(LOC_LLEG);
-                destroyLocation(LOC_RLEG);
-                break;
+                case 0: // Nose
+                    destroyLocation(LOC_HEAD);
+                    destroyLocation(LOC_CT);
+                    break;
+                case 1: // Left wing
+                    destroyLocation(LOC_LT);
+                    destroyLocation(LOC_LARM);
+                    break;
+                case 2: // Right wing
+                    destroyLocation(LOC_RT);
+                    destroyLocation(LOC_RARM);
+                    break;
+                case 3: // Aft
+                    destroyLocation(LOC_LLEG);
+                    destroyLocation(LOC_RLEG);
+                    break;
             }
             // Also apply three engine hits
             int i = 0;
@@ -1877,7 +1883,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((getGame() != null) && !getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt;
@@ -1992,7 +1998,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     protected void addBomb(Mounted mounted, int loc) throws LocationFullException {
         if ((loc < 0) || (loc >= crits.length)) {
-            MegaMek.getLogger().error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
+            LogManager.getLogger().error("Cannot add bomb " + mounted.getName() + " at illegal location " + loc);
             return;
         }
 
@@ -2093,9 +2099,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      */
     @Override
     public void updateSensorOptions() {
-        //Remove everything but Radar if we're not in space
+        // Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
-            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            Vector<Sensor> sensorsToRemove = new Vector<>();
             if (isAero()) {
                 for (Sensor sensor : getSensors()) {
                     if (sensor.getType() == Sensor.TYPE_AERO_THERMAL) {
@@ -2108,10 +2114,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             setNextSensor(getSensors().firstElement());
             }
         }
-        //If we are in space, add them back...
+        // If we are in space, add them back...
         if (isSpaceborne()) {
             if (isAero()) {
-                //ASFs and small craft get thermal/optical sensors
+                // ASFs and small craft get thermal/optical sensors
                 getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
                 setNextSensor(getSensors().firstElement());
             }

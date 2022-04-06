@@ -30,10 +30,10 @@ import megamek.common.util.ImageUtil;
 /**
  * This class will produce <code>Image</code> objects from files. If an image
  * file is inside of JAR and ZIP file, then it must save the contents to a
- * temporary file. Created on January 18, 2004
+ * temporary file.
  * 
  * @author James Damour
- * @version 1
+ * @since January 18, 2004
  */
 public class ScaledImageFileFactory extends ImageFileFactory {
     //region Variable Declarations

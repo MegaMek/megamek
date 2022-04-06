@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
@@ -39,7 +39,7 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public ACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

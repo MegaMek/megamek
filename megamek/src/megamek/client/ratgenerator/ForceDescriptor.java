@@ -12,38 +12,19 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ratgenerator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import megamek.MegaMek;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.UnitType;
+import megamek.common.*;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.logging.LogLevel;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Describes the characteristics of a force. May be changed during generation.
  *
  * @author Neoancient
- *
  */
 public class ForceDescriptor {
 
@@ -131,17 +112,17 @@ public class ForceDescriptor {
     public ForceDescriptor() {
         faction = "IS";
         year = 3067;
-        movementModes = new HashSet<EntityMovementMode>();
-        roles = new HashSet<MissionRole>();
+        movementModes = new HashSet<>();
+        roles = new HashSet<>();
         formationType = null;
         experience = EXP_REGULAR;
-        models = new HashSet<String>();
-        chassis = new HashSet<String>();
-        variants = new HashSet<String>();
+        models = new HashSet<>();
+        chassis = new HashSet<>();
+        variants = new HashSet<>();
         parent = null;
-        subforces = new ArrayList<ForceDescriptor>();
-        attached = new ArrayList<ForceDescriptor>();
-        flags = new HashSet<String>();
+        subforces = new ArrayList<>();
+        attached = new ArrayList<>();
+        flags = new HashSet<>();
         topLevel = false;
         element = false;
         positionIndex = -1;
@@ -208,7 +189,7 @@ public class ForceDescriptor {
             if (null != mr) {
                 setUnit(mr);
             } else {
-                MegaMek.getLogger().error("Could not generate unit");
+                LogManager.getLogger().error("Could not generate unit");
             }
         } else {
             if (null != formationType) {
@@ -221,13 +202,13 @@ public class ForceDescriptor {
                     }
                 } else {
                     //If group generation is not set, then either this is a compound formation (e.g. squadron,
-                    //aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
+                    // aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
                     try {
                         Map<String,List<ForceDescriptor>> byGenRule = subforces.stream()
                                 .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
                         if (byGenRule.containsKey("group")) {
                             if (!generateAndAssignFormation(byGenRule.get("group").stream()
-                                    .map(fd -> fd.getSubforces()).flatMap(sf -> sf.stream())
+                                    .map(ForceDescriptor::getSubforces).flatMap(Collection::stream)
                                     .collect(Collectors.toList()), false, byGenRule.get("group").size())) {
                                 formationType = null;
                             }
@@ -237,12 +218,12 @@ public class ForceDescriptor {
                             generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
                         }
                     } catch (NullPointerException ex) {
-                        MegaMek.getLogger().error("Found null generation rule in force node with formation set.");
+                        LogManager.getLogger().error("Found null generation rule in force node with formation set.");
                     }
                 }
             } else {
                 if (null != generationRule) {
-                    switch(generationRule) {
+                    switch (generationRule) {
                         case "chassis":
                             if (getChassis().isEmpty()) {
                                 generate(generationRule);
@@ -455,7 +436,7 @@ public class ForceDescriptor {
         //will get the infantry support role.
         if (infSubs.size() > 0) {
             generateLance(infSubs);
-            int footCount = (int)infSubs.stream().filter(fd -> fd.getMovementModes()
+            int footCount = (int) infSubs.stream().filter(fd -> fd.getMovementModes()
                     .contains(EntityMovementMode.INF_LEG)).count();
             for (int i = 0; i < baseSubs.size(); i++) {
                 if (baseSubs.get(i).getUnitType() == UnitType.TANK
@@ -482,7 +463,7 @@ public class ForceDescriptor {
         }
 
         //Any BA in exceess of the number of omni base units will require mag clamps, up to the number of base units.
-        int magReq = Math.min((int)(baSubs.size() - baseUnitList.stream().filter(mr -> mr.isOmni()).count()),
+        int magReq = Math.min((int) (baSubs.size() - baseUnitList.stream().filter(AbstractUnitRecord::isOmni).count()),
                 baSubs.size());
         for (int i = 0; i < baSubs.size(); i++) {
             if (i < magReq) {
@@ -526,7 +507,7 @@ public class ForceDescriptor {
         Integer ut = subs.get(0).getUnitType();
 
         boolean useWeights = useWeightClass(ut);
-        ArrayList<Integer> weights = new ArrayList<Integer>();
+        ArrayList<Integer> weights = new ArrayList<>();
         if (useWeights) {
             for (ForceDescriptor sub : subs) {
                 weights.add(sub.getWeightClass());
@@ -544,17 +525,17 @@ public class ForceDescriptor {
         int ratingLevel = getRatingLevel();
         int totalLevels = 5;
         /*
-         * 		Using the rating level relative to the total number of levels throws the results
-         * 		off for ComStar, which should behave as A-B out of A-F rather than A-B out of A-B.
+         * Using the rating level relative to the total number of levels throws the results
+         * off for ComStar, which should behave as A-B out of A-F rather than A-B out of A-B.
          *
-         * 		int totalLevels = RATGenerator.getInstance().getFaction(faction.split(",")[0]).getRatingLevels().size();
+         *  int totalLevels = RATGenerator.getInstance().getFaction(faction.split(",")[0]).getRatingLevels().size();
          */
         int target = 12 - ratingLevel;
         if (ratingLevel < 0) {
             target = 10;
         }
-        Integer era = RATGenerator.getInstance().eraForYear(getYear());
-        AvailabilityRating av = null;
+        int era = RATGenerator.getInstance().eraForYear(getYear());
+        AvailabilityRating av;
         ModelRecord baseModel = null;
         /* Generate base model using weight class of entire formation */
         if (ut != null) {
@@ -574,6 +555,7 @@ public class ForceDescriptor {
                 }
             }
         }
+
         for (ForceDescriptor sub : subs) {
             boolean foundUnit = false;
             if (baseModel == null || (ut != null && !ut.equals(sub.getUnitType()))) {
@@ -604,7 +586,7 @@ public class ForceDescriptor {
                                 }
                             }
                         }
-                        if (Compute.d6(2) >= target - ((av == null)?0:av.adjustForRating(ratingLevel, totalLevels))) {
+                        if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                             sub.getChassis().clear();
                             sub.getChassis().add(model);
                             int oldWt = sub.getWeightClass();
@@ -634,10 +616,10 @@ public class ForceDescriptor {
                                     }
                                 }
                             }
-                            if (Compute.d6(2) >= target - ((av == null)?0:av.adjustForRating(ratingLevel, totalLevels))) {
+                            if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                                 sub.setUnit(mRec);
                                 if (useWeights) {
-                                    weights.remove((Object)mRec.getWeightClass());
+                                    weights.remove((Object) mRec.getWeightClass());
                                 }
                                 foundUnit = true;
                                 break;
@@ -655,7 +637,7 @@ public class ForceDescriptor {
                             }
                         }
                     }
-                    if (Compute.d6(2) >= target - ((av == null)?0:av.adjustForRating(ratingLevel, totalLevels))) {
+                    if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
                         sub.getChassis().add(baseModel.getChassis());
                         sub.setWeightClass(-1);
                         unit = sub.generate();
@@ -781,7 +763,7 @@ public class ForceDescriptor {
         fd.getRoles().clear();
         fd.getRoles().addAll(roles.stream().filter(r -> r.fitsUnitType(unitType)).collect(Collectors.toList()));
 
-        int wtIndex = (useWeightClass() && weightClass != null && weightClass != -1)?0:4;
+        int wtIndex = (useWeightClass() && weightClass != null && weightClass != -1) ? 0 : 4;
 
         while (wtIndex < 5) {
             for (int roleStrictness = 3; roleStrictness >= 0; roleStrictness--) {
@@ -817,9 +799,9 @@ public class ForceDescriptor {
                     wtIndex++;
                 }
             }
-        };
+        }
 
-        MegaMek.getLogger().debug("Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
+        LogManager.getLogger().debug("Could not find unit for " + UnitType.getTypeDisplayableName(unitType));
         return null;
     }
 
@@ -834,7 +816,7 @@ public class ForceDescriptor {
                     String forceString = getForceString();
                     entity.setForceString(forceString);
                 } catch (EntityLoadingException ex) {
-                    MegaMek.getLogger().error("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath(), ex);
+                    LogManager.getLogger().error("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath(), ex);
                 }
             }
         }
@@ -854,19 +836,15 @@ public class ForceDescriptor {
             ancestors.add(p);
             p = p.parent;
         }
-        
-        String forceString = "";
+
+        StringBuilder result = new StringBuilder();
         int id = 0;
         for (int i = ancestors.size() - 1; i >= 0; i--) {
             ForceDescriptor ancestor = ancestors.get(i);
             id = 17 * id + ancestor.index + 1;
-            forceString += "\\" + ancestor.parseName() + "|" + id;
+            result.append(ancestor.parseName()).append("|").append(id).append("||");
         }
-        // Remove the backslash at the start
-        if (forceString.length() > 0) {
-            forceString = forceString.substring(1);
-        }
-        return forceString;
+        return result.toString();
     }
 
     public void assignCommanders() {
@@ -896,16 +874,14 @@ public class ForceDescriptor {
         if (subforces.size() > 0) {
             int coPos = 0;
             if (coNode != null) {
-                coPos = (coNode.getPosition() == null)?1:
-                    Math.min(coNode.getPosition(), 1);
+                coPos = (coNode.getPosition() == null) ? 1 : Math.min(coNode.getPosition(), 1);
             }
             int xoPos = 0;
             if (xoNode != null && (xoNode.getPosition() == null || xoNode.getPosition() > 0)) {
-                xoPos = (xoNode.getPosition() == null)?coPos + 1:
-                    Math.max(coPos, xoNode.getPosition());
+                xoPos = (xoNode.getPosition() == null) ? coPos + 1 : Math.max(coPos, xoNode.getPosition());
             }
             if (coPos + xoPos > 0) {
-                ForceDescriptor [] forces = subforces.toArray(new ForceDescriptor[subforces.size()]);
+                ForceDescriptor[] forces = subforces.toArray(new ForceDescriptor[0]);
                 Arrays.sort(forces, forceSorter);
                 if (coPos != 0) {
                     ForceDescriptor coFound = null;
@@ -1014,7 +990,7 @@ public class ForceDescriptor {
             for (ForceDescriptor sub : subforces) {
                 if (sub.useWeightClass()) {
                     if (sub.getWeightClass() == null) {
-                        MegaMek.getLogger().error("Weight class == null for " 
+                        LogManager.getLogger().error("Weight class == null for " 
                                 + sub.getUnitType() + " with " + sub.getSubforces().size() + " subforces.");
                     } else {
                         wt += sub.getWeightClass();
@@ -1023,18 +999,16 @@ public class ForceDescriptor {
                 }
             }
             if (c > 0) {
-                weightClass = (int)(wt / c + 0.5);
+                weightClass = (int) (wt / c + 0.5);
             }
         }
 
         attached.forEach(ForceDescriptor::assignCommanders);
-
-        //		setIcon();
     }
 
     public void assignPositions() {
         int index = 0;
-        HashMap<String,Integer> uniqueCount = new HashMap<String,Integer>();
+        HashMap<String,Integer> uniqueCount = new HashMap<>();
         for (int i = 0; i < subforces.size(); i++) {
             subforces.get(i).positionIndex = i + 1;
             if (subforces.get(i).name == null) {
@@ -1050,7 +1024,7 @@ public class ForceDescriptor {
                 subforces.get(i).nameIndex = index++;
             }
         }
-        HashMap<String,Integer> indexCount = new HashMap<String,Integer>();
+        HashMap<String,Integer> indexCount = new HashMap<>();
         for (ForceDescriptor sub : subforces) {
             if (uniqueCount.containsKey(sub.name)) {
                 if (uniqueCount.get(sub.name) > 1) {
@@ -1070,7 +1044,7 @@ public class ForceDescriptor {
         attached.forEach(ForceDescriptor::assignPositions);
     }
 
-    private Comparator<? super ForceDescriptor> forceSorter = new Comparator<ForceDescriptor>() {
+    private Comparator<? super ForceDescriptor> forceSorter = new Comparator<>() {
         /* Rank by difference in experience + difference in unit/eschelon weights */
         private int rank(ForceDescriptor fd) {
             int retVal = 0;
@@ -1149,43 +1123,51 @@ public class ForceDescriptor {
     }
 
     /*
-	public void assignBloodnames() {
-		assignBloodnames(getFactionRec());
-	}
+    public void assignBloodnames() {
+        assignBloodnames(getFactionRec());
+    }
 
-	public void assignBloodnames(FactionRecord fRec) {
-		if (fRec != null && fRec.isClan()) {
-			for (ForceDescriptor fd : subforces) {
-				fd.assignBloodnames();
-			}
-			for (ForceDescriptor fd : attached) {
-				fd.assignBloodnames();
-			}
+    public void assignBloodnames(FactionRecord fRec) {
+        if (fRec != null && fRec.isClan()) {
+            for (ForceDescriptor fd : subforces) {
+                fd.assignBloodnames();
+            }
+            for (ForceDescriptor fd : attached) {
+                fd.assignBloodnames();
+            }
 
-			if (co != null && (element || !(co.getAssignment() != null && co.getAssignment().isElement()))) {
-				co.assignBloodname();
-			}
-			if (xo != null && !(xo.getAssignment() != null && xo.getAssignment().isElement())) {
-				xo.assignBloodname();
-			}
-		}
-	}
+            if (co != null && (element || !(co.getAssignment() != null && co.getAssignment().isElement()))) {
+                co.assignBloodname();
+            }
+            if (xo != null && !(xo.getAssignment() != null && xo.getAssignment().isElement())) {
+                xo.assignBloodname();
+            }
+        }
+    }
      */
 
     public static int decodeWeightClass(String code) {
         switch (code) {
-            case "UL":return EntityWeightClass.WEIGHT_ULTRA_LIGHT;
-            case "L":return EntityWeightClass.WEIGHT_LIGHT;
-            case "M":return EntityWeightClass.WEIGHT_MEDIUM;
-            case "H":return EntityWeightClass.WEIGHT_HEAVY;
-            case "A":return EntityWeightClass.WEIGHT_ASSAULT;
-            case "SH":case "C":return EntityWeightClass.WEIGHT_COLOSSAL;
+            case "UL":
+                return EntityWeightClass.WEIGHT_ULTRA_LIGHT;
+            case "L":
+                return EntityWeightClass.WEIGHT_LIGHT;
+            case "M":
+                return EntityWeightClass.WEIGHT_MEDIUM;
+            case "H":
+                return EntityWeightClass.WEIGHT_HEAVY;
+            case "A":
+                return EntityWeightClass.WEIGHT_ASSAULT;
+            case "SH":
+            case "C":
+                return EntityWeightClass.WEIGHT_COLOSSAL;
+            default:
+                return -1;
         }
-        return -1;
     }
 
     public String getWeightClassCode() {
-        final String[] codes = {"UL", "L", "M", "H", "A", "SH"};
+        final String[] codes = { "UL", "L", "M", "H", "A", "SH" };
         if (weightClass == null || weightClass == -1) {
             return "";
         }
@@ -1233,7 +1215,7 @@ public class ForceDescriptor {
         } else {
             wc = EntityWeightClass.WEIGHT_MEDIUM;
         }
-        weightClass = (int)Math.round(wc);
+        weightClass = (int) Math.round(wc);
 
         //Some names require knowing the weight class first.
         if (null != nameNodes) {
@@ -1250,7 +1232,7 @@ public class ForceDescriptor {
     }
 
     public ArrayList<Object> getAllChildren() {
-        ArrayList<Object> retVal = new ArrayList<Object>();
+        ArrayList<Object> retVal = new ArrayList<>();
         retVal.addAll(subforces);
         retVal.addAll(attached);
         return retVal;
@@ -1284,7 +1266,7 @@ public class ForceDescriptor {
             retVal = retVal.replace("{latin:parent}", LATIN[getParent().getNameIndex()]);
             retVal = retVal.replace("{roman:parent}", ROMAN[getParent().getNameIndex()]);
             retVal = retVal.replace("{cardinal:parent}", Integer.toString(getParent().getNameIndex() + 1));
-            retVal = retVal.replace("{alpha:parent}", Character.toString((char)(getParent().getNameIndex() + 'A')));
+            retVal = retVal.replace("{alpha:parent}", Character.toString((char) (getParent().getNameIndex() + 'A')));
         }
         if (getParent() != null && retVal.contains("{name:parent}")) {
             String parentName = getParent().getName().replaceAll(".*\\[", "").replaceAll("\\].*", "");
@@ -1299,7 +1281,7 @@ public class ForceDescriptor {
             retVal = retVal.replace("{latin}", LATIN[getNameIndex()]);
             retVal = retVal.replace("{roman}", ROMAN[getNameIndex()]);
             retVal = retVal.replace("{cardinal}", Integer.toString(getNameIndex() + 1));
-            retVal = retVal.replace("{alpha}", Character.toString((char)(getNameIndex() + 'A')));
+            retVal = retVal.replace("{alpha}", Character.toString((char) (getNameIndex() + 'A')));
             if (retVal.contains("{formation}")) {
                 if (null != formationType && null != formationType.getCategory()) {
                     retVal = retVal.replace("{formation}", formationType.getCategory()
@@ -1317,13 +1299,12 @@ public class ForceDescriptor {
     public String getDescription() {
         StringBuilder retVal = new StringBuilder();
         if (unitType != null) {
-            //			if (useWeightClass() && weightClass != null && weightClass >= 0) {
             if (weightClass != null && weightClass >= 0) {
                 retVal.append(EntityWeightClass.getClassName(weightClass)).append(" ");
             }
 
             if (roles.contains(MissionRole.ARTILLERY) || roles.contains(MissionRole.MISSILE_ARTILLERY)) {
-                retVal.append(getUnitTypeName().equals("Infantry")?"Field":"Mobile").append(" ");
+                retVal.append(getUnitTypeName().equals("Infantry") ? "Field" : "Mobile").append(" ");
             } else {
                 retVal.append(UnitType.getTypeName(unitType)).append(" ");
             }
@@ -1723,30 +1704,5 @@ public class ForceDescriptor {
         retVal.generateAttachments = generateAttachments;
 
         return retVal;
-    }
-
-    /**
-     * Intended for debugging output. Shows description of current eschelon and all subforces
-     *
-     * @param indent   Prefix for the current eschelon
-     * @param logLevel The level to pass to the logging utility
-     */
-    public void show(String indent, LogLevel logLevel) {
-        final String[] eschelonNames = {
-                "Element", "Squad", "(2)", "Lance", "Company", "Battalion",
-                "Regiment", "Brigade", "Division", "Corps", "Army"
-        };
-        final String[] airEschelonNames = {
-                "Element", "(1)", "(2)", "Flight", "Squadron", "Group", "Wing", "Regiment"
-        };
-
-        MegaMek.getLogger().log(logLevel, indent + weightClass + " " + unitType + " "
-                        + (((unitType == UnitType.AERO) || (unitType == UnitType.CONV_FIGHTER)) ? airEschelonNames[eschelon] : eschelonNames[eschelon]), null);
-        for (ForceDescriptor sub : subforces) {
-            sub.show(indent + "  ", logLevel);
-        }
-        for (ForceDescriptor sub : attached) {
-            sub.show(indent + " +", logLevel);
-        }
     }
 }

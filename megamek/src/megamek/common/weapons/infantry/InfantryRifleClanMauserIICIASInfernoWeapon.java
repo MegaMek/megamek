@@ -41,12 +41,12 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
 		cost = 18000;
 		bv = 6.45;
 		tonnage = .012;
-		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
+		flags = flags.or(F_INFERNO).or(F_INF_BURST).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
 		infantryDamage = 0.90;
 		infantryRange = 3;
 		ammoWeight = 0.0003;
 		shots = 6;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
 		        .setProductionFactions(F_CHH).setTechRating(RATING_F)

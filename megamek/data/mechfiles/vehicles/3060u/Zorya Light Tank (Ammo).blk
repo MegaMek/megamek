@@ -15,6 +15,10 @@ Zorya Light Tank
 <Model>
 (Ammo)
 </Model>
+
+<mul id:>
+3652
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

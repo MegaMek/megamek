@@ -20,6 +20,10 @@ Hiryo Armored Infantry Transport
 (MRM)
 </Model>
 
+<mul id:>
+1527
+</mul id:>
+
 <Tonnage>
 40
 </Tonnage>

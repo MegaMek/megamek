@@ -19,17 +19,15 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
-import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
 import megamek.common.event.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
@@ -71,7 +69,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                systemEvent("Phase changed it is now " + IGame.Phase.getDisplayableName(e.getNewPhase()) + ".");
+                systemEvent("Phase changed it is now " + e.getNewPhase() + ".");
                 if (client.phaseReport != null) {
                     systemEvent(cleanHtml(client.phaseReport));
                 }
@@ -180,9 +178,9 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                     Integer.parseInt(args[2]) - 1);
             // Why don't constants work here?
             // Cursor over the hex.
-            gui.bv.mouseAction(selectedTarget, 3, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+            gui.getBoardView().mouseAction(selectedTarget, 3, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
             // Click.
-            ((BoardView1) gui.getBoardView()).mouseAction(selectedTarget, 1, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
+            gui.getBoardView().mouseAction(selectedTarget, 1, InputEvent.BUTTON1_DOWN_MASK, MouseEvent.BUTTON1);
         }
     }
 
@@ -226,7 +224,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
                 processAccessibleGUI();
                 systemEvent("Selected " + selectedTarget.toFriendlyString() + " in the GUI.");
             } else {
-                //default to running commands in the accesibility window, added a say command for chat.
+                // default to running commands in the accesibility window, added a say command for chat.
                 systemEvent(client.runCommand(Client.CLIENT_COMMAND + inputField.getText()));
             }
             inputField.setText("");

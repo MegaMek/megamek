@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,6 +20,10 @@ Lightning
 LTN-G16-P (Branson)
 </Model>
 
+<mul id:>
+1879
+</mul id:>
+
 <year>
 3071
 </year>
@@ -29,7 +33,7 @@ LTN-G16-P (Branson)
 </originalBuildYear>
 
 <type>
-IS Level 4
+Mixed (IS Chassis) Experimental
 </type>
 
 <motion_type>
@@ -64,11 +68,11 @@ Aerodyne
 </engine_type>
 
 <armor_type>
-19
+16
 </armor_type>
 
 <armor_tech>
--1
+6
 </armor_tech>
 
 <armor>
@@ -111,3 +115,4 @@ XTRO Pirates - Jihad
 <tonnage>
 50.0
 </tonnage>
+

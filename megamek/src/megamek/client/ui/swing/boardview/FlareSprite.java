@@ -17,7 +17,7 @@ class FlareSprite extends Sprite {
 
     Flare flare;  
 
-    public FlareSprite(BoardView1 boardView1, final Flare f) {
+    public FlareSprite(BoardView boardView1, final Flare f) {
         super(boardView1);
         flare = f;
 
@@ -47,7 +47,6 @@ class FlareSprite extends Sprite {
 
     @Override
     public StringBuffer getTooltip() {
-        return new StringBuffer(Messages.getString("BoardView1.flare", 
-                new Object [] {flare.turnsToBurn} ));
+        return new StringBuffer(Messages.getString("BoardView1.flare", flare.turnsToBurn));
     }
 }

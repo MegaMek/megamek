@@ -1,4 +1,4 @@
-/**
+/*
  * Tests for the class {@link Configuration}
  * 
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
@@ -14,7 +14,7 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, it is available online at:
- *   http://www.gnu.org/licenses/gpl-2.0.html 
+ * http://www.gnu.org/licenses/gpl-2.0.html
  */
 package megamek.common;
 
@@ -30,7 +30,6 @@ import org.junit.Test;
 
 /**
  * @author Edward Cullen
- * 
  */
 public class ConfigurationTests {
 
@@ -192,29 +191,6 @@ public class ConfigurationTests {
         Configuration.setUnitsDir(null);
         assertEquals(new File("data", "mechfiles").toString(), Configuration
                 .unitsDir().toString());
-    }
-
-    /**
-     * Test method for {@link megamek.common.Configuration#namesDir()}.
-     */
-    @Test
-    public final void testNamesDir() {
-        assertEquals(new File("data", "names").toString(), Configuration
-                .namesDir().toString());
-    }
-
-    /**
-     * Test method for
-     * {@link megamek.common.Configuration#setNamesDir(java.io.File)}.
-     */
-    @Test
-    public final void testSetNamesDir() {
-        Configuration.setNamesDir(new File("my_names"));
-        assertEquals("my_names", Configuration.namesDir().toString());
-        // Should reset to default.
-        Configuration.setNamesDir(null);
-        assertEquals(new File("data", "names").toString(), Configuration
-                .namesDir().toString());
     }
 
     /**

@@ -1,0 +1,167 @@
+Version:1.0
+Jenner IIC
+5
+mul id:8248
+
+Config:Biped
+techbase:Clan
+era:3140
+source:Rec Guide:ilClan #18 - Dark Age
+rules level:2
+
+mass:35
+engine:315 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:11 Clan Double
+walk mp:9
+jump mp:7
+
+armor:Ferro-Fibrous(Clan)
+LA armor:3
+RA armor:3
+LT armor:6
+RT armor:6
+CT armor:13
+HD armor:7
+LL armor:8
+RL armor:8
+RTL armor:3
+RTR armor:3
+RTC armor:7
+
+Weapons:5
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
+SRM 6, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLLightActiveProbe
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Ammo SRM-6
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLSRM6
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:This fast second-line striker BattleMech is still a fast light that is now capable of delivering plenty of short-range missiles.
+
+capabilities:To achieve this, it uses an XL Engine, Endo Steel structure, and mounts only three and a half tons of Ferro-Fibrous armor. It also carries enough jump jets to leap up to 210 meters at a time. This results in an expensive garrison 'Mech, but one that is still in production nonetheless. Unique among the IIC models, the Jenner IIC changes the leg mechanism found on the original design. While the original Jenner, despite otherwise sharing design characteristics common in Marauder-descended reverse articulated 'Mechs, had standard forward articulated legs, the IIC model has reverse articulated legs similar to those on the Stormcrow.
+
+history:The Jenner was first fielded in September 2784, the same year the Exodus fleet that would eventually become the Clans left the Inner Sphere in November. How exactly they acquired this design in that short timeframe is not known, but what is known is that the Clan version fields Clan weaponry, so it is known as the Jenner IIC.
+
+manufacturer:Irece Alpha
+primaryfactory:Irece
+systemmanufacturer:CHASSIS:Type D-SA Modified Endo-Steel
+systemmanufacturer:ENGINE:Series V Fusion 315 XL
+systemmanufacturer:ARMOR:Epsilon Compound 31 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Clan Type 2 Light
+systemmanufacturer:COMMUNICATIONS:NCO System 7
+systemmanufacturer:TARGETING:Build 1 HLF TTS
+

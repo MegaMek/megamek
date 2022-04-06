@@ -132,19 +132,19 @@ public class ConfirmDialog extends JDialog{
         Action yesAction = new AbstractAction() {
             private static final long serialVersionUID = -5442315938595454381L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 confirmation = true;
                 setVisible(false);
             }
         };
         butYes = new JButton(yesAction);
-        butYes.setText(Messages.getString("Yes")); //$NON-NLS-1$
-	butYes.setMnemonic(KeyEvent.VK_Y);
+        butYes.setText(Messages.getString("Yes"));
+        butYes.setMnemonic(KeyEvent.VK_Y);
         KeyStroke ks = null;
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_Y, 0);
 
-        InputMap imap = butYes
-        .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        InputMap imap = butYes.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap amap = butYes.getActionMap();
         imap.put(ks, YESACTION);
         amap.put(YESACTION, yesAction);
@@ -152,14 +152,15 @@ public class ConfirmDialog extends JDialog{
         Action noAction = new AbstractAction() {
             private static final long serialVersionUID = -952830599469731009L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 confirmation = false;
                 setVisible(false);
             }
         };
         butNo = new JButton(noAction);
-        butNo.setText(Messages.getString("No")); //$NON-NLS-1$
-	butNo.setMnemonic(KeyEvent.VK_N);
+        butNo.setText(Messages.getString("No"));
+        butNo.setMnemonic(KeyEvent.VK_N);
         ks = KeyStroke.getKeyStroke(KeyEvent.VK_N, 0);
         imap = butNo.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         amap = butNo.getActionMap();
@@ -183,8 +184,7 @@ public class ConfirmDialog extends JDialog{
         c.gridheight = 1;
 
         if (useCheckbox) {
-            botherCheckbox = new JCheckBox(Messages
-                    .getString("ConfirmDialog.dontBother")); //$NON-NLS-1$
+            botherCheckbox = new JCheckBox(Messages.getString("ConfirmDialog.dontBother"));
 
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);

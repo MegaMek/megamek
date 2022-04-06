@@ -19,6 +19,10 @@ Shedu Assault Battle Armor
 (Support)
 </Model>
 
+<mul id:>
+5045
+</mul id:>
+
 <chassis>
 quad
 </chassis>

@@ -1,11 +1,12 @@
 Version:1.0
 Atlas II
 AS7-D-H2
+mul id:153
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2780
-Source:TRO 3075
+Source:TRO 3075 - Star League
 Rules Level:2
 
 Mass:100
@@ -150,4 +151,18 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:The technologically-advanced Hegemony counterpart to the SLDF's regular army's AS7-D Atlas, the Atlas II was exclusively reserved for SLDF Royal Regiments.
 
+capabilities:The weapons payload gives the design more broad range attack ability versus the Atlas's brawling weaponry and its limited long range attack capacities.
+
+deployment:This variant exchanges both ER Large Lasers and its LB 10-X for a Kinslaughter ER PPC and a Gauss Rifle while removing only one double heat sink.
+
+history:First fielded in 2765, the Atlas II was designed by the Hegemony Research and Development Department, Weapons Division of the original Star League to maintain the technological edge over the other Great Houses. It was exclusively for the SLDF's Royal Regiments. In 2785, when General Aleksandr Kerensky put out his call for loyal forces to join him in his Exodus, every Atlas II pilot responded and left with him. These 'Mechs are prized by the Clans when they were found. One such 'Mech was spotted in 3052 during the Battle of Tukayyid. In the early 3070s, the design was resurrected by the Word of Blake when they captured Hesperus II's factories. After the liberation of Defiance Industries, Devlin Stone's coalition forces kept the 'Mechs in production.
+
+manufacturer:Defiance Industries,Hegemony Research and Development Department, Weapons Division
+primaryfactory:Hesperus II,New Earth
+systemmanufacturer:CHASSIS:Foundation Type 10X
+systemmanufacturer:ENGINE:Vlar 300
+systemmanufacturer:ARMOR:StarSlab/2 Ferro Fibrous with CASE
+systemmanufacturer:JUMPJET:Army Comm Class 5
+systemmanufacturer:COMMUNICATIONS:Army Corporation Type 29K

@@ -23,7 +23,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
@@ -49,11 +49,11 @@ public class LRMHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public LRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         this(t, w, g, s, 0);
     }
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s,
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s,
             int salvoMod) {
         super(t, w, g, s);
         nSalvoBonus = salvoMod;
@@ -80,7 +80,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
             Enumeration<Minefield> minefields = game.getMinefields(coords)
                     .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (server.clearMinefield(mf, ae,

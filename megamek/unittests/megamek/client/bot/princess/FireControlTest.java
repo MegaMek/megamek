@@ -1,63 +1,28 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.BuildingTarget;
-import megamek.common.ConvFighter;
-import megamek.common.Coords;
-import megamek.common.Crew;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.Infantry;
-import megamek.common.LargeSupportTank;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
-import megamek.common.TargetRollModifier;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
-import megamek.common.logging.FakeLogger;
-import megamek.common.logging.MMLogger;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.*;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.util.StringUtil;
+import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
-import megamek.common.weapons.StopSwarmAttack;
 import megamek.server.SmokeCloud;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,19 +31,10 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version %Id%
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:38 PM
  */
 @RunWith(JUnit4.class)
@@ -158,9 +114,9 @@ public class FireControlTest {
     private Crew mockCrew;
 
     private GameOptions mockGameOptions;
-    private IHex mockHex;
-    private IBoard mockBoard;
-    private IGame mockGame;
+    private Hex mockHex;
+    private Board mockBoard;
+    private Game mockGame;
 
     private Princess mockPrincess;
 
@@ -179,9 +135,7 @@ public class FireControlTest {
 
     @Before
     public void setUp() {
-        final MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
-        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         final BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
@@ -221,14 +175,14 @@ public class FireControlTest {
         Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS)))
             .thenReturn(true);
 
-        mockHex = Mockito.mock(IHex.class);
+        mockHex = Mockito.mock(Hex.class);
 
-        mockBoard = Mockito.mock(IBoard.class);
+        mockBoard = Mockito.mock(Board.class);
         Mockito.when(mockBoard.getHex(Mockito.any(Coords.class))).thenReturn(mockHex);
         Mockito.when(mockBoard.contains(Mockito.any(Coords.class))).thenReturn(true);
 
 
-        mockGame = Mockito.mock(IGame.class);
+        mockGame = Mockito.mock(Game.class);
         Mockito.when(mockGame.getOptions()).thenReturn(mockGameOptions);
         Mockito.when(mockGame.getBoard()).thenReturn(mockBoard);
 
@@ -240,12 +194,12 @@ public class FireControlTest {
         testFireControl = Mockito.spy(new FireControl(mockPrincess));
         Mockito.doReturn(mockShooterMoveMod)
                .when(testFireControl)
-               .getAttackerMovementModifier(Mockito.any(IGame.class), Mockito.anyInt(),
+               .getAttackerMovementModifier(Mockito.any(Game.class), Mockito.anyInt(),
                                             Mockito.nullable(EntityMovementType.class));
         Mockito.doReturn(mockTargetMoveMod)
                .when(testFireControl)
                .getTargetMovementModifier(Mockito.anyInt(), Mockito.anyBoolean(), Mockito.anyBoolean(),
-                                          Mockito.any(IGame.class));
+                                          Mockito.any(Game.class));
         
         Mockito.doReturn(false).when(testFireControl).isCommander(Mockito.any(Entity.class));
         Mockito.doReturn(false).when(testFireControl).isSubCommander(Mockito.any(Entity.class));
@@ -439,20 +393,20 @@ public class FireControlTest {
                                                                                     Mockito.any(Targetable.class),
                                                                                     Mockito.any(EntityState.class),
                                                                                     Mockito.eq(mockPPC),
-                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.any(Game.class),
                                                                                     Mockito.anyBoolean());
         Mockito.doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
                                                                                     Mockito.any(MovePath.class),
                                                                                     Mockito.any(Targetable.class),
                                                                                     Mockito.any(EntityState.class),
                                                                                     Mockito.eq(mockPPC),
-                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.any(Game.class),
                                                                                     Mockito.anyBoolean(),
                                                                                     Mockito.anyBoolean());
         Mockito.doReturn(mockPPCFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
                                                                                     Mockito.any(Targetable.class),
                                                                                     Mockito.eq(mockPPC),
-                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.any(Game.class),
                                                                                     Mockito.anyBoolean());
 
         mockML = Mockito.mock(Mounted.class);
@@ -465,20 +419,20 @@ public class FireControlTest {
                                                                                    Mockito.any(Targetable.class),
                                                                                    Mockito.any(EntityState.class),
                                                                                    Mockito.eq(mockML),
-                                                                                   Mockito.any(IGame.class),
+                                                                                   Mockito.any(Game.class),
                                                                                    Mockito.anyBoolean());
         Mockito.doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
                                                                                    Mockito.any(MovePath.class),
                                                                                    Mockito.any(Targetable.class),
                                                                                    Mockito.any(EntityState.class),
                                                                                    Mockito.eq(mockML),
-                                                                                   Mockito.any(IGame.class),
+                                                                                   Mockito.any(Game.class),
                                                                                    Mockito.anyBoolean(),
                                                                                    Mockito.anyBoolean());
         Mockito.doReturn(mockMLFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
                                                                                    Mockito.any(Targetable.class),
                                                                                    Mockito.eq(mockML),
-                                                                                   Mockito.any(IGame.class),
+                                                                                   Mockito.any(Game.class),
                                                                                    Mockito.anyBoolean());
 
         mockLRM5 = Mockito.mock(Mounted.class);
@@ -491,20 +445,20 @@ public class FireControlTest {
                                                                                     Mockito.any(Targetable.class),
                                                                                     Mockito.any(EntityState.class),
                                                                                     Mockito.eq(mockLRM5),
-                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.any(Game.class),
                                                                                     Mockito.anyBoolean());
         Mockito.doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
                                                                                     Mockito.any(MovePath.class),
                                                                                     Mockito.any(Targetable.class),
                                                                                     Mockito.any(EntityState.class),
                                                                                     Mockito.eq(mockLRM5),
-                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.any(Game.class),
                                                                                     Mockito.anyBoolean(),
                                                                                     Mockito.anyBoolean());
         Mockito.doReturn(mockLRMFireInfo).when(testFireControl).buildWeaponFireInfo(Mockito.any(Entity.class),
                                                                                     Mockito.any(Targetable.class),
                                                                                     Mockito.eq(mockLRM5),
-                                                                                    Mockito.any(IGame.class),
+                                                                                    Mockito.any(Game.class),
                                                                                     Mockito.anyBoolean());
 
 
@@ -965,8 +919,8 @@ public class FireControlTest {
         Mockito.when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
         Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)))
                .thenReturn(false);
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
-        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(Terrain.LEVEL_NONE);
         Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class), Mockito.anyBoolean())).thenReturn(21);
         ToHitData expected = new ToHitData();
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierHelperForAnyAttack(mockShooter,
@@ -1175,7 +1129,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in heavy woods.
         Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(2);
@@ -1187,7 +1141,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in super heavy woods.
         Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(3);
@@ -1199,7 +1153,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(Terrain.LEVEL_NONE);
 
         // Stand the target in jungle.
         Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(2);
@@ -1211,7 +1165,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
+        Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(Terrain.LEVEL_NONE);
 
         // Give the shooter the anti-air quirk but fire on a ground target.
         Mockito.when(mockShooter.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_ANTI_AIR))).thenReturn(true);
@@ -1334,7 +1288,7 @@ public class FireControlTest {
             failure.append("\nExpected: ").append(expected.getDesc());
             failure.append("\nActual:   ").append(actualTHD.getDesc());
         }
-        if (!StringUtil.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }
@@ -1348,12 +1302,12 @@ public class FireControlTest {
                .when(testFireControl)
                .guessToHitModifierHelperForAnyAttack(Mockito.any(Entity.class), Mockito.any(EntityState.class),
                                                      Mockito.any(Targetable.class), Mockito.any(EntityState.class),
-                                                     Mockito.anyInt(), Mockito.any(IGame.class));
+                                                     Mockito.anyInt(), Mockito.any(Game.class));
         mockTargetCoords = new Coords(0, 1);
         Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
         Mockito.doReturn(true).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
                                                              Mockito.any(Coords.class), Mockito.anyInt());
-        final IHex mockShooterHex = Mockito.mock(IHex.class);
+        final Hex mockShooterHex = Mockito.mock(Hex.class);
         Mockito.when(mockShooterHex.getLevel()).thenReturn(0);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockShooterState.getPosition()))).thenReturn(mockShooterHex);
         Mockito.when(mockShooter.getElevation()).thenReturn(0);
@@ -1368,7 +1322,7 @@ public class FireControlTest {
         Mockito.when(mockShooter.hasWorkingSystem(Mech.ACTUATOR_LOWER_LEG, Mech.LOC_LLEG)).thenReturn(true);
         Mockito.when(mockShooter.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)).thenReturn(true);
 
-        final IHex mockTargetHex = Mockito.mock(IHex.class);
+        final Hex mockTargetHex = Mockito.mock(Hex.class);
         Mockito.when(mockTargetHex.getLevel()).thenReturn(0);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetState.getPosition()))).thenReturn(mockTargetHex);
         Mockito.when(mockTarget.getElevation()).thenReturn(0);
@@ -1638,15 +1592,15 @@ public class FireControlTest {
                .when(testFireControl)
                .guessToHitModifierHelperForAnyAttack(Mockito.any(Entity.class), Mockito.any(EntityState.class),
                                                      Mockito.any(Targetable.class), Mockito.any(EntityState.class),
-                                                     Mockito.anyInt(), Mockito.any(IGame.class));
+                                                     Mockito.anyInt(), Mockito.any(Game.class));
         final LosEffects spyLosEffects = Mockito.spy(new LosEffects());
         Mockito.doReturn(spyLosEffects)
                .when(testFireControl)
-               .getLosEffects(Mockito.any(IGame.class), Mockito.any(Entity.class), Mockito.any(Targetable.class),
+               .getLosEffects(Mockito.any(Game.class), Mockito.any(Entity.class), Mockito.any(Targetable.class),
                               Mockito.any(Coords.class), Mockito.any(Coords.class), Mockito.anyBoolean());
         Mockito.doReturn(new ToHitData()).when(spyLosEffects).losModifiers(Mockito.eq(mockGame));
 
-        final IHex mockTargetHex = Mockito.mock(IHex.class);
+        final Hex mockTargetHex = Mockito.mock(Hex.class);
         Mockito.when(mockBoard.getHex(Mockito.eq(mockTargetCoords))).thenReturn(mockTargetHex);
         Mockito.when(mockTargetHex.containsTerrain(Terrains.WATER)).thenReturn(false); // todo test water
 
@@ -2014,7 +1968,7 @@ public class FireControlTest {
                .when(testFireControl)
                .guessToHitModifierHelperForAnyAttack(Mockito.any(Entity.class), Mockito.any(EntityState.class),
                                                      Mockito.any(Targetable.class), Mockito.any(EntityState.class),
-                                                     Mockito.anyInt(), Mockito.any(IGame.class));
+                                                     Mockito.anyInt(), Mockito.any(Game.class));
         Mockito.doReturn(true).when(testFireControl).isTargetUnderFlightPath(Mockito.any(MovePath.class),
                                                                              Mockito.any(EntityState.class));
         Mockito.doReturn(false).when(testFireControl).isTargetUnderFlightPath(Mockito.eq(mockFlightPathBad),
@@ -2685,7 +2639,7 @@ public class FireControlTest {
             }
         }
 
-        if (!StringUtil.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrEmpty(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }
@@ -2715,8 +2669,8 @@ public class FireControlTest {
         Mockito.when(mockTarget.getPosition()).thenReturn(mockTargetCoords);
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
         final FiringPlan plan = testFireControl.getBestFiringPlan(mockShooter, mockTarget, mockGame,
-                                                                  testToHitThreshold);
+                testToHitThreshold);
         Assert.assertFalse("Expected not 0.0.  Got " + plan.getUtility(),
-                           0.00001 > Math.abs(0 - plan.getUtility()));
+                0.00001 > Math.abs(0 - plan.getUtility()));
     }
 }

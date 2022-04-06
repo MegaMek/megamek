@@ -22,7 +22,7 @@ public class BuildingTemplate implements Serializable {
 
     public static final int BASEMENT_RANDOM = -1;
 
-    private ArrayList<Coords> coordsList = new ArrayList<Coords>();
+    private ArrayList<Coords> coordsList = new ArrayList<>();
     private int type = Building.LIGHT;
     private int CF = 15;
     private int height = 2;

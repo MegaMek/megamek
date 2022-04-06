@@ -31,6 +31,7 @@ public class Chromosome implements Comparable<Chromosome> {
         System.arraycopy(chromosome.genes, 0, genes, 0, genes.length);
     }
 
+    @Override
     public int compareTo(Chromosome o) {
         return Double.compare(fitness, o.fitness);
     }

@@ -1,6 +1,7 @@
 Version:1.1
 Cudgel
 CDG-2B
+mul id:768
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,35 +1,21 @@
 package megamek.client.ui.swing;
 
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.widget.IndexedRadioButton;
+import megamek.common.*;
+import megamek.common.enums.AimingMode;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.widget.IndexedRadioButton;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-import megamek.common.IAimingModes;
-import megamek.common.LargeSupportTank;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.SuperHeavyTank;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
-
 class AimedShotHandler implements ActionListener, ItemListener {
-    /**
-     * 
-     */
     private final FiringDisplay firingDisplay;
 
     private int aimingAt = Entity.LOC_NONE;
 
-    private int aimingMode = IAimingModes.AIM_MODE_NONE;
+    private AimingMode aimingMode = AimingMode.NONE;
 
     private int partialCover = LosEffects.COVER_NONE;
 
@@ -42,12 +28,12 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
     public void showDialog() {
         if (asd != null) {
-            int oldAimingMode = aimingMode;
+            AimingMode oldAimingMode = aimingMode;
             closeDialog();
             aimingMode = oldAimingMode;
         }
 
-        if (inAimingMode()) {
+        if (!getAimingMode().isNone()) {
             String[] options;
             boolean[] enabled;
 
@@ -61,9 +47,9 @@ class AimedShotHandler implements ActionListener, ItemListener {
                 return;
             }
             if (this.firingDisplay.target instanceof Mech) {
-                if (aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
+                if (aimingMode.isImmobile()) {
                     aimingAt = Mech.LOC_HEAD;
-                } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
+                } else if (aimingMode.isTargetingComputer()) {
                     aimingAt = Mech.LOC_CT;
                 }
             } else if (this.firingDisplay.target instanceof Tank) {
@@ -104,8 +90,8 @@ class AimedShotHandler implements ActionListener, ItemListener {
 
             asd = new AimedShotDialog(
                     this.firingDisplay.clientgui.frame,
-                    Messages.getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
-                    Messages.getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
+                    Messages.getString("FiringDisplay.AimedShotDialog.title"),
+                    Messages.getString("FiringDisplay.AimedShotDialog.message"),
                     options, enabled, aimingAt, this, this);
 
             asd.setVisible(true);
@@ -272,7 +258,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
             }
         }
 
-        if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
+        if (aimingMode.isTargetingComputer()) {
             // Can't target head with targeting computer.
             mask[Mech.LOC_HEAD] = false;
         }
@@ -282,7 +268,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
     public void closeDialog() {
         if (asd != null) {
             aimingAt = Entity.LOC_NONE;
-            aimingMode = IAimingModes.AIM_MODE_NONE;
+            aimingMode = AimingMode.NONE;
             asd.dispose();
             asd = null;
             this.firingDisplay.updateTarget();
@@ -306,7 +292,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
         return aimingAt;
     }
 
-    public int getAimingMode() {
+    public AimingMode getAimingMode() {
         return aimingMode;
     }
 
@@ -315,7 +301,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
      */
     public String getAimingLocation() {
         if ((this.firingDisplay.target != null) && (aimingAt != Entity.LOC_NONE)
-            && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+                && !getAimingMode().isNone()) {
             if (this.firingDisplay.target instanceof GunEmplacement) {
                 return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
             } else if (this.firingDisplay.target instanceof Entity) {
@@ -341,24 +327,21 @@ class AimedShotHandler implements ActionListener, ItemListener {
                 || (this.firingDisplay.target instanceof Tank)
                 || (this.firingDisplay.target instanceof BattleArmor) || (this.firingDisplay.target instanceof Protomech)));
         if (allowAim) {
-            aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
+            aimingMode = AimingMode.TARGETING_COMPUTER;
             return;
         }
         // immobile mech or gun emplacement
-        allowAim = ((this.firingDisplay.target != null) && ((this.firingDisplay.target.isImmobile() && ((this.firingDisplay.target instanceof Mech) || (this.firingDisplay.target instanceof Tank))) || (this.firingDisplay.target instanceof GunEmplacement)));
+        allowAim = ((this.firingDisplay.target != null)
+                && ((this.firingDisplay.target.isImmobile()
+                && ((this.firingDisplay.target instanceof Mech)
+                || (this.firingDisplay.target instanceof Tank)))
+                || (this.firingDisplay.target instanceof GunEmplacement)));
         if (allowAim) {
-            aimingMode = IAimingModes.AIM_MODE_IMMOBILE;
+            aimingMode = AimingMode.IMMOBILE;
             return;
         }
 
-        aimingMode = IAimingModes.AIM_MODE_NONE;
-    }
-
-    /**
-     * @return if are we in aiming mode
-     */
-    public boolean inAimingMode() {
-        return aimingMode != IAimingModes.AIM_MODE_NONE;
+        aimingMode = AimingMode.NONE;
     }
 
     /**
@@ -381,6 +364,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
     /**
      * ActionListener, listens to the button in the dialog.
      */
+    @Override
     public void actionPerformed(ActionEvent ev) {
         closeDialog();
     }
@@ -388,6 +372,7 @@ class AimedShotHandler implements ActionListener, ItemListener {
     /**
      * ItemListener, listens to the radiobuttons in the dialog.
      */
+    @Override
     public void itemStateChanged(ItemEvent ev) {
         IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
         aimingAt = icb.getIndex();

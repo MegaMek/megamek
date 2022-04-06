@@ -47,7 +47,7 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 		ammoCost = 6;
 		shots = 40;
 		bursts = 4;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2890, 2895, 2950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_DC)

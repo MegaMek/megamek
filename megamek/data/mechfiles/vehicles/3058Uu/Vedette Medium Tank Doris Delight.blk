@@ -15,6 +15,10 @@ Vedette Medium Tank
 <Model>
 'Doris' Delight'
 </Model>
+
+<mul id:>
+3387
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

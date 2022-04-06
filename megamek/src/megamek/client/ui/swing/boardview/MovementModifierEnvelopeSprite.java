@@ -36,7 +36,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
      * @param boardView1
      * @param mp
      */
-    public MovementModifierEnvelopeSprite(BoardView1 boardView1, MovePath mp) {
+    public MovementModifierEnvelopeSprite(BoardView boardView1, MovePath mp) {
         super(boardView1, mp.getFinalCoords());
 
         facing = Facing.valueOfInt(mp.getFinalFacing());
@@ -68,7 +68,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         
         // create image for buffer
         image = createNewHexImage();
-        Graphics2D graph = (Graphics2D)image.getGraphics();
+        Graphics2D graph = (Graphics2D) image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
 
         // scale the following draws according to board zoom
@@ -82,7 +82,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         if (fontSize * bv.scale > 4) {
             graph.setFont(graph.getFont().deriveFont(fontSize));
             Point2D.Double pos = getHexBorderAreaMid(facing.getIntValue(), borderW, inset);
-            bv.drawCenteredText(graph, modifier, (float)pos.x, (float)pos.y, fontColor, false);
+            bv.drawCenteredText(graph, modifier, (float) pos.x, (float) pos.y, fontColor, false);
         }
 
         graph.dispose();

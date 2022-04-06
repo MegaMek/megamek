@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -20,25 +19,25 @@ import java.util.Map;
 import megamek.common.annotations.Nullable;
 
 public interface Targetable extends Serializable {
-    public static final int TYPE_ENTITY = 0;
-    public static final int TYPE_HEX_CLEAR = 1;
-    public static final int TYPE_HEX_IGNITE = 2;
-    public static final int TYPE_HEX_TAG = 19;
-    public static final int TYPE_BUILDING = 3;
-    public static final int TYPE_BLDG_IGNITE = 4;
-    public static final int TYPE_BLDG_TAG = 20;    
-    public static final int TYPE_MINEFIELD_CLEAR = 5;
-    public static final int TYPE_MINEFIELD_DELIVER = 6;
-    public static final int TYPE_HEX_ARTILLERY = 7;
-    public static final int TYPE_HEX_EXTINGUISH = 8;
-    public static final int TYPE_INARC_POD = 11;
-    public static final int TYPE_SEARCHLIGHT = 12;
-    public static final int TYPE_FLARE_DELIVER = 13;
-    public static final int TYPE_HEX_BOMB = 14;
-    public static final int TYPE_FUEL_TANK = 15;
-    public static final int TYPE_FUEL_TANK_IGNITE = 16;
-    public static final int TYPE_HEX_SCREEN = 17;
-    public static final int TYPE_HEX_AERO_BOMB = 18;
+    int TYPE_ENTITY = 0;
+    int TYPE_HEX_CLEAR = 1;
+    int TYPE_HEX_IGNITE = 2;
+    int TYPE_HEX_TAG = 19;
+    int TYPE_BUILDING = 3;
+    int TYPE_BLDG_IGNITE = 4;
+    int TYPE_BLDG_TAG = 20;    
+    int TYPE_MINEFIELD_CLEAR = 5;
+    int TYPE_MINEFIELD_DELIVER = 6;
+    int TYPE_HEX_ARTILLERY = 7;
+    int TYPE_HEX_EXTINGUISH = 8;
+    int TYPE_INARC_POD = 11;
+    int TYPE_SEARCHLIGHT = 12;
+    int TYPE_FLARE_DELIVER = 13;
+    int TYPE_HEX_BOMB = 14;
+    int TYPE_FUEL_TANK = 15;
+    int TYPE_FUEL_TANK_IGNITE = 16;
+    int TYPE_HEX_SCREEN = 17;
+    int TYPE_HEX_AERO_BOMB = 18;
 
     int getTargetType();
 
@@ -151,6 +150,10 @@ public interface Targetable extends Serializable {
         return false;
     }
     
+    default boolean isBracing() {
+        return false;
+    }
+    
     @Override
     int hashCode();
     
@@ -158,7 +161,7 @@ public interface Targetable extends Serializable {
      * Utility function used to safely tell whether two Targetables are in the same hex.
      * Does not throw exceptions in case of nulls.
      */
-    public static boolean areAtSamePosition(@Nullable Targetable first, @Nullable Targetable second) {
+    static boolean areAtSamePosition(@Nullable Targetable first, @Nullable Targetable second) {
         if ((first == null) || (second == null) ||
                 (first.getPosition() == null) || (second.getPosition() == null)) {
             return false;

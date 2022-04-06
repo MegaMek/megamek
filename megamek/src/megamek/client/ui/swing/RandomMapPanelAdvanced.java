@@ -28,15 +28,11 @@ import java.awt.*;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/13/14 3:57 PM
  */
 public class RandomMapPanelAdvanced extends JPanel {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 7904626306929132645L;
+
     // City Type constants.
     private static final String CT_NONE = "None";
     private static final String CT_HUB = "HUB";

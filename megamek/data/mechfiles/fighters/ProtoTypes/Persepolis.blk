@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Persepolis
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+4806
+</mul id:>
 
 <year>
 3082
@@ -81,6 +85,8 @@ Aerodyne
 <Nose Equipment>
 CLERLargeLaser
 CLERLargeLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -92,6 +98,8 @@ CLStreakLRM20
 </Right Wing Equipment>
 
 <Aft Equipment>
+CLImprovedSmallHeavyLaser
+CLImprovedSmallHeavyLaser
 </Aft Equipment>
 
 <Wings Equipment>
@@ -105,6 +113,34 @@ Clan Streak LRM 20 Ammo
 CLCASE
 </Fuselage Equipment>
 
+<overview>
+The Persepolis is a second-line Clan Aerospace Fighter developed by Clan Jade Falcon.
+</overview>
+
+<deployment>
+The medium fighter is optimized for standoff engagements using its Series 7k Extended-Range Large Lasers and its advanced tech 20-tubed Streak LRMs. Each of the launchers is supplied with two tons of ammunition, while its Streak technology prevents wasted shots. In close range, the fighter's brace of Improved Heavy Medium and Small Lasers add to Persepolis's firepower to finish off an opponent. However, flaws in the Falcons' manufacturing process sometimes caused these weapons to explode. The fighter is not considered the fastest of its class. However, it somewhat makes up for its lack of speed by being well armored, with 9 tons of Compound Gamma Ferro-Aluminum Armor.
+</deployment>
+
+<history>
+First encountered in late 3085, The craft was first developed unknown to the military intelligence agencies of the Inner Sphere, until a pirate band encountered it while attempting to raid Sudeten. The Persepolis was the first product of the Falcons' new orbital space factory, Falcon's Roost Orbital Assembly Plant. The powerful fighter has seen deployment to nearly all of Clan Jade Falcon's second and front-line Galaxies with the exception of its elite formations, which have been given the allotment of the OmniFighters in the Clan's Touman.[
+</history>
+
+<manufacturer>
+Falcon’s Roost Orbital Assembly Plant
+</manufacturer>
+
+<primaryFactory>
+Sudeten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Fledgling 2
+ENGINE:Consolidated 280 XL
+ARMOR:Compound Gamma Ferro-Aluminum
+COMMUNICATIONS:System XXX
+TARGETING:Omicron XX
+</systemManufacturers>
+
 <source>
 TRO Prototypes - Jihad
 </source>
@@ -112,3 +148,4 @@ TRO Prototypes - Jihad
 <tonnage>
 70.0
 </tonnage>
+

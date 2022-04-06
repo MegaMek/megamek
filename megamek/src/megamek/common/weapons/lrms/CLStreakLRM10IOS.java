@@ -20,14 +20,8 @@ import megamek.common.SimpleTechLevel;
  */
 public class CLStreakLRM10IOS extends StreakLRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 2692279526867532848L;
 
-    /**
-     *
-     */
     public CLStreakLRM10IOS() {
         super();
         name = "Streak LRM 10 (I-OS)";
@@ -50,7 +44,7 @@ public class CLStreakLRM10IOS extends StreakLRMWeapon {
         medAV = 15;
         longAV = 15;
         maxRange = RANGE_LONG;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_B)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
             .setClanAdvancement(3058, 3081, 3088).setClanApproximate(false, true, false)

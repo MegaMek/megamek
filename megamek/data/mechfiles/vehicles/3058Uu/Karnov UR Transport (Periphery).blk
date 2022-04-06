@@ -15,6 +15,10 @@ Karnov UR Transport
 <Model>
 (Periphery)
 </Model>
+
+<mul id:>
+1758
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

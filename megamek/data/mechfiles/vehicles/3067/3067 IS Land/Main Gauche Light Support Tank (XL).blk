@@ -15,6 +15,10 @@ Main Gauche Light Support Tank
 <Model>
 (XL)
 </Model>
+
+<mul id:>
+4570
+</mul id:>
 <Tonnage>
 30
 </Tonnage>

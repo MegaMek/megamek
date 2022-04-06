@@ -1,6 +1,7 @@
 Version:1.0
 Colossus
 CL-P3
+mul id:661
 
 Config:Biped
 TechBase:Inner Sphere

@@ -274,73 +274,73 @@ public class EntityWeightClass {
             }
         } else if ((en instanceof SupportTank) || (en instanceof SupportVTOL)) {
             switch (en.getMovementMode()) {
-            case WHEELED:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (wheeledSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= wheeledSupportVehicleWeightLimits[i]) {
-                        break;
+                case WHEELED:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (wheeledSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= wheeledSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case TRACKED:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (trackedSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= trackedSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case TRACKED:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (trackedSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= trackedSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case HOVER:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (hoverSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= hoverSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case HOVER:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (hoverSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= hoverSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case VTOL:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case VTOL:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (vtolSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= vtolSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case WIGE:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (wigeSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= wigeSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case WIGE:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (wigeSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= wigeSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case NAVAL:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case NAVAL:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= navalSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case SUBMARINE:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case SUBMARINE:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= navalSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case HYDROFOIL:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= navalSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case HYDROFOIL:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= navalSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            case RAIL:
-            case MAGLEV:
-                for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
-                    if (tonnage <= railSupportVehicleWeightLimits[i]) {
-                        break;
+                    break;
+                case RAIL:
+                case MAGLEV:
+                    for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
+                        if (tonnage <= railSupportVehicleWeightLimits[i]) {
+                            break;
+                        }
                     }
-                }
-                break;
-            default:
-                i = 0;
-                break;
+                    break;
+                default:
+                    i = 0;
+                    break;
             }
         } else if (en instanceof Tank) {
             for (i = WEIGHT_LIGHT; i < (vehicleWeightLimits.length - 1); i++) { // Started late to bypass padding & save a loop execution

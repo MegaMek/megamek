@@ -1,7 +1,7 @@
 3075 Assault Vehicles - Generic Inner Sphere
 Demolisher II Heavy Tank (Standard),1
 Behemoth Heavy Tank (Kurita),2
-Sturmfeur Heavy Tank (Heavy Gauss),3
+SturmFeur Heavy Tank (Heavy Gauss),3
 Ontos Heavy Tank (3053 Upgrade),4
 Schrek PPC Carrier (Armor),5
 Demolisher Heavy Tank (Gauss),6

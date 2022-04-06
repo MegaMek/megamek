@@ -20,6 +20,10 @@ Thunderbird
 TRB-D50
 </Model>
 
+<mul id:>
+5233
+</mul id:>
+
 <year>
 3065
 </year>
@@ -114,3 +118,31 @@ TRO 3075 - Civil War
 <tonnage>
 100.0
 </tonnage>
+
+<overview>
+While sporting a large and rather unconventional look, the Thunderbird is an old standby design, one of the most common if dated heavy Aerospace Fighters in use across the Inner Sphere in the mid 31st century.
+</overview>
+
+<deployment>
+A variant developed by Pinard Protectorates Limited in 3065, the D50 uses Ferro-Aluminum armor and lacks LRMs. A second medium laser is added to each wing. The medium laser from the nose is replaced with an AC/10 and two tons of ammunition. The rest of the saved weight is spent on nine more standard heat sinks and an increase in armor. 
+</deployment>
+
+<history>
+Created in 2487 as part of an alliance between the Lockheed Corporation of Gibbs and CBM Aerospace of Donegal, the original Thunderbird was built for the LCAF as an assault fighter, well suited to air-to-ground attack and DropShip escort missions in the so-called Age of War. Despite its less than sleek look, the sturdy and dependable Thunderbird spread across the Star League as a number of other manufacturers were able to precisely duplicate the fighter, ensuring the design survived the centuries.
+</history>
+
+<manufacturer>
+Pinard Protectorates Limited
+</manufacturer>
+
+<primaryFactory>
+Perdition
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockheed/CBM 300-TRB
+ENGINE:Vlar 300
+ARMOR:L/CBM AeroSteel
+COMMUNICATIONS:Neil 6000-a
+TARGETING:N&D Longreach
+</systemManufacturers>

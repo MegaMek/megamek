@@ -1,6 +1,7 @@
 Version:1.1
 Omni-Corvis
 B
+mul id:7612
 
 Config:Biped Omnimech
 techbase:Clan
@@ -82,8 +83,8 @@ Clan Endo Steel
 
 Right Torso:
 CLNarcBeacon (OMNIPOD)
-ISNarc Pods (OMNIPOD)
-ISNarc Pods (OMNIPOD)
+CLNarc Pods (OMNIPOD)
+CLNarc Pods (OMNIPOD)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

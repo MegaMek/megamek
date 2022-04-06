@@ -1,36 +1,37 @@
 Version:1.1
 Longbow
 LGB-14C2
+mul id:6854
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3088
-Source:RS 3145 NT NU
-Rules Level:3
+techbase:Inner Sphere
+era:3088
+source:RS 3145 NT NU
+rules level:3
 
-Mass:85
-Engine:255 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Standard Gyro
+mass:85
+engine:255 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Double
-Walk MP:3
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:24
-RA Armor:24
-LT Armor:23
-RT Armor:23
-CT Armor:32
-HD Armor:9
-LL Armor:31
-RL Armor:31
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Standard(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:23
+RT armor:23
+CT armor:32
+HD armor:9
+LL armor:31
+RL armor:31
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
 Weapons:7
 MML 9, Left Arm
@@ -116,8 +117,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
--Empty-
--Empty-
+ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit
 -Empty-
 -Empty-
 -Empty-
@@ -153,5 +154,17 @@ IS Ammo MML-9 SRM
 -Empty-
 -Empty-
 
-imagefile:.\data\images\fluff\Mech\3085 Longbow .jpg
+overview:The Longbow, introduced in 2480 as the LGB-0C Longbow, has seen service in the armies of the Inner Sphere since the days of the Star League and is one of the most well-known fire support 'Mechs in existence.
+
+capabilities:The Longbow is a massive BattleMech weighing in at 85 tons and is able to move at a top speed of 54.0 km/h, thanks to a Strand 255 fusion engine. The Longbow is protected by fourteen and a half tons of armor. Some have criticized the design for its lack of CASE - making an otherwise rugged 'Mech vulnerable to a loss by an ammunition explosion. As a fire-support 'Mech though, the Longbow is a trusted and reliable machine that can be counted on to carry out the mission it is designed for.
+
+deployment:This upgrade of the 14C removes two of the ER Medium Lasers and replaces them with a Boosted C3 Slave unit. It is otherwise identical to the 14C.
+
+manufacturer:StarCorps Industries,StarCorps (FWL) Industries,StarCorps Industries,StarCorps Industries
+primaryfactory:Crofton,Emris IV,Fletcher (TH),Loburg
+systemmanufacturer:CHASSIS:StarCorps 100 LGB
+systemmanufacturer:ENGINE:Strand 340
+systemmanufacturer:ARMOR:StarSlab/9.5 Mk II
+systemmanufacturer:COMMUNICATIONS:O/P 3000 COMSET
+systemmanufacturer:TARGETING:Octagon Tartrac System C
 

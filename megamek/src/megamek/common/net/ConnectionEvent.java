@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.net;
 
 /**
@@ -21,10 +20,6 @@ package megamek.common.net;
  * @see ConnectionListener
  */
 public abstract class ConnectionEvent extends java.util.EventObject {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 6124300183866317006L;
     public static final int CONNECTED = 0;
     public static final int DISCONNECTED = 1;
@@ -53,34 +48,34 @@ public abstract class ConnectionEvent extends java.util.EventObject {
     }
 
     /**
-     * Returns the connection on which the Event occured; Equivalent to the
+     * Returns the connection on which the Event occurred; Equivalent to the
      * getSource()
      * 
      * @return
      */
-    public IConnection getConnection() {
-        return (IConnection) getSource();
+    public AbstractConnection getConnection() {
+        return (AbstractConnection) getSource();
     }
 
     @Override
     public String toString() {
-        StringBuffer buff = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         switch (this.type) {
             case CONNECTED:
-                buff.append("Connected");
+                sb.append("Connected");
                 break;
             case DISCONNECTED:
-                buff.append("Disconnected");
+                sb.append("Disconnected");
                 break;
             case PACKET_RECEIVED:
-                buff.append("Packet Received");
+                sb.append("Packet Received");
                 break;
             default:
-                buff.append("Unknown");
+                sb.append("Unknown");
                 break;
         }
-        buff.append(" connection event ");
-        return buff.toString();
+        sb.append(" connection event ");
+        return sb.toString();
     }
 
 }

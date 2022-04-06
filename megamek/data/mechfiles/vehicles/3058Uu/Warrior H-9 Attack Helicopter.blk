@@ -15,6 +15,10 @@ Warrior Attack Helicopter
 <Model>
 H-9
 </Model>
+
+<mul id:>
+3517
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

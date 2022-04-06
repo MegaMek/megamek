@@ -18,22 +18,24 @@
  */
 package megamek.client.ui.swing.tileset;
 
-import megamek.MegaMek;
-import megamek.common.util.fileUtils.ImageFileFactory;
-import megamek.common.util.fileUtils.ScaledImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
+import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
+import megamek.common.util.fileUtils.ImageFileFactory;
+import megamek.common.util.fileUtils.ScaledImageFileFactory;
+import org.apache.logging.log4j.LogManager;
 
 public class MMStaticDirectoryManager {
     //region Variable Declarations
     // Directories
-    private static DirectoryItems portraitDirectory;
-    private static DirectoryItems camouflageDirectory;
+    private static AbstractDirectory portraitDirectory;
+    private static AbstractDirectory camouflageDirectory;
     private static MechTileset mechTileset;
 
-    // Re-parsing Prevention Variables: The are True at startup and when the specified directory
-    // should be re-parsed, and are used to avoid re-parsing the directory repeatedly when there's an error.
+    // Re-parsing Prevention Variables: They are True at startup and when the specified directory
+    // should be re-parsed, and are used to avoid re-parsing the directory repeatedly when there's
+    // an error.
     private static boolean parsePortraitDirectory = true;
     private static boolean parseCamouflageDirectory = true;
     private static boolean parseMechTileset = true;
@@ -67,9 +69,9 @@ public class MMStaticDirectoryManager {
             parsePortraitDirectory = false;
             try {
                 portraitDirectory = new DirectoryItems(Configuration.portraitImagesDir(),
-                        "", new ImageFileFactory());
+                        new ImageFileFactory());
             } catch (Exception e) {
-                MegaMek.getLogger().error("Could not parse the portraits directory!", e);
+                LogManager.getLogger().error("Could not parse the portraits directory!", e);
             }
         }
     }
@@ -85,10 +87,10 @@ public class MMStaticDirectoryManager {
             // Set parseCamouflageDirectory to false to avoid parsing repeatedly when something fails
             parseCamouflageDirectory = false;
             try {
-                camouflageDirectory = new DirectoryItems(Configuration.camoDir(), "",
+                camouflageDirectory = new DirectoryItems(Configuration.camoDir(),
                         new ScaledImageFileFactory());
             } catch (Exception e) {
-                MegaMek.getLogger().error("Could not parse the camo directory!", e);
+                LogManager.getLogger().error("Could not parse the camo directory!", e);
             }
         }
     }
@@ -104,9 +106,9 @@ public class MMStaticDirectoryManager {
             parseMechTileset = false;
             mechTileset = new MechTileset(Configuration.unitImagesDir());
             try {
-                mechTileset.loadFromFile("mechset.txt");
+                mechTileset.loadFromFile("mechset.txt");// TODO : Remove inline file path
             } catch (Exception e) {
-                MegaMek.getLogger().error("Unable to load mech tileset", e);
+                LogManager.getLogger().error("Unable to load mech tileset", e);
             }
         }
     }
@@ -114,23 +116,23 @@ public class MMStaticDirectoryManager {
 
     //region Getters
     /**
-     * Returns a DirectoryItems object containing all portrait image filenames
-     * found in MM's portrait images folder.
-     * @return a DirectoryItems object with the portrait folders and filenames.
+     * Returns an AbstractDirectory object containing all portrait image filenames found in MM's
+     * portrait images folder.
+     * @return an AbstractDirectory object with the portrait folders and filenames.
      * May be null if the directory cannot be parsed.
      */
-    public static @Nullable DirectoryItems getPortraits() {
+    public static @Nullable AbstractDirectory getPortraits() {
         initializePortraits();
         return portraitDirectory;
     }
 
     /**
-     * Returns a DirectoryItems object containing all camo image filenames
-     * found in MM's camo images folder.
-     * @return a DirectoryItems object with the camo folders and filenames.
+     * Returns an AbstractDirectory object containing all camo image filenames found in MM's camo
+     * images folder.
+     * @return an AbstractDirectory object with the camo folders and filenames.
      * May be null if the directory cannot be parsed.
      */
-    public static @Nullable DirectoryItems getCamouflage() {
+    public static @Nullable AbstractDirectory getCamouflage() {
         initializeCamouflage();
         return camouflageDirectory;
     }
@@ -146,27 +148,25 @@ public class MMStaticDirectoryManager {
 
     //region Refreshers
     /**
-     * Re-reads MM's camo images folder and returns the updated
-     * DirectoryItems object. This will update the DirectoryItems object
-     * with changes to the camos (like added image files and folders)
-     * while MM is running.
+     * Re-reads MM's camo images folder and returns the updated AbstractDirectory object. This will
+     * update the AbstractDirectory object with changes to the camos (like added image files and
+     * folders) while MM is running.
      *
      * @see #getCamouflage()
      */
-    public static DirectoryItems refreshCamouflageDirectory() {
+    public static @Nullable AbstractDirectory refreshCamouflageDirectory() {
         parseCamouflageDirectory = true;
         return getCamouflage();
     }
 
     /**
-     * Re-reads MM's portrait images folder and returns the updated
-     * DirectoryItems object. This will update the DirectoryItems object
-     * with changes to the portraits (like added image files and folders)
-     * while MM is running.
+     * Re-reads MM's portrait images folder and returns the updated AbstractDirectory object. This
+     * will update the AbstractDirectory object with changes to the portraits (like added image
+     * files and folders) while MM is running.
      *
      * @see #getPortraits()
      */
-    public static DirectoryItems refreshPortraitDirectory() {
+    public static @Nullable AbstractDirectory refreshPortraitDirectory() {
         parsePortraitDirectory = true;
         return getPortraits();
     }

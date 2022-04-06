@@ -20,6 +20,10 @@ Skulker Wheeled Scout Tank
 (C3M)
 </Model>
 
+<mul id:>
+2955
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>

@@ -20,10 +20,9 @@ import java.util.Enumeration;
  * Public interface for the group of the options. It extends the
  * <code>IBasicOptionGroup</code> and adds the ability to query the options
  * that belongs to this group. Instances of this interface are ONLY returned as
- * the members of the <code>Enumeration</code> returned by the
- * megamek.common.options.IOptions#getGroups()
+ * the members of the <code>Enumeration</code> returned by the AbstractOptions#getGroups()
  * 
- * @see IOptions#getGroups()
+ * @see AbstractOptions#getGroups()
  */
 public interface IOptionGroup extends IBasicOptionGroup {
 
@@ -33,17 +32,17 @@ public interface IOptionGroup extends IBasicOptionGroup {
      * 
      * @return displayable name
      */
-    public abstract String getDisplayableName();
+    String getDisplayableName();
 
     /**
      * @return the <code>Enumeration</code> of the <code>IOption</code>
-     * @see IOptions#getGroups()
+     * @see AbstractOptions#getGroups()
      */
-    public abstract Enumeration<IOption> getOptions();
+    Enumeration<IOption> getOptions();
 
     /**
      * @return the <code>Enumeration</code> of the <code>IOption</code> sorted in alpha-numerically ascending order.
-     * @see IOptions#getGroups()
+     * @see AbstractOptions#getGroups()
      */
-    public abstract Enumeration<IOption> getSortedOptions();
+    Enumeration<IOption> getSortedOptions();
 }

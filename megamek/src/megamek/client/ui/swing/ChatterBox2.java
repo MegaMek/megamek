@@ -2,41 +2,21 @@
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Vector;
-
 import megamek.client.Client;
-import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
-import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -47,22 +27,33 @@ import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.util.StringUtil;
+import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
+
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
- *  A graphical chatterbox within the boardview.
+ * A graphical chatterbox within the boardview.
  * @author beerockxs2
- *
  */
 public class ChatterBox2 implements KeyListener, IDisplayable {
 
-    private static final String FILENAME_BUTTON_UP = "upbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_DOWN = "downbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_MINIMISE = "minbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif"; //$NON-NLS-1$
-    private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif"; //$NON-NLS-1$
-    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD, GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));  //$NON-NLS-2$
+    private static final String FILENAME_BUTTON_UP = "upbutton.gif";
+    private static final String FILENAME_BUTTON_DOWN = "downbutton.gif";
+    private static final String FILENAME_BUTTON_MINIMISE = "minbutton.gif";
+    private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif";
+    private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif";
+    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD,
+            GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));
     private static final Color COLOR_TEXT_BACK = Color.black;
     private static final Color COLOR_TEXT_FRONT = Color.white;
     private static final Color COLOR_BACKGROUND;
@@ -71,8 +62,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     static {
         Color temp;
         try {
-            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor"); //$NON-NLS-1$
-            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(), GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy")); //$NON-NLS-1$
+            temp = GUIPreferences.getInstance().getColor("AdvancedChatbox2BackColor");
+            temp = new Color(temp.getRed(), temp.getGreen(), temp.getBlue(),
+                    GUIPreferences.getInstance().getInt("AdvancedChatbox2Transparancy"));
         } catch (Throwable err) {
             temp = Color.gray;
         }
@@ -113,10 +105,10 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private Point lastScrollPoint;
 
-    private Vector<String> messages = new Vector<String>();
+    private Vector<String> messages = new Vector<>();
 
     private Client client;
-    private BoardView1 bv;
+    private BoardView bv;
 
     private Image upbutton;
     private Image downbutton;
@@ -126,18 +118,17 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private FontMetrics fm;
 
-    public ChatterBox2(ClientGUI client, IBoardView boardview,
-            MegaMekController controller) {
+    public ChatterBox2(ClientGUI client, BoardView boardview, MegaMekController controller) {
         this.client = client.getClient();
         client.getClient().getGame().addGameListener(new GameListenerAdapter() {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 addChatMessage(e.getMessage());
             }
+
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
                     addChatMessage("MegaMek: " + e.getNumberOfEntities() + 
                             " Entities added.");
                 }
@@ -145,14 +136,13 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
-                    addChatMessage("Megamek: " + e.toString());
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                    addChatMessage("MegaMek: " + e.toString());
                 }
             }
         });
 
-        bv = (BoardView1)boardview;
+        bv = boardview;
         fm = bv.getFontMetrics(FONT_CHAT);
 
         Toolkit toolkit = bv.getToolkit();
@@ -186,11 +176,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (!bv.getChatterBoxActive()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                        return bv.getChatterBoxActive();
                     }
 
                     @Override
@@ -201,6 +187,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 });
     }
 
+    @Override
     public boolean isReleased() {
         if (scrolling) {
             stopScrolling();
@@ -213,13 +200,14 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             return true;
         }
         
-        if (isHit){
+        if (isHit) {
             isHit = false;
             return true;
         }            
         return false;
     }
 
+    @Override
     public boolean isSliding() {
         return slidingDown || slidingUp;
     }
@@ -251,6 +239,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return !isSliding() && (slideOffset == MIN_SLIDE_OFFSET);
     }
 
+    @Override
     public synchronized void setIdleTime(long timeIdle, boolean add) {
         if (!lockOpen) {
             if (add) {
@@ -287,6 +276,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         computeScrollBarOffset();
     }
 
+    @Override
     public boolean slide() {
         if (slidingDown) {
             if (slideOffset < getMaxSlideOffset()) {
@@ -318,6 +308,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         decreasedChatScroll = false;
     }
 
+    @Override
     public boolean isDragged(Point p, Dimension size) {
         if (scrolling) {
             scroll(p, size);
@@ -338,10 +329,12 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return mouseOver;
     }
 
+    @Override
     public boolean isBeingDragged() {
         return scrolling || resizing ;
     }
 
+    @Override
     public boolean isMouseOver(Point p, Dimension size) {
         int xMin = DIST_SIDE;
         int xMax = xMin + width;
@@ -368,6 +361,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return mouseOver;
     }
 
+    @Override
     public boolean isHit(Point p, Dimension size) {
         if (isSliding()) {
             return false;
@@ -395,7 +389,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         }
         
         bv.setChatterBoxActive(true);
-        if (isDown()){
+        if (isDown()) {
             slideUp();
         }
 
@@ -457,6 +451,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     /**
      * Draws the chatter box.
      */
+    @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
         graph.setColor(COLOR_BACKGROUND);
         graph.setFont(FONT_CHAT);
@@ -471,7 +466,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         if (slideOffset == getMaxSlideOffset()) {
             graph.drawImage(maxbutton, 10 + clipBounds.x, yOffset + 3, bv);
         } else {
-            graph.drawImage(minbutton, 10 + clipBounds.x , yOffset + 3, bv);
+            graph.drawImage(minbutton, 10 + clipBounds.x, yOffset + 3, bv);
         }
 
         // Title
@@ -557,8 +552,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         while (words.hasMoreElements()) {
             String nextWord = words.nextElement();
             if (fm.stringWidth(nextLine + " " + nextWord) < lineWidth) {
-                nextLine = (nextLine.equals("")) ? nextWord : nextLine + " "
-                        + nextWord;
+                nextLine = nextLine.isBlank() ? nextWord : nextLine + " " + nextWord;
             } else {
                 messages.addElement(nextLine);
                 nextLine = nextWord;
@@ -714,9 +708,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     // KeyListener
     //
+    @Override
     public void keyPressed(KeyEvent ke) {
-
-        if (!bv.getChatterBoxActive()){
+        if (!bv.getChatterBoxActive()) {
             return;
         }
         
@@ -727,22 +721,14 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                     content.isDataFlavorSupported(DataFlavor.stringFlavor);
             if (hasTransferableText) {
                 try {
-                    addChatMessage((String)content.getTransferData(
-                            DataFlavor.stringFlavor));
-                  }
-                  catch (UnsupportedFlavorException ex){
-                    //highly unlikely since we are using a standard DataFlavor
-                    System.out.println(ex);
-                    ex.printStackTrace();
-                  }
-                  catch (IOException ex) {
-                      System.out.println(ex);
-                      ex.printStackTrace();
-                  }
+                    addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
+                }
             }            
             return;
         }
-        
+
         if (ke.isAltDown() || ke.isControlDown()) {
             return;
         }
@@ -820,7 +806,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 slideDown();
                 break;
             case KeyEvent.VK_BACK_SPACE:
-                if ((message == null) || message.equals("")) {
+                if ((message == null) || message.isBlank()) {
                     return;
                 }
 
@@ -858,9 +844,11 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         bv.refreshDisplayables();
     }
 
+    @Override
     public void keyReleased(KeyEvent ke) {
     }
 
+    @Override
     public void keyTyped(KeyEvent ke) {
     }
 
@@ -898,9 +886,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         return height - 20;
     }
     
-    public void clearMessage(){
+    public void clearMessage() {
         message = "";
         visibleMessage ="";
     }
-
 }

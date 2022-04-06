@@ -1,6 +1,7 @@
 Version:1.1
 MuckRaker
 GMMM-2 MiningMech
+mul id:4220
 
 Config:Biped
 techbase:Inner Sphere

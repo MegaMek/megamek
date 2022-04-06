@@ -1,46 +1,47 @@
 Version:1.0
 Crusader
 CRD-2R
+mul id:748
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2649
-Source:TRO 3075
-Rules Level:2
+techbase:Inner Sphere
+era:2649
+source:TRO 3075
+rules level:2
 
-Mass:65
-Engine:260 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:65
+engine:260 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
-LT Armor:24
-RT Armor:24
-CT Armor:33
-HD Armor:9
-LL Armor:21
-RL Armor:21
-RTL Armor:6
-RTR Armor:6
-RTC Armor:8
+armor:Standard(Inner Sphere)
+LA armor:20
+RA armor:20
+LT armor:24
+RT armor:24
+CT armor:33
+HD armor:9
+LL armor:21
+RL armor:21
+RTL armor:6
+RTR armor:6
+RTC armor:8
 
 Weapons:10
-Medium Laser, Left Arm
-Medium Laser, Right Arm
+Streak SRM 2, Left Leg
+Streak SRM 2, Left Leg
+Streak SRM 2, Right Leg
+Streak SRM 2, Right Leg
 LRM 15, Left Arm
-LRM 15, Right Arm
+Medium Laser, Left Arm
 Machine Gun, Left Arm
+LRM 15, Right Arm
+Medium Laser, Right Arm
 Machine Gun, Right Arm
-Streak SRM 2, Left Leg
-Streak SRM 2, Left Leg
-Streak SRM 2, Right Leg
-Streak SRM 2, Right Leg
 
 Left Arm:
 Shoulder
@@ -53,8 +54,8 @@ LRM 15
 ISArtemisIV
 Medium Laser
 Machine Gun
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
@@ -67,17 +68,17 @@ LRM 15
 ISArtemisIV
 Medium Laser
 Machine Gun
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 IS Ammo LRM-15 Artemis-capable
 IS Ammo MG - Full
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -88,9 +89,9 @@ Right Torso:
 IS Ammo LRM-15 Artemis-capable
 IS Streak SRM 2 Ammo
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -109,14 +110,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -153,5 +154,25 @@ ISStreakSRM2
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Crusader was initially designed as a close combat BattleMech for the Star League Defense Force, but soon proved itself to be a very adaptable, multi-role design. This reliable workhorse of the SLDF, while not excelling in any one job, was quite capable of accomplishing just about any mission, whether it be close assault, anti-aircraft, counter-insurgency, or even reconnaissance. Its versatility and large number of manufacturers ensured the Crusader its place as one of the most common heavy 'Mechs in the Inner Sphere.
+
+capabilities:Each arm was equipped with an LRM launcher, laser and machine gun, while the SRM launchers were built into the legs and mounted at hip height to provide a stable firing location and avoid interference with the LRMs' flight path. Early Crusader models had issues with the arm-mounted launchers and lasers overheating and causing stress to the actuators and internal structure, but this was rectified with the additions of the now-distinctive collars which deflect hot gasses away. 
+The Crusader was well-protected with twelve tons of armor, particularly around the legs, which made it a good hand-to-hand combatant. A thirteen and a half ton fusion engine allowed the Crusader to achieve a decent cruising speed of 43.2 km/h. One disadvantage to the Crusader was its inadequate heat management system, carrying just ten standard heat sinks to handle all the waste heat produced by its weapons and equipment.
+
+deployment:This lostech variant was used by the SLDF's Royal units. It used double heat sinks and utilized an Endo Steel internal structure to save mass. This enabled the addition of Artemis IV Fire Control Systems to the LRM launchers. The SRMs were replaced with four Hawk Streak SRM-2s. All of the ammunition was moved to the side torsos and protected by CASE.
+
+history:The Crusader received its baptism of fire during the Reunification War and remained a common fixture in the regiments of the SLDF for many centuries. Even after the fall of the Star League, the various Successor States continued to field large numbers of Crusaders in their armies, thanks to factories located on Tharkad, Oliver, Asuncion and Bernardo. House Steiner in particular was a notable Crusader user, thanks in part to their well-trained technicians who could have damaged units turned around and ready to fight in a single day. A variety of new production variants and field modification kits were turned out for the Crusader after the recovery of the Helm Memory Core, just in time for the Clan Invasion. In the wake of the Clan Invasion, one of the first new Crusader variants was built by the Cosby BattleMech Research Firm, the (in)famous producer of the No-Dachi 'Mech. Hoping to overcome the lack of prestige of their previous design and win the favor of the Coordinator, the company acquired manufacturing rights to the Crusader through the hostile takeover of another company and unveiled an updated variant of the 'Mech around the start of the FedCom Civil War. Additional variants would continue to be produced in the years since, including models utilized by the Word of Blake during the Jihad.
+
+manufacturer:Kallon Weapon Industries, Kallon Weapon Industries,Brigadier Corporation,Lyran 'Mech Corporation
+primaryfactory:Asuncion, Bernardo, Oliver,Fefferfer
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
+
+
+
 
 

@@ -14,12 +14,12 @@
 
 package megamek.common.event;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 
 /**
  * Instances of this class are sent when the game finished
  * 
- * @see IGame#end(int, int)
+ * @see Game#end(int, int)
  * @see GameListener
  */
 public class GameEndEvent extends GameEvent {

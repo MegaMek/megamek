@@ -1,0 +1,40 @@
+Tech Progression Changes
+Dec 11/2021
+
+By Hammer
+
+When tech progression in MegaMek was implemented it used the Universal Technology Advancement Table from Interstellar Operations (pg 32-). It was our understanding these tables where complete and superceded the tables in TRO Prototypes and RS NTNU 3145. After we implemented it I was informed by members of CGL Record Sheet team that the IntOps implemention had numerous errors. 
+
+With this commit I have tried to reconcile the three tables. I would strongly recommend people use the variable tech level option under the configuration tab of MegaMekLab for building. This represented the best way to consolidate the three tables.
+
+I used the following order of precedince for these changes:
+
+1) NTNU 3145 tables - in the event of a conflict these tables are considered primary.
+2) TRO Prototypes - these tables would supercede the tables in IntOps.
+3) Table in Interstellar Operations.
+
+Process to change the dates:
+
+I first checked the tables in TRO Prototypes for a piece of equipment. 
+Checked to see if the equipment existed on NTNU table. 
+
+If it was on both tables:
+	NTNU dates and tech level take precedince
+	Variable tech level information updated
+	Static Tech level set to match NTNU
+
+If if was only on either Prototypes or NTNU:
+	The table information from the specific book takes precedince. 
+	As above variable tech level, and static tech level updated to match publication
+	
+If not on TRO Prototypes or RS NTNU.
+	Tech Progression per IntOps retained.
+	If missing a Static tech level one was added based on the last entry in IntOps table.
+	
+	
+A big result of these changes is Static levels now reflect the equipment tech level for the Dark Ages rather than the start of the Jihad.
+	
+CGL Products for reference:
+	TRO Prototypes (CAT 35132) - 2011
+	RS 3145 NTNU (E-CATRS218) - 2013
+	Interstellar Operations (E-CAT35006) - 2016 

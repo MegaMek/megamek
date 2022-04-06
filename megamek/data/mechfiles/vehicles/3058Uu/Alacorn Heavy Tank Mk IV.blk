@@ -15,6 +15,10 @@ Alacorn Heavy Tank
 <Model>
 Mk IV
 </Model>
+
+<mul id:>
+24
+</mul id:>
 <Tonnage>
 95
 </Tonnage>

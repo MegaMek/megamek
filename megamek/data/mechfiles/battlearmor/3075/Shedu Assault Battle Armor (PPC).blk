@@ -19,6 +19,10 @@ Shedu Assault Battle Armor
 (PPC)
 </Model>
 
+<mul id:>
+5042
+</mul id:>
+
 <chassis>
 quad
 </chassis>

@@ -1,6 +1,7 @@
 Version:1.0
 Daishi (Dire Wolf)
 U
+mul id:820
 
 Config:Biped Omnimech
 techbase:Clan
@@ -157,9 +158,14 @@ CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 
-overview:The Dire Wolf is one of the OmniMechs that became feared throughout the Inner Sphere during the initial Clan Invasion and rightly so. The Dire Wolf weighs in at an impressive one hundred tons and has a relatively slow cruising speed of 54 km/h provided by a 300 XL engine. Its speed and armor protection matches that of an Atlas, but it has superior potential firepower with fifty and a half tons of free pod space for weapons and equipment. It is these traits which saw the 'Mech christened Daishi (pseudo-Japanese for "Great Death") by the criminal underbelly of the Draconis Combine, a name that would be proven grimly accurate time and time again.
-capabilities:The U configuration is configured for underwater combat. It makes use of the experimental BattleMech HarJel System, MASS, and a trio of UMUs allow it to travel underwater as quickly as it walks on land. The weapons load has been optimized for sub-surface combat as well: A trio of SRT-6 launchers appears in each side torso while each arm mounts an ER PPC and pair of Medium Pulse Lasers.
+overview:The Dire Wolf is one of the OmniMechs that became feared throughout the Inner Sphere during the initial Clan Invasion and rightly so. 
+
+capabilities:The Dire Wolf weighs in at an impressive one hundred tons and has a relatively slow cruising speed of 54 km/h provided by a 300 XL engine. Its speed and armor protection matches that of an Atlas, but it has superior potential firepower with fifty and a half tons of free pod space for weapons and equipment. It is these traits which saw the 'Mech christened Daishi (pseudo-Japanese for "Great Death") by the criminal underbelly of the Draconis Combine, a name that would be proven grimly accurate time and time again.
+
+deployment:The U configuration is configured for underwater combat. It makes use of the experimental BattleMech HarJel System, MASS, and a trio of UMUs allow it to travel underwater as quickly as it walks on land. The weapons load has been optimized for sub-surface combat as well: A trio of SRT-6 launchers appears in each side torso while each arm mounts an ER PPC and pair of Medium Pulse Lasers.
+
 history:The Dire Wolf was the brainchild of the Clan Wolf scientist caste, but was actually first produced by Clan Smoke Jaguar. Hearing rumors that Clan Wolf was developing the "Ultimate Assault OmniMech", the Jaguars won the plans and production rights in a trial that, rumor has it, was fought dishonorably. Production commenced on Huntress in 3010. In 3019, Clan Wolf began production of the OmniMech on Strana Mechty as well; Star Colonel Ulric won a trial of possession to expand manufacture into Clan Wolf. Beyond the limited manufacture of the Dire Wolf on Outreach, all Dire Wolves outside of Clans Smoke Jaguar and Wolf (or the Wolf's Dragoons) are either gifts, isorla, or were acquired through trade.
+
 manufacturer:Phan Industriplex, Wolf Clan Site #1, Svarstaad Industriplex Delta
 primaryfactory:Huntress, Strana Mechty, Svarstaad
 systemmanufacturer:CHASSIS:Titan HX

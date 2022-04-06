@@ -1,6 +1,7 @@
 Version:1.0
 Ghost
 GST-10A 'Aurora'
+mul id:8373
 
 Config:Biped
 techbase:Mixed (IS Chassis)

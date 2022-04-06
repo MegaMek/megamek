@@ -25,7 +25,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -38,6 +38,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -54,7 +55,7 @@ public class CLIATMHandler extends ATMHandler {
      * @param g
      * @param s
      */
-    public CLIATMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
     }
@@ -92,7 +93,7 @@ public class CLIATMHandler extends ATMHandler {
                     toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             
             // some question here about "partial streak missiles"
-            if(streakInactive()) {
+            if (streakInactive()) {
                 toReturn = applyGlancingBlowModifier(toReturn, true);
             }
         }
@@ -185,7 +186,7 @@ public class CLIATMHandler extends ATMHandler {
         // If we are in streak mode and miss, don't fire AMS! - However, AMS
         // shouldn't fire if we miss anyway, right?
         /*
-         * if(bMissed && allShotsHit()) { return 0; }
+         * if (bMissed && allShotsHit()) { return 0; }
          */
         // //////
         // TacOPs p.84 Cluster Hit Penalites will only effect ATM HE.
@@ -338,7 +339,7 @@ public class CLIATMHandler extends ATMHandler {
 
             Enumeration<Minefield> minefields = game.getMinefields(coords)
                                                     .elements();
-            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (server.clearMinefield(mf, ae,
@@ -477,7 +478,7 @@ public class CLIATMHandler extends ATMHandler {
      */
 
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
             if (!cares(phase)) {

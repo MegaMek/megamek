@@ -19,6 +19,10 @@ Shedu Assault Battle Armor
 (Standard)
 </Model>
 
+<mul id:>
+5044
+</mul id:>
+
 <chassis>
 quad
 </chassis>

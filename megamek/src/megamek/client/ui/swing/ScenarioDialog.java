@@ -13,27 +13,15 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.IPlayer;
 import megamek.common.Player;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -66,7 +54,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         playerTypes = new int[pa.length];
         final PlayerColour[] colours = PlayerColour.values();
         for (int x = 0; x < pa.length; x++) {
-            final IPlayer curPlayer = m_players[x];
+            final Player curPlayer = m_players[x];
             curPlayer.setColour(colours[x % colours.length]);
             m_labels[x] = new JLabel(pa[x].getName(), SwingConstants.LEFT);
             m_typeChoices[x] = new JComboBox<String>();
@@ -102,11 +90,11 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         getContentPane().add(choicePanel, BorderLayout.CENTER);
         JPanel butPanel = new JPanel();
         butPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton bOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-        bOkay.setActionCommand("okay"); //$NON-NLS-1$
+        JButton bOkay = new JButton(Messages.getString("Okay"));
+        bOkay.setActionCommand("okay");
         bOkay.addActionListener(this);
-        JButton bCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-        bCancel.setActionCommand("cancel"); //$NON-NLS-1$
+        JButton bCancel = new JButton(Messages.getString("Cancel"));
+        bCancel.setActionCommand("cancel");
         bCancel.addActionListener(this);
         butPanel.add(bOkay);
         butPanel.add(bCancel);
@@ -118,8 +106,9 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 + (frame.getSize().height / 2)) - (getSize().height / 2));
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
-        if ("okay".equals(e.getActionCommand())) { //$NON-NLS-1$
+        if ("okay".equals(e.getActionCommand())) {
             boolean bMeSet = false;
             for (int x = 0; x < m_players.length; x++) {
                 playerTypes[x] = m_typeChoices[x].getSelectedIndex();
@@ -141,7 +130,7 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             }
             bSet = true;
             setVisible(false);
-        } else if ("cancel".equals(e.getActionCommand())) { //$NON-NLS-1$
+        } else if ("cancel".equals(e.getActionCommand())) {
             setVisible(false);
         }
     }

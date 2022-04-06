@@ -24,32 +24,32 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicNoDachiWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicNoDachiWeapon() {
-		super();
+    public InfantryArchaicNoDachiWeapon() {
+        super();
 
-		name = "Blade (No-Dachi)";
-		// IO Combines the No-Dachi into Archaic Dao Weapon
-		setInternalName(name);
-		addLookupName("InfantryNoDachi");
-		addLookupName("No Dachi");
-		ammoType = AmmoType.T_NA;
-		cost = 300;
-		bv = 0.05;
+        name = "Blade (No-Dachi)";
+        // IO Combines the No-Dachi into Archaic Dao Weapon
+        setInternalName(name);
+        addLookupName("InfantryNoDachi");
+        addLookupName("No Dachi");
+        ammoType = AmmoType.T_NA;
+        cost = 300;
+        bv = 0.05;
         tonnage = .0045; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.05;
-		infantryRange = 0;
-		rulesRefs = " 272,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.05;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
 
-	}
+    }
 }

@@ -1,6 +1,7 @@
 Version:1.0
 Orion IIC
 (Standard)
+mul id:2340
 
 Config:Biped
 TechBase:Clan

@@ -1,24 +1,20 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
 /*
- * Created on Oct 19, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -27,16 +23,11 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
+ * @since Oct 19, 2004
  */
 public class CLGaussRifle extends GaussWeapon {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -4436936560457546313L;
 
-    /**
-     * 
-     */
     public CLGaussRifle() {
         super();
 
@@ -60,16 +51,16 @@ public class CLGaussRifle extends GaussWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
-        rulesRefs = "219,TM";
+        rulesRefs = "219, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
-        .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CBR)
-        .setProductionFactions(F_CBR);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+                .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CBR)
+                .setProductionFactions(F_CBR);
     }
 
     /*
@@ -81,9 +72,8 @@ public class CLGaussRifle extends GaussWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new GRHandler(toHit, waa, game, server);
     }
-
 }

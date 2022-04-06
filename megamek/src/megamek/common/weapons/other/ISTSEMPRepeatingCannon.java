@@ -32,7 +32,7 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         tonnage = 8;
         criticals  = 7;
         tankslots = 1;
-		rulesRefs = "92,IO";
+		rulesRefs = "92, IO";
 		techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_F)
 		    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
 		    .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)
@@ -50,7 +50,7 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
      * megamek.server.Server)
      */
     /*@Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
         return new TSEMPCannonHandler(toHit, waa, game, server);
     }
     */

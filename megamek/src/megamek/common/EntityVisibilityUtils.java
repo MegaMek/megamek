@@ -13,11 +13,11 @@ public class EntityVisibilityUtils {
      * Logic lifted from BoardView1.redrawEntity() that checks whether the given player playing the given game
      * can see the given entity. Takes into account double blind, hidden units, team vision, etc.
      * @param localPlayer The player to check.
-     * @param game Game object
+     * @param game The current {@link Game}
      * @param entity The entity to check
      * @return Whether or not the player can see the entity.
      */
-    public static boolean detectedOrHasVisual(IPlayer localPlayer, IGame game, Entity entity) {
+    public static boolean detectedOrHasVisual(Player localPlayer, Game game, Entity entity) {
         boolean canSee = (localPlayer == null)
                 || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 || !entity.getOwner().isEnemyOf(localPlayer)
@@ -38,7 +38,7 @@ public class EntityVisibilityUtils {
      *
      * @return
      */
-    public static boolean onlyDetectedBySensors(IPlayer localPlayer, Entity entity) {
+    public static boolean onlyDetectedBySensors(Player localPlayer, Entity entity) {
         boolean sensors = (entity.getGame().getOptions().booleanOption(
                 OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS));
@@ -62,14 +62,14 @@ public class EntityVisibilityUtils {
      * We only want to show double-blind visibility indicators on our own
      * mechs and teammates mechs (assuming team vision option).
      */
-    public static boolean trackThisEntitiesVisibilityInfo(IPlayer localPlayer, Entity e) {
+    public static boolean trackThisEntitiesVisibilityInfo(Player localPlayer, Entity e) {
         if (localPlayer == null) {
             return false;
         }
         
-        if (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
+        if (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && ((e.getOwner().getId() == localPlayer.getId()) || 
-                        (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
+                        (e.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)
                 && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }

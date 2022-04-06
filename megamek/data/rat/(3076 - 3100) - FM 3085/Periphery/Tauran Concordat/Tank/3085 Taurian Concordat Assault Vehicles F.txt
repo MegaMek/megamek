@@ -1,7 +1,7 @@
 3085 Taurian Concordat Assault Vehicles F
 Behemoth Heavy Tank (Kurita),1
 Rhino Fire Support Tank (Standard),2
-Sturmfeur Heavy Tank (Standard),3
+SturmFeur Heavy Tank (Standard),3
 Demolisher Heavy Tank (Standard Mk. II),4
 Ontos Heavy Tank (Standard),5
 Partisan Heavy Tank (Standard),6

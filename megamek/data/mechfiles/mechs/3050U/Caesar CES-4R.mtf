@@ -1,85 +1,86 @@
 Version:1.0
 Caesar
 CES-4R
+mul id:457
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:TRO 3050 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO 3050 - Civil War
+rules level:2
 
-Mass:70
-Engine:280 XL Engine
-Structure:Standard
-Myomer:MASC
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:13 Double
-Walk MP:4
-Jump MP:0
+heat sinks:13 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Ferro-Fibrous
-LA Armor:22
-RA Armor:22
-LT Armor:22
-RT Armor:22
-CT Armor:28
-HD Armor:9
-LL Armor:27
-RL Armor:27
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:28
+HD armor:9
+LL armor:27
+RL armor:27
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
-Weapons:6
-1 ISSNPPC, Right Arm
-1 ISMediumPulseLaser, Right Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISGaussRifle, Right Torso, Ammo:16
-1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Left Torso
-1 ISERMediumLaser, Center Torso (R)
+Weapons:7
+Medium Pulse Laser, Left Arm
+Snub-Nose PPC, Right Arm
+Medium Pulse Laser, Right Arm
+ER Medium Laser, Left Torso
+Gauss Rifle, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISSNPPC
 ISSNPPC
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERMediumLaser
-ISGauss Ammo
-ISGauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 ISMASC
 ISMASC
 ISMASC
 ISMASC
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -107,13 +108,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERMediumLaser (R)
-Ferro-Fibrous
+IS Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,11 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

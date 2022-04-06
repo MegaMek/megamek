@@ -1,6 +1,7 @@
 Version:1.0
 Kintaro
 KTO-19b
+mul id:1792
 
 Config:Biped
 TechBase:Inner Sphere
@@ -150,4 +151,18 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:Introduced in 2587 for the SLDF, the Kintaro was designed with one sole mission: tagging enemy units with a Narc Missile Beacon. As such, it is a 'Mech that is intended to work in a team with a missile-heavy lance.
 
+capabilities:After it delivers its deadly package to the enemy, the Kintaro disengages and lets its lance mates do most of the work as their missiles track the signal from the beacon. The act of putting this into practice is far less simple. With a maximum speed of 86.4 km/h the Kintaro is not able to engage and disengage from enemy units as easily as its designers envisioned and because of this, if a pilot is not observant of their surroundings and the enemy, they can find themselves in a very dangerous situation.
+
+deployment:The KTO-19b was an upgrade utilized by the Royal Brigades of the SLDF. It used an XL Engine and Double Heat Sinks to free up space to upgrade the KTO-19's LRM-5 launcher to a larger LRM-15 with two tons of CASE-protected ammunition. CASE was also added to the SRM ammo bins, with the leftover half ton devoted to more armor.
+
+history:The Succession Wars saw the last known Narc factory destroyed in 2792, and the advances made during the Star League era became lostech. The loss of Narc beacons rendered the Kintaro's role unnecessary, and it became just another missile-armed 'Mech. By the Third Succession War the Kintaro was nearly extinct, but in the end was saved when General Dynamics rebuilt a Kintaro factory on Ozawa, though they could only produce the downgraded KTO-18 variant. ComStar however maintained a number of original Kintaros which they used to outfit their Com Guards. They also produced their own slightly-downgraded variant, the KTO-20, which they gifted to the Draconis Combine as part of Operation Rosebud. Concentrated among the Ghost Regiments and certain Sword of Light regiments, the superiority of these 'Mechs over their Federated Commonwealth cousins caused an overreaction during the War of 3039 as they were targeted for destruction more than necessary, leaving other units free to fight.
+
+manufacturer:General Mechanics
+primaryfactory:Mars
+systemmanufacturer:CHASSIS:Technicron-1
+systemmanufacturer:ENGINE:Core Tek 275
+systemmanufacturer:ARMOR:Leopard V Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:OmniComm 3
+systemmanufacturer:TARGETING:Starbeam 3000

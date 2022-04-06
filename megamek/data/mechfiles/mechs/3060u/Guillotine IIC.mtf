@@ -1,34 +1,35 @@
 Version:1.0
 Guillotine IIC
 (Standard)
+mul id:1345
 
 Config:Biped
-TechBase:Clan
-Era:2889
-Source:TRO 3060
-Rules Level:2
+techbase:Clan
+era:2889
+source:TRO 3060
+rules level:2
 
-Mass:70
-Engine:280 Fusion (Clan) Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:70
+engine:280 Fusion (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:4
+heat sinks:16 Clan Double
+walk mp:4
+jump mp:4
 
-Armor:Standard(Clan)
-LA Armor:20
-RA Armor:20
-LT Armor:22
-RT Armor:22
-CT Armor:27
-HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+armor:Standard(Clan)
+LA armor:20
+RA armor:20
+LT armor:22
+RT armor:22
+CT armor:27
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:8
+RTR armor:8
+RTC armor:12
 
 Weapons:6
 ER PPC, Left Arm
@@ -44,9 +45,9 @@ Upper Arm Actuator
 Lower Arm Actuator
 CLERPPC
 CLERPPC
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -60,9 +61,9 @@ CLLargePulseLaser
 CLLargePulseLaser
 CLLargePulseLaser
 CLLargePulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -112,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -150,4 +151,20 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Guillotine IIC is a simple upgrade of the original Guillotine BattleMech using Clan technology. 
+
+capabilities:This version of that venerable 'Mech uses double heat sinks and an Endo Steel internal structure to save weight. These weight savings were used to upgrade the 'Mech's weapon systems. The original twelve tons of armor was left unchanged. 
+
+deployment:From long range, the Guillotine IIC replaced the Large Laser of the original with a Clan Mk. XVII ER PPC. Of the original four Medium Lasers, two were upgraded to Kolibri Delta Series Large Pulse Lasers, while the other pair were replaced with Series 2f ER Medium Lasers. The SRM-6 was replaced with a lighter Clan Series 4d.
+
+history:Although Clan Coyote created this upgrade, Clan Star Adder was the first to use it in combat in 2892. With the introduction of the OmniMech, most Guillotine IICs were relegated to second-line and solahma duty.
+manufacturer:Omega Orbital Production Plant, Irian BattleMechs Unlimited (Refit ),  W-7 Facilities (Refit) 
+
+primaryfactory:Unknown, Angell II, Weingarten
+systemmanufacturer:CHASSIS:Clan Modified Heavy Type X
+systemmanufacturer:ENGINE:Clan Standard 280 series
+systemmanufacturer:ARMOR:Forging OTR17b
+systemmanufacturer:JUMPJET:Clan Series Type 4 Heavy
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:Series VI KITT
 

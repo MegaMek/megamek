@@ -1,6 +1,7 @@
 Version:1.0
 Exterminator
 EXT-5F
+mul id:1007
 
 Config:Biped
 TechBase:Inner Sphere

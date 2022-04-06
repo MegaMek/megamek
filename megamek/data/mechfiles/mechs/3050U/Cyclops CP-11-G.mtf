@@ -1,6 +1,7 @@
 Version:1.0
 Cyclops
 CP-11-G
+mul id:778
 
 Config:Biped
 TechBase:Inner Sphere
@@ -148,3 +149,19 @@ IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Cyclops began production in 2710 as an assault BattleMech and headquarters unit for Star League Defense Force field commanders.
+
+capabilities:A decent mix of weapons provided the Cyclops with both long- and short-range firepower and a sizable engine to keep up with mobile operations. But the centerpiece of the Cyclops is its sophisticated holographic battle computer, the Tacticon B-2000. When combined with the Omstead Olmstead 840 tight beam comm suite with SatNav module, the Cyclops can effectively command a brigade across the surface of an entire world. Unfortunately the Cyclops is poorly protected relative to other assault 'Mechs with only ten tons of armor, and while its normal load of twelve heat sinks allows it to stay cool in most cases, they can prove to be inadequate in especially heavy situations.
+
+deployment:A full redesign of the Cyclops, the 11-G was built by Grumium Creations for the Second Star League Defense Force, Com Guards and Free Rasalhague Republic. Debuting in 3058 it redesigns the chassis to use Endo Steel construction and also replaces the standard armor with fifteen tons of Ferro-Fibrous armor. For long range combat it retains the Gauss Rifle and LRM-10 missile launcher minus one ton of missile reloads, while the arm-mounted medium lasers and center-torso SRM launcher were also upgraded to ER Medium Lasers and a Streak SRM-4 launcher. All ammunition for the weapons was also shifted to the right-side torso and uses CASE to protect itself from complete destruction in the event of an ammunition explosion.
+
+history:Unfortunately the Cyclops did not fare so well with the onset of the Amaris Civil War when the Rim Worlds Republic Military destroyed its primary factory on Caph in 2774. Spare parts for the machine quickly began to dry up, until by the end of the Succession Wars less than ten percent still had a working B-2000 computer. Lacking the critical part of being a command vehicle many Cyclopses were pressed into an assault role. Acting as the bodyguard or decoy for the real commanding officer, they proved to be swift if mediocre combat machines. As most enemies know about the vulnerable head and automatically target it in combat, many Cyclops pilots also began adding false head protectors to defend against impacts. A study by the NAIS after the Fourth Succession War would eventually find that these caused more harm than good by restricting vision and increasing shrapnel, ending the practice altogether. The rediscovery of the Helm Memory Core kick-started a number of attempts to replicate the B-2000 computer, however there were no successful attempts prior to the Clan Invasion. Also, the invention of the C3 Computer with its emphasis on small-scale networking, and a switch in doctrine to using DropShips as command posts, saw the Cyclops' command role decline. However Grumium Creations was eventually able to restart production of new variants of the 'Mech, and where it has participated a Cyclops with a working B-2000 has had noticeable effects. For this reason Cyclops 'Mechs with a working battle computer were reserved for high-ranking officers.
+
+manufacturer:Grumium Creations
+primaryfactory:Grumium
+systemmanufacturer:CHASSIS:Stormvanger Endo-Steel
+systemmanufacturer:ENGINE:Hermes 360
+systemmanufacturer:ARMOR:Starshield Ferro-Fibrous with CASE
+systemmanufacturer:COMMUNICATIONS:Olmstead 840
+systemmanufacturer:TARGETING:Tacticon Tracer 280

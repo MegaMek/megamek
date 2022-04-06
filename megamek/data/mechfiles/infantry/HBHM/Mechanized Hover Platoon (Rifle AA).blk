@@ -15,6 +15,10 @@ Mechanized Hover Platoon
 <Model>
 (Rifle AA)
 </Model>
+
+<mul id:>
+4612
+</mul id:>
 <squad_size>
 5
 </squad_size>

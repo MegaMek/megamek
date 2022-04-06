@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -41,7 +41,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      * @param w
      * @param g
      */
-    public RapidfireACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public RapidfireACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }

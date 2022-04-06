@@ -1,0 +1,161 @@
+Version:1.0
+Eris
+ERS-2N
+mul id:8251
+
+Config:Biped
+techbase:Inner Sphere
+era:3092
+source:Rec Guide:ilClan #18 - Early Republic
+rules level:3
+
+mass:50
+engine:250 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:5
+
+armor:Standard(Inner Sphere)
+LA armor:15
+RA armor:15
+LT armor:18
+RT armor:18
+CT armor:23
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:5
+RTR armor:5
+RTC armor:8
+
+Weapons:6
+Small X-Pulse Laser, Left Arm
+Small X-Pulse Laser, Left Arm
+Snub-Nose PPC, Right Arm
+MML 5, Left Torso
+MML 5, Right Torso
+Small X-Pulse Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSmallXPulseLaser
+ISSmallXPulseLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISSNPPC
+ISSNPPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 LRM
+ISCASEII
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISPartialWing
+ISMML5
+ISMML5
+ISMML5
+IS Ammo MML-5 SRM
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallXPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Kallon Weapon Industries
+primaryfactory:Loyalty
+systemmanufacturer:CHASSIS:N&D HLBM Endo-Steel
+systemmanufacturer:ENGINE:Hermes 250 XL
+systemmanufacturer:ARMOR:Kallon Royalstar with CASE II
+systemmanufacturer:JUMPJET:Chilton 360 with Partial Wing
+systemmanufacturer:COMMUNICATIONS:Garret T20-C
+systemmanufacturer:TARGETING:Garret A6

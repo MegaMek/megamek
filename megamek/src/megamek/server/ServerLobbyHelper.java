@@ -18,27 +18,21 @@
  */
 package megamek.server;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import megamek.MegaMek;
 import megamek.client.ui.swing.lobby.LobbyActions;
 import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.net.Packet;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 class ServerLobbyHelper {
-
-
     /**
      * Returns true when the given new force (that is not part of the given game's forces)
      * can be integrated into game's forces without error; i.e.:
@@ -46,7 +40,7 @@ class ServerLobbyHelper {
      * if it has no entities and no subforces,
      * if the client sending it is the owner
      */
-    static boolean isNewForceValid(IGame game, Force force) {
+    static boolean isNewForceValid(Game game, Force force) {
         if ((!force.isTopLevel() && !game.getForces().contains(force.getParentId()))
                 || (force.getChildCount() != 0)) {
             return false;
@@ -58,7 +52,7 @@ class ServerLobbyHelper {
      * Writes a "Unit XX has been customized" message to the chat. The message
      * is adapted to blind drop conditions. 
      */
-    static String entityUpdateMessage(Entity entity, IGame game) {
+    static String entityUpdateMessage(Entity entity, Game game) {
         StringBuilder result = new StringBuilder();
         if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
             result.append("A Unit of ");
@@ -88,7 +82,7 @@ class ServerLobbyHelper {
      * Returns a set of entities that received changes. The set may be empty, but not null.
      * <P>NOTE: This is a simplified unload that is only valid in the lobby!
      */
-    static HashSet<Entity> lobbyUnload(IGame game, Collection<Entity> entities) { 
+    static HashSet<Entity> lobbyUnload(Game game, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
         for (Entity entity: entities) {
             result.addAll(lobbyDisembark(game, entity));
@@ -106,7 +100,7 @@ class ServerLobbyHelper {
      * Returns a set of entities that received changes. The set may be empty, but not null.
      * <P>NOTE: This is a simplified unload that is only valid in the lobby!
      */
-    static HashSet<Entity> lobbyUnloadOthers(IGame game, Collection<Entity> entities) { 
+    static HashSet<Entity> lobbyUnloadOthers(Game game, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
         for (Entity entity: entities) {
             result.addAll(lobbyDisembarkOthers(game, entity, entities));
@@ -123,7 +117,7 @@ class ServerLobbyHelper {
      * the entity was not loaded to a carrier. 
      * <P>NOTE: This is a simplified disembark that is only valid in the lobby!
      */
-    private static HashSet<Entity> lobbyDisembark(IGame game, Entity entity) {
+    private static HashSet<Entity> lobbyDisembark(Game game, Entity entity) {
         return lobbyDisembarkOthers(game, entity, new ArrayList<>());
     }
     
@@ -133,7 +127,7 @@ class ServerLobbyHelper {
      * the entity was not loaded to a carrier. 
      * <P>NOTE: This is a simplified disembark that is only valid in the lobby!
      */
-    private static HashSet<Entity> lobbyDisembarkOthers(IGame game, Entity entity, Collection<Entity> entities) {
+    private static HashSet<Entity> lobbyDisembarkOthers(Game game, Entity entity, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
         if (entity.getTransportId() != Entity.NONE) {
             Entity carrier = game.getEntity(entity.getTransportId());
@@ -151,7 +145,7 @@ class ServerLobbyHelper {
      * Have the given entity disembark if it is carried by an enemy unit.
      * <P>NOTE: This is a simplified disembark that is only valid in the lobby!
      */
-    private static void lobbyDisembarkEnemy(IGame game, Entity entity) {
+    private static void lobbyDisembarkEnemy(Game game, Entity entity) {
         if (entity.getTransportId() != Entity.NONE) {
             Entity carrier = game.getEntity(entity.getTransportId());
             if (carrier == null) {
@@ -168,7 +162,7 @@ class ServerLobbyHelper {
      * This is a simplified version that is only valid in the lobby.
      * Returns a set of entities that received changes.
      */
-    static HashSet<Entity> performC3Disconnect(IGame game, Collection<Entity> entities) {
+    static HashSet<Entity> performC3Disconnect(Game game, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
         // Disconnect the entity from networks
         for (Entity entity: entities) {
@@ -211,7 +205,7 @@ class ServerLobbyHelper {
      * making the sent forces top-level. 
      * This method is intended for use in the lobby!
      */
-    static void receiveForceParent(Packet c, int connId, IGame game, Server server) {
+    static void receiveForceParent(Packet c, int connId, Game game, Server server) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         int newParentId = (int) c.getObject(1);
@@ -223,7 +217,7 @@ class ServerLobbyHelper {
             forceList.stream().forEach(f -> changedForces.addAll(forces.promoteForce(forces.getForce(f.getId()))));
         } else {
             if (!forces.contains(newParentId)) {
-                MegaMek.getLogger().warning("Tried to attach forces to non-existing parent force ID " + newParentId);
+                LogManager.getLogger().warn("Tried to attach forces to non-existing parent force ID " + newParentId);
                 return;
             }
             Force newParent = forces.getForce(newParentId);
@@ -239,11 +233,11 @@ class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them.
      * This method is intended for use in the lobby!
      */
-    static void receiveEntitiesAssign(Packet c, int connId, IGame game, Server server) {
+    static void receiveEntitiesAssign(Packet c, int connId, Game game, Server server) {
         @SuppressWarnings("unchecked")
         var entityList = (Collection<Entity>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
-        IPlayer newOwner = game.getPlayer(newOwnerId);
+        Player newOwner = game.getPlayer(newOwnerId);
 
         if (entityList.isEmpty() || newOwner == null) {
             return;
@@ -265,11 +259,11 @@ class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them.
      * This method is intended for use in the lobby!
      */
-    static void receiveForceAssignFull(Packet c, int connId, IGame game, Server server) {
+    static void receiveForceAssignFull(Packet c, int connId, Game game, Server server) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
-        IPlayer newOwner = game.getPlayer(newOwnerId);
+        Player newOwner = game.getPlayer(newOwnerId);
 
         if (forceList.isEmpty() || newOwner == null) {
             return;
@@ -301,11 +295,11 @@ class ServerLobbyHelper {
      * Handles a force update packet, forwarding a client-side change that 
      * only affects forces, not entities:
      * - rename
-     * - move subforce/entity up/down (this does not change the entitiy, only the force)
+     * - move subforce/entity up/down (this does not change the entity, only the force)
      * - owner change of only the force (not the entities, only within a team) 
      * This method is intended for use in the lobby!
      */
-    static void receiveForceUpdate(Packet c, int connId, IGame game, Server server) {
+    static void receiveForceUpdate(Packet c, int connId, Game game, Server server) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         
@@ -318,7 +312,7 @@ class ServerLobbyHelper {
             game.setForces(forcesClone);
             server.send(createForceUpdatePacket(forceList));
         } else {
-            MegaMek.getLogger().warning("Invalid forces update received.");
+            LogManager.getLogger().warn("Invalid forces update received.");
             server.send(server.createFullEntitiesPacket());
         }
     }
@@ -327,13 +321,13 @@ class ServerLobbyHelper {
      * Handles a team change, updating units and forces as necessary.
      * This method is intended for use in the lobby!
      */
-    static void receiveLobbyTeamChange(Packet c, int connId, IGame game, Server server) {
+    static void receiveLobbyTeamChange(Packet c, int connId, Game game, Server server) {
         @SuppressWarnings("unchecked")
-        var players = (Collection<IPlayer>) c.getObject(0);
+        var players = (Collection<Player>) c.getObject(0);
         var newTeam = (int) c.getObject(1);
         
         // Collect server-side player objects
-        var serverPlayers = new HashSet<IPlayer>();
+        Set<Player> serverPlayers = new HashSet<>();
         players.stream().map(p -> game.getPlayer(p.getId())).forEach(serverPlayers::add);
         
         // Check parameters and if there's an actual change to a player
@@ -343,7 +337,7 @@ class ServerLobbyHelper {
         }
         
         // First, change all teams, then correct all connections (load, C3, force)
-        for (IPlayer player: serverPlayers) {
+        for (Player player : serverPlayers) {
             player.setTeam(newTeam);
         }
         Forces forces = game.getForces();
@@ -352,8 +346,8 @@ class ServerLobbyHelper {
         correctC3Connections(game);
         
         server.send(server.createFullEntitiesPacket());
-        for (IPlayer player: serverPlayers) {
-            server.send(server.createPlayerUpdatePacket(player.getId()));
+        for (Player player: serverPlayers) {
+            server.transmitPlayerUpdate(player);
         }
     }
 
@@ -362,7 +356,7 @@ class ServerLobbyHelper {
      * if they are enemies.  
      * <P>NOTE: This is a simplified unload that is only valid in the lobby!
      */
-    static void correctLoading(IGame game) {
+    static void correctLoading(Game game) {
         for (Entity entity: game.getEntitiesVector()) {
             lobbyDisembarkEnemy(game, entity);
             for (Entity carriedUnit: entity.getLoadedUnits()) {
@@ -375,7 +369,7 @@ class ServerLobbyHelper {
      * For all game units, disconnects from enemy C3 masters / networks
      * <P>NOTE: This is intended for use in the lobby phase!
      */
-    static void correctC3Connections(IGame game) {
+    static void correctC3Connections(Game game) {
         for (Entity entity: game.getEntitiesVector()) {
             if (entity.hasNhC3()) {
                 String net = entity.getC3NetId();
@@ -385,12 +379,13 @@ class ServerLobbyHelper {
                     if (game.getEntity(id).getOwner().isEnemyOf(entity.getOwner())) {
                         entity.setC3NetIdSelf();
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else if (entity.hasAnyC3System()) {
-                if (entity.getC3Master() != null 
-                        && entity.getC3Master().getOwner().isEnemyOf(entity.getOwner()))
-                entity.setC3Master(null, true);
+                if ((entity.getC3Master() != null)
+                        && entity.getC3Master().getOwner().isEnemyOf(entity.getOwner())) {
+                    entity.setC3Master(null, true);
+                }
             }
         }
     }
@@ -400,7 +395,7 @@ class ServerLobbyHelper {
      * sent entities to a force or removing them from any force. 
      * This method is intended for use in the lobby!
      */
-    static void receiveAddEntititesToForce(Packet c, int connId, IGame game, Server server) {
+    static void receiveAddEntititesToForce(Packet c, int connId, Game game, Server server) {
         @SuppressWarnings("unchecked")
         var entityList = (Collection<Entity>) c.getObject(0);
         var forceId = (int) c.getObject(1);
@@ -414,7 +409,7 @@ class ServerLobbyHelper {
         if (forceId != Force.NO_FORCE) {
             var forceOwner = forces.getOwner(forceId);
             if (entities.stream().anyMatch(e -> e.getOwner().isEnemyOf(forceOwner))) {
-                MegaMek.getLogger().warning("Tried to add entities to an enemy force.");
+                LogManager.getLogger().warn("Tried to add entities to an enemy force.");
                 return;
             }
             for (Entity entity: entities) {
@@ -434,17 +429,17 @@ class ServerLobbyHelper {
     /**
      * Adds a force with the info from the client. Only valid during the lobby phase.
      */
-    static void receiveForceAdd(Packet c, int connId, IGame game, Server server) {
+    static void receiveForceAdd(Packet c, int connId, Game game, Server server) {
         var force = (Force) c.getObject(0);
         @SuppressWarnings("unchecked")
         var entities = (Collection<Entity>) c.getObject(1);
 
         int newId;
         if (force.isTopLevel()) {
-            newId = game.getForces().addTopLevelForce(force.getName(), game.getPlayer(force.getOwnerId()));
+            newId = game.getForces().addTopLevelForce(force, game.getPlayer(force.getOwnerId()));
         } else {
             Force parent = game.getForces().getForce(force.getParentId()); 
-            newId = game.getForces().addSubForce(force.getName(), parent);
+            newId = game.getForces().addSubForce(force, parent);
         }
         for (var entity: entities) {
             game.getForces().addEntity(game.getEntity(entity.getId()), newId);
@@ -481,7 +476,7 @@ class ServerLobbyHelper {
      * forces of other players if they are a subforce of one's own force.
      * @see LobbyActions#isEditable(Force)
      */
-    static boolean isEditable(Force force, IGame game, IPlayer sender) {
+    static boolean isEditable(Force force, Game game, Player sender) {
         List<Force> chain = game.getForces().forceChain(force);
         return chain.stream().map(f -> game.getForces().getOwner(f)).anyMatch(p -> p.equals(sender));
     }

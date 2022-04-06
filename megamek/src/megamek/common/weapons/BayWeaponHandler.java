@@ -1,46 +1,31 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.MegaMek;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * @author Jay Lawson
  */
 public class BayWeaponHandler extends WeaponHandler {
-
-    /**
-     *
-     */
-
     private static final long serialVersionUID = -1618484541772117621L;
     Mounted ammo;
 
@@ -54,7 +39,7 @@ public class BayWeaponHandler extends WeaponHandler {
      * @param g
      * @param s
      */
-    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public BayWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -126,9 +111,9 @@ public class BayWeaponHandler extends WeaponHandler {
      *         kept or not
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
 
-        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
 
@@ -139,10 +124,10 @@ public class BayWeaponHandler extends WeaponHandler {
                 && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR 
                 &&  target.getTargetType() != Targetable.TYPE_HEX_IGNITE
                 &&  target.getTargetType() != Targetable.TYPE_BUILDING)) 
-        		|| game.getBoard().inSpace()
-        		// Capital missile launchers should return the root handler...
-        		|| (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
-        		|| (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
+                || game.getBoard().inSpace()
+                // Capital missile launchers should return the root handler...
+                || (wtype.getAtClass() == (WeaponType.CLASS_CAPITAL_MISSILE))
+                || (wtype.getAtClass() == (WeaponType.CLASS_AR10))) {
             return super.handle(phase, vPhaseReport);
         }
 
@@ -361,7 +346,7 @@ public class BayWeaponHandler extends WeaponHandler {
         return 0;
     }
 
-    public boolean handleAeroSanity(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handleAeroSanity(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
@@ -399,16 +384,16 @@ public class BayWeaponHandler extends WeaponHandler {
         // Handle point defense fire. For cluster hit missile launchers, we'll report later.
         CounterAV = calcCounterAV();
         
-        //We need this for thunderbolt bays
+        // We need this for thunderbolt bays
         CapMissileAMSMod = calcCapMissileAMSMod();
         
-        //Set up Capital Missile (thunderbolt) armor
+        // Set up Capital Missile (thunderbolt) armor
         CapMissileArmor = initializeCapMissileArmor();
         
-        //and now damage it
+        // and now damage it
         CapMissileArmor = (CapMissileArmor - CounterAV);
         
-        //Only do this if the missile wasn't destroyed
+        // Only do this if the missile wasn't destroyed
         if (CapMissileAMSMod > 0 && CapMissileArmor > 0) {
             toHit.addModifier(CapMissileAMSMod, "Damage from Point Defenses");
             if (roll < toHit.getValue()) {
@@ -519,10 +504,9 @@ public class BayWeaponHandler extends WeaponHandler {
         }
 
         // We have to adjust the reports on a miss, so they line up
-        if (bMissed){
+        if (bMissed) {
             reportMiss(vPhaseReport);
-            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
-                    vPhaseReport)) {
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg, vPhaseReport)) {
                 return false;
             }
         }
@@ -563,8 +547,8 @@ public class BayWeaponHandler extends WeaponHandler {
         }
 
         Report.addNewline(vPhaseReport);
-        //New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
-        //data from the 'real' toHit data of this bay handler
+        // New toHit data to hold our bay auto hit. We want to be able to get glacing/direct blow
+        // data from the 'real' toHit data of this bay handler
         ToHitData autoHit = new ToHitData();
         autoHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "if the bay hits, all bay weapons hit");
         int replaceReport;
@@ -572,52 +556,50 @@ public class BayWeaponHandler extends WeaponHandler {
             Mounted m = ae.getEquipment(wId);
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
                 WeaponType bayWType = ((WeaponType) m.getType());
-                if(bayWType instanceof Weapon) {
+                if (bayWType instanceof Weapon) {
                     replaceReport = vPhaseReport.size();
                     WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                    AttackHandler bayWHandler = ((Weapon)bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                    AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
                     bayWHandler.setAnnouncedEntityFiring(false);
                     // This should always be true
                     if (bayWHandler instanceof WeaponHandler) {
                         WeaponHandler wHandler = (WeaponHandler) bayWHandler;
                         wHandler.setParentBayHandler(this);
                     } else {
-                        MegaMek.getLogger().error("bayWHandler " +  bayWHandler.getClass() 
+                        LogManager.getLogger().error("bayWHandler " +  bayWHandler.getClass()
                                 + " is not a weapon handler! Cannot set parent bay handler.");
                         continue;
                     }
                     bayWHandler.handle(phase, vPhaseReport);
-                    if(vPhaseReport.size() > replaceReport) {
+                    if (vPhaseReport.size() > replaceReport) {
                         //fix the reporting - is there a better way to do this
-                        if(vPhaseReport.size() > replaceReport) {
-                            Report currentReport = vPhaseReport.get(replaceReport);
-                            while(null != currentReport) {
-                                vPhaseReport.remove(replaceReport);
-                                if(currentReport.newlines > 0 || vPhaseReport.size() <= replaceReport) {
-                                    currentReport = null;
-                                } else {
-                                    currentReport = vPhaseReport.get(replaceReport);
-                                }
-                            }
-                            r = new Report(3115);
-                            r.indent(2);
-                            r.newlines = 1;
-                            r.subject = subjectId;
-                            r.add(bayWType.getName());
-                            if (entityTarget != null) {
-                                r.addDesc(entityTarget);
+                        Report currentReport = vPhaseReport.get(replaceReport);
+                        while (null != currentReport) {
+                            vPhaseReport.remove(replaceReport);
+                            if ((currentReport.newlines > 0) || (vPhaseReport.size() <= replaceReport)) {
+                                currentReport = null;
                             } else {
-                                r.messageId = 3120;
-                                r.add(target.getDisplayName(), true);
+                                currentReport = vPhaseReport.get(replaceReport);
                             }
-                            vPhaseReport.add(replaceReport, r);
                         }
+                        r = new Report(3115);
+                        r.indent(2);
+                        r.newlines = 1;
+                        r.subject = subjectId;
+                        r.add(bayWType.getName());
+                        if (entityTarget != null) {
+                            r.addDesc(entityTarget);
+                        } else {
+                            r.messageId = 3120;
+                            r.add(target.getDisplayName(), true);
+                        }
+                        vPhaseReport.add(replaceReport, r);
                     }
                 }
             }
-        } // Handle the next weapon in the bay
+        }
+
         Report.addNewline(vPhaseReport);
         return false;
     }
-
 }

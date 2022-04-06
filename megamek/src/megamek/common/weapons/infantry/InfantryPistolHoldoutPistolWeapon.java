@@ -46,7 +46,7 @@ public class InfantryPistolHoldoutPistolWeapon extends InfantryWeapon {
 		ammoWeight = 0.00002;
 		ammoCost = 1;
 		shots = 2;
-		rulesRefs = " 273,TM";
+		rulesRefs = " 273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

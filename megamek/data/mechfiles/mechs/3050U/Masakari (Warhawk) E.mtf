@@ -1,6 +1,7 @@
 Version:1.1
 Masakari (Warhawk)
 E
+mul id:2095
 
 Config:Biped Omnimech
 techbase:Clan
@@ -152,15 +153,16 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 
-overview:Introduced by Clan Smoke Jaguar in 2999 in preparation for the anticipated return to the Inner Sphere, while the Dragoon Compromise stalled such plans, the Jaguars unleashed the powerful Warhawk on their Warden opponents to deadly effect. The Warhawk was powered by a massive 340 XL Engine that gave it a top speed of 64.8 km/h and mounted thirteen and a half tons of Ferro-Fibrous armor to protect itself from enemy fire. To dissipate the massive waste heat produced in its various configurations, it carried a staggering twenty double heat sinks. Additionally, though not truly fixed equipment on the chassis, the Warhawk managed to incorporate an advanced Targeting Computer into each of its configurations, making all of its direct fire weapons extremely accurate.
+overview:Introduced by Clan Smoke Jaguar in 2999 in preparation for the anticipated return to the Inner Sphere, while the Dragoon Compromise stalled such plans, the Jaguars unleashed the powerful Warhawk on their Warden opponents to deadly effect. 
 
-capabilities:A sort of fusion between the B and C variants, the Warhawk E mounted an ER PPC, a Large Pulse Laser, and an SRM-6. The new addition to the design was three Plasma Cannons. The Targeting Computer made the energy weapons more accurate.
+capabilities:The Warhawk was powered by a massive 340 XL Engine that gave it a top speed of 64.8 km/h and mounted thirteen and a half tons of Ferro-Fibrous armor to protect itself from enemy fire. To dissipate the massive waste heat produced in its various configurations, it carried a staggering twenty double heat sinks. Additionally, though not truly fixed equipment on the chassis, the Warhawk managed to incorporate an advanced Targeting Computer into each of its configurations, making all of its direct fire weapons extremely accurate.
 
-deployment:Deployed extensively in the Jaguar frontline forces, and often seen paired with the Dire Wolf, the design truly came to prominence as originally intended, on the battlefields of the Jaguars' Invasion Corridor and earned the code name of Masakari - a Japanese battle-axe used on medieval Terra - from warriors within the DCMS who faced it.
+deployment:A sort of fusion between the B and C variants, the Warhawk E mounted an ER PPC, a Large Pulse Laser, and an SRM-6. The new addition to the design was three Plasma Cannons. The Targeting Computer made the energy weapons more accurate.
 
-Though it appeared in the Toumans of a number of other Clans, such as the Ghost Bears and Jade Falcons, the Jaguars jealously guarded their production, and all examples of the highly prized 'Mech outside of the Jaguars were battlefield salvage until production lines and design specs finally spread to the Fire Mandrills, Diamond Sharks and Goliath Scorpions upon the Smoke Jaguars' Annihilation. Produced exclusively on the Clan Homeworlds, the design was one of many lost to the Inner Sphere Clans after contact with the Homeworlds ceased during the Jihad.
-manufacturer:Phan Industrialplex, Abysmal Manufacturing Complex,  Kindraa Kline Primary Production Facility
-primaryfactory:Huntress, Huntress, Dagda
+history:Deployed extensively in the Jaguar frontline forces, and often seen paired with the Dire Wolf, the design truly came to prominence as originally intended, on the battlefields of the Jaguars' Invasion Corridor and earned the code name of Masakari - a Japanese battle-axe used on medieval Terra - from warriors within the DCMS who faced it. Though it appeared in the Toumans of a number of other Clans, such as the Ghost Bears and Jade Falcons, the Jaguars jealously guarded their production, and all examples of the highly prized 'Mech outside of the Jaguars were battlefield salvage until production lines and design specs finally spread to the Fire Mandrills, Diamond Sharks and Goliath Scorpions upon the Smoke Jaguars' Annihilation. Produced exclusively on the Clan Homeworlds, the design was one of many lost to the Inner Sphere Clans after contact with the Homeworlds ceased during the Jihad. Though it appeared in the Toumans of a number of other Clans, such as the Ghost Bears and Jade Falcons, the Jaguars jealously guarded their production, and all examples of the highly prized 'Mech outside of the Jaguars were battlefield salvage until production lines and design specs finally spread to the Fire Mandrills, Diamond Sharks and Goliath Scorpions upon the Smoke Jaguars' Annihilation. Produced exclusively on the Clan Homeworlds, the design was one of many lost to the Inner Sphere Clans after contact with the Homeworlds ceased during the Jihad.
+
+manufacturer:Phan Industrialplex,Abysmal Manufacturing Complex,Kindraa Kline Primary Production Facility,Imperial BattleMechs
+primaryfactory:Huntress,Huntress,Dagda,Antwerp
 systemmanufacturer:CHASSIS:Huntress WH
 systemmanufacturer:ENGINE:General Systems 340 XL
 systemmanufacturer:ARMOR:Forging X85 Ferro-Fibrous

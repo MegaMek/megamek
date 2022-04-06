@@ -20,6 +20,10 @@ Schrek PPC Carrier
 (C3M)
 </Model>
 
+<mul id:>
+2826
+</mul id:>
+
 <Tonnage>
 80
 </Tonnage>

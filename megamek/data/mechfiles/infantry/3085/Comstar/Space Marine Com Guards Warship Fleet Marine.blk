@@ -15,6 +15,10 @@ Space Marine
 <Model>
 Com Guards Warship Fleet Marine
 </Model>
+
+<mul id:>
+2985
+</mul id:>
 <squad_size>
 6
 </squad_size>

@@ -12,8 +12,12 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.templates;
+
+import megamek.common.*;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAero;
+import org.apache.logging.log4j.LogManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -22,23 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.MegaMek;
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Entity;
-import megamek.common.EntityFluff;
-import megamek.common.Messages;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAero;
-
 /**
  * Creates a TRO template model for aerospace and conventional fighters.
  *
  * @author Neoancient
- *
  */
 public class AeroTROView extends TROView {
 
@@ -182,7 +173,7 @@ public class AeroTROView extends TROView {
         for (final Integer eqNum : bay.getBayWeapons()) {
             final Mounted wMount = aero.getEquipment(eqNum);
             if (null == wMount) {
-                MegaMek.getLogger().error("Bay " + bay.getName() + " has non-existent weapon");
+                LogManager.getLogger().error("Bay " + bay.getName() + " has non-existent weapon");
                 continue;
             }
             final WeaponType wtype = (WeaponType) wMount.getType();

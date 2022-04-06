@@ -1,27 +1,17 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.html.HTMLEditorKit;
 
 import megamek.client.Client;
 import megamek.client.ui.GBC;
@@ -31,17 +21,22 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
-import megamek.common.IGame;
 import megamek.common.Report;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.html.HTMLEditorKit;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class ReportDisplay extends AbstractPhaseDisplay implements
         ActionListener, HyperlinkListener, IPreferenceChangeListener {
-    /**
-     *
-     */
     private static final long serialVersionUID = 6185643976857892270L;
 
     // displays
@@ -64,6 +59,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("doneButton")) {
                     ready();
@@ -75,16 +71,16 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         // Create a tabbed panel to hold our reports.
         tabs = new JTabbedPane();
 
-        Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
+        Font tabPanelFont = new Font("Dialog", Font.BOLD,
                 GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setFont(tabPanelFont);
 
         resetTabs();
 
-        butDone.setText(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
+        butDone.setText(Messages.getString("ReportDisplay.Done"));
 
-        rerollInitiativeB = new JButton(Messages.getString("ReportDisplay.Reroll")); //$NON-NLS-1$
-        rerollInitiativeB.setActionCommand("reroll_initiative"); //$NON-NLS-1$
+        rerollInitiativeB = new JButton(Messages.getString("ReportDisplay.Reroll"));
+        rerollInitiativeB.setActionCommand("reroll_initiative");
         rerollInitiativeB.addActionListener(this);
 
         // layout screen
@@ -94,7 +90,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         panButtons.setLayout(new GridLayout(1, 8));
         panButtons.add(rerollInitiativeB);
         for (int padding = 0; padding < 6; padding++) {
-            panButtons.add(new JLabel("")); //$NON-NLS-1$
+            panButtons.add(new JLabel(""));
         }
         add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
@@ -127,7 +123,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     public void rerollInitiative() {
         rerolled = true;
         rerollInitiativeB.setEnabled(false);
-        //butDone.setEnabled(false);
+        // butDone.setEnabled(false);
         clientgui.getClient().sendRerollInitiativeRequest();
     }
 
@@ -140,7 +136,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     public void resetButtons() {
         resetReadyButton();
-        if ((clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
+        if ((clientgui.getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) && clientgui.getClient().getGame().hasTacticalGenius(clientgui.getClient().getLocalPlayer())) {
             showRerollButton(true);
         } else {
             showRerollButton(false);
@@ -252,8 +248,9 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     //
     // ActionListener
     //
+    @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) { //$NON-NLS-1$
+        if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) {
             rerollInitiative();
         }
     }
@@ -271,6 +268,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         rerolled = false;
 
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 int phaseTab = tabs.indexOfTab("Phase");
                 if (phaseTab > 0) {
@@ -290,6 +288,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     /**
      * Stop just ignoring events and actually stop listening to them.
      */
+    @Override
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         GUIPreferences.getInstance().removePreferenceChangeListener(this);
@@ -314,7 +313,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 Entity ent = clientgui.getClient().getGame().getEntity(id);
                 if (ent != null) {
                     clientgui.mechD.displayEntity(ent);
-                    clientgui.setDisplayVisible(true);
+                    clientgui.setUnitDisplayVisible(true);
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());

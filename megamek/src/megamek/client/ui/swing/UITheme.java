@@ -61,7 +61,7 @@ public class UITheme {
         } else if (other == null || other.getClass() != getClass()) {
             return false;
         } else {
-            return getClassName().equals(((UITheme)other).getClassName());
+            return getClassName().equals(((UITheme) other).getClassName());
         }
     }
 }

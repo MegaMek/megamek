@@ -1,6 +1,7 @@
 Version:1.0
 Mad Cat Mk IV (Savage Wolf)
 B
+mul id:6572
 
 Config:Biped Omnimech
 TechBase:Clan

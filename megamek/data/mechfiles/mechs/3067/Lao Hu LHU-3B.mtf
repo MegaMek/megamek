@@ -1,6 +1,7 @@
 Version:1.0
 Lao Hu
 LHU-3B
+mul id:4479
 
 Config:Biped
 techbase:Inner Sphere
@@ -82,14 +83,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
 IS LB 10-X AC Ammo
 IS LB 10-X Cluster Ammo
 IS LB 10-X Cluster Ammo
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
 IS Endo Steel
 
 Center Torso:

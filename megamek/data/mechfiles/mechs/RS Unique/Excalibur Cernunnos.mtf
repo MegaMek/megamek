@@ -1,6 +1,7 @@
 Version:1.1
 Excalibur
 EXC-C1 (Cernunnos)
+mul id:1001
 
 Config:Biped
 TechBase:Inner Sphere

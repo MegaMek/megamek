@@ -1,6 +1,7 @@
 Version:1.0
 Charger
 CGR-SB 'Challenger'
+mul id:570
 
 Config:Biped
 TechBase:Inner Sphere

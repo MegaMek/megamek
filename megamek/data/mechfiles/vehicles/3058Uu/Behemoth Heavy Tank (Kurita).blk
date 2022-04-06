@@ -15,6 +15,10 @@ Behemoth Heavy Tank
 <Model>
 (Kurita)
 </Model>
+
+<mul id:>
+323
+</mul id:>
 <Tonnage>
 100
 </Tonnage>

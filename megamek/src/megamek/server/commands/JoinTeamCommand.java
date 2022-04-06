@@ -20,7 +20,7 @@
  */
 package megamek.server.commands;
 
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.server.Server;
 
 /**
@@ -49,7 +49,7 @@ public class JoinTeamCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         try {
-            IPlayer player = server.getPlayer(connId);
+            Player player = server.getPlayer(connId);
             int numEntities = server.getGame().getEntitiesOwnedBy(player);
             
             if (args.length != 2) {
@@ -62,19 +62,20 @@ public class JoinTeamCommand extends ServerCommand {
             
             int teamId = Integer.parseInt(args[1]);
             
-            if(IPlayer.TEAM_UNASSIGNED == teamId && numEntities != 0) {
+            if ((Player.TEAM_UNASSIGNED == teamId) && (numEntities != 0)) {
                 server.sendServerChat(connId, "Player must have no more " +
                         "units to join the unassigned team!");
                 return;
             }
             String teamString = "join Team " + teamId + ".  ";
-            if (teamId == IPlayer.TEAM_UNASSIGNED){
+            if (teamId == Player.TEAM_UNASSIGNED) {
                 teamString = " leave their team and go unassigned.  ";
-            } else if (teamId == IPlayer.TEAM_NONE){
+            } else if (teamId == Player.TEAM_NONE) {
                 teamString = " go lone wolf!  ";
             }
-            for (IPlayer p : server.getGame().getPlayersVector()){
-                if (p.getId() != player.getId()){
+
+            for (Player p : server.getGame().getPlayersVector()) {
+                if (p.getId() != player.getId()) {
                     server.sendServerChat(p.getId(), player.getName()
                             + " wants to " + teamString
                             + SERVER_VOTE_PROMPT_MSG);
@@ -83,7 +84,7 @@ public class JoinTeamCommand extends ServerCommand {
             
             server.requestTeamChange(teamId, player);
             
-            for (IPlayer p : server.getGame().getPlayersVector()){
+            for (Player p : server.getGame().getPlayersVector()) {
                 p.setAllowTeamChange(false);
             }
             player.setAllowTeamChange(true);

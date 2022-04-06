@@ -1,73 +1,86 @@
 Version:1.1
 Daedalus
 GTX2 (Militarized)
+mul id:793
 
 Config:Quad
-TechBase:Inner Sphere
-Era:2801
-Rules Level:4
+techbase:Inner Sphere
+era:2801
+source:Historical: Operation Klondike
+rules level:4
 
-Mass:60
-Engine:240 Fusion Engine
-Structure:Industrial
-Myomer:Standard
-Cockpit:Industrial Cockpit
+mass:60
+engine:240 Fusion Engine(IS)
+structure:IS Industrial
+myomer:Standard
+cockpit:Industrial Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
+heat sinks:10 Single
+walk mp:4
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:19
-RA Armor:19
-LT Armor:14
-RT Armor:14
-CT Armor:22
-HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+armor:Standard(Inner Sphere)
+FLL armor:19
+FRL armor:19
+LT armor:14
+RT armor:14
+CT armor:22
+HD armor:9
+RLL armor:19
+RRL armor:19
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
-Weapons:12
-1 ISMediumLaser, Center Torso
-1 ISMediumLaser, Center Torso
-1 ISMachine Gun, Right Arm, Ammo:200
-1 ISMachine Gun, Left Arm
-1 ISMachine Gun, Right Arm
-1 ISMachine Gun, Left Arm
-1 Backhoe, Right Torso
-1 Chainsaw, Left Torso
-1 CLRocketLauncher20Prototype, Left Torso
-1 CLRocketLauncher20Prototype, Left Torso
-1 CLRocketLauncher20Prototype, Right Torso
-1 CLRocketLauncher20Prototype, Right Torso
+Weapons:10
+Machine Gun, Front Left Leg
+Machine Gun, Front Left Leg
+Machine Gun, Front Right Leg
+Machine Gun, Front Right Leg
+Prototype Rocket Launcher 20, Left Torso
+Prototype Rocket Launcher 20, Left Torso
+Prototype Rocket Launcher 20, Right Torso
+Prototype Rocket Launcher 20, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISMachine Gun
-ISMachine Gun
+Machine Gun
+Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISMachine Gun
-ISMachine Gun
+Machine Gun
+Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-ISMG Ammo (200)
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+IS Ammo MG - Full
 Chainsaw
 Chainsaw
 Chainsaw
@@ -75,12 +88,12 @@ Chainsaw
 Chainsaw
 
 Right Torso:
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
-CLRocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
+RocketLauncher20Prototype
 Backhoe
 Backhoe
 Backhoe
@@ -89,18 +102,18 @@ Backhoe
 Backhoe
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISMediumLaser
-ISMediumLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Medium Laser
 
 Head:
 Life Support
@@ -109,19 +122,39 @@ Cockpit
 Heat Sink
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,6 +1,7 @@
 Version:1.0
 Trebuchet
 TBT-5N
+mul id:3297
 
 Config:Biped
 TechBase:Inner Sphere
@@ -149,4 +150,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Trebuchet (also jovially referred to as the Trenchbucket) is a mainline medium weight BattleMech considered to be a fine blend of long- and short-range fire support for a unit of its size.
 
+capabilities:Unlike many other pre-Clan 'Mechs, the Trebuchet was designed from the beginning to work as part of a lance instead of functioning as a standalone model. 
+
+deployment:The primary weapons on the Trebuchet are a pair of Zeus LRM-15 launchers in its right torso and left arm. One ton of ammo per launcher allows it to "soften up" an opponent, though not truly cripple them, at ranges where they cannot return fire. Backing these up for close range work is a trio of Magna Mk II Medium Lasers, two in its right arm and one in its left, which provide the Trebuchet with firepower when the LRM ammunition has been depleted. These also discourages lighter 'Mechs from attempting to intercept it, and the ten heat sinks allows the 'Mech to fire these continuously when traveling at a cruising speed of 54 km/h. The Trebuchet is also proficient as a brawler, though its physical blows lack the same weight as heavier 'Mechs.
+
+history:The Trebuchet first walked off assembly lines in 2780 for the SLDF in the final years of the Star League, between the liberation of Terra from Stefan Amaris and Aleksandr Kerensky's departure. With the onset of the Succession Wars the Trebuchet would become an almost exclusive staple of the Free Worlds League since its manufacturing site on Stewart fell within their territory. However the original TBT-3C models proved to be too difficult to repair and produce with the disappearance of advanced technology, and in 2799 Corean Enterprises went back to the drawing board to create the TBT-5N using older, mass-producible technology. The Free Worlds League Military often partnered the Trebuchet with the Archer, while lances consisting of an Archer, two Trebuchets and a Centurion became a common configuration used for siege operations and by the Regulan Hussars. However the design also found its way into the hands of the other Great Houses and served with distinction during the Succession Wars in nearly every major operation, with a number of variants created to fulfill various needs. The technological renaissance which swept through the Inner Sphere during the 3030s allowed first Kali Yama and then the Irian corporations to begin producing the Trebuchet as well, culminating in upgraded designs debuting several years prior to the Clan Invasion. As late as 3071 advanced Trebuchet variants would continue to be produced and found themselves used by new actors on the galactic stage, most notoriously the Word of Blake.
+
+manufacturer:Irian BattleMechs Unlimited,Kali Yama Weapons Industries Inc,Corean Enterprises,Corean Enterprises - MacAdams-Suharno
+primaryfactory:Irian,Kalidasa,Ramen II,Stewart
+systemmanufacturer:CHASSIS:Corean Model 9C
+systemmanufacturer:ENGINE:Magna 250
+systemmanufacturer:ARMOR:Starshield
+systemmanufacturer:COMMUNICATIONS:Corean TransBand-J9
+systemmanufacturer:TARGETING:Corean B-Tech

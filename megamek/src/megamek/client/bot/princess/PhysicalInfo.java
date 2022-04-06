@@ -1,37 +1,30 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
 import megamek.client.bot.PhysicalOption;
-import megamek.common.BipedMech;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Mech;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.TripodMech;
+import megamek.common.*;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
+import org.apache.logging.log4j.LogManager;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
- * @version $Id$
- * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:29 PM
  */
 public class PhysicalInfo {
@@ -73,12 +66,12 @@ public class PhysicalInfo {
      * @param target             The {@link megamek.common.Targetable} of the attack.
      * @param targetState        The current {@link megamek.client.bot.princess.EntityState} of the target.
      * @param physicalAttackType The type of attack being made.
-     * @param game               The {@link megamek.common.IGame} in progress.
+     * @param game               The current {@link Game}
      * @param owner              The owning {@link Princess} bot.
      * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
     PhysicalInfo(Entity shooter, EntityState shooterState, Targetable target, EntityState targetState,
-                 PhysicalAttackType physicalAttackType, IGame game, Princess owner, boolean guess) {
+                 PhysicalAttackType physicalAttackType, Game game, Princess owner, boolean guess) {
 
         this.owner = owner;
 
@@ -115,11 +108,11 @@ public class PhysicalInfo {
      * @param shooter            The {@link megamek.common.Entity} doing the attacking.
      * @param target             The {@link megamek.common.Targetable} of the attack.
      * @param physicalAttackType The type of attack being made.
-     * @param game               The {@link megamek.common.IGame} in progress.
+     * @param game               The current {@link Game}
      * @param owner              The owning {@link Princess} bot.
      * @param guess              Set TRUE to estimate the chance to hit rather than doing the full calculation.
      */
-    PhysicalInfo(Entity shooter, Targetable target, PhysicalAttackType physicalAttackType, IGame game, Princess owner,
+    PhysicalInfo(Entity shooter, Targetable target, PhysicalAttackType physicalAttackType, Game game, Princess owner,
                  boolean guess) {
         this(shooter, null, target, null, physicalAttackType, game, owner, guess);
     }
@@ -128,7 +121,7 @@ public class PhysicalInfo {
      * Helper function to determine damage and criticals
      */
     protected void initDamage(PhysicalAttackType physicalAttackType, EntityState shooterState, EntityState targetState,
-                              boolean guess, IGame game) {
+                              boolean guess, Game game) {
         StringBuilder msg =
                 new StringBuilder("Initializing Damage for ").append(getShooter().getDisplayName())
                                                              .append(" ").append(physicalAttackType.toString())
@@ -137,7 +130,7 @@ public class PhysicalInfo {
 
         // Only mechs do physical attacks.
         if (!(getShooter() instanceof Mech)) {
-            owner.getLogger().warning(msg.append("\n\tNot a mech!").toString());
+            LogManager.getLogger().warn(msg.append("\n\tNot a mech!").toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);
@@ -170,7 +163,7 @@ public class PhysicalInfo {
 
         // If we can't hit, set all values to 0 and return.
         if (getHitData().getValue() > 12) {
-            owner.getLogger().info(msg.append("\n\tImpossible toHit: ").append(getHitData().getValue()).toString());
+            LogManager.getLogger().info(msg.append("\n\tImpossible toHit: ").append(getHitData().getValue()).toString());
             setProbabilityToHit(0);
             setMaxDamage(0);
             setExpectedCriticals(0);
@@ -185,7 +178,7 @@ public class PhysicalInfo {
                 setMaxDamage((int) Math.ceil(getShooter().getWeight() / 10.0));
             } else {
                 // Only bipeds & tripods can punch.
-                owner.getLogger().warning(msg.append("\n\tnon-biped/tripod trying to punch!").toString());
+                LogManager.getLogger().warn(msg.append("\n\tnon-biped/tripod trying to punch!").toString());
                 setProbabilityToHit(0);
                 setMaxDamage(0);
                 setExpectedCriticals(0);

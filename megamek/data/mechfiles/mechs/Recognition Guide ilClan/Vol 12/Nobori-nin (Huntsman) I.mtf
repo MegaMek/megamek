@@ -1,12 +1,13 @@
 Version:1.1
 Nobori-nin (Huntsman)
 I
+mul id:7784
 
 Config:Biped Omnimech
 techbase:Clan
 era:3088
 rules level:2
-source:ilClan Vol 12 - Early Republic
+source:Rec Guide:ilClan #12 - Early Republic
 
 mass:50
 engine:250 XL (Clan) Engine(IS)
@@ -149,9 +150,14 @@ Jump Jet
 -Empty-
 -Empty-
 
-overview:Exemplifying the OmniMech concept, the flexible Huntsman was the premier medium 'Mech of Clan Nova Cat during Operation REVIVAL. No expense has been spared in the construction of this front-line OmniMech that uses an Extra-Light Engine, Endo Steel structure, and nine tons of Ferro-Fibrous armor. Five jump jets enable it to leap up to 150 meters at a time.
+overview:Exemplifying the OmniMech concept, the flexible Huntsman was the premier medium 'Mech of Clan Nova Cat during Operation REVIVAL. 
+
+deployment:This configuration provides heavy fire support. The right arm carries a HAG 20; A three ton ammo bay is in the right torso. The left arm carries an ER Large Laser and a Plasma Cannon with two tons of ammunition. An ER Small Pulse Laser deals with close in attacks. 
+
+capabilities:No expense has been spared in the construction of this front-line OmniMech that uses an Extra-Light Engine, Endo Steel structure, and nine tons of Ferro-Fibrous armor. Five jump jets enable it to leap up to 150 meters at a time.
 
 history:First seen within the 119th Nova Cat Striker Cluster during the Battle of Luthien, a Draconis Combine Mustered Soldiery intelligence officer dubbed the OmniMech with the name of "Nobori-nin" (Japanese for "Banner-bearer") due to the single fin-like projection rising from the back of the 'Mech reminding him of the banner samurai worn on their backs in feudal Japan. Prized for its flexibility across a wide range of opponents and battlefield conditions, the Huntsman was almost exclusively a Nova Cat design during the initial Clan Invasion, but prior to the Word of Blake Jihad had entered service with Clans Diamond Shark, Cloud Cobra and Star Adder.
+
 manufacturer:Irece Alpha, Avon Alpha, and Brim Ironworks, Clan Protectorate Arms
 primaryfactory:Irece, Avon, Brim, Asellus Australis
 systemmanufacturer:CHASSIS:Mynx Type Medium Endo Steel

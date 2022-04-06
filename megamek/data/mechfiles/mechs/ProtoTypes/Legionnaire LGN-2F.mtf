@@ -1,6 +1,7 @@
 Version:1.1
 Legionnaire
 LGN-2F
+mul id:4491
 
 Config:Biped
 TechBase:Inner Sphere

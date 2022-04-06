@@ -16,16 +16,10 @@ package megamek.server;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.IBoard;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.ITerrainFactory;
-import megamek.common.Report;
-import megamek.common.Terrains;
+import megamek.common.*;
 
 /**
  * This is for simulating the vertically moving walls in the Solaris 7
@@ -33,7 +27,7 @@ import megamek.common.Terrains;
  */
 public class ElevatorProcessor extends DynamicTerrainProcessor {
 
-    private ElevatorInfo elevators[] = null;
+    private ElevatorInfo[] elevators = null;
 
     public ElevatorProcessor(Server server) {
         super(server);
@@ -57,12 +51,10 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
         Report r = new Report(5290, Report.PUBLIC);
         vPhaseReport.add(r);
 
-        ITerrainFactory tf = Terrains.getTerrainFactory();
-        for (Iterator<Coords> i = elevators[roll].positions.iterator(); i
-                .hasNext();) {
+        for (Iterator<Coords> i = elevators[roll].positions.iterator(); i.hasNext();) {
             Coords c = i.next();
-            IHex hex = server.getGame().getBoard().getHex(c);
-            ITerrain terr = hex.getTerrain(Terrains.ELEVATOR);
+            Hex hex = server.getGame().getBoard().getHex(c);
+            Terrain terr = hex.getTerrain(Terrains.ELEVATOR);
             // Swap the elevator and hex elevations
             // Entity elevations are not adjusted. This makes sense for
             // everything except possibly
@@ -71,14 +63,13 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
             int elevation = hex.getLevel();
             hex.setLevel(terr.getLevel());
             hex.removeTerrain(Terrains.ELEVATOR);
-            hex.addTerrain(tf.createTerrain(Terrains.ELEVATOR, elevation, true,
-                    terr.getExits()));
+            hex.addTerrain(new Terrain(Terrains.ELEVATOR, elevation, true, terr.getExits()));
             server.getHexUpdateSet().add(c);
         }
     }
 
     private void findElevators() {
-        IBoard b = server.getGame().getBoard();
+        Board b = server.getGame().getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
         int exits = 0;
@@ -101,7 +92,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
         }
     }
 
-    private class ElevatorInfo {
-        ArrayList<Coords> positions = new ArrayList<Coords>();
+    private static class ElevatorInfo {
+        List<Coords> positions = new ArrayList<>();
     }
 }

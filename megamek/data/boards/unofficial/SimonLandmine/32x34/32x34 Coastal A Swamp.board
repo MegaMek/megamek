@@ -1,12 +1,4 @@
 size 32 34
-tag "Water (Auto)"
-tag "GrassTheme (Auto)"
-tag "Roads (Auto)"
-tag "Swamp (Auto)"
-tag "Ocean (Auto)"
-tag "HighHills (Auto)"
-tag "Woods (Auto)"
-tag "LightForest (Auto)"
 hex 0101 3 "woods:1;foliage_elev:2" "grass"
 hex 0201 3 "woods:2;foliage_elev:2" "grass"
 hex 0301 3 "" "grass"

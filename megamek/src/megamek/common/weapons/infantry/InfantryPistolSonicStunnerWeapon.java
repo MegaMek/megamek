@@ -44,7 +44,7 @@ public class InfantryPistolSonicStunnerWeapon extends InfantryWeapon {
 		infantryRange = 0;
 		ammoWeight = 0.0003;
 		shots = 30;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setClanAdvancement(2365, 2375, 2400, DATE_NONE, DATE_NONE)

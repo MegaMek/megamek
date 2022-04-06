@@ -1,15 +1,15 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
 package megamek.common.weapons.missiles;
 
@@ -19,15 +19,8 @@ import megamek.common.weapons.CLIATMWeapon;
  * @author Sebastian Brocks, edited by Greg
  */
 public class CLIATM6 extends CLIATMWeapon {
-
-    /**
-     * I think i can just assign 1? I don't think SVUIDs conflict with those from other classes
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * TODO: Changeme
-     */
     public CLIATM6() {
         super();
         this.name = "Improved ATM 6";
@@ -47,15 +40,15 @@ public class CLIATM6 extends CLIATMWeapon {
         this.shortAV = 12;
         this.medAV = 12;
         this.maxRange = RANGE_MED;
-        rulesRefs = "65,IO";
+        rulesRefs = "65, IO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CCY)
-            .setProductionFactions(F_CCY);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CCY)
+                .setProductionFactions(F_CCY);
     }
 }

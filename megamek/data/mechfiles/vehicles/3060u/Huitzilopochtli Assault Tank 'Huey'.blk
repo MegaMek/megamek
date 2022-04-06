@@ -15,6 +15,10 @@ Huitzilopochtli Assault Tank 'Huey'
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+1551
+</mul id:>
 <Tonnage>
 85
 </Tonnage>

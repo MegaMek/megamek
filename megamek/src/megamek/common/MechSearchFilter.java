@@ -13,29 +13,27 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
+
+import megamek.client.ui.swing.AdvancedSearchDialog;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.MegaMek;
-import megamek.client.ui.swing.AdvancedSearchDialog;
-
-
 /**
- * Class to perform filtering on units.  This class stores a list of
+ * Class to perform filtering on units. This class stores a list of
  * constraints and for a given <code>MechSummary</code> it can tell whether
- * that <code>MechSummary</codes> meets the constraints or not.
+ * that <code>MechSummary</code> meets the constraints or not.
  *
  * @author JSmyrloglou
  * @author Arlith
  */
 public class MechSearchFilter {
 
-    public enum BoolOp { AND, OR, NOP };
+    public enum BoolOp { AND, OR, NOP }
     public String sWalk;
     public String sJump;
     public int iWalk;
@@ -65,114 +63,96 @@ public class MechSearchFilter {
     }
 
     /**
-     * Deep copy constructor.  New instantiations of all state variables are
+     * Deep copy constructor. New instantiations of all state variables are
      * created.
      *
-     * @param sf  The <code>MechSearchFilter</code> to create a copy of.
+     * @param sf The <code>MechSearchFilter</code> to create a copy of.
      */
-    public MechSearchFilter(MechSearchFilter sf)
-    {
-
-        if (sf != null)
-        {
+    public MechSearchFilter(MechSearchFilter sf) {
+        if (sf != null) {
             isDisabled = sf.isDisabled;
             checkEquipment = sf.checkEquipment;
             equipmentCriteria = new ExpressionTree(sf.equipmentCriteria);
-        }
-        else{
+        } else {
             isDisabled = true;
             checkEquipment = false;
             equipmentCriteria = new ExpressionTree();
         }
-
     }
 
     /**
      * Creates an Expressiontree from a collection of tokens.
      */
-    public void createFilterExpressionFromTokens(
-            Vector<AdvancedSearchDialog.FilterTokens> toks)
+    public void createFilterExpressionFromTokens(Vector<AdvancedSearchDialog.FilterTokens> toks)
             throws FilterParsingException {
         equipmentCriteria = new ExpressionTree();
-        if (toks.size() != 0)
-        {
-            equipmentCriteria.root =
-                    createFTFromTokensRecursively(toks.iterator(),null);
+        if (!toks.isEmpty()) {
+            equipmentCriteria.root = createFTFromTokensRecursively(toks.iterator(), null);
             checkEquipment = true;
-        }else{
+        } else {
             checkEquipment = false;
         }
     }
 
-    private ExpNode createFTFromTokensRecursively(
-            Iterator<AdvancedSearchDialog.FilterTokens> toks,
-            ExpNode currNode) throws FilterParsingException{
-
-        // Base case.  We're out of tokens, so we're done.
-        if (!toks.hasNext())
-          return currNode;
+    private ExpNode createFTFromTokensRecursively(Iterator<AdvancedSearchDialog.FilterTokens> toks,
+                                                  ExpNode currNode) {
+        // Base case. We're out of tokens, so we're done.
+        if (!toks.hasNext()) {
+            return currNode;
+        }
 
         AdvancedSearchDialog.FilterTokens filterTok = toks.next();
 
         // Parsing Parenthesis
         if (filterTok instanceof AdvancedSearchDialog.ParensFT) {
-            if (((AdvancedSearchDialog.ParensFT) filterTok).parens.equals("(")){
-                if (currNode == null){
-                    return createFTFromTokensRecursively(toks,null);
+            if (((AdvancedSearchDialog.ParensFT) filterTok).parens.equals("(")) {
+                if (currNode == null) {
+                    return createFTFromTokensRecursively(toks, null);
                 } else {
-                    currNode.children.add(
-                            createFTFromTokensRecursively(toks,null));
+                    currNode.children.add(createFTFromTokensRecursively(toks, null));
                     return currNode;
                 }
-            } else if (((AdvancedSearchDialog.ParensFT) filterTok).parens
-                    .equals(")")){
-                ExpNode nextNode = createFTFromTokensRecursively(toks,null);
+            } else if (((AdvancedSearchDialog.ParensFT) filterTok).parens.equals(")")) {
+                ExpNode nextNode = createFTFromTokensRecursively(toks, null);
                 // This right paren is the end of the expression
-                if (nextNode == null){
+                if (nextNode == null) {
                     return currNode;
-                }else{ //Otherwise, we make a new root
+                } else { //Otherwise, we make a new root
                     nextNode.children.add(currNode);
                     return nextNode;
                 }
             }
         }
 
-        //Parsing an Operation
-        if (filterTok instanceof AdvancedSearchDialog.OperationFT){
-            AdvancedSearchDialog.OperationFT ft =
-                (AdvancedSearchDialog.OperationFT) filterTok;
+        // Parsing an Operation
+        if (filterTok instanceof AdvancedSearchDialog.OperationFT) {
+            AdvancedSearchDialog.OperationFT ft = (AdvancedSearchDialog.OperationFT) filterTok;
             ExpNode newNode = new ExpNode();
             // If currNode is null, we came from a right paren
-            if (currNode == null){
+            if (currNode == null) {
                 newNode.operation = ft.op;
-                ExpNode nextNode = createFTFromTokensRecursively(toks,null);
-                if (nextNode.operation == newNode.operation ||
-                        nextNode.operation == BoolOp.NOP){
+                ExpNode nextNode = createFTFromTokensRecursively(toks, null);
+                if ((nextNode.operation == newNode.operation) || (nextNode.operation == BoolOp.NOP)) {
                     newNode.children.addAll(nextNode.children);
-                }else{
+                } else {
                     newNode.children.add(nextNode);
                 }
                 return newNode;
-            // If we are already working on the same operation, keeping adding
-            //  children to it
-            } else if (currNode.operation == ft.op ||
-                    currNode.operation == BoolOp.NOP){
+            // If we are already working on the same operation, keeping adding children to it
+            } else if ((currNode.operation == ft.op) || (currNode.operation == BoolOp.NOP)) {
                 currNode.operation = ft.op;
-                //We're already parsing this operation, continue on
-                return createFTFromTokensRecursively(toks,currNode);
-            }else{ //Mismatching operation
-                // In the case of an AND, since AND has a higher precendence,
-                //  take the last seen operand, then the results of furhter
+                // We're already parsing this operation, continue on
+                return createFTFromTokensRecursively(toks, currNode);
+            } else { //Mismatching operation
+                // In the case of an AND, since AND has a higher precedence,
+                //  take the last seen operand, then the results of further
                 //  parsing becomes a child of the current node
-                if (ft.op == BoolOp.AND)
-                {
-                    ExpNode leaf =
-                            currNode.children.remove(currNode.children.size()-1);
+                if (ft.op == BoolOp.AND) {
+                    ExpNode leaf = currNode.children.remove(currNode.children.size() - 1);
                     newNode.operation = BoolOp.AND;
                     newNode.children.add(leaf);
-                    ExpNode sibling =
-                            createFTFromTokensRecursively(toks,newNode);
-                    if (sibling.operation == currNode.operation){
+                    ExpNode sibling = createFTFromTokensRecursively(toks, newNode);
+                    if (sibling.operation == currNode.operation) {
                         currNode.children.addAll(sibling.children);
                     } else {
                         currNode.children.add(sibling);
@@ -181,36 +161,33 @@ public class MechSearchFilter {
                 } else { //BoolOp.OR
                     newNode.operation = BoolOp.OR;
                     newNode.children.add(currNode);
-                    newNode.children.add(
-                            createFTFromTokensRecursively(toks,null));
+                    newNode.children.add(createFTFromTokensRecursively(toks, null));
                     return newNode;
                 }
             }
         }
 
         //Parsing an Operand
-        if (filterTok instanceof AdvancedSearchDialog.EquipmentFT){
-          if (currNode == null){
+        if (filterTok instanceof AdvancedSearchDialog.EquipmentFT) {
+          if (currNode == null) {
               currNode = new ExpNode();
           }
-          AdvancedSearchDialog.EquipmentFT ft =
-              (AdvancedSearchDialog.EquipmentFT)filterTok;
-          ExpNode newChild = new ExpNode(ft.internalName,ft.qty);
+          AdvancedSearchDialog.EquipmentFT ft = (AdvancedSearchDialog.EquipmentFT) filterTok;
+          ExpNode newChild = new ExpNode(ft.internalName, ft.qty);
           currNode.children.add(newChild);
-          return createFTFromTokensRecursively(toks,currNode);
+          return createFTFromTokensRecursively(toks, currNode);
 
         }
         return null;
     }
 
 
-    public void clearEquipmentCriteria()
-    {
+    public void clearEquipmentCriteria() {
         checkEquipment = false;
         equipmentCriteria = new ExpressionTree();
     }
 
-    public String getEquipmentExpression(){
+    public String getEquipmentExpression() {
         return equipmentCriteria.toString();
     }
 
@@ -270,9 +247,10 @@ public class MechSearchFilter {
         int jump = -1;
         try {
             jump = Integer.parseInt(f.sJump);
-        } catch (NumberFormatException ne) {
-            //ignore
+        } catch (Exception ignored) {
+
         }
+
         if (jump > -1) {
             if (f.iJump == 0) { // at least
                 if (mech.getJumpMp() < jump) {
@@ -289,17 +267,17 @@ public class MechSearchFilter {
             }
         }
 
-        if (f.checkInternalsType){
+        if (f.checkInternalsType) {
             if (f.internalsType != mech.getInternalsType())
                 return false;
         }
 
-        if (f.checkArmorType){
+        if (f.checkArmorType) {
             if (!mech.getArmorType().contains(f.armorType))
                 return false;
         }
 
-        if (f.checkCockpitType){
+        if (f.checkCockpitType) {
             if (f.cockpitType != mech.getCockpitType())
                 return false;
         }
@@ -332,26 +310,28 @@ public class MechSearchFilter {
         List<String> eqNames = mech.getEquipmentNames();
         List<Integer> qty = mech.getEquipmentQuantities();
         //Evaluate the expression tree, if there's not a match, return false
-        if (f.checkEquipment && !f.evaluate(eqNames,qty))
+        if (f.checkEquipment && !f.evaluate(eqNames, qty)) {
             return false;
+        }
 
-        //Check year criteria
+        // Check year criteria
         int startYear = Integer.MIN_VALUE;
         int endYear = Integer.MAX_VALUE;
         try {
             startYear = Integer.parseInt(f.sStartYear);
-        } catch (NumberFormatException ne) {
-            //ignore
+        } catch (Exception ignored) {
+
         }
+
         try {
             endYear = Integer.parseInt(f.sEndYear);
-        } catch (NumberFormatException ne) {
-            //ignore
+        } catch (Exception ignored) {
+
         }
+
         if ((mech.getYear() < startYear) || (mech.getYear() > endYear)) {
             return false;
         }
-
 
         return true;
     }
@@ -364,8 +344,7 @@ public class MechSearchFilter {
      * @param qty   The number of each piece of equipment
      * @return      True if the provided lists satisfy the expression tree
      */
-    public boolean evaluate(List<String> eq, List<Integer> qty)
-    {
+    public boolean evaluate(List<String> eq, List<Integer> qty) {
         return evaluate(eq, qty, equipmentCriteria.root);
     }
 
@@ -378,26 +357,23 @@ public class MechSearchFilter {
      * @param n     The current node in the ExpressionTree
      * @return      True if the tree evaluates successfully, else false
      */
-    private boolean evaluate(List<String> eq, List<Integer> qty, ExpNode n)
-    {
+    private boolean evaluate(List<String> eq, List<Integer> qty, ExpNode n) {
         //Base Case: See if any of the equipment matches the leaf node in
         // sufficient quantity
-        if (n.children.size() == 0)
-        {
+        if (n.children.isEmpty()) {
             Iterator<String> eqIter = eq.iterator();
             Iterator<Integer> qtyIter = qty.iterator();
-            while (eqIter.hasNext())
-            {
+            while (eqIter.hasNext()) {
                 String currEq = eqIter.next();
 
                 int currQty = qtyIter.next();
 
                 if (null == currEq) {
-                    MegaMek.getLogger().debug("List<String> currEq is null");
+                    LogManager.getLogger().debug("List<String> currEq is null");
                 }
 
                 if (null == n) {
-                    MegaMek.getLogger().debug("ExpNode n is null");
+                    LogManager.getLogger().debug("ExpNode n is null");
                 }
 
                 if (currEq.equals(n.name) && currQty >= n.qty)
@@ -405,24 +381,19 @@ public class MechSearchFilter {
             }
             return false;
         }
-        //Otherwise, recurse on all of the children and either AND the results
-        // or OR them, baesd upon the operation in this node
-        boolean retVal;
-        //If we set the proper default starting value of retVal, we can take
+        // Otherwise, recurse on all the children and either AND the results
+        // or OR them, based upon the operation in this node
+        boolean retVal = n.operation == BoolOp.AND;
+        // If we set the proper default starting value of retVal, we can take
         // advantage of logical short-circuiting.
-        if (n.operation == BoolOp.AND)
-            retVal = true;
-        else
-            retVal = false;
         Iterator<ExpNode> childIter = n.children.iterator();
-        while (childIter.hasNext())
-        {
+        while (childIter.hasNext()) {
             ExpNode child = childIter.next();
-            if (n.operation == BoolOp.AND)
-                retVal = retVal && evaluate(eq,qty,child);
-            else
-                retVal = retVal || evaluate(eq,qty,child);
-
+            if (n.operation == BoolOp.AND) {
+                retVal = retVal && evaluate(eq, qty, child);
+            } else {
+                retVal = retVal || evaluate(eq, qty, child);
+            }
         }
         return retVal;
     }
@@ -434,10 +405,8 @@ public class MechSearchFilter {
      * boolean operations (AND and OR).
      *
      * @author Arlith
-     *
      */
     public class ExpressionTree {
-
         private ExpNode root;
 
         public ExpressionTree() {
@@ -445,10 +414,10 @@ public class MechSearchFilter {
         }
 
         /**
-         * Deep copy constructor.  New instantiations of all state variables
+         * Deep copy constructor. New instantiations of all state variables
          * are created.
          *
-         * @param et  The <code>ExpressionTree</code> to create a copy of.
+         * @param et The <code>ExpressionTree</code> to create a copy of.
          */
         public ExpressionTree(ExpressionTree et) {
             root = new ExpNode(et.root);
@@ -458,11 +427,9 @@ public class MechSearchFilter {
             root = new ExpNode(n, q);
         }
 
+        @Override
         public String toString() {
-            if (root.children.size() == 0)
-                return "";
-            else
-                return root.toString();
+            return root.children.isEmpty() ? "" : root.toString();
         }
     }
 
@@ -476,23 +443,24 @@ public class MechSearchFilter {
 
         public ExpNode() {
             operation = BoolOp.NOP;
-            children = new LinkedList<ExpNode>();
+            children = new LinkedList<>();
         }
 
         /**
-         * Deep copy constructor.  New instantiations of all state variables
+         * Deep copy constructor. New instantiations of all state variables
          * are created.
          *
          * @param e  The <code>ExpressionTree</code> to create a copy of.
          */
-        public ExpNode(ExpNode e){
+        public ExpNode(ExpNode e) {
             parent = null;
             this.operation = e.operation;
             this.qty = e.qty;
-            if (e.name != null)
-                this.name = new String(e.name);
+            if (e.name != null) {
+                this.name = e.name;
+            }
             Iterator<ExpNode> nodeIter = e.children.iterator();
-            this.children = new LinkedList<ExpNode>();
+            this.children = new LinkedList<>();
             while (nodeIter.hasNext())
                 children.add(new ExpNode(nodeIter.next()));
         }
@@ -502,16 +470,19 @@ public class MechSearchFilter {
             name = n;
             qty = q;
             operation = BoolOp.NOP;
-            children = new LinkedList<ExpNode>();
+            children = new LinkedList<>();
         }
 
+        @Override
         public String toString() {
             // Base Case: this is a leaf-node
-            if (children.size() == 0)
-                if (qty == 1)
+            if (children.isEmpty()) {
+                if (qty == 1) {
                     return qty + " " + name;
-                else
+                } else {
                     return qty + " " + name + "s";
+                }
+            }
 
             // Recursive Case
             StringBuilder result = new StringBuilder("(");
@@ -519,15 +490,17 @@ public class MechSearchFilter {
             int count = 0;
             while (nodeIter.hasNext()) {
                 ExpNode child = nodeIter.next();
-                if (operation == BoolOp.AND)
-                    if (count == children.size() - 1)
+                if (operation == BoolOp.AND) {
+                    if (count == children.size() - 1) {
                         result.append(child.toString());
-                    else
+                    } else {
                         result.append(child.toString() + " AND ");
-                else if (count == children.size() - 1)
+                    }
+                } else if (count == children.size() - 1) {
                     result.append(child.toString());
-                else
+                } else {
                     result.append(child.toString() + " OR ");
+                }
                 count++;
             }
             result.append(" )");
@@ -536,18 +509,13 @@ public class MechSearchFilter {
 
     }
 
-    public class FilterParsingException extends Exception{
-
+    public class FilterParsingException extends Exception {
         public String msg;
 
-        /**
-         *
-         */
         private static final long serialVersionUID = 1L;
 
-        FilterParsingException(String m){
+        FilterParsingException(String m) {
             msg = m;
         }
-
     }
 }

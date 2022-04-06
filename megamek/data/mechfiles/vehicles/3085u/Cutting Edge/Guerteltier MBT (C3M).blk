@@ -20,6 +20,10 @@ Gurteltier MBT
 (C3M)
 </Model>
 
+<mul id:>
+4255
+</mul id:>
+
 <Tonnage>
 100
 </Tonnage>

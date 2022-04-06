@@ -20,6 +20,10 @@ Marksman Artillery Vehicle
 (Standard)
 </Model>
 
+<mul id:>
+2077
+</mul id:>
+
 <year>
 2702
 </year>

@@ -24,32 +24,32 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicYumiBowWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicYumiBowWeapon() {
-		super();
+    public InfantryArchaicYumiBowWeapon() {
+        super();
 
-		name = "Compound Yumi (Bow) (Unofficial)";
-		// IO Combines this weapon into the Compound Bow
-		setInternalName(name);
-		addLookupName("InfantryYumiBow");
-		addLookupName("Yumi Bow");
-		ammoType = AmmoType.T_NA;
-		cost = 30;
-		bv = 0.01;
+        name = "Compound Yumi (Bow) (Unofficial)";
+        // IO Combines this weapon into the Compound Bow
+        setInternalName(name);
+        addLookupName("InfantryYumiBow");
+        addLookupName("Yumi Bow");
+        ammoType = AmmoType.T_NA;
+        cost = 30;
+        bv = 0.01;
         tonnage = .001; 
-		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
-		infantryDamage = 0.01;
-		infantryRange = 0;
-		rulesRefs = " 272,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-				.setAvailability(RATING_B, RATING_A, RATING_A, RATING_A);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
+        infantryDamage = 0.01;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_A, RATING_A, RATING_A);
 
-	}
+    }
 }

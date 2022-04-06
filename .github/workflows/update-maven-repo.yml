@@ -1,6 +1,4 @@
-#
 # This workflow updates the MM Maven Repo on push to master 
-#
 name: Update Maven Repo
 
 on:
@@ -13,24 +11,33 @@ on:
 
 jobs:
   update_maven_repo:
+    runs-on: ${{ matrix.os }}
 
-    runs-on: ubuntu-latest
+    # Run this job once for each combination in the matrix below.
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ] # For Maven Repository Update running on *nix is sufficient
+        java-distribution: [ temurin ]
+        java-version: [ 11 ]
 
     steps:
-    # Put the MM repo in a subfolder to make
-    # updating the Maven repo easier
+    # Put the MM repo in a subfolder to make updating the Maven repo easier
     - uses: actions/checkout@v2
       with:
         path: megamek
 
-    # Do the standard JDK + Gradle work
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
+    # Setup the requested Java Distribution and Version from the matrix
+    - name: Set up ${{ matrix.java-distribution }} JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v2
       with:
-        java-version: 11
-    - name: Grant execute permission for gradlew
+        distribution: ${{ matrix.java-distribution }}
+        java-version: ${{ matrix.java-version }}
+
+    # Make sure we can execute the Gradle wrapper
+    - name: Grant execute permission for gradlew (*nix or MacOS)
       working-directory: megamek
       run: chmod +x gradlew
+      if: runner.os != 'Windows'
 
     # Create the actual maven repo bits with Gradle
     - name: Publish Maven Repo with Gradle
@@ -52,16 +59,14 @@ jobs:
       run: |
         cp -r . ../../../../mavenrepo/
         
-    # In case we run into an issue, use git status to help
-    # us understand what happened.
+    # In case we run into an issue, use git status to help us understand what happened.
     - name: Inspect git status output
       if: github.repository == 'MegaMek/megamek'
       working-directory: mavenrepo
       run: |
         git status
         
-    # Add the changes under the username and email of the
-    # user who pushed the code
+    # Add the changes under the username and email of the user who pushed the code
     - name: Commit changes to the Maven Repo
       if: github.repository == 'MegaMek/megamek'
       working-directory: mavenrepo

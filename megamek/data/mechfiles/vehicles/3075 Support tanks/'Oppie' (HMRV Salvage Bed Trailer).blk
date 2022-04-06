@@ -20,6 +20,10 @@ LargeSupportTank
 (Standard)
 </Model>
 
+<mul id:>
+6960
+</mul id:>
+
 <Tonnage>
 150
 </Tonnage>

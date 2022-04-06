@@ -1,12 +1,13 @@
 Version:1.1
 Valkyrie
 C
+mul id:7701
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3139
-source:Dark Age
-rules level:4
+source:Rec Guide:ilClan #9 - Dark Age
+rules level:2
 
 mass:30
 engine:150 XL Engine(IS)

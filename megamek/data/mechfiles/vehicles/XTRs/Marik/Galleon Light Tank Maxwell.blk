@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,17 +20,21 @@ Galleon Light Tank
 Maxwell
 </Model>
 
+<mul id:>
+1181
+</mul id:>
+
 <year>
 3076
 </year>
 
+<originalBuildYear>
+3076
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
-
-<tonnage>
-30.0
-</tonnage>
 
 <motion_type>
 Tracked
@@ -40,17 +44,14 @@ Tracked
 troopspace:4.0
 </transporters>
 
-<engine_type>
-2
-</engine_type>
-
 <cruiseMP>
 6
 </cruiseMP>
 
-<armor_type>
-0
-</armor_type>
+<engine_type>
+2
+</engine_type>
+
 <armor>
 18
 18
@@ -62,7 +63,8 @@ troopspace:4.0
 <Body Equipment>
 ISArmoredMotiveSystem
 ISCASE
-ISSponsonTurret
+SponsonTurret
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
@@ -88,3 +90,8 @@ ISERMediumLaser
 <source>
 XTRO Marik - Jihad
 </source>
+
+<tonnage>
+30.0
+</tonnage>
+

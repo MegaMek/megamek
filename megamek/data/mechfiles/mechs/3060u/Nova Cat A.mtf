@@ -1,6 +1,7 @@
 Version:1.0
 Nova Cat
 A
+mul id:2299
 
 Config:Biped Omnimech
 TechBase:Clan
@@ -149,4 +150,18 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
+overview:A Nova Cat heavy OmniMech built to protect the Nova Cats spiritually and militarily.
+ 
+capabilities:The basic components of this design, combined with its characteristics as an OmniMech, make it very simple to repair and leave room for the large amount of double heat sinks most variants carry. 13 ½ tons of standard armor make this 'Mech very difficult to kill.
 
+deployment:The first variant is armed with 4 ER Large Lasers linked to a targeting computer for increased accuracy. Additional heat sinks keep heat mostly in check, while jump jets rocket the 'Mech up to one hundred and twenty meters at a time.
+
+history:After its defeat on Tukayyid, Khan Severen Leroux of Clan Nova Cat commissioned the Nova Cat OmniMech, meant to protect the Clan both militarily and spiritually. The 12 meter tall 'Mech is inspired by the Night Gyr created by Clan Jade Falcon.
+
+manufacturer:Barcella Alpha, Irece Alpha  
+primaryfactory:Barcella, Irece 
+systemmanufacturer:CHASSIS:Mynx Type Heavy
+systemmanufacturer:ENGINE:Consolidated Fusion 280 Extralight
+systemmanufacturer:ARMOR:Alpha Compound Plate
+systemmanufacturer:COMMUNICATIONS:JNE Integrated
+systemmanufacturer:TARGETING:Build 2 CAT TTS

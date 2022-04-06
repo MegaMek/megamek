@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
 * Copyright (C) 2020 The MegaMek Team
 *
@@ -57,7 +57,7 @@ public class EscapePods extends SmallCraft {
         }
         setMovementMode(EntityMovementMode.AERODYNE);
         
-        //and an armor value of 4 per craft -- 1 point per location
+        // and an armor value of 4 per craft -- 1 point per location
         for (int i = 0; i < 4; i++) {
             initializeArmor(nPods, i);
         }
@@ -76,7 +76,7 @@ public class EscapePods extends SmallCraft {
         setCrew(new Crew(CrewType.CREW));
         setChassis(POD_EJECT_NAME);
         //this constructor is just so that the MUL parser can read these units in so
-        //assign some arbitrarily large number here for the internal so that locations will get 
+        // assign some arbitrarily large number here for the internal so that locations will get 
         //the actual current number of pods correct.
         initializeSI(Integer.MAX_VALUE);
         for (int i = 0; i < locations(); i++) {

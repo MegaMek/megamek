@@ -35,6 +35,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void hexMoused(BoardViewEvent b) {
     }
 
@@ -44,6 +45,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void hexCursor(BoardViewEvent b) {
     }
 
@@ -53,6 +55,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void boardHexHighlighted(BoardViewEvent b) {
     }
 
@@ -61,6 +64,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void hexSelected(BoardViewEvent b) {
     }
 
@@ -69,6 +73,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void firstLOSHex(BoardViewEvent b) {
     }
 
@@ -77,6 +82,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void secondLOSHex(BoardViewEvent b, Coords c) {
     }
 
@@ -86,6 +92,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
     }
 
@@ -94,6 +101,7 @@ public class BoardViewListenerAdapter implements BoardViewListener {
      * 
      * @param b an event
      */
+    @Override
     public void unitSelected(BoardViewEvent b) {
     }
 

@@ -9,4 +9,4 @@ Wraith TR1,5
 Buccaneer BCN-3R,4
 Grim Reaper GRM-R-PR29,3
 Blackjack BJ2-O,2
-Raijin RJN101-A,1
+Raijin RJN-101-A,1

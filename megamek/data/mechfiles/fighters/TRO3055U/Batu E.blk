@@ -1,0 +1,123 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Batu
+</Name>
+
+<Model>
+E
+</Model>
+
+<mul id:>
+6963
+</mul id:>
+
+<year>
+3065
+</year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+9
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+50
+38
+38
+27
+</armor>
+
+<Nose Equipment>
+CLUltraAC20:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLStreakSRM2 (IOS):OMNI
+CLStreakSRM2 (IOS):OMNI
+CLStreakSRM2 (IOS):OMNI
+CLStreakSRM2 (IOS):OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+</Fuselage Equipment>
+
+<source>
+TRO 3055u - Succession Wars
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

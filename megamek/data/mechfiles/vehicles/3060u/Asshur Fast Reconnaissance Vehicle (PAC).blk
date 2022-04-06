@@ -20,6 +20,10 @@ Asshur Fast Reconnaissance Vehicle
 (Proto AC)
 </Model>
 
+<mul id:>
+134
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>

@@ -47,7 +47,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 		ammoCost = 3;
 		shots = 15;
 		bursts = 1;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3060, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

@@ -1,6 +1,6 @@
 3059 Inner Sphere Assault Vehicles
 Alacorn Heavy Tank Mk VI,1
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Schrek PPC Carrier (Standard),3
 Partisan Heavy Tank (Standard),4
 Demolisher Heavy Tank (Standard Mk. II),5

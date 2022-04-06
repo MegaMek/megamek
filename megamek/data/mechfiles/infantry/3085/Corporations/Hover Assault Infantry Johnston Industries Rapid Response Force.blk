@@ -15,6 +15,10 @@ Hover Assault Infantry
 <Model>
 Johnston Industries Rapid Response Force
 </Model>
+
+<mul id:>
+1549
+</mul id:>
 <squad_size>
 5
 </squad_size>

@@ -1,6 +1,7 @@
 Version:1.0
 Wyvern
 WVE-9N
+mul id:3600
 
 Config:Biped
 TechBase:Inner Sphere

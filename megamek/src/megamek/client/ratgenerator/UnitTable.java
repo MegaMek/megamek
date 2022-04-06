@@ -42,8 +42,7 @@ public class UnitTable {
 
     private static final int CACHE_SIZE = 32;
 
-    private static LinkedHashMap<Parameters,UnitTable> cache =
-            new LinkedHashMap<Parameters, UnitTable>(CACHE_SIZE, 0.75f, true) {
+    private static LinkedHashMap<Parameters,UnitTable> cache = new LinkedHashMap<>(CACHE_SIZE, 0.75f, true) {
 
         private static final long serialVersionUID = -8016095510116134800L;
 
@@ -62,14 +61,14 @@ public class UnitTable {
      * @param year - the game year
      * @param rating - the unit's equipment rating; if null, the table is not adjusted for unit rating.
      * @param weightClasses - a collection of EntityWeightClass constants to include in the table;
-     * 						if null or empty all weight classes are included
+     * if null or empty all weight classes are included
      * @param networkMask - a ModelRecord.NETWORK_* constant
      * @param movementModes - the movement modes allowed to appear in the table; if null or empty, no filtering
-     * 						is applied.
+     * is applied.
      * @param roles - the roles for which to adjust the availability
-     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is <= 4
+     * @param roleStrictness - how rigidly to apply the role adjustments; normal range is &lt;= 4
      * @param deployingFaction - when using the salvage/isorla mechanism, any omni unit will select
-     * 							the configuration based on the faction actually deploying
+     * the configuration based on the faction actually deploying
      * @return - a table containing the available units and their relative weights
      */
     public static UnitTable findTable(FactionRecord faction, int unitType, int year,
@@ -109,15 +108,15 @@ public class UnitTable {
             retVal = new UnitTable(params);
             if (retVal.hasUnits()) {
                 //Use a copy of the params for the cache key to prevent changing it.
-                cache.put((Parameters)params.copy(), retVal);
+                cache.put(params.copy(), retVal);
             }
         }
         return retVal;
     }
 
     private Parameters key;
-    private List<TableEntry> salvageTable = new ArrayList<TableEntry>();
-    private List<TableEntry> unitTable = new ArrayList<TableEntry>();
+    private List<TableEntry> salvageTable = new ArrayList<>();
+    private List<TableEntry> unitTable = new ArrayList<>();
 
     int salvageTotal;
     int unitTotal;
@@ -132,7 +131,7 @@ public class UnitTable {
      */
     protected UnitTable(Parameters key) {
         this.key = key;
-        /**
+        /*
          * Generate the RAT, then go through it to build the NavigableMaps that
          * will be used for random selection.
          */
@@ -198,6 +197,18 @@ public class UnitTable {
             } else {
                 return "Salvage: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
             }
+        }
+    }
+
+    /**
+     * @param index
+     * @return - a string representing the entry at the indicated index for use in the table
+     */
+    public String getTechBase(int index) {
+        if (index >= salvageTable.size()) {
+            return unitTable.get(index - salvageTable.size()).getUnitEntry().isClan() ? "Clan" : "IS";
+        } else {
+            return key.getFaction().isClan() ? "Clan" : "IS";
         }
     }
 
@@ -311,7 +322,7 @@ public class UnitTable {
      *
      * @param filter - passed to generateUnit() in the generated table.
      * @return - a unit generated from another faction, or null if none of the factions in
-     * 	       the salvage list contain any units that meet the parameters.
+     * the salvage list contain any units that meet the parameters.
      */
     private MechSummary generateSalvage(UnitFilter filter) {
         while (salvageTotal > 0) {
@@ -353,11 +364,11 @@ public class UnitTable {
         }
 
         public MechSummary getUnitEntry() {
-            return (MechSummary)entry;
+            return (MechSummary) entry;
         }
 
         public FactionRecord getSalvageFaction() {
-            return (FactionRecord)entry;
+            return (FactionRecord) entry;
         }
 
         public boolean isUnit() {
@@ -378,7 +389,7 @@ public class UnitTable {
         @Override
         public String toString() {
             if (entry instanceof MechSummary) {
-                return ((MechSummary)entry).getName();
+                return ((MechSummary) entry).getName();
             }
             return entry.toString();
         }
@@ -412,12 +423,12 @@ public class UnitTable {
             this.weightClasses = weightClasses == null?
                     new ArrayList<>() : new ArrayList<>(weightClasses);
             this.networkMask = networkMask;
-            this.movementModes = movementModes == null || movementModes.isEmpty()?
-                    EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
-            this.roles = roles == null || roles.isEmpty()?
-                    EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
+            this.movementModes = ((movementModes == null) || movementModes.isEmpty())
+                    ? EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
+            this.roles = ((roles == null) || roles.isEmpty())
+                    ? EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
             this.roleStrictness = roleStrictness;
-            this.deployingFaction = deployingFaction == null? faction : deployingFaction;
+            this.deployingFaction = (deployingFaction == null) ? faction : deployingFaction;
         }
 
         @Override

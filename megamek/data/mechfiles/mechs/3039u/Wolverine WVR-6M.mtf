@@ -1,6 +1,7 @@
 Version:1.0
 Wolverine
 WVR-6M
+mul id:3572
 
 Config:Biped
 TechBase:Inner Sphere
@@ -149,19 +150,19 @@ Heat Sink
 -Empty-
 
 
-Overview: The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed. 
+overview:The Wolverine commonly served as a heavy scout unit. Often deployed in situations where heavy opposition could easily destroy lighter BattleMechs, it has had a reliable service record ever since its initial deployment within the Star League Defense Force. With respectable armor, speed, and firepower, it can easily outfight lighter enemy scouts and defend itself capably if ambushed.
 
-Capabilities: The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
+capabilities:The autocannon, missile system and laser found on most Wolverines are all reliable and well-storied systems. Unfortunately, the jump jets suffer from an opposing reputation; the Northrup 12000's are underpowered and prone to breakdowns. The one defining system to be found on the Wolverine, however, are its superb Tek BattleCom and Garret T11-b communications systems. The comgear, regardless of the manufacturer, is well-shielded and features a multi-channel transmitter and receiver, making the Wolverine a powerful Command BattleMech for scouting formations.
 
-Deployment: A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities. The -6M is largely regarded as having been one of the best medium line 'Mechs of the Succession Wars. As House Marik's domestic variant, this model remains a near-exclusivity of the Free Worlds League.
+deployment:Eventually becoming the sole variant manufactured by Kallon's Thermopolis plant, the 6M was introduced in 2816 after Lyran raiders destroyed the plant's stockpiles of GM Whirlwind autocannons in the later years of the First Succession War. Boasting increased firepower and endurance as a strike raider, Kallon fitted a Magna Mk III large laser into the GM's semi-detachable mount. The weight saved also allowed the Marik designers to add a second Medium Laser to the right arm, as well as two additional Heat Sinks to help with the extra heat load, and one more ton of armor for added protection. Unlike the similar 6K, the 6M still retains the five jump jets of the 6R, though this causes it to run hot in heavy combat.
 
-systemmanufacturer:CHASSIS:Crucis
-systemmode:CHASSIS:-A
-systemmanufacturer:ENGINE:CoreTek
-systemmode:ENGINE:275
-systemmanufacturer:ARMOR:Maximillian
-systemmode:ARMOR:60
-systemmanufacturer:COMMUNICATIONS:Garret
-systemmode:COMMUNICATIONS:T11-b
-systemmanufacturer:TARGETING:Sync Tracker
-systemmode:TARGETING:(39-42071)
+history:A widespread part of every major military, the Wolverine has manufacturing plants scattered throughout the entire Inner Sphere. While certain states-notable the Free Worlds League-have larger numbers of the design, only the Capellans began facing a shortage of the Wolverine after the loss of their Nanking facilities.
+
+manufacturer:Gibson Federated BattleMechs (A Division of Free Worlds Defense Industries),Kallon Weapon Industries 
+primaryfactory:Gibson,Thermopolis
+systemmanufacturer:CHASSIS:Crucis-A
+systemmanufacturer:ENGINE:Core Tek 275
+systemmanufacturer:ARMOR:Maximillian 60
+systemmanufacturer:JUMPJET:Northrup 12000
+systemmanufacturer:COMMUNICATIONS:Garret T11-b
+systemmanufacturer:TARGETING:Sync Tracker(39-42071)

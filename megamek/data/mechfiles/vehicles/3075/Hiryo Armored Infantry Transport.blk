@@ -20,6 +20,10 @@ Hiryo Armored Infantry Transport
 (Standard)
 </Model>
 
+<mul id:>
+1528
+</mul id:>
+
 <Tonnage>
 40
 </Tonnage>

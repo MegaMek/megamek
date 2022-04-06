@@ -19,7 +19,6 @@
 package megamek.client.ui.baseComponents;
 
 import megamek.MegaMek;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
 import megamek.client.ui.preferences.JTabbedPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
@@ -48,7 +47,7 @@ public abstract class AbstractTabbedPane extends JTabbedPane {
      */
     protected AbstractTabbedPane(final JFrame frame, final String name) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages", 
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name);
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name);
     }
 
     /**
@@ -85,7 +84,7 @@ public abstract class AbstractTabbedPane extends JTabbedPane {
      * for MekHQ usage
      */
     protected void setPreferences() {
-        setPreferences(MegaMek.getPreferences().forClass(getClass()));
+        setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**

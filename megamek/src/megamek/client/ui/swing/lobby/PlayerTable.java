@@ -18,26 +18,27 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.table.*;
-
+import megamek.MegaMek;
 import megamek.client.bot.BotClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.IStartingPositions;
+import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import static megamek.client.ui.swing.util.UIUtil.*;
 
 class PlayerTable extends JTable {
     private static final long serialVersionUID = 6252953920509362407L;
@@ -65,7 +66,7 @@ class PlayerTable extends JTable {
     @Override
     public String getToolTipText(MouseEvent e) {
         Point p = e.getPoint();
-        IPlayer player = model.getPlayerAt(rowAtPoint(p));
+        Player player = model.getPlayerAt(rowAtPoint(p));
         if (player == null) {
             return null;
         }
@@ -76,9 +77,9 @@ class PlayerTable extends JTable {
 
         result.append(guiScaledFontHTML());
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
-            result.append(" (\u259A This Bot)");
+            result.append(" (" + UIUtil.BOT_MARKER + " This Bot)");
         } else if (lobby.client().bots.containsKey(player.getName())) {
-            result.append(" (\u259A Your Bot)");
+            result.append(" (" + UIUtil.BOT_MARKER + " Your Bot)");
         } else if (lobby.localPlayer().equals(player)) {
             result.append(" (You)");
         }
@@ -105,7 +106,7 @@ class PlayerTable extends JTable {
         static final int COL_PLAYER = 0;
         static final int N_COL = 1;
 
-        private ArrayList<IPlayer> players;
+        private ArrayList<Player> players;
 
         public PlayerTableModel() {
             players = new ArrayList<>();
@@ -116,7 +117,7 @@ class PlayerTable extends JTable {
             return players.size();
         }
 
-        void replaceData(List<IPlayer> newPlayers) {
+        void replaceData(List<Player> newPlayers) {
             players.clear();
             players.addAll(newPlayers);
             fireTableDataChanged();
@@ -129,13 +130,7 @@ class PlayerTable extends JTable {
 
         @Override
         public String getColumnName(int column) {
-            String result = "<HTML>" + UIUtil.guiScaledFontHTML();
-            switch (column) {
-            case (COL_PLAYER):
-                return result + Messages.getString("ChatLounge.colPlayer");
-            default:
-                return result + "Force";
-            }
+            return "<HTML>" + UIUtil.guiScaledFontHTML() + Messages.getString("ChatLounge.colPlayer");
         }
 
         @Override
@@ -149,7 +144,7 @@ class PlayerTable extends JTable {
 
         }
 
-        IPlayer getPlayerAt(int row) {
+        Player getPlayerAt(int row) {
             return players.get(row);
         }
     }
@@ -158,7 +153,7 @@ class PlayerTable extends JTable {
         private static final long serialVersionUID = 4947299735765324311L;
 
         public PlayerRenderer() {
-            setLayout(new GridLayout(1,1,5,0));
+            setLayout(new GridLayout(1, 1, 5, 0));
             setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
         }
 
@@ -170,13 +165,13 @@ class PlayerTable extends JTable {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
 
-            IPlayer player = (IPlayer) value;
+            Player player = (Player) value;
 
             StringBuilder result = new StringBuilder("<HTML><NOBR>" + UIUtil.guiScaledFontHTML());
             // First Line - Player Name
             if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())
                     || lobby.client().bots.containsKey(player.getName())) {
-                result.append("\u259A ");
+                result.append(UIUtil.BOT_MARKER);
             }
             result.append(player.getName());
             result.append("<BR>");
@@ -185,18 +180,32 @@ class PlayerTable extends JTable {
             boolean isEnemy = lobby.localPlayer().isEnemyOf(player);
             Color color = isEnemy ? GUIPreferences.getInstance().getWarningColor() : uiGreen();
             result.append(guiScaledFontHTML(color));
-            result.append(IPlayer.teamNames[player.getTeam()]);
+            result.append(Player.TEAM_NAMES[player.getTeam()]);
             result.append("</FONT>");
 
             // Deployment Position
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
-            result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+            if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
+                result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+            } else {
+                result.append("Start: None");
+            }
+            result.append("</FONT>");
+            
             if (!LobbyUtility.isValidStartPos(lobby.game(), player)) {
                 result.append(guiScaledFontHTML(uiYellow())); 
                 result.append(WARNING_SIGN + "</FONT>");
             }
             
+            // Player BV
+            result.append(UIUtil.DOT_SPACER);
+            result.append(guiScaledFontHTML());
+            result.append("BV: ");
+            NumberFormat formatter = NumberFormat.getIntegerInstance(MegaMek.getMMOptions().getLocale());
+            result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
+            result.append("</FONT>");
+
             // Initiative Mod
             if (player.getConstantInitBonus() != 0) {
                 result.append(UIUtil.DOT_SPACER);
@@ -204,6 +213,7 @@ class PlayerTable extends JTable {
                 String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
                 result.append("Init: ").append(sign);
                 result.append(player.getConstantInitBonus());
+                result.append("</FONT>");
             }
 
             setText(result.toString());

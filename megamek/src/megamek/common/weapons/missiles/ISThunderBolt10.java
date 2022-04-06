@@ -1,19 +1,26 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
+import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
@@ -52,7 +59,7 @@ public class ISThunderBolt10 extends ThunderBoltWeapon {
         cost = 175000;
         flags = flags.or(F_LARGEMISSILE);
         this.missileArmor = 10;
-        rulesRefs = "347,TO";
+        rulesRefs = "347, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
@@ -61,6 +68,7 @@ public class ISThunderBolt10 extends ThunderBoltWeapon {
             .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS,F_LC);
+            .setProductionFactions(F_FS,F_LC)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

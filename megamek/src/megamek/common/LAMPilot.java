@@ -326,10 +326,10 @@ public class LAMPilot extends Crew {
      * @param usePiloting
      *            whether or not to use the default value non-anti-mech
      *            infantry/BA should not use the anti-mech skill
-     * @param game
+     * @param game The current {@link Game}
      */
     @Override
-    public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
+    public double getBVSkillMultiplier(boolean usePiloting, Game game) {
         int pilotVal = (getPilotingMech() + getPilotingAero()) / 2;
         if (!usePiloting) {
             pilotVal = 5;

@@ -1,6 +1,7 @@
 Version:1.0
 Scorpion
 SCP-12K
+mul id:2835
 
 Config:Quad
 TechBase:Inner Sphere

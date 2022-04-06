@@ -15,6 +15,10 @@ Demolisher II Heavy Tank
 <Model>
 (MML)
 </Model>
+
+<mul id:>
+865
+</mul id:>
 <Tonnage>
 100
 </Tonnage>

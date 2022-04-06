@@ -18,13 +18,18 @@
  */
 package megamek.utils;
 
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Configuration;
+import megamek.common.Hex;
+
 import java.io.*;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 import static megamek.common.Terrains.*;
-import megamek.common.*;
 
 /** 
  * Scans all boards and applies automated tags to them.
@@ -33,7 +38,6 @@ import megamek.common.*;
  * they may be removed accordingly and will also not be applied twice.  
  * 
  * @author Simon (Juliez)
- *
  */
 public class BoardsTagger {
 
@@ -83,7 +87,16 @@ public class BoardsTagger {
         TAG_SNOWTERRAIN("SnowTerrain");
 
         private String tagName;
+        private static final Map<String, Tags> internalTagMap;
 
+        static {
+            internalTagMap = new HashMap<>();
+            
+            for (Tags tag : values()) {
+                internalTagMap.put(tag.getName().replace(AUTO_SUFFIX, ""), tag);
+            }
+        }
+        
         Tags(String name) {
             tagName = name + AUTO_SUFFIX;
         }
@@ -91,16 +104,25 @@ public class BoardsTagger {
         public String getName() {
             return tagName;
         }
+        
+        public static Tags parse(String tag) {
+            String noAutoTag = tag.replace(AUTO_SUFFIX, "");
+            if (internalTagMap.containsKey(noAutoTag)) {
+                return internalTagMap.get(noAutoTag);
+            }
+            
+            return null;
+        }
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         try {
             File boardDir = Configuration.boardsDir();
             scanForBoards(boardDir);
-        } catch (IOException e) {
-            System.out.println("Something is not quite right.");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            System.out.println("Board tagger cannot scan boards");
+            ex.printStackTrace();
             System.exit(64);
         }
         System.out.println("Finished.");
@@ -109,7 +131,7 @@ public class BoardsTagger {
     /** Recursively scans the supplied file/directory for any boards and auto-tags them. */
     private static void scanForBoards(File file) throws IOException {
         if (file.isDirectory()) {
-            String fileList[] = file.list();
+            String[] fileList = file.list();
             for (String filename : fileList) {
                 File filepath = new File(file, filename);
                 if (filepath.isDirectory()) {
@@ -182,7 +204,7 @@ public class BoardsTagger {
         
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
-                IHex hex = board.getHex(x, y);
+                Hex hex = board.getHex(x, y);
                 forest += hex.containsAnyTerrainOf(WOODS, JUNGLE) ? 1 : 0;
                 woods += hex.containsTerrain(WOODS) ? 1 : 0;
                 jungles += hex.containsTerrain(JUNGLE) ? 1 : 0;
@@ -278,14 +300,14 @@ public class BoardsTagger {
         Set<String> toRemove = board.getTags().stream().filter(t -> t.contains(AUTO_SUFFIX)).collect(toSet());
 
         // Find any applicable tags to give the board
-        Set<String> toAdd = matchingTags.keySet().stream().filter(t -> matchingTags.get(t)).map(Tags::getName).collect(toSet());
+        Set<String> toAdd = matchingTags.keySet().stream().filter(matchingTags::get).map(Tags::getName).collect(toSet());
 
         if (DEBUG) {
             System.out.println("----- Board: " + boardFile);
             if (toRemove.equals(toAdd)) {
                 System.out.println("No changes");
             } else {
-                toAdd.stream().forEach(System.out::println);
+                toAdd.forEach(System.out::println);
             }
         }
         
@@ -297,12 +319,11 @@ public class BoardsTagger {
             // Re-save the board
             try (OutputStream os = new FileOutputStream(boardFile)) {
                 board.save(os);
-            } catch (IOException e) {
+            } catch (Exception ex) {
                 System.out.println("Error: Could not save board: " + boardFile);
-                e.printStackTrace();
+                ex.printStackTrace();
             }
 
         }
     }
-
 }

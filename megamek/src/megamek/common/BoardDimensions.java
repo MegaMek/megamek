@@ -122,7 +122,7 @@ public class BoardDimensions implements Cloneable, Serializable,
     }
 
     /**
-     * {@inheritDoc Object#hashCode()
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {

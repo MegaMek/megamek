@@ -1,6 +1,7 @@
 Version:1.0
 Porcupine
 PRC-1N
+mul id:2555
 
 Config:Biped
 TechBase:Inner Sphere

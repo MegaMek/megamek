@@ -33,21 +33,21 @@ public class BoardNewDialog extends JDialog implements ActionListener {
     private JButton butCancel;
 
     BoardNewDialog(JFrame frame) {
-        super(frame, Messages.getString("BoardEditor.SetDimensions"), true); //$NON-NLS-1$
+        super(frame, Messages.getString("BoardEditor.SetDimensions"), true);
         xvalue = 0;
         yvalue = 0;
         labWidth = new JLabel(
-                Messages.getString("BoardEditor.labWidth"), SwingConstants.RIGHT); //$NON-NLS-1$
+                Messages.getString("BoardEditor.labWidth"), SwingConstants.RIGHT);
         labHeight = new JLabel(
-                Messages.getString("BoardEditor.labHeight"), SwingConstants.RIGHT); //$NON-NLS-1$
-        texWidth = new JTextField("16", 2); //$NON-NLS-1$
-        texHeight = new JTextField("17", 2); //$NON-NLS-1$
-        butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-        butOkay.setActionCommand("done"); //$NON-NLS-1$
+                Messages.getString("BoardEditor.labHeight"), SwingConstants.RIGHT);
+        texWidth = new JTextField("16", 2);
+        texHeight = new JTextField("17", 2);
+        butOkay = new JButton(Messages.getString("Okay"));
+        butOkay.setActionCommand("done");
         butOkay.addActionListener(this);
         butOkay.setSize(80, 24);
-        butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-        butCancel.setActionCommand("cancel"); //$NON-NLS-1$
+        butCancel = new JButton(Messages.getString("Cancel"));
+        butCancel.setActionCommand("cancel");
         butCancel.addActionListener(this);
         butCancel.setSize(80, 24);
         GridBagLayout gridbag = new GridBagLayout();
@@ -83,6 +83,7 @@ public class BoardNewDialog extends JDialog implements ActionListener {
                 + frame.getSize().height / 2 - getSize().height / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             try {

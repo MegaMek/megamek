@@ -20,6 +20,10 @@ Rapier
 RPR-100b-EC
 </Model>
 
+<mul id:>
+7690
+</mul id:>
+
 <year>
 2820
 </year>
@@ -106,7 +110,7 @@ CLCASE
 </Fuselage Equipment>
 
 <history>
-Two improved large pulse lasers replaced the older Star League models, but the real change came with the installation of an improved LRM 20 launcher. The weight saved allowed for the addition of three more heat sinks, two more tons of armor, additional AC ammo and fuel, making the fighter even more dangerous in the hands of skilled Wolverine pilots.
+
 </history>
 
 <source>
@@ -116,3 +120,35 @@ Succession War
 <tonnage>
 85.0
 </tonnage>
+
+<capabilities>
+The Bauer Scope 130Y, the innovation at the heart of the Rapier design, effectively extends the range of all of the mounted weapon systems, and allows the pilot to help direct launched missiles in mid-flight through neural impulses.
+</capabilities>
+
+<overview>
+The Rapier was the staple heavy Aerospace Fighter of the SLDF since its introduction despite coming from an unusual source: the toy manufacturer Bauer Enterprises.
+</overview>
+
+<deployment>
+Clan Wolverine replaced the Large Pulse Lasers with Clan-spec versions and the missile launcher with an Improved LRM-20. Additional armor, heat sinks, fuel and autocannon ammo used up the rest of the weight freed by the lighter weapons.
+</deployment>
+
+<history>
+Bauer's unexpected decision to enter the military aerospace market in 2590 was a complete surprise to everyone, since it was better-known for making remote-controlled aerospace models than the real deal. However, their decision was based upon a new invention from one of their researchers, the veteran Dr. Lionel Rajan III, who developed a revolutionary neurocontrol device. This device used overlapping wave signals to produce a three-dimensional image of what the toy was "seeing" in the operator's mind. The SLDF was impressed with this revolutionary targeting and tracking system, especially since the Reunification War still raged with no end in sight, and gave the toy company a chance. A number of different prototypes, including a heavy Land-Air 'Mech, were rejected but it was the Rapier which won Bauer Enterprises its contract, with full production beginning in 2595. Besides its revolutionary Bauer Scope 130Y, the craft boasted good maneuverability and protection compared to craft of similar mass, sporting twelve tons of Philter Mech myomer-weave armor plating. It was widely deployed throughout the SLDF, with less advanced versions lacking the Scope 130Y used by the Lyran Commonwealth. Though the factory on Tharkad was never attacked during the Succession Wars, the Rapier still suffered from the loss of technological knowledge during that period, with downgraded versions of the fighter produced throughout the Inner Sphere. Only ComStar and the Word of Blake are known to still field Star League-quality Rapiers. Bauer Enterprises was poised to begin production of new models of the Rapier when a Blakist assault in late 3067 destroyed the Tharkad factory, though enough of the facility apparently survived to roll out a few of the new variant.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Field Refit.
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Interstar 290M
+ENGINE:VOX 340XL
+ARMOR:PhilterMesh
+COMMUNICATIONS:COMHRT II.Q
+TARGETING:Bauer-Scope 130Z
+</systemManufacturers>

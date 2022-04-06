@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Transit
 <Model>
 TR-13G
 </Model>
+
+<mul id:>
+5274
+</mul id:>
 
 <year>
 3081
@@ -63,6 +67,14 @@ Aerodyne
 2
 </engine_type>
 
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
 <armor>
 65
 35
@@ -103,3 +115,34 @@ TRO Prototypes - Jihad
 <tonnage>
 50.0
 </tonnage>
+
+<capabilities>
+Built as a 'Mech-buster and DropShip attack craft, the Transit isn't fast or agile, but is easy to control and has had few loss of control accidents.
+</capabilities>
+
+<overview>
+A common sight in House Liao and Capellan Confederation air lances, the Transit has armor and weapons to spare.
+</overview>
+
+<deployment>
+Based on the Transit Glare, this version offers identical performance and protection to the pilot. The only real change was in the main armament. Unable to secure a steady supply of Improved Heavy Gauss Rifles, the TR-13G instead uses a Long Tom Cannon with three tons of ammunition as its main armament. This massive weapon provided a longer reach and massive firepower against incoming DropShips while not affecting the Transit's traditional ground attack role. The variant use a Endicott Type 28 Maser communications system.
+</deployment>
+
+<manufacturer>
+Ceres Metals Industries
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Mujika Aerospace Type 18
+ENGINE:Rawlings 200 XL
+ARMOR:Mujika StarGlare Reflective
+COMMUNICATIONS:Endicott Type 28 Maser
+TARGETING:Dwyerson Mark XII
+</systemManufacturers>
+
+
+

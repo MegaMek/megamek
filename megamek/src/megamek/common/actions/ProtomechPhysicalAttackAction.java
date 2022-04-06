@@ -14,28 +14,13 @@
 
 package megamek.common.actions;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.IPlayer;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Protomech;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
 /**
- * The attacking Protomech makes its combo physical attack action.
+ * The attacking ProtoMech makes its combo physical attack action.
  */
 public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1432011536091665084L;
 
     public ProtomechPhysicalAttackAction(int entityId, int targetId) {
@@ -48,7 +33,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
     }
 
     /**
-     * Damage a Protomech does with its Combo-physicalattack.
+     * Damage a ProtoMech does with its Combo-physicalattack.
      */
     public static int getDamageFor(Entity entity, Targetable target) {
         int toReturn;
@@ -59,35 +44,37 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         } else {
             toReturn = 3;
         }
-        // Protomech weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
+
+        // ProtoMech weapon (TacOps, p. 337) or quad melee system (IO, p. 67)
         if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE, MiscType.S_PROTO_QMS)) {
-            toReturn += Math.ceil(entity.getWeight() / 5.0) * 2;
+            toReturn += (int) Math.ceil(entity.getWeight() / 5.0) * 2;
         } else if (entity.hasWorkingMisc(MiscType.F_PROTOMECH_MELEE)) {
-            toReturn += Math.ceil(entity.getWeight() / 5.0);
+            toReturn += (int) Math.ceil(entity.getWeight() / 5.0);
         }
+
         if (((Protomech) entity).isEDPCharged() && target.isConventionalInfantry()) {
             toReturn++;
-            // TODO: add another +1 to damage if target is cybernetically
-            // enhanced
+            // TODO: add another +1 to damage if target is cybernetically enhanced
         }
+
         // underwater damage is half, round up (see bug 1110692)
-        if (entity.getLocationStatus(Protomech.LOC_TORSO) 
-                == ILocationExposureStatus.WET) {
+        if (entity.getLocationStatus(Protomech.LOC_TORSO) == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
+
         if ((null != entity.getCrew())
                 && entity.hasAbility(OptionsConstants.PILOT_MELEE_MASTER)) {
             toReturn *= 2;
         }
-  return toReturn;
+        return toReturn;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()));
     }
 
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
@@ -104,24 +91,23 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((((Entity)target).getOwnerId() == ae.getOwnerId())
-                            || ((((Entity)target).getOwner().getTeam() != IPlayer.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
-                                    && (ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))) {
+                    && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                            || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit "
                         + "can never be the target of a direct attack.");
             }
         }
 
-        final IHex attHex = game.getBoard().getHex(ae.getPosition());
-        final IHex targHex = game.getBoard().getHex(target.getPosition());
+        final Hex attHex = game.getBoard().getHex(ae.getPosition());
+        final Hex targHex = game.getBoard().getHex(target.getPosition());
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int targetHeight = target.relHeight() + targHex.getLevel();
-        final int targetElevation = target.getElevation()
-                + targHex.getLevel();
+        final int targetElevation = target.getElevation() + targHex.getLevel();
         
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
         
@@ -135,40 +121,33 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         // non-protos can't make protomech-physicalattacks
         if (!(ae instanceof Protomech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Non-protos can't make proto-physicalattacks");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
         }
 
         // Can't target a transported entity.
         if ((te != null) && (Entity.NONE != te.getTransportId())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is a passenger.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if ((te != null) && (Entity.NONE != te.getSwarmTargetId())) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is swarming a Mek.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
         if (range != 0) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target must be in same hex");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be in same hex");
         }
 
         // check elevation
-        if ((attackerElevation < targetElevation)
-                || (attackerElevation > targetHeight)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target elevation not in range");
+        if ((attackerElevation < targetElevation) || (attackerElevation > targetHeight)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
 
         // can't physically attack mechs making dfa attacks
         if ((te != null) && te.isMakingDfa()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target is making a DFA attack");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a DFA attack");
         }
 
         // Can't target woods or ignite a building with a physical.
@@ -197,8 +176,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         // target terrain
         if (te != null) {
-            toHit.append(Compute.getTargetTerrainModifier(game, te, 0,
-                    inSameBuilding));
+            toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
         }        
 
         // target prone
@@ -224,5 +202,4 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         // done!
         return toHit;
     }
-
 }

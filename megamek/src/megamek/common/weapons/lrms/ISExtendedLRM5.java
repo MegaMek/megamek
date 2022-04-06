@@ -20,14 +20,8 @@ import megamek.common.SimpleTechLevel;
  */
 public class ISExtendedLRM5 extends ExtendedLRMWeapon {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6153832907941260136L;
 
-    /**
-     *
-     */
     public ISExtendedLRM5() {
         super();
         name = "Extended LRM 5";
@@ -46,10 +40,13 @@ public class ISExtendedLRM5 extends ExtendedLRMWeapon {
         medAV = 3;
         longAV = 3;
         extAV = 3;
-        rulesRefs = "327,TO";
+        rulesRefs = "327, TO";
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3054, 3078, 3083, DATE_NONE, DATE_NONE).setPrototypeFactions(F_FS,F_LC)
-            .setProductionFactions(F_LC).setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setISAdvancement(DATE_NONE, 3054, 3080, DATE_NONE, DATE_NONE)
+            .setPrototypeFactions(F_FS,F_LC)
+            .setProductionFactions(F_LC)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

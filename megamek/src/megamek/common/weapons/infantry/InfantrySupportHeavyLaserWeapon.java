@@ -47,7 +47,7 @@ public class InfantrySupportHeavyLaserWeapon extends InfantryWeapon {
 		ammoWeight = 0.003;
 		shots = 7;
 		tonnage = .300;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2400, 2405, 2450, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2400, 2405, 2450, DATE_NONE, DATE_NONE)

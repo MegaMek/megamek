@@ -1,6 +1,7 @@
 Version:1.1
 Harvester Ant
 KIC-3 AgroMech
+mul id:4265
 
 Config:Quad
 TechBase:Inner Sphere

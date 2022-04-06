@@ -9,9 +9,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Jun 17, 2007
- */
 package megamek.common;
 
 import java.util.HashMap;
@@ -21,6 +18,7 @@ import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class SmallCraft extends Aero {
 
@@ -28,10 +26,8 @@ public class SmallCraft extends Aero {
     
     public static final int LOC_HULL = 4;
     
-    private static String[] LOCATION_ABBRS =
-        { "NOS", "LS", "RS", "AFT", "HULL" };
-    private static String[] LOCATION_NAMES =
-        { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
+    private static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT", "HULL" };
+    private static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft", "Hull" };
 
     // crew and passengers
     private int nOfficers = 0;
@@ -39,7 +35,7 @@ public class SmallCraft extends Aero {
     private int nBattleArmor = 0;
     private int nOtherPassenger = 0;
     
-    // Maps transported crew,passengers,marines to a host ship so we can match them up again post-game
+    // Maps transported crew, passengers, marines to a host ship so we can match them up again post-game
     private Map<String,Integer> nOtherCrew = new HashMap<>();
     private Map<String,Integer> passengers = new HashMap<>();
     
@@ -255,7 +251,7 @@ public class SmallCraft extends Aero {
     }
     
     /**
-     * Returns the total number of life boats launched so far
+     * Returns the total number of lifeboats launched so far
      */
     @Override
     public int getLaunchedLifeBoats() {
@@ -263,7 +259,7 @@ public class SmallCraft extends Aero {
     }
     
     /**
-     * Updates the total number of life boats launched so far
+     * Updates the total number of lifeboats launched so far
      * @param n The number to change
      */
     @Override
@@ -276,7 +272,7 @@ public class SmallCraft extends Aero {
         if (isPrimitive()) {
             return 1.84 * primitiveFuelFactor();
         }
-    	return 1.84;
+        return 1.84;
     }
 
     @Override
@@ -434,7 +430,7 @@ public class SmallCraft extends Aero {
                     setPotCrit(CRIT_KF_BOOM);
                     // Primitve dropships without kf-boom take avionics hit instead (IO, p. 119).
                     if ((this instanceof Dropship)
-                            && (((Dropship)this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
+                            && (((Dropship) this).getCollarType() == Dropship.COLLAR_NO_BOOM)) {
                         setPotCrit(CRIT_AVIONICS);
                     }
                     return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -961,34 +957,34 @@ public class SmallCraft extends Aero {
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {
-        case LOC_NOSE:
-            if (location == LOC_NOSE) {
-                return 1.0;
-            }
-            if (isSpheroid() && (location == LOC_LWING || location == LOC_RWING)
-                    && !rearMounted) {
-                return 0.5;
-            }
-            break;
-        case LOC_LWING:
-        case LOC_RWING:
-            if (index == location) {
-                if (isSpheroid()) {
-                    return 0.5;
-                }
-                if (!rearMounted) {
+            case LOC_NOSE:
+                if (location == LOC_NOSE) {
                     return 1.0;
                 }
-            }
-            break;
-        case LOC_AFT:
-            if (location == LOC_AFT) {
-                return 1.0;
-            }
-            if (rearMounted && (location == LOC_LWING || location == LOC_RWING)) {
-                return isSpheroid()? 0.5 : 1.0;
-            }
-            break;
+                if (isSpheroid() && (location == LOC_LWING || location == LOC_RWING)
+                        && !rearMounted) {
+                    return 0.5;
+                }
+                break;
+            case LOC_LWING:
+            case LOC_RWING:
+                if (index == location) {
+                    if (isSpheroid()) {
+                        return 0.5;
+                    }
+                    if (!rearMounted) {
+                        return 1.0;
+                    }
+                }
+                break;
+            case LOC_AFT:
+                if (location == LOC_AFT) {
+                    return 1.0;
+                }
+                if (rearMounted && (location == LOC_LWING || location == LOC_RWING)) {
+                    return isSpheroid() ? 0.5 : 1.0;
+                }
+                break;
         }
         return 0;
     }
@@ -999,7 +995,8 @@ public class SmallCraft extends Aero {
         specialAbilities.put(BattleForceSPA.LG, null);
     }
 
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
     
@@ -1013,6 +1010,6 @@ public class SmallCraft extends Aero {
      */
     @Override
     protected int calculateWalk() {
-    	return walkMP;
+        return walkMP;
     }
 }

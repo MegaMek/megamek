@@ -18,6 +18,12 @@
  */
 package megamek.common.force;
 
+import megamek.common.Entity;
+import megamek.common.Game;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
+import megamek.common.icons.Camouflage;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,72 +31,68 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import megamek.common.Entity;
-import megamek.common.IPlayer;
-
 /**
  * A representation of a force or part of a force. Very similar to MHQ's Force.
  * A Force in MM belongs to a player. It can hold units of the owner's team.
  * @author Simon
  */
 public final class Force implements Serializable {
-    
+
     private static final long serialVersionUID = -3870731687743542253L;
 
     public static final int NO_FORCE = -1;
-    
+
     private String name;
     private int id;
+    private Camouflage camouflage;
     private int ownerId = -1;
     private int parent = NO_FORCE;
     private ArrayList<Integer> entities = new ArrayList<>();
     private ArrayList<Integer> subForces = new ArrayList<>();
-    
-    /** Creates a top-level force, i.e. one with no parent force. */
-    Force(String n, int nId, IPlayer owner) {
-        this(n, nId);
+
+    /**
+     * Creates a top-level (no parent) force
+     */
+    public Force(final String name, final int id, final Camouflage camouflage, final Player owner) {
+        this(name, id, camouflage);
         Objects.requireNonNull(owner);
         ownerId = owner.getId();
     }
 
-    /** Creates a subforce. */
-    Force(String n, int nId, Force fParent) {
-        this(n, nId);
-        Objects.requireNonNull(fParent);
-        parent = fParent.getId();
-        ownerId = fParent.getOwnerId();
+    /**
+     * Creates a subforce.
+     */
+    public Force(final String name, final int id, final Camouflage camouflage, final Force parent) {
+        this(name, id, camouflage);
+        setParent(parent.getId());
+        setOwnerId(parent.getOwnerId());
     }
     
-    /** 
+    /**
      * Creates a force with name n and id nId. Without either a parent or owner
      * this force is a stub and should not be added to a Forces object. Used to
      * parse the forceString, e.g. when loading a MUL. 
      */
-    Force(String n, int nId) {
-        Objects.requireNonNull(n);
-        name = n;
-        id = nId;
+    public Force(final String name, final int id, final Camouflage camouflage) {
+        setName(Objects.requireNonNull(name));
+        setId(id);
+        setCamouflage(camouflage);
     }
-    
-    /** Changes the id of this force to newId. */
-    void setId(int newId) {
-        id = newId;
-    }
-    
+
     /**
      * Creates a force object that is not integrated into any forces. Used
      * to send a new force to the server. In other cases, use Forces.add.
      */
     public static Force createSubforce(String name, Force fParent) {
-        return new Force(name, -1, fParent);
+        return new Force(name, -1, new Camouflage(), fParent);
     }
-    
+
     /**
      * Creates a force object that is not integrated into any forces. Used
      * to send a new force to the server. In other cases, use Forces.add.
      */
-    public static Force createToplevelForce(String name, IPlayer owner) {
-        return new Force(name, -1, owner);
+    public static Force createToplevelForce(String name, Player owner) {
+        return new Force(name, -1, new Camouflage(), owner);
     }
 
     public String getName() {
@@ -104,7 +106,26 @@ public final class Force implements Serializable {
     public int getId() {
         return id;
     }
-    
+
+    /** Changes the id of this force to newId. */
+    void setId(int newId) {
+        id = newId;
+    }
+
+    public Camouflage getCamouflage() {
+        return camouflage;
+    }
+
+    public Camouflage getCamouflageOrElse(final Game game, final Camouflage camouflage) {
+        return getCamouflage().hasDefaultCategory()
+                ? ((getParentId() == NO_FORCE) ? camouflage : getParent(game).getCamouflageOrElse(game, camouflage))
+                : getCamouflage();
+    }
+
+    public void setCamouflage(final Camouflage camouflage) {
+        this.camouflage = camouflage;
+    }
+
     /** Returns the player ID of the owner of this force. */
     public int getOwnerId() {
         return ownerId;
@@ -117,6 +138,10 @@ public final class Force implements Serializable {
     /** Returns the Force ID of this force's parent force; -1 if top-level. */
     public int getParentId() {
         return parent;
+    }
+
+    public @Nullable Force getParent(final Game game) {
+        return game.getForces().getForce(getParentId());
     }
     
     void setParent(int newParentId) {
@@ -222,25 +247,26 @@ public final class Force implements Serializable {
     }
     
     void removeEntity(Entity entity) {
-        entities.remove((Integer)entity.getId());
+        entities.remove((Integer) entity.getId());
     }
     
     /** Removes the given id from the list of subordinated entities. */
     void removeEntity(int id) {
-        entities.remove((Integer)id);
+        entities.remove((Integer) id);
     }
     
     /** Removes the given id from the list of (direct) subforces. */
     void removeSubForce(int id) {
-        subForces.remove((Integer)id);
+        subForces.remove((Integer) id);
     }
     
+    @Override
     protected Force clone() {
-        Force clone = new Force(name, id);
+        Force clone = new Force(name, id, camouflage.clone());
         clone.parent = parent;
         clone.ownerId = ownerId;
-        clone.subForces = new ArrayList<Integer>(subForces);
-        clone.entities = new ArrayList<Integer>(entities);
+        clone.subForces = new ArrayList<>(subForces);
+        clone.entities = new ArrayList<>(entities);
         return clone;
     }
     

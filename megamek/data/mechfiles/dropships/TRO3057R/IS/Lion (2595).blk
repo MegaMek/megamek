@@ -20,6 +20,10 @@ Lion
 (2595)
 </Model>
 
+<mul id:>
+4524
+</mul id:>
+
 <year>
 2595
 </year>
@@ -209,3 +213,51 @@ TRO 3057R - Star League
 <escape_pod>
 10
 </escape_pod>
+
+<capabilities>
+An old Star League combined arms troop transport, the Lion-class DropShip is one of the oldest designs still in use. The Lion has an impressive array of weapons and armor, nearly as formidable as some assault DropShips. The long range firepower of the Lion is provided by eight ER large lasers, ten large pulse lasers, six LRM-20s, and six LRM-15s. For short range engagements, it adds ten medium pulse lasers and six Streak SRM-6s. In addition, it carries a dozen anti-missile systems to provide further protection. Fully laden, it carries forty-eight tons of LRM missiles, twelve tons of Streak-SRM missiles, and forty-eight tons of AMS ammunition.
+</capabilities>
+
+<overview>
+The Lion was a Star League-era DropShip produced primarily in the 27th century and largely operated by the Clans in the 31st century.
+</overview>
+
+<deployment>
+Along with three transport bays, the Lion has a cargo capacity of 2,355.5 tons. The first 'Mech bay was originally designed to carry eight 'Mechs, which could enter and exit through two access doors. The second bay was given over to a company of twelve light vehicles with a similar layout. The last bay was given over to general cargo, with a single door.
+</deployment>
+
+<history>
+Introduced in 2595, the Lion would serve throughout the Inner Sphere up to the Amaris Civil War, when many left with the Exodus Fleet. Heavy fighting during the Succession Wars would reduce the number of Lions still in service in the Inner Sphere to a mere handful by the thirty-first century. The Clans eventually refitted the Lion for their revised unit structure, though they could never manage a refit that could support Elementals. This relegated the ship for use by dezgra and freeborn units, who continued to use it in its combined-arms role. Likewise, all Lions in service with the Clans date from the original Exodus, with no new ships having been built. When the Wolf's Dragoons returned to the Inner Sphere in 3005, they brought with them Lion-class ships, stripped of most of their advanced Clan equipment. However, the sudden sight of so many rare DropShips immediately raised questions, though the Dragoons remained quiet about their origin. In an effort to allay any further suspicion, these ships were restricted to carrying two lances of BattleMechs, though they would switch to openly using the Clan organization after the Fourth Succession War.
+</history>
+
+<manufacturer>
+Krester Ship Construction,Krester Ship Construction,Krester Ship Construction
+</manufacturer>
+
+<primaryFactory>
+Keid,Thorin,Yorii
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Troop Carrier
+</use>
+
+<length>
+92 meters
+</length>
+
+<width>
+92 meters
+</width>
+
+<height>
+95 meters
+</height>

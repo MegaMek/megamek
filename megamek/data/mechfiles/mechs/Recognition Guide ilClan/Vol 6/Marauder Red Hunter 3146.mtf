@@ -1,11 +1,13 @@
 Version:1.0
 Marauder
 Red Hunter 3146
+mul id:7536
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3146
 rules level:3
+source:Rec Guide:ilClan #6 - Dark Age
 
 mass:75
 engine:300 XL Engine(IS)

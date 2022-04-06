@@ -195,16 +195,16 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
         this.numSC = scCount;
         this.numTM = tmCount;
         this.numAero = aeroCount;
-        this.normal_turns = new Vector<ITurnOrdered>(normalCount);
-        this.total_turns = new Vector<ITurnOrdered>(this.numTotal);
-        this.even_turns = new Vector<ITurnOrdered>(evenCount);
-        this.space_station_turns = new Vector<ITurnOrdered>(ssCount);
-        this.jumpship_turns = new Vector<ITurnOrdered>(jsCount);
-        this.warship_turns = new Vector<ITurnOrdered>(wsCount);
-        this.dropship_turns = new Vector<ITurnOrdered>(dsCount);
-        this.small_craft_turns = new Vector<ITurnOrdered>(scCount);
-        this.telemissile_turns = new Vector<ITurnOrdered>(tmCount);
-        this.aero_turns = new Vector<ITurnOrdered>(aeroCount);
+        this.normal_turns = new Vector<>(normalCount);
+        this.total_turns = new Vector<>(this.numTotal);
+        this.even_turns = new Vector<>(evenCount);
+        this.space_station_turns = new Vector<>(ssCount);
+        this.jumpship_turns = new Vector<>(jsCount);
+        this.warship_turns = new Vector<>(wsCount);
+        this.dropship_turns = new Vector<>(dsCount);
+        this.small_craft_turns = new Vector<>(scCount);
+        this.telemissile_turns = new Vector<>(tmCount);
+        this.aero_turns = new Vector<>(aeroCount);
         this.min = min;
     }
 
@@ -263,7 +263,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * all normal turns.
      * 
      * @param marker the <code>TurnOrdered</code> marker for a even turn.
-     * @exception IllegalStateException if as many markers have been added for
+     * @throws IllegalStateException if as many markers have been added for
      *                even turns as indicated at construction.
      */
     public void addEven(ITurnOrdered marker) {
@@ -278,7 +278,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Add a <code>TurnOrdered</code> marker for a "normal" turn.
      * 
      * @param marker the <code>TurnOrdered</code> marker for a "normal" turn.
-     * @exception IllegalStateException if as many markers have been added for
+     * @throws IllegalStateException if as many markers have been added for
      *                normal turns as indicated at construction.
      */
     public void addNormal(ITurnOrdered marker) {
@@ -386,6 +386,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * 
      * @return the "total" <code>TurnOrdered</code> marker.
      */
+    @Override
     public ITurnOrdered nextElement() {
         return this.getTurnTotalEnum().nextElement();
     }
@@ -395,6 +396,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * 
      * @return <code>true</code> if we've read all turn markers.
      */
+    @Override
     public boolean hasMoreElements() {
         return this.getTurnTotalEnum().hasMoreElements();
     }

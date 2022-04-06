@@ -20,6 +20,10 @@ Trajan Assault Infantry Fighting Vehicle
 (Standard)
 </Model>
 
+<mul id:>
+3282
+</mul id:>
+
 <Tonnage>
 85
 </Tonnage>

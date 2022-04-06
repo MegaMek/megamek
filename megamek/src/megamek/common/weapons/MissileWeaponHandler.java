@@ -24,7 +24,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -37,6 +37,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
@@ -56,7 +57,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
@@ -254,7 +255,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (ae instanceof BattleArmor) {
                 int shootingStrength = 1;
                 if ((weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                        && !(weapon.isSquadSupportWeapon())){
+                        && !(weapon.isSquadSupportWeapon())) {
                     shootingStrength = ((BattleArmor) ae).getShootingStrength();
                 }
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
@@ -489,12 +490,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (bayHandler.amsBayEngaged || bayHandler.pdBayEngaged) {
                 // Let's try to mimic reduced AMS effectiveness against higher munition attack values
                 // Set a minimum -4 (default AMS mod)
-                return Math.max((counterAVMod / calcDamagePerHit()),2);
+                return Math.max((counterAVMod / calcDamagePerHit()), 2);
             }
         } else if (getCounterAV() > 0) {
             // Good for squadron missile fire. This may get divided up against too many missile racks to produce a result.
             // Set a minimum -4 (default AMS mod)
-            return Math.max((getCounterAV() / nweaponsHit),4);
+            return Math.max((getCounterAV() / nweaponsHit), 4);
         }
         return 0;
     }
@@ -669,7 +670,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
             return true;
         }
@@ -697,9 +698,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(wtype.getName() + number);
         if (entityTarget != null) {
-            if (wtype.getAmmoType() != AmmoType.T_NA){
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
                 AmmoType atype = (AmmoType) ammo.getType();
-                if (atype.getMunitionType() != AmmoType.M_STANDARD){
+                if (atype.getMunitionType() != AmmoType.M_STANDARD) {
                     r.messageId = 3116;
                     r.add(atype.getSubMunitionName());
                 }
@@ -888,7 +889,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     || waa.isAirToAir(game)
                     || waa.isAirToGround(game)) {
             // Ensures single AMS state is properly updated
-            getAMSHitsMod(new Vector<Report>());
+            getAMSHitsMod(new Vector<>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
             nCluster = aeroResults[1];
@@ -969,13 +970,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
 
         // We have to adjust the reports on a miss, so they line up
-        if (bMissed && (id != vPhaseReport.size())){
+        if (bMissed && (id != vPhaseReport.size())) {
             vPhaseReport.get(id-1).newlines--;
             vPhaseReport.get(id).indent(2);
             vPhaseReport.get(vPhaseReport.size()-1).newlines++;
         }
 
-        if (!bMissed){
+        if (!bMissed) {
             // Buildings shield all units from a certain amount of damage.
             // Amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
@@ -1056,7 +1057,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
             // When shooting at a non-infantry unit in a building and the
             //  shot misses, the building is damaged instead, TW pg 171
-            if (bldgDamagedOnMiss){
+            if (bldgDamagedOnMiss) {
                 r = new Report(6429);
                 r.indent(2);
                 r.subject = ae.getId();

@@ -15,6 +15,10 @@ Cavalry Attack Helicopter
 <Model>
 (LRM)
 </Model>
+
+<mul id:>
+504
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

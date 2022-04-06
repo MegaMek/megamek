@@ -15,7 +15,7 @@ public class TextMarkerSprite extends HexSprite {
     private String spriteText;
     private Color spriteColor;
 
-    public TextMarkerSprite(BoardView1 boardView1, Coords loc, String text, Color color) {
+    public TextMarkerSprite(BoardView boardView1, Coords loc, String text, Color color) {
         super(boardView1, loc);
         spriteText = text;
         spriteColor = color;
@@ -28,30 +28,32 @@ public class TextMarkerSprite extends HexSprite {
 
         // create image for buffer
         image = createNewHexImage();
-        Graphics2D graph = (Graphics2D)image.getGraphics();
+        Graphics2D graph = (Graphics2D) image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
 
         // get a big font and test to see which font size will fit
         // the hex shape
-        Font textFont = new Font("SansSerif", 0, 1000);
+        Font textFont = new Font("SansSerif", Font.PLAIN, 1000);
         graph.setFont(textFont);
         FontMetrics fm = graph.getFontMetrics(graph.getFont());
         Rectangle2D rect = fm.getStringBounds(spriteText, graph);
 
         float factor = 1;
-        if (rect.getHeight() > bounds.getHeight()) 
-            factor = (float)bounds.getHeight()/(float)rect.getHeight();
-        if ((rect.getWidth()*factor) > bounds.getWidth())
-            factor = Math.min(factor, ((float)bounds.getWidth()/(float)rect.getWidth()));
+        if (rect.getHeight() > bounds.getHeight()) {
+            factor = (float) bounds.getHeight() / (float) rect.getHeight();
+        }
+
+        if ((rect.getWidth() * factor) > bounds.getWidth()) {
+            factor = Math.min(factor, ((float) bounds.getWidth() / (float) rect.getWidth()));
+        }
         // make smaller to actually fit the hex shape
-        factor = factor*0.7f;
+        factor = factor * 0.7f;
         
         // set the font and draw the text
-        Font textFontS = new Font("SansSerif", 0, (int)(factor*1000));
+        Font textFontS = new Font("SansSerif", Font.PLAIN, (int) (factor * 1000));
         graph.setFont(textFontS);
-        Point pos = new Point((int)(bounds.getWidth()/2),(int)(bounds.getHeight()/2));
-        bv.drawTextShadow(graph,spriteText,pos,textFontS);
+        Point pos = new Point((int) (bounds.getWidth() / 2),(int) (bounds.getHeight() / 2));
+        bv.drawTextShadow(graph, spriteText, pos, textFontS);
         bv.drawCenteredText(graph, spriteText, pos, spriteColor, false);
     }
-
 }

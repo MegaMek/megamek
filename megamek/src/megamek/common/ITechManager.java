@@ -24,7 +24,7 @@ package megamek.common;
 public interface ITechManager {
     
     /**
-     * @return The maximimum intro date for the tech; any tech that appears after this date
+     * @return The maximum intro date for the tech; any tech that appears after this date
      *         will be excluded.
      */
     int getTechIntroYear();
@@ -43,7 +43,7 @@ public interface ITechManager {
      * date, providing a transitional stage from the formation of the Clans until early in the Golden
      * Century.
      * 
-     * @return One of the F_* faction constants defined in {@link ITechnology}. If < 0, faction
+     * @return One of the F_* faction constants defined in {@link ITechnology}. If &lt; 0, faction
      *         variations will be ignored.
      */
     int getTechFaction();

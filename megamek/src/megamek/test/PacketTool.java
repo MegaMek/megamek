@@ -1,62 +1,44 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.test;
 
-import java.awt.Button;
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.TextField;
+import megamek.MMConstants;
+import megamek.common.Board;
+import megamek.common.net.*;
+import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.SwingUtilities;
-
-import megamek.common.Board;
-import megamek.common.net.ConnectionFactory;
-import megamek.common.net.ConnectionListenerAdapter;
-import megamek.common.net.DisconnectedEvent;
-import megamek.common.net.IConnection;
-import megamek.common.net.Packet;
-import megamek.common.net.PacketReceivedEvent;
-
 /**
  * This class provides an AWT GUI for testing the transmission and reception of
  * <code>Packet</code>s.
  *
- * @author James Damour <suvarov454@users.sourceforge.net>
+ * @author James Damour (suvarov454@users.sourceforge.net)
  */
 public class PacketTool extends Frame implements Runnable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 3249150110009720658L;
 
     /**
@@ -70,7 +52,7 @@ public class PacketTool extends Frame implements Runnable {
     private Panel panConnect = null;
 
     /**
-     * The panel containing the transimission controls.
+     * The panel containing the transmission controls.
      */
     private Panel panXmit = null;
 
@@ -97,7 +79,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * The connection to the other peer.
      */
-    IConnection conn = null;
+    AbstractConnection conn = null;
 
     /**
      * Display a window for testing the transmission of boards.
@@ -146,13 +128,14 @@ public class PacketTool extends Frame implements Runnable {
 
         // Populate the connection panel.
         panConnect.add(new Label(" Connect To:"));
-        hostName = new TextField("localhost", 10);
+        hostName = new TextField(MMConstants.LOCALHOST, 10);
         panConnect.add(hostName);
         panConnect.add(new Label("Port Number:"));
-        hostPort = new TextField("2346", 10);
+        hostPort = new TextField( String.valueOf(MMConstants.DEFAULT_PORT), 10);
         panConnect.add(hostPort);
         button = new Button("Listen");
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 (new Thread(PacketTool.this, "Packet Reader")).start();
             }
@@ -160,6 +143,7 @@ public class PacketTool extends Frame implements Runnable {
         panConnect.add(button);
         button = new Button("Connect");
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 connect();
             }
@@ -169,6 +153,7 @@ public class PacketTool extends Frame implements Runnable {
         // Populate the transmission panel.
         button = new Button("Load Board");
         button.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 boardLoad();
             }
@@ -179,6 +164,7 @@ public class PacketTool extends Frame implements Runnable {
         panXmit.add(boardName);
         butSend = new Button("Send");
         butSend.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 send();
             }
@@ -209,14 +195,13 @@ public class PacketTool extends Frame implements Runnable {
             conn = ConnectionFactory.getInstance().createServerConnection(
                     new Socket(host, port), 1);
             Timer t = new Timer(true);
-            final Runnable packetUpdate = new Runnable() {
-                public void run() {
-                    IConnection connection = conn;
-                    if (connection != null) {
-                        connection.update();
-                    }
+            final Runnable packetUpdate = () -> {
+                AbstractConnection connection = conn;
+                if (connection != null) {
+                    connection.update();
                 }
             };
+
             final TimerTask packetUpdate2 = new TimerTask() {
                 @Override
                 public void run() {
@@ -297,6 +282,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * Listen for incoming clients.
      */
+    @Override
     public void run() {
         int port = 0;
         try {
@@ -321,7 +307,7 @@ public class PacketTool extends Frame implements Runnable {
     }
 
     /**
-     * Process a packet from a connection. <p/> Implements
+     * Process a packet from a connection. <p> Implements
      * <code>ConnectionHandler</code>.
      *
      * @param id - the <code>int</code> ID the connection that received the
@@ -336,8 +322,14 @@ public class PacketTool extends Frame implements Runnable {
             System.out.print("null");
         } else {
             switch (packet.getCommand()) {
+                case Packet.COMMAND_SERVER_VERSION_CHECK:
+                    System.out.println("COMMAND_SERVER_VERSION_CHECK");
+                    break;
                 case Packet.COMMAND_SERVER_GREETING:
                     System.out.print("COMMAND_SERVER_GREETING");
+                    break;
+                case Packet.COMMAND_ILLEGAL_CLIENT_VERSION:
+                    System.out.println("COMMAND_ILLEGAL_CLIENT_VERSION");
                     break;
                 case Packet.COMMAND_CLIENT_NAME:
                     System.out.print("COMMAND_CLIENT_NAME");
@@ -420,10 +412,10 @@ public class PacketTool extends Frame implements Runnable {
                      * * Save the board here.
                      */
                     Board recvBoard = (Board) packet.getObject(0);
-                    try(OutputStream os = new FileOutputStream("xmit.board")) { //$NON-NLS-1$
+                    try (OutputStream os = new FileOutputStream("xmit.board")) {
                         recvBoard.save(os);
-                    } catch (IOException ioErr) {
-                        ioErr.printStackTrace();
+                    } catch (Exception ex) {
+                        LogManager.getLogger().error("", ex);
                     }
                     break;
                 case Packet.COMMAND_SENDING_ENTITIES:
@@ -465,8 +457,8 @@ public class PacketTool extends Frame implements Runnable {
                 case Packet.COMMAND_REROLL_INITIATIVE:
                     System.out.print("COMMAND_REROLL_INITIATIVE");
                     break;
-                case Packet.COMMAND_SET_ARTYAUTOHITHEXES:
-                    System.out.print("COMMAND_SET_ARTYAUTOHITHEXES");
+                case Packet.COMMAND_SET_ARTILLERY_AUTOHIT_HEXES:
+                    System.out.print("COMMAND_SET_ARTILLERY_AUTOHIT_HEXES");
                     break;
                 default:
                     System.out.print("unknown");
@@ -477,12 +469,12 @@ public class PacketTool extends Frame implements Runnable {
     }
 
     /**
-     * Called when it is sensed that a connection has terminated. <p/>
+     * Called when it is sensed that a connection has terminated. <p>
      * Implements <code>ConnectionHandler</code>.
      *
      * @param deadConn - the <code>Connection</code> that has terminated.
      */
-    public synchronized void disconnected(IConnection deadConn) {
+    public synchronized void disconnected(AbstractConnection deadConn) {
         // write something in the log
         System.out.println("s: connection " + deadConn.getId() + " disconnected");
 
@@ -495,7 +487,7 @@ public class PacketTool extends Frame implements Runnable {
         panConnect.setEnabled(true);
     }
 
-    private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
+    private ConnectionListener connectionListener = new ConnectionListener() {
 
         /**
          * Called when it is sensed that a connection has terminated.
@@ -511,5 +503,4 @@ public class PacketTool extends Frame implements Runnable {
         }
 
     };
-
 }

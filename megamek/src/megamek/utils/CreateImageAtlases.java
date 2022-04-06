@@ -36,7 +36,6 @@ import megamek.common.Configuration;
  * tileset file will be scanned and updated to reflect the new image location.
  *
  * @author arlith
- *
  */
 public class CreateImageAtlases {
 
@@ -73,29 +72,18 @@ public class CreateImageAtlases {
 
     int improperImgDimsCount = 0;
 
-    /**
-     * 
-     */
     CreateImageAtlases() {
         this(10);
     }
 
-    /**
-     * 
-     * @param imagesPerRow
-     */
     CreateImageAtlases(int imagesPerRow) {
         this.imagesPerRow = imagesPerRow;
     }
 
-    /**
-     * 
-     * @param file
-     */
     void scanDirectory(File file) {
         if (file.isDirectory()) {
             // Ignore certian directories
-            if (file.toString().contains("hexes/largeTextures")) {
+            if (file.toString().contains("largeTextures")) {
                 return;
             }
             processDirectory(file);
@@ -163,7 +151,7 @@ public class CreateImageAtlases {
             y = row * hexHeight;
 
             // Update imageFileToAtlas map
-            atlasLoc = atlasFile.toString() + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
+            atlasLoc = atlasFile + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
             File atlasLocFile = new File(atlasLoc);
             imgFileToAtlasMap.put(imgFile.toPath(), atlasLocFile.toPath());
             imagesStored.add(imgFile.toString());
@@ -198,18 +186,10 @@ public class CreateImageAtlases {
         imgFileToAtlasMap.writeToFile();
     }
 
-    /**
-     * 
-     */
     public static void printUsage() {
 
     }
 
-    /**
-     * 
-     * @param args
-     * @return
-     */
     public static void main(String[] args) {
         CreateImageAtlases atlasCreator = new CreateImageAtlases();
 

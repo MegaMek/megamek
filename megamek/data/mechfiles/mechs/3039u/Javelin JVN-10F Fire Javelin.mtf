@@ -1,6 +1,7 @@
 Version:1.0
 Javelin
 JVN-10F 'Fire Javelin'
+mul id:1674
 
 Config:Biped
 TechBase:Inner Sphere

@@ -20,6 +20,10 @@ Ballista Self-Propelled Artillery Tank
 (Standard)
 </Model>
 
+<mul id:>
+6775
+</mul id:>
+
 <year>
 2480
 </year>

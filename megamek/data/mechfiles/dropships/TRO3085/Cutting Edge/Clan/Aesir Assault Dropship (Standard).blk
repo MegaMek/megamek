@@ -20,6 +20,10 @@ Aesir Assault Dropship
 (Standard)
 </Model>
 
+<mul id:>
+3676
+</mul id:>
+
 <year>
 3077
 </year>
@@ -268,3 +272,48 @@ TRO 3085 - Jihad
 <escape_pod>
 10
 </escape_pod>
+
+<capabilities>
+The ship was designed to carry ninety tons of Ferro-Aluminum armor to give it a sizable amount of protection from both standard and some capital grade weaponry. As part of its enhanced escort capacities, the ship was equipped with a small Naval Comm-Scanner Suite, which allowed the ship to detect enemy forces better than conventional ships' sensors. The Vanir is designed with a wide array of standard and some sub-capital weaponry.
+</capabilities>
+
+<overview>
+Designed as a Fighter Carrier, the Aesir Assault DropShip was first developed by Clan Ghost Bear during the early years of the Jihad. The ship was designed to serve as an escort vessel for the Clan's Leviathan Class Heavy Battleships. 
+</overview>
+
+<history>
+The Clan lost an entire fleet of escort WarShips to Clan Nova Cat when they conducted a Trial of Possession for one of its incomplete Leviathan WarShips in 3067. The Aesir was developed at the same time as its near-sister Class, the Vanir. The ship was first produced from 3077 until 3081 at the Clan's shipyards located at Alshain and Rasalhague. This first production run produced upwards to 5 Stars worth of ships which were employed in the war with Word of Blake. During the liberation of Terra in 3078, Devlin Stone convinced the Bears to "gift" a mixed binary of ships consisting of the Aesir and Vanir designs to Clan Nova Cat for the liberation. These Nova Cats ships were taken from Leviathan Heavy Battleship Great Bear's escort force. The WarShip's loss of its escort force was a suspected reason the ship was destroyed during the liberation. After the Jihad, the ship's productions lines continue produce the ship but in limited numbers.
+</history>
+
+<manufacturer>
+Alshain Naval Yards (Military), Gorton, Kingsley and Thorpe
+</manufacturer>
+
+<primaryFactory>
+Alshain,Rasalhague
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Escort Fighter Carrier
+</use>
+
+<length>
+110 meters
+</length>
+
+<width>
+100 meters
+</width>
+
+<height>
+150 meters
+</height>
+

@@ -1,6 +1,7 @@
 Version:1.1
 Dig King RCL-1 MiningMech
 (Standard)
+mul id:4078
 
 Config:Biped
 TechBase:Inner Sphere

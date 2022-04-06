@@ -26,7 +26,8 @@ class MapListPopup {
     static final String MLP_BOARD = "BOARD";
     static final String MLP_SURPRISE = "SURPRISE";
 
-    static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener, ChatLounge lobby) {
+    static ScalingPopup mapListPopup(List<String> boards, int numButtons, ActionListener listener, 
+            ChatLounge lobby, boolean enableRotation) {
         
         if (boards.isEmpty()) {
             return new ScalingPopup();
@@ -35,23 +36,28 @@ class MapListPopup {
         boolean oneSelected = boards.size() == 1;
 
         ScalingPopup popup = new ScalingPopup();
-        popup.add(singleBoardMenu(oneSelected, listener, numButtons, boards));
+        popup.add(singleBoardMenu(oneSelected, false, listener, numButtons, boards));
+        
+        if (enableRotation) {
+            popup.add(singleBoardMenu(oneSelected, true, listener, numButtons, boards));
+        }
+        
         popup.add(multiBoardRandomMenu(!oneSelected, listener, numButtons, boards));
         popup.add(multiBoardSurpriseMenu(!oneSelected, listener, numButtons, boards));
         return popup;
     }
 
     /**
-     * Returns the "Load" submenu, allowing general embarking
+     * Returns the "set as board" submenu.
      */
-    private static JMenu singleBoardMenu(boolean enabled, ActionListener listener, 
+    private static JMenu singleBoardMenu(boolean enabled, boolean rotated, ActionListener listener, 
             int numB, List<String> boards) {
 
-        JMenu menu = new JMenu("Set as Board...");
+        JMenu menu = new JMenu(!rotated ? "Set as Board..." : "Set as Board (rotated)...");
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {
-                menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(0), enabled, listener));
+                menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(0) + ":" + rotated, enabled, listener));
             }
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
@@ -68,7 +74,7 @@ class MapListPopup {
         menu.setEnabled(enabled);
         if (enabled) {
             // Since it's not visible to the player, the random board can already be chosen here
-            int rnd = (int)(Math.random() * boards.size());
+            int rnd = (int) (Math.random() * boards.size());
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(rnd), enabled, listener));
             }

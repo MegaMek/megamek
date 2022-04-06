@@ -17,7 +17,6 @@ import megamek.common.util.StringUtil;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 3/18/14 1:14 PM
  */
 public class VerifyInRange implements DataVerifier {

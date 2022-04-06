@@ -20,6 +20,10 @@ Kopis Assault Battle Armor
 (AI Mk IIr)
 </Model>
 
+<mul id:>
+6744
+</mul id:>
+
 <chassis>
 biped
 </chassis>

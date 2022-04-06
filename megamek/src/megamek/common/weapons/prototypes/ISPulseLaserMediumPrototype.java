@@ -1,15 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 /*
  * Created on Sep 8, 2005
@@ -17,7 +23,8 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.IGame;
+import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -60,7 +67,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         criticals = 1;
         bv = 48;
         cost = 300000;
-        rulesRefs = "71,IO";
+        rulesRefs = "71, IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
             .setIntroLevel(false)
             .setUnofficial(false)
@@ -69,7 +76,8 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
             .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
             .setISApproximate(false, false, false, true, false)
             .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH);
+            .setProductionFactions(F_TH)
+            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*
@@ -82,7 +90,7 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+            WeaponAttackAction waa, Game game, Server server) {
         return new PrototypeLaserHandler(toHit, waa, game, server);
     }
 }

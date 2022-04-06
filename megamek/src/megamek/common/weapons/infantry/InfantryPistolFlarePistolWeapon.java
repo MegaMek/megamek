@@ -24,33 +24,33 @@ import megamek.common.AmmoType;
  */
 public class InfantryPistolFlarePistolWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryPistolFlarePistolWeapon() {
-		super();
+    public InfantryPistolFlarePistolWeapon() {
+        super();
 
-		name = "Flare Pistol";
-		setInternalName(name);
-		addLookupName("InfantryFlarepistol");
-		ammoType = AmmoType.T_INFANTRY;
-		cost = 25;
-		bv = 0.08;
-		tonnage = .0004;
-		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-		infantryDamage = 0.09;
-		infantryRange = 0;
-		ammoWeight = 0.00002;
-		ammoCost = 2;
-		shots = 5;
-		rulesRefs = " 273,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+        name = "Flare Pistol";
+        setInternalName(name);
+        addLookupName("InfantryFlarepistol");
+        ammoType = AmmoType.T_INFANTRY;
+        cost = 25;
+        bv = 0.08;
+        tonnage = .0004;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+        infantryDamage = 0.09;
+        infantryRange = 0;
+        ammoWeight = 0.00002;
+        ammoCost = 2;
+        shots = 5;
+        rulesRefs = " 273, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
 
-	}
+    }
 }

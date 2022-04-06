@@ -1,6 +1,7 @@
 Version:1.0
 Gladiator
 GLD-3R
+mul id:1200
 
 Config:Biped
 TechBase:Inner Sphere

@@ -1,6 +1,7 @@
 Version:1.0
 Sentinel
 STN-4D
+mul id:2863
 
 Config:Biped
 TechBase:Inner Sphere

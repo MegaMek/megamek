@@ -15,6 +15,10 @@ Scimitar Medium Hover Tank
 <Model>
 (C3)
 </Model>
+
+<mul id:>
+2829
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

@@ -15,6 +15,10 @@ SRM Foot Infantry
 <Model>
 Taurian Citizens' Militia
 </Model>
+
+<mul id:>
+5110
+</mul id:>
 <squad_size>
 10
 </squad_size>

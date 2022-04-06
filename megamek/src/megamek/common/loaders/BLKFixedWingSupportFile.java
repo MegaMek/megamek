@@ -38,6 +38,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         dataFile = bb;
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
 
         FixedWingSupport a = new FixedWingSupport();
@@ -50,6 +51,9 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             a.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             a.setModel("");
+        }
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
         }
 
         setTechLevel(a);
@@ -287,7 +291,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }

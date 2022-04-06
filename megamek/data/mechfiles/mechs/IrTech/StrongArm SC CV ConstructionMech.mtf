@@ -1,6 +1,7 @@
 Version:1.1
 StrongArm
 SC CV ConstructionMech
+mul id:7857
 
 Config:Biped
 techbase:Inner Sphere

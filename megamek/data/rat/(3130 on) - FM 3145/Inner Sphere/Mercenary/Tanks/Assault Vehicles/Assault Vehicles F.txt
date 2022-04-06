@@ -1,6 +1,6 @@
 3145 Mercenary Assault Vehicles F
 Ontos Heavy Tank (Standard), 1
-Sturmfeur Heavy Tank (Standard), 2
+SturmFeur Heavy Tank (Standard), 2
 Heavy LRM Carrier (Standard), 3
 Demolisher Heavy Tank (Standard Mk. II), 4
 Fortune Wheeled Assault Vehicle (Standard), 5

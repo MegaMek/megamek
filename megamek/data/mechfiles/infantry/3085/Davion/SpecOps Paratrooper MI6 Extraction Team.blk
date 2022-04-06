@@ -15,6 +15,10 @@ SpecOps Paratrooper
 <Model>
 MI6 Extraction Team
 </Model>
+
+<mul id:>
+3001
+</mul id:>
 <squad_size>
 7
 </squad_size>

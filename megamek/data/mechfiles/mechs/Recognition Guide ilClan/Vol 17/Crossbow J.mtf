@@ -1,0 +1,173 @@
+Version:1.0
+Crossbow
+J
+mul id:8245
+
+Config:Biped Omnimech
+techbase:Clan
+era:3142
+source:Rec Guide:ilClan #17 - Dark Age
+rules level:3
+
+mass:65
+engine:325 Fusion (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
+
+armor:Standard(Clan)
+LA armor:18
+RA armor:18
+LT armor:19
+RT armor:19
+CT armor:26
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:9
+RTR armor:9
+RTC armor:13
+
+Weapons:10
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+Improved Heavy Large Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+CLERSmallLaser (OMNIPOD)
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+CLImprovedHeavyLargeLaser (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Supercharger (Clan) (OMNIPOD)
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons (OMNIPOD)
+Talons (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Talons (OMNIPOD)
+Talons (OMNIPOD)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Developed during the Golden Century by Clan Steel Viper as an early second-generation OmniMech, the Crossbow is a relatively cheap OmniMech.
+
+capabilities:Often described as a sleeker version of the Star League Longbow, the Crossbow is solidly protected by twelve tons of armor, though its traditionally missile-heavy weapons loadout means that it does not need any extra double heat sinks.
+
+deployment:This configuration carries an Improved Heavy Large Laser in the right arm. An engine Supercharger allows the Crossbow to reach sprint speeds of 100km/h. This speed boost allows the 'Mech to bring the nine ER Small Lasers in the left arm and Talons mounted in the legs into play more quickly.
+
+history:The Crossbow was Clan Steel Viper's first attempt to crash-start their OmniMech manufacturing capability, and was initiated in part by a small cadre of captured Clan Snow Raven scientist caste. Since both parties were relatively new to Omni-technology, the teams developed a novel Omni-pod system confined to replacing the 'Mech's arms. Since only the arms of early Crossbows can mount Omni-pods, early Crossbows are jump-incapable(more recently, configurations have been published containing weapon systems in the torsos). As the Crossbow is much less flexible than most OmniMechs, and since the Crossbow lacks of lighter materials of most OmniMechs, the Crossbow has largely been relegated to second-line duty, though it still appears frequently in the front lines, especially within Clan Steel Viper. However, the Crossbow is still quite effective - from its first engagement at Firebase Climax on Homer in 2870 to the present, the Crossbow's mix of arm-mounted missiles make it a superb fire-support choice. Considered a rare design by the Jihad era, the Crossbow's remaining production facilities would end up being destroyed in 3074 during the Wars of Reaving, effectively phasing it out of use in the Clan Homeworlds. The Crossbow would find new life in the Inner Sphere during the next century, as Clan Wolf used Arcturus' factories to mass-produce the design when they took the planet in 3128. During that battle a Wolf MechWarrior named Andreas managed to destroy an entire company of Lyran 'Mechs while piloting a Crossbow, earning a posthumous place in the Remembrance and ensuring that the newly-won factory would produce more of the design. Sporting an upgraded configuration Crossbows saw extensive use in the Clan Wolf touman, notably with the Seventy-ninth Wolf Battle Cluster on Denebola. When the Jade Falcons later claimed Arcturus after it was abandoned by the Wolves, they neglected the Crossbow's production lines, allowing Clan Sea Fox to buy and sell the design in large numbers. In Jade Falcon service Crossbows were used to less effect, partly because they were relegated to inferior units.
+
+manufacturer:Novy Minsky Armaments Plant
+primaryfactory:New Kent
+systemmanufacturer:CHASSIS:Anaconda OmniHeavy
+systemmanufacturer:ENGINE:New Kent Type 325
+systemmanufacturer:ARMOR:Compound V6
+systemmanufacturer:COMMUNICATIONS:Bishop 211 Meridian
+systemmanufacturer:TARGETING:Spanke 112-A

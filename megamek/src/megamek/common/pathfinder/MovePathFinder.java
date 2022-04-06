@@ -30,7 +30,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -40,16 +40,11 @@ import megamek.common.Tank;
  * Generic implementation of AbstractPathFinder when we restrict graph nodes to
  * (coordinates x facing) and edges to MovePaths. Provides useful
  * implementations of functional interfaces defined in AbstractPathFinder.
- *
- * @param <C>
  */
 public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsWithFacing, C, MovePath> {
 
     /**
      * Node defined by coordinates and unit facing.
-     *
-     */
-    /**
      * @author Saginatio
      */
     public static class CoordsWithFacing {
@@ -107,16 +102,15 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         @Override
         public String toString() {
-            return String.format("%s f:%d", coords, facing);  //$NON-NLS-1$
+            return String.format("%s f:%d", coords, facing);
         }
     }
 
     /**
      * Filters MovePaths that are forcing PSR.
-     * <p/>
-     * Current implementation uses MoveStep.isDanger(). This implementation is
-     * broken :( It does not work properly for movement paths that use running
-     * mp.
+     * <p>
+     * FIXME : Current implementation uses MoveStep.isDanger(). This implementation is broken :(
+     * FIXME : It does not work properly for movement paths that use running mp.
      */
     public static class MovePathRiskFilter extends AbstractPathFinder.Filter<MovePath> {
         @Override
@@ -151,20 +145,17 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             }
             return cfw;
         }
-
-        ;
     }
 
     /**
      * Filters edges that are illegal.
-     * <p/>
-     * Current implementation uses MoveStep.isMovementPossible() to verify
-     * legality.
+     * <p>
+     * Current implementation uses MoveStep.isMovementPossible() to verify legality.
      */
     public static class MovePathLegalityFilter extends AbstractPathFinder.Filter<MovePath> {
-        IGame game;
+        Game game;
 
-        public MovePathLegalityFilter(IGame game) {
+        public MovePathLegalityFilter(Game game) {
             this.game = game;
         }
 
@@ -172,7 +163,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public boolean shouldStay(MovePath edge) {
             if (edge.getEntity().isAero()) {
                 /*
-                 * isMovemementPossible is currently not working for aero units,
+                 * isMovementPossible is currently not working for aero units,
                  * so we have to use a substitute.
                  */
                 if (edge.length() == 0) {
@@ -280,7 +271,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             final MoveStepType lType = (last == null) ? null : last.getType();
             final Entity entity = mp.getEntity();
 
-            final ArrayList<MovePath> result = new ArrayList<MovePath>();
+            final ArrayList<MovePath> result = new ArrayList<>();
 
             if (lType != MoveStepType.TURN_LEFT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
@@ -319,7 +310,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.BACKWARDS));
-            } else if(mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
+            } else if (mp.getGame().getBoard().contains(mp.getFinalCoords().translated(mp.getFinalFacing()))) {
                 MovePath newPath = mp.clone();
                 PathDecorator.AdjustElevationForForwardMovement(newPath);
                 result.add(newPath.addStep(MoveStepType.FORWARDS));
@@ -338,7 +329,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     public MovePathFinder(EdgeRelaxer<C, MovePath> edgeRelaxer,
                           AdjacencyMap<MovePath> edgeAdjacencyMap,
                           Comparator<MovePath> comparator,
-                          IGame game) {
+                          Game game) {
         super(new MovePathDestinationMap(),
               edgeRelaxer,
               edgeAdjacencyMap,

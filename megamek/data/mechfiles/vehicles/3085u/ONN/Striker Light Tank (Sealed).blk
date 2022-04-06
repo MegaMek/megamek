@@ -20,6 +20,10 @@ Striker Light Tank
 (Sealed)
 </Model>
 
+<mul id:>
+3103
+</mul id:>
+
 <Tonnage>
 35
 </Tonnage>

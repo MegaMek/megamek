@@ -53,7 +53,7 @@ public class TechLevelCompareTool {
                  SimpleTechLevel fixed = SimpleTechLevel.convertCompoundToSimple(en.getTechLevel());
                  SimpleTechLevel calc = en.getStaticTechLevel();
                 if (fixed.compareTo(calc) < 0) {
-                    System.out.println(en.getShortName() + ": " + fixed.toString() + "/" + calc.toString());
+                    System.out.println(en.getShortName() + ": " + fixed + "/" + calc);
                     for (Mounted m : en.getEquipment()) {
                         if (fixed.compareTo(m.getType().getStaticTechLevel()) < 0) {
                             if (m.getType() instanceof WeaponType) {

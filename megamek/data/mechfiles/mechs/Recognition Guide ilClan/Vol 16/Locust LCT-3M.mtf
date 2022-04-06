@@ -1,0 +1,155 @@
+Version:1.0
+Locust
+LCT-3M
+mul id:1905
+
+Config:Biped
+techbase:Inner Sphere
+era:3050
+source:Rec Guide:ilClan #16 - Clan Invasion
+rules level:2
+
+mass:20
+engine:160 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:8
+jump mp:0
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:4
+RA armor:4
+LT armor:6
+RT armor:6
+CT armor:6
+HD armor:7
+LL armor:7
+RL armor:7
+RTL armor:2
+RTR armor:2
+RTC armor:2
+
+Weapons:6
+Small Laser, Left Arm
+Small Laser, Left Arm
+Anti-Missile System, Left Arm
+Small Laser, Right Arm
+Small Laser, Right Arm
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Small Laser
+Small Laser
+ISAntiMissileSystem
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Small Laser
+Small Laser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+
+Left Torso:
+ISAMS Ammo
+ISCASE
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+IS Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\Locust3050.jpg
+

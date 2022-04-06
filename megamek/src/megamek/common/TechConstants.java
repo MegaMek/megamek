@@ -13,20 +13,13 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
-/*
- * TechConstants.java
- *
- * Created on June 11, 2002, 4:35 PM
- */
-
 package megamek.common;
 
 /**
  * Contains some constants representing equipment/unit tech levels
  *
  * @author Ben
- * @version
+ * @since June 11, 2002, 4:35 PM
  */
 public class TechConstants {
 
@@ -169,12 +162,10 @@ public class TechConstants {
     }
 
     /**
-     * Returns the Game's tech level as an integer.
-     *
-     * @param game
-     * @return
+     * @param game The current {@link Game}
+     * @return  the Game's tech level as an integer.
      */
-    public static int getSimpleLevel(IGame game) {
+    public static int getSimpleLevel(Game game) {
         return getSimpleLevel(game.getOptions().stringOption("techlevel"));
     }
 
@@ -230,11 +221,11 @@ public class TechConstants {
      * Use the game's simple tech level and a flag to return the tech level +
      * tech type.
      *
-     * @param game
-     * @param isClan
-     * @return
+     * @param game The current {@link Game}
+     * @param isClan if the tech base is clan
+     * @return Tech Level and Type magic number to use for the current {@link Game}
      */
-    public static int getGameTechLevel(IGame game, boolean isClan) {
+    public static int getGameTechLevel(Game game, boolean isClan) {
         // Get the integer simple level based on the string game option
         int simpleTechLvl = getSimpleLevel(game);
         // Arrays.binarySearch could return -1 if string isn't found
@@ -272,7 +263,7 @@ public class TechConstants {
             boolean ignoreUnknown, boolean mixed) {
         // If it's allowed to all, ALWAYS return true.
         if (equipmentTechlevel == T_ALLOWED_ALL
-        		|| equipmentTechlevel == T_ALL) {
+                || equipmentTechlevel == T_ALL) {
             return true;
         }
 
@@ -312,7 +303,7 @@ public class TechConstants {
         // If none of the catch-alls above are true, we go to specific cases
 
         // If the equipment is allowed to all clan and the entity is clan...
-        if ((equipmentTechlevel == T_ALL_IS) && !isClan(entityTechlevel)){
+        if ((equipmentTechlevel == T_ALL_IS) && !isClan(entityTechlevel)) {
             return true;
         }
 
@@ -356,7 +347,7 @@ public class TechConstants {
         }
 
         // If the equipment is allowed to all clan and the entity is clan...
-        if ((equipmentTechlevel == T_ALL_CLAN) && isClan(entityTechlevel)){
+        if ((equipmentTechlevel == T_ALL_CLAN) && isClan(entityTechlevel)) {
             return true;
         }
 
@@ -616,17 +607,19 @@ public class TechConstants {
                     if (isClan) {
                         if (year <= 3055) {
                             return T_CLAN_UNOFFICIAL;
+                        } else if (year < 3070) {
+                            return T_CLAN_ADVANCED;
+                        } else {
+                            return T_CLAN_TW;
                         }
-                        return T_CLAN_EXPERIMENTAL;
-                    }
-                    if (year <= 3053) {
-                        return T_IS_UNOFFICIAL;
-                    } else if (year <= 3075) {
-                        return T_IS_EXPERIMENTAL;
-                    } else if (year <= 3100) {
-                        return T_IS_ADVANCED;
                     } else {
-                        return T_IS_TW_NON_BOX;
+                        if (year <= 3053) {
+                            return T_IS_UNOFFICIAL;
+                        } else if (year <= 3070) {
+                            return T_IS_ADVANCED;
+                        } else {
+                            return T_IS_TW_NON_BOX;
+                        }
                     }
                 case Mech.COCKPIT_INTERFACE: // Clan Version
                     if (isClan) {
@@ -764,71 +757,69 @@ public class TechConstants {
             }
         } else if ((entityType & Entity.ETYPE_AERO) != 0) {
             switch (cockpitType) {
-            case Aero.COCKPIT_PRIMITIVE:
-                 if (isClan) {
-                         return T_CLAN_ADVANCED;
+                case Aero.COCKPIT_PRIMITIVE:
+                     if (isClan) {
+                             return T_CLAN_ADVANCED;
+                         }
+
+                     if (year <= 2100) {
+                         return T_IS_UNOFFICIAL;
+                     } else if (year <= 2295) {
+                         return T_IS_EXPERIMENTAL;
+                     } else if (year <= 2520) {
+                         return T_IS_ADVANCED;
                      }
-
-                 if (year <= 2100) {
-                     return T_IS_UNOFFICIAL;
-                 } else if (year <= 2295) {
-                     return T_IS_EXPERIMENTAL;
-                 } else if (year <= 2520) {
-                     return T_IS_ADVANCED;
-                 }
-            case Aero.COCKPIT_STANDARD:
-                if (isClan) {
-                    if (year <= 2807) {
-                        return T_CLAN_UNOFFICIAL;
+                case Aero.COCKPIT_STANDARD:
+                    if (isClan) {
+                        if (year <= 2807) {
+                            return T_CLAN_UNOFFICIAL;
+                        }
+                        return T_CLAN_TW;
                     }
-                    return T_CLAN_TW;
-                }
-                if (year <= 2455) {
-                    return T_IS_UNOFFICIAL;
-                } else if (year <= 2470) {
-                    return T_IS_EXPERIMENTAL;
-                } else if (year <= 2491) {
-                    return T_IS_ADVANCED;
-                } else {
-                    return T_INTRO_BOXSET;
-                }
-            case Aero.COCKPIT_SMALL:
-                if (isClan) {
-                    if (year <= 3080) {
-                        return T_CLAN_UNOFFICIAL;
+                    if (year <= 2455) {
+                        return T_IS_UNOFFICIAL;
+                    } else if (year <= 2470) {
+                        return T_IS_EXPERIMENTAL;
+                    } else if (year <= 2491) {
+                        return T_IS_ADVANCED;
+                    } else {
+                        return T_INTRO_BOXSET;
                     }
-                    return T_CLAN_ADVANCED;
-                }
-                if (year <= 3060) {
-                    return T_IS_UNOFFICIAL;
-                } else if (year <= 3070) {
-                    return T_IS_EXPERIMENTAL;
-                } else if (year <= 3080) {
-                    return T_IS_ADVANCED;
-                } else {
-                    return T_IS_TW_NON_BOX;
-                }
-            case Aero.COCKPIT_COMMAND_CONSOLE:
-                if (isClan) {
-                    if (year <= 2807) {
-                        return T_CLAN_UNOFFICIAL;
+                case Aero.COCKPIT_SMALL:
+                    if (isClan) {
+                        if (year <= 3080) {
+                            return T_CLAN_UNOFFICIAL;
+                        }
+                        return T_CLAN_ADVANCED;
                     }
-                    return T_CLAN_TW;
-                }
-                if (year <= 2620) {
-                    return T_IS_UNOFFICIAL;
-                } else if (year <= 2631) {
-                    return T_IS_EXPERIMENTAL;
-                } else if (year <= 2855) {
-                    return T_IS_ADVANCED;
-                } else if (year <=3025) {
-                    return T_IS_UNOFFICIAL;
-                } else {
-                    return T_IS_ADVANCED;
-                }
-
+                    if (year <= 3060) {
+                        return T_IS_UNOFFICIAL;
+                    } else if (year <= 3070) {
+                        return T_IS_EXPERIMENTAL;
+                    } else if (year <= 3080) {
+                        return T_IS_ADVANCED;
+                    } else {
+                        return T_IS_TW_NON_BOX;
+                    }
+                case Aero.COCKPIT_COMMAND_CONSOLE:
+                    if (isClan) {
+                        if (year <= 2807) {
+                            return T_CLAN_UNOFFICIAL;
+                        }
+                        return T_CLAN_TW;
+                    }
+                    if (year <= 2620) {
+                        return T_IS_UNOFFICIAL;
+                    } else if (year <= 2631) {
+                        return T_IS_EXPERIMENTAL;
+                    } else if (year <= 2855) {
+                        return T_IS_ADVANCED;
+                    } else if (year <=3025) {
+                        return T_IS_UNOFFICIAL;
+                    } else {
+                        return T_IS_ADVANCED;
+                    }
             }
-
         }
         return T_TECH_UNKNOWN;
     }

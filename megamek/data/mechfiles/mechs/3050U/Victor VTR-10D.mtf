@@ -1,6 +1,7 @@
 Version:1.1
 Victor
 VTR-10D
+mul id:3404
 
 Config:Biped
 TechBase:Inner Sphere
@@ -129,3 +130,21 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Endo-Steel
+
+overview:The Victor was built in 2508 under contract to the Terran Hegemony as a support 'Mech with jump capabilities.
+
+capabilities:Standing at 14 meters tall, the Victor approaches the concept of support in an unorthodox way for a 'Mech of its weight class. While only possessing a ground speed of 64.8 km/h, the Victor achieves a high degree of mobility instead through the use of four jump jets, allowing it to jump up to one hundred and twenty meters. A Victor can therefore "support" friendly units by jumping directly into the fray and bringing its deadly close range arsenal to bear, an ability which can surprise inexperienced MechWarriors and prove advantageous in mountainous terrain. One sacrifice made for this superb mobility is the 'Mech's relatively light armor of only eleven and a half tons, while the lack of proper anti-infantry capabilities is a minor problem.
+
+deployment:A more recent variant of the Victor produced on New Valencia, the 10D is an excellent close combat 'Mech. The 10D variant has a powerful Ultra Autocannon/20 as its primary weapon. This is supported by two ER Medium Lasers and a Streak SRM-4 to finish off a damaged target. The 10D is also capable of jumping up to one hundered and twenty meters, making it an excellent urban combat machine.
+
+history:An estimated one thousand Victors had been produced by the time the Star League fell. Many of these left with Aleksandr Kerensky during the Exodus, and when HildCo Interplanetary's three Victor factories were destroyed during the First Succession War, the 'Mech became a prized target with all sides scrambling to salvage serviceable units. Only Independence Weaponry retained the ability to build new Victors, and with their capture by the Federated Suns during the Second Succession War it became the AFFS' primary assault 'Mech and a favorite command model for battalion and regimental commanders. Though the Draconis Combine would eventually retake the company following the War of 3039, most Kurita samurai were too proud to adopt a 'Mech now associated with their enemy, while the Davions made do with purchasing new models from the rebuilt HildCo factory in the St. Ives Compact and funding the construction of Styk's Tao MechWorks.
+By the time of the Clan Invasion new models of Victors were being produced which incorporated new-found lostech into their design. The formation of the Second Star League and destruction of Clan Smoke Jaguar would finally win the design acceptance by Combine warriors, while the conquest of Styk and St. Ives by the Capellan Confederation forced the Federated Commonwealth to contract General Motors to build more Victors. Though it had officially fallen out of favor, during the FedCom Civil War the Victor remained the favorite of Allied forces, with newer variants seeing use in the years afterwards
+
+manufacturer:HildCo Interplanetary, HildCo Interplanetary, General Motors/Blackwell Corporation, Independence Weaponry, Robinson Standard BattleWorks, Tao 'Mechworks, TharHes Industries
+primaryfactory:St. Ives, Carver V/Liberty, New Valencia, Quentin, Robinson, Styk, Tharkad
+systemmanufacturer:CHASSIS:Alshain Class 920 Endo Steel
+systemmanufacturer:ENGINE:Pitban 340
+systemmanufacturer:ARMOR:Durallex Heavy with CASE
+systemmanufacturer:JUMPJET:Lexington Ltd. Lifters
+systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
+systemmanufacturer:TARGETING:Matabushi Sentinel

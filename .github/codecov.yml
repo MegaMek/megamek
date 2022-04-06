@@ -1,0 +1,15 @@
+# CodeCov.io Configuration
+# https://docs.codecov.io/docs/codecovyml-reference
+coverage:
+  status:
+    project:
+      default:
+        target: auto  # auto compares coverage to the previous base commit
+        threshold: 1%  # the leniency in hitting the target
+
+fixes:
+  - "megamek/::"        # reduce root e.g., "before/path/" => "path/"
+
+github_checks:
+  # https://docs.codecov.io/docs/github-checks-beta#disabling-github-checks-patch-annotations-via-yaml
+  annotations: false

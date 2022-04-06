@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2001, 2002, 2003, 2004 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2001-2004 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2018 The MegaMek Team
 *
 * This program is free software; you can redistribute it and/or modify it under
@@ -13,38 +13,15 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.actions;
 
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.LargeSupportTank;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.RangeType;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.TripodMech;
+import megamek.client.ui.Messages;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4702357516725749181L;
-    // equipment that affects this attack (AMS, ECM?, etc)
 
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
@@ -57,14 +34,13 @@ public class PhysicalAttackAction extends AbstractAttackAction {
     /**
      * Common checking whether is it possible to physically attack the target
      *
-     * @param game
-     * @param ae        Attacking Entity
-     * @param target    Target
+     * @param game The current {@link Game}
+     * @param ae the attacking {@link Entity}, which may be null
+     * @param target the attack's target
      * @return reason the attack is impossible, or null if it is possible
      */
-    protected static String toHitIsImpossible(IGame game, Entity ae,
-                                              Targetable target) {
-
+    protected static @Nullable String toHitIsImpossible(Game game, @Nullable Entity ae,
+                                                        Targetable target) {
         if (target == null) {
             return "target is null";
         }
@@ -73,12 +49,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                 && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                    || ((((Entity) target).getOwner().getTeam() != IPlayer.TEAM_NONE)
-                        && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
+                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                        && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                         && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return "A friendly unit can never be the target of a direct attack.";
             }
-
         }
 
         // check range
@@ -86,7 +61,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             return "Target not in range";
         }
 
-        //can't make a physical attack if you are evading
+        // can't make a physical attack if you are evading
         if (ae.isEvading()) {
             return "Attacker is evading.";
         }
@@ -105,7 +80,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 return "You can't target yourself";
             }
 
-            //can't target airborne aeros
+            // can't target airborne aeros
             if (te.isAirborne()) {
                 return "can't target airborne units";
             }
@@ -115,8 +90,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 return "Target is swarming a Mek.";
             }
 
-            if ((ae.getGrappled() != Entity.NONE) &&
-                (ae.getGrappleSide() == Entity.GRAPPLE_BOTH)) {
+            if ((ae.getGrappled() != Entity.NONE) && (ae.getGrappleSide() == Entity.GRAPPLE_BOTH)) {
                 return "Locked in Grapple";
 
             }
@@ -124,14 +98,12 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             // target unit in building checks
             final boolean targetInBuilding = Compute.isInBuilding(game, te);
             if (targetInBuilding) {
-                Building TargBldg = game.getBoard().getBuildingAt(
-                        te.getPosition());
+                Building TargBldg = game.getBoard().getBuildingAt(te.getPosition());
 
                 // Can't target units in buildings (from the outside).
                 if (!Compute.isInBuilding(game, ae)) {
                     return "Target is inside building";
-                } else if (!game.getBoard().getBuildingAt(ae.getPosition())
-                                .equals(TargBldg)) {
+                } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(TargBldg)) {
                     return "Target is inside different building";
                 }
             }
@@ -140,7 +112,6 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (te.isMakingDfa()) {
                 return "Target is making a DFA attack";
             }
-
         }
 
         // Can't target woods or ignite a building with a physical.
@@ -153,9 +124,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         return null;
     }
 
-    protected static void setCommonModifiers(ToHitData toHit, IGame game,
-                                             Entity ae, Targetable target) {
-
+    protected static void setCommonModifiers(ToHitData toHit, Game game, Entity ae, Targetable target) {
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, target);
         int attackerId = ae.getId();
         int targetId = target.getTargetId();
@@ -188,7 +157,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(1, "Modular Armor");
         }
 
-        if ((ae instanceof Mech) && ((Mech) ae).isSuperHeavy()) {
+        if ((ae instanceof Mech) && ae.isSuperHeavy()) {
             toHit.addModifier(1, "attacker is superheavy mech");
         }
         
@@ -206,11 +175,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                                                  Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                                      "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
                 return;
             } else if (sensorHits == 2) {
-                toHit.addModifier(4,
-                                  "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 
@@ -234,28 +202,32 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
             // target prone
             if (te.isProne()) {
-                toHit.addModifier(-2, "target prone and adjacent");
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
             }
 
-            if (te instanceof LargeSupportTank) {
-                toHit.addModifier(-2, "target is large support tank");
+            if ((te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
+                toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
             }
 
-            if (te instanceof Dropship) {
-                toHit.addModifier(-2, "target is dropship");
+            if (te instanceof SmallCraft) {
+                if (te instanceof Dropship) {
+                    toHit.addModifier(-4, Messages.getString("WeaponAttackAction.ImmobileDs"));
+                } else {
+                    toHit.addModifier(-2, Messages.getString("WeaponAttackAction.TeGroundedSmallCraft"));
+                }
             }
 
-            IHex targHex = game.getBoard().getHex(te.getPosition());
+            Hex targHex = game.getBoard().getHex(te.getPosition());
             // water partial cover?
             if ((te.height() > 0) && (te.getElevation() == -1)
-                && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
+                    && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
                 toHit.addModifier(1, "target has partial cover");
             }
 
             // Pilot skills
             Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-            //Attacking Weight Class Modifier.
+            // Attacking Weight Class Modifier.
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
                 if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                     toHit.addModifier(-2, "Weight Class Attack Modifier");
@@ -264,7 +236,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 }
             }
 
-            //evading bonuses (
+            // evading bonuses
             if (te.isEvading()) {
                 toHit.addModifier(te.getEvasionBonus(), "target is evading");
             }

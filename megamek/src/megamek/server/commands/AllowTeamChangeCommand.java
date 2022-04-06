@@ -3,19 +3,19 @@
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2014 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.server.commands;
 
-import megamek.common.IPlayer;
+import megamek.common.Player;
 import megamek.server.Server;
 
 /**
@@ -27,7 +27,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
 
     public AllowTeamChangeCommand(Server server) {
         super(server, "allowTeamChange", "Allows a player to switch their team "
-                + "Usage: /allowTeamChange used in responsed to another " +
+                + "Usage: /allowTeamChange used in respond to another " +
                 "Player's request to change teams.  All players assigned to" +
                 " a team must allow the change.");
     }
@@ -40,12 +40,11 @@ public class AllowTeamChangeCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         try {
-            IPlayer player = server.getPlayer(connId);
+            Player player = server.getPlayer(connId);
             player.setAllowTeamChange(true);
             
-            if (!server.isTeamChangeRequestInProgress()){
-                server.sendServerChat(connId, "No vote to change " +
-                        "teams in progress!");
+            if (!server.isTeamChangeRequestInProgress()) {
+                server.sendServerChat(connId, "No vote to change teams in progress!");
                 return;
             }
             
@@ -53,10 +52,10 @@ public class AllowTeamChangeCommand extends ServerCommand {
             boolean changeTeam = true;
             int voteCount = 0;
             int eligiblePlayerCount = 0;
-            for (IPlayer p : server.getGame().getPlayersVector()){
-                if (p.getTeam() != IPlayer.TEAM_UNASSIGNED){
+            for (Player p : server.getGame().getPlayersVector()) {
+                if (p.getTeam() != Player.TEAM_UNASSIGNED) {
                     changeTeam &= p.isAllowingTeamChange();
-                    if (p.isAllowingTeamChange()){
+                    if (p.isAllowingTeamChange()) {
                         voteCount++;
                     }
                     eligiblePlayerCount++;
@@ -73,7 +72,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
                     + " vote(s) needed");
             
             // If all votes are received, perform team change
-            if (changeTeam){
+            if (changeTeam) {
                 server.sendServerChat("All votes received, "
                         + server.getPlayerRequestingTeamChange().getName()
                         + " will join Team " + server.getRequestedTeam()

@@ -19,6 +19,10 @@ Infiltrator Mk. II Battle Armor
 'Puma'
 </Model>
 
+<mul id:>
+1618
+</mul id:>
+
 <chassis>
 biped
 </chassis>

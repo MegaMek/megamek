@@ -13,22 +13,17 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import megamek.MegaMek;
+import megamek.common.battlevalue.CombatVehicleBVCalculator;
+import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * You know what tanks are, silly.
@@ -98,6 +93,13 @@ public class Tank extends Entity {
 
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front",
             "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
+    
+    // maps ToHitData - SIDE_X constants to LOC_X constants here for hull down fixed side hit locations
+    protected static final Map<Integer, Integer> SIDE_LOC_MAPPING = 
+        Map.of(ToHitData.SIDE_FRONT, LOC_FRONT,
+                ToHitData.SIDE_LEFT, LOC_LEFT,
+                ToHitData.SIDE_RIGHT, LOC_RIGHT,
+                ToHitData.SIDE_REAR, LOC_REAR);
 
     @Override
     public int getUnitType() {
@@ -133,7 +135,7 @@ public class Tank extends Entity {
     private boolean driverHit = false;
     private boolean commanderHit = false;
     //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
-    //but the command console benefits are lost as the backup has to take command.
+    // but the command console benefits are lost as the backup has to take command.
     private boolean usingConsoleCommander = false;
     /** Vehicles can be constructed with seating for additional crew. This has no effect on play */
     private int extraCrewSeats = 0;
@@ -172,6 +174,7 @@ public class Tank extends Entity {
      */
     private FuelType fuelType = FuelType.PETROCHEMICALS;
 
+    @Override
     public CrewType defaultCrewType() {
         return CrewType.CREW;
     }
@@ -237,11 +240,13 @@ public class Tank extends Entity {
     //Advanced turrets
     public static TechAdvancement getDualTurretTA() {
         return new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(DATE_PS, 3080, 3080).setApproximate(false, true, false)
+                .setAdvancement(DATE_PS, DATE_NONE, 3080)
+                .setApproximate(false, false, true)
                 .setTechRating(RATING_B).setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
-                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
+    @Override
     protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
         super.addSystemTechAdvancement(ctl);
         if (!hasNoDualTurret()) {
@@ -546,7 +551,7 @@ public class Tank extends Entity {
      */
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
@@ -561,7 +566,7 @@ public class Tank extends Entity {
             if ((hex.containsTerrain(Terrains.PAVEMENT)
                     || hex.containsTerrain(Terrains.ROAD))
                     && (!hex.containsTerrain(Terrains.BUILDING)
-                            && !hex.containsTerrain(Terrains.RUBBLE))){
+                            && !hex.containsTerrain(Terrains.RUBBLE))) {
                 return true;
             }
             // Can't deploy on a bridge
@@ -639,7 +644,7 @@ public class Tank extends Entity {
             case HYDROFOIL:
                 // Can only deploy under a bridge if there is sufficient clearance.
                 if (hex.containsTerrain(Terrains.BRIDGE)
-                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.surface())) {
+                        && (getHeight() >= hex.terrainLevel(Terrains.BRIDGE_ELEV) - hex.getLevel())) {
                     return true;
                 }
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
@@ -738,21 +743,7 @@ public class Tank extends Entity {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        // If MASC was used last turn, increment the counter,
-        // otherwise decrement. Then, clear the counter
-        if (usedMASC) {
-            nMASCLevel++;
-            bMASCWentUp = true;
-        } else {
-            nMASCLevel = Math.max(0, nMASCLevel - 1);
-            if (bMASCWentUp) {
-                nMASCLevel = Math.max(0, nMASCLevel - 1);
-                bMASCWentUp = false;
-            }
-        }
-
-        // Clear the MASC flag
-        usedMASC = false;
+        incrementMASCAndSuperchargerLevels();
 
         // check for crew stun
         if (m_nStunnedTurns > 0) {
@@ -918,8 +909,8 @@ public class Tank extends Entity {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation,
-            int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         boolean bRear = false;
@@ -941,8 +932,7 @@ public class Tank extends Entity {
                 if (!ignoreTurret) {
                     // on a hull down vee, all hits expect for those that come
                     // from the opposite direction to which it entered the hex
-                    // it
-                    // went Hull Down in go to turret if one exists.
+                    // it went Hull Down in go to turret if one exists.
                     if (!hasNoDualTurret()) {
                         int roll = Compute.d6() - 2;
                         if (roll <= 3) {
@@ -958,7 +948,7 @@ public class Tank extends Entity {
                 // the opposite direction to which it entered the hex it went
                 // Hull Down in hit side they come in from
                 else {
-                    nArmorLoc = side;
+                    nArmorLoc = SIDE_LOC_MAPPING.get(side);
                 }
                 // Hull Down tanks don't make hit location rolls
                 return new HitData(nArmorLoc);
@@ -976,9 +966,7 @@ public class Tank extends Entity {
         }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-
+        if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
             int roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -1195,8 +1183,7 @@ public class Tank extends Entity {
 
     @Override
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE,
-                IAimingModes.AIM_MODE_NONE, LosEffects.COVER_NONE);
+        return rollHitLocation(table, side, LOC_NONE, AimingMode.NONE, LosEffects.COVER_NONE);
     }
 
     /**
@@ -1215,896 +1202,9 @@ public class Tank extends Entity {
         return LOC_NONE;
     }
 
-    /**
-     * Calculates the battle value of this mech
-     */
     @Override
-    public int calculateBattleValue() {
-        if (useManualBV) {
-            return manualBV;
-        }
-
-        return calculateBattleValue(false, false);
-    }
-
-    /**
-     * Calculates the battle value of this tank
-     */
-    @Override
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        if (useManualBV) {
-            return manualBV;
-        }
-        if (isCarcass() && !ignorePilot) {
-            return 0;
-        }
-        bvText = new StringBuffer(
-                "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-
-        bvText.append(getChassis());
-        bvText.append(" ");
-        bvText.append(getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
-
-        double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
-
-        boolean blueShield = false;
-        // a blueshield system means a +0.2 on the armor and internal modifier,
-        // like for mechs
-        if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
-            blueShield = true;
-        }
-
-        bvText.append(startTable);
-        double armorMultiplier = 1.0;
-
-        for (int loc = 1; loc < locations(); loc++) {
-            int modularArmor = 0;
-            for (Mounted mounted : getEquipment()) {
-                if ((mounted.getType() instanceof MiscType)
-                        && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                        && (mounted.getLocation() == loc)) {
-                    modularArmor += mounted.getBaseDamageCapacity()
-                            - mounted.getDamageTaken();
-                }
-            }
-            // total armor points
-
-            switch (getArmorType(loc)) {
-                case EquipmentType.T_ARMOR_COMMERCIAL:
-                    armorMultiplier = 0.5;
-                    break;
-                case EquipmentType.T_ARMOR_HARDENED:
-                    armorMultiplier = 2.0;
-                    break;
-                case EquipmentType.T_ARMOR_REACTIVE:
-                case EquipmentType.T_ARMOR_REFLECTIVE:
-                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
-                    armorMultiplier = 1.5;
-                    break;
-                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
-                    armorMultiplier = 1.2;
-                    break;
-                default:
-                    armorMultiplier = 1.0;
-                    break;
-            }
-
-            if (hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
-                armorMultiplier += 0.2;
-            }
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            int armor = getArmor(loc) + modularArmor;
-            bvText.append("Total Armor " + this.getLocationAbbr(loc) + " ("
-                    + armor + ") x ");
-            bvText.append(armorMultiplier);
-            bvText.append(" x ");
-            bvText.append(getBARRating(loc));
-            bvText.append("/10");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier * (getBARRating(loc) / 10.0);
-            bvText.append(armorBV);
-            dbv += armorBV;
-            bvText.append(endColumn);
-        }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total modified armor BV x 2.5 ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        dbv *= 2.5;
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total I.S. Points x 1.5 x Blue Shield Multipler");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(getTotalInternal());
-        bvText.append(" x 1.5 x ");
-        bvText.append((blueShield ? 1.2 : 1));
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        // total internal structure
-        dbv += getTotalInternal() * 1.5 * (blueShield ? 1.2 : 1);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("--------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Defensive Equipment");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        double amsAmmoBV = 0;
-        for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-            if ((atype.getAmmoType() == AmmoType.T_AMS) || (atype.getAmmoType() == AmmoType.T_APDS)) {
-                amsAmmoBV += atype.getBV(this);
-            }
-        }
-        double amsBV = 0;
-        // add defensive equipment
-        double dEquipmentBV = 0;
-        for (Mounted mounted : getEquipment()) {
-            EquipmentType etype = mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            if (((etype instanceof WeaponType) && (etype
-                    .hasFlag(WeaponType.F_AMS) || etype
-                    .hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(etype.getBV(this));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                dEquipmentBV += etype.getBV(this);
-                WeaponType wtype = (WeaponType) etype;
-                if ((wtype.hasFlag(WeaponType.F_AMS)
-                        && (wtype.getAmmoType() == AmmoType.T_AMS)) || (wtype.getAmmoType() == AmmoType.T_APDS)) {
-                    amsBV += etype.getBV(this);
-                }
-            } else if (((etype instanceof MiscType) && (etype
-                    .hasFlag(MiscType.F_ECM)
-                    || etype.hasFlag(MiscType.F_AP_POD)
-                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || etype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || etype.hasFlag(MiscType.F_BULLDOZER)
-                    || etype.hasFlag(MiscType.F_CHAFF_POD) || etype
-                        .hasFlag(MiscType.F_BAP)))
-                    || etype.hasFlag(MiscType.F_MINESWEEPER)) {
-                MiscType mtype = (MiscType) etype;
-                double bv = mtype.getBV(this, mounted.getLocation());
-                bvText.append(startColumn);
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(bv);
-                dEquipmentBV += bv;
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        }
-        if (amsAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("AMS Ammo (to a maximum of AMS BV)");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+");
-            bvText.append(Math.min(amsBV, amsAmmoBV));
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            dEquipmentBV += Math.min(amsBV, amsAmmoBV);
-        }
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(dEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-
-        dbv += dEquipmentBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("--------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        double typeModifier;
-        switch (getMovementMode()) {
-            case TRACKED:
-                typeModifier = 0.9;
-                break;
-            case WHEELED:
-                typeModifier = 0.8;
-                break;
-            case HOVER:
-            case VTOL:
-            case WIGE:
-                typeModifier = 0.7;
-                break;
-            case NAVAL:
-            case RAIL:
-                typeModifier = 0.6;
-                break;
-            default:
-                typeModifier = 0.6;
-        }
-
-        if (!isSupportVehicle()) {
-            for (Mounted m : getMisc()) {
-                if (m.getType().hasFlag(MiscType.F_FULLY_AMPHIBIOUS)) {
-                    typeModifier += 0.2;
-                } else if (m.getType().hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)
-                        || m.getType().hasFlag(MiscType.F_DUNE_BUGGY)
-                        || m.getType().hasFlag(MiscType.F_FLOTATION_HULL)
-                        || m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
-                        || m.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
-                    typeModifier += 0.1;
-                }
-            }
-        }
-        typeModifier = Math.round(typeModifier * 10.0) / 10.0;
-        bvText.append(startColumn);
-        bvText.append("x Body Type Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("x ");
-        bvText.append(typeModifier);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-
-        dbv *= typeModifier;
-
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("x Target Movement modifier");
-        bvText.append(endColumn);
-        // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(
-                getRunMP(false, true, true), this instanceof VTOL,
-                this instanceof VTOL, game).getValue();
-        // for the future, when we implement jumping tanks
-        double tmmJumped = (getJumpMP() > 0) ? Compute.
-                getTargetMovementModifier(getJumpMP(), true, false, game).
-                getValue() : 0;
-        if (hasStealth()) {
-            tmmRan += 2;
-            tmmJumped += 2;
-        }
-        if (getMovementMode() == EntityMovementMode.WIGE) {
-            tmmRan += 1;
-            tmmJumped += 1;
-        }
-        double tmmFactor = 1 + (Math.max(tmmRan, tmmJumped) / 10);
-        dbv *= tmmFactor;
-        // Deal with floating point errors
-        dbv = Math.round(dbv * 100000.0) / 100000.0;
-
-        bvText.append(startColumn);
-        bvText.append("x ");
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("--------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        double weaponBV = 0;
-
-        // figure out base weapon bv
-        double weaponsBVFront = 0;
-        double weaponsBVRear = 0;
-        boolean hasTargComp = hasTargComp();
-        double targetingSystemBVMod = 1.0;
-
-        if (isSupportVehicle()) {
-            if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                targetingSystemBVMod = 1.0;
-            } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
-                targetingSystemBVMod = .9;
-            } else {
-                targetingSystemBVMod = .8;
-            }
-        }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapons");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
-        for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            double dBV = wtype.getBV(this);
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-            if (wtype.hasFlag(WeaponType.F_B_POD)) {
-                continue;
-            }
-            if (wtype.hasFlag(WeaponType.F_M_POD)) {
-                continue;
-            }
-            String weaponName = wtype.getName();
-            if (mounted.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
-                if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(
-                            this, mounted);
-                    weaponName = weaponName.concat(" with Capacitor");
-                }
-            }
-
-
-            // calc MG Array here:
-            if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgBV = 0;
-                for (int eqNum : mounted.getBayWeapons()) {
-                    Mounted mg = getEquipment(eqNum);
-                    if ((mg != null) && (!mg.isDestroyed())) {
-                        mgBV += mg.getType().getBV(this);
-                    }
-                }
-                dBV = mgBV * 0.67;
-            }
-
-            bvText.append(weaponName);
-            bvText.append(" ");
-            bvText.append(dBV);
-
-            // artemis bumps up the value
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
-                    bvText.append(" x 1.2 Artemis IV");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                    dBV *= 1.1;
-                    bvText.append(" x 1.1 Artemis IV Prototype");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                    bvText.append(" x 1.3 Artemis V");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
-                    bvText.append(" x 1.15 Apollo");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.15;
-                    bvText.append(" x 1.15 RISC Laser Pulse Module");
-                }
-            }
-            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-                dBV *= 0.8;
-                bvText.append(" x 0.8 Drone OS");
-            }
-
-
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                dBV *= 1.25;
-                bvText.append(" x 1.25 Direct Fire and TC");
-            } else if (isSupportVehicle() && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
-                dBV *= targetingSystemBVMod;
-                bvText.append(" x ");
-                bvText.append(targetingSystemBVMod);
-                bvText.append(" Targeting System");
-            }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            if (mounted.getLocation() == (this instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                    : this instanceof LargeSupportTank ? LargeSupportTank.LOC_REAR
-                            : LOC_REAR)) {
-                weaponsBVRear += dBV;
-                bvText.append(" Rear");
-            } else if (mounted.getLocation() == LOC_FRONT) {
-                weaponsBVFront += dBV;
-                bvText.append(" Front");
-            } else {
-                weaponBV += dBV;
-                bvText.append(" Side/Turret");
-            }
-            // add up BV of ammo-using weapons for each type of weapon,
-            // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
-                    || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
-                    || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER) || (wtype
-                    .getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
-                    || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
-                        .getAmmoType() == AmmoType.T_NA))) {
-                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
-                if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
-                            + weaponsForExcessiveAmmo.get(key));
-                }
-            }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(dBV);
-            bvText.append(endColumn);
-
-            bvText.append(endRow);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-        }
-
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-
-        if (weaponsBVFront > weaponsBVRear) {
-            weaponBV += weaponsBVFront;
-            weaponBV += (weaponsBVRear * 0.5);
-        } else {
-            weaponBV += weaponsBVRear;
-            weaponBV += (weaponsBVFront * 0.5);
-        }
-
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("--------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-
-        bvText.append("Ammo BV");
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        // add ammo bv
-        double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on
-        // our team
-        double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
-        for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-
-            // don't count depleted ammo
-            if (mounted.getUsableShotsLeft() == 0) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if ((atype.getAmmoType() == AmmoType.T_AMS) || (atype.getAmmoType() == AmmoType.T_APDS)) {
-                continue;
-            }
-
-            // don't count oneshot ammo, it's considered part of the launcher.
-            if (mounted.getLocation() == Entity.LOC_NONE) {
-                // assumption: ammo without a location is for a oneshot weapon
-                continue;
-            }
-
-            bvText.append(atype.getName());
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            // semiguided or homing ammo might count double
-            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                IPlayer tmpP = getOwner();
-                // Okay, actually check for friendly TAG.
-                if (tmpP != null) {
-                    if (tmpP.hasTAG()) {
-                        tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE)
-                            && (game != null)) {
-                        for (Enumeration<Team> e = game.getTeams(); e
-                                .hasMoreElements();) {
-                            Team m = e.nextElement();
-                            if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(game)) {
-                                    tagBV += atype.getBV(this);
-                                    bvText.append("Tag: ");
-                                    bvText.append(atype.getBV(this));
-                                }
-                                // A player can't be on two teams.
-                                // If we check his team and don't give the
-                                // penalty, that's it.
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            String key = atype.getAmmoType() + ":" + atype.getRackSize();
-            if (!keys.contains(key)) {
-                keys.add(key);
-            }
-            if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getBV(this));
-            } else {
-                ammo.put(key, atype.getBV(this) + ammo.get(key));
-            }
-            bvText.append("BV: ");
-            bvText.append(atype.getBV(this));
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-        }
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        // excessive ammo rule:
-        // only count BV for ammo for a weapontype until the BV of all weapons
-        // of that
-        // type on the mech is reached
-        for (String key : keys) {
-            // They dont exist in either hash then dont bother adding nulls.
-            if (!ammo.containsKey(key)
-                    || !weaponsForExcessiveAmmo.containsKey(key)) {
-                continue;
-            }
-            if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
-                ammoBV += weaponsForExcessiveAmmo.get(key);
-            } else {
-                ammoBV += ammo.get(key);
-            }
-        }
-        ammoBV *= targetingSystemBVMod;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(ammoBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        weaponBV += ammoBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("--------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
-        // BMR p152)
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Offensive Equipment");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        double oEquipmentBV = 0;
-        for (Mounted mounted : getMisc()) {
-            MiscType mtype = (MiscType) mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            if ((mtype.hasFlag(MiscType.F_ECM) && !mtype
-                    .hasFlag(MiscType.F_WATCHDOG))
-                    || mtype.hasFlag(MiscType.F_AP_POD)
-                    || mtype.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
-                    || mtype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
-                    || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
-                    || mtype.hasFlag(MiscType.F_CHAFF_POD)
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_BULLDOZER)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)
-                    || mtype.hasFlag(MiscType.F_MINESWEEPER)) {
-                continue;
-            }
-            double bv = mtype.getBV(this, mounted.getLocation());
-            // we need to special case watchdog, because it has both offensive
-            // and defensive BV
-            if (mtype.hasFlag(MiscType.F_WATCHDOG)) {
-                bv = 7;
-            }
-            oEquipmentBV += bv;
-            bvText.append(mounted.getName());
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(bv);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-        }
-
-        bvText.append(endRow);
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(oEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        weaponBV += oEquipmentBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("--------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("+ weight / 2");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(getWeight());
-        bvText.append(" / 2 ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(getWeight() / 2);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        weaponBV += getWeight() / 2;
-
-        // adjust further for speed factor
-        double runMP = getRunMP(false, true, true);
-
-        // Trains use cruise instead of flank MP for speed factor
-        if (getMovementMode().equals(EntityMovementMode.RAIL) || getMovementMode().equals(EntityMovementMode.MAGLEV)) {
-            runMP = getWalkMP(false, true, true);
-        }
-        // trailers have original run MP of 0, but should count at 1 for speed
-        // factor calculation
-        if (getOriginalRunMP() == 0) {
-            runMP = 1;
-        }
-        double speedFactor = Math
-                .pow(1 + (((runMP + (Math.round(getJumpMP(false) / 2.0))) - 5)
-                 / 10), 1.2);
-        speedFactor = Math.round(speedFactor * 100) / 100.0;
-
-        obv = weaponBV * speedFactor;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("+ weapons bv * speed factor");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(" * ");
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("--------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        double finalBV;
-        if (useGeometricMeanBV()) {
-            finalBV = 2 * Math.sqrt(obv * dbv);
-            if (finalBV == 0) {
-                finalBV = dbv + obv;
-            }
-        } else {
-            finalBV = dbv + obv;
-        }
-        double totalBV = finalBV;
-
-        if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-            finalBV *= 0.95;
-            finalBV = Math.round(finalBV);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total BV * Drone Operating System Modifier");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(totalBV);
-            bvText.append(" * ");
-            bvText.append("0.95");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(" = ");
-            bvText.append(finalBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append("-------------");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Final BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        xbv += tagBV;
-        if (!ignoreC3) {
-            xbv += getExtraC3BV((int) Math.round(finalBV));
-        }
-
-        finalBV = Math.round(finalBV + xbv);
-
-        // and then factor in pilot
-        double pilotFactor = 1;
-        if (!ignorePilot && (null != getCrew())) {
-            pilotFactor = getCrew().getBVSkillMultiplier(game);
-        }
-
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Final BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(retVal);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        return retVal;
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
+        return CombatVehicleBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
     }
 
     @Override
@@ -2120,7 +1220,7 @@ public class Tank extends Entity {
         }
 
         // are we wheeled and in light snow?
-        IHex hex = game.getBoard().getHex(getPosition());
+        Hex hex = game.getBoard().getHex(getPosition());
         if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
                 && (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
@@ -2146,7 +1246,7 @@ public class Tank extends Entity {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -2189,13 +1289,14 @@ public class Tank extends Entity {
     }
 
     /**
-     * Tanks don't have MASC
+     * Tanks have Superchargers but don't have MASC
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
+
 
     /*
      * (non-Javadoc)
@@ -2283,6 +1384,7 @@ public class Tank extends Entity {
             return getOriginalRunMP();
         }
     }
+
 
     /**
      * Returns this entity's Sprint mp as a string.
@@ -2497,7 +1599,7 @@ public class Tank extends Entity {
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
-        ArrayList<String> left = new ArrayList<String>();
+        ArrayList<String> left = new ArrayList<>();
 
         if (isSupportVehicle()) {
             left.add("Chassis");
@@ -2540,7 +1642,7 @@ public class Tank extends Entity {
 
             if (l == 7) {
                 getWeaponsAndEquipmentCost(true);
-            }else {
+            } else {
                 if (left.get(l).equals("Final Structural Cost")) {
                     bvText.append(startRow);
                     bvText.append(startColumn);
@@ -2656,7 +1758,7 @@ public class Tank extends Entity {
 
         // Engine Costs
         double engineCost = 0.0;
-        if(hasEngine()) {
+        if (hasEngine()) {
             if (isSupportVehicle()) {
                 engineCost = 5000 * getEngine().getWeightEngine(this)
                         * Engine.getSVCostMultiplier(getEngine().getEngineType());
@@ -2734,16 +1836,16 @@ public class Tank extends Entity {
         if (!isSupportVehicle()) {
             double diveTonnage;
             switch (movementMode) {
-            case HOVER:
-            case HYDROFOIL:
-            case VTOL:
-            case SUBMARINE:
-            case WIGE:
-                diveTonnage = Math.ceil(weight / 5.0) / 2.0;
-                break;
-            default:
-                diveTonnage = 0.0;
-                break;
+                case HOVER:
+                case HYDROFOIL:
+                case VTOL:
+                case SUBMARINE:
+                case WIGE:
+                    diveTonnage = Math.ceil(weight / 5.0) / 2.0;
+                    break;
+                default:
+                    diveTonnage = 0.0;
+                    break;
             }
             if (movementMode != EntityMovementMode.VTOL) {
                 costs[i++] = diveTonnage * 20000;
@@ -2944,7 +2046,7 @@ public class Tank extends Entity {
         // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
         // if the movement is illegal
-        IHex occupiedHex = game.getBoard().getHex(getPosition());
+        Hex occupiedHex = game.getBoard().getHex(getPosition());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }
@@ -3170,7 +2272,7 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3264,7 +2366,7 @@ public class Tank extends Entity {
                             return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if(hasEngine()) {
+                        if (hasEngine()) {
                             if (getEngine().isFusion() && !engineHit) {
                                 return CRIT_ENGINE;
                             } else if (!getEngine().isFusion()) {
@@ -3282,7 +2384,7 @@ public class Tank extends Entity {
     /**
      * OmniVehicles have handles for Battle Armor squads to latch onto. Please
      * note, this method should only be called during this Tank's construction.
-     * <p/>
+     * <p>
      * Overrides <code>Entity#setOmni(boolean)</code>
      */
     @Override
@@ -3307,7 +2409,7 @@ public class Tank extends Entity {
         // if ba_grab_bars is on, then we need to add battlearmor handles,
         // otherwise clamp mounts
         // but first clear out whatever we have
-        Vector<Transporter> et = new Vector<Transporter>(getTransports());
+        Vector<Transporter> et = new Vector<>(getTransports());
         for (Transporter t : et) {
             if (t instanceof BattleArmorHandlesTank) {
                 removeTransporter(t);
@@ -3396,7 +2498,7 @@ public class Tank extends Entity {
     }
 
     public void resetJammedWeapons() {
-        jammedWeapons = new ArrayList<Mounted>();
+        jammedWeapons = new ArrayList<>();
     }
 
     /**
@@ -3515,7 +2617,7 @@ public class Tank extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3542,7 +2644,7 @@ public class Tank extends Entity {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3776,8 +2878,18 @@ public class Tank extends Entity {
      */
     @Override
     public String getRunMPasString() {
-        if (hasArmedMASC()) {
-            return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
+        MPBoosters mpBoosters = getMPBoosters();
+        if (mpBoosters.hasMASCAndOrSupercharger()) {
+            String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
+            if (game != null) {
+                MPBoosters armed = getArmedMPBoosters();
+
+                str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
+                        + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                        + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
+                        + (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") : "");
+            }
+            return str;
         }
         return Integer.toString(getRunMP());
     }
@@ -3787,7 +2899,7 @@ public class Tank extends Entity {
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range
@@ -3852,8 +2964,8 @@ public class Tank extends Entity {
         double move = getOriginalWalkMP();
 
         if (getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_MASC))
-        		.map(m -> m.getType().getSubType())
-        		.anyMatch(st -> st == MiscType.S_SUPERCHARGER)) {
+                .map(m -> m.getType().getSubType())
+                .anyMatch(st -> st == MiscType.S_SUPERCHARGER)) {
             move *= 1.25;
         }
 
@@ -3880,7 +2992,7 @@ public class Tank extends Entity {
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
             return 2;
-        } else if  (m_bHasNoDualTurret) {
+        } else if (m_bHasNoDualTurret) {
             return 3;
         } else {
             return 4;
@@ -3910,26 +3022,26 @@ public class Tank extends Entity {
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {
-        case 0:
-            if (location > LOC_BODY && location < LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 1:
-            if (location == LOC_REAR) {
-                return 1.0;
-            }
-            break;
-        case 2:
-            if (location == LOC_TURRET) {
-                return 1.0;
-            }
-            break;
-        case 3:
-            if (location == LOC_TURRET_2) {
-                return 1.0;
-            }
-            break;
+            case 0:
+                if (location > LOC_BODY && location < LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 1:
+                if (location == LOC_REAR) {
+                    return 1.0;
+                }
+                break;
+            case 2:
+                if (location == LOC_TURRET) {
+                    return 1.0;
+                }
+                break;
+            case 3:
+                if (location == LOC_TURRET_2) {
+                    return 1.0;
+                }
+                break;
         }
         return 0; 
     }
@@ -3939,12 +3051,13 @@ public class Tank extends Entity {
      */
     @Override
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
-    	if (index == 0) {
-    		return location > LOC_BODY? 1.0 : 0.0;
-    	}
-    	return getBattleForceLocationMultiplier(index, location, rearMounted);
+        if (index == 0) {
+            return location > LOC_BODY? 1.0 : 0.0;
+        }
+        return getBattleForceLocationMultiplier(index, location, rearMounted);
     }
     
+    @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
         if (!isSupportVehicle()) {
@@ -4039,25 +3152,25 @@ public class Tank extends Entity {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front armor destroyed.");
             return true;
         } else if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Right armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Right armor destroyed.");
             return true;
         } else if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Left armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Left armor destroyed.");
             return true;
         } else if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Turret destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Turret destroyed.");
             return true;
         } else if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Front Turret destroyed.");
             return true;
         } else if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Rear armor destroyed.");
             return true;
         } else if (isPermanentlyImmobilized(checkCrew)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Immobilized.");
             return true;
         }
 
@@ -4071,7 +3184,7 @@ public class Tank extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
             return true;
         }
         return false;
@@ -4081,11 +3194,11 @@ public class Tank extends Entity {
     public boolean isDmgHeavy() {
         // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
         if (((double) getMotiveDamage() / getOriginalWalkMP()) >= 0.5) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than or equal to half the original Walk MP");
             return true;
         } else if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.33.");
             return true;
@@ -4110,7 +3223,7 @@ public class Tank extends Entity {
     @Override
     public boolean isDmgModerate() {
         if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.67.");
             return true;
@@ -4137,11 +3250,11 @@ public class Tank extends Entity {
     public boolean isDmgLight() {
         // when checking if MP has been reduced, we want to ignore non-damage effects such as weather/gravity
         if (getMotiveDamage() > 0) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Walk MP less than the original Walk MP");
             return true;
         } else if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.8.");
             return true;
@@ -4366,6 +3479,7 @@ public class Tank extends Entity {
      *
      * @return
      */
+    @Override
     public int getSpriteDrawPriority() {
         return 4;
     }

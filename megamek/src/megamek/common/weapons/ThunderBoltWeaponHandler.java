@@ -18,7 +18,7 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -41,7 +41,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public ThunderBoltWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public ThunderBoltWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
     }
@@ -198,6 +198,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     /**
      * Sets the appropriate AMS Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setAMSBayReportingFlag() {
         amsBayEngagedCap = true;
     }
@@ -205,6 +206,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     /**
      * Sets the appropriate PD Bay reporting flag depending on what type of missile this is
      */
+    @Override
     protected void setPDBayReportingFlag() {
         pdBayEngagedCap = true;
     }

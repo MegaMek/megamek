@@ -19,6 +19,10 @@ Rottweiler Battle Armor
 (Standard)
 </Model>
 
+<mul id:>
+4940
+</mul id:>
+
 <chassis>
 quad
 </chassis>

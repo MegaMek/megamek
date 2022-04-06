@@ -37,7 +37,7 @@ public class TimerSingleton {
     protected Timer t;
 
     public TimerSingleton() {
-        t = new Timer("TimerSingleton Timer",true);
+        t = new Timer("TimerSingleton Timer", true);
     }
 
     public void schedule(TimerTask tt, long delay, long interval) {

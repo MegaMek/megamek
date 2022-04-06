@@ -1,24 +1,23 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
-
 package megamek.common.actions;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
@@ -33,9 +32,6 @@ import megamek.common.options.OptionsConstants;
  * The attacker kicks the target.
  */
 public class JumpJetAttackAction extends PhysicalAttackAction {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 5068155731614378911L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
@@ -97,15 +93,16 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         return damage;
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getLeg());
     }
 
     /**
      * To-hit number for the specified leg to kick
+     * @param game The current {@link Game}
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int leg) {
+    public static ToHitData toHit(Game game, int attackerId, Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
@@ -123,8 +120,8 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Can only make Jump Jet attacks in mech mode");
         }
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex attHex = game.getBoard().getHex(ae.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation()

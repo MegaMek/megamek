@@ -1,6 +1,7 @@
 Version:1.1
 Warhammer
 WHD-10CT
+mul id:3480
 
 Config:Biped
 TechBase:Inner Sphere

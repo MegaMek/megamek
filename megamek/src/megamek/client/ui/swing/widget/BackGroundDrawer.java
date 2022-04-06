@@ -13,7 +13,6 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Graphics;
@@ -24,11 +23,12 @@ import java.awt.Image;
  * draws it according specified rules. For example, we can order to draw image
  * by fully tiling it over all area, or tile it in a single row or column with
  * desired alignment, or draw it just once. Alignment of drawing can be
+ * <ol>
  * <li>logical (top, bottom, center for vertical alignment and left, right,
  * center for horizontal one)</li>
  * <li>or given by exact number of pixels from top or left borders of area</li>
+ * </ol>
  */
-
 public class BackGroundDrawer {
     /**
      * Single copy of image will be drawn.

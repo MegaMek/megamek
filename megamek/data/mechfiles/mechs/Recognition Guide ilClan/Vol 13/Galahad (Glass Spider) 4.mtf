@@ -1,11 +1,12 @@
 Version:1.0
-Glass Spider (Galahad)
+Galahad (Glass Spider)
 4
+mul id:8131
 
 Config:Biped
 techbase:Clan
 era:3148
-source:RecGuide 13 - Dark Ages
+source:Rec Guide:ilClan #13 - Dark Ages
 rules level:2
 
 mass:60

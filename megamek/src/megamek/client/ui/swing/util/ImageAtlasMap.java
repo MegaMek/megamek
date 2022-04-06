@@ -1,33 +1,28 @@
 /*
  * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.util;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
+import com.thoughtworks.xstream.XStream;
+import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.thoughtworks.xstream.XStream;
-
-import megamek.common.Configuration;
 
 /**
  * Class to encapsulate a map that maps old image paths to the subsequent location in an image atlas.  This allows us
@@ -39,13 +34,12 @@ import megamek.common.Configuration;
  * they are passed in as paths which then are expicitly converted to UNIX-style filepaths.
  *
  * @author arlith
- *
  */
 public class ImageAtlasMap {
-
     Map<String, String> imgFileToAtlasMap = new HashMap<>();
 
     public ImageAtlasMap() {
+
     }
 
     private  ImageAtlasMap(Map<String, String> map) {
@@ -90,53 +84,34 @@ public class ImageAtlasMap {
         return v.toString();
     }
 
-    /**
-     * 
-     * @param key
-     * @return
-     */
     public String get(Path key) {
         return imgFileToAtlasMap.get(convertPathToLinux(key));
     }
 
-    /**
-     * 
-     * @return
-     */
     public boolean writeToFile() {
         XStream xstream = new XStream();
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(Configuration.imageFileAtlasMapFile()),
-                Charset.forName("UTF-8"));) {
+        try (OutputStream fos = new FileOutputStream(Configuration.imageFileAtlasMapFile());
+             Writer writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8)) {
             xstream.toXML(imgFileToAtlasMap, writer);
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
             return false;
         }
         return true;
     }
 
-    /**
-     * 
-     * @return
-     */
     @SuppressWarnings("unchecked")
-    public static ImageAtlasMap readFromFile() {
+    public static @Nullable ImageAtlasMap readFromFile() {
         if (!Configuration.imageFileAtlasMapFile().exists()) {
             return null;
         }
 
-        ImageAtlasMap map;
         try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
             XStream xstream = new XStream();
-            map = new ImageAtlasMap((Map<String, String>) xstream.fromXML(is));
-        } catch (FileNotFoundException e) {
-            map = null;
-            e.printStackTrace();
-        } catch (IOException e) {
-            map = null;
-            e.printStackTrace();
+            return new ImageAtlasMap((Map<String, String>) xstream.fromXML(is));
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
+            return null;
         }
-        return map;
     }
-
 }

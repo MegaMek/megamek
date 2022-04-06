@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2018-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -33,6 +34,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
+import megamek.common.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.xml.sax.InputSource;
@@ -42,8 +44,20 @@ import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
 public class MegaMekXmlUtil {
+    //region Variable Declarations
     private static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY;
     private static SAXParserFactory SAX_PARSER_FACTORY;
+
+    private static final String[] INDENTS = new String[] {
+            "",
+            "\t",
+            "\t\t",
+            "\t\t\t",
+            "\t\t\t\t",
+            "\t\t\t\t\t",
+            "\t\t\t\t\t\t"
+    };
+    //endregion Variable Declarations
 
     /**
      * Creates a DocumentBuilder safe from XML external entities
@@ -90,7 +104,6 @@ public class MegaMekXmlUtil {
      *
      * @see "https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#JAXB_Unmarshaller"
      */
-    @SuppressWarnings("nls")
     public static XMLReader createSafeXMLReader() {
         if (SAX_PARSER_FACTORY == null) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -98,22 +111,20 @@ public class MegaMekXmlUtil {
                 spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
                 spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
                 spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
-                throw new AssertionError("SAX implementation does not recognize or support the features we want to disable", e);
-            } catch (ParserConfigurationException e) {
-                throw new AssertionError(e); // Only if we messed up the CFG above
+            } catch (SAXNotRecognizedException | SAXNotSupportedException ex) {
+                throw new AssertionError("SAX implementation does not recognize or support the features we want to disable", ex);
+            } catch (ParserConfigurationException ex) {
+                throw new AssertionError(ex); // Only if we messed up the CFG above
             }
             SAX_PARSER_FACTORY = spf;
         }
+
         try {
             return SAX_PARSER_FACTORY.newSAXParser().getXMLReader();
-        } catch (ParserConfigurationException e) {
-            throw new AssertionError(e); // Only if we messed up the CFG above
-        } catch (SAXException e) {
-            throw new AssertionError(e); // Whatever - just blow up. :-)
-            // As of 2018-11, Xerces does not throw generic SAXExceptions.
-            // Yes, SAX was designed when checked exception were all the rage.
+        } catch (ParserConfigurationException | SAXException ex) {
+            throw new AssertionError(ex);
         }
+
     }
 
     /**
@@ -126,93 +137,331 @@ public class MegaMekXmlUtil {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
     }
 
+    //region XML Writing
+    //region Open Tag
+    /**
+     * This writes an open XML tag
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     */
+    public static void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                             final String name) {
+        writeSimpleXMLOpenTag(pw, indent, name, null, null, null, null);
+    }
+
+    /**
+     * This writes an open XML tag, with the possible addition of an attribute and its value
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param attributeName the attribute to write as part of the XML tag
+     * @param attributeValue the value of the attribute
+     */
+    public static <T> void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                                 final String name, final String attributeName,
+                                                 final T attributeValue) {
+        writeSimpleXMLOpenTag(pw, indent, name, attributeName, attributeValue, null, null);
+    }
+
+    /**
+     * This writes an open XML tag, with the possible addition of a class attribute and its class
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param classAttribute the class attribute to write as part of the tag
+     * @param c the class to write as part of the tag
+     */
+    public static void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                             final String name, final String classAttribute,
+                                             final Class<?> c) {
+        writeSimpleXMLOpenTag(pw, indent, name, null, null, classAttribute, c);
+    }
+
+    /**
+     * This writes an open XML tag, with the possible addition of an attribute and its value
+     * and/or the possible addition of a class attribute and its class
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param attributeName the attribute to write as part of the XML tag
+     * @param attributeValue the value of the attribute
+     * @param classAttribute the class attribute to write as part of the tag
+     * @param c the class to write as part of the tag
+     */
+    public static <T> void writeSimpleXMLOpenTag(final PrintWriter pw, final int indent,
+                                                 final String name,
+                                                 final @Nullable String attributeName,
+                                                 @Nullable T attributeValue,
+                                                 final @Nullable String classAttribute,
+                                                 final @Nullable Class<?> c) {
+        final boolean hasValue = attributeValue != null;
+        final boolean hasClass = c != null;
+        pw.print(indentStr(indent) + "<" + name);
+        if (hasValue) {
+            pw.print(" " + attributeName + "=\"" + escape(attributeValue.toString()) + "\"");
+        }
+
+        if (hasClass) {
+            pw.print(" " + classAttribute + "=\"" + c.getName() + "\"");
+        }
+        pw.print(">\n");
+    }
+    //endregion Open Tag
+
+    //region Simple XML Tag
+    /**
+     * This writes a UUID or an array of UUIDs to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the UUID or UUID[] to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final UUID... values) {
+        if (values.length > 0) {
+            final StringJoiner stringJoiner = new StringJoiner(",");
+            for (final UUID value : values) {
+                if (value != null) {
+                    stringJoiner.add(value.toString());
+                }
+            }
+
+            if (!stringJoiner.toString().isBlank()) {
+                pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+            }
+        }
+    }
+
+    /**
+     * This writes a LocalDate or an array of LocalDates to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the LocalDate or LocalDate[] to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final LocalDate... values) {
+        if (values.length > 0) {
+            final StringJoiner stringJoiner = new StringJoiner(",");
+            for (final LocalDate value : values) {
+                if (value != null) {
+                    stringJoiner.add(value.toString());
+                }
+            }
+
+            if (!stringJoiner.toString().isBlank()) {
+                pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+            }
+        }
+    }
+
+    /**
+     * This writes a collection of objects that are saved based on their toString value.
+     * Examples are UUID and LocalDate
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the collection to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final Collection<?> values) {
+        if (!values.isEmpty()) {
+            final StringJoiner stringJoiner = new StringJoiner(",");
+            values.forEach(v -> stringJoiner.add(v.toString()));
+            pw.println(indentStr(indent) + "<" + name + ">" + escape(stringJoiner.toString()) + "</" + name + ">");
+        }
+    }
+
+    /**
+     * This writes a String or an array of Strings to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the String or String[] to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final String... values) {
+        writeSimpleXMLAttributedTag(pw, indent, name, null, null, values);
+    }
+
+    /**
+     * This writes a String or an array of Strings to file, with an the possible addition of an
+     * attribute and its value
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param attributeName the attribute to write as part of the XML tag
+     * @param attributeValue the value of the attribute
+     * @param values the String or String[] to write to XML
+     */
+    public static <T> void writeSimpleXMLAttributedTag(final PrintWriter pw, final int indent,
+                                                       final String name,
+                                                       final @Nullable String attributeName,
+                                                       final @Nullable T attributeValue,
+                                                       final String... values) {
+        if (values.length > 0) {
+            final boolean hasAttribute = attributeValue != null;
+            pw.print(indentStr(indent) + "<" + name);
+            if (hasAttribute) {
+                pw.print(" " + attributeName + "=\"" + escape(attributeValue.toString()) + "\"");
+            }
+            pw.print(">" + escape(StringUtils.join(values, ',')) + "</" + name + ">\n");
+        }
+    }
+
+    /**
+     * This writes an int or an array of ints to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the int or int[] to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final int... values) {
+        if (values.length > 0) {
+            pw.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
+    }
+
+    /**
+     * This writes a boolean or an array of booleans to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the boolean or boolean[] to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final boolean... values) {
+        if (values.length > 0) {
+            final StringJoiner stringJoiner = new StringJoiner(",");
+            for (final boolean value : values) {
+                stringJoiner.add(Boolean.toString(value));
+            }
+            pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+        }
+    }
+
+    /**
+     * This writes a long or an array of longs to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the long or long[] to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final long... values) {
+        if (values.length > 0) {
+            pw.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
+    }
+
+    /**
+     * This writes a double or an array of doubles to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     * @param values the double or double[] to write to XML
+     */
+    public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
+                                         final double... values) {
+        if (values.length > 0) {
+            pw.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+        }
+    }
+    //endregion Simple XML Tag
+
+    //region Close Tag
+    /**
+     * This writes a XML close tag to file
+     * @param pw the PrintWriter to use
+     * @param indent the indent to write at
+     * @param name the name of the XML tag
+     */
+    public static void writeSimpleXMLCloseTag(final PrintWriter pw, final int indent,
+                                              final String name) {
+        pw.println(indentStr(indent) + "</" + name + ">");
+    }
+    //endregion Close Tag
+
+    //region Deprecated Tag Writers
+    @Deprecated
+    public static void writeSimpleXMLOpenIndentedLine(final PrintWriter pw, final int indent,
+                                                      final String name) {
+        writeSimpleXMLOpenTag(pw, indent, name, null, null, null, null);
+    }
+
+    @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
         if (val != null) {
             writeSimpleXmlTag(pw1, indent, name, val.toString());
         }
     }
 
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, LocalDate val) {
-        if (val != null) {
-            writeSimpleXmlTag(pw1, indent, name, saveFormattedDate(val));
-        }
-    }
-
+    @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
     }
 
-    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, String... values) {
-        if (values.length > 0) {
-            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
-        }
-    }
-
+    @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
-    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, int... values) {
-        if (values.length > 0) {
-            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
-        }
-    }
-
+    @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
-    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, boolean... values) {
-        StringJoiner stringJoiner = new StringJoiner(",", "", "");
-        for (boolean value : values) {
-            stringJoiner.add(Boolean.toString(value));
-        }
-        pw1.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
-    }
-
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, long val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
-    }
-
-    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, long... values) {
-        if (values.length > 0) {
-            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
-        }
-    }
-
+    @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
         pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
     }
 
-    public static void writeSimpleXMLTag(PrintWriter pw1, int indent, String name, double... values) {
-        if (values.length > 0) {
-            pw1.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
-        }
+    @Deprecated
+    public static void writeSimpleXMLCloseIndentedLine(final PrintWriter pw, final int indent,
+                                                       final String name) {
+        writeSimpleXMLCloseTag(pw, indent, name);
+    }
+    //endregion Deprecated Tag Writers
+
+    /**
+     * @param level the level to indent up to
+     * @return a string containing level tab indents
+     */
+    public static String indentStr(final int level) {
+        return (level < INDENTS.length) ? INDENTS[level] : StringUtils.repeat('\t', level);
     }
 
-    public static void writeSimpleXMLOpenIndentedLine(PrintWriter pw1, int indent, String name) {
-        pw1.println(indentStr(indent) + "<" + escape(name) + ">");
+    /**
+     * Formats a Date suitable for writing to an XML node.
+     * @param date The date to format for XML.
+     * @return A String suitable for writing a date to an XML node.
+     */
+    @Deprecated
+    public static String saveFormattedDate(final LocalDate date) {
+        return date.toString(); // ISO-8601
     }
 
-    public static void writeSimpleXMLCloseIndentedLine(PrintWriter pw1, int indent, String name) {
-        pw1.println(indentStr(indent) + "</" + escape(name) + ">");
+    /**
+     * Escapes a string to store in an XML element.
+     * @param string The string to be encoded
+     * @return An encoded copy of the string
+     */
+    public static String escape(final String string) {
+        return StringEscapeUtils.escapeXml10(string);
     }
+    //endregion XML Writing
 
-    private static final String[] INDENTS = new String[] {
-            "",
-            "\t",
-            "\t\t",
-            "\t\t\t",
-            "\t\t\t\t",
-            "\t\t\t\t\t",
-            "\t\t\t\t\t\t"
-    };
-
-    public static String indentStr(int level) {
-        if (level < INDENTS.length) {
-            return INDENTS[level];
-        } else {
-            return StringUtils.repeat('\t', level);
+    //region XML Parsing
+    /**
+     * This parses an collection of UUIDs
+     * @param values  the XML text to parse containing a comma separated UUID collection
+     * @param ids the collection to load the UUIDs into
+     */
+    public static void parseUUIDCollection(final String values, final Collection<UUID> ids) {
+        for (final String value : values.split(",")) {
+            ids.add(UUID.fromString(value));
         }
     }
 
@@ -221,7 +470,7 @@ public class MegaMekXmlUtil {
      * @param value The date from an XML node's content.
      * @return The Date retrieved from the XML node content.
      */
-    public static LocalDate parseDate(String value) throws DateTimeParseException {
+    public static LocalDate parseDate(final String value) throws DateTimeParseException {
         // Accept (truncates): yyyy-MM-dd HH:mm:ss
         // Accept (legacy): YYYYMMDD
         // Accept (preferred): yyyy-MM-dd
@@ -238,7 +487,7 @@ public class MegaMekXmlUtil {
                 return LocalDate.parse(value + "-01");
         }
 
-        int firstSpace = value.indexOf(' ');
+        final int firstSpace = value.indexOf(' ');
         if (firstSpace >= 0) {
             return LocalDate.parse(value.substring(0, firstSpace));
         } else if (value.indexOf('-') < 0) {
@@ -249,26 +498,89 @@ public class MegaMekXmlUtil {
     }
 
     /**
-     * Formats a Date suitable for writing to an XML node.
-     * @param date The date to format for XML.
-     * @return A String suitable for writing a date to an XML node.
+     * This parses an collection of LocalDates
+     * @param values the XML text to parse containing a comma separated LocalDate collection
+     * @param dates the collection to load the LocalDates into
      */
-    public static String saveFormattedDate(LocalDate date) {
-        return date.toString(); // ISO-8601
-    }
-
-    /** Escapes a string to store in an XML element.
-     * @param string The string to be encoded
-     * @return An encoded copy of the string
-     */
-    public static String escape(String string) {
-        return StringEscapeUtils.escapeXml10(string);
+    public static void parseDateCollection(final String values, final Collection<LocalDate> dates) {
+        for (final String value : values.split(",")) {
+            dates.add(parseDate(value));
+        }
     }
 
     /**
-     * Unescape...well, it reverses escaping...
+     * @param value the XML text to parse containing a single String
+     * @return the parsed String
      */
-    public static String unEscape(String string) {
+    public static String parseString(final String value) {
+        return unEscape(value);
+    }
+
+    /**
+     * @param value the XML text to parse containing a comma spaced String array
+     * @return the parsed String Array
+     */
+    public static String[] parseStringArray(final String value) {
+        return unEscape(value).split(",");
+    }
+
+    /**
+     * @param value the XML text to parse containing a comma spaced int array
+     * @return the parsed int Array
+     */
+    public static int[] parseIntArray(final String value) {
+        final String[] values = value.split(",");
+        final int[] ints = new int[values.length];
+        for (int i = 0; i < values.length; i++) {
+            ints[i] = Integer.parseInt(values[i]);
+        }
+        return ints;
+    }
+
+    /**
+     * @param value the XML text to parse containing a comma spaced boolean array
+     * @return the parsed boolean Array
+     */
+    public static boolean[] parseBooleanArray(final String value) {
+        final String[] values = value.split(",");
+        final boolean[] booleans = new boolean[values.length];
+        for (int i = 0; i < values.length; i++) {
+            booleans[i] = Boolean.parseBoolean(values[i]);
+        }
+        return booleans;
+    }
+
+    /**
+     * @param value the XML text to parse containing a comma spaced long array
+     * @return the parsed long Array
+     */
+    public static long[] parseLongArray(final String value) {
+        final String[] values = value.split(",");
+        final long[] longs = new long[values.length];
+        for (int i = 0; i < values.length; i++) {
+            longs[i] = Long.parseLong(values[i]);
+        }
+        return longs;
+    }
+
+    /**
+     * @param value the XML text to parse containing a comma spaced double array
+     * @return the parsed double Array
+     */
+    public static double[] parseDoubleArray(final String value) {
+        final String[] values = value.split(",");
+        final double[] doubles = new double[values.length];
+        for (int i = 0; i < values.length; i++) {
+            doubles[i] = Double.parseDouble(values[i]);
+        }
+        return doubles;
+    }
+
+    /**
+     * Unescape... well, it reverses escaping...
+     */
+    public static String unEscape(final String string) {
         return StringEscapeUtils.unescapeXml(string);
     }
+    //endregion XML Parsing
 }

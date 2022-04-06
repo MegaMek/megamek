@@ -17,14 +17,7 @@ package megamek.server;
 import java.util.Iterator;
 import java.util.Vector;
 
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.IBoard;
-import megamek.common.IHex;
-import megamek.common.ITerrainFactory;
-import megamek.common.Report;
-import megamek.common.Terrains;
+import megamek.common.*;
 
 /**
  * This class allows for dynamic Geysers to be added to maps which will go off
@@ -35,7 +28,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
     private Vector<GeyserInfo> geysers = null;
 
     /**
-     * Create a new GeyseProcessor for the given server.
+     * Create a new GeyserProcessor for the given server.
      * 
      * @param server the server for which this runs.
      */
@@ -47,24 +40,23 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         // 1st time, find geysers on board
         if (geysers == null || server.getGame().getRoundCount() == 1) {
-            geysers = new Vector<GeyserInfo>();
+            geysers = new Vector<>();
             findGeysers();
         }
 
         Report r;
-        ITerrainFactory tf = Terrains.getTerrainFactory();
         for (Iterator<GeyserInfo> gs = geysers.iterator(); gs.hasNext();) {
             GeyserInfo g = gs.next();
             if (g.turnsToGo > 0) {
                 g.turnsToGo--;
             } else {
-                IHex hex = server.getGame().getBoard().getHex(g.position);
+                Hex hex = server.getGame().getBoard().getHex(g.position);
                 if (hex.terrainLevel(Terrains.GEYSER) == 2) {
                     r = new Report(5275, Report.PUBLIC);
                     r.add(g.position.getBoardNum());
                     vPhaseReport.add(r);
                     hex.removeTerrain(Terrains.GEYSER);
-                    hex.addTerrain(tf.createTerrain(Terrains.GEYSER, 1));
+                    hex.addTerrain(new Terrain(Terrains.GEYSER, 1));
                     server.getHexUpdateSet().add(g.position);
                 } else if (Compute.d6() == 1) {
                     if (hex.terrainLevel(Terrains.GEYSER) == 3) {
@@ -72,7 +64,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         r.add(g.position.getBoardNum());
                         vPhaseReport.add(r);
                         hex.removeAllTerrains();
-                        hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 2));
+                        hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                         server.getHexUpdateSet().add(g.position);
                         gs.remove();
                         for (Entity e : server.getGame().getEntitiesVector(
@@ -84,7 +76,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         r.add(g.position.getBoardNum());
                         vPhaseReport.add(r);
                         hex.removeTerrain(Terrains.GEYSER);
-                        hex.addTerrain(tf.createTerrain(Terrains.GEYSER, 2));
+                        hex.addTerrain(new Terrain(Terrains.GEYSER, 2));
                         server.getHexUpdateSet().add(g.position);
                         g.turnsToGo = Compute.d6() - 1;
                     }
@@ -94,7 +86,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
     }
 
     private void findGeysers() {
-        IBoard b = server.getGame().getBoard();
+        Board b = server.getGame().getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
         for (int x = 0; x < width; x++) {
@@ -106,7 +98,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
         }
     }
 
-    private class GeyserInfo {
+    private static class GeyserInfo {
         Coords position;
         int turnsToGo;
 

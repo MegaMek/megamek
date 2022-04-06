@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2020-2021 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -25,6 +25,9 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+/**
+ * This renders the AbstractIcon for the current Cell of the rendered list
+ */
 public class AbstractIconRenderer extends JPanel implements ListCellRenderer<AbstractIcon> {
     //region Variable Declarations
     private JLabel lblImage; // This JLabel displays the selectable image
@@ -83,11 +86,11 @@ public class AbstractIconRenderer extends JPanel implements ListCellRenderer<Abs
     //endregion Initialization
 
     /**
-     * Sets the image based on the passed category and name from the DirectoryItems that the list
-     * currently displays.
+     * Sets the image based on the passed AbstractIcon
+     * @param icon the icon to render as the image
      */
     private void setImage(final AbstractIcon icon) {
-        getLblImage().setIcon(icon.getImageIcon());
+        getLblImage().setIcon(icon.getImageIcon(80));
         setToolTip(String.format("<html><BODY>%s<br>%s</html>", icon.getCategory(), icon.getFilename()));
     }
 

@@ -19,6 +19,10 @@ Achileus Light Battle Armor
 [David]
 </Model>
 
+<mul id:>
+7
+</mul id:>
+
 <Trooper Count>
 4
 </Trooper Count>

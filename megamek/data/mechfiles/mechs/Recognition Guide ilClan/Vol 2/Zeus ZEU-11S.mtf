@@ -1,11 +1,12 @@
 Version:1.1
 Zeus
 ZEU-11S
+mul id:7455
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3130
-source:ilClan Vol 2 - Dark Age
+source:Rec Guide:ilClan #2- Dark Age
 rules level:2
 
 mass:80

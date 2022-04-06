@@ -14,15 +14,15 @@
  */
 package megamek.client.ui.swing.boardview;
 
-import java.awt.Color;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.common.ECMInfo;
+import megamek.common.Player;
+
+import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.ECMInfo;
-import megamek.common.IPlayer;
 
 /**
  * This class contains a collection of <code>ECMInfo</code> instances that all
@@ -47,7 +47,7 @@ public class ECMEffects {
     protected boolean isECCM = false;
 
     ECMEffects() {
-        ecmEffects = new LinkedList<ECMInfo>();
+        ecmEffects = new LinkedList<>();
     }
 
     /**
@@ -70,8 +70,7 @@ public class ECMEffects {
      */
     public Color getHexColor() {
         Color c = null;
-        Map<IPlayer, ECMInfo> ecmEffectsForPlayer =
-                new HashMap<IPlayer, ECMInfo>();
+        Map<Player, ECMInfo> ecmEffectsForPlayer = new HashMap<>();
         // Total the ECM effects for each Player
         for (ECMInfo ecmInfo : ecmEffects) {
             ECMInfo playerECM = ecmEffectsForPlayer.get(ecmInfo.getOwner());
@@ -84,11 +83,11 @@ public class ECMEffects {
         }
         // Each Player that has an active E(C)CM effect will have a color
         // to contribute to this location
-        List<Color> ecmColors = new LinkedList<Color>();
-        List<Color> eccmColors = new LinkedList<Color>();
-        for (IPlayer p : ecmEffectsForPlayer.keySet()) {
+        List<Color> ecmColors = new LinkedList<>();
+        List<Color> eccmColors = new LinkedList<>();
+        for (Player p : ecmEffectsForPlayer.keySet()) {
             ECMInfo playerECM = new ECMInfo(ecmEffectsForPlayer.get(p));
-            for (IPlayer other : ecmEffectsForPlayer.keySet()) {
+            for (Player other : ecmEffectsForPlayer.keySet()) {
                 // Don't add info for p again
                 if (((p == null) && (other == null))
                         || ((p != null) && p.equals(other))) {
@@ -155,7 +154,7 @@ public class ECMEffects {
      * @param player
      * @return
      */
-    public static Color getECMColor(IPlayer player) {
+    public static Color getECMColor(Player player) {
         final int alpha = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
         Color tint = (player == null) ? Color.GRAY : player.getColour().getColour();
         // Create a new color by adding transparency to the tint

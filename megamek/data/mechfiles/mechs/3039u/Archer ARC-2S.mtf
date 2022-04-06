@@ -1,6 +1,7 @@
 Version:1.0
 Archer
 ARC-2S
+mul id:76
 
 Config:Biped
 TechBase:Inner Sphere

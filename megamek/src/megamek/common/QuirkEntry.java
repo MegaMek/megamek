@@ -1,28 +1,26 @@
 /*
  * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
-import java.util.Objects;
+import megamek.codeUtilities.StringUtility;
 
-import megamek.common.util.StringUtil;
+import java.util.Objects;
 
 /**
  * Class to store pertinent quirk information.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
- * @version %I% %G%
  * @since 2012-03-05
  */
 class QuirkEntry {
@@ -43,7 +41,7 @@ class QuirkEntry {
      * @param unitId The ID (chassis & model) of the unit to which the quirk belongs.
      */
     QuirkEntry(String quirk, String unitId) {
-        if (StringUtil.isNullOrEmpty(quirk)) {
+        if (StringUtility.isNullOrEmpty(quirk)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
         }
 
@@ -63,16 +61,13 @@ class QuirkEntry {
      * @param unitId     The ID (chassis & model) of the unit to which the quirk belongs.
      */
     QuirkEntry(String quirk, String location, int slot, String weaponName, String unitId) {
-        if (StringUtil.isNullOrEmpty(quirk)) {
+        if (StringUtility.isNullOrEmpty(quirk)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
-        }
-        if (StringUtil.isNullOrEmpty(location)) {
+        } else if (StringUtility.isNullOrEmpty(location)) {
             throw new IllegalArgumentException("No location for " + quirk + " : " + unitId);
-        }
-        if (StringUtil.isNullOrEmpty(weaponName)) {
+        } else if (StringUtility.isNullOrEmpty(weaponName)) {
             throw new IllegalArgumentException("No weapon for " + quirk + " : " + unitId);
-        }
-        if (slot < 0 || slot > 11) {
+        } else if ((slot < 0) || (slot > 11)) {
             throw new IllegalArgumentException("Invalid slot index (" + slot + ") for " + quirk + " : " + unitId);
         }
 
@@ -142,18 +137,19 @@ class QuirkEntry {
      */
     public String toLog() {
         String out = getQuirk();
-        if (StringUtil.isNullOrEmpty(getLocation()))
+        if (StringUtility.isNullOrEmpty(getLocation())) {
             return out;
+        }
 
         return out + "\t" + getLocation() + "\t" + getSlot() + "\t" + getWeaponName();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if((null == obj) || (getClass() != obj.getClass())) {
+        if ((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
         final QuirkEntry other = (QuirkEntry) obj;
@@ -171,7 +167,7 @@ class QuirkEntry {
         copy.setQuirk(String.copyValueOf(getQuirk().toCharArray()));
 
         // If location is empty, then this is not a weapon quirk.
-        if (StringUtil.isNullOrEmpty(getLocation())) {
+        if (StringUtility.isNullOrEmpty(getLocation())) {
             return copy;
         }
 

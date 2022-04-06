@@ -11,62 +11,37 @@
  * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
  * more details.
  */
-
 package megamek.common.actions;
 
-import java.util.Enumeration;
-
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.LandAirMech;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
+
+import java.util.Enumeration;
 
 /**
  * Ram attack by an airborne LAM in airmech mode. This is treated like a charge in the movement path,
  * but has significant difference in the way damage is calculated and in the final locations.
  * 
  * @author Neoancient
- *
  */
 public class AirmechRamAttackAction extends DisplacementAttackAction {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 5110608317218688433L;
 
     public AirmechRamAttackAction(Entity attacker, Targetable target) {
-        this(attacker.getId(), target.getTargetType(), target.getTargetId(),
-             target.getPosition());
+        this(attacker.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
     }
 
-    public AirmechRamAttackAction(int entityId, int targetType, int targetId,
-                              Coords targetPos) {
+    public AirmechRamAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
         super(entityId, targetType, targetId, targetPos);
     }
 
     /**
      * To-hit number for a ram, assuming that movement has been handled
+     *
+     * @param game The current {@link Game}
      */
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
         return toHit(game, game.getTarget(getTargetType(), getTargetId()),
                      entity.getPosition(), entity.getElevation(), entity.moved);
@@ -74,8 +49,10 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
 
     /**
      * To-hit number for a ram, assuming that movement has been handled
+     *
+     * @param game The current {@link Game}
      */
-    public ToHitData toHit(IGame game, Targetable target, Coords src,
+    public ToHitData toHit(Game game, Targetable target, Coords src,
                            int elevation, EntityMovementType movement) {
         final Entity ae = getEntity(game);
 
@@ -106,15 +83,15 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                 && ((((Entity) target).getOwnerId() == ae.getOwnerId())
-                        || ((((Entity) target).getOwner().getTeam() != IPlayer.TEAM_NONE)
-                                && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
+                        || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                                && (ae.getOwner().getTeam() != Player.TEAM_NONE)
                                 && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "A friendly unit can never be the target of a direct attack.");
             }
         }
 
-        IHex targHex = game.getBoard().getHex(target.getPosition());
+        Hex targHex = game.getBoard().getHex(target.getPosition());
         // we should not be using the attacker's hex here since the attacker
         // will end up in
         // the target's hex
@@ -125,8 +102,8 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt(getTargetPos());
         ToHitData toHit = null;
-        boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK) || (getTargetType() == Targetable
-                .TYPE_BUILDING));
+        boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK)
+                || (getTargetType() == Targetable.TYPE_BUILDING));
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
 
@@ -316,7 +293,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
     /**
      * Checks if a ram can hit the target, taking account of movement
      */
-    public ToHitData toHit(IGame game, MovePath md) {
+    public ToHitData toHit(Game game, MovePath md) {
         final Entity ae = game.getEntity(getEntityId());
         final Targetable target = getTarget(game);
         Coords ramSrc = ae.getPosition();
@@ -415,7 +392,7 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         }
         double weight = entity.getWeight();
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            weight = ((Entity)target).getWeight();
+            weight = ((Entity) target).getWeight();
         }
         return (int) Math
                 .ceil((weight / 10.0) * (distance - 1)

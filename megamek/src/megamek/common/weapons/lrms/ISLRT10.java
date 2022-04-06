@@ -46,7 +46,7 @@ public class ISLRT10 extends LRTWeapon {
         this.criticals = 2;
         this.bv = 90;
         this.cost = 100000;
-        rulesRefs = "230,TM";
+        rulesRefs = "230, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

@@ -20,6 +20,10 @@ Afreet Medium Battle Armor
 (Jade Falcon)
 </Model>
 
+<mul id:>
+3678
+</mul id:>
+
 <chassis>
 biped
 </chassis>

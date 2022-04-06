@@ -1,6 +1,7 @@
 Version:1.0
 Bombardier
 BMB-10D
+mul id:422
 
 Config:Biped
 TechBase:Inner Sphere

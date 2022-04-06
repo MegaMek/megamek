@@ -25,8 +25,7 @@ import megamek.common.options.GameOptions;
 
 /** An interface for the Comparators used for the lobby Mek table. */
 public interface MekTableSorter extends Comparator<Entity> {
-    
-    public enum Sorting { ASCENDING, DESCENDING; }
+    enum Sorting { ASCENDING, DESCENDING }
 
     /** 
      * Returns the info that is displayed in the column header to show
@@ -50,7 +49,7 @@ public interface MekTableSorter extends Comparator<Entity> {
     /** Returns the sorting direction. */
     default Sorting getSortingDirection() {
         return null;
-    };
+    }
     
     /** Returns 1 if dir is ASCENDING, -1 otherwise. */
     default int bigger(Sorting dir) {
@@ -61,5 +60,4 @@ public interface MekTableSorter extends Comparator<Entity> {
     default int smaller(Sorting dir) {
         return dir == Sorting.ASCENDING ? -1 : 1;
     }
-    
 }

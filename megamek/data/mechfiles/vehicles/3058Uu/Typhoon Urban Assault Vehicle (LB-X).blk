@@ -15,6 +15,10 @@ Typhoon Urban Assault Vehicle
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+3335
+</mul id:>
 <Tonnage>
 70
 </Tonnage>

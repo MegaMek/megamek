@@ -13,12 +13,16 @@ SupportVTOL
 </UnitType>
 
 <Name>
-Pion-Laurier Lama-Deux
+Lama-Deux Firefighting VTOL
 </Name>
 
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+4834
+</mul id:>
 
 <year>
 3022

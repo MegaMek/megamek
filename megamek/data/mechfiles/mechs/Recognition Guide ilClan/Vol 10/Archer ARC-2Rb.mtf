@@ -1,11 +1,13 @@
 Version:1.0
 Archer
 ARC-2Rb
+mul id:75
 
 Config:Biped
 techbase:Inner Sphere
 era:2752
 rules level:2
+source:Rec Guide:ilClan #10 - Star League
 
 mass:70
 engine:280 Fusion Engine(IS)

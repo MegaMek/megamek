@@ -15,6 +15,10 @@ JES I Tactical Missile Carrier
 <Model>
 (3082 Upgrade)
 </Model>
+
+<mul id:>
+1702
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

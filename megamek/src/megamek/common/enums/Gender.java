@@ -16,8 +16,9 @@
  */
 package megamek.common.enums;
 
-import megamek.MegaMek;
 import megamek.client.generator.RandomGenderGenerator;
+import org.apache.logging.log4j.LogManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +136,7 @@ public enum Gender {
 
         }
 
-        MegaMek.getLogger().error("Failed to parse the gender value from input String " + input
+        LogManager.getLogger().error("Failed to parse the gender value from input String " + input
                         + ". Returning a newly generated gender.");
         return RandomGenderGenerator.generate();
     }

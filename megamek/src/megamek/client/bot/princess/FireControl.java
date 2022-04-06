@@ -1,77 +1,23 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.BombType;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.FixedWingSupport;
-import megamek.common.GunEmplacement;
-import megamek.common.HexTarget;
-import megamek.common.IAero;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.INarcPod;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.LargeSupportTank;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.RangeType;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.TargetRollModifier;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
-import megamek.common.VTOL;
-import megamek.common.WeaponType;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.actions.SearchlightAttackAction;
-import megamek.common.actions.SpotAction;
-import megamek.common.actions.UnjamTurretAction;
-import megamek.common.actions.WeaponAttackAction;
+import megamek.common.*;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
-import megamek.common.logging.LogLevel;
+import megamek.common.enums.IlluminationLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.weapons.StopSwarmAttack;
@@ -79,6 +25,12 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * FireControl selects which weapons a unit wants to fire and at whom Pay
@@ -268,16 +220,16 @@ public class FireControl {
     }
 
     /**
-     * Returns the movement modifier calculated by {@link Compute#getAttackerMovementModifier(IGame, int,
+     * Returns the movement modifier calculated by {@link Compute#getAttackerMovementModifier(Game, int,
      * EntityMovementType)}.
      *
-     * @param game            The {@link IGame} being played.
-     * @param shooterId       The ID of the unit doing the shooting.
+     * @param game The current {@link Game}
+     * @param shooterId The ID of the unit doing the shooting.
      * @param shooterMoveType The {@link EntityMovementType} of the unit doing the shooting.
      * @return The attacker movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
-    protected ToHitData getAttackerMovementModifier(final IGame game,
+    protected ToHitData getAttackerMovementModifier(final Game game,
                                                     final int shooterId,
                                                     final EntityMovementType shooterMoveType) {
         return Compute.getAttackerMovementModifier(game, shooterId, shooterMoveType);
@@ -292,45 +244,45 @@ public class FireControl {
      * @return The {@link Coords} from the target's flight path closest to the shooter.
      */
     @StaticWrapper
-    Coords getNearestPointInFlightPath(final Coords shooterPosition,
-                                       final IAero targetAero) {
-        return Compute.getClosestFlightPath(-1, shooterPosition, (Entity)targetAero);
+    Coords getNearestPointInFlightPath(final Coords shooterPosition, final IAero targetAero) {
+        return Compute.getClosestFlightPath(-1, shooterPosition, (Entity) targetAero);
     }
 
     /**
-     * Returns the movement modifier calculated by {@link Compute#getTargetMovementModifier(int, boolean, boolean,
-     * IGame)}
+     * Returns the movement modifier calculated by
+     * {@link Compute#getTargetMovementModifier(int, boolean, boolean, Game)}
      *
      * @param hexesMoved The number of hexes the target unit moved.
-     * @param jumping    Set TRUE if the target jumped.
-     * @param vtol       Set TRUE if the target is a {@link VTOL}.
-     * @param game       The {@link IGame} being played.
+     * @param jumping Set TRUE if the target jumped.
+     * @param vtol Set TRUE if the target is a {@link VTOL}.
+     * @param game The current {@link Game}
      * @return The target movement modifier as a {@link ToHitData} object.
      */
     @StaticWrapper()
     protected ToHitData getTargetMovementModifier(final int hexesMoved,
                                                   final boolean jumping,
                                                   final boolean vtol,
-                                                  final IGame game) {
+                                                  final Game game) {
         return Compute.getTargetMovementModifier(hexesMoved, jumping, vtol, game);
     }
 
     /**
      * Gets the toHit modifier common to both weapon and physical attacks
      *
-     * @param shooter      The unit doing the shooting.
+     * @param shooter The unit doing the shooting.
      * @param shooterState The state of the unit doing the shooting.
-     * @param target       Who is being shot at.
-     * @param targetState  The state of the target.
-     * @param distance     Distance between shooter and target.
-     * @param game         The game being played.  @return The estimated to hit modifiers.
+     * @param target Who is being shot at.
+     * @param targetState The state of the target.
+     * @param distance Distance between shooter and target.
+     * @param game The current {@link Game}
+     * @return The estimated to hit modifiers.
      */
     ToHitData guessToHitModifierHelperForAnyAttack(final Entity shooter,
                                                    @Nullable EntityState shooterState,
                                                    final Targetable target,
                                                    @Nullable EntityState targetState,
                                                    final int distance,
-                                                   final IGame game) {
+                                                   final Game game) {
 
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
@@ -359,7 +311,7 @@ public class FireControl {
         // Ground units attacking airborne aeros.
         if (!shooterState.isAero() && targetState.isAirborneAero()) {
             final IAero targetAero = (IAero) target;
-            if (((Entity)targetAero).isNOE()) {
+            if (((Entity) targetAero).isNOE()) {
                 final Coords closestInFlightPath = getNearestPointInFlightPath(shooterState.getPosition(), targetAero);
                 final int aeroDistance = closestInFlightPath.distance(shooterState.getPosition());
                 if (1 >= aeroDistance) {
@@ -393,7 +345,7 @@ public class FireControl {
         }
 
         // terrain modifiers, since "compute" won't let me do these remotely
-        final IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
         int woodsLevel = targetHex.terrainLevel(Terrains.WOODS);
         if (targetHex.terrainLevel(Terrains.JUNGLE) > woodsLevel) {
             woodsLevel = targetHex.terrainLevel(Terrains.JUNGLE);
@@ -462,12 +414,12 @@ public class FireControl {
     /**
      * Makes a rather poor guess as to what the to hit modifier will be with a physical attack.
      *
-     * @param shooter      The unit doing the attacking.
+     * @param shooter The unit doing the attacking.
      * @param shooterState The state of the unit doing the attacking.
-     * @param target       Who is being attacked.
-     * @param targetState  The state of the target.
-     * @param attackType   The tyep of physical attack being made.
-     * @param game         The game being played.
+     * @param target Who is being attacked.
+     * @param targetState The state of the target.
+     * @param attackType The type of physical attack being made.
+     * @param game The current {@link Game}
      * @return The estimated to hit modifiers.
      */
     ToHitData guessToHitModifierPhysical(final Entity shooter,
@@ -475,7 +427,7 @@ public class FireControl {
                                          final Targetable target,
                                          @Nullable EntityState targetState,
                                          final PhysicalAttackType attackType,
-                                         final IGame game) {
+                                         final Game game) {
 
         // todo weapons, frenzy (pg 144) & vehicle charges.
         // todo heat mods to piloting?
@@ -519,8 +471,8 @@ public class FireControl {
         }
 
         // Check elevation difference.
-        final IHex attackerHex = game.getBoard().getHex(shooterState.getPosition());
-        final IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex attackerHex = game.getBoard().getHex(shooterState.getPosition());
+        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
         final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
         final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
         final int targetElevation = target.getElevation() + targetHex.getLevel();
@@ -635,18 +587,18 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link LosEffects#calculateLOS(IGame, Entity, Targetable, Coords, Coords, boolean)}.
+     * Returns the value of {@link LosEffects#calculateLOS(Game, Entity, Targetable, Coords, Coords, boolean)}.
      *
-     * @param game            The {@link IGame} being played.
-     * @param shooter         The shooting unit.
-     * @param target          The unit being shot at as a {@link Targetable} object.
+     * @param game The current {@link Game}
+     * @param shooter The shooting unit.
+     * @param target The unit being shot at as a {@link Targetable} object.
      * @param shooterPosition The current {@link Coords} of the shooter.
-     * @param targetPosition  The current {@link Coords} of the target.
-     * @param spotting        Set TRUE if the shooter is simply spotting for indirect fire.
+     * @param targetPosition The current {@link Coords} of the target.
+     * @param spotting Set TRUE if the shooter is simply spotting for indirect fire.
      * @return The resulting {@link LosEffects}.
      */
     @StaticWrapper
-    LosEffects getLosEffects(final IGame game, final @Nullable Entity shooter,
+    LosEffects getLosEffects(final Game game, final @Nullable Entity shooter,
                              final @Nullable Targetable target,
                              final @Nullable Coords shooterPosition,
                              final @Nullable Coords targetPosition, final boolean spotting) {
@@ -654,32 +606,32 @@ public class FireControl {
     }
 
     /**
-     * Returns the value of {@link Compute#getSwarmMekBaseToHit(Entity, Entity, IGame)}.
+     * Returns the value of {@link Compute#getSwarmMekBaseToHit(Entity, Entity, Game)}.
      *
      * @param attacker The attacking {@link Entity}.
      * @param defender The target of the attack.
-     * @param game     The game being played.
+     * @param game The current {@link Game}
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
     private ToHitData getSwarmMekBaseToHit(final Entity attacker,
                                            final Entity defender,
-                                           final IGame game) {
+                                           final Game game) {
         return Compute.getSwarmMekBaseToHit(attacker, defender, game);
     }
 
     /**
-     * Returns the value of {@link Compute#getLegAttackBaseToHit(Entity, Entity, IGame)}.
+     * Returns the value of {@link Compute#getLegAttackBaseToHit(Entity, Entity, Game)}.
      *
      * @param attacker The attacking {@link Entity}.
      * @param defender The target of the attack.
-     * @param game     The game being played.
+     * @param game The current {@link Game}
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
     private ToHitData getLegAttackBaseToHit(final Entity attacker,
                                             final Entity defender,
-                                            final IGame game) {
+                                            final Game game) {
         return Compute.getLegAttackBaseToHit(attacker, defender, game);
     }
 
@@ -740,8 +692,7 @@ public class FireControl {
      *            The {@link EntityState} of the unit being shot at.
      * @param weapon
      *            The weapon being fired as a {@link Mounted} object.
-     * @param game
-     *            The {@link IGame being played.}
+     * @param game The current {@link Game}
      * @return The to hit modifiers for the given weapon firing at the given
      *         target as a {@link ToHitData} object.
      */
@@ -750,7 +701,7 @@ public class FireControl {
                                           final Targetable target,
                                           @Nullable EntityState targetState,
                                           final Mounted weapon,
-                                          final IGame game) {
+                                          final Game game) {
 
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
@@ -862,7 +813,7 @@ public class FireControl {
                 targetState.getPosition(), false);
 
         // water is a separate los effect
-        final IHex targetHex = game.getBoard().getHex(targetState.getPosition());
+        final Hex targetHex = game.getBoard().getHex(targetState.getPosition());
         Entity targetEntity = null;
         if (target instanceof Entity) {
             targetEntity = (Entity) target;
@@ -1024,8 +975,7 @@ public class FireControl {
      * @param weapon
      *            The weapon being fired as a {@link megamek.common.Mounted}
      *            object.
-     * @param game
-     *            The {@link megamek.common.IGame being played.}
+     * @param game The current {@link Game}
      * @param assumeUnderFlightPlan
      *            Set TRUE to assume that the target falls under the given
      *            flight path.
@@ -1038,7 +988,7 @@ public class FireControl {
                                                   @Nullable EntityState targetState,
                                                   final MovePath flightPath,
                                                   final Mounted weapon,
-                                                  final IGame game,
+                                                  final Game game,
                                                   final boolean assumeUnderFlightPlan) {
 
         if (null == targetState) {
@@ -1111,42 +1061,35 @@ public class FireControl {
      *            The unit being shot at.
      * @param weapon
      *            The weapon being fired.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return A description of the differences or NULL if there are none.
      */
     private String checkGuess(final Entity shooter,
                               final Targetable target,
                               final Mounted weapon,
-                              final IGame game) {
+                              final Game game) {
 
-        // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
-        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+        // This really should only be done for debugging purposes. Regular play should avoid the overhead.
+        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
-        // Don't bother checking these as the guesses are minimal (or non-existant).
+        // Don't bother checking these as the guesses are minimal (or non-existent).
         if (shooter.isAero() || (null == shooter.getPosition()) || (null == target.getPosition())) {
             return null;
         }
 
         String ret = "";
-        final WeaponFireInfo guessInfo = new WeaponFireInfo(shooter,
-                                                            new EntityState(shooter),
-                                                            target,
-                                                            null,
-                                                            weapon,
-                                                            game,
-                                                            true,
-                                                            owner);
+        final WeaponFireInfo guessInfo = new WeaponFireInfo(shooter, new EntityState(shooter),
+                target, null, weapon, game, true, owner);
         final WeaponFireInfo accurateInfo = new WeaponFireInfo(shooter, target, weapon, game, false, owner);
 
         if (guessInfo.getToHit().getValue() != accurateInfo.getToHit().getValue()) {
             ret += "Incorrect To Hit prediction, weapon " + weapon.getName() + " (" + shooter.getChassis() + " vs " +
                    target.getDisplayName() + ")" + ":\n";
-            ret += " Guess: " + Integer.toString(guessInfo.getToHit().getValue()) + " " +
+            ret += " Guess: " + guessInfo.getToHit().getValue() + " " +
                    guessInfo.getToHit().getDesc() + "\n";
-            ret += " Real:  " + Integer.toString(accurateInfo.getToHit().getValue()) + " " +
+            ret += " Real:  " + accurateInfo.getToHit().getValue() + " " +
                    accurateInfo.getToHit().getDesc() + "\n";
         }
         return ret;
@@ -1163,18 +1106,13 @@ public class FireControl {
      *            The unit being shot at.
      * @param attackType
      *            The attack being made.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return A description of the differences or NULL if there are none.
      */
-    private String checkGuessPhysical(final Entity shooter,
-                                      final Targetable target,
-                                      final PhysicalAttackType attackType,
-                                      final IGame game) {
-
-        // This really should only be done for debugging purposes. Regular play
-        // should avoid the overhead.
-        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+    private @Nullable String checkGuessPhysical(final Entity shooter, final Targetable target,
+                                                final PhysicalAttackType attackType, final Game game) {
+        // This really should only be done for debugging purposes. Regular play should avoid the overhead.
+        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
@@ -1194,10 +1132,8 @@ public class FireControl {
         final PhysicalInfo accurateInfo = new PhysicalInfo(shooter, target, attackType, game, owner, false);
         if (guessInfo.getHitData().getValue() != accurateInfo.getHitData().getValue()) {
             ret += "Incorrect To Hit prediction, physical attack " + attackType.name() + ":\n";
-            ret += " Guess: " + Integer.toString(guessInfo.getHitData().getValue()) + " " + guessInfo.getHitData()
-                                                                                                     .getDesc() +
-                   "\n";
-            ret += " Real:  " + Integer.toString(accurateInfo.getHitData().getValue()) + " " +
+            ret += " Guess: " + guessInfo.getHitData().getValue() + " " + guessInfo.getHitData().getDesc() + "\n";
+            ret += " Real:  " + accurateInfo.getHitData().getValue() + " " +
                    accurateInfo.getHitData().getDesc() + "\n";
         }
         return ret;
@@ -1210,15 +1146,12 @@ public class FireControl {
      *
      * @param shooter
      *            The unit doing the shooting.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return A description of the differences or NULL if there are none.
      */
-    String checkAllGuesses(final Entity shooter,
-                           final IGame game) {
-
+    @Nullable String checkAllGuesses(final Entity shooter, final Game game) {
         // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
-        if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
+        if (LogManager.getLogger().getLevel().isMoreSpecificThan(Level.INFO)) {
             return null;
         }
 
@@ -1433,7 +1366,7 @@ public class FireControl {
             return 0;
         }
         final Entity entity = (Entity) target;
-        return getMaxDamageAtRange(entity,1,false,false);
+        return getMaxDamageAtRange(entity, 1, false, false);
     }
 
     /**
@@ -1495,8 +1428,7 @@ public class FireControl {
      *            The current state of the target.
      * @param weapon
      *            The weapon being fired.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @param guessToHit
      *            Set TRUE to estimate the odds to hit rather than doing the
      *            full calculation.
@@ -1507,7 +1439,7 @@ public class FireControl {
                                        final Targetable target,
                                        final EntityState targetState,
                                        final Mounted weapon,
-                                       final IGame game,
+                                       final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, shooterState, target, targetState,
                 weapon, game, guessToHit, owner);
@@ -1516,15 +1448,15 @@ public class FireControl {
     /**
      * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
      *
-     * @param shooter               The unit doing the shooting.
-     * @param flightPath            The path the unit flies over this turn.
-     * @param target                The target being fired on.
-     * @param targetState           The current state of the target.
-     * @param weapon                The weapon being fired.
-     * @param game                  The game being played.
-     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid doing the full
-     *                              calculation.
-     * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @param shooter The unit doing the shooting.
+     * @param flightPath The path the unit flies over this turn.
+     * @param target The target being fired on.
+     * @param targetState The current state of the target.
+     * @param weapon The weapon being fired.
+     * @param game The current {@link Game}
+     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid
+     *                             doing the full calculation.
+     * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
     WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
@@ -1532,7 +1464,7 @@ public class FireControl {
                                        final Targetable target,
                                        final EntityState targetState,
                                        final Mounted weapon,
-                                       final IGame game,
+                                       final Game game,
                                        final boolean assumeUnderFlightPath,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, flightPath, target, targetState,
@@ -1542,16 +1474,16 @@ public class FireControl {
     /**
      * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
      *
-     * @param shooter               The unit doing the shooting.
-     * @param flightPath            The path the unit flies over this turn.
-     * @param target                The target being fired on.
-     * @param targetState           The current state of the target.
-     * @param weapon                The weapon being fired.
-     * @param game                  The game being played.
-     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid doing the full
-     *                              calculation.
-     * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
-     * @param bombPayload           The bomb payload, as described in WeaponAttackAction.setBombPayload
+     * @param shooter The unit doing the shooting.
+     * @param flightPath The path the unit flies over this turn.
+     * @param target The target being fired on.
+     * @param targetState The current state of the target.
+     * @param weapon The weapon being fired.
+     * @param game The current {@link Game}
+     * @param assumeUnderFlightPath Set TRUE to assume the target is under the flight path and avoid
+     *                             doing the full calculation.
+     * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @param bombPayload The bomb payload, as described in WeaponAttackAction.setBombPayload
      * @return The resulting {@link WeaponFireInfo}.
      */
     private WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
@@ -1559,7 +1491,7 @@ public class FireControl {
                                                final Targetable target,
                                                @SuppressWarnings("SameParameterValue") final EntityState targetState,
                                                final Mounted weapon,
-                                               final IGame game,
+                                               final Game game,
                                                final boolean assumeUnderFlightPath,
                                                final boolean guessToHit,
                                                final int[] bombPayload) {
@@ -1570,17 +1502,17 @@ public class FireControl {
     /**
      * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
      *
-     * @param shooter    The unit doing the shooting.
-     * @param target     The target being fired on.
-     * @param weapon     The weapon being fired.
-     * @param game       The game being played.
+     * @param shooter The unit doing the shooting.
+     * @param target The target being fired on.
+     * @param weapon The weapon being fired.
+     * @param game The current {@link Game}
      * @param guessToHit Set TRUE to estimate the odds to hit rather than doing the full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
     WeaponFireInfo buildWeaponFireInfo(final Entity shooter,
                                        final Targetable target,
                                        final Mounted weapon,
-                                       final IGame game,
+                                       final Game game,
                                        final boolean guessToHit) {
         return new WeaponFireInfo(shooter, target, weapon, game, guessToHit, owner);
     }
@@ -1598,15 +1530,14 @@ public class FireControl {
      *            The unit being fired on.
      * @param targetState
      *            The current state of the target.
-     * @param game
-     *            The game being played.
+     * @param game The current {@link Game}
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan guessFullFiringPlan(final Entity shooter,
                                    @Nullable EntityState shooterState,
                                    final Targetable target,
                                    @Nullable EntityState targetState,
-                                   final IGame game) {
+                                   final Game game) {
         if (null == shooterState) {
             shooterState = new EntityState(shooter);
         }
@@ -1619,22 +1550,22 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.getLogger().error("Shooter's position is NULL/Off Board!");
+            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.getLogger().error("Target's position is NULL/Off Board!");
+            LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
-        	// respect restriction on manual AMS firing.
-        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
-        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
-        		continue;
-        	}
-        	
+            // respect restriction on manual AMS firing.
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+                    weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+
             final WeaponFireInfo shoot = buildWeaponFireInfo(shooter,
                                                              shooterState,
                                                              target,
@@ -1653,11 +1584,11 @@ public class FireControl {
         
         // if we're in a position to drop bombs because we're an aircraft on a ground map, then
         // the "alpha strike" may be a bombing plan.
-        if(shooter.isAirborneAeroOnGroundMap()) {
+        if (shooter.isAirborneAeroOnGroundMap()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), true);
             calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
-            if(bombingPlan.getUtility() > myPlan.getUtility()) {
+            if (bombingPlan.getUtility() > myPlan.getUtility()) {
                 return bombingPlan;
             }
         }
@@ -1668,20 +1599,20 @@ public class FireControl {
     /**
      * Creates a firing plan that fires all weapons with nonzero to hit value in a air to ground strike
      *
-     * @param shooter               The unit doing the shooting.
-     * @param target                The unit being fired on.
-     * @param targetState           The current state of the target.
-     * @param flightPath            The path the shooter is flying over.
-     * @param game                  The game being played.
-     * @param assumeUnderFlightPath Set TRUE to automatically assume the target will be under the flight path rather
-     *                              than going through the full calculation.
+     * @param shooter The unit doing the shooting.
+     * @param target The unit being fired on.
+     * @param targetState The current state of the target.
+     * @param flightPath The path the shooter is flying over.
+     * @param game The current {@link Game}
+     * @param assumeUnderFlightPath Set TRUE to automatically assume the target will be under the
+     *                              flight path rather than going through the full calculation.
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan guessFullAirToGroundPlan(final Entity shooter,
                                         final Targetable target,
                                         @Nullable EntityState targetState,
                                         final MovePath flightPath,
-                                        final IGame game,
+                                        final Game game,
                                         final boolean assumeUnderFlightPath) {
         if (null == targetState) {
             targetState = new EntityState(target);
@@ -1697,31 +1628,31 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.getLogger().error("Shooter's position is NULL/Off Board!");
+            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
 
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.getLogger().error("Target's position is NULL/Off Board!");
+            LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
         
         // if we have no bombs on board, we can't attack from down here
         if (AeroGroundPathFinder.NAP_OF_THE_EARTH >= flightPath.getFinalAltitude() &&
             0 == shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
-            owner.getLogger().error("Shooter will crash if striking at altitude 1!");
+            LogManager.getLogger().error("Shooter will crash if striking at altitude 1!");
             return myPlan;
         }
 
         if (AeroGroundPathFinder.OPTIMAL_STRIKE_ALTITUDE < flightPath.getFinalAltitude()) {
-            owner.getLogger().error("Shooter's altitude is too high!");
+            LogManager.getLogger().error("Shooter's altitude is too high!");
             return myPlan;
         }
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
             // bombing attacks have to be carried out separately from other weapon attacks, so we handle them in a special case
-            if(weapon.isGroundBomb()) {
+            if (weapon.isGroundBomb()) {
                 continue;
             }
 
@@ -1749,7 +1680,7 @@ public class FireControl {
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
         
-        if(myPlan.getUtility() >= bombPlan.getUtility()) {
+        if (myPlan.getUtility() >= bombPlan.getUtility()) {
             return myPlan;
         } else {
             return bombPlan;
@@ -1761,7 +1692,7 @@ public class FireControl {
      *
      * @param shooter               The unit doing the shooting.
      * @param target                The unit being fired on.
-     * @param game                  The game being played.
+     * @param game                  The current {@link Game}
      * @param passedOverTarget      Set TRUE to automatically assume the target will be under the flight path rather
      *                              than going through the full calculation.
      * @param guess                 Whether we're just thinking about this firing plan or about to                              
@@ -1770,7 +1701,7 @@ public class FireControl {
     private FiringPlan getDiveBombPlan(final Entity shooter,
                                       final MovePath flighPath,
                                       final Targetable target,
-                                       final IGame game,
+                                       final Game game,
                                       final boolean passedOverTarget,
                                       final boolean guess) {
         final FiringPlan diveBombPlan = new FiringPlan(target);
@@ -1785,13 +1716,13 @@ public class FireControl {
         }
         
         // not having any bombs (due to expenditure/damage)
-        if(shooter.getBombs(BombType.F_GROUND_BOMB).size() == 0) {
+        if (shooter.getBombs(BombType.F_GROUND_BOMB).size() == 0) {
             return diveBombPlan;
         }
 
         while (weaponIter.hasNext()) {
             final Mounted weapon = weaponIter.next();
-            if(weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
+            if (weapon.getType().hasFlag(WeaponType.F_DIVE_BOMB)) {
                 final int[] bombPayload = new int[BombType.B_NUM];
                 // load up all droppable bombs, yeah baby! Mix thunder bombs and infernos 'cause why the hell not.
                 // seriously, though, TODO: more intelligent bomb drops
@@ -1820,14 +1751,14 @@ public class FireControl {
      * actual game rules from different states
      *
      * @param shooter The unit doing the shooting.
-     * @param target  The unit being fired on.
-     * @param game    The game being played.
+     * @param target The unit being fired on.
+     * @param game The current {@link Game}
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan getFullFiringPlan(final Entity shooter,
                                  final Targetable target,
                                  final Map<Mounted, Double> ammoConservation,
-                                 final IGame game) {
+                                 final Game game) {
         final NumberFormat DECF = new DecimalFormat("0.000");
 
         final FiringPlan myPlan = new FiringPlan(target);
@@ -1835,23 +1766,23 @@ public class FireControl {
         // Shooting isn't possible if one of us isn't on the board.
         if ((null == shooter.getPosition()) || shooter.isOffBoard() ||
             !game.getBoard().contains(shooter.getPosition())) {
-            owner.getLogger().error("Shooter's position is NULL/Off Board!");
+            LogManager.getLogger().error("Shooter's position is NULL/Off Board!");
             return myPlan;
         }
         if ((null == target.getPosition()) || target.isOffBoard() || !game.getBoard().contains(target.getPosition())) {
-            owner.getLogger().error("Target's position is NULL/Off Board!");
+            LogManager.getLogger().error("Target's position is NULL/Off Board!");
             return myPlan;
         }
 
         // cycle through my weapons
         for (final Mounted weapon : shooter.getWeaponList()) {
-        	// respect restriction on manual AMS firing.
-        	if(!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
-        			weapon.getType().hasFlag(WeaponType.F_AMS)) {
-        		continue;
-        	}
-        	
-        	final double toHitThreshold = ammoConservation.get(weapon);
+            // respect restriction on manual AMS firing.
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_MANUAL_AMS) &&
+                    weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+
+            final double toHitThreshold = ammoConservation.get(weapon);
             WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
             
             // if we're below the threshold, try switching missile modes
@@ -1868,9 +1799,9 @@ public class FireControl {
             if ((shoot.getProbabilityToHit() > toHitThreshold)) {
                 myPlan.add(shoot);
                 continue;
-            }            
-            
-            owner.getLogger().debug("\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) 
+            }
+
+            LogManager.getLogger().debug("\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit())
                       + ") for " + weapon.getName() +
                       " is less than threshold (" + DECF.format(toHitThreshold) + ")");
         }
@@ -1878,12 +1809,12 @@ public class FireControl {
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
         
-        if(shooter.isAero()) {
+        if (shooter.isAero()) {
             final FiringPlan bombingPlan = this.getDiveBombPlan(shooter, null, target, game, shooter.passedOver(target), false);
             calculateUtility(bombingPlan, Entity.DOES_NOT_TRACK_HEAT, true); // bomb drops never cause heat
             
             // if the bombing plan actually involves doing something
-            if((bombingPlan.size() > 0) && 
+            if ((bombingPlan.size() > 0) && 
                     (bombingPlan.getUtility() > myPlan.getUtility())) {
                 return bombingPlan;
             }
@@ -1903,7 +1834,7 @@ public class FireControl {
         int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
 
         // if we've got a combat computer, we get an automatic
-        if(entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
+        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
             baseTolerance += 4;
         }
         
@@ -1980,7 +1911,7 @@ public class FireControl {
                     //Only fire field guns up until we no longer have the men to fire more, since going over that limit results in nothing firing.
                     //In theory we could adapt the heat system to handle this(with tonnage as heat and shooting strength as heat capacity, no heat tolerance).
                     //This would behave much better for units with mixed type field guns, but given that those are rare, this should serve for now.
-                    if(fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry)shooter).getShootingStrength()) {
+                    if (fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry) shooter).getShootingStrength()) {
                         fieldGuns.add(weaponFireInfo);
                         fieldGunMassAlreadyFired += fieldGunMass;
                     }
@@ -2036,15 +1967,15 @@ public class FireControl {
         }
         
         // if we are an aero blasting away at ground targets, another good option for a heatless plan is to bomb the crap out of the enemy
-        //bombs cannot be mixed with other attack types, so we calculate it separately and overwrite the 0-heat plan if it's better
-        //currently, this will probably result in the aero blowing its bomb load as soon as it passes over an enemy
-        //dropping everything it has, including specialized munitions such as thunder bombs and infernos
+        // bombs cannot be mixed with other attack types, so we calculate it separately and overwrite the 0-heat plan if it's better
+        // currently, this will probably result in the aero blowing its bomb load as soon as it passes over an enemy
+        // dropping everything it has, including specialized munitions such as thunder bombs and infernos
         if (shooter.isAirborne() && 0 < shooter.getBombs(BombType.F_GROUND_BOMB).size()) {
             final FiringPlan diveBombPlan = this.getDiveBombPlan(shooter, null, target,
                                                                  shooter.getGame(), shooter.passedOver(target), false);
             
             calculateUtility(diveBombPlan, Entity.DOES_NOT_TRACK_HEAT, true);
-            if(diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
+            if (diveBombPlan.getUtility() > bestPlans[0].getUtility()) {
                 bestPlans[0] = diveBombPlan;
             }
         }
@@ -2052,32 +1983,29 @@ public class FireControl {
         return bestPlans;
     }
 
-    /*
+    /**
      * Gets the 'best' firing plan, using heat as a disutility. No twisting is
      * done
      * 
      * @param shooter The unit doing the shooting.
-     * 
      * @param target The unit being shot at.
-     * 
-     * @param game The game currently being played.
-     * 
+     * @param game The current {@link Game}
      * @return the 'best' firing plan, using heat as a disutility.
      */
     FiringPlan getBestFiringPlan(final Entity shooter,
                                  final Targetable target,
-                                 final IGame game,
+                                 final Game game,
                                  final Map<Mounted, Double> ammoConservation) {
 
         // Start with an alpha strike.
         FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
                                                     ammoConservation, game);
         
-        if(shooter.canFlipArms()) {
+        if (shooter.canFlipArms()) {
             shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
             betaStrike.setFlipArms(true);
-            if(betaStrike.getUtility() > alphaStrike.getUtility()) {
+            if (betaStrike.getUtility() > alphaStrike.getUtility()) {
                 alphaStrike = betaStrike;
             }
             
@@ -2116,8 +2044,7 @@ public class FireControl {
      *            The current state of the target unit.
      * @param maxHeat
      *            How much heat we're willing to tolerate.
-     * @param game
-     *            The game currently being played.
+     * @param game The current {@link Game}
      * @return the 'best' firing plan under a certain heat.
      */
     protected FiringPlan guessBestFiringPlanUnderHeat(final Entity shooter,
@@ -2125,7 +2052,7 @@ public class FireControl {
                                                     final Targetable target,
                                                     @Nullable final EntityState targetState,
                                                     int maxHeat,
-                                                    final IGame game) {
+                                                    final Game game) {
 
         // can't have less than zero heat
         if (0 > maxHeat) {
@@ -2136,12 +2063,12 @@ public class FireControl {
         FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
                                                        target, targetState, game);
         
-        if(shooter.canFlipArms()) {
+        if (shooter.canFlipArms()) {
             shooter.setArmsFlipped(true, false);
             FiringPlan betaStrike = guessFullFiringPlan(shooter, shooterState,
                                                         target, targetState, game);
             betaStrike.setFlipArms(true);
-            if(betaStrike.getUtility() > alphaStrike.getUtility()) {
+            if (betaStrike.getUtility() > alphaStrike.getUtility()) {
                 alphaStrike = betaStrike;
             }
             
@@ -2203,7 +2130,7 @@ public class FireControl {
         // Get the best plan without any twists.
         FiringPlan noTwistPlan = null;
         
-        switch(params.getCalculationType()) {
+        switch (params.getCalculationType()) {
             case GET:
                 noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
                 break;
@@ -2263,22 +2190,22 @@ public class FireControl {
      * Determines if the given entity can use indirect fire as in LRMs.
      */
     public boolean entityCanIndirectFireMissile(FireControlState fireControlState, Entity shooter) {
-    	// cache the results of our computation
-    	if(fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
-    		return fireControlState.getEntityIDFStates().get(shooter.getId());
-    	}
-    	
-    	// airborne aerospace units cannot use indirect fire
-    	if(shooter.isAirborne()) {
-    	    fireControlState.getEntityIDFStates().put(shooter.getId(), false);
-    	    return false;
-    	}
-    	
-        for(Mounted weapon : shooter.getWeaponList()) {
-        	if(weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
-        		fireControlState.getEntityIDFStates().put(shooter.getId(), true);
-        		return true;
-        	}
+        // cache the results of our computation
+        if (fireControlState.getEntityIDFStates().containsKey(shooter.getId())) {
+            return fireControlState.getEntityIDFStates().get(shooter.getId());
+        }
+
+        // airborne aerospace units cannot use indirect fire
+        if (shooter.isAirborne()) {
+            fireControlState.getEntityIDFStates().put(shooter.getId(), false);
+            return false;
+        }
+
+        for (Mounted weapon : shooter.getWeaponList()) {
+            if (weapon.getType().hasModeType(Weapon.MODE_MISSILE_INDIRECT)) {
+                fireControlState.getEntityIDFStates().put(shooter.getId(), true);
+                return true;
+            }
         }
         
         fireControlState.getEntityIDFStates().put(shooter.getId(), false);
@@ -2290,60 +2217,71 @@ public class FireControl {
      * can/should spot. If yes, then return a spot action.
      */
     public SpotAction getSpotAction(FiringPlan plan, Entity spotter, FireControlState fireControlState) {
-    	// logic applies as follows:
-    	// if I am disqualified from spotting, don't spot
-    	// disqualifiers are:
-    	// 		legally can't spot
-    	//		am firing and don't have a command console to mitigate the spotting penalty
-    	// otherwise, attempt to spot the closest enemy
-    	if(spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) || 
-    			(plan != null) && (plan.getExpectedDamage() > 0) && 
-    			!spotter.getCrew().hasActiveCommandConsole()) {
-    		return null;
-    	}
-    	
-    	List<Targetable> enemyTargets = getAllTargetableEnemyEntities(
-    			spotter.getOwner(), spotter.getGame(), fireControlState);
-    	List<Targetable> closestTargets = new ArrayList<>();
-    	int shortestDistance = Integer.MAX_VALUE;
-    	
-    	// loop through all enemy targets, pick a random one out of the closest.
-    	// future revision: pick one that's the least evasive
-    	for(Targetable target : enemyTargets) {
-    		LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
+        // logic applies as follows:
+        // if I am disqualified from spotting, don't spot
+        // disqualifiers are:
+        //     legally can't spot
+        //     am firing and don't have a command console to mitigate the spotting penalty
+        // otherwise, attempt to spot the closest enemy
+        if (spotter.isSpotting() || !spotter.canSpot() || spotter.isNarcedBy(INarcPod.HAYWIRE) ||
+                (plan != null) && (plan.getExpectedDamage() > 0) &&
+                !spotter.getCrew().hasActiveCommandConsole()) {
+            return null;
+        }
+
+        List<Targetable> enemyTargets = getAllTargetableEnemyEntities(
+                spotter.getOwner(), spotter.getGame(), fireControlState);
+        List<Targetable> closestTargets = new ArrayList<>();
+        int shortestDistance = Integer.MAX_VALUE;
+
+        // loop through all enemy targets, pick a random one out of the closest.
+        // future revision: pick one that's the least evasive
+        for (Targetable target : enemyTargets) {
+            // don't spot aerospace units
+            if (target.isAirborne()) {
+                continue;
+            }
+
+            // don't spot sensor returns
+            if ((target.getTargetType() == Targetable.TYPE_ENTITY) &&
+                ((Entity) target).isSensorReturn(spotter.getOwner())) {
+                continue;
+            }
+
+            LosEffects effects = LosEffects.calculateLOS(spotter.getGame(), spotter, target);
             
             // if we're in LOS
-    		if (effects.canSee()) {
-    			int targetDistance = spotter.getPosition().distance(target.getPosition());
-    			if(targetDistance < shortestDistance) {
-    				shortestDistance = targetDistance;
-    				closestTargets.clear();
-    				closestTargets.add(target);
-    			} else if (targetDistance == shortestDistance) {
-    				closestTargets.add(target);
-    			}
-    		}
-    	}
-    	
-    	// if we found one or more targets, pick at random from the closest ones.
-    	// otherwise, we still can't spot
-    	if(closestTargets.size() > 0) {
-	    	Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
-	    	return new SpotAction(spotter.getId(), target.getTargetId());
-    	}
-    	
-    	return null;
+            if (effects.canSee()) {
+                int targetDistance = spotter.getPosition().distance(target.getPosition());
+                if (targetDistance < shortestDistance) {
+                    shortestDistance = targetDistance;
+                    closestTargets.clear();
+                    closestTargets.add(target);
+                } else if (targetDistance == shortestDistance) {
+                    closestTargets.add(target);
+                }
+            }
+        }
+
+        // if we found one or more targets, pick at random from the closest ones.
+        // otherwise, we still can't spot
+        if (closestTargets.size() > 0) {
+            Targetable target = closestTargets.get(Compute.randomInt(closestTargets.size()));
+            return new SpotAction(spotter.getId(), target.getTargetId());
+        }
+
+        return null;
     }
     
     /**
      * Gets all the entities that are potential targets
      *
      * @param shooter The unit doing the shooting.
-     * @param game    The game being played.
+     * @param game The current {@link Game}
      * @return A list of potential targets.
      */
     protected List<Targetable> getTargetableEnemyEntities(final Entity shooter,
-                                                        final IGame game,
+                                                        final Game game,
                                                         final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
@@ -2373,15 +2311,15 @@ public class FireControl {
      * Variation on getTargetableEnemyEntities.
      * Returns all possible enemy targets, regardless of LOS status.
      * @param player The player from whose perspective enemies are determined.
-     * @param game    The game being played.
+     * @param game The current {@link Game}
      * @return A list of potential targets.
      */
-    static List<Targetable> getAllTargetableEnemyEntities(final IPlayer player, final IGame game, final FireControlState fireControlState) {
+    static List<Targetable> getAllTargetableEnemyEntities(final Player player, final Game game,
+                                                          final FireControlState fireControlState) {
         final List<Targetable> targetableEnemyList = new ArrayList<>();
 
         // Go through every unit in the game.
         for (final Entity entity : game.getEntitiesVector()) {
-
             // If they are my enemy and on the board, they're a target.
             if (entity.getOwner().isEnemyOf(player)
                 && (null != entity.getPosition())
@@ -2403,12 +2341,12 @@ public class FireControl {
      * Overload this function if you think you can do better.
      *
      * @param shooter The unit doing the shooting.
-     * @param game    The game being played.
+     * @param game The current {@link Game}
      * @return The best firing plan according to our calculations.
      */
     FiringPlan getBestFiringPlan(final Entity shooter,
                                  final IHonorUtil honorUtil,
-                                 final IGame game,
+                                 final Game game,
                                  final Map<Mounted, Double> ammoConservation) {
         FiringPlan bestPlan = null;
 
@@ -2418,13 +2356,18 @@ public class FireControl {
         // Loop through each enemy and find the best plan for attacking them.
         for (final Targetable enemy : enemies) {
 
+            if (owner.getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getTargetId())) {
+                LogManager.getLogger().info(enemy.getDisplayName() + " is being explicitly ignored");
+                continue;
+            }
+            
             final boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getTargetId());
 
             // Skip retreating enemies so long as they haven't fired on me while retreating.
             final int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
             if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getTargetId(), playerId,
                                                            owner.getForcedWithdrawal())) {
-                owner.getLogger().info(enemy.getDisplayName() + " is broken - ignoring");
+                LogManager.getLogger().info(enemy.getDisplayName() + " is broken - ignoring");
                 continue;
             }
 
@@ -2433,8 +2376,8 @@ public class FireControl {
                                                                              enemy,
                                                                              ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
-            
-            owner.getLogger().info(shooter.getDisplayName() + " at " + enemy
+
+            LogManager.getLogger().info(shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((null == bestPlan) || (plan.getUtility() > bestPlan.getUtility())) {
                 bestPlan = plan;
@@ -2468,7 +2411,7 @@ public class FireControl {
                                                        useExtremeRange,
                                                        useLOSRange);
             // if the weapon has been disabled or is out of ammo, don't count it
-            if(weapon.isCrippled()) {
+            if (weapon.isCrippled()) {
                 continue;
             }
             
@@ -2478,7 +2421,7 @@ public class FireControl {
             // only a little over half of a cluster will generally hit
             // but some cluster munitions do more than 1 point of damage per individual hit
             // still better than just discounting them completely.
-            if(weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
+            if (weaponDamage == WeaponType.DAMAGE_BY_CLUSTERTABLE) {
                 weaponDamage = weaponType.getRackSize();
             }
             
@@ -2534,7 +2477,7 @@ public class FireControl {
             final Mounted mountedAmmo = getPreferredAmmo(shooter, info.getTarget(), currentWeapon);
             // if we found preferred ammo but can't apply it to the weapon, log it and continue.
             if ((null != mountedAmmo) && !shooter.loadWeapon(currentWeapon, mountedAmmo)) {
-                owner.getLogger().warning(shooter.getDisplayName() + " tried to load " 
+                LogManager.getLogger().warn(shooter.getDisplayName() + " tried to load "
                           + currentWeapon.getName() + " with ammo " +
                           mountedAmmo.getDesc() + " but failed somehow.");
                 continue;
@@ -2723,7 +2666,7 @@ public class FireControl {
             return preferredAmmo;
         } finally {
             msg.append("\n\tReturning: ").append(null == preferredAmmo ? "null" : preferredAmmo.getDesc());
-            owner.getLogger().debug(msg.toString());
+            LogManager.getLogger().debug(msg.toString());
         }
     }
 
@@ -2740,10 +2683,9 @@ public class FireControl {
                 mmlLrm = ammo;
             } else if (null == mmlSrm) {
                 mmlSrm = ammo;
-            } else //noinspection ConstantConditions
-                if ((null != mmlSrm) && (null != mmlLrm)) {
-                    break;
-                }
+            } else if (null != mmlLrm) {
+                break;
+            }
         }
 
         // Out of SRM range.
@@ -2911,10 +2853,9 @@ public class FireControl {
                     mmlLrm = ammo;
                 } else if (null == mmlSrm) {
                     mmlSrm = ammo;
-                } else //noinspection ConstantConditions
-                    if ((null != mmlLrm) && (null != mmlSrm)) {
-                        break;
-                    }
+                } else if (null != mmlLrm) {
+                    break;
+                }
             }
         }
 
@@ -3069,10 +3010,9 @@ public class FireControl {
                 mmlLrm = ammo;
             } else if (null == mmlSrm) {
                 mmlSrm = ammo;
-            } else //noinspection ConstantConditions
-                if ((null != mmlLrm) && (null != mmlSrm)) {
-                    break;
-                }
+            } else if (null != mmlLrm) {
+                break;
+            }
         }
 
         // MML ammo depends on range.
@@ -3136,8 +3076,8 @@ public class FireControl {
     public static List<Integer> getValidFacingChanges(final Entity shooter) {
         // figure out all valid twists or turret turns
         // mechs can turn:
-        //		one left, one right unless he has "no torso twist" quirk or is on the ground
-        //		two left, two right if he has "extended torso twist" quirk
+        //     one left, one right unless he has "no torso twist" quirk or is on the ground
+        //     two left, two right if he has "extended torso twist" quirk
         // vehicles and turrets can turn any direction unless he has no turret
         final List<Integer> validFacingChanges = new ArrayList<>();
         if (((Entity.ETYPE_MECH & shooter.getEntityType()) > 0)
@@ -3265,7 +3205,7 @@ public class FireControl {
             
             for (Coords intervening : Coords.intervening(shooter.getPosition(), target.getPosition())) {
                 // if it's already lit up, don't count it 
-                if (shooter.getGame().isPositionIlluminated(intervening) > 0) {
+                if (!IlluminationLevel.determineIlluminationLevel(shooter.getGame(), intervening).isNone()) {
                     continue;
                 }
                 
@@ -3278,7 +3218,7 @@ public class FireControl {
                         boolean willbeIlluminated = false;
                         
                         for (SearchlightAttackAction searchlight : searchlights) {
-                            if(searchlight.willIlluminate(shooter.getGame(), ent)) {
+                            if (searchlight.willIlluminate(shooter.getGame(), ent)) {
                                 willbeIlluminated = true;
                                 break;
                             }

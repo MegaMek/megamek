@@ -20,6 +20,10 @@ Fensalir Combat WiGE
 (HAG)
 </Model>
 
+<mul id:>
+1055
+</mul id:>
+
 <Tonnage>
 80
 </Tonnage>

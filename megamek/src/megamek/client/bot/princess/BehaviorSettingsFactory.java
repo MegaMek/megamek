@@ -1,22 +1,20 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.MMLogger;
 import megamek.utils.MegaMekXmlUtil;
-
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,23 +24,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @version $Id$
- * @author: Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 9/6/13 6:50 PM
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net)
+ * @since 9/6/13 6:50 PM
  */
 public class BehaviorSettingsFactory {
 
@@ -50,7 +37,6 @@ public class BehaviorSettingsFactory {
 
     final Map<String, BehaviorSettings> behaviorMap = new HashMap<>();
     private static BehaviorSettingsFactory instance = new BehaviorSettingsFactory();
-    private static MMLogger logger = null;
 
     private BehaviorSettingsFactory() {
         init(true);
@@ -59,26 +45,10 @@ public class BehaviorSettingsFactory {
     public static BehaviorSettingsFactory getInstance() {
         return instance;
     }
-
-    public static BehaviorSettingsFactory getInstance(MMLogger logger) {
-        setLogger(logger);
-        return instance;
-    }
-
-    private static void setLogger(MMLogger logger) {
-        BehaviorSettingsFactory.logger = logger;
-    }
-
-    private MMLogger getLogger() {
-        if (null == logger) {
-            logger = DefaultMmLogger.getInstance();
-        }
-        return logger;
-    }
     
     /**
-     * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache.  If the cache is empty, it will load from
-     * mmconf/princessBehaviors.xml.  Also, if the "DEFAULT behavior is missing, it will be added.
+     * Initializes the {@link megamek.client.bot.princess.BehaviorSettings} cache. If the cache is empty, it will load from
+     * mmconf/princessBehaviors.xml. Also, if the "DEFAULT behavior is missing, it will be added.
      *
      * @param reinitialize Set TRUE to force the cache to be completely rebuilt.
      */
@@ -120,6 +90,16 @@ public class BehaviorSettingsFactory {
             behaviorMap.put(behaviorSettings.getDescription().trim(), behaviorSettings);
         }
     }
+    
+    /**
+     * Removes the behavior setting with the given name from the cache. Returns the BehaviorSettings that was 
+     * removed (or null if there was no such BehaviorSettings). 
+     */
+    public BehaviorSettings removeBehavior(String settingName) {
+        synchronized (behaviorMap) {
+            return behaviorMap.remove(settingName);
+        }
+    }
 
     /**
      * Returns the named {@link megamek.client.bot.princess.BehaviorSettings}.
@@ -136,14 +116,14 @@ public class BehaviorSettingsFactory {
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {
-                getLogger().error("Could not load " + PRINCESS_BEHAVIOR_PATH);
+                LogManager.getLogger().error("Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
-            try(InputStream is = new FileInputStream(behaviorFile)) {
+            try (InputStream is = new FileInputStream(behaviorFile)) {
                 return MegaMekXmlUtil.newSafeDocumentBuilder().parse(is);
             }
         } catch (Exception e) {
-            getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }
@@ -172,7 +152,7 @@ public class BehaviorSettingsFactory {
                 }
                 return true;
             } catch (Exception e) {
-                getLogger().error(e);
+                LogManager.getLogger().error("", e);
                 return false;
             } finally {
                 addDefaultBehaviors();
@@ -193,12 +173,12 @@ public class BehaviorSettingsFactory {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists()) {
                 if (!behaviorFile.createNewFile()) {
-                    getLogger().error("Could not create " + PRINCESS_BEHAVIOR_PATH);
+                    LogManager.getLogger().error("Could not create " + PRINCESS_BEHAVIOR_PATH);
                     return false;
                 }
             }
             if (!behaviorFile.canWrite()) {
-                getLogger().error("Could not write to " + PRINCESS_BEHAVIOR_PATH);
+                LogManager.getLogger().error("Could not write to " + PRINCESS_BEHAVIOR_PATH);
                 return false;
             }
 
@@ -216,13 +196,13 @@ public class BehaviorSettingsFactory {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(behaviorDoc);
-            try(Writer writer = new FileWriter(behaviorFile)) {
+            try (Writer writer = new FileWriter(behaviorFile)) {
                 StreamResult result = new StreamResult(writer);
                 transformer.transform(source, result);
                 return true;
             }
         } catch (Exception e) {
-            getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return false;
         }
     }
@@ -237,15 +217,26 @@ public class BehaviorSettingsFactory {
             names = new ArrayList<>(behaviorMap.keySet());
         }
         Collections.sort(names);
-        return names.toArray(new String[names.size()]);
+        return names.toArray(new String[0]);
+    }
+    
+    /** 
+     * Returns a list of the names of all the available 
+     * {@link megamek.client.bot.princess.BehaviorSettings BehaviorSettings}.
+     */
+    public List<String> getBehaviorNameList() {
+        init(false);
+        synchronized (behaviorMap) {
+            return new ArrayList<>(behaviorMap.keySet());
+        }
     }
 
     //******************
     // DEFAULT BEHAVIORS
     //******************
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NONE} <br>
      * Forced Withdrawal: False <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -277,14 +268,14 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setBraveryIndex(9);
             return berserkBehavior;
         } catch (Exception e) {
-            getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -313,14 +304,14 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setBraveryIndex(2);
             return cowardlyBehavior;
         } catch (Exception e) {
-            getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: True <br>
      * Auto Flee: True <br>
@@ -352,14 +343,14 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setBraveryIndex(2);
             return escapeBehavior;
         } catch (Exception e) {
-            getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }
 
     /**
-     * Destination Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
-     * Retreat Edge: {@link CardinalEdge#NEAREST_OR_NONE} <br>
+     * Destination Edge: {@link CardinalEdge#NONE} <br>
+     * Retreat Edge: {@link CardinalEdge#NEAREST} <br>
      * Forced Withdrawal: True <br>
      * Go Home: False <br>
      * Auto Flee: False <br>
@@ -388,7 +379,7 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setBraveryIndex(5);
             return defaultBehavior;
         } catch (Exception e) {
-            getLogger().error(e);
+            LogManager.getLogger().error("", e);
             return null;
         }
     }

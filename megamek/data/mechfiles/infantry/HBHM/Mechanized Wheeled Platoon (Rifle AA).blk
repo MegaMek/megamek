@@ -15,6 +15,10 @@ Mechanized Wheeled Platoon
 <Model>
 (Rifle AA)
 </Model>
+
+<mul id:>
+4616
+</mul id:>
 <squad_size>
 6
 </squad_size>

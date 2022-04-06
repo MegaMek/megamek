@@ -20,6 +20,10 @@ Lucifer
 LCF-R20
 </Model>
 
+<mul id:>
+1956
+</mul id:>
+
 <year>
 2609
 </year>
@@ -102,3 +106,35 @@ TRO 3039 - Star League
 <tonnage>
 65.0
 </tonnage>
+
+<capabilities>
+However, numerous issues with cooling, targeting, and communications systems have plagued the design, and the ejection system was removed when the frame was refitted for high-G maneuvers. However, the craft is respected for its anti-DropShip mission and the Lyran Commonwealth has invested heavily in production. When supported by other fighters to fend off enemy fighters, the Lucifer is a very effective machine.
+</capabilities>
+
+<overview>
+Considered to be well armored and fairly well armed, the Lucifer is known for its tight maneuvering and prolonged weapons fire capabilities.
+</overview>
+
+<deployment>
+This 2609 Lyran version places more armor and three additional heat sinks, at the expense of the LRM rack, in order to increase the combat loiter time necessary for anti-DropShip operations.
+</deployment>
+
+<history>
+Nicknamed “The Dragger,” the LCF series was plagued with difficulties from the start. Structural problems forced a full recall just two years after production started in 2526. A year later an issue with weapon cooling required widespread modifications. Despite a host of issues, the craft has been manufactured in large numbers and now is House Steiner’s primary medium fighter.
+</history>
+
+<manufacturer>
+Lockheed/CBM Corp
+</manufacturer>
+
+<primaryFactory>
+Donegal
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockhead/CBM 200
+ENGINE:WAS 195
+ARMOR:StarScale Type IV
+COMMUNICATIONS:Lockhead/CBM COMSET 100
+TARGETING:Lockhead/CBM TarSet 55
+</systemManufacturers>

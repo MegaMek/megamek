@@ -1,18 +1,17 @@
-/**
- * MegaMek - Copyright (C) 2000,2001,2002,2004 Ben Mazur (bmazur@sev.org)
+/*
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -33,7 +32,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to represent Capital Fighter unit
- * in MechDsiplay.ArmorPanel class.
+ * in MechDisplay.ArmorPanel class.
  */
 public class CapitalFighterMapSet implements DisplayMapSet {
 
@@ -61,7 +60,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private PMSimpleLabel fcsCritLabel;
     private PMSimpleLabel sensorCritLabel;
     private PMSimpleLabel pilotCritLabel;
-    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private PMAreasGroup content = new PMAreasGroup();
 
     private int stepY = 14;
@@ -69,7 +68,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private int armorRows = 8;
     private int armorCols = 6;
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
 
     public CapitalFighterMapSet(JComponent c) {
@@ -84,14 +83,17 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     public void setRest() {
     }
 
+    @Override
     public PMAreasGroup getContentGroup() {
         return content;
     }
 
+    @Override
     public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
+    @Override
     public void setEntity(Entity e) {
         Aero t = (Aero) e;
 
@@ -149,11 +151,11 @@ public class CapitalFighterMapSet implements DisplayMapSet {
         armorLabel = new PMSimpleLabel("Armor:", fm, Color.white);
         armorVLabel = new PMValueLabel(fm, Color.red.brighter());
 
-        avCritLabel = new PMSimpleLabel("Avionics:", fm, Color.white); //$NON-NLS-1$
-        engineCritLabel = new PMSimpleLabel("Engine:", fm, Color.white); //$NON-NLS-1$
-        fcsCritLabel = new PMSimpleLabel("FCS:", fm, Color.white); //$NON-NLS-1$
-        sensorCritLabel = new PMSimpleLabel("Sensors:", fm, Color.white); //$NON-NLS-1$
-        pilotCritLabel = new PMSimpleLabel("Pilot hits:", fm, Color.white); //$NON-NLS-1$
+        avCritLabel = new PMSimpleLabel("Avionics:", fm, Color.white);
+        engineCritLabel = new PMSimpleLabel("Engine:", fm, Color.white);
+        fcsCritLabel = new PMSimpleLabel("FCS:", fm, Color.white);
+        sensorCritLabel = new PMSimpleLabel("Sensors:", fm, Color.white);
+        pilotCritLabel = new PMSimpleLabel("Pilot hits:", fm, Color.white);
     }
 
     private void setBackGround() {

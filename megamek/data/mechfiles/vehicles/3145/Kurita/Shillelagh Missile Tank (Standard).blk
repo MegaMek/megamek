@@ -20,6 +20,10 @@ Shillelagh Missile Tank
 (Standard)
 </Model>
 
+<mul id:>
+6378
+</mul id:>
+
 <year>
 3093
 </year>

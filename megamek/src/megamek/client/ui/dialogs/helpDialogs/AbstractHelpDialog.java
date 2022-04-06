@@ -18,9 +18,9 @@
  */
 package megamek.client.ui.dialogs.helpDialogs;
 
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,7 +67,7 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
         } catch (Exception e) {
             setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
             pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
         return new JScrollPane(pane);
     }

@@ -20,6 +20,10 @@ Persepolis
 2
 </Model>
 
+<mul id:>
+7358
+</mul id:>
+
 <year>
 3134
 </year>
@@ -121,3 +125,31 @@ XTRO Republic II - Dark Ages
 <tonnage>
 70.0
 </tonnage>
+
+<overview>
+The Persepolis is a second-line Clan Aerospace Fighter developed by Clan Jade Falcon.
+</overview>
+
+<deployment>
+Introduced in 3134 this variant of the Persepolis carries two nose mounted ER Large Lasers, two nose mounted Improved Heavy Medium Lasers, and two aft-mounted Improved Heavy Small Lasers for rear defense. These weapons are tied into a Targeting Computer. Each wing carries a single LRM-20 with Artemis V FCS. The armor was replaced by Ferro-Lamellor armor, which greatly reduces damage from enemy weaponry.
+</deployment>
+
+<history>
+First encountered in late 3085, The craft was first developed unknown to the military intelligence agencies of the Inner Sphere, until a pirate band encountered it while attempting to raid Sudeten. The Persepolis was the first product of the Falcons' new orbital space factory, Falcon's Roost Orbital Assembly Plant. The powerful fighter has seen deployment to nearly all of Clan Jade Falcon's second and front-line Galaxies with the exception of its elite formations, which have been given the allotment of the OmniFighters in the Clan's Touman.[
+</history>
+
+<manufacturer>
+Falcon’s Roost Orbital Assembly Plant
+</manufacturer>
+
+<primaryFactory>
+Sudeten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Fledgling 2
+ENGINE:Consolidated 280 XL
+ARMOR:Compound Gamma Ferro-Aluminum
+COMMUNICATIONS:System XXX
+TARGETING:Omicron XX
+</systemManufacturers>

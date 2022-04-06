@@ -1,31 +1,29 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.Coords;
-import megamek.common.CriticalSlot;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.Mounted;
-import megamek.common.PlanetaryConditions;
-import megamek.common.Report;
-import megamek.common.Terrains;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
@@ -34,10 +32,6 @@ import megamek.server.SmokeCloud;
  * @author Jason Tighe
  */
 public class HVACWeaponHandler extends ACWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 7326881584091651519L;
 
     /**
@@ -46,8 +40,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
      * @param g
      * @param s
      */
-    public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -55,25 +48,22 @@ public class HVACWeaponHandler extends ACWeaponHandler {
      * (non-Javadoc)
      * 
      * @see
-     * megamek.common.weapons.WeaponHandler#handle(megamek.common.IGame.Phase,
+     * megamek.common.weapons.WeaponHandler#handle(megamek.common.Game.Phase,
      * java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-
+    public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
                 && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
-            int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon
-                    .getFacing() : 0)) % 6;
+            int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon.getFacing() : 0)) % 6;
             Coords src = ae.getPosition();
             Coords rearCoords = src.translated(rear);
-            IBoard board = game.getBoard();
-            IHex currentHex = board.getHex(src);
+            Board board = game.getBoard();
+            Hex currentHex = board.getHex(src);
 
             if (!board.contains(rearCoords)) {
                 rearCoords = src;
-            } else if (board.getHex(rearCoords).getLevel() > currentHex
-                    .getLevel()) {
+            } else if (board.getHex(rearCoords).getLevel() > currentHex.getLevel()) {
                 rearCoords = src;
             } else if ((board.getBuildingAt(rearCoords) != null)
                     && ((board.getHex(rearCoords).terrainLevel(

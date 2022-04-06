@@ -24,30 +24,30 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicMedusaWhipWeapon() {
-		super();
+    public InfantryArchaicMedusaWhipWeapon() {
+        super();
 
-		name = "Whip (Medusa)";
-		setInternalName(name);
-		addLookupName("InfantryClanMedusaWhip");
-		addLookupName("Medusa Whip");
-		ammoType = AmmoType.T_NA;
-		cost = 2200;
-		bv = 0.15;
+        name = "Whip (Medusa)";
+        setInternalName(name);
+        addLookupName("InfantryClanMedusaWhip");
+        addLookupName("Medusa Whip");
+        ammoType = AmmoType.T_NA;
+        cost = 2200;
+        bv = 0.15;
         tonnage = .00045; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);
-		infantryDamage = 0.16;
-		infantryRange = 0;
-		rulesRefs = "272,TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2820, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CWM)
-				.setProductionFactions(F_CWM).setTechRating(RATING_E)
-				.setAvailability(RATING_X, RATING_F, RATING_E, RATING_E);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);
+        infantryDamage = 0.16;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2820, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CWM)
+                .setProductionFactions(F_CWM).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_E);
 
-	}
+    }
 }

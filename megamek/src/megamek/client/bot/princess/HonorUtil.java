@@ -24,13 +24,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Deric Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 9/5/14 2:53 PM
  */
 public class HonorUtil implements IHonorUtil {
 
-    private final Set<Integer> dishonoredEnemies = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
-    private final Set<Integer> brokenEnemies = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final Set<Integer> dishonoredEnemies = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<Integer> brokenEnemies = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private void checkEnemyBroken(Entity entity, boolean forcedWithdrawal) {
         if (forcedWithdrawal && entity.isCrippled()) {

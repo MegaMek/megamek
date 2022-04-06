@@ -24,32 +24,32 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicKatanaWeapon() {
-		super();
+    public InfantryArchaicKatanaWeapon() {
+        super();
 
-		name = "Katana (Unofficial)";
-		// IO Combines the Katana into Archaic Dao Weapon
-		setInternalName(name);
-		addLookupName("InfantryKatana");
-		addLookupName("Blade (Katana)");
-		ammoType = AmmoType.T_NA;
-		cost = 250;
-		bv = 0.06;
+        name = "Katana (Unofficial)";
+        // IO Combines the Katana into Archaic Dao Weapon
+        setInternalName(name);
+        addLookupName("InfantryKatana");
+        addLookupName("Blade (Katana)");
+        ammoType = AmmoType.T_NA;
+        cost = 250;
+        bv = 0.06;
         tonnage = .0025; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0.07;
-		infantryRange = 0;
-		rulesRefs = " 272,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.07;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
 
-	}
+    }
 }

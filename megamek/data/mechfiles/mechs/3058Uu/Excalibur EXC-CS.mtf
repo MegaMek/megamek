@@ -1,6 +1,7 @@
 Version:1.0
 Excalibur
 EXC-CS
+mul id:1002
 
 Config:Biped
 TechBase:Inner Sphere

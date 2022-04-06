@@ -1,6 +1,7 @@
 Version:1.0
 Osprey
 OSP-15
+mul id:2344
 
 Config:Biped
 TechBase:Inner Sphere

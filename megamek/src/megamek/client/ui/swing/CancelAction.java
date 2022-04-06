@@ -39,7 +39,7 @@ public class CancelAction extends AbstractAction {
      */
     public CancelAction(Window myOwner) {
         owner = myOwner;
-        putValue(NAME, Messages.getString("Cancel")); //$NON-NLS-N$ 
+        putValue(NAME, Messages.getString("Cancel"));
     }
     
     @Override

@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Methods shared by Aero and LandAirMech
@@ -97,7 +98,7 @@ public interface IAero {
 
     void setAltLossThisRound(int i);
 
-    public void resetAltLossThisRound();
+    void resetAltLossThisRound();
 
     int getNoseArmor();
 
@@ -219,11 +220,10 @@ public interface IAero {
                         newmount.setNWeapons(groups.get(key));
                         getWeaponGroups().put(key, ((Entity) this).getEquipmentNum(newmount));
                     } catch (LocationFullException ex) {
-                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$
-                        ex.printStackTrace();
+                        LogManager.getLogger().error("Unable to compile weapon groups", ex);
                         return;
                     }
-                } else if (name != "0") {
+                } else if (!"0".equals(name)) {
                     ((Entity) this).addFailedEquipment(name);
                 }
             }
@@ -315,7 +315,7 @@ public interface IAero {
 
         // if the entity has already moved, its movement got interrupted (probably by a hidden unit, not much else can interrupt an aero unit)
         // in which case, the movement is complete. We just need to allow the user to hit 'done'.
-        if(((Entity) this).delta_distance > 0) {
+        if (((Entity) this).delta_distance > 0) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: aero has already moved");
         // an airborne, aerodyne aero is considered to "stall" if it's not moving anywhere,
         // hovering, landing, or going off board
@@ -356,7 +356,7 @@ public interface IAero {
         // Supposed to be -1 for lifting off from an "airfield or landing pad."
         // We will just treat this as having paved terrain
         Coords pos = ((Entity) this).getPosition();
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(pos);
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
         if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
@@ -369,9 +369,9 @@ public interface IAero {
         // TW doesn't define what a crater is, assume it means that the hex
         // level of all surrounding hexes is greater than what we are sitting on
         boolean allAdjacentHigher = true;
-        Set<Coords> positions = new HashSet<Coords>(((Entity) this).getSecondaryPositions().values());
+        Set<Coords> positions = new HashSet<>(((Entity) this).getSecondaryPositions().values());
         positions.add(pos);
-        IHex adjHex;
+        Hex adjHex;
         for (Coords currPos : positions) {
             hex = ((Entity) this).getGame().getBoard().getHex(currPos);
             for (int dir = 0; dir < 6; dir++) {
@@ -431,20 +431,20 @@ public interface IAero {
 
         // Landing Gear Partial Repairs, only apply if the landing gear isn't currently damaged
         if (getLandingGearMod(false) == 0) {
-        	if (getLandingGearPartialRepairs() == 2) {
-            roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
-        	} else if (getLandingGearPartialRepairs() == 1) {
-            roll.addModifier(getLandingGearPartialRepairs(), "landing gear misreplaced");
-        	}
-    	}
+            if (getLandingGearPartialRepairs() == 2) {
+                roll.addModifier(getLandingGearPartialRepairs(), "landing gear misrepaired");
+            } else if (getLandingGearPartialRepairs() == 1) {
+                roll.addModifier(getLandingGearPartialRepairs(), "landing gear misreplaced");
+            }
+        }
 
-        //Avionics Partial Repairs, only apply if the Avionics package isn't destroyed
+        // Avionics Partial Repairs, only apply if the Avionics package isn't destroyed
         if (avihits < 3) {
-        	if (getAvionicsMisrepaired() == 1) {
-        	roll.addModifier(1, "misrepaired avionics");
-        	} if (getAvionicsMisreplaced() == 1) {
-            roll.addModifier(1, "misreplaced avionics");
-        	}
+            if (getAvionicsMisrepaired() == 1) {
+                roll.addModifier(1, "misrepaired avionics");
+            } if (getAvionicsMisreplaced() == 1) {
+                roll.addModifier(1, "misreplaced avionics");
+            }
         }
         // Landing Modifiers table, TW pg 86
         int velmod;
@@ -484,7 +484,7 @@ public interface IAero {
         boolean clear = false;
         boolean paved = true;
 
-        Set<Coords> landingPositions = new HashSet<Coords>();
+        Set<Coords> landingPositions = new HashSet<>();
         boolean isDropship = (this instanceof Dropship);
         // Vertical landing just checks the landing hex
         if (isVertical) {
@@ -509,7 +509,7 @@ public interface IAero {
         }
 
         for (Coords pos : landingPositions) {
-            IHex hex = ((Entity) this).getGame().getBoard().getHex(pos);
+            Hex hex = ((Entity) this).getGame().getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
                 rough = true;
             } else if (hex.containsTerrain(Terrains.WOODS, 2)) {
@@ -624,14 +624,14 @@ public interface IAero {
 
     default String hasRoomForHorizontalTakeOff() {
         // walk along the hexes in the facing of the unit
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
         int elev = hex.getLevel();
         int facing = ((Entity) this).getFacing();
         String lenString = " (" + getTakeOffLength() + " hexes required)";
         // dropships need a strip three hexes wide
-        Vector<Coords> startingPos = new Vector<Coords>();
+        Vector<Coords> startingPos = new Vector<>();
         startingPos.add(((Entity) this).getPosition());
-        if (((Entity) this) instanceof Dropship) {
+        if (this instanceof Dropship) {
             startingPos.add(((Entity) this).getPosition().translated((facing + 4) % 6));
             startingPos.add(((Entity) this).getPosition().translated((facing + 2) % 6));
         }
@@ -644,9 +644,10 @@ public interface IAero {
                 }
                 // no units in the way
                 for (Entity en : ((Entity) this).getGame().getEntitiesVector(pos)) {
-                    if (en.equals((Entity) this)) {
+                    if (en.equals(this)) {
                         continue;
                     }
+
                     if (!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }
@@ -671,12 +672,12 @@ public interface IAero {
 
     default String hasRoomForHorizontalLanding() {
         // walk along the hexes in the facing of the unit
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
         int elev = hex.getLevel();
         int facing = ((Entity) this).getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
         // dropships need a a landing strip three hexes wide
-        Vector<Coords> startingPos = new Vector<Coords>();
+        Vector<Coords> startingPos = new Vector<>();
         startingPos.add(((Entity) this).getPosition());
         if (this instanceof Dropship) {
             startingPos.add(((Entity) this).getPosition().translated((facing + 5) % 6));
@@ -716,7 +717,7 @@ public interface IAero {
 
     default String hasRoomForVerticalLanding() {
         Coords pos = ((Entity) this).getPosition();
-        IHex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
+        Hex hex = ((Entity) this).getGame().getBoard().getHex(((Entity) this).getPosition());
         if (((Entity) this).getGame().getBoard().getBuildingAt(pos) != null) {
             return "Buildings in the way";
         }
@@ -789,5 +790,6 @@ public interface IAero {
      * A method to add/remove sensors that only work in space as we transition in and out of an atmosphere
      */
     default void updateSensorOptions() {
+
     }
 }

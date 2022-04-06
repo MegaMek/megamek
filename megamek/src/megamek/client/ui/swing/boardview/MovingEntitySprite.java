@@ -23,15 +23,15 @@ class MovingEntitySprite extends Sprite {
 
     private int elevation;
 
-    public MovingEntitySprite(BoardView1 boardView1, final Entity entity,
-            final Coords position, final int facing, final int elevation) {
+    public MovingEntitySprite(BoardView boardView1, final Entity entity,
+                              final Coords position, final int facing, final int elevation) {
         super(boardView1);
         this.entity = entity;
         this.facing = facing;
         this.elevation = elevation;
 
         String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+        Font font = new Font("SansSerif", Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
 
@@ -40,7 +40,7 @@ class MovingEntitySprite extends Sprite {
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
             altAdjust = (int) (bv.DROPSHDW_DIST * bv.scale);
         } else if (bv.useIsometric() && (elevation != 0)) {
-            altAdjust = (int) (elevation * BoardView1.HEX_ELEV * bv.scale);
+            altAdjust = (int) (elevation * BoardView.HEX_ELEV * bv.scale);
         }
 
         Dimension dim = new Dimension(bv.hex_size.width, bv.hex_size.height
@@ -72,7 +72,7 @@ class MovingEntitySprite extends Sprite {
             shadow = bv.getScaledImage(shadow, true);
             
             g.drawImage(shadow, x, y
-                    + (int) (elevation * BoardView1.HEX_ELEV * bv.scale),
+                    + (int) (elevation * BoardView.HEX_ELEV * bv.scale),
                     observer);
         }
         // submerged?
@@ -81,7 +81,7 @@ class MovingEntitySprite extends Sprite {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
                     0.35f));
             g2.drawImage(image, x, y
-                    - (int) (elevation * BoardView1.HEX_ELEV * bv.scale),
+                    - (int) (elevation * BoardView.HEX_ELEV * bv.scale),
                     observer);
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
                     1.0f));

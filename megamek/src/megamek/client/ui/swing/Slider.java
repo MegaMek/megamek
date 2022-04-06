@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
@@ -35,13 +34,9 @@ import megamek.client.ui.Messages;
  * A simple prompt.
  */
 public class Slider extends JDialog implements ActionListener, ChangeListener {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -7823206132140091543L;
-    private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butOk = new JButton(Messages.getString("Okay"));
+    private JButton butCancel = new JButton(Messages.getString("Cancel"));
     private JSlider value;
     private JLabel lblText = new JLabel();
     private boolean ok;
@@ -93,6 +88,7 @@ public class Slider extends JDialog implements ActionListener, ChangeListener {
         return ok;
     }
 
+    @Override
     public void actionPerformed(ActionEvent evt) {
         ok = evt.getSource().equals(butOk);
         setVisible(false);
@@ -103,6 +99,7 @@ public class Slider extends JDialog implements ActionListener, ChangeListener {
         return value.getValue();
     }
 
+    @Override
     public void stateChanged(ChangeEvent event) {
         curText.setText(String.valueOf(value.getValue()));
         pack();

@@ -1,6 +1,7 @@
 Version:1.1
 Rifleman
 RFL-X3 MUSE WIND
+mul id:2708
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

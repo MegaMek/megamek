@@ -1,6 +1,7 @@
 Version:1.0
 Legacy
 LGC-02
+mul id:4489
 
 Config:Biped
 techbase:Inner Sphere
@@ -74,10 +75,10 @@ LRM 20
 LRM 20
 LRM 20
 LRM 20
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo LRM-20
 ISMediumPulseLaser
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
 ISC3iUnit
 ISC3iUnit
 ISCASE

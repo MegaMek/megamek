@@ -1,22 +1,24 @@
 package megamek.server.victory;
 
-import megamek.common.IGame;
-import megamek.common.IPlayer;
+import megamek.common.Game;
+import megamek.common.Player;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(JUnit4.class)
+@RunWith(value = JUnit4.class)
 public class VictoryResultTest {
 
     @Test
     public void testGetWinningPlayer() {
         // Trivial case: no players
         VictoryResult testResult = new VictoryResult(false);
-        assertSame(IPlayer.PLAYER_NONE, testResult.getWinningPlayer());
+        assertSame(Player.PLAYER_NONE, testResult.getWinningPlayer());
 
         // Case with two players
         int winningPlayer = 0;
@@ -33,14 +35,14 @@ public class VictoryResultTest {
         testResult.addPlayerScore(secondWinningPlayer, 100);
         assertNotSame(secondWinningPlayer, testResult.getWinningPlayer());
         assertNotSame(winningPlayer, testResult.getWinningPlayer());
-        assertSame(IPlayer.PLAYER_NONE, testResult.getWinningPlayer());
+        assertSame(Player.PLAYER_NONE, testResult.getWinningPlayer());
     }
 
     @Test
     public void testGetWinningTeam() {
         // Trivial case: no team
         VictoryResult testResult = new VictoryResult(false);
-        assertSame(IPlayer.TEAM_NONE, testResult.getWinningTeam());
+        assertSame(Player.TEAM_NONE, testResult.getWinningTeam());
 
         // Case with two teams
         int winningTeam = 1;
@@ -57,7 +59,7 @@ public class VictoryResultTest {
         testResult.addTeamScore(secondWinningTeam, 100);
         assertNotSame(secondWinningTeam, testResult.getWinningTeam());
         assertNotSame(winningTeam, testResult.getWinningTeam());
-        assertSame(IPlayer.TEAM_NONE, testResult.getWinningTeam());
+        assertSame(Player.TEAM_NONE, testResult.getWinningTeam());
     }
 
     @Test
@@ -65,10 +67,10 @@ public class VictoryResultTest {
         // Trivial cases
         VictoryResult victoryResult = new VictoryResult(true);
 
-        IPlayer playerMock = Mockito.mock(IPlayer.class);
+        Player playerMock = Mockito.mock(Player.class);
         Mockito.when(playerMock.getColorForPlayer()).thenReturn("");
 
-        IGame gameMock = Mockito.mock(IGame.class);
+        Game gameMock = Mockito.mock(Game.class);
         Mockito.when(gameMock.getPlayer(Mockito.anyInt())).thenReturn(playerMock);
 
         assertTrue(victoryResult.processVictory(gameMock).isEmpty());

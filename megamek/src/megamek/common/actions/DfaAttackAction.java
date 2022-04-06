@@ -1,59 +1,29 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * DfaAttackAction.java
- *
- * Created on March 16, 2002, 11:43 AM
- */
-
 package megamek.common.actions;
 
 import java.util.Enumeration;
 
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.CriticalSlot;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.EntityWeightClass;
-import megamek.common.GunEmplacement;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
 import megamek.common.options.OptionsConstants;
 
 /**
  * @author Ben
+ * @since March 16, 2002, 11:43 AM
  */
 public class DfaAttackAction extends DisplacementAttackAction {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 3953889779582616903L;
 
     /**
@@ -93,10 +63,10 @@ public class DfaAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * Checks if a death from above attack can hit the target, including
-     * movement
+     * Checks if a death from above attack can hit the target, including movement
+     * @param game The current {@link Game}
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, MovePath md) {
         final Entity ae = game.getEntity(attackerId);
 
@@ -194,7 +164,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         return DfaAttackAction.toHit(game, attackerId, target, chargeSrc);
     }
 
-    public ToHitData toHit(IGame game) {
+    public ToHitData toHit(Game game) {
         final Entity entity = game.getEntity(getEntityId());
         return DfaAttackAction.toHit(game, getEntityId(),
                                      game.getTarget(getTargetType(), getTargetId()),
@@ -202,10 +172,10 @@ public class DfaAttackAction extends DisplacementAttackAction {
     }
 
     /**
-     * To-hit number for a death from above attack, assuming that movement has
-     * been handled
+     * To-hit number for a death from above attack, assuming that movement has been handled
+     * @param game The current {@link Game}
      */
-    public static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(Game game, int attackerId,
                                   Targetable target, Coords src) {
         final Entity ae = game.getEntity(attackerId);
 
@@ -231,15 +201,12 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                && ((((Entity) target).getOwnerId() == ae.getOwnerId()) || ((((Entity) target)
-                                                                                     .getOwner().getTeam() != IPlayer
-                                                                                     .TEAM_NONE)
-                                                                            && (ae.getOwner().getTeam() != IPlayer
-                    .TEAM_NONE) && (ae
-                                                                                                                                          .getOwner().getTeam() == ((Entity) target)
-                                                                                                                                          .getOwner().getTeam())))) {
+                && ((((Entity) target).getOwnerId() == ae.getOwnerId())
+                    || ((((Entity) target).getOwner().getTeam() != Player.TEAM_NONE)
+                    && (ae.getOwner().getTeam() != Player.TEAM_NONE)
+                    && (ae.getOwner().getTeam() == ((Entity) target).getOwner().getTeam())))) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "A friendly unit can never be the target of a direct attack.");
+                        "A friendly unit can never be the target of a direct attack.");
             }
         }
 

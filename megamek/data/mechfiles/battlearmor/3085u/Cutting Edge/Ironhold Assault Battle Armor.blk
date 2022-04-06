@@ -19,6 +19,10 @@ Ironhold Assault Battle Armor
 (Standard)
 </Model>
 
+<mul id:>
+1623
+</mul id:>
+
 <chassis>
 biped
 </chassis>

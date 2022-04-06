@@ -1,9 +1,10 @@
 Version:1.1
-Ryoken III-XP
+Ryoken III-XP (Skinwalker)
 A
+mul id:7379
 
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
+techbase:Mixed (Clan Chassis)
 Era:3143
 Rules Level:4
 
@@ -158,4 +159,18 @@ Clan Ferro-Lamellor
 -Empty-
 -Empty-
 
+overview:Developed during the mid-Dark Ages in the 32nd Century, the Ryoken III-XP was an experimental medium OmniMech which was first fielded by Clan Wolf. 
 
+capabilities:Built with a mix of Inner Sphere and Clan technologies, the Ryoken III-XP is a powerful and swift design. Using a combination of a 330-rated Extra-Light Fusion Engine and Triple Strength Myomer, the 'Mech is able to achieve speeds up to 110 km/h. Perhaps the most startling innovation included in this design is the Clan Interface Armor, which allows a MechWarrior to interface with their 'Mech while being completely armored should they be forced to eject. This combination interface allows the Ryoken III pilot's a degree of control in combat, and removes the need to have a Gyro mounted in the 'Mech. This technology was thought to have been lost at the time of Ryoken III's baptism in combat by Inner Sphere powers. In addition to having its pilot encased in a power-armor interface, the Mech's hull is protected by 11.5 tons of Ferro-Lamellor Armor.
+
+deployment:Designed as a striker and ideal at all ranges, the A configuration is armed with a number of Extended Range Lasers tied into a Targeting Computer, with a single ER Large Laser and two ER Medium Lasers in each of the Mech's arms. The side torsos mount six ER Small Lasers split in arrays of 3 lasers per side torso. An Inner Sphere-produced Radical Heat Sink is fitted to help cope with the additional heat.
+
+history:Also known as the Skinwalker, it was created by the newly transplanted Clan Wolf, which had renovated a factory that had once belonged to the former Marik-Stewart Commonwealth. This 'Mech, when it was first deployed into combat, surprised many with its use of a mix of experimental and exotic technologies, the likes of which was rarely seen in Clan design before. The design was first encountered in combat in 3148, when Republic Remnant forces raided Kalidasa.
+
+manufacturer:Kali Yama Weapons Industries Inc.
+primaryfactory:Kalidasa
+systemmanufacturer:CHASSIS:Prototype Hybrid Chassis
+systemmanufacturer:ENGINE:330 Fusion Extralight
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown

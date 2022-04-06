@@ -20,6 +20,10 @@ Heavy Wheeled APC
 (WoB)
 </Model>
 
+<mul id:>
+1459
+</mul id:>
+
 <Tonnage>
 20
 </Tonnage>

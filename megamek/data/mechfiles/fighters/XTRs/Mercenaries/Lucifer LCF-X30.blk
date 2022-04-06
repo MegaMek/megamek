@@ -20,6 +20,10 @@ Lucifer
 LCF-X30
 </Model>
 
+<mul id:>
+1957
+</mul id:>
+
 <year>
 3074
 </year>
@@ -109,3 +113,39 @@ XTRO Mercenaries - Jihad
 <tonnage>
 65.0
 </tonnage>
+
+<capabilities>
+However, numerous issues with cooling, targeting, and communications systems have plagued the design, and the ejection system was removed when the frame was refitted for high-G maneuvers. However, the craft is respected for its anti-DropShip mission and the Lyran Commonwealth has invested heavily in production. When supported by other fighters to fend off enemy fighters, the Lucifer is a very effective machine.
+</capabilities>
+
+<overview>
+Considered to be well armored and fairly well armed, the Lucifer is known for its tight maneuvering and prolonged weapons fire capabilities.
+</overview>
+
+<deployment>
+Developed by the Shipil Company on Skye, the LCF-X30 is a test-bed for Experimental Technology. Replacing the standard engine with an XL version and swapping the standard armor for Ferro-Aluminum was the starting point. Removing the standard weapon load for the Lucifer was the next step. In place of the standard weapons, the LCF-X30 carries a Binary Laser Cannon in the nose, an Extended LRM-10 in each wing for long range hitting power, while a Medium X-Pulse Laser covers the rear arc. Only two are known to be undergoing testing.
+</deployment>
+
+<history>
+Nicknamed “The Dragger,” the LCF series was plagued with difficulties from the start. Structural problems forced a full recall just two years after production started in 2526. A year later an issue with weapon cooling required widespread modifications. Despite a host of issues, the craft has been manufactured in large numbers and now is House Steiner’s primary medium fighter.
+</history>
+
+<manufacturer>
+Refit - Shipil Test Facility Hades
+</manufacturer>
+
+<primaryFactory>
+Skye
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockhead/CBM 200
+ENGINE:Edasich Motors 195 XL
+ARMOR:StarScale Ferro-Aluminum
+COMMUNICATIONS:Lockhead/CBM COMSET 100
+TARGETING:Lockhead/CBM TarSet 55
+</systemManufacturers>
+
+
+
+

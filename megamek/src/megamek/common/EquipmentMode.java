@@ -27,7 +27,7 @@ import java.util.Hashtable;
  * to the mode identified by the given name.
  * <p>
  * There is no way to create the instance of the <code>EquipmentMode</code>
- * directly, use </code>EquipmentMode#getMode</code> instead.
+ * directly, use <code>EquipmentMode#getMode</code> instead.
  * 
  * @see megamek.common.EquipmentType
  * @see megamek.common.Mounted
@@ -37,7 +37,7 @@ public class EquipmentMode {
     /**
      * Hash of all modes
      */
-    protected static Hashtable<String, EquipmentMode> modesHash = new Hashtable<String, EquipmentMode>();
+    protected static Hashtable<String, EquipmentMode> modesHash = new Hashtable<>();
 
     /**
      * Unique internal mode identifier. Used as the part of the key to look for
@@ -109,6 +109,7 @@ public class EquipmentMode {
         return name.equals(modeName);
     }
     
+    @Override
     public String toString() {
         return getName();
     }

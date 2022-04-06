@@ -1,6 +1,7 @@
 Version:1.0
 Crosscut
 ED-X2 (RL)
+mul id:6973
 
 Config:Biped
 TechBase:Inner Sphere

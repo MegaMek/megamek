@@ -15,6 +15,10 @@ Sprint Scout Helicopter
 <Model>
 (Troop Transport)
 </Model>
+
+<mul id:>
+3027
+</mul id:>
 <Tonnage>
 10
 </Tonnage>

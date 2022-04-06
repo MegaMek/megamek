@@ -1,6 +1,7 @@
 Version:1.0
 Stalker
 STK-5M
+mul id:3040
 
 Config:Biped
 TechBase:Inner Sphere
@@ -152,3 +153,19 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:"It's not flashy. It's not the cutting edge. It just keeps coming.”
+-From Triad Technologies marketing campaign
+
+capabilities:Relatively common as assault 'Mechs go, the 85-ton Stalker has been a staple of assault 'Mech formations for centuries. The Stalker's weapons array is geared to increase damage as it closes with its target. The number of weapons carried by the Stalker is so great that should a pilot attempt to fire them all at once they would easily overload the twenty heat sinks the 'Mech carries. Originally, the Stalker used a special fire-control computer which determined the range to the enemy and suggested the optimal mix of weapons to avoid such a problem occurring, although with the ravages of age, many older 'Mechs lack this vital piece of equipment. (By the late Succession Wars era, a functional Spar 3c Tight Band targeting & tracking system was considered very valuable.) These pilots therefore must take care when in combat: thirteen and a half tons of armor may defend against the enemy's blows, but will do nothing to prevent an ammunition cook-off caused by overheating. 
+
+deployment:An upgrade originating from the Free Worlds League, the 5M variant of the Stalker was introduced in 3050 using moderate amounts of Star League technology. Most of the weaponry was retained but both large lasers were removed for a single Diverse Optics Sunbeam ER Large Laser placed in the 'Mech's centerline and an Octagon Missile Magnet Narc Missile Beacon in the left torso accompanied by two tons of reloads, allowing the Stalker to tag enemy units with homing beacon and direct friendly missile fire onto them. The seventeen double heat sinks of the 5M afford it far greater heat efficiency than the twenty single heat sinks of previous models, although it still could not handle firing all of its weaponry simultaneously, and an additional ton of armor was added for survivability. Other changes included the use of proprietary components such as an Irian E.A.R. communications system, Riese-456 armor and an Irian Chassis Class 30. Unfortunately the designers of the new 5M dismissed the inclusion of CASE, a factor which led directly to the deaths of several Stalkers during the Clan Invasion due to ammunition cook-offs caused by overheating and weapon penetrations.
+
+history:The Stalker was first produced in 2594 as a heavy assault BattleMech for the Reunification War. The engineers and designers at Triad Technologies created the Stalker to be a heavily-armored weapons platform capable of handling combat at any range and absorbing a tremendous amount of punishment. Although among the slowest 'Mechs ever built, the Stalker was still fast enough to keep up with other assault 'Mechs and lead major advances, using its firepower to blast holes in the enemy's lines. Its heavy armor and armament also makes it well-suited for urban combat. Indeed a favorite tactic developed by Stalker pilots was to lie in wait inside a building until an enemy 'Mech passed by, then crash through the wall and emerge onto the street behind them. For nearly two hundred years, the Stalker remained in service in the Star League Defense Force as a workhorse assault 'Mech until the fall of the Star League, where it continued in the same capacity for another two hundred years in service to the Successor States. It also remained in continuous production during this time for, when Triad Technologies was destroyed in the Succession Wars, both Irian BattleMechs Unlimited and Trellshire Heavy Industries began producing Stalkers at their factories on Shiro III and Twycross respectively. Both the Free Worlds League and Lyran Commonwealth were thus able to maintain the largest number of Stalkers in their arsenals, but still the 'Mech was so common throughout the Inner Sphere and Periphery that some pilots lost their fear of it (at least until they had to face one in combat). Its long career also led to a large number of variants, one of the most common being removing ten to fifteen tons of weaponry in order to lighten the strain on its increasingly older, battle-worn skeleton. This created at least one subvariant that effectively rebuilds the Stalker as a 75-ton 'Mech. Starting in the late 3040s, Irian began utilizing newly-recovered lost technology to update the original design, improving upon its weaponry and armor and increasing its heat management capabilities. These new STK-5M models were fielded in time to take part in the Clan Invasion, although even with their upgrades they were sorely tested by the Clans' OmniMechs. The Federated Commonwealth also produced their own variant, the STK-5S, although this was introduced towards the end of the invasion. New variants would continue to be produced in the wake of the FedCom Civil War, one for both of the split nations, and by Irian in an effort to further keep the design alive.
+
+manufacturer:Irian BattleMechs Unlimited
+primaryfactory:Shiro III
+systemmanufacturer:CHASSIS:Irian Chassis Class 30
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:Riese-456
+systemmanufacturer:COMMUNICATIONS:Irian E.A.R.
+systemmanufacturer:TARGETING:Wasat Aggressor

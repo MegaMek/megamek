@@ -2,18 +2,26 @@
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.preference;
 
+import jakarta.xml.bind.*;
+import jakarta.xml.bind.annotation.*;
+import megamek.common.Configuration;
+import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
+
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,25 +31,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
-
-import megamek.MegaMek;
-import megamek.common.Configuration;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.MegaMekXmlUtil;
 
 public class PreferenceManager {
 
@@ -67,7 +56,7 @@ public class PreferenceManager {
         return instance;
     }
 
-    public static IClientPreferences getClientPreferences() {
+    public static ClientPreferences getClientPreferences() {
         return getInstance().clientPreferences;
     }
 
@@ -81,7 +70,7 @@ public class PreferenceManager {
     }
 
     protected void load() {
-        stores = new Hashtable<String, IPreferenceStore>();
+        stores = new Hashtable<>();
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(
                 CFG_FILE_OPTION_NAME,
@@ -95,7 +84,7 @@ public class PreferenceManager {
         InputStream is;
 
         try {
-            is = new FileInputStream(new File(fileName));
+            is = new FileInputStream(fileName);
         } catch (FileNotFoundException e) {
             return;
         }
@@ -119,7 +108,7 @@ public class PreferenceManager {
                 }
             }
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading XML for client settings: " + e.getMessage(), e);
+            LogManager.getLogger().error("Error loading XML for client settings: " + e.getMessage(), e);
         }
     }
 
@@ -136,18 +125,12 @@ public class PreferenceManager {
             
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            try {
-            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            } catch (PropertyException ex) {
-            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            }
-            
-            JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME), Settings.class, new Settings(clientPreferenceStore, stores));
-            
+            marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+            JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME),
+                    Settings.class, new Settings(clientPreferenceStore, stores));
             marshaller.marshal(element, file);
-        } catch (JAXBException ex) {
-            System.err.println("Error writing XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed writing client settings XML", ex);
         }
     }
 
@@ -233,6 +216,7 @@ public class PreferenceManager {
          */
         @SuppressWarnings("unused")
         private XmlProperty() {
+
         }
     }
 }

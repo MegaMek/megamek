@@ -15,6 +15,10 @@ Sprint Scout Helicopter
 <Model>
 (Laser)
 </Model>
+
+<mul id:>
+3025
+</mul id:>
 <Tonnage>
 10
 </Tonnage>

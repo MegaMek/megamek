@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -40,7 +40,7 @@ import megamek.common.annotations.Nullable;
      * The troopers being carried.
      */
     protected int troopers = Entity.NONE;
-    transient IGame game;
+    transient Game game;
 
     /**
      * The set of front locations that load troopers externally.
@@ -68,7 +68,7 @@ import megamek.common.annotations.Nullable;
 
     /**
      * Get the exterior locations that a loaded squad covers.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param isRear
@@ -87,7 +87,7 @@ import megamek.common.annotations.Nullable;
     /**
      * Get the <code>String</code> to report the presence (or lack thereof) of a
      * loaded squad of Battle Armor troopers.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param isLoaded
@@ -149,12 +149,8 @@ import megamek.common.annotations.Nullable;
     /**
      * Load the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @exception IllegalArgumentException
-     *                - If the unit can't be loaded, an
-     *                <code>IllegalArgumentException</code> exception will be
-     *                thrown.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public final void load(Entity unit) throws IllegalArgumentException {
@@ -178,9 +174,13 @@ import megamek.common.annotations.Nullable;
     @Override
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
-        Vector<Entity> units = new Vector<Entity>(1);
+        Vector<Entity> units = new Vector<>(1);
         if (troopers != Entity.NONE) {
-            units.addElement(game.getEntity(troopers));
+            Entity entity = game.getEntity(troopers);
+            
+            if (entity != null) {
+                units.addElement(entity);
+            }
         }
         return units;
     }
@@ -221,8 +221,8 @@ import megamek.common.annotations.Nullable;
     }
 
     @Override
-    public double getUnused(){
-        if (troopers == Entity.NONE){
+    public double getUnused() {
+        if (troopers == Entity.NONE) {
             return 1;
         } else {
             return 0;
@@ -246,7 +246,6 @@ import megamek.common.annotations.Nullable;
      *            facing.
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
-     * @see megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
      */
     @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
@@ -300,8 +299,7 @@ import megamek.common.annotations.Nullable;
      */
     @Override
     public final @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
-        return isWeaponBlockedAt(loc, isRear)?
-                game.getEntity(troopers) : null;
+        return isWeaponBlockedAt(loc, isRear) ? game.getEntity(troopers) : null;
     }
 
     @Override
@@ -325,7 +323,7 @@ import megamek.common.annotations.Nullable;
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
-} // End package class BattleArmorHandles implements Transporter
+}

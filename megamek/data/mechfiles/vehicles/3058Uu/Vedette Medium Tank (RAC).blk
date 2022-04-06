@@ -15,6 +15,10 @@ Vedette Medium Tank
 <Model>
 (RAC)
 </Model>
+
+<mul id:>
+3394
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

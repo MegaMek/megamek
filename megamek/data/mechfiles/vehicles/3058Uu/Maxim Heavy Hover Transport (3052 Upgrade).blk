@@ -15,6 +15,10 @@ Maxim Heavy Hover Transport
 <Model>
 (3052 Upgrade)
 </Model>
+
+<mul id:>
+2117
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

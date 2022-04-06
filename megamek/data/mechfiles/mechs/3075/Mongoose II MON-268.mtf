@@ -1,6 +1,7 @@
 Version:1.0
 Mongoose II
 MON-268
+mul id:2218
 
 Config:Biped
 TechBase:Inner Sphere
@@ -148,4 +149,18 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:Luthien Armor Works was working on an upgrade of the Mongoose for ComStar to be a faster and tougher scout 'Mech, when the chaos on Luthien during the early years of the Jihad forced them to look elsewhere. 
 
+capabilities:The result is the Mongoose II, an effective hunter-killer that is able to find hidden enemies and provide long range fire support. Equipped with an impressive suite of electronics, the 'Mech carries a Beagle Active Probe, Guardian ECM Suite, C3i Computer, and MASC that enables it move up to 172 km/h in bursts. A respectable seven tons of armor protects the Mongoose II.
+
+deployment:A command unit that was still undergoing tests in 3075, the 268 trades out the ECM and C3i for a C3 Master Computer. Ferro-Fibrous armor provides increased protection. In order to make room, the ER Large Laser had to be removed, so it is replaced with three Ramtech ER Medium Lasers guided by a Targeting Computer.
+
+history:ComStar financed a refit of a lost Rim Worlds Republic factory on Kwangjong-ni. New versions of the Zeus and Banshee were walking off the line for battlefield testing when Word of Blake conquered Hesperus II. Anxious to stay solvent, ComStar C-bills paid for the upgrade to the Kwangjong-ni facility. In exchange, Defiance sold them sixty-six percent of its production for its first two years.
+
+manufacturer:Arc-Royal MechWorks, Defiance Manufacturing Annex
+primaryfactory:Arc-Royal,Kwangjong-ni
+systemmanufacturer:CHASSIS:Alshain Type 69-40S
+systemmanufacturer:ENGINE:Pitban 320 XL
+systemmanufacturer:ARMOR:Starshield Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:Nashan Comm-i U-284
+systemmanufacturer:TARGETING:Nashan Trac V-102 with Active Probe

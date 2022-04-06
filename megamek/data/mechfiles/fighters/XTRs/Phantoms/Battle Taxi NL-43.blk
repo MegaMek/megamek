@@ -20,6 +20,10 @@ Battle Taxi
 NL-43
 </Model>
 
+<mul id:>
+5610
+</mul id:>
+
 <year>
 3074
 </year>
@@ -37,6 +41,8 @@ Aerodyne
 </motion_type>
 
 <transporters>
+troopspace:16	
+cargobay:2.0:1:1
 </transporters>
 
 <SafeThrust>

@@ -23,8 +23,8 @@ import javax.swing.tree.*;
 
 import megamek.client.ui.swing.lobby.sorters.MekTreeTopLevelSorter;
 import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.force.*;
 import megamek.common.options.OptionsConstants;
 
@@ -96,10 +96,10 @@ public class MekTreeForceModel extends DefaultTreeModel {
      * Removes those that aren't visible in real blind drop. 
      */
     private void createTopLevel() {
-        IGame game = lobby.getClientgui().getClient().getGame();
+        Game game = lobby.getClientgui().getClient().getGame();
         boolean realBD = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         Forces forces = lobby.game().getForces();
-        IPlayer localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
+        Player localPlayer = lobby.getClientgui().getClient().getLocalPlayer();
         ArrayList<Force> toplevel = new ArrayList<>(forces.getTopLevelForces());
         if (realBD) {
             toplevel.removeIf(f -> localPlayer.isEnemyOf(forces.getOwner(f)));

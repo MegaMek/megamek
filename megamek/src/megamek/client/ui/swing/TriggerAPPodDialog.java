@@ -45,17 +45,14 @@ import megamek.common.actions.TriggerAPPodAction;
  * Anti-Personell Pod on one of their units.
  */
 public class TriggerAPPodDialog extends JDialog implements ActionListener {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -9009039614015364943L;
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+    private JButton butOkay = new JButton(Messages.getString("Okay"));
     private JTextArea labMessage;
 
     /**
      * The <code>FirePodTracker</code>s for the entity's active AP Pods.
      */
-    private ArrayList<TriggerPodTracker> trackers = new ArrayList<TriggerPodTracker>();
+    private ArrayList<TriggerPodTracker> trackers = new ArrayList<>();
 
     /**
      * The <code>int</code> ID of the entity that can fire AP Pods.
@@ -112,13 +109,11 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
      * @param entity the <code>Entity</code> that can fire AP Pods.
      */
     public TriggerAPPodDialog(JFrame parent, Entity entity) {
-        super(parent, Messages.getString("TriggerAPPodDialog.title"), true); //$NON-NLS-1$
+        super(parent, Messages.getString("TriggerAPPodDialog.title"), true);
         entityId = entity.getId();
 
-        labMessage = new JTextArea(
-                Messages
-                        .getString(
-                                "TriggerAPPodDialog.selectPodsToTrigger", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
+        labMessage = new JTextArea(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger",
+                entity.getDisplayName()));
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
 
@@ -128,7 +123,6 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
 
         // Walk through the entity's misc equipment, looking for AP Pods.
         for (Mounted mount : entity.getMisc()) {
-
             // Is this an AP Pod?
             if (mount.getType().hasFlag(MiscType.F_AP_POD)) {
 
@@ -208,6 +202,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
                 + parent.getSize().height / 2 - size.height / 2);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         setVisible(false);
     }
@@ -219,7 +214,7 @@ public class TriggerAPPodDialog extends JDialog implements ActionListener {
      *         objects that match the user's selections.
      */
     public Enumeration<TriggerAPPodAction> getActions() {
-        Vector<TriggerAPPodAction> temp = new Vector<TriggerAPPodAction>();
+        Vector<TriggerAPPodAction> temp = new Vector<>();
 
         // Walk through the list of AP Pod trackers.
         for (TriggerPodTracker pod : trackers) {

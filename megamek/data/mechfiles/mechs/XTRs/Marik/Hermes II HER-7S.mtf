@@ -1,6 +1,7 @@
 Version:1.1
 Hermes II
 HER-7S
+mul id:1505
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

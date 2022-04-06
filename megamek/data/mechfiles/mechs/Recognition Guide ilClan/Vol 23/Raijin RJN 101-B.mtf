@@ -1,0 +1,169 @@
+Version:1.0
+Raijin
+RJN-101-B
+mul id:8429
+
+Config:Biped
+techbase:Inner Sphere
+era:3058
+source:Rec Guide:ilClan #23 - Clan Invasion
+rules level:2
+
+mass:50
+engine:300 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:6
+jump mp:6
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:13
+RA armor:13
+LT armor:13
+RT armor:13
+CT armor:18
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:6
+RTR armor:6
+RTC armor:8
+
+Weapons:6
+Large Pulse Laser, Left Arm
+Medium Laser, Left Torso
+Flamer, Right Torso
+ER PPC, Right Torso
+Medium Laser, Right Torso
+Flamer, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Flamer
+BeagleActiveProbe
+BeagleActiveProbe
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+Medium Laser
+Flamer
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Raijin is designed to be highly mobile and capable of engaging an enemy at a variety of ranges. 
+
+capabilities: The 'Mech's relatively light armor can be a liability if it is engaged in close combat or finds itself in a protracted engagement. 
+
+deployment:The Raijin is built around a Vlar 300 XL Engine that gives it a top speed of 97.2 km/h. For added mobility, the Raijin carries six Rawlings 60 jump jets, allowing the 'Mech to jump up to one hundred and eighty meters. The Raijin carries seven tons of Krupp 200 Ferro-Fibrous armor. For long-range striking power, the Raijin carries a Blankenburg 200 ER PPC that can be used to engage a target at up to six hundred and ninety meters. For close combat, the Raijin has three highly accurate Blankenburg Technologies Medium Pulse Lasers. Additionally, to seek out any weak points in an enemy's armor, the Raijin has a Holly SRM-6 and an ammunition efficient Holly Streak SRM-2. 
+
+history:The Raijin was designed after the Battle of Tukayyid to rearm ComGuard units that had suffered losses in the campaign. Despite having stockpiled Star League-era BattleMechs at his disposal, Precentor Martial Focht wanted something unfamiliar to both the Inner Sphere and the Clans. The Raijin was redesigned after Word of Blake forces lost considerable amounts of the design during its taking of Terra from ComStar in 3058. Newly redesigned Raijin II units began to be deployed in 3066, with older versions of the 'Mech being refitted to RJN-200-A variant standards. While off-shoots of the 200-A were deployed to elite Divisions.
+
+manufacturer:Krupp Armament Works
+primaryfactory:Terra
+systemmanufacturer:CHASSIS:Krupp 200
+systemmanufacturer:ENGINE:Vlar 300 XL
+systemmanufacturer:ARMOR:Krupp 200 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Rawlings 60
+systemmanufacturer:COMMUNICATIONS:Exeter Longscan 200
+systemmanufacturer:TARGETING:Garret T12A

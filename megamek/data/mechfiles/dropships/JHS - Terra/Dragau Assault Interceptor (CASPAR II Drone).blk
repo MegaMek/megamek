@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Dragau Assault Interceptor
 <Model>
 (CASPAR II Drone)
 </Model>
+
+<mul id:>
+907
+</mul id:>
 
 <year>
 3065
@@ -140,6 +144,11 @@ CasparIIDroneControlSystem
 15
 </structural_integrity>
 
+<notes>
+Caspar II Advanced Smart Robotic Control System (Gunnery 4,
+Piloting 5).
+</notes>
+
 <source>
 Jihad Hot Spots: Terra - Civil War
 </source>
@@ -187,3 +196,4 @@ Jihad Hot Spots: Terra - Civil War
 <escape_pod>
 0
 </escape_pod>
+

@@ -15,6 +15,10 @@ Anti-'Mech Jump Infantry
 <Model>
 Third Ueda Infantry
 </Model>
+
+<mul id:>
+46
+</mul id:>
 <squad_size>
 7
 </squad_size>

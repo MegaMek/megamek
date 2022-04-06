@@ -27,6 +27,7 @@ public class WeaponComparatorBV implements Comparator<Mounted> {
     public WeaponComparatorBV() {
     }
 
+    @Override
     public int compare(Mounted obj1, Mounted obj2) {
         if (obj1.getType() instanceof WeaponType
                 && obj2.getType() instanceof WeaponType) {

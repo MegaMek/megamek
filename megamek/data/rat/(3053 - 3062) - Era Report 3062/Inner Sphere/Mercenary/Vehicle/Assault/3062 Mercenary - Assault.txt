@@ -1,6 +1,6 @@
 3062 Mercenary - Assault Vehicles
 Alacorn Heavy Tank Mk VI,1
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Schrek PPC Carrier (Standard),3
 Partisan Air Defense Tank (Standard),4
 Demolisher II Heavy Tank (Standard),5

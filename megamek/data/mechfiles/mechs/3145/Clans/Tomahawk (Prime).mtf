@@ -1,35 +1,36 @@
 Version:1.0
 Tomahawk
 (Prime)
+mul id:6298
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3065
-Source:TRO 3145 The Clans - Civil War
-Rules Level:2
+techbase:Clan
+era:3063
+source:TRO 3145 The Clans - Civil War
+rules level:2
 
-Mass:100
-Engine:300 XL (Clan) Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:100
+engine:300 XL (Clan) Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:18 Double
-Base Chassis Heat Sinks:12
-Walk MP:3
-Jump MP:0
+heat sinks:18 Clan Double
+base chassis heat sinks:12
+walk mp:3
+jump mp:0
 
-Armor:Standard(Clan)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:46
-HD Armor:9
-LL Armor:41
-RL Armor:41
-RTL Armor:10
-RTR Armor:10
-RTC Armor:15
+armor:Standard(Clan)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:46
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:15
 
 Weapons:9
 Gauss Rifle, Left Arm
@@ -38,47 +39,47 @@ Gauss Rifle, Right Arm
 ER Large Laser, Right Arm
 Streak SRM 4, Left Torso
 Medium Pulse Laser, Left Torso
-AMS, Left Torso
+Anti-Missile System, Left Torso
 Streak SRM 4, Right Torso
 Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLERLargeLaser (omnipod)
-Clan Gauss Ammo (omnipod)
-Clan Gauss Ammo (omnipod)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLGaussRifle (omnipod)
-CLERLargeLaser (omnipod)
-Clan Gauss Ammo (omnipod)
-Clan Gauss Ammo (omnipod)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLStreakSRM4 (omnipod)
-CLMediumPulseLaser (omnipod)
-CLAntiMissileSystem (omnipod)
-CLAMS Ammo (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLStreakSRM4 (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLAntiMissileSystem (OMNIPOD)
+CLAMS Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -87,13 +88,13 @@ CLAMS Ammo (omnipod)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLStreakSRM4 (omnipod)
-CLMediumPulseLaser (omnipod)
-Clan Streak SRM 4 Ammo (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLStreakSRM4 (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+Clan Streak SRM 4 Ammo (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -109,14 +110,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLECMSuite (omnipod)
+CLECMSuite (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -131,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +146,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -154,4 +155,18 @@ CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
+overview:The Tomahawk is an assault-class OmniMech designed by Clan Wolf in 3063. The 'Mech ultimately failed to enter production and remained a prototype, presumably due at least in part to the Clan's troubles during the Jihad.
+
+deployment:The Prime configuration is similar in its weapon layout to the later Tomahawk II. The Tomahawk's main weapons focus on pair of Gauss Rifles and ER Large Lasers, which are mounted in its arms. The close-range weaponry includes pair of Medium Pulse Lasers and Streak 4 launchers found in the side torsos. Other features include three additional Double Heat Sinks, an Anti-Missile System, and an ECM Suite.
+
+history:One these prototypes was piloted by Nathan Wolf in a Circle of Equals on Tamar when he attained the rank of Star Colonel. Although he was victorious against a Thor, it was noted that the Tomahawk still suffered from numerous system errors and gremlins and was not yet ready for mass production. Still, Nathan retained the 'Mech for his subsequent assignment to Omega Galaxy and successfully piloted it in combat on Novo Cressidas in the Star's End system on 11 April 3064. After the Jihad, the design was revisited and improved, and became the Tomahawk II which did enter line production.
+
+manufacturer:Clan Wolf
+primaryfactory:Unknown
+systemmanufacturer:CHASSIS:Unspecified
+systemmanufacturer:ENGINE:Unspecified
+systemmanufacturer:ARMOR:Unspecified
+systemmanufacturer:JUMPJET:Unspecified
+systemmanufacturer:COMMUNICATIONS:Unspecified
+systemmanufacturer:TARGETING:Unspecified
 

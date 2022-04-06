@@ -12,104 +12,101 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 /**
  * Implemented by any class that is subject to tech advancement (entities, equipment, systems, etc.)
  *
  * @author Neoancient
- *
  */
 public interface ITechnology {
 
-    public static final int TECH_BASE_ALL  = 0;
-    public static final int TECH_BASE_IS   = 1;
-    public static final int TECH_BASE_CLAN = 2;
+    int TECH_BASE_ALL  = 0;
+    int TECH_BASE_IS   = 1;
+    int TECH_BASE_CLAN = 2;
 
-    public static final int RATING_A = 0;
-    public static final int RATING_B = 1;
-    public static final int RATING_C = 2;
-    public static final int RATING_D = 3;
-    public static final int RATING_E = 4;
-    public static final int RATING_F = 5;
-    public static final int RATING_FSTAR = 6; // Increasing F (Clan equipmment for IS or extinct equipment
-                                              // during SW era has a 50% chance of being X, denoted by F*.
-    public static final int RATING_X = 7;
+    int RATING_A = 0;
+    int RATING_B = 1;
+    int RATING_C = 2;
+    int RATING_D = 3;
+    int RATING_E = 4;
+    int RATING_F = 5;
+    int RATING_FSTAR = 6; // Increasing F (Clan equipment for IS or extinct equipment
+    // during SW era has a 50% chance of being X, denoted by F*.
+    int RATING_X = 7;
 
-    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F", "F*",
-    "X" };
+    String[] ratingNames = { "A", "B", "C", "D", "E", "F", "F*", "X" };
 
-    public static final int ERA_SL   = 0;
-    public static final int ERA_SW   = 1;
-    public static final int ERA_CLAN = 2;
-    public static final int ERA_DA   = 3;
-    public static final int ERA_NUM  = 4;
+    int ERA_SL   = 0;
+    int ERA_SW   = 1;
+    int ERA_CLAN = 2;
+    int ERA_DA   = 3;
+    int ERA_NUM  = 4;
 
-    public static final int DATE_NONE = -1;
-    public static final int DATE_PS = 1950;
-    public static final int DATE_ES = 2100;
+    int DATE_NONE = -1;
+    int DATE_PS = 1950;
+    int DATE_ES = 2100;
 
-    //codes for recording which factions had access to technology at various points
-    public static final int F_NONE = -1; // Indicates that factions should be ignored when calculating tech level.
-    public static final int F_IS = 0;
-    public static final int F_CC = 1;
-    public static final int F_CF = 2;
-    public static final int F_CP = 3;
-    public static final int F_CS = 4;
-    public static final int F_DC = 5;
-    public static final int F_EI = 6;
-    public static final int F_FC = 7;
-    public static final int F_FR = 8;
-    public static final int F_FS = 9;
-    public static final int F_FW = 10;
-    public static final int F_LC = 11;
-    public static final int F_MC = 12;
-    public static final int F_MH = 13;
-    public static final int F_OA = 14;
-    public static final int F_TA = 15;
-    public static final int F_TC = 16;
-    public static final int F_TH = 17;
-    public static final int F_RD = 18;
-    public static final int F_RS = 19;
-    public static final int F_RA = 20;
-    public static final int F_RW = 21;
-    public static final int F_WB = 22;
-    public static final int F_MERC = 23;
-    public static final int F_PER = 24;
-    public static final int F_CLAN = 25;
-    public static final int F_CBR = 26;
-    public static final int F_CBS = 27;
-    public static final int F_CCY = 28;
-    public static final int F_CCC = 29;
-    public static final int F_CFM = 30;
-    public static final int F_CGB = 31;
-    public static final int F_CGS = 32;
-    public static final int F_CHH = 33;
-    public static final int F_CIH = 34;
-    public static final int F_CJF = 35;
-    public static final int F_CMN = 36;
-    public static final int F_CNC = 37;
-    public static final int F_CSF = 38;
-    public static final int F_CSJ = 39;
-    public static final int F_CSR = 40;
-    public static final int F_CSV = 41;
-    public static final int F_CSA = 42;
-    public static final int F_CWM = 43;
-    public static final int F_CWF = 44;
-    public static final int F_CWX = 45;
-    public static final int F_CWV = 46;
+    // codes for recording which factions had access to technology at various points
+    int F_NONE = -1; // Indicates that factions should be ignored when calculating tech level.
+    int F_IS = 0;
+    int F_CC = 1;
+    int F_CF = 2;
+    int F_CP = 3;
+    int F_CS = 4;
+    int F_DC = 5;
+    int F_EI = 6;
+    int F_FC = 7;
+    int F_FR = 8;
+    int F_FS = 9;
+    int F_FW = 10;
+    int F_LC = 11;
+    int F_MC = 12;
+    int F_MH = 13;
+    int F_OA = 14;
+    int F_TA = 15;
+    int F_TC = 16;
+    int F_TH = 17;
+    int F_RD = 18;
+    int F_RS = 19;
+    int F_RA = 20;
+    int F_RW = 21;
+    int F_WB = 22;
+    int F_MERC = 23;
+    int F_PER = 24;
+    int F_CLAN = 25;
+    int F_CBR = 26;
+    int F_CBS = 27;
+    int F_CCY = 28;
+    int F_CCC = 29;
+    int F_CFM = 30;
+    int F_CGB = 31;
+    int F_CGS = 32;
+    int F_CHH = 33;
+    int F_CIH = 34;
+    int F_CJF = 35;
+    int F_CMN = 36;
+    int F_CNC = 37;
+    int F_CSF = 38;
+    int F_CSJ = 39;
+    int F_CSR = 40;
+    int F_CSV = 41;
+    int F_CSA = 42;
+    int F_CWM = 43;
+    int F_CWF = 44;
+    int F_CWX = 45;
+    int F_CWV = 46;
 
-    //display codes using values from IOps
-    public static final String[] IO_FACTION_CODES = {
+    // display codes using values from IOps
+    String[] IO_FACTION_CODES = {
             "IS", "CC", "CF", "CP", "CS", "DC", "EI", "FC", "FR", "FS", "FW", "LC", "MC",
             "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", "Per",
             "Clan", "CBR", "CBS", "CCY", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMN",
             "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV"
     };
 
-    //faction lookup names for MHQ
-    public static final String[] MM_FACTION_CODES = {
+    // faction lookup names for MHQ
+    String[] MM_FACTION_CODES = {
             "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FC", "FRR", "FS", "FWL", "LA", "MOC",
             "MH", "OA", "TA", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC", "Periphery",
             "CLAN", "CB", "CBS", "CCO", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMG",
@@ -154,7 +151,7 @@ public interface ITechnology {
         return getReintroductionDate();
     }
 
-    public static int getTechEra(int year) {
+    static int getTechEra(int year) {
         if (year < 2780) {
             return ERA_SL;
         } else if (year < 3050) {
@@ -228,8 +225,8 @@ public interface ITechnology {
      */
     default SimpleTechLevel findMinimumRulesLevel(boolean clan) {
         if (getCommonDate(clan) != DATE_NONE) {
-            return (getStaticTechLevel() == SimpleTechLevel.INTRO)?
-                    SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
+            return (getStaticTechLevel() == SimpleTechLevel.INTRO)
+                    ? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate(clan) != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;
@@ -247,8 +244,8 @@ public interface ITechnology {
      */
     default SimpleTechLevel findMinimumRulesLevel() {
         if (getCommonDate() != DATE_NONE) {
-            return (getStaticTechLevel() == SimpleTechLevel.INTRO)?
-                    SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
+            return (getStaticTechLevel() == SimpleTechLevel.INTRO)
+                    ? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate() != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;
@@ -419,14 +416,14 @@ public interface ITechnology {
         return calcYearAvailability(year, isClan());
     }
 
-    public static String getRatingName(int rating) {
+    static String getRatingName(int rating) {
         if ((rating < 0) || (rating >= ratingNames.length)) {
             return "U";
         }
         return ratingNames[rating];
     }
 
-    public static String getDateRange(int startIncl, int endNonIncl) {
+    static String getDateRange(int startIncl, int endNonIncl) {
         if (startIncl == DATE_NONE) {
             return "-";
         }

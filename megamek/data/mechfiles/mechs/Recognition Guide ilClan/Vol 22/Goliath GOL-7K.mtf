@@ -1,0 +1,173 @@
+Version:1.0
+Goliath
+GOL-7K
+mul id:8407
+
+Config:Quad
+techbase:Inner Sphere
+era:3148
+source:Rec Guide:ilClan #22 - Dark Age
+rules level:2
+
+mass:80
+engine:320 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:4
+jump mp:0
+
+armor:Standard(Inner Sphere)
+FLL armor:30
+FRL armor:30
+LT armor:21
+RT armor:21
+CT armor:30
+HD armor:9
+RLL armor:31
+RRL armor:31
+RTL armor:13
+RTR armor:13
+RTC armor:19
+
+Weapons:10
+Heavy PPC, Right Torso
+MRM 10, Left Torso
+MRM 10, Right Torso
+Machine Gun, Center Torso
+Machine Gun, Left Torso
+M-Pod, Front Right Leg
+M-Pod, Front Left Leg
+M-Pod, Rear Right Leg
+M-Pod, Rear Left Leg
+M-Pod, Center Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISMPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISMPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+MRM 10
+MRM 10
+ISApollo
+Machine Gun
+IS Machine Gun Ammo - Half
+IS MRM 10 Ammo
+IS MRM 10 Ammo
+Supercharger
+ISCASEII
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+PPC Capacitor
+MRM 10
+MRM 10
+ISApollo
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMPod
+Machine Gun
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISMPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISMPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Goliath is used as a general assault 'Mech and until recently was not usually seen in large numbers because of the bias against quad 'Mechs prior to the 3060s. 
+
+capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.
+
+deployment:Unknown
+
+history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. The Goliath is based on lessons that were learned from the Scorpion. The first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
+
+manufacturer:Osaka Heavy Metrics
+primaryfactory:Togura
+systemmanufacturer:CHASSIS:Brigadier 1000F
+systemmanufacturer:ENGINE:Hermes 320 Light
+systemmanufacturer:ARMOR:Starshield with CASE II
+systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
+systemmanufacturer:TARGETING:Daidouji 52 Enhanced Optical with Apollo FCS
+

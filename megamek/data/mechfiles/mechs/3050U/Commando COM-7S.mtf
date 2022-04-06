@@ -1,6 +1,7 @@
 Version:1.0
 Commando
 COM-7S
+mul id:676
 
 Config:Biped
 TechBase:Inner Sphere
@@ -147,3 +148,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:Created for the Lyran Commonwealth Armed Forces and one of the first 'Mechs ever designed for reconnaissance, the Commando was much lighter and faster than its precursors, though it still utilized primitive BattleMech technology. 
+
+capabilities:With only four tons of armor to protect itself, the Commando is not meant to participate in a stand-up fight against heavier enemies, but it excels at hit-and-run tactics and as a scout hunter.
+
+deployment:This update of the COM-5S introduced in 3059 is also built on an Endo Steel chassis but uses a new Light Fusion engine. The 'Mech carries two Streak SRM-2 launchers, an SRM-4 with an Artemis IV Fire Control System, and an ER Medium Laser in each arm.
+
+history:In 2463 Coventry Metal Works (then known as Coventry Defense Conglomerate) introduced their second BattleMech, the COM-1A Commando. The Commando was able to destroy much heavier Kuritan Gladiators during the first large-scale battle between BattleMechs in 2475 on Nox. The installed Large Laser caused several problems and other 'Mechs were soon introduced (like the Wasp in 2464 and the Stinger in 2479) that were better equipped for scouting and even mounted jump jets. The Commando's profile was radically changed with the introduction of the sophisticated COM-2D variant in 2486, which exchanged the laser weaponry with short range missiles and turned the machine into a striker. The Commando became popular among LCAF forces and, nearly 600 years later, is still mainly in use by Lyrans. The Commonwealth went to great pains to keep the 'Mech solely in Lyran hands, especially during the years of the Star League. It took an alliance with the Federated Suns and the creation of the Federated Commonwealth to break the stranglehold. The Commando was chosen as the standard light BattleMech for the Armed Forces of the Federated Commonwealth next to the Valkyrie, and after the upgrade to the COM-5S model in 3050, Vandenberg Mechanized Industries was allowed to produce the old COM-2D for the Taurian Defense Force. Furthermore, the Marian Hegemony deploys the Rocket Launcher-packed COM-4H, and the Word of Blake produced its own variant (the COM-7B) during its occupation of Coventry from 3068 to 3074.
+
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Foundation Ultralight Endo Steel
+systemmanufacturer:ENGINE:Defiance 150 Light
+systemmanufacturer:ARMOR:Lexington Limited
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Cyclops MultiTasker 10

@@ -1,26 +1,27 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 
 import megamek.server.SmokeCloud;
 
-public class Terrains implements ITerrainFactory {
+public class Terrains implements Serializable {
+    private static final long serialVersionUID = -4333807226569945079L;
 
     // base terrain types
     public static final int WOODS = 1; // 1: light 2: heavy 3: ultra
@@ -90,8 +91,7 @@ public class Terrains implements ITerrainFactory {
 
     // special types
     public static final int IMPASSABLE = 35;
-    public static final int ELEVATOR = 36; // level=elevation it moves
-                                           // to,exits=d6 rolls it moves on
+    public static final int ELEVATOR = 36; // level = elevation it moves to, exits = d6 rolls it moves on
     public static final int FORTIFIED = 37;
     public static final int SCREEN = 38;
 
@@ -154,21 +154,17 @@ public class Terrains implements ITerrainFactory {
             "incline_top", "incline_bottom", "incline_high_top", "incline_high_bottom", "foliage_elev" };
     
     /** Terrains in this set are hidden in the Editor, not saved to board files and handled internally. */
-    public static final HashSet<Integer> AUTOMATIC = 
-            new HashSet<Integer>(Arrays.asList(
-                    INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM));
+    public static final HashSet<Integer> AUTOMATIC = new HashSet<>(Arrays.asList(
+            INCLINE_TOP, INCLINE_BOTTOM, INCLINE_HIGH_TOP, INCLINE_HIGH_BOTTOM, CLIFF_BOTTOM));
 
     public static final int SIZE = names.length;
 
     private static Hashtable<String, Integer> hash;
 
-    private static ITerrainFactory factory;
-
     /**
      * Checks to see if the given terrain type can have exits.
      * 
-     * @param terrType
-     *            The terrain type to test
+     * @param terrType The terrain type to test
      * @return True if the input terrain type can have exits, else false.
      */
     public static boolean exitableTerrain(int terrType) {
@@ -188,7 +184,6 @@ public class Terrains implements ITerrainFactory {
     }
 
     /**
-     * 
      * @param type the type of terrain to get a localized name for
      * @return the localised name of the type of terrain
      */
@@ -197,7 +192,6 @@ public class Terrains implements ITerrainFactory {
     }
 
     /**
-     *
      * @param type the type of terrain to get a localized name for
      * @return the localised tool tip for the type of terrain
      */
@@ -221,166 +215,163 @@ public class Terrains implements ITerrainFactory {
      */
     public static String getDisplayName(int type, int level) {
         switch (type) {
-        case (BUILDING):
-            if (level == 1) {
-                return "Light building";
-            } else if (level == 2) {
-                return "Medium building";
-            } else if (level == 3) {
-                return "Heavy building";
-            } else if (level == 4) {
-                return "Hardened Building";
-            }
-        case (WOODS):
-            if (level == 1) {
-                return "Light woods";
-            } else if (level == 2) {
-                return "Heavy woods";
-            } else if (level == 3) {
-                return "Ultra-heavy woods";
-            } else {
-                return "Woods (unknown)";
-            }
-        case (FOLIAGE_ELEV):
-            return "Woods/Jungle elevation: " + level; 
-        case (ROUGH):
-            if (level == 1) {
-                return "Rough";
-            } else if (level == 2) {
-                return "Ultra rough";
-            } else {
-                return "Rough (unknown)";
-            }
-        case (RUBBLE):
-            if (level < 6) {
-                return "Rubble";
-            } else if (level > 5) {
-                return "Ultra rubble";
-            } else { //this will never be hit, as Level <6 and >5 mean all values are hit by the first two
-                return "Rubble (unknown)";
-            }
-        case (WATER):
-            return "Water (depth " + level + ")";
-        case (PAVEMENT):
-            return "Pavement";
-        case (ROAD):
-            return "Road";
-        case (FIRE):
-            if (level == 1) {
-                return "Fire";
-            }
-            if (level == 2 || level == 3 || level == 4) {
-                return "Inferno fire";
-            }
-            return "Fire (unknown)";
-        case (SMOKE):
-            switch (level) {
-                case SmokeCloud.SMOKE_LIGHT:
-                    return "Light smoke";
-                case SmokeCloud.SMOKE_HEAVY:
-                    return "Heavy smoke";
-                case SmokeCloud.SMOKE_LI_LIGHT:
-                case SmokeCloud.SMOKE_LI_HEAVY:
-                    return "LASER inhibiting smoke";
-                case SmokeCloud.SMOKE_CHAFF_LIGHT:
-                    return "Chaff (ECM)";
-                case SmokeCloud.SMOKE_GREEN:
-                    return "Green smoke (anti-TSM)";
-                default:
-                    return "Smoke (unknown)";
-            }
-        case (SWAMP):
-            if ((level == 2) || (level == 3)) {
-                return "Quicksand";
-            } else {
-                return "Swamp";
-            }
-        case (ICE):
-            return "Ice";
-        case (FORTIFIED):
-            return "Improved position";
-        case (GEYSER):
-            if (level == 1) {
-                return "Dormant";
-            } else if (level == 2) {
-                return "Active";
-            } else if (level == 3) {
-                return "Magma vent";
-            } else {
-                return "Geyser (unknown)";
-            }
-        case (JUNGLE):
-            if (level == 1) {
-                return "Light jungle";
-            } else if (level == 2) {
-                return "Heavy jungle";
-            } else if (level == 3) {
-                return "Ultra-heavy jungle";
-            } else {
-                return "Jungle (unknown)";
-            }
-        case (MAGMA):
-            if (level == 1) {
-                return "Magma crust";
-            } else if (level == 2) {
-                return "Magma liquid";
-            } else {
-                return "Magma (unknown)";
-            }
-        case (MUD):
-            return "Mud";
-        case (RAPIDS):
-            if (level == 1) {
-                return "Rapids";
-            } else if (level == 2) {
-                return "Torrent";
-            } else {
-                return "Rapids (unknown)";
-            }
-        case (SAND):
-            return "Sand";
-        case (SNOW):
-            if (level == 1) {
-                return "Thin snow";
-            } else if (level == 2) {
-                return "Heavy snow";
-            } else {
-                return "Snow (unknown)";
-            }
-        case (TUNDRA):
-            return "Tundra";
-        case (SPACE):
-            return "Space";
-        case (SCREEN):
-            return "Screen";
-        case (FIELDS):
-            return "Planted fields";
-        case (INDUSTRIAL):
-            return "Heavy industrial zone (height " + level + ")";
-        case (IMPASSABLE):
-            return "Impassable terrain";
-        case (ELEVATOR):
-            return "Elevator";
-        case (METAL_CONTENT):
-            if (level < 1) {
-                return "No metal content";
-            } else if (level == 1) {
-                return "Very low metal content";
-            } else if (level == 2) {
-                return "Low metal content";
-            } else if ((level == 3) || (level == 4)) {
-                return "Medium metal content";
-            } else if ((level == 5) || (level == 6)) {
-                return "High metal content";
-            } else if ((level == 7) || (level == 8)) {
-                return "Very high metal content";
-            } else {
-                return "Extremely high metal content";
-            }
-        default:
-            return null;
+            case BUILDING:
+                if (level == 1) {
+                    return "Light building";
+                } else if (level == 2) {
+                    return "Medium building";
+                } else if (level == 3) {
+                    return "Heavy building";
+                } else if (level == 4) {
+                    return "Hardened Building";
+                }
+            case WOODS:
+                if (level == 1) {
+                    return "Light woods";
+                } else if (level == 2) {
+                    return "Heavy woods";
+                } else if (level == 3) {
+                    return "Ultra-heavy woods";
+                } else {
+                    return "Woods (unknown)";
+                }
+            case FOLIAGE_ELEV:
+                return "Woods/Jungle elevation: " + level;
+            case ROUGH:
+                if (level == 1) {
+                    return "Rough";
+                } else if (level == 2) {
+                    return "Ultra rough";
+                } else {
+                    return "Rough (unknown)";
+                }
+            case RUBBLE:
+                if (level > 5) {
+                    return "Ultra rubble";
+                } else {
+                    return "Rubble";
+                }
+            case WATER:
+                return "Water (depth " + level + ")";
+            case PAVEMENT:
+                return "Pavement";
+            case ROAD:
+                return "Road";
+            case FIRE:
+                if (level == 1) {
+                    return "Fire";
+                }
+                if (level == 2 || level == 3 || level == 4) {
+                    return "Inferno fire";
+                }
+                return "Fire (unknown)";
+            case SMOKE:
+                switch (level) {
+                    case SmokeCloud.SMOKE_LIGHT:
+                        return "Light smoke";
+                    case SmokeCloud.SMOKE_HEAVY:
+                        return "Heavy smoke";
+                    case SmokeCloud.SMOKE_LI_LIGHT:
+                    case SmokeCloud.SMOKE_LI_HEAVY:
+                        return "LASER inhibiting smoke";
+                    case SmokeCloud.SMOKE_CHAFF_LIGHT:
+                        return "Chaff (ECM)";
+                    case SmokeCloud.SMOKE_GREEN:
+                        return "Green smoke (anti-TSM)";
+                    default:
+                        return "Smoke (unknown)";
+                }
+            case SWAMP:
+                if ((level == 2) || (level == 3)) {
+                    return "Quicksand";
+                } else {
+                    return "Swamp";
+                }
+            case ICE:
+                return "Ice";
+            case FORTIFIED:
+                return "Improved position";
+            case GEYSER:
+                if (level == 1) {
+                    return "Dormant";
+                } else if (level == 2) {
+                    return "Active";
+                } else if (level == 3) {
+                    return "Magma vent";
+                } else {
+                    return "Geyser (unknown)";
+                }
+            case JUNGLE:
+                if (level == 1) {
+                    return "Light jungle";
+                } else if (level == 2) {
+                    return "Heavy jungle";
+                } else if (level == 3) {
+                    return "Ultra-heavy jungle";
+                } else {
+                    return "Jungle (unknown)";
+                }
+            case MAGMA:
+                if (level == 1) {
+                    return "Magma crust";
+                } else if (level == 2) {
+                    return "Magma liquid";
+                } else {
+                    return "Magma (unknown)";
+                }
+            case MUD:
+                return "Mud";
+            case RAPIDS:
+                if (level == 1) {
+                    return "Rapids";
+                } else if (level == 2) {
+                    return "Torrent";
+                } else {
+                    return "Rapids (unknown)";
+                }
+            case SAND:
+                return "Sand";
+            case SNOW:
+                if (level == 1) {
+                    return "Thin snow";
+                } else if (level == 2) {
+                    return "Heavy snow";
+                } else {
+                    return "Snow (unknown)";
+                }
+            case TUNDRA:
+                return "Tundra";
+            case SPACE:
+                return "Space";
+            case SCREEN:
+                return "Screen";
+            case FIELDS:
+                return "Planted fields";
+            case INDUSTRIAL:
+                return "Heavy industrial zone (height " + level + ")";
+            case IMPASSABLE:
+                return "Impassable terrain";
+            case ELEVATOR:
+                return "Elevator";
+            case METAL_CONTENT:
+                if (level < 1) {
+                    return "No metal content";
+                } else if (level == 1) {
+                    return "Very low metal content";
+                } else if (level == 2) {
+                    return "Low metal content";
+                } else if ((level == 3) || (level == 4)) {
+                    return "Medium metal content";
+                } else if ((level == 5) || (level == 6)) {
+                    return "High metal content";
+                } else if ((level == 7) || (level == 8)) {
+                    return "Very high metal content";
+                } else {
+                    return "Extremely high metal content";
+                }
+            default:
+                return null;
         }
-
     }
 
     /**
@@ -397,13 +388,6 @@ public class Terrains implements ITerrainFactory {
         return 0;
     }
 
-    public static ITerrainFactory getTerrainFactory() {
-        if (factory == null) {
-            factory = new TerrainFactory();
-        }
-        return factory;
-    }
-
     protected static Hashtable<String, Integer> getHash() {
         if (hash == null) {
             hash = new Hashtable<>(SIZE);
@@ -414,43 +398,6 @@ public class Terrains implements ITerrainFactory {
         return hash;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.ITerrainFactory#createTerrain(int, int)
-     */
-    public ITerrain createTerrain(int type, int level) {
-        return getTerrainFactory().createTerrain(type, level);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.ITerrainFactory#createTerrain(int, int, boolean, int)
-     */
-    public ITerrain createTerrain(int type, int level, boolean exitsSpecified, int exits) {
-        return getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.ITerrainFactory#createTerrain(java.lang.String)
-     */
-    public ITerrain createTerrain(String terrain) {
-        return getTerrainFactory().createTerrain(terrain);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * megamek.common.ITerrainFactory#createTerrain(megamek.common.ITerrain)
-     */
-    public ITerrain createTerrain(ITerrain other) {
-        return getTerrainFactory().createTerrain(other);
-    }
-
     /**
      * @param type the type of terrain specified
      * @param level the level of the specified terrain
@@ -458,7 +405,7 @@ public class Terrains implements ITerrainFactory {
      */
     public static int getTerrainFactor(int type, int level) {
         switch (type) {
-            case (WOODS):
+            case WOODS:
                 if (level == 2) {
                     return 90;
                 } else if (level == 3) {
@@ -466,7 +413,7 @@ public class Terrains implements ITerrainFactory {
                 } else {
                     return 50;
                 }
-            case (JUNGLE):
+            case JUNGLE:
                 if (level == 2) {
                     return 100;
                 } else if (level == 3) {
@@ -474,22 +421,22 @@ public class Terrains implements ITerrainFactory {
                 } else {
                     return 60;
                 }
-            case (ROUGH):
-            case (PAVEMENT):
+            case ROUGH:
+            case PAVEMENT:
                 return 200;
-            case (ROAD):
+            case ROAD:
                 return 150;
-            case (ICE):
+            case ICE:
                 return 40;
-            case (MAGMA):
+            case MAGMA:
                 if (level == 1) {
                     return 30;
                 } else {
                     return 0;
                 }
-            case (SAND):
+            case SAND:
                 return 100;
-            case (SNOW):
+            case SNOW:
                 if (level == 1) {
                     return 15;
                 } else if (level == 2) {
@@ -497,13 +444,10 @@ public class Terrains implements ITerrainFactory {
                 } else {
                     return 15;
                 }
-            case (TUNDRA):
+            case TUNDRA:
                 return 70;
-            case (FIELDS):
+            case FIELDS:
                 return 30;
-            /*
-             * case(METAL_CONTENT): if(level < 1) { return 0; } return level;
-             */
             default:
                 return 0;
         }
@@ -521,26 +465,27 @@ public class Terrains implements ITerrainFactory {
      *         rises above the hex level.
      */
     public static int getTerrainElevation(int terrainType, int terrainLevel, boolean inAtmosphere) {
-        // Handle altitudes
         if (inAtmosphere) {
+            // Handle altitudes
             switch (terrainType) {
-            case FOLIAGE_ELEV:
-                return 1;
-            default:
-                return 0;
+                case FOLIAGE_ELEV:
+                    return 1;
+                default:
+                    return 0;
             }
-        }
-        // Handle elevations
-        switch (terrainType) {
-        case INDUSTRIAL:
-        case BLDG_ELEV:
-        case BRIDGE_ELEV:
-        case FOLIAGE_ELEV:
-            return terrainLevel;
-        case FIELDS:
-            return 1;
-        default:
-            return 0;
+        } else {
+            // Handle elevations
+            switch (terrainType) {
+                case INDUSTRIAL:
+                case BLDG_ELEV:
+                case BRIDGE_ELEV:
+                case FOLIAGE_ELEV:
+                    return terrainLevel;
+                case FIELDS:
+                    return 1;
+                default:
+                    return 0;
+            }
         }
     }
 }

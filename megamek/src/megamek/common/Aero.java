@@ -13,23 +13,16 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.Vector;
-
-import megamek.MegaMek;
+import megamek.common.battlevalue.AeroBVCalculator;
+import megamek.common.enums.AimingMode;
+import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * Taharqa's attempt at creating an Aerospace entity
@@ -321,6 +314,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * A method to determine if an aero has suffered 3 sensor hits.
      * When double-blind is on, this affects both standard visibility and sensor rolls
      */
+    @Override
     public boolean isAeroSensorDestroyed() {
         return getSensorHits() >= 3;
     }
@@ -356,7 +350,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         // partially repaired engine
         if (getPartialRepairs().booleanOption("aero_engine_crit")) {
-        	j--;
+            j--;
         }
 
         // if they are not airborne, then they get MP halved (aerodyne) or no MP
@@ -742,36 +736,39 @@ public class Aero extends Entity implements IAero, IBomber {
         if (gearHit) {
             return vTakeoff ? 1 : 5;
         } else {
-        	return 0;
+            return 0;
         }
     }
 
     //Landing mods for partial repairs
+    @Override
     public int getLandingGearPartialRepairs() {
-    	if (getPartialRepairs().booleanOption("aero_gear_crit")) {
-        return 2;
-    	} else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
-        return 1;
-    	} else {
-    	return 0;
-    	}
+        if (getPartialRepairs().booleanOption("aero_gear_crit")) {
+            return 2;
+        } else if (getPartialRepairs().booleanOption("aero_gear_replace")) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
-    //Avionics mods for partial repairs
+    // Avionics mods for partial repairs
+    @Override
     public int getAvionicsMisreplaced() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
+        if (getPartialRepairs().booleanOption("aero_avionics_replace")) {
         return 1;
-    	} else {
-    	return 0;
-    	}
+        } else {
+        return 0;
+        }
     }
 
+    @Override
     public int getAvionicsMisrepaired() {
-    	if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
-        return 1;
-    	} else {
-    	return 0;
-    	}
+        if (getPartialRepairs().booleanOption("aero_avionics_crit")) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     public void setOHeatSinks(int hs) {
@@ -834,21 +831,23 @@ public class Aero extends Entity implements IAero, IBomber {
         return fuel;
     }
 
+    @Override
     public int getFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-        		|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
-        	return (int) (fuel * 0.9);
+                || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+            return (int) (fuel * 0.9);
         } else {
-        	return fuel;
+            return fuel;
         }
     }
 
+    @Override
     public int getCurrentFuel() {
         if ((getPartialRepairs().booleanOption("aero_asf_fueltank_crit"))
-            	|| (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
+                || (getPartialRepairs().booleanOption("aero_fueltank_crit"))) {
             return (int) (currentfuel * 0.9);
         } else {
-        	return currentfuel;
+            return currentfuel;
         }
     }
 
@@ -858,15 +857,18 @@ public class Aero extends Entity implements IAero, IBomber {
      * @param gas
      *            Number of fuel points.
      */
+    @Override
     public void setFuel(int gas) {
         fuel = gas;
         currentfuel = gas;
     }
 
+    @Override
     public void setCurrentFuel(int gas) {
-    	currentfuel = gas;
+        currentfuel = gas;
     }
 
+    @Override
     public double getFuelPointsPerTon() {
         if (isPrimitive()) {
             return 80 / primitiveFuelFactor();
@@ -995,20 +997,20 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-        case MOVE_SKID:
-            return "Skidded";
-        case MOVE_NONE:
-            return "None";
-        case MOVE_WALK:
-            return "Cruised";
-        case MOVE_RUN:
-            return "Flanked";
-        case MOVE_SAFE_THRUST:
-            return "Safe Thrust";
-        case MOVE_OVER_THRUST:
-            return "Over Thrust";
-        default:
-            return "Unknown!";
+            case MOVE_SKID:
+                return "Skidded";
+            case MOVE_NONE:
+                return "None";
+            case MOVE_WALK:
+                return "Cruised";
+            case MOVE_RUN:
+                return "Flanked";
+            case MOVE_SAFE_THRUST:
+                return "Safe Thrust";
+            case MOVE_OVER_THRUST:
+                return "Over Thrust";
+            default:
+                return "Unknown!";
         }
     }
 
@@ -1018,14 +1020,14 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
-        case MOVE_NONE:
-            return "N";
-        case MOVE_SAFE_THRUST:
-            return "S";
-        case MOVE_OVER_THRUST:
-            return "O";
-        default:
-            return "?";
+            case MOVE_NONE:
+                return "N";
+            case MOVE_SAFE_THRUST:
+                return "S";
+            case MOVE_OVER_THRUST:
+                return "O";
+            default:
+                return "?";
         }
     }
 
@@ -1071,6 +1073,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 break;
             default:
                 arc = Compute.ARC_360;
+                break;
         }
 
         return rollArcs(arc);
@@ -1091,7 +1094,8 @@ public class Aero extends Entity implements IAero, IBomber {
      * Rolls up a hit location
      */
     @Override
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover) {
         return rollHitLocation(table, side);
     }
 
@@ -1116,189 +1120,189 @@ public class Aero extends Entity implements IAero, IBomber {
                 wingloc = LOC_LWING;
             }
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(wingloc, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(wingloc, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
 
         if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_FCS);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_FCS);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
             // normal left-side hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_BOMB);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_BOMB);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
             // normal right-side hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_SENSOR);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_CREW);
-                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_AVIONICS);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_BOMB);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_GEAR);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_SENSOR);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_CREW);
+                    return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_AVIONICS);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_BOMB);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_GEAR);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_REAR) {
             // normal aft hits
             switch (roll) {
-            case 2:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 3:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 4:
-                setPotCrit(CRIT_FUEL_TANK);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 5:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
-            case 6:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 7:
-                setPotCrit(CRIT_CONTROL);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 8:
-                setPotCrit(CRIT_ENGINE);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 9:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 10:
-                setPotCrit(CRIT_FUEL_TANK);
-                return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
-            case 11:
-                setPotCrit(CRIT_HEATSINK);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-            case 12:
-                setPotCrit(CRIT_WEAPON);
-                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 2:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 3:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 4:
+                    setPotCrit(CRIT_FUEL_TANK);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 5:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_RWING, false, HitData.EFFECT_NONE);
+                case 6:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 7:
+                    setPotCrit(CRIT_CONTROL);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 8:
+                    setPotCrit(CRIT_ENGINE);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 9:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 10:
+                    setPotCrit(CRIT_FUEL_TANK);
+                    return new HitData(LOC_LWING, false, HitData.EFFECT_NONE);
+                case 11:
+                    setPotCrit(CRIT_HEATSINK);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+                case 12:
+                    setPotCrit(CRIT_WEAPON);
+                    return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
             }
         }
         return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
@@ -1320,1285 +1324,9 @@ public class Aero extends Entity implements IAero, IBomber {
         return LOC_NONE;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#calculateBattleValue()
-     */
     @Override
-    public int calculateBattleValue() {
-        if (useManualBV) {
-            return manualBV;
-        }
-
-        return calculateBattleValue(false, false);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#calculateBattleValue(boolean, boolean)
-     */
-    @Override
-    public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        if (useManualBV) {
-            return manualBV;
-        }
-
-        bvText = new StringBuffer("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-
-        bvText.append(getChassis());
-        bvText.append(" ");
-        bvText.append(getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
-
-        double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
-
-        double armorMultiplier = 1.0;
-
-        boolean blueShield = hasWorkingMisc(MiscType.F_BLUE_SHIELD);
-
-        // Ignore any hull/fuselage or capital fighter wing locations
-        for (int loc = 0; loc < locations() - ((this instanceof SmallCraft) ? 1 : 2); loc++) {
-            int modularArmor = 0;
-            for (Mounted mounted : getEquipment()) {
-                if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                        && (mounted.getLocation() == loc)) {
-                    modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
-                }
-            }
-            // total armor points
-
-            switch (getArmorType(loc)) {
-                case EquipmentType.T_ARMOR_COMMERCIAL:
-                    armorMultiplier = 0.5;
-                    break;
-                case EquipmentType.T_ARMOR_HARDENED:
-                    armorMultiplier = 2.0;
-                    break;
-                case EquipmentType.T_ARMOR_REACTIVE:
-                case EquipmentType.T_ARMOR_REFLECTIVE:
-                case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
-                    armorMultiplier = 1.5;
-                    break;
-                case EquipmentType.T_ARMOR_LC_LAMELLOR_FERRO_CARBIDE:
-                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
-                    armorMultiplier = 1.2;
-                    break;
-                default:
-                    armorMultiplier = 1.0;
-                    break;
-            }
-            if (hasBARArmor(loc)) {
-                armorMultiplier *= getBARRating(loc) / 10.0;
-            }
-
-            if (blueShield) {
-                armorMultiplier += 0.2;
-            }
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            int armor = getArmor(loc) + modularArmor;
-            bvText.append("Total Armor " + this.getLocationAbbr(loc) + " (" + armor + ") x ");
-            bvText.append(armorMultiplier);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier;
-            bvText.append(armorBV);
-            dbv += armorBV;
-            bvText.append(endColumn);
-        }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total modified armor BV x 2.5 ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        dbv *= 2.5;
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total SI x 2 x SI modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        double dbvSI = getSI() * 2.0 * (blueShield ? 1.2 : 1);
-        dbv += dbvSI;
-
-        bvText.append(getSI());
-        bvText.append(" x 2 x ");
-        bvText.append(blueShield ? 1.2 : 1);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(dbvSI);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add defensive equipment
-        double amsBV = 0;
-        double amsAmmoBV = 0;
-        double screenBV = 0;
-        double screenAmmoBV = 0;
-        double defEqBV = 0;
-        for (Mounted mounted : getEquipment()) {
-            EquipmentType etype = mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-            // don't count weapon groups
-            if (mounted.isWeaponGroup()) {
-                continue;
-            }
-            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
-                amsBV += etype.getBV(this);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(this));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
-                amsAmmoBV += etype.getBV(this);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(this));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            } else if ((etype instanceof AmmoType)
-                    && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
-                screenAmmoBV += etype.getBV(this);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(this));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            } else if ((etype instanceof WeaponType)
-                    && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
-                screenBV += etype.getBV(this);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(this));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            } else if ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP)
-                    || etype.hasFlag(MiscType.F_CHAFF_POD))) {
-                defEqBV += etype.getBV(this);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(this));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        }
-        if (amsBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total AMS BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(amsBV);
-            dbv += amsBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-        if (screenBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total Screen BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(screenBV);
-            dbv += screenBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-        if (amsAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(Math.min(amsBV, amsAmmoBV));
-            dbv += Math.min(amsBV, amsAmmoBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-        if (screenAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(Math.min(screenBV, screenAmmoBV));
-            dbv += Math.min(screenBV, screenAmmoBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-        if (defEqBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total misc defensive equipment BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(defEqBV);
-            dbv += defEqBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // subtract for explosive ammo
-        double explosivePenalty = 0;
-        // FIXME: Consider new AmmoType::equals / BombType::equals
-        Map<AmmoType, Boolean> ammos = new HashMap<AmmoType, Boolean>();
-        for (Mounted mounted : getEquipment()) {
-            int loc = mounted.getLocation();
-            int toSubtract = 1;
-            EquipmentType etype = mounted.getType();
-
-            if (mounted.isWeaponGroup()) {
-                continue;
-            }
-
-            // only count explosive ammo
-            if (!etype.isExplosive(mounted, true)) {
-                continue;
-            }
-            // PPCs with capacitors subtract 1
-            if (etype instanceof PPCWeapon) {
-                if (mounted.getLinkedBy() == null) {
-                    continue;
-                }
-            }
-
-            // PPC capacitor does not count separately, it's already counted for
-            // with the PPC
-            if ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                continue;
-            }
-
-            // don't count oneshot ammo
-            if (loc == LOC_NONE) {
-                continue;
-            }
-
-            // CASE means no subtraction
-            if (hasWorkingMisc(MiscType.F_CASE) || isClan()) {
-                continue;
-            }
-
-            // RACs, LACs and ACs don't really count
-            if ((etype instanceof WeaponType) && ((((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY)
-                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC)
-                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_IMP)
-                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_AC_PRIMITIVE)
-                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_PAC)
-                    || (((WeaponType) etype).getAmmoType() == AmmoType.T_LAC))) {
-                toSubtract = 0;
-            }
-
-            // empty ammo shouldn't count
-            if ((etype instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
-                continue;
-            }
-            if (etype instanceof AmmoType) {
-                ammos.put((AmmoType) etype, true);
-            } else {
-                explosivePenalty += toSubtract;
-            }
-        }
-        explosivePenalty += ammos.size() * 15;
-        dbv = Math.max(1, dbv - explosivePenalty);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Explosive Weapons/Equipment Penalty ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= -");
-        bvText.append(explosivePenalty);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Unit Type Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(getBVTypeModifier());
-        if (hasStealth()) {
-            bvText.append("+ 0.3 for Stealth");
-        }
-        bvText.append(endColumn);
-        // unit type multiplier
-        dbv *= (getBVTypeModifier() + (hasStealth() ? 0.3 : 0));
-        bvText.append(startColumn);
-        bvText.append("x" + (getBVTypeModifier() + (hasStealth() ? 0.3 : 0)));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // calculate heat efficiency
-        int aeroHeatEfficiency = 6 + getHeatCapacity();
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Base Heat Efficiency ");
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(aeroHeatEfficiency);
-
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Unmodified Weapon BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        double weaponBV = 0;
-        boolean hasTargComp = hasTargComp();
-
-        double targetingSystemBVMod = 1.0;
-
-        if (this instanceof FixedWingSupport) {
-            if (hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                targetingSystemBVMod = 1.0;
-            } else if (hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
-                targetingSystemBVMod = .9;
-            } else {
-                targetingSystemBVMod = .8;
-            }
-        }
-
-        // first, add up front-faced and rear-faced unmodified BV,
-        // to know wether front- or rear faced BV should be halved
-        double bvFront = 0, bvRear = 0;
-        List<Mounted> weapons = getTotalWeaponList();
-        for (Mounted weapon : weapons) {
-            WeaponType wtype = (WeaponType) weapon.getType();
-            double dBV = wtype.getBV(this);
-            // don't count destroyed equipment
-            if (weapon.isDestroyed()) {
-                continue;
-            }
-            // don't count AMS, it's defensive
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-            // don't count screen launchers, they are defensive
-            if (wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
-                continue;
-            }
-            // do not count weapon groups
-            if (weapon.isWeaponGroup()) {
-                continue;
-            }
-
-            String name = wtype.getName();
-            // PPC caps bump up the value
-            if (weapon.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
-                if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(this, weapon);
-                    name = name.concat(" with Capacitor");
-                }
-            }
-            // calc MG Array here:
-            if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgBV = 0;
-                for (int eqNum : weapon.getBayWeapons()) {
-                    Mounted mg = getEquipment(eqNum);
-                    if ((mg != null) && (!mg.isDestroyed())) {
-                        mgBV += mg.getType().getBV(this);
-                    }
-                }
-                dBV = mgBV * 0.67;
-            }
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append(name);
-            if (weapon.isRearMounted() || (weapon.getLocation() == LOC_AFT)) {
-                bvRear += dBV;
-                bvText.append(" (R)");
-            } else {
-                bvFront += dBV;
-            }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(dBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-        boolean halveRear = true;
-        if (bvFront <= bvRear) {
-            halveRear = false;
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("halving front instead of rear weapon BVs");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-        }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapon Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // here we store the modified BV and heat of all heat-using weapons,
-        // to later be sorted by BV
-        ArrayList<ArrayList<Object>> heatBVs = new ArrayList<>();
-        // BVs of non-heat-using weapons
-        ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<>();
-        // total up maximum heat generated
-        // and add up BVs for ammo-using weapon types for excessive ammo rule
-        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
-        double maximumHeat = 0;
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            double weaponHeat = wtype.getHeat();
-
-            // only count non-damaged equipment
-            if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed() || mounted.isBreached()) {
-                continue;
-            }
-
-            // do not count weapon groups
-            if (mounted.isWeaponGroup()) {
-                continue;
-            }
-
-            // one shot weapons count 1/4
-            if ((wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER) || wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                weaponHeat *= 0.25;
-            }
-
-            // double heat for ultras
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
-                weaponHeat *= 2;
-            }
-
-            // Six times heat for RAC
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                weaponHeat *= 6;
-            }
-
-            // laser insulator reduce heat by 1, to a minimum of 1
-            if (wtype.hasFlag(WeaponType.F_LASER) && (mounted.getLinkedBy() != null)
-                    && !mounted.getLinkedBy().isInoperable()
-                    && mounted.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-                weaponHeat -= 1;
-                if (weaponHeat == 0) {
-                    weaponHeat++;
-                }
-            }
-
-            // half heat for streaks
-            if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK) || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
-                weaponHeat *= 0.5;
-            }
-            String name = wtype.getName();
-
-            // check to see if the weapon is a PPC and has a Capacitor attached
-            // to it
-            if (wtype.hasFlag(WeaponType.F_PPC) && (mounted.getLinkedBy() != null)) {
-                name = name.concat(" with Capacitor");
-                weaponHeat += 5;
-            }
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append(name);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+ ");
-            bvText.append(weaponHeat);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-
-            double dBV = wtype.getBV(this);
-
-            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-                dBV *= 0.8;
-            }
-
-            String weaponName = mounted.getName() + (mounted.isRearMounted() ? "(R)" : "");
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-            // don't count screen launchers, they are defensive
-            if (wtype.getAtClass() == WeaponType.CLASS_SCREEN) {
-                continue;
-            }
-            // do not count weapon groups
-            if (mounted.isWeaponGroup()) {
-                continue;
-            }
-            // calc MG Array here:
-            if (wtype.hasFlag(WeaponType.F_MGA)) {
-                double mgBV = 0;
-                for (int eqNum : mounted.getBayWeapons()) {
-                    Mounted mg = getEquipment(eqNum);
-                    if ((mg != null) && (!mg.isDestroyed())) {
-                        mgBV += mg.getType().getBV(this);
-                    }
-                }
-                dBV = mgBV * 0.67;
-            }
-            // artemis bumps up the value
-            // PPC caps do, too
-            if (mounted.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
-                if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(this, mounted);
-                    name = name.concat(" with Capacitor");
-                }
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
-                    name = name.concat(" with Artemis IV");
-                }
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                    name = name.concat(" with Artemis V");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                    dBV *= 1.1;
-                    name = name.concat(" with Artemis IV Prototype");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
-                    name = name.concat(" with Apollo");
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.15;
-                    name = name.concat(" with RISC Laser Pulse Module");
-                }
-            }
-
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                dBV *= 1.25;
-            } else if ((this instanceof FixedWingSupport) && !wtype.hasFlag(WeaponType.F_INFANTRY)) {
-                dBV *= targetingSystemBVMod;
-            }
-
-            // half for being rear mounted (or front mounted, when more rear-
-            // than front-mounted un-modded BV
-            if (((mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && halveRear)
-                    || (!(mounted.isRearMounted() || (mounted.getLocation() == LOC_AFT)) && !halveRear)) {
-                dBV /= 2;
-            }
-
-            // ArrayList that stores weapon values
-            // stores a double first (BV), then an Integer (heat),
-            // then a String (weapon name)
-            // for 0 heat weapons, just stores BV and name
-            ArrayList<Object> weaponValues = new ArrayList<>();
-            if (weaponHeat > 0) {
-                // store heat and BV, for sorting a few lines down;
-                weaponValues.add(dBV);
-                weaponValues.add(weaponHeat);
-                weaponValues.add(weaponName);
-                heatBVs.add(weaponValues);
-            } else {
-                weaponValues.add(dBV);
-                weaponValues.add(weaponName);
-                nonHeatBVs.add(weaponValues);
-            }
-
-            maximumHeat += weaponHeat;
-            // add up BV of ammo-using weapons for each type of weapon,
-            // to compare with ammo BV later for excessive ammo BV rule
-            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
-                    || wtype.hasFlag(WeaponType.F_ONESHOT) || wtype.hasFlag(WeaponType.F_INFANTRY)
-                    || (wtype.getAmmoType() == AmmoType.T_NA))) {
-                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
-                if (!weaponsForExcessiveAmmo.containsKey(key)) {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                } else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this) + weaponsForExcessiveAmmo.get(key));
-                }
-            }
-        }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(maximumHeat);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapons with no heat at full BV:");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-        // count heat-free weapons always at full modified BV
-        for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
-            weaponBV += (Double) nonHeatWeapon.get(0);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(nonHeatWeapon.get(1));
-            if (nonHeatWeapon.get(1).toString().length() < 8) {
-                bvText.append("\t");
-            }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(nonHeatWeapon.get(0));
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Heat Modified Weapons BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        if (maximumHeat > aeroHeatEfficiency) {
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("(Heat Exceeds Aero Heat Efficiency) ");
-
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-
-        if (maximumHeat <= aeroHeatEfficiency) {
-            // count all weapons equal, adjusting for rear-firing and excessive
-            // ammo
-            for (ArrayList<Object> weaponValues : heatBVs) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(2));
-                weaponBV += (Double) weaponValues.get(0);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(0));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        } else {
-            // this will count heat-generating weapons at full modified BV until
-            // heatefficiency is reached or passed with one weapon
-
-            // sort the heat-using weapons by modified BV
-            Collections.sort(heatBVs, (obj1, obj2) -> {
-                Double obj1BV = (Double) obj1.get(0); // BV
-                Double obj2BV = (Double) obj2.get(0); // BV
-
-                // first element in the the ArrayList is BV, second is heat
-                // if same BV, lower heat first
-                if(obj1BV.equals(obj2BV)) {
-                    Double obj1Heat = (Double) obj1.get(1);
-                    Double obj2Heat = (Double) obj2.get(1);
-
-                    return Double.compare(obj1Heat, obj2Heat);
-                }
-
-                // higher BV first
-                return Double.compare(obj2BV, obj1BV);
-            });
-
-            // count heat-generating weapons at full modified BV until
-            // heatefficiency is reached or
-            // passed with one weapon
-            double heatAdded = 0;
-            for (ArrayList<Object> weaponValues : heatBVs) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(2));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                double dBV = (Double) weaponValues.get(0);
-                if (heatAdded >= aeroHeatEfficiency) {
-                    dBV /= 2;
-                }
-                if (heatAdded >= aeroHeatEfficiency) {
-                    bvText.append("Heat efficiency reached, half BV");
-                }
-                heatAdded += (Double) weaponValues.get(1);
-                weaponBV += dBV;
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(dBV);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append("Heat count: " + heatAdded);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Weapons BV Adjusted For Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Misc Offensive Equipment: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add offensive misc. equipment BV
-        double oEquipmentBV = 0;
-        for (Mounted mounted : getMisc()) {
-            MiscType mtype = (MiscType) mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            if (mtype.hasFlag(MiscType.F_TARGCOMP) || mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_CHAFF_POD)) {
-                continue;
-            }
-            double bv = mtype.getBV(this);
-            if (bv > 0) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(bv);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-            oEquipmentBV += bv;
-        }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Misc Offensive Equipment BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(oEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        weaponBV += oEquipmentBV;
-
-        // add ammo bv
-        double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on
-        // our team
-        double tagBV = 0;
-        Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>();
-        for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-
-            // don't count depleted ammo
-            if (mounted.getUsableShotsLeft() == 0) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
-                continue;
-            }
-            // don't count screen launchers, they are defensive
-            if (atype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
-                continue;
-            }
-
-            // don't count oneshot ammo, it's considered part of the launcher.
-            if (mounted.getLocation() == Entity.LOC_NONE) {
-                // assumption: ammo without a location is for a oneshot weapon
-                continue;
-            }
-            // semiguided or homing ammo might count double
-            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED) || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                IPlayer tmpP = getOwner();
-
-                if (tmpP != null) {
-                    // Okay, actually check for friendly TAG.
-                    if (tmpP.hasTAG()) {
-                        tagBV += atype.getBV(this);
-                    } else if ((tmpP.getTeam() != IPlayer.TEAM_NONE) && (game != null)) {
-                        for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
-                            Team m = e.nextElement();
-                            if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(game)) {
-                                    tagBV += atype.getBV(this);
-                                }
-                                // A player can't be on two teams.
-                                // If we check his team and don't give the
-                                // penalty, that's it.
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            String key = atype.getAmmoType() + ":" + atype.getRackSize();
-            if (!keys.contains(key)) {
-                keys.add(key);
-            }
-            if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getBV(this));
-            } else {
-                ammo.put(key, atype.getBV(this) + ammo.get(key));
-            }
-        }
-
-        // Excessive ammo rule:
-        // Only count BV for ammo for a weapontype until the BV of all weapons
-        // of that
-        // type on the mech is reached.
-        for (String key : keys) {
-            if (weaponsForExcessiveAmmo.get(key) != null) {
-                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
-                    ammoBV += weaponsForExcessiveAmmo.get(key);
-                } else {
-                    ammoBV += ammo.get(key);
-                }
-            }
-        }
-        weaponBV += ammoBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Ammo BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(ammoBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) getRunMP() - 5) / 10), 1.2);
-        speedFactor = Math.round(speedFactor * 100) / 100.0;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Final Speed Factor: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        obv = weaponBV * speedFactor;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Weapons BV * Speed Factor ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(weaponBV);
-        bvText.append(" * ");
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        if (useGeometricMeanBV()) {
-            bvText.append("2 * sqrt(Offensive BV * Defensive BV");
-        } else {
-            bvText.append("Offensive BV + Defensive BV");
-        }
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        double finalBV;
-        if (useGeometricMeanBV()) {
-            finalBV = 2 * Math.sqrt(obv * dbv);
-            if (finalBV == 0) {
-                finalBV = dbv + obv;
-            }
-            bvText.append("2 * sqrt(");
-            bvText.append(obv);
-            bvText.append(" + ");
-            bvText.append(dbv);
-            bvText.append(")");
-        } else {
-            finalBV = dbv + obv;
-            bvText.append(dbv);
-            bvText.append(" + ");
-            bvText.append(obv);
-        }
-        double totalBV = finalBV;
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        double cockpitMod = 1;
-        if (getCockpitType() == Aero.COCKPIT_SMALL) {
-            cockpitMod = 0.95;
-            finalBV *= cockpitMod;
-        } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-            finalBV *= 0.95;
-        }
-        finalBV = Math.round(finalBV);
-        bvText.append("Total BV * Cockpit Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(totalBV);
-        bvText.append(" * ");
-        bvText.append(cockpitMod);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Final BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // We need to consider external stores. Per TechManual Pg314,
-        // TM BV Errata Pg23, the external stores BV is added to the
-        // units base BV
-        boolean hasBombs = false;
-        double bombBV = 0;
-        for (int bombType = 0; bombType < BombType.B_NUM; bombType++) {
-            BombType bomb = BombType.createBombByType(bombType);
-            bombBV += bomb.bv * bombChoices[bombType];
-            if (bombChoices[bombType] > 0) {
-                hasBombs = true;
-            }
-        }
-        finalBV += bombBV;
-        if (hasBombs) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("External Stores BV");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(bombBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append("-------------");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Final BV");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(finalBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
-
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        xbv += tagBV;
-        // extra from c3 networks. a valid network requires at least 2 members
-        // some hackery and magic numbers here. could be better
-        // also, each 'has' loops through all equipment. inefficient to do it 3
-        // times
-        if (!ignoreC3 && (game != null)) {
-
-            xbv += getExtraC3BV((int) Math.round(finalBV));
-        }
-        finalBV += xbv;
-
-        // and then factor in pilot
-        double pilotFactor = 1;
-        if (!ignorePilot) {
-            pilotFactor = getCrew().getBVSkillMultiplier(game);
-        }
-
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
-
-        return retVal;
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
+        return AeroBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
     }
 
     public double getBVTypeModifier() {
@@ -2609,7 +1337,7 @@ public class Aero extends Entity implements IAero, IBomber {
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         // this is a control roll. Affected by:
         // avionics damage
-    	// partial repairs
+        // partial repairs
         // pilot damage
         // current velocity
         int avihits = getAvionicsHits();
@@ -2706,7 +1434,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public Vector<Report> victoryReport() {
-        Vector<Report> vDesc = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -3193,7 +1921,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3220,7 +1948,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * Determine if this unit has an active and working stealth system. (stealth
      * can be active and not working when under ECCM)
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @return <code>true</code> if this unit has a stealth system that is
@@ -3248,7 +1976,7 @@ public class Aero extends Entity implements IAero, IBomber {
      * range. If the value supplied for <code>range</code> is not one of the
      * <code>Entity</code> class range constants, an
      * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
+     * <p>
      * Sub-classes are encouraged to override this method.
      *
      * @param range
@@ -3271,34 +1999,34 @@ public class Aero extends Entity implements IAero, IBomber {
         // Infantry do not ignore Chameleon LPS!!!
         else {
             switch (range) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-                if (!ae.isConventionalInfantry()) {
-                    result = new TargetRoll(0, "stealth");
-                } else {
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_MEDIUM:
-                if (!ae.isConventionalInfantry()) {
-                    result = new TargetRoll(1, "stealth");
-                } else {
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_LONG:
-            case RangeType.RANGE_EXTREME:
-            case RangeType.RANGE_LOS:
-                if (!ae.isConventionalInfantry()) {
-                    result = new TargetRoll(2, "stealth");
-                } else {
-                    result = new TargetRoll(0, "infantry ignore stealth");
-                }
-                break;
-            case RangeType.RANGE_OUT:
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown range constant: " + range);
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    if (!ae.isConventionalInfantry()) {
+                        result = new TargetRoll(0, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    if (!ae.isConventionalInfantry()) {
+                        result = new TargetRoll(1, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
+                    if (!ae.isConventionalInfantry()) {
+                        result = new TargetRoll(2, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_OUT:
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown range constant: " + range);
             }
         }
 
@@ -3331,7 +2059,7 @@ public class Aero extends Entity implements IAero, IBomber {
             return false;
         }
 
-        IHex hex = game.getBoard().getHex(c);
+        Hex hex = game.getBoard().getHex(c);
 
         // Additional restrictions for hidden units
         if (isHidden()) {
@@ -3493,16 +2221,16 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public int getOppositeLocation(int loc) {
         switch (loc) {
-        case Aero.LOC_NOSE:
-            return Aero.LOC_AFT;
-        case Aero.LOC_LWING:
-            return Aero.LOC_RWING;
-        case Aero.LOC_RWING:
-            return Aero.LOC_LWING;
-        case Aero.LOC_AFT:
-            return Aero.LOC_NOSE;
-        default:
-            return Aero.LOC_NOSE;
+            case Aero.LOC_NOSE:
+                return Aero.LOC_AFT;
+            case Aero.LOC_LWING:
+                return Aero.LOC_RWING;
+            case Aero.LOC_RWING:
+                return Aero.LOC_LWING;
+            case Aero.LOC_AFT:
+                return Aero.LOC_NOSE;
+            default:
+                return Aero.LOC_NOSE;
         }
     }
 
@@ -3600,7 +2328,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // capital fighters can load other capital fighters (becoming squadrons)
         // but not in the deployment phase
         if (isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter() && (getId() != unit.getId())
-                && (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT)) {
+                && (game.getPhase() != GamePhase.DEPLOYMENT)) {
             return true;
         }
 
@@ -3741,16 +2469,10 @@ public class Aero extends Entity implements IAero, IBomber {
         if ((game != null) && game.getBoard().inSpace()) {
             return 0;
         }
-        // Altitude is not the same as elevation. If an aero is at 0 altitude,
-        // then it is
-        // grounded and uses elevation normally. Otherwise, just set elevation
-        // to a very
-        // large number so that a flying aero won't interact with the ground
-        // maps in any way
-        if (isAirborne()) {
-            return 999;
-        }
-        return super.getElevation();
+        // Altitude is not the same as elevation. If an aero is at 0 altitude, then it is grounded
+        // and uses elevation normally. Otherwise, just set elevation to a very large number so that
+        // a flying aero won't interact with the ground maps in any way
+        return isAirborne() ? 999 : super.getElevation();
     }
 
     @Override
@@ -3935,20 +2657,20 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         // Cargo bays and bay doors for large craft
         for (Bay next : getTransportBays()) {
-        	if (next.getBayDamage() > 0) {
-        	    if (!first) {
+            if (next.getBayDamage() > 0) {
+                if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
-        	first = false;
-        	}
-        	if (next.getCurrentDoors() < next.getDoors()) {
-        	    if (!first) {
+            toReturn.append(String.format(Messages.getString("Aero.bayDamageString"), next.getType(), next.getBayNumber()));
+            first = false;
+            }
+            if (next.getCurrentDoors() < next.getDoors()) {
+                if (!first) {
                     toReturn.append(", ");
                 }
-        	toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
-        	first = false;
-        	}
+            toReturn.append(String.format(Messages.getString("Aero.bayDoorDamageString"), next.getType(), next.getBayNumber(), (next.getDoors() - next.getCurrentDoors())));
+            first = false;
+            }
         }
         return toReturn.toString();
     }
@@ -3961,26 +2683,26 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isCrippled(boolean checkCrew) {
         if (isEjecting()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: The crew is currently ejecting.");
             return true;
         } else if (getInternalRemainingPercent() < 0.5) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Only "
                     + NumberFormat.getPercentInstance().format(getInternalRemainingPercent()) + " internals remaining.");
             return true;
         } else if (getEngineHits() > 0) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: " + engineHits + " Engine Hits.");
             return true;
         } else if (fuelTankHit()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Fuel Tank Hit");
             return true;
         } else if (checkCrew && (getCrew() != null) && (getCrew().getHits() >= 4)) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: " + getCrew().getHits() + " Crew Hits taken.");
             return true;
         } else if (getFCSHits() >= 3) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Fire Control Destroyed by taking " + fcsHits);
             return true;
         } else if (getCICHits() >= 3) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Combat Information Center Destroyed by taking " + cicHits);
             return true;
         }
 
@@ -3990,7 +2712,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         if (!hasViableWeapons()) {
-            MegaMek.getLogger().debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: No more viable weapons.");
             return true;
         } else {
             return false;
@@ -4000,17 +2722,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgHeavy() {
         if (getArmorRemainingPercent() <= 0.33) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.33.");
             return true;
         } else if (getInternalRemainingPercent() < 0.67) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Heavily Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.67.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 3)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + "Moderately Damaged: The crew has taken a minimum of three hits.");
             return true;
         }
@@ -4034,17 +2756,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgModerate() {
         if (getArmorRemainingPercent() <= 0.5) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.50.");
             return true;
         } else if (getInternalRemainingPercent() < 0.75) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.75.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 2)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Moderately Damaged: The crew has taken a minimum of two hits.");
             return true;
         }
@@ -4067,17 +2789,17 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean isDmgLight() {
         if (getArmorRemainingPercent() <= 0.75) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Armour Remaining percent of " + getArmorRemainingPercent()
                     + " is less than or equal to 0.75.");
             return true;
         } else if (getInternalRemainingPercent() < 0.9) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: Internal Structure Remaining percent of " + getInternalRemainingPercent()
                     + " is less than 0.9.");
             return true;
         } else if ((getCrew() != null) && (getCrew().getHits() == 1)) {
-            MegaMek.getLogger().debug(getDisplayName()
+            LogManager.getLogger().debug(getDisplayName()
                     + " Lightly Damaged: The crew has taken a minimum of one hit.");
             return true;
         }
@@ -4268,6 +2990,7 @@ public class Aero extends Entity implements IAero, IBomber {
     /**
      * @return The number conventional marines available to vessels for boarding actions.
      */
+    @Override
     public int getNMarines() {
         return 0;
     }
@@ -4535,7 +3258,7 @@ public class Aero extends Entity implements IAero, IBomber {
         }
         //Remove everything but Radar if we're not in space
         if (!isSpaceborne()) {
-            Vector<Sensor> sensorsToRemove = new Vector<Sensor>();
+            Vector<Sensor> sensorsToRemove = new Vector<>();
             if (hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
                 for (Sensor sensor : getSensors()) {
                     if (sensor.getType() == Sensor.TYPE_SPACECRAFT_ESM) {

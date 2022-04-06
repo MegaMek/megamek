@@ -20,6 +20,10 @@ DI Morgan Assault Tank
 (LRM)
 </Model>
 
+<mul id:>
+899
+</mul id:>
+
 <Tonnage>
 100
 </Tonnage>

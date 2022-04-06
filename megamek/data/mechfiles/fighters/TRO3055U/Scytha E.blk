@@ -20,6 +20,10 @@ Scytha
 E
 </Model>
 
+<mul id:>
+5002
+</mul id:>
+
 <year>
 3073
 </year>
@@ -123,3 +127,27 @@ TRO 3055u - Jihad
 <tonnage>
 90.0
 </tonnage>
+
+<overview>
+Developed when Clan Jade Falcon warriors demanded their own super-heavy OmniFighter to compete against Clan Ghost Bear's Kirghiz, the Scytha favors speed and pod space over that venerable fighter's preference for armor.
+</overview>
+
+<deployment>
+Introduced during the Jihad, this variant is equipped with an Active Probe and an ECM Suite to disrupt enemy electronic systems. The fighter carries an ER PPC in the nose, backed up by two ER Medium Lasers. Each wing mounts a single HAG/30. To make room for this equipment, the craft only carries twenty double heat sinks.
+</deployment>
+
+<manufacturer>
+Complex VI, Falcon's Roost Orbital Assembly Plant
+</manufacturer>
+
+<primaryFactory>
+Ironhold,Sudeten
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Falcon Hollowbone
+ENGINE:360 XL
+ARMOR:Ironhold Series III Ferro-Aluminum
+COMMUNICATIONS:System VII
+TARGETING:TTS Model 3
+</systemManufacturers>

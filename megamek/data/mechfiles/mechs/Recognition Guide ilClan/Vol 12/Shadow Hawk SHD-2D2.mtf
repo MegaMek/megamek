@@ -1,11 +1,12 @@
 Version:1.0
 Shadow Hawk
 SHD-2D2
+mul id:2900
 
 Config:Biped
 techbase:Inner Sphere
 era:3049
-source:ilClan Vol 12 - Clan Invasion
+source:Rec Guide:ilClan #12 - Late Succession War
 rules level:2
 
 mass:55

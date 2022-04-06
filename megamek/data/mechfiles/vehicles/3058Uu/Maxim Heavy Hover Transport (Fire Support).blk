@@ -15,6 +15,10 @@ Maxim Heavy Hover Transport
 <Model>
 (Fire Support)
 </Model>
+
+<mul id:>
+2124
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

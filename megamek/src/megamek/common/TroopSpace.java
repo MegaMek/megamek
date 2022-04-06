@@ -49,7 +49,7 @@ public final class TroopSpace implements Transporter {
      */
     /* package */double currentSpace;
 
-    transient IGame game;
+    transient Game game;
 
 
     // Protected constructors and methods.
@@ -108,11 +108,8 @@ public final class TroopSpace implements Transporter {
     /**
      * Load the given unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @exception - If the unit can't be loaded, an
-     *            <code>IllegalArgumentException</code> exception will be
-     *            thrown.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @throws IllegalArgumentException If the unit can't be loaded
      */
     @Override
     public void load(Entity unit) throws IllegalArgumentException {
@@ -140,10 +137,14 @@ public final class TroopSpace implements Transporter {
      */
     @Override
     public Vector<Entity> getLoadedUnits() {
-        Vector<Entity> loaded = new Vector<Entity>();
+        Vector<Entity> loaded = new Vector<>();
         for (Map.Entry<Integer, Double> entry : troops.entrySet()) {
             int key = entry.getKey();
-            loaded.add(game.getEntity(key));
+            Entity entity = game.getEntity(key);
+            
+            if (entity != null) {
+                loaded.add(entity);
+            }
         }
 
         return loaded;
@@ -193,7 +194,7 @@ public final class TroopSpace implements Transporter {
     }
 
     @Override
-    public double getUnused(){
+    public double getUnused() {
         return currentSpace;
     }
 
@@ -238,7 +239,7 @@ public final class TroopSpace implements Transporter {
 
     @Override
     public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<Entity>(1);
+        ArrayList<Entity> rv = new ArrayList<>(1);
         return rv;
     }
 
@@ -253,7 +254,7 @@ public final class TroopSpace implements Transporter {
     }
 
     @Override
-    public void setGame(IGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
     

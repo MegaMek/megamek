@@ -1,6 +1,7 @@
 Version:1.1
 Icarus
 ICR-1X
+mul id:1599
 
 Config:Biped
 TechBase:Inner Sphere

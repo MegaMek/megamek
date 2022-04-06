@@ -1,6 +1,7 @@
 Version:1.1
 Pillager
 PLG-4X 'Anvil'
+mul id:2526
 
 Config:Biped
 TechBase:Inner Sphere

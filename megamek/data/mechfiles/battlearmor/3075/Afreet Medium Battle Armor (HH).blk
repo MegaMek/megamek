@@ -19,6 +19,10 @@ Afreet Medium Battle Armor
 (Hell's Horses)
 </Model>
 
+<mul id:>
+3677
+</mul id:>
+
 <chassis>
 biped
 </chassis>

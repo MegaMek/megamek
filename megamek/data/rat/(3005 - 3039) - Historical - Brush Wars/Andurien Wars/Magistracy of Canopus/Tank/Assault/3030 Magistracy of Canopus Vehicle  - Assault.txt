@@ -8,5 +8,5 @@ Demolisher Heavy Tank (Standard Mk. I),6
 Demolisher Heavy Tank (Standard Mk. I),5
 Ontos Heavy Tank (Standard),4
 Schrek PPC Carrier (Standard),3
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Behemoth Heavy Tank (Standard),1

@@ -1,6 +1,7 @@
 Version:1.0
 Carbine CON-9M-J ConstructionMech
 MOD
+mul id:7849
 
 Config:Biped
 techbase:Inner Sphere

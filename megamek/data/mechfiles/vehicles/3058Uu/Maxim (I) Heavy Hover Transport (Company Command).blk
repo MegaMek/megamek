@@ -15,6 +15,10 @@ Maxim (I) Heavy Hover Transport
 <Model>
 (Company Command)
 </Model>
+
+<mul id:>
+2114
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

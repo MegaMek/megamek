@@ -1,67 +1,52 @@
 /*
- * Copyright (c) 2019 The MegaMek Team. All rights reserved.
+ * Copyright (c) 2019 - The MegaMek Team. All Rights Reserved.
  *
- * This file is part of MekHQ.
+ * This file is part of MegaMek.
  *
- * MekHQ is free software: you can redistribute it and/or modify
+ * MegaMek is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * MekHQ is distributed in the hope that it will be useful,
+ * MegaMek is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with MekHQ.  If not, see <http://www.gnu.org/licenses/>.
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common.pathfinder;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Coords;
+import megamek.common.Game;
 import megamek.common.IAero;
-import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.logging.DefaultMmLogger;
-import megamek.common.logging.LogLevel;
-import megamek.common.logging.MMLogger;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.*;
 
 /**
  * This set of classes is intended to be used by AI players to generate paths for units behaving
- * like spheroid dropships in atmosphere. Remarkably similar to a jumping infantry unit.
+ * like spheroid DropShips in atmosphere. Remarkably similar to a jumping infantry unit.
  * @author NickAragua
- *
  */
 public class SpheroidPathFinder {
-    private IGame game;
+    private Game game;
     private List<MovePath> spheroidPaths;
-    private MMLogger logger;
-    private static final String LOGGER_CATEGORY = "megamek.common.pathfinder.SpheroidPathFinder";
-    
+
     private Set<Coords> visitedCoords = new HashSet<>();
     
-    private SpheroidPathFinder(IGame game) {
+    private SpheroidPathFinder(Game game) {
         this.game = game;
-        getLogger().setLogLevel(LOGGER_CATEGORY, LogLevel.DEBUG);
     }
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return spheroidPaths;
     }
-    
-    private MMLogger getLogger() {
-        return logger == null ? logger = DefaultMmLogger.getInstance() : logger;
-    }
-    
+
     /**
      * Computes paths to nodes in the graph.
      * 
@@ -69,10 +54,10 @@ public class SpheroidPathFinder {
      */
     public void run(MovePath startingEdge) {
         try {
-            spheroidPaths = new ArrayList<MovePath>();
+            spheroidPaths = new ArrayList<>();
 
             // can't do anything if the unit is out of control.
-            if(((IAero) startingEdge.getEntity()).isOutControlTotal()) {
+            if (((IAero) startingEdge.getEntity()).isOutControlTotal()) {
                 return;
             }
             
@@ -80,14 +65,14 @@ public class SpheroidPathFinder {
             // where n is the number of possible altitude changes
             List<MovePath> altitudePaths = AeroPathUtil.generateValidAltitudeChanges(startingEdge);
             MovePath hoverPath = generateHoverPath(startingEdge);
-            for(MovePath altitudePath : altitudePaths) {
+            for (MovePath altitudePath : altitudePaths) {
                 // since we are considering paths across multiple altitudes that cross the same coordinates
                 // we want to clear this out before every altitude to avoid discarding altitude changing paths
                 // so that our dropships can maneuver vertically if necessary.
                 visitedCoords.clear();
                 
                 // we don't really want to consider a non-hovering path, we will add it as a special case
-                if(altitudePath.length() != 0) {
+                if (altitudePath.length() != 0) {
                     spheroidPaths.addAll(generateChildren(altitudePath));
                 } else {
                     spheroidPaths.addAll(generateChildren(hoverPath));
@@ -100,7 +85,7 @@ public class SpheroidPathFinder {
             List<MovePath> validRotations = new ArrayList<>();
             // now that we've got all our possible destinations, make sure to try every possible rotation
             // at the end of the path
-            for(MovePath path : spheroidPaths) {
+            for (MovePath path : spheroidPaths) {
                 validRotations.addAll(AeroPathUtil.generateValidRotations(path));
             }
             
@@ -109,7 +94,7 @@ public class SpheroidPathFinder {
             visitedCoords.clear();
             
             // add "flee" option if we haven't done anything else
-            if(game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
+            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
                     startingEdge.getStepVector().size() == 0) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
@@ -122,20 +107,18 @@ public class SpheroidPathFinder {
              * by ending prematurely while preserving already computed results.
              */
 
-            final String memoryMessage = "Not enough memory to analyse all options."//$NON-NLS-1$
-                    + " Try setting time limit to lower value, or "//$NON-NLS-1$
+            final String memoryMessage = "Not enough memory to analyse all options."
+                    + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
             
-            getLogger().error(memoryMessage, e);
-        } catch(Exception e) {
-            getLogger().error(e); //do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(memoryMessage, e);
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
         }
     }
     
-    public static SpheroidPathFinder getInstance(IGame game) {
-        SpheroidPathFinder ipf = new SpheroidPathFinder(game);
-
-        return ipf;
+    public static SpheroidPathFinder getInstance(Game game) {
+        return new SpheroidPathFinder(game);
     }
     
     private MovePath generateHoverPath(MovePath startingPath) {
@@ -143,7 +126,7 @@ public class SpheroidPathFinder {
         hoverPath.addStep(MoveStepType.HOVER);
         
         // if we can hover, then hover. If not (due to battle damage or whatever), then we fall down.
-        if(hoverPath.isMoveLegal()) {
+        if (hoverPath.isMoveLegal()) {
             return hoverPath;
         } else {
             hoverPath.removeLastStep();
@@ -165,7 +148,7 @@ public class SpheroidPathFinder {
         // we've visited this hex already
         // we've moved further than 1 hex on a low-atmo map
         // we've moved further than 8 hexes on a ground map
-        if(visitedCoords.contains(startingPath.getFinalCoords()) ||
+        if (visitedCoords.contains(startingPath.getFinalCoords()) ||
                 (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
             return retval;
         }
@@ -177,11 +160,11 @@ public class SpheroidPathFinder {
         // forward, left-forward, left-left-forward, right-forward, right-right-forward, right-right-right-forward
         // there is never a reason to "back up"
         // there are also very little built-in error control, since these things are flying
-        for(int direction = 0; direction <= 5; direction++) {
+        for (int direction = 0; direction <= 5; direction++) {
             MovePath childPath = startingPath.clone();
             
             // for each child, we first turn in the appropriate direction
-            for(MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
+            for (MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
                 childPath.addStep(stepType);
             }
             
@@ -190,7 +173,7 @@ public class SpheroidPathFinder {
             
             // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
             // of course, if it winds up not being legal anyway for some other reason, then we discard it and move on
-            if(!childPath.isMoveLegal()) {
+            if (!childPath.isMoveLegal()) {
                 continue;
             }
             

@@ -31,10 +31,10 @@ public class TOCNode extends RulesetNode {
     protected ArrayList<ValueNode> flagNodes;
 
     protected TOCNode() {
-        unitTypeNodes = new ArrayList<ValueNode>();
-        eschelonNodes = new ArrayList<ValueNode>();
-        ratingNodes = new ArrayList<ValueNode>();
-        flagNodes = new ArrayList<ValueNode>();
+        unitTypeNodes = new ArrayList<>();
+        eschelonNodes = new ArrayList<>();
+        ratingNodes = new ArrayList<>();
+        flagNodes = new ArrayList<>();
     }
 
     public ValueNode findUnitTypes(ForceDescriptor fd) {
@@ -55,7 +55,7 @@ public class TOCNode extends RulesetNode {
         return null;
     }
 
-    public ValueNode findRatings(ForceDescriptor fd) {	
+    public ValueNode findRatings(ForceDescriptor fd) {
         for (ValueNode n : ratingNodes) {
             if (n.matches(fd)) {
                 return n;
@@ -64,7 +64,7 @@ public class TOCNode extends RulesetNode {
         return null;
     }
 
-    public ValueNode findFlags(ForceDescriptor fd) {	
+    public ValueNode findFlags(ForceDescriptor fd) {
         for (ValueNode n : flagNodes) {
             if (n.matches(fd)) {
                 return n;
@@ -92,7 +92,7 @@ public class TOCNode extends RulesetNode {
                     for (int y = 0; y < wn.getChildNodes().getLength(); y++) {
                         Node wn2 = wn.getChildNodes().item(y);
                         if (wn2.getNodeName().equals("option")) {
-                            unitTypeNodes.add(ValueNode.createFromXml(wn2));						
+                            unitTypeNodes.add(ValueNode.createFromXml(wn2));
                         }
                     }
                     break;

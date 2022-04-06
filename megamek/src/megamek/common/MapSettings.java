@@ -1,19 +1,29 @@
 /*
- * MegaMek - Copyright (C) 2002,2003 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
+import jakarta.xml.bind.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import megamek.client.ui.swing.lobby.LobbyUtility;
+import megamek.common.util.BuildingTemplate;
+import megamek.utils.MegaMekXmlUtil;
+import org.apache.logging.log4j.LogManager;
+
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,29 +33,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.namespace.QName;
-import megamek.MegaMek;
-import megamek.client.ui.swing.lobby.LobbyUtility;
-import megamek.common.util.BuildingTemplate;
-import megamek.utils.MegaMekXmlUtil;
-
 /**
- * MapSettings.java Created on March 27, 2002, 1:07 PM
+ * MapSettings.java
  *
  * @author Ben
+ * @since March 27, 2002, 1:07 PM
  */
 @XmlRootElement(name = "ENVIRONMENT")
-@XmlAccessorType(XmlAccessType.NONE)
+@XmlAccessorType(value = XmlAccessType.NONE)
 public class MapSettings implements Serializable {
     private static final long serialVersionUID = -6163977970758303066L;
 
@@ -75,9 +70,9 @@ public class MapSettings implements Serializable {
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
 
-    private ArrayList<String> boardsSelected = new ArrayList<String>();
-    private ArrayList<String> boardsAvailable = new ArrayList<String>();
-    private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<BuildingTemplate>();
+    private ArrayList<String> boardsSelected = new ArrayList<>();
+    private ArrayList<String> boardsAvailable = new ArrayList<>();
+    private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<>();
 
     /**
      * Parameters for the Map Generator Parameters refer to a default map siz 16
@@ -380,7 +375,7 @@ public class MapSettings implements Serializable {
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
         } catch (Exception e) {
-            MegaMek.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
+            LogManager.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
         }
 
         return ms;
@@ -656,7 +651,7 @@ public class MapSettings implements Serializable {
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (boardsSelected.get(i).startsWith(BOARD_SURPRISE)) {
                 List<String> boards = LobbyUtility.extractSurpriseMaps(boardsSelected.get(i));
-                int rnd = (int)(Math.random() * boards.size());
+                int rnd = (int) (Math.random() * boards.size());
                 boardsSelected.set(i, boards.get(rnd));
             }
         }
@@ -686,7 +681,7 @@ public class MapSettings implements Serializable {
                     } else {
                         rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
                         // validate that the selected map is legal
-                        IBoard b = new Board(16, 17);
+                        Board b = new Board(16, 17);
                         String boardSelected = boardsAvailable.get(rindex);
                         if (!MapSettings.BOARD_GENERATED.equals(boardSelected)
                                 && !MapSettings.BOARD_RANDOM.equals(boardSelected)
@@ -717,6 +712,8 @@ public class MapSettings implements Serializable {
         for (int i = 0; i < boardsSelected.size(); i++) {
             String boardName = boardsSelected.get(i);
             if (boardName != null) {
+                boardName = boardName.replace(Board.BOARD_REQUEST_ROTATION, "");
+                
                 if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
                     List<String> boards = LobbyUtility.extractSurpriseMaps(boardName);
                     ArrayList<String> remainingBoards = new ArrayList<>();
@@ -1595,18 +1592,12 @@ public class MapSettings implements Serializable {
 
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-            try {
-            	marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            } catch (PropertyException ex) {
-            	marshaller.setProperty("com.sun.xml.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            }
-
-            JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
-
+            marshaller.setProperty("org.glassfish.jaxb.xmlHeaders", "<?xml version=\"1.0\"?>");
+            JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"),
+                    MapSettings.class, this);
             marshaller.marshal(element, os);
-        } catch (JAXBException ex) {
-            System.err.println("Error writing XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to write map settings xml", ex);
         }
     }
 }

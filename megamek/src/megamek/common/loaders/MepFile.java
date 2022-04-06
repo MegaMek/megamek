@@ -77,7 +77,7 @@ public class MepFile implements IMechLoader {
 
     String[] critData;
 
-    Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<EquipmentType, Mounted>();
+    Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<>();
 
     public MepFile(InputStream is) throws EntityLoadingException {
         try {
@@ -157,6 +157,7 @@ public class MepFile implements IMechLoader {
         }
     }
 
+    @Override
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech;

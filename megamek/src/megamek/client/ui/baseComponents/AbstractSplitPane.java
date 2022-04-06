@@ -19,10 +19,9 @@
 package megamek.client.ui.baseComponents;
 
 import megamek.MegaMek;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.EncodeControl;
 import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
+import megamek.common.util.EncodeControl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +49,7 @@ public abstract class AbstractSplitPane extends JSplitPane {
      */
     protected AbstractSplitPane(final JFrame frame, final String name) {
         this(frame, ResourceBundle.getBundle("megamek.client.messages", 
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name);
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name);
     }
 
     /**
@@ -109,7 +108,7 @@ public abstract class AbstractSplitPane extends JSplitPane {
      * for MekHQ usage
      */
     protected void setPreferences() {
-        setPreferences(MegaMek.getPreferences().forClass(getClass()));
+        setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**

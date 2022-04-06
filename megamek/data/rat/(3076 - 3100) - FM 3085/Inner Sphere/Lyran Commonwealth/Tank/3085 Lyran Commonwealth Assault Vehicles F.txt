@@ -1,12 +1,12 @@
 3085 Lyran Commonwealth Assault Vehicles F
 Alacorn Heavy Tank Mk VI,1
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Behemoth Heavy Tank (Standard),3
 Partisan Heavy Tank (Standard),4
 Demolisher Heavy Tank (Standard Mk. II),5
-Sturmfeur Heavy Tank (Standard),6
+SturmFeur Heavy Tank (Standard),6
 Partisan Air Defense Tank (Cell),5
-Sturmfeur Heavy Tank (Heavy Gauss),4
+SturmFeur Heavy Tank (Heavy Gauss),4
 Fortune Wheeled Assault Vehicle (Standard),3
 Alacorn Heavy Tank Mk VII,2
 Demolisher II Heavy Tank (MML),1

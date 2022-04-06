@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import megamek.common.Compute;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.Targetable;
@@ -38,7 +38,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public MekMortarHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MekMortarHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
     }

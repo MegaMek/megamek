@@ -1,0 +1,234 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Union
+</Name>
+
+<Model>
+(2708) (Cargo)
+</Model>
+
+<mul id:>
+5323
+</mul id:>
+
+<year>
+2708
+</year>
+
+<originalBuildYear>
+2708
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+asfbay:2.0:2:1
+1stclassquarters:30.0:0
+2ndclassquarters:0.0:0
+crewquarters:77.0:0
+cargobay:1874.5:1:2
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+90
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+6450
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+180
+180
+180
+104
+</armor>
+
+<Nose Equipment>
+(B) PPC
+(B) Autocannon/5
+Autocannon/5
+IS Ammo AC/5:20
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:24
+(B) Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Side Equipment>
+(B) PPC
+(B) Autocannon/5
+Autocannon/5
+IS Ammo AC/5:40
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:24
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Left Side Equipment>
+
+<Right Side Equipment>
+(B) PPC
+(B) Autocannon/5
+Autocannon/5
+IS Ammo AC/5:40
+(B) LRM 20
+LRM 20
+IS Ammo LRM-20:24
+(B) Large Laser
+Medium Laser
+Medium Laser
+(R) (B) Large Laser
+(R) Medium Laser
+(R) Medium Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+(B) Large Laser
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<Hull Equipment>
+</Hull Equipment>
+
+<structural_integrity>
+11
+</structural_integrity>
+
+<capabilities>
+The ubiquitous example of the company-sized BattleMech combat transport, the Union class is a venerable and capable member of the DropShip unit type. Capable of carrying twelve 'Mechs and two aerospace fighters (a standard 'Mech company including one air lance under classic SLDF doctrine), it is among the smaller dedicated military deployment vehicles, dwarfed by its larger cousin Overlord and especially the massive troop transports such as the Excalibur, Lee, or Colossus. The Union, while not as heavily armed as Assault DropShips, carries a formidable array of weapons. The semi-automated weaponry is significant enough to defend the ship from light ground forces and cause single and paired aerospace fighters pause.
+</capabilities>
+
+<overview>
+The Union is the archetypical DropShip, widely used in military and civilian roles and described as the yardstick against which all other DropShips are measured.
+</overview>
+
+<deployment>
+Due to the availability of the design and spare parts, the Union has proven a popular choice for merchants and traders, who strip out all twelve 'Mech cubicles to free up more than 1,500 tons of cargo space.
+</deployment>
+
+<history>
+The smaller but much more numerous, and implicitly also more cost-efficient and easier to manufacture, Union class weathered Lostech throughout the Succession Wars era better than the much larger vessels, and has been in continuous production ever since its inception. The ship was designed as a 'Mech deployment vehicle, not for prolonged comfortable travel. The interior personnel spaces aboard the Union are infamous for being very cramped on most Unions, and the air circulation system is often found lacking. The command and control facilities aboard Unions consisted of a Tactical Operations Room (TOR) sufficient to operate as a coordination point for smaller lance-sized combat transports partaking in company or larger sized operations. Likewise, it operates well in larger operations, where it may conduct missions of a surprise, diversionary or raiding role. The TOR was frequently removed from Union Class Dropships during refurbishment by the Clans.
+</history>
+
+<manufacturer>
+Bowie Industries - Port Sydney,Earthwerks Ltd,Matabushi Inc,Irian Naval Systems of Clipperton,Federated-Boeing Interstellar - Port Simon Shipyards,Vandenberg Mechanized Industries,Boeing Interstellar,Taurus Territorial Industries,Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Alarion,Ares,Avon,Clipperton,Galax,Illiushin,New Earth,Sterope,Terra
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Star League V250
+</systemManufacturers>
+
+<use>
+'Mech/ASF carrier
+</use>
+
+<length>
+81.5 meters
+</length>
+
+<width>
+81.5 meters
+</width>
+
+<height>
+78 meters
+</height>
+
+<source>
+TRO 3057R - Star League
+</source>
+
+<tonnage>
+3600.0
+</tonnage>
+
+<designtype>
+1
+</designtype>
+
+<crew>
+18
+</crew>
+
+<officers>
+3
+</officers>
+
+<gunners>
+6
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+7
+</escape_pod>
+

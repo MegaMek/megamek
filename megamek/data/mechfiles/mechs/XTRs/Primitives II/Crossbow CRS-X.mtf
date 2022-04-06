@@ -1,54 +1,56 @@
 Version:1.1
 Crossbow
 CRS-X
+mul id:5583
 
 Config:Biped
-TechBase:Inner Sphere
-Era:2468
-Source:XTRO Primitives II - Age of War
-Rules Level:4
+techbase:Inner Sphere
+era:2468
+source:XTRO Primitives II - Age of War
+rules level:4
 
-Mass:60
-Engine:290 Primitive Fusion Engine
-Structure:Standard
-Cockpit:Primitive Cockpit
-Myomer:Standard
+mass:60
+engine:290 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:10 Single
-Walk MP:4
-Jump MP:0
+heat sinks:10 Single
+walk mp:4
+jump mp:0
 
-Armor:Primitive
-LA Armor:12
-RA Armor:12
-LT Armor:14
-RT Armor:14
-CT Armor:16
-HD Armor:8
-LL Armor:15
-RL Armor:15
-RTL Armor:5
-RTR Armor:5
-RTC Armor:7
+armor:Primitive(Inner Sphere)
+LA armor:12
+RA armor:12
+LT armor:14
+RT armor:14
+CT armor:16
+HD armor:8
+LL armor:15
+RL armor:15
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:7
-1 ISLargeLaser, Right Torso
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Left Arm
-1 ISLRM5, Left Arm, Ammo:48
-1 ISLRM5, Left Arm
-1 ISLRM5, Right Arm
-1 ISLRM5, Right Arm
+Medium Laser, Left Arm
+LRM 5, Left Arm
+LRM 5, Left Arm
+Medium Laser, Right Arm
+LRM 5, Right Arm
+LRM 5, Right Arm
+Large Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISLRM5
-ISLRM5
-ISLRM5 Ammo
+Medium Laser
+LRM 5
+LRM 5
+IS Ammo LRM-5
 -Empty-
 -Empty-
 -Empty-
@@ -59,10 +61,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISLRM5
-ISLRM5
-ISLRM5 Ammo
+Medium Laser
+LRM 5
+LRM 5
+IS Ammo LRM-5
 -Empty-
 -Empty-
 -Empty-
@@ -83,8 +85,8 @@ Left Torso:
 -Empty-
 
 Right Torso:
-ISLargeLaser
-ISLargeLaser
+Large Laser
+Large Laser
 -Empty-
 -Empty-
 -Empty-
@@ -97,16 +99,16 @@ ISLargeLaser
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -117,12 +119,24 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -133,3 +147,25 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The predecessor to Clan Steel Viper's Crossbow OmniMech, the original Crossbow first saw battlefield action for the Lyran Commonwealth in 2468. The 60-ton 'Mech is speedy for its era, capable of 86 km/h. This came at the expense of armor, however, as the Crossbow is only protected by eight tons of armor.
+
+capabilities:The prototype used less sophisticated components, forcing the downgrade of many weapon systems. Each arm carried a pair of LRM-5 launchers and a Medium Laser, while a single Large Laser mounted in the torso provided additional long range firepower. The Primitive Engine drove this version of the Crossbow at a top speed of 64km/h. The bulk of the engine, cockpit, and armor required engineers to devote more tonnage to armor. This would be overcome in later versions of the Crossbow
+
+history:The production model, the 6B, came a few years later. The heavy 'Mech was the first produced by Arcturan Arms and the third homegrown BattleMech produced in the Commonwealth. Arcturan Arms fell on hard times when the capital was relocated from Arcturus to Tharkad, forcing them to shut down the factory in 2490 after producing only a few hundred Crossbows. MacEnroe Motors bought out the financially troubled company in 2541, which shut down Crossbow production in 2550.
+
+manufacturer:Arcturan Arms
+primaryfactory:Arcturus
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:JUMPJET:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
+

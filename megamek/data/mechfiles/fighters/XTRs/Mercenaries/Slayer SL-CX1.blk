@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Slayer
 <Model>
 SL-CX1
 </Model>
+
+<mul id:>
+2966
+</mul id:>
 
 <year>
 3075
@@ -56,7 +60,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-800
+640
 </fuel>
 
 <engine_type>
@@ -64,11 +68,11 @@ Aerodyne
 </engine_type>
 
 <armor_type>
-19
+16
 </armor_type>
 
 <armor_tech>
--1
+6
 </armor_tech>
 
 <armor>
@@ -79,7 +83,7 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISRotaryAC5
+CLRotaryAC5
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -111,3 +115,4 @@ XTRO Mercenaries - Jihad
 <tonnage>
 80.0
 </tonnage>
+

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<princessBehaviors>
+<?xml version="1.0" encoding="UTF-8"?><princessBehaviors>
   <behavior>
     <name>Skirmisher (pPT)</name>
     <destinationEdge>NONE</destinationEdge>
@@ -9,9 +8,9 @@
     <autoFlee>false</autoFlee>
     <fallShameIndex>4</fallShameIndex>
     <hyperAggressionIndex>6</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>6</herdMentalityIndex>
-    <braveryIndex>6</braveryIndex>
+    <selfPreservationIndex>4</selfPreservationIndex>
+    <herdMentalityIndex>4</herdMentalityIndex>
+    <braveryIndex>3</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
@@ -24,9 +23,9 @@
     <autoFlee>false</autoFlee>
     <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>1</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
+    <selfPreservationIndex>6</selfPreservationIndex>
     <herdMentalityIndex>2</herdMentalityIndex>
-    <braveryIndex>6</braveryIndex>
+    <braveryIndex>4</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
@@ -39,14 +38,14 @@
     <autoFlee>false</autoFlee>
     <fallShameIndex>4</fallShameIndex>
     <hyperAggressionIndex>8</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
-    <herdMentalityIndex>7</herdMentalityIndex>
-    <braveryIndex>3</braveryIndex>
+    <selfPreservationIndex>6</selfPreservationIndex>
+    <herdMentalityIndex>3</herdMentalityIndex>
+    <braveryIndex>7</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
   <behavior>
-    <name>Missile Boat (pPT)</name>
+    <name>LRM Missile Boat (pPT)</name>
     <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
@@ -54,9 +53,24 @@
     <autoFlee>false</autoFlee>
     <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>1</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
+    <selfPreservationIndex>4</selfPreservationIndex>
     <herdMentalityIndex>3</herdMentalityIndex>
-    <braveryIndex>4</braveryIndex>
+    <braveryIndex>6</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+  <behavior>
+    <name>SRM Missile Boat (pPT)</name>
+    <destinationEdge>NONE</destinationEdge>
+    <retreatEdge>NEAREST</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>6</hyperAggressionIndex>
+    <selfPreservationIndex>6</selfPreservationIndex>
+    <herdMentalityIndex>7</herdMentalityIndex>
+    <braveryIndex>6</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
@@ -69,9 +83,9 @@
     <autoFlee>false</autoFlee>
     <fallShameIndex>3</fallShameIndex>
     <hyperAggressionIndex>9</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
+    <selfPreservationIndex>2</selfPreservationIndex>
     <herdMentalityIndex>7</herdMentalityIndex>
-    <braveryIndex>8</braveryIndex>
+    <braveryIndex>5</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
@@ -84,9 +98,9 @@
     <autoFlee>false</autoFlee>
     <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>9</hyperAggressionIndex>
-    <selfPreservationIndex>5</selfPreservationIndex>
+    <selfPreservationIndex>3</selfPreservationIndex>
     <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>7</braveryIndex>
+    <braveryIndex>5</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
@@ -99,9 +113,9 @@
     <autoFlee>false</autoFlee>
     <fallShameIndex>2</fallShameIndex>
     <hyperAggressionIndex>10</hyperAggressionIndex>
-    <selfPreservationIndex>2</selfPreservationIndex>
+    <selfPreservationIndex>3</selfPreservationIndex>
     <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>9</braveryIndex>
+    <braveryIndex>2</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
@@ -127,11 +141,11 @@
     <forcedWithdrawal>true</forcedWithdrawal>
     <goHome>false</goHome>
     <autoFlee>false</autoFlee>
-    <fallShameIndex>7</fallShameIndex>
-    <hyperAggressionIndex>1</hyperAggressionIndex>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>3</hyperAggressionIndex>
     <selfPreservationIndex>10</selfPreservationIndex>
-    <herdMentalityIndex>5</herdMentalityIndex>
-    <braveryIndex>2</braveryIndex>
+    <herdMentalityIndex>4</herdMentalityIndex>
+    <braveryIndex>8</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>
@@ -140,7 +154,7 @@
     <destinationEdge>NONE</destinationEdge>
     <retreatEdge>NEAREST</retreatEdge>
     <forcedWithdrawal>true</forcedWithdrawal>
-    <goHome>false</goHome>
+    <goHome>true</goHome>
     <autoFlee>false</autoFlee>
     <fallShameIndex>5</fallShameIndex>
     <hyperAggressionIndex>5</hyperAggressionIndex>
@@ -162,6 +176,21 @@
     <selfPreservationIndex>10</selfPreservationIndex>
     <herdMentalityIndex>8</herdMentalityIndex>
     <braveryIndex>2</braveryIndex>
+    <verbosity>WARNING</verbosity>
+    <strategicBuildingTargets/>
+  </behavior>
+    <behavior>
+    <name>Ambusher</name>
+    <destinationEdge>NONE</destinationEdge>
+    <retreatEdge>NEAREST</retreatEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>7</hyperAggressionIndex>
+    <selfPreservationIndex>6</selfPreservationIndex>
+    <herdMentalityIndex>4</herdMentalityIndex>
+    <braveryIndex>7</braveryIndex>
     <verbosity>WARNING</verbosity>
     <strategicBuildingTargets/>
   </behavior>

@@ -1,48 +1,49 @@
 Version:1.1
 Stalker II
 STK-9A
+mul id:6515
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3137
-Source:TRO 3145 Free Worlds League - Dark Ages
-Rules Level:4
+techbase:Inner Sphere
+era:3137
+source:TRO 3145 Free Worlds League - Dark Ages
+rules level:4
 
-Mass:85
-Engine:255 Fusion Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Torso-Mounted Cockpit
-Gyro:Compact Gyro
+mass:85
+engine:255 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Compact Gyro
 
-Heat Sinks:10 Double
-Walk MP:3
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:3
+jump mp:0
 
-Armor:Hardened(Inner Sphere)
-LA Armor:23
-RA Armor:23
-LT Armor:25
-RT Armor:25
-CT Armor:36
-HD Armor:9
-LL Armor:25
-RL Armor:25
-RTL Armor:7
-RTR Armor:7
-RTC Armor:11
+armor:Hardened(Inner Sphere)
+LA armor:23
+RA armor:23
+LT armor:25
+RT armor:25
+CT armor:36
+HD armor:9
+LL armor:25
+RL armor:25
+RTL armor:7
+RTR armor:7
+RTC armor:11
 
 Weapons:10
-Medium Laser, Center Torso
-Medium Laser, Right Arm
-Medium Laser, Head
-Medium Laser, Head
-Medium Laser, Right Arm
 Medium Laser, Left Arm
 Medium Laser, Left Arm
-Medium Laser, Center Torso
-Extended LRM 10, Right Torso
+Medium Laser, Right Arm
+Medium Laser, Right Arm
 Extended LRM 10, Left Torso
+Extended LRM 10, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+Medium Laser, Head
+Medium Laser, Head
 
 Left Arm:
 Shoulder
@@ -156,4 +157,15 @@ IS Endo Steel
 -Empty-
 -Empty-
 
+overview:Based on the original Star League-era BattleMech, the Stalker II is a complete top-to-bottom redesign that takes advantage of technological advancements gained since the last era of open warfare ended. 
+capabilities:One of the aspects that contributed to the original Stalker's success was variants that used Star League-era fire control systems. In order to recapture this particular aspect of the old design, the Stalker II was fitted with a modern Targeting Computer that ties into its eight Magna Mk. II Medium Lasers. For its long-range firepower, the 'Mech relies on two Irian Weapon Works 10-Tubed Extended-Range LRM Launchers with four tons of ammunition tied to them.
+deployment:Designed to take great deal of punishment, the Stalker II's armor protection consists of twenty-seven tons of Riese-675 Hardened Armor with CASE II. The Stalker II is powered by a Strand rated-255 Fusion Engine, the very same model used to power its ancient brethren over the centuries. The old power plant proved unable to overcome the weight of new heavy armor and causes the 'Mech's maximum speed to be slowed down to only 43 km/h. Adding to these protected aspects of the design, the cockpit has been moved to the torso, while a Compact Gyro is installed to make room for it.
+history:Its conception was propelled by the events of Gray Monday in 3132. Irian engineers on Shiro III reviewed records of the classic Stalker over its service life and focused their efforts on taking the best of those qualities for their new design. These efforts resulted in the Stalker II, giving troops an incredibly durable assault 'Mech that is able to withstand horrific amounts of punishment. First deployed by the armed forces of the Duchy of Andurien in 3137, the Stalker II was deployed in all of its major commands. The 'Mech first saw action during the Duchy of Oriente's invasion of Andurien. Shortly after the conflict, Irian began selling the Stalker II to Andurien allies as a means of drumming up needed cash for the Duchy. Sales of the design would see the 'Mech deployed with various combat units within the Capellan Confederation and the now-defunct Marik-Stewart Commonwealth. The Stalker II made a name for itself during the Commonwealth's last days, fighting against Lyran and Clan Wolf forces. In the fighting on Rexburg, two Stalker IIs from the Thirteenth Atrean Dragoons engaged in a Clan trial to buy time for the rest of their company to withdraw from the battlefield. Each Stalker II engaged an entire Nova of light 'Mechs and combat vehicles. The trial by combat ended when one of the Stalker IIs fell to its foes and the other defeated its opponents, even though the pilot eventually succumbed to neurohelmet feedback effects.
+manufacturer:Irian BattleMechs Unlimited
+primaryfactory:Shiro III
+systemmanufacturer:CHASSIS:Irian Chassis Class 38 Endo Steel
+systemmanufacturer:ENGINE:Strand 255
+systemmanufacturer:ARMOR:Riese-675 Hardened with CASE II
+systemmanufacturer:COMMUNICATIONS:Irian E.A.R.
+systemmanufacturer:TARGETING:Wasat Aggressor with Advanced Targeting Computer
 

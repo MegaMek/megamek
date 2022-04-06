@@ -15,6 +15,10 @@ Rotunda Scout Vehicle
 <Model>
 RND-J-1-11 (LRM)
 </Model>
+
+<mul id:>
+2746
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

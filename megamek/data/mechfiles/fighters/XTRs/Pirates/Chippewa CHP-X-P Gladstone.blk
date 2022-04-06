@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Chippewa
 <Model>
 CHP-X-P (Gladstone)
 </Model>
+
+<mul id:>
+589
+</mul id:>
 
 <year>
 3074
@@ -56,7 +60,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-400
+800
 </fuel>
 
 <engine_type>
@@ -68,7 +72,7 @@ Aerodyne
 </armor_type>
 
 <armor_tech>
--1
+7
 </armor_tech>
 
 <armor>
@@ -114,6 +118,34 @@ IS Ammo Extended LRM-15
 IS Ammo Extended LRM-15
 </Fuselage Equipment>
 
+<overview>
+Designed by the Star League, the heavy Chippewa isn't extremely fast, but it has an impressive array of armament.
+</overview>
+
+<deployment>
+The personal Chippewa of Michael Gladstone, a deserter from the Lyran Regulars, the Chippewa Gladstone can be found near the Rim Collection acting as an escort for various merchant DropShips and JumpShips. Modified to carry a pair of Extended LRM-15 launchers in the nose, Gladstone can engage enemy forces from much further out than they expect. The standard armor has been removed and replaced with Laser Reflective Armor, which means energy weapons are far less effective against the Chippewa. If an enemy does manage to close with Gladstone they'll receive a rude shock: Ten ER Medium Lasers and enough Double Heat Sinks to use them. In the technology-starved Periphery, the Chippewa Gladstone is one of the most effective and fearsome Aerospace Fighters in service.
+</deployment>
+
+<history>
+Mostly used in the Lyran Commonwealth, the Chippewa has become House Steiner's main heavy fighter. Prior to the start of the First Succession War Steiner captured the Bowie Industries plant on Dell, where W5 models were produced until House Kurita successfully destroyed the plant in a raid. Another major production site was the Bowie Industries in the planet Wyatt, untill 3068, when the Word of Blake nuked it during the Jihad. A heavy fighter, the Chippewa utilizes its large wings to provide added maneuverability when fighting in an atmosphere. The outer portions of each wing can retract inward, allowing for the fighter to be stored aboard transports more easily.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Field Refit
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Bowie 50
+ENGINE:PlasmaStar 270
+ARMOR:Wyatt Coresteel Standard
+COMMUNICATIONS:Rander 200
+TARGETING:Rander TAS
+</systemManufacturers>
+
 <source>
 XTRO Pirates - Jihad
 </source>
@@ -121,3 +153,4 @@ XTRO Pirates - Jihad
 <tonnage>
 90.0
 </tonnage>
+

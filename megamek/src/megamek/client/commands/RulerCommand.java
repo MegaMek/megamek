@@ -52,17 +52,14 @@ public class RulerCommand extends ClientCommand {
 
             if (args.length == 3) {
                 start = client.getCurrentHex();
-                end = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                        .parseInt(args[2]) - 1);
+                end = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
             } else {
                 if (args[1].equals("cur")) {
                     start = client.getCurrentHex();
                 } else {
-                    start = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                            .parseInt(args[2]) - 1);
+                    start = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
                 }
-                end = new Coords(Integer.parseInt(args[3]) - 1, Integer
-                        .parseInt(args[4]) - 1);
+                end = new Coords(Integer.parseInt(args[3]) - 1, Integer.parseInt(args[4]) - 1);
                 if (args.length > 5) {
                     try {
                         elev1 = Integer.parseInt(args[5]);
@@ -80,22 +77,24 @@ public class RulerCommand extends ClientCommand {
             }
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                                          LosEffects.buildAttackInfo(start, end, elev1, elev2,
-                                                                     getClient().getBoard().getHex(start).floor(),
-                                                                     getClient().getBoard().getHex(end).floor())).losModifiers(
-                    getClient().getGame());
+                    LosEffects.buildAttackInfo(start, end, elev1, elev2,
+                            getClient().getBoard().getHex(start).floor(),
+                            getClient().getBoard().getHex(end).floor())
+            ).losModifiers(getClient().getGame());
+
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
+                toHit1 = thd.getValue() + " because ";
             }
             toHit1 += thd.getDesc();
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                                          LosEffects.buildAttackInfo(end, start, elev2, elev1,
-                                                                     getClient().getBoard().getHex(end).floor(),
-                                                                     getClient().getBoard().getHex(start).floor())).losModifiers(
-                    getClient().getGame());
+                    LosEffects.buildAttackInfo(end, start, elev2, elev1,
+                            getClient().getBoard().getHex(end).floor(),
+                            getClient().getBoard().getHex(start).floor())
+            ).losModifiers(getClient().getGame());
+
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
+                toHit2 = thd.getValue() + " because  ";
             }
             toHit2 += thd.getDesc();
 
@@ -105,12 +104,10 @@ public class RulerCommand extends ClientCommand {
                    + elev2 + " has a range of " + start.distance(end)
                    + " and a modifier of " + toHit1
                    + " and return fire has a modifier of " + toHit2 + ".";
-        } catch (NumberFormatException nfe) {
-        } catch (NullPointerException npe) {
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (Exception ignored) {
+
         }
 
-        return "Error parsing the ruler command. Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]] where x1, y1, x2, y2, and the optional elev agruments are integers.";
+        return "Error parsing the ruler command. Usage: #ruler x1 y1 x2 y2 [elev1 [elev2]] where x1, y1, x2, y2, and the optional elev arguments are integers.";
     }
-
 }

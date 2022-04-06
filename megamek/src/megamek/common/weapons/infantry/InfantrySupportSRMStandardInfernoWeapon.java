@@ -37,6 +37,7 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
 		addLookupName(name);
 		addLookupName("Infantry2ShotSRMInferno");
 		addLookupName("Infantry Two-Shot SRM Launcher (Inferno)");
+		sortingName = "SRM Launcher CI";
 		ammoType = AmmoType.T_INFANTRY;
 		cost = 1500;
 		bv = 3.48;
@@ -49,7 +50,7 @@ public class InfantrySupportSRMStandardInfernoWeapon extends InfantryWeapon {
  		shots = 2;
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2365, 2370, 2400, DATE_NONE, DATE_NONE)

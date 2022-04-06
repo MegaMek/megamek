@@ -1,23 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * TargetRoll.java
- *
- * Created on April 19, 2002, 1:05 AM
- */
-
 package megamek.common;
 
 import java.io.Serializable;
@@ -30,12 +23,9 @@ import java.util.List;
  * Intended for rolls like a to-hit roll or a piloting skill check.
  *
  * @author Ben
+ * @since April 19, 2002, 1:05 AM
  */
 public class TargetRoll implements Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -7453086182585457422L;
     public static final int IMPOSSIBLE = Integer.MAX_VALUE;
     public static final int AUTOMATIC_FAIL = Integer.MAX_VALUE - 1;
@@ -59,14 +49,14 @@ public class TargetRoll implements Serializable {
     }
 
     /**
-     * Creates a new TargetRoll with a base value & desc
+     * Creates a new TargetRoll with a base value and desc
      */
     public TargetRoll(int value, String desc) {
         addModifier(value, desc);
     }
 
     /**
-     * Creates a new TargetRoll with a base value & desc, which is possibly
+     * Creates a new TargetRoll with a base value and desc, which is possibly
      * not cumulative
      *
      * @param value
@@ -137,6 +127,7 @@ public class TargetRoll implements Serializable {
         return allDesc.toString();
     }
     
+    @Override
     public String toString() {
         return getDesc();
     }

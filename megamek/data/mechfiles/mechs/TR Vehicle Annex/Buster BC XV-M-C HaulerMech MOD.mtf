@@ -1,6 +1,7 @@
 Version:1.0
 Buster BC XV-M-C HaulerMech
 MOD
+mul id:7178
 
 Config:Biped
 TechBase:Inner Sphere

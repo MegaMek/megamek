@@ -1,6 +1,7 @@
 Version:1.0
 Chimera
 CMA-1S
+mul id:3950
 
 Config:Biped
 TechBase:Inner Sphere

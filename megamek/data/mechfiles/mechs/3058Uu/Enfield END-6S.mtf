@@ -1,6 +1,7 @@
 Version:1.0
 Enfield
 END-6S
+mul id:974
 
 Config:Biped
 TechBase:Inner Sphere

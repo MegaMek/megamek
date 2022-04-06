@@ -1,6 +1,7 @@
 Version:1.0
 Arctic Fox
 AF1D
+mul id:95
 
 Config:Biped Omnimech
 TechBase:Inner Sphere

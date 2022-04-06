@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Monitor Naval Vessel
@@ -20,37 +20,37 @@ Monitor Naval Vessel
 (Standard)
 </Model>
 
+<mul id:>
+2219
+</mul id:>
+
 <year>
 2910
 </year>
 
-<source>
-TRO 3039 - Succession Wars
-</source>
+<originalBuildYear>
+2910
+</originalBuildYear>
 
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-75.0
-</tonnage>
 
 <motion_type>
 Naval
 </motion_type>
 
 <transporters>
-TroopSpace: 1
+troopspace:1.5
 </transporters>
-
-<engine_type>
-1
-</engine_type>
 
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 22
@@ -86,4 +86,16 @@ SRM 2
 Autocannon/20
 Autocannon/20
 </Turret Equipment>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
 

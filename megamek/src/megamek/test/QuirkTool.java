@@ -1,57 +1,42 @@
 /*
- * MegaMek - Copyright (C) 2003,2004 Ben Mazur (bmazur@sev.org)
- *  Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
+ * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2016 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import megamek.common.*;
+import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.Protomech;
-import megamek.common.QuirksHandler;
-import megamek.common.Tank;
-import megamek.common.VTOL;
+import java.io.File;
+import java.util.*;
 
 /**
- * This program is a tool to help gather information about quirks.  It goes
- * through each canon quirk entry and will print out 1) if it belongs to 
- * multiple types of units (which is an error), 2) if it belongs to no unit 
- * (which likely means there's an error).  Also, since some errors don't appear
- * until a unit is loaded, it will force any problematic quirks to throw up
- * warnings.
+ * This program is a tool to help gather information about quirks. It goes through each canon quirk
+ * entry and will print out:
+ * 1) if it belongs to multiple types of units (which is an error)
+ * 2) if it belongs to no unit (which likely means there's an error)
+ *
+ * Also, since some errors don't appear until a unit is loaded, it will force any problematic quirks
+ * to throw up warnings.
  * 
  * @author arlith
- * @date January 2016
+ * @since January 2016
  */
 public class QuirkTool implements MechSummaryCache.Listener {
-
     private static MechSummaryCache mechSummaryCache = null;
 
-    public static void main(String[] args) {     
+    public static void main(String... args) {
         EquipmentType.initializeTypes();
         
         QuirkTool qc = new QuirkTool();
@@ -65,9 +50,8 @@ public class QuirkTool implements MechSummaryCache.Listener {
 
         try {
             QuirksHandler.initQuirksList();
-        } catch (IOException e) {
-            System.err.println("Error initializing quirks!");
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error("Error initializing quirks", e);
             return;
         }
         
@@ -76,46 +60,40 @@ public class QuirkTool implements MechSummaryCache.Listener {
         
         for (String quirkId : quirkIds) {
             for (MechSummary summary : ms) {              
-                String allId = QuirksHandler.getUnitId(summary.getChassis(),
-                        "all", MechSummary.determineETypeName(summary));
-                String specificId = QuirksHandler.getUnitId(
-                        summary.getChassis(), summary.getModel(),
+                String allId = QuirksHandler.getUnitId(summary.getChassis(), "all",
                         MechSummary.determineETypeName(summary));
+                String specificId = QuirksHandler.getUnitId(summary.getChassis(),
+                        summary.getModel(), MechSummary.determineETypeName(summary));
                 List<Entity> entities;
                 if (quirkId.equals(allId) || quirkId.equals(specificId)) {
-                    entities = idEntitiesMap.get(quirkId);
-                    if (entities == null) {
-                        entities = new ArrayList<>();
-                        idEntitiesMap.put(quirkId, entities);
-                    }
-                    entities.add(loadEntity(summary.getSourceFile(),
-                            summary.getEntryName()));
+                    entities = idEntitiesMap.computeIfAbsent(quirkId, k -> new ArrayList<>());
+                    entities.add(loadEntity(summary.getSourceFile(), summary.getEntryName()));
                 }
             }
+
             if (idEntitiesMap.get(quirkId) == null) {
-                System.out.println("Entry: " + quirkId
-                        + " doesn't have any matches!");
+                LogManager.getLogger().warn("Entry: " + quirkId + "doesn't have any matches!");
             }
         }
         
-        for (String quirkId : idEntitiesMap.keySet()) {
+        for (final String quirkId : idEntitiesMap.keySet()) {
             List<Entity> entities = idEntitiesMap.get(quirkId);
             Set<Integer> types = new HashSet<>();
             boolean containsNonMech = false;
-            for (Entity ent : entities) {
+            for (final Entity ent : entities) {
                 if (!(ent instanceof Mech)) {
-                    System.out.println("Entry: " + quirkId
-                            + " contains non 'mech!");
+                    LogManager.getLogger().info("Entry " + quirkId + " contains non 'Mek");
                     containsNonMech = true;
                 }
+
                 if (ent instanceof Mech) {
                     types.add(1);
+                } else if (ent instanceof VTOL) {
+                    types.add(4);
                 } else if (ent instanceof Tank) {
                     types.add(2);
                 } else if (ent instanceof Aero) {
                     types.add(3);
-                } else if (ent instanceof VTOL) {
-                    types.add(4);
                 } else if (ent instanceof Infantry) {
                     types.add(5);
                 } else if (ent instanceof Protomech) {
@@ -124,29 +102,27 @@ public class QuirkTool implements MechSummaryCache.Listener {
                     types.add(7);
                 }
             }
+
             if (containsNonMech) {
-                System.out.println("non-mech entry: " + quirkId);
+                LogManager.getLogger().info("Non-Mek Entry " + quirkId);
             }
+
             if (types.size() > 1) {
-                System.out.println("Entry: " + quirkId
-                        + " contains mixed types!");
+                LogManager.getLogger().warn("Entry " + quirkId + " contains mixed types");
             }
-            if (types.size() == 0) {
-                System.out.println("Entry: " + quirkId
-                        + " doesn't have any matches!");
+
+            if (types.isEmpty()) {
+                LogManager.getLogger().warn("Entry " + quirkId + " doesn't have any matches");
             }
         }
-    }
-    
-    public Entity loadEntity(File f, String entityName) {
-        Entity entity = null;
-        try {
-            entity = new MechFileParser(f, entityName).getEntity();
-        } catch (megamek.common.loaders.EntityLoadingException e) {
-            System.out.println("Exception: " + e.toString()); //$NON-NLS-1$
-        }
-        return entity;
     }
 
-    
+    public @Nullable Entity loadEntity(final File file, final String entityName) {
+        try {
+            return new MechFileParser(file, entityName).getEntity();
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
+            return null;
+        }
+    }
 }

@@ -1,11 +1,12 @@
 Version:1.1
 Warhammer
 C 3
+mul id:7566
 
 Config:Biped
 techbase:Clan
 era:2874
-source:Succession Wars
+source:Rec Guide:ilClan #7 - Early Succession Wars
 rules level:2
 
 mass:70

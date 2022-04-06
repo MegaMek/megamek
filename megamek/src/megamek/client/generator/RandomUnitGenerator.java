@@ -2,44 +2,31 @@
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.generator;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import megamek.common.Configuration;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import org.apache.logging.log4j.LogManager;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * This class sets up a random unit generator that can then
@@ -53,17 +40,12 @@ import megamek.common.MechSummaryCache;
  * line of the file should give the unit type number corresponding to
  * UnitType.java The remaining lines should be comma split. The first field
  * should give the frequency of that unit and the second line should give the
- * name of that unit written as <Model> <Chassis> Comment lines can also be
- * added with "#"
+ * name of that unit written as { Model } { Chassis }. Comment lines can also be added with "#".
  * </p>
  *
  * @author Jay Lawson
  */
 public class RandomUnitGenerator implements Serializable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 5765118329881301375L;
 
     // The RATs are stored in a hashmap of string vectors. The keys are the RAT
@@ -112,9 +94,9 @@ public class RandomUnitGenerator implements Serializable {
         private Vector<String> units;
         private Vector<Float> weights;
 
-        RatEntry(){
-            setUnits(new Vector<String>());
-            setWeights(new Vector<Float>());
+        RatEntry() {
+            setUnits(new Vector<>());
+            setWeights(new Vector<>());
         }
 
         public Vector<String> getUnits() {
@@ -158,10 +140,10 @@ public class RandomUnitGenerator implements Serializable {
         // Give the MSC some time to initialize
         MechSummaryCache msc = MechSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
-        while( !interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis() ) {
+        while (!interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis()) {
             try {
                 Thread.sleep(50);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 // Ignore
             }
         }
@@ -179,24 +161,23 @@ public class RandomUnitGenerator implements Serializable {
         }
     }
 
-    public synchronized void registerListener(ActionListener l){
+    public synchronized void registerListener(ActionListener l) {
         listeners.add(l);
     }
 
 
     // todo Not being used.  Is this really needed?
-    public synchronized void removeListener(ActionListener l){
+    public synchronized void removeListener(ActionListener l) {
         listeners.remove(l);
     }
 
     /**
      * Notifies all the listeners that initialization is finished
      */
-    public void notifyListenersOfInitialization(){
-        if (initialized){
-            for (ActionListener l : listeners){
-                l.actionPerformed(new ActionEvent(
-                        this,ActionEvent.ACTION_PERFORMED,"rugInitialized"));
+    public void notifyListenersOfInitialization() {
+        if (initialized) {
+            for (ActionListener l : listeners) {
+                l.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED,"rugInitialized"));
             }
         }
     }
@@ -206,11 +187,9 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try(
-        BufferedReader reader
-                = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) { //$NON-NLS-1$
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             int lineNumber = 0;
-            String key = "Huh"; //$NON-NLS-1$
+            String key = "Huh";
             float totalWeight = 0.0f;
             RatEntry re = new RatEntry();
             String line = null;
@@ -218,17 +197,19 @@ public class RandomUnitGenerator implements Serializable {
                 if (interrupted) {
                     return;
                 }
-                if (line.startsWith("#")) { //$NON-NLS-1$
+
+                if (line.startsWith("#")) {
                     continue;
                 }
+
                 lineNumber++;
                 if (lineNumber == 1) {
                     key = line;
                 } else {
-                    String[] values = line.split(","); //$NON-NLS-1$
+                    String[] values = line.split(",");
                     if (values.length < 2) {
-                        System.err.println(String.format("Not enough fields in %s on %d", //$NON-NLS-1$
-                            fileName, lineNumber));
+                        LogManager.getLogger().error(String.format("Not enough fields in %s on %d",
+                                fileName, lineNumber));
                         continue;
                     }
                     String name = values[0];
@@ -236,22 +217,23 @@ public class RandomUnitGenerator implements Serializable {
                     try {
                         weight = Integer.parseInt(values[1].trim());
                     } catch (NumberFormatException nef) {
-                        System.err.println(
-                            String.format("The frequency field could not be interpreted on line %d of %s", //$NON-NLS-1$
+                        LogManager.getLogger().error(String.format(
+                                "The frequency field could not be interpreted on line %d of %s",
                                 lineNumber, fileName));
                         continue;
                     }
-                    if( weight <= 0.0f ) {
-                        System.err.println(
-                            String.format("The frequency field is zero or negative (%d) on line %d of %s", //$NON-NLS-1$
-                                (int)Math.round(weight), lineNumber, fileName));
+
+                    if (weight <= 0.0f) {
+                        LogManager.getLogger().error(String.format(
+                                "The frequency field is zero or negative (%d) on line %d of %s",
+                                Math.round(weight), lineNumber, fileName));
                         continue;
                     }
 
                     // The @ symbol denotes a reference to another RAT rather than a unit.
-                    if (!name.startsWith("@") && (null == msc.getMech(name))) { //$NON-NLS-1$
-                        System.err.println(
-                            String.format("The unit %s could not be found in the %s RAT (%s)", //$NON-NLS-1$
+                    if (!name.startsWith("@") && (null == msc.getMech(name))) {
+                        LogManager.getLogger().error(String.format(
+                                "The unit %s could not be found in the %s RAT (%s)",
                                 name, key, fileName));
                         continue;
                     }
@@ -262,7 +244,7 @@ public class RandomUnitGenerator implements Serializable {
             }
 
             // Calculate total weights
-            if (re.getUnits().size() > 0) {
+            if (!re.getUnits().isEmpty()) {
                 for (int i = 0; i < re.getWeights().size(); i++) {
                     re.getWeights().set(i, re.getWeights().get(i) / totalWeight);
                 }
@@ -272,24 +254,24 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
         }
-
     }
 
     private RatTreeNode getNodeByPath(RatTreeNode root, String path) {
         RatTreeNode result = root;
-        String[] pathElements = path.split("/", -1); //$NON-NLS-1$
-        for( int i = 0; i < pathElements.length - 1; ++ i ) {
-            if( pathElements[i].length() == 0 ) {
+        String[] pathElements = path.split("/", -1);
+        for (int i = 0; i < pathElements.length - 1; i++) {
+            if (pathElements[i].length() == 0) {
                 continue;
             }
             RatTreeNode subNode = null;
-            for( RatTreeNode rtn : result.children ) {
-                if( rtn.name.equals(pathElements[i]) ) {
+            for (RatTreeNode rtn : result.children) {
+                if (rtn.name.equals(pathElements[i])) {
                     subNode = rtn;
                     break;
                 }
             }
-            if( null == subNode ) {
+
+            if (null == subNode) {
                 subNode = new RatTreeNode(pathElements[i]);
                 result.children.addElement(subNode);
             }
@@ -299,7 +281,7 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void cleanupNode(RatTreeNode node) {
-        for(RatTreeNode child : node.children) {
+        for (RatTreeNode child : node.children) {
                cleanupNode(child);
         }
         Collections.sort(node.children);
@@ -330,52 +312,51 @@ public class RandomUnitGenerator implements Serializable {
             }
             String ratFileNameLC = ratFile.getName().toLowerCase(Locale.ROOT);
 
-            if (ratFileNameLC.equals("_svn") || ratFileNameLC.equals(".svn")) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (ratFileNameLC.equals("_svn") || ratFileNameLC.equals(".svn")) {
                 // This is a Subversion work directory. Lets ignore it.
                 continue;
             }
 
             // READ IN RATS
             if (ratFile.isDirectory()) {
-                RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/"); //$NON-NLS-1$
+                RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/");
 
                 // recursion is fun
                 loadRatsFromDirectory(ratFile, msc, newNode);
 
                 // Prune empty nodes (this removes the "Unofficial" place holder)
-                if (newNode.children.size() == 0) {
+                if (newNode.children.isEmpty()) {
                     node.children.remove(newNode);
                 }
                 continue;
             }
-            if( ratFileNameLC.endsWith(".zip") ) { //$NON-NLS-1$
-                try(ZipFile zipFile = new ZipFile(ratFile)) {
+
+            if (ratFileNameLC.endsWith(".zip")) {
+                try (ZipFile zipFile = new ZipFile(ratFile)) {
                     Enumeration<? extends ZipEntry> entries = zipFile.entries();
-                    while(entries.hasMoreElements()) {
+                    while (entries.hasMoreElements()) {
                         ZipEntry entry = entries.nextElement();
                         String entryName = entry.getName();
-                        if(!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt")) //$NON-NLS-1$
-                        {
+                        if (!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt")) {
                             RatTreeNode subNode = getNodeByPath(node, entryName);
-                            try(InputStream zis = zipFile.getInputStream(entry))
-                            {
-                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc); //$NON-NLS-1$
+                            try (InputStream zis = zipFile.getInputStream(entry)) {
+                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc);
                             }
                         }
                     }
-                } catch(IOException e) {
-                    System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
                 }
             }
-            if (!ratFileNameLC.endsWith(".txt")) { //$NON-NLS-1$
+
+            if (!ratFileNameLC.endsWith(".txt")) {
                 continue;
             }
-            try(InputStream ratInputStream = new FileInputStream(ratFile)) {
+
+            try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
-            } catch(IOException e) {
-                System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
-                System.err.println(e.getMessage());
-                e.printStackTrace();
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
             }
         }
     }
@@ -386,17 +367,17 @@ public class RandomUnitGenerator implements Serializable {
      * @return - a string giving the name
      */
     public ArrayList<MechSummary> generate(int numRolls, String ratName) {
-    	return generate(numRolls, ratName, null);
+        return generate(numRolls, ratName, null);
     }
 
-	/**
+    /**
      * Generate a list of units from the RAT.
-	 *     
-	 * @param numRolls - the number of units to roll from the RAT
-	 * @param ratName - name of the RAT to roll on
-	 * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
+     *
+     * @param numRolls - the number of units to roll from the RAT
+     * @param ratName - name of the RAT to roll on
+     * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
      * @return - a list of units determined by the random rolls
-	 */
+     */
     public ArrayList<MechSummary> generate(int numRolls, String ratName, Predicate<MechSummary> filter) {
         ArrayList<MechSummary> units = new ArrayList<>();
 
@@ -404,13 +385,13 @@ public class RandomUnitGenerator implements Serializable {
             int retryCount = 0;
             
             // give the RATs a few seconds to load
-            while(!initialized && retryCount < 5) {
+            while (!initialized && (retryCount < 5)) {
                 try {
                     Thread.sleep(1000);
-                } catch(Exception e) {
+                } catch (Exception ignored) {
                     
                 }
-                
+
                 retryCount++;
             }
             
@@ -418,24 +399,24 @@ public class RandomUnitGenerator implements Serializable {
             if (null != ratMap) {
                 RatEntry re = ratMap.get(ratName);
                 if (filter != null) {
-                	RatEntry filtered = new RatEntry();
-                	float totalWeight = 0.0f;
-                	MechSummaryCache msc = MechSummaryCache.getInstance();
-                	for (int i = 0; i < re.getUnits().size(); i++) {
-                		if (!re.getUnits().get(i).startsWith("@")) {
-	                		MechSummary ms = msc.getMech(re.getUnits().get(i));
-	                		if (ms == null || !filter.test(ms)) {
-	                			continue;
-	                		}
-                		}
-            			filtered.getUnits().add(re.getUnits().get(i));
-            			filtered.getWeights().add(re.getWeights().get(i));
-            			totalWeight += re.getWeights().get(i);
-                	}
-                	for (int i = 0; i < filtered.getWeights().size(); i++) {
-                		filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
-                	}
-                	re = filtered;
+                    RatEntry filtered = new RatEntry();
+                    float totalWeight = 0.0f;
+                    MechSummaryCache msc = MechSummaryCache.getInstance();
+                    for (int i = 0; i < re.getUnits().size(); i++) {
+                        if (!re.getUnits().get(i).startsWith("@")) {
+                            MechSummary ms = msc.getMech(re.getUnits().get(i));
+                            if (ms == null || !filter.test(ms)) {
+                                continue;
+                            }
+                        }
+                        filtered.getUnits().add(re.getUnits().get(i));
+                        filtered.getWeights().add(re.getWeights().get(i));
+                        totalWeight += re.getWeights().get(i);
+                    }
+                    for (int i = 0; i < filtered.getWeights().size(); i++) {
+                        filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
+                    }
+                    re = filtered;
                 }
                 if ((null != re) && (re.getUnits().size() > 0)) {
                     for (int roll = 0; roll < numRolls; roll++) {
@@ -461,7 +442,7 @@ public class RandomUnitGenerator implements Serializable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogManager.getLogger().error("", e);
         }
         return units;
     }
@@ -508,7 +489,7 @@ public class RandomUnitGenerator implements Serializable {
     public void dispose() {
         interrupted = true;
         dispose = true;
-        if (initialized){
+        if (initialized) {
             clear();
         }
     }
@@ -529,15 +510,11 @@ public class RandomUnitGenerator implements Serializable {
             rug.initializing = true;
             interrupted = false;
             dispose = false;
-            rug.loader = new Thread(new Runnable() {
-                public void run() {
-                    long start = System.currentTimeMillis();
-                    rug.populateUnits();
-                    long end = System.currentTimeMillis();
-                    System.out.println("Loaded Rats in: " + (end - start)
-                            + "ms.");
-                    System.out.flush();
-                }
+            rug.loader = new Thread(() -> {
+                long start = System.currentTimeMillis();
+                rug.populateUnits();
+                long end = System.currentTimeMillis();
+                LogManager.getLogger().info("Loaded Rats in: " + (end - start) + "ms.");
             }, "Random Unit Generator unit populator");
             rug.loader.setPriority(Thread.NORM_PRIORITY - 1);
             rug.loader.start();
@@ -548,5 +525,4 @@ public class RandomUnitGenerator implements Serializable {
     public boolean isInitialized() {
         return initialized;
     }
-
 }

@@ -11,21 +11,16 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
  * Represents a volume of space set aside for carrying infantry platoons
  * aboard large spacecraft and mobile structures.  Marines count as crew and should have at least steerage quarters.
  */
-
 public final class InfantryBay extends Bay {
 
     // Protected constructors and methods.
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 946578184870030662L;
     
     /** The amount of space taken up by an infantry unit in a transport bay differs from the space
@@ -62,7 +57,7 @@ public final class InfantryBay extends Bay {
         
         @Override
         public String toString() {
-            return name().substring(0, 1) + name().substring(1).toLowerCase();
+            return name().charAt(0) + name().substring(1).toLowerCase();
         }
         
         public static PlatoonType getPlatoonType(Entity en) {
@@ -91,7 +86,7 @@ public final class InfantryBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected InfantryBay() {
+    private InfantryBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
@@ -122,7 +117,7 @@ public final class InfantryBay extends Bay {
     public double spaceForUnit(Entity unit) {
         PlatoonType type = PlatoonType.getPlatoonType(unit);
         if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
-            return type.getWeight() * ((Infantry)unit).getSquadN();
+            return type.getWeight() * ((Infantry) unit).getSquadN();
         } else {
             return type.getWeight();
         }
@@ -181,8 +176,8 @@ public final class InfantryBay extends Bay {
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)(totalSpace / platoonType.getWeight())
-                * (clan? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
+        return (int) (totalSpace / platoonType.getWeight())
+                * (clan ? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
     }
 
     @Override
@@ -197,7 +192,8 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String toString() {
-        return "infantrybay:" + (totalSpace / platoonType.getWeight()) + ":" + doors + ":"+ bayNumber + ":" + platoonType.toString();
+        return "infantrybay:" + (totalSpace / platoonType.getWeight()) + ":" + doors + ":"
+                + bayNumber + ":" + platoonType;
     }
     
     public PlatoonType getPlatoonType() {
@@ -209,4 +205,4 @@ public final class InfantryBay extends Bay {
         // Based on the weight of the equipment (not capacity), rounded up to the whole ton
         return 15000L * (long) Math.ceil(getWeight());
     }
-} // End package class TroopSpace implements Transporter
+}

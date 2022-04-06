@@ -1,6 +1,7 @@
 Version:1.0
 Corvis
 (Standard)
+mul id:700
 
 Config:Biped
 TechBase:Clan

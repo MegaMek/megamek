@@ -20,6 +20,10 @@ Axel Heavy Tank
 Mk 1
 </Model>
 
+<mul id:>
+180
+</mul id:>
+
 <year>
 3036
 </year>

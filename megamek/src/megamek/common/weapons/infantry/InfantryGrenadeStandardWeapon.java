@@ -24,31 +24,31 @@ import megamek.common.AmmoType;
  */
 public class InfantryGrenadeStandardWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryGrenadeStandardWeapon() {
-		super();
+    public InfantryGrenadeStandardWeapon() {
+        super();
 
-		name = "Grenade (Non-Inferno)";
-		setInternalName("InfantryGrenade");
-		addLookupName(name);
-		addLookupName("Grenades");
-		ammoType = AmmoType.T_NA;
-		cost = 16;
-		bv = 0.44;
-		tonnage = .0006;
-		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
-		infantryDamage = 0.48;
-		infantryRange = 0;
-		rulesRefs = " 273,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-				.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+        name = "Grenade (Non-Inferno)";
+        setInternalName("InfantryGrenade");
+        addLookupName(name);
+        addLookupName("Grenades");
+        ammoType = AmmoType.T_NA;
+        cost = 16;
+        bv = 0.44;
+        tonnage = .0006;
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        infantryDamage = 0.48;
+        infantryRange = 0;
+        rulesRefs = " 273, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
 
-	}
+    }
 }

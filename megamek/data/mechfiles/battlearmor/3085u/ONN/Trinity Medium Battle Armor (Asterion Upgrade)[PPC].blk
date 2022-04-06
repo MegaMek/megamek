@@ -1,0 +1,109 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Trinity Medium Battle Armor
+</Name>
+
+<Model>
+(Asterion Upgrade)[PPC]
+</Model>
+
+<mul id:>
+3305
+</mul id:>
+
+<year>
+3073
+</year>
+
+<originalBuildYear>
+3073
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BA Advanced:LA
+BA Advanced:Body
+BA Advanced:LA
+BA Advanced:RA
+BA Advanced:Body
+BABattleClaw:LA
+BABattleClawVibro:RA
+CLBAMG:RA
+ISBASupportPPC:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+8
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

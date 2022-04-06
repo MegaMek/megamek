@@ -24,29 +24,29 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicShurikenWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicShurikenWeapon() {
-		super();
+    public InfantryArchaicShurikenWeapon() {
+        super();
 
-		name = "Blade (Shuriken/Thrown Knives)";
-		setInternalName(name);
-		addLookupName("InfantryShuriken");
-		addLookupName("Shuriken");
-		ammoType = AmmoType.T_NA;
-		cost = 5;
-		bv = 0;
+        name = "Blade (Shuriken/Thrown Knives)";
+        setInternalName(name);
+        addLookupName("InfantryShuriken");
+        addLookupName("Shuriken");
+        ammoType = AmmoType.T_NA;
+        cost = 5;
+        bv = 0;
         tonnage = .0001; 
-		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-		infantryDamage = 0;
-		infantryRange = 0;
-		rulesRefs = " 272,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
 
-	}
+    }
 }

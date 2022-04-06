@@ -1,11 +1,13 @@
 Version:1.1
 Marauder II
 MAD-6C
+mul id:7521
 
 Config:Biped
 techbase:Inner Sphere
 era:3134
 rules level:3
+source:Rec Guide:ilClan #5 - Dark Age
 
 mass:100
 engine:300 Fusion Engine(IS)

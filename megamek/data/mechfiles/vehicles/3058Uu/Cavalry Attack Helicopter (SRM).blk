@@ -15,6 +15,10 @@ Cavalry Attack Helicopter
 <Model>
 (SRM)
 </Model>
+
+<mul id:>
+505
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

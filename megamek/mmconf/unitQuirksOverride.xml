@@ -3,8 +3,8 @@
 <!--
 NOTE: saving quirks for units within MM will cause this file to get re-written and all changes will be lost!
 
-This file allows users to customize the default cannon quirks list.  Any quirk assignments in this file will override
-  the cannon quirk entries entirely.  Changes to this file will not take effect until the next time megamek is launched.
+This file allows users to customize the default cannon quirks list. Any quirk assignments in this file will override
+ the cannon quirk entries entirely. Changes to this file will not take effect until the next time MegaMek is launched.
 
 To assign a unit a quirk, the entry should be in the following format:
     <unit>
@@ -27,20 +27,20 @@ To assign a unit a quirk, the entry should be in the following format:
     </unit>
 
 The "model" field can be left blank if there is no model number for the unit (common for some tank chassis), but the
-  tags should still be included.  A <model> of "all" will cause all units with the same <chassis> to have the defined
-  quirks.  This can later be overridden with entries for specific models.
+ tags should still be included. A <model> of "all" will cause all units with the same <chassis> to have the defined
+ quirks. This can later be overridden with entries for specific models.
 
 Multiple quirks should be contained within separate "quirk" tags.
 
 Multiple weapon quirks should be contained within separate "weaponQuirk" structures, even if multiple quirks apply to
-  the same weapon.
+ the same weapon.
 
 The proper names for quirks can be found in the
-  l10n/megamek/common/options/messages.properties file.  Search for the "QuirksInfo" section.
-  The name you want will fall between "option" and "displayableName".  For example, if you wish to apply the
-  "Anti-Aircraft Targeting" quirk to a unit, you will find the following entry in the messages.properties file:
-    QuirksInfo.option.anti_air.displayableName
-  The name you want to include in this file for the <quirk> entry is "anti_air".
+ l10n/megamek/common/options/messages.properties file.  Search for the "QuirksInfo" section.
+ The name you want will fall between "option" and "displayableName".  For example, if you wish to apply the
+ "Anti-Aircraft Targeting" quirk to a unit, you will find the following entry in the messages.properties file:
+   QuirksInfo.option.anti_air.displayableName
+ The name you want to include in this file for the <quirk> entry is "anti_air".
 If you wish to remove all quirks for a unit, you can create an entry in this file with a <quirk> of "none".
 
 Example:  If you wish to declare that all Atlas variants do not have the Command Mech quirk:
@@ -88,9 +88,15 @@ Example: You can define quirks that affect all units of a given chassis and then
 -->
 
 <unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsd">
+
 	<unit>
 		<chassis>Atlas</chassis>
 		<unitType>Mech</unitType>
+		<quirk>battle_fists_la</quirk>
+		<quirk>battle_fists_ra</quirk>
 		<quirk>command_mech</quirk>
+		<quirk>distracting</quirk>
+		<quirk>imp_com</quirk>
 	</unit>
+
 </unitQuirks>

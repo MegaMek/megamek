@@ -47,7 +47,7 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
 		ammoCost = 3;
 		shots = 20;
 		bursts = 5;
-		rulesRefs = "273,TM";
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3058, 3085, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

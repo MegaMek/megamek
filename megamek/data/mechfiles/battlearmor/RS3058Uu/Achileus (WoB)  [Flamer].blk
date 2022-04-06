@@ -20,6 +20,10 @@ Achileus Light Battle Armor
 (WoB) [Flamer]
 </Model>
 
+<mul id:>
+8
+</mul id:>
+
 <chassis>
 biped
 </chassis>

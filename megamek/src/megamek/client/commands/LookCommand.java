@@ -2,7 +2,7 @@ package megamek.client.commands;
 
 import megamek.client.Client;
 import megamek.common.Coords;
-import megamek.common.IHex;
+import megamek.common.Hex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class LookCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         Coords pos = client.getCurrentHex();
-        IHex hex = getClient().getGame().getBoard().getHex(pos);
+        Hex hex = getClient().getGame().getBoard().getHex(pos);
         String str;
         if (hex != null) {
             str = "Looking around hex (" + (pos.getX() + 1) + ", "

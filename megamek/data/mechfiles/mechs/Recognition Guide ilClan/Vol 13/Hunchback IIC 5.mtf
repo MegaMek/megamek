@@ -1,11 +1,12 @@
 Version:1.0
 Hunchback IIC
 5
+mul id:8130
 
 Config:Biped
 techbase:Clan
 era:3130
-source:RecGuide 13 - Dark Ages
+source:Rec Guide:ilClan #13 - Dark Ages
 rules level:2
 
 mass:50

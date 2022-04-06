@@ -17,11 +17,8 @@ import megamek.client.ui.Messages;
 import megamek.common.OffBoardDirection;
 
 /**
- * Created with IntelliJ IDEA.
- *
- * @author : Deric "Netzilla" Page (deric dot page at usa dot net
- * @version $Id$
- * @since : 8/17/13 10:37 PM
+ * @author Deric "Netzilla" Page (deric dot page at usa dot net
+ * @since 8/17/13 10:37 PM
  */
 public enum CardinalEdge {
     NORTH(0, Messages.getString("BotConfigDialog.northEdge")),
@@ -45,6 +42,7 @@ public enum CardinalEdge {
         return index;
     }
     
+    @Override
     public String toString() {
         return text;
     }

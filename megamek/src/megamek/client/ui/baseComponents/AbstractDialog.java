@@ -19,14 +19,17 @@
 package megamek.client.ui.baseComponents;
 
 import megamek.MegaMek;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.EncodeControl;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
+import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ResourceBundle;
 
 /**
@@ -61,7 +64,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final String name, final String title) {
         this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name, title);
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name, title);
     }
 
     /**
@@ -112,7 +115,10 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      * this being the abstract basis for all other dialogs.
      */
     protected void finalizeInitialization() {
+        // Pack and fit only affect dialogs when shown for the absolute first time; at any later time,
+        // the setPreferences() below overwrites size and position with stored values
         pack();
+        fitAndCenter();
 
         // Escape keypress
         final KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
@@ -133,11 +139,23 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
     }
 
     /**
+     * Re-sizes the dialog to a maximum width and height of 80% of the screen size when necessary.
+     * It then centers the dialog on the screen.
+     */
+    protected void fitAndCenter() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int maxWidth = (int) (screenSize.width * 0.8);
+        int maxHeight = (int) (screenSize.height * 0.8);
+        setSize(new Dimension(Math.min(maxWidth, getWidth()), Math.min(maxHeight, getHeight())));
+        setLocation((screenSize.width - getSize().width) / 2, (screenSize.height - getSize().height) / 2);
+    }
+
+    /**
      * This is used to set preferences based on the preference node for this class. It is overridden
      * for MekHQ usage
      */
     protected void setPreferences() {
-        setPreferences(MegaMek.getPreferences().forClass(getClass()));
+        setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**
@@ -168,7 +186,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         } finally {
             setVisible(false);
         }
@@ -191,7 +209,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
         try {
             cancelAction();
         } catch (Exception e) {
-            MegaMek.getLogger().error(e);
+            LogManager.getLogger().error("", e);
         }
     }
 

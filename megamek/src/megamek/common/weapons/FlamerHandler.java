@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,7 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EquipmentMode;
 import megamek.common.HitData;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -41,7 +41,7 @@ public class FlamerHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
             Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
@@ -58,13 +58,13 @@ public class FlamerHandler extends WeaponHandler {
         boolean flamerDoesHeatOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_HEAT);
         boolean flamerDoesOnlyDamage = currentWeaponMode != null && currentWeaponMode.equals(Weapon.MODE_FLAMER_DAMAGE);
         
-        if(bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
+        if (bmmFlamerDamage || flamerDoesOnlyDamage || (flamerDoesHeatOnlyDamage && !entityTarget.tracksHeat())) {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             
-            if(bmmFlamerDamage && entityTarget.tracksHeat()) {
+            if (bmmFlamerDamage && entityTarget.tracksHeat()) {
                 FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, wtype, subjectId, hit);
             }
-        } else if(flamerDoesHeatOnlyDamage) {
+        } else if (flamerDoesHeatOnlyDamage) {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());

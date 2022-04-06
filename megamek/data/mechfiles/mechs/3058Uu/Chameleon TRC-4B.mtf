@@ -1,6 +1,7 @@
 Version:1.0
 Chameleon
 TRC-4B
+mul id:546
 
 Config:Biped
 TechBase:Inner Sphere

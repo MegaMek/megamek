@@ -1,6 +1,7 @@
-Version:1.1
+Version:1.0
 Masauwu
-
+(Standard)
+mul id:7642
 
 Config:Biped
 techbase:Clan
@@ -13,7 +14,7 @@ engine:300 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:16 Double
+heat sinks:16 Clan Double
 walk mp:4
 jump mp:4
 
@@ -34,10 +35,10 @@ Weapons:7
 Large Pulse Laser, Left Arm
 Large Pulse Laser, Left Arm
 LB 10-X AC, Right Arm
+ER Small Laser, Center Torso
 Streak SRM 2, Left Torso
 Streak SRM 2, Right Torso
 Anti-Missile System, Right Torso
-ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -73,10 +74,10 @@ Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
-CLERSmallLaser
 CLStreakSRM2
 Clan Streak SRM 2 Ammo
 Clan Endo Steel
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -107,7 +108,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLECMSuite
--Empty-
+CLERSmallLaser
 
 Head:
 Life Support

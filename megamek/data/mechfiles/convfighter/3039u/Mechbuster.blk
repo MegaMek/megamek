@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ MechBuster
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+2154
+</mul id:>
 
 <year>
 3023
@@ -64,7 +68,7 @@ Aerodyne
 </engine_type>
 
 <armor>
-12
+18
 10
 10
 10
@@ -97,3 +101,4 @@ TRO 3039 - Succession Wars
 <tonnage>
 50.0
 </tonnage>
+

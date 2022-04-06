@@ -20,6 +20,10 @@ Yasha VTOL
 'Spectre'
 </Model>
 
+<mul id:>
+3610
+</mul id:>
+
 <Tonnage>
 30
 </Tonnage>

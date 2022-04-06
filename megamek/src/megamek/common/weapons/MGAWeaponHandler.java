@@ -23,8 +23,8 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
-import megamek.common.IGame;
-import megamek.common.IHex;
+import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -47,7 +47,7 @@ public class MGAWeaponHandler extends MGHandler {
      * @param w
      * @param g
      */
-    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -181,7 +181,7 @@ public class MGAWeaponHandler extends MGHandler {
 
         // if the target was in partial cover, then we already handled
         // damage absorption by the partial cover, if it would have happened
-        IHex targetHex = game.getBoard().getHex(target.getPosition());
+        Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
                 
         nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
@@ -208,7 +208,7 @@ public class MGAWeaponHandler extends MGHandler {
                 hit.makeGlancingBlow();
             }
             
-            if(bLowProfileGlancing) {
+            if (bLowProfileGlancing) {
                 hit.makeGlancingBlow();
             }
             vPhaseReport

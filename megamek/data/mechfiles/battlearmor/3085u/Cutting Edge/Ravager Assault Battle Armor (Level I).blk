@@ -18,6 +18,10 @@ Ravager Assault Battle Armor
 (Level I)
 </Model>
 
+<mul id:>
+2661
+</mul id:>
+
 <chassis>
 biped
 </chassis>

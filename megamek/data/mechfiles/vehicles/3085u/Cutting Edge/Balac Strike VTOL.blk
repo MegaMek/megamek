@@ -20,6 +20,10 @@ Balac Strike VTOL
 (Standard)
 </Model>
 
+<mul id:>
+210
+</mul id:>
+
 <year>
 3079
 </year>

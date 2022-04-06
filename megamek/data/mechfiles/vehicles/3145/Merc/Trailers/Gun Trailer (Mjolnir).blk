@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,17 +20,28 @@ Gun Trailer
 (Mjolnir)
 </Model>
 
+<mul id:>
+6536
+</mul id:>
+
 <year>
 3112
 </year>
 
+<originalBuildYear>
+3112
+</originalBuildYear>
+
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <motion_type>
-Wheeled
+Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 0
@@ -56,6 +67,7 @@ Wheeled
 </armor>
 
 <Body Equipment>
+IS Vehicular Stealth
 ISGuardianECMSuite
 ISImprovedHeavyGauss Ammo
 </Body Equipment>
@@ -72,8 +84,8 @@ Hitch
 
 <Rear Equipment>
 ISImprovedHeavyGaussRifle
-ISVehicularGrenadeLauncher (R)
-ISVehicularGrenadeLauncher (R)
+ISVehicularGrenadeLauncher
+ISVehicularGrenadeLauncher
 </Rear Equipment>
 
 <source>
@@ -87,3 +99,4 @@ TRO 3145 Mercenaries - Late Republic
 <trailer>
 1
 </trailer>
+

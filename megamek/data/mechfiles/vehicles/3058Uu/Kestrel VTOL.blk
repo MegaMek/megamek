@@ -15,6 +15,10 @@ Kestrel VTOL
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+1769
+</mul id:>
 <Tonnage>
 25
 </Tonnage>

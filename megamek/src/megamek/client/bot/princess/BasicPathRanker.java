@@ -1,59 +1,30 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.common.BattleArmor;
-import megamek.common.BipedMech;
-import megamek.common.BuildingTarget;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.IBoard;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.Infantry;
-import megamek.common.LosEffects;
-import megamek.common.Mech;
-import megamek.common.MechWarrior;
-import megamek.common.MiscType;
-import megamek.common.MovePath;
-import megamek.common.MoveStep;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.TripodMech;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+import org.apache.logging.log4j.LogManager;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.util.*;
 
 /**
  * A very "basic" pathranker
@@ -83,7 +54,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         
         bestDamageByEnemies = new TreeMap<>();
         
-        getOwner().getLogger().debug("Using " + getOwner().getBehaviorSettings().getDescription()
+        LogManager.getLogger().debug("Using " + getOwner().getBehaviorSettings().getDescription()
                         + " behavior");
     }
     
@@ -128,7 +99,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         Set<CoordFacingCombo> enemyFacingSet =
                 pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
         if (enemyFacingSet == null) {
-            getOwner().getLogger().warning("no facing set for " + enemy.getDisplayName());
+            LogManager.getLogger().warn("no facing set for " + enemy.getDisplayName());
             return false;
         }
         return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing))
@@ -241,7 +212,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                                     MovePath path,
                                     EntityState targetState,
                                     int distance,
-                                    IGame game) {
+                                    Game game) {
 
         // If they don't have the range, they can't do damage.
         int maxRange = getOwner().getMaxWeaponRange(enemy, path.getEntity().isAirborne());
@@ -277,7 +248,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return getFireControl(path.getEntity()).determineBestFiringPlan(guess).getUtility();
     }
 
-    double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
+    double calculateKickDamagePotential(Entity enemy, MovePath path, Game game) {
         if (!(enemy instanceof Mech)) {
             return 0.0;
         }
@@ -294,7 +265,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     double calculateMyDamagePotential(MovePath path, Entity enemy,
-                                      int distance, IGame game) {
+                                      int distance, Game game) {
         Entity me = path.getEntity();
 
         // If I don't have range, I can't do damage.
@@ -340,7 +311,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     double calculateMyKickDamagePotential(MovePath path, Entity enemy,
-                                          IGame game) {
+                                          Game game) {
         if (!(path.getEntity() instanceof Mech)) {
             return 0.0;
         }
@@ -355,7 +326,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     EntityEvaluationResponse evaluateMovedEnemy(Entity enemy, MovePath path,
-                                                IGame game) {
+                                                Game game) {
 
         EntityEvaluationResponse returnResponse = new EntityEvaluationResponse();
 
@@ -394,7 +365,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     // The further I am from a target, the lower this path ranks (weighted by 
     // Hyper Aggression.
     protected double calculateAggressionMod(Entity movingUnit, MovePath path,
-                                          IGame game, StringBuilder formula) {
+                                          Game game, StringBuilder formula) {
         double distToEnemy = distanceToClosestEnemy(movingUnit,
                                                     path.getFinalCoords(),
                                                     game);
@@ -433,7 +404,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
     // todo account for damaged locations and face those away from enemy.
-    private double calculateFacingMod(Entity movingUnit, IGame game,
+    private double calculateFacingMod(Entity movingUnit, Game game,
                                       final MovePath path,
                                       StringBuilder formula) {
 
@@ -471,7 +442,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      */
     protected double calculateSelfPreservationMod(Entity movingUnit,
                                                 MovePath path,
-                                                IGame game,
+                                                Game game,
                                                 StringBuilder formula) {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner()); 
         
@@ -517,7 +488,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * A path ranking
      */
     @Override
-    protected RankedPath rankPath(MovePath path, IGame game, int maxRange,
+    protected RankedPath rankPath(MovePath path, Game game, int maxRange,
                                double fallTolerance,
                                List<Entity> enemies, Coords friendsCoords) {
         Entity movingUnit = path.getEntity();
@@ -573,21 +544,27 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 eval = evaluateUnmovedEnemy(enemy, path, extremeRange,
                                             losRange);
             }
-            if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
-                damageEstimate.firingDamage = eval.getMyEstimatedDamage();
+            
+            // if we're not ignoring the enemy, we consider damage that we may do to them;
+            // however, just because we're ignoring them doesn't mean they won't shoot at us.
+            if (!getOwner().getBehaviorSettings().getIgnoredUnitTargets().contains(enemy.getId())) {
+                if (damageEstimate.firingDamage < eval.getMyEstimatedDamage()) {
+                    damageEstimate.firingDamage = eval.getMyEstimatedDamage();
+                }
+                if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
+                    damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
+                }
             }
-            if (damageEstimate.physicalDamage < eval.getMyEstimatedPhysicalDamage()) {
-                damageEstimate.physicalDamage = eval.getMyEstimatedPhysicalDamage();
-            }
+            
             expectedDamageTaken += eval.getEstimatedEnemyDamage();
         }
 
         // if we're not in the air, we may get hit by friendly artillery
-        if(!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
+        if (!path.getEntity().isAirborne() && !path.getEntity().isAirborneVTOLorWIGE()) {
             double friendlyArtilleryDamage = 0;
             Map<Coords, Double> artyDamage = getOwner().getPathRankerState().getIncomingFriendlyArtilleryDamage();
             
-            if(!artyDamage.containsKey(path.getFinalCoords())) {
+            if (!artyDamage.containsKey(path.getFinalCoords())) {
                 friendlyArtilleryDamage = ArtilleryTargetingControl.evaluateIncomingArtilleryDamage(path.getFinalCoords(), getOwner());
                 artyDamage.put(path.getFinalCoords(), friendlyArtilleryDamage);
             } else {
@@ -676,7 +653,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * Calculate who all other units would shoot at if I weren't around
      */
     @Override
-    public void initUnitTurn(Entity unit, IGame game) {
+    public void initUnitTurn(Entity unit, Game game) {
         bestDamageByEnemies.clear();
         List<Entity> enemies = getOwner().getEnemyEntities();
         List<Entity> friends = getOwner().getFriendEntities();
@@ -703,7 +680,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
 
 
-    protected void calcDamageToStrategicTargets(MovePath path, IGame game, 
+    protected void calcDamageToStrategicTargets(MovePath path, Game game,
             FireControlState fireControlState, FiringPhysicalDamage damageStructure) {
                 
         for (int i = 0; i < fireControlState.getAdditionalTargets().size(); i++) {
@@ -749,11 +726,12 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
      * Gives the distance to the closest enemy unit, or -1 if none exist.
      * The reason being that the closest enemy unit may be 0 away.
      *
-     * @param me       Entity who has enemies
-     * @param position Coords from which the closest enemy is found
-     * @param game     IGame that we're playing
+     * @param me {@link Entity} who has enemies
+     * @param position {@link Coords} from which the closest enemy is found
+     * @param game The current {@link Game}
      */
-    public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
+    @Override
+    public double distanceToClosestEnemy(Entity me, Coords position, Game game) {
         Targetable closest = findClosestEnemy(me, position, game);
         if (closest == null) {
             return -1;
@@ -764,7 +742,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     /**
      * Gives the distance to the closest edge
      */
-    int distanceToClosestEdge(Coords position, IGame game) {
+    int distanceToClosestEdge(Coords position, Game game) {
        int width = game.getBoard().getWidth();
         int height = game.getBoard().getHeight();
         int minimum = position.getX();
@@ -780,7 +758,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return minimum;
     }
 
-    double checkPathForHazards(MovePath path, Entity movingUnit, IGame game) {
+    double checkPathForHazards(MovePath path, Entity movingUnit, Game game) {
         StringBuilder logMsg = new StringBuilder("Checking Path (")
                 .append(path.toString()).append(") for hazards.");
 
@@ -804,7 +782,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
             if (path.isJumping()) {
                 logMsg.append("\n\tJumping");
                 Coords endCoords = path.getFinalCoords();
-                IHex endHex = game.getBoard().getHex(endCoords);
+                Hex endHex = game.getBoard().getHex(endCoords);
                 return checkHexForHazards(endHex, movingUnit, true,
                                           path.getLastStep(), true,
                                           path, game.getBoard(), logMsg);
@@ -818,7 +796,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
                 if ((coords == null) || coords.equals(previousCoords)) {
                     continue;
                 }
-                IHex hex = game.getBoard().getHex(coords);
+                Hex hex = game.getBoard().getHex(coords);
                 totalHazard += checkHexForHazards(hex, movingUnit,
                                                   lastStep.equals(step), step,
                                                   false, path,
@@ -828,14 +806,12 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
 
             return totalHazard;
         } finally {
-            getOwner().getLogger().debug(logMsg.toString());
+            LogManager.getLogger().debug(logMsg.toString());
         }
     }
 
-    private double checkHexForHazards(IHex hex, Entity movingUnit,
-                                      boolean endHex, MoveStep step,
-                                      boolean jumpLanding,
-                                      MovePath movePath, IBoard board,
+    private double checkHexForHazards(Hex hex, Entity movingUnit, boolean endHex, MoveStep step,
+                                      boolean jumpLanding, MovePath movePath, Board board,
                                       StringBuilder logMsg) {
         logMsg.append("\n\tHex ").append(hex.getCoords().toFriendlyString());
 
@@ -898,9 +874,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
     }
     
     // Building collapse and basements are handled in PathRanker.validatePaths.
-    private double calcBuildingHazard(MoveStep step, Entity movingUnit,
-                                      boolean jumpLanding, IBoard board,
-                                      StringBuilder logMsg) {
+    private double calcBuildingHazard(MoveStep step, Entity movingUnit, boolean jumpLanding,
+                                      Board board, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating building hazard:  ");
 
         // Protos, BA and Infantry move through buildings freely.
@@ -932,7 +907,8 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazard;
     }
     
-    private double calcBridgeHazard(Entity movingUnit, IHex hex, MoveStep step, boolean jumpLanding, IBoard board, StringBuilder logMsg) {
+    private double calcBridgeHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding,
+                                    Board board, StringBuilder logMsg) {
         logMsg.append("\n\tCalculating bridge hazard:  ");
         
         // if we are going to BWONGGG into a bridge from below, then it's treated as a building.
@@ -946,8 +922,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return 0;
     }
 
-    private double calcIceHazard(Entity movingUnit, IHex hex, MoveStep step,
-                                 boolean jumpLanding,
+    private double calcIceHazard(Entity movingUnit, Hex hex, MoveStep step, boolean jumpLanding,
                                  StringBuilder logMsg) {
         logMsg.append("\n\tCalculating ice hazard:  ");
 
@@ -977,7 +952,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazard;
     }
 
-    private double calcWaterHazard(Entity movingUnit, IHex hex, MoveStep step,
+    private double calcWaterHazard(Entity movingUnit, Hex hex, MoveStep step,
                                    StringBuilder logMsg) {
         logMsg.append("\n\tCalculating water hazard:  ");
 
@@ -1005,9 +980,9 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         // if we are crossing a bridge, then we'll be fine. Trust me.
         // 1. Determine bridge elevation
         // 2. If unit elevation is equal to bridge elevation, skip.
-        if(hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+        if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
             int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
-            if(bridgeElevation == step.getElevation()) {
+            if (bridgeElevation == step.getElevation()) {
                 logMsg.append("Unit (0) crossing bridge.");
                 return 0;
             }
@@ -1124,7 +1099,7 @@ public class BasicPathRanker extends PathRanker implements IPathRanker {
         return hazardValue;
     }
 
-    private double calcMagmaHazard(IHex hex, boolean endHex, Entity movingUnit,
+    private double calcMagmaHazard(Hex hex, boolean endHex, Entity movingUnit,
                                    boolean jumpLanding, MoveStep step,
                                    StringBuilder logMsg) {
         logMsg.append("\n\tCalculating magma hazard:  ");

@@ -15,6 +15,10 @@ Tokugawa Heavy Tank
 <Model>
 (C3)
 </Model>
+
+<mul id:>
+3260
+</mul id:>
 <Tonnage>
 60
 </Tonnage>

@@ -1,5 +1,5 @@
 3145 TDF Assault Vehicles B
-Sturmfeur Heavy Tank (Standard), 1
+SturmFeur Heavy Tank (Standard), 1
 Heavy NLRM Carrier (Standard), 2
 Heavy LRM Carrier (Standard), 3
 Ontos Heavy Tank (Light Gauss), 4

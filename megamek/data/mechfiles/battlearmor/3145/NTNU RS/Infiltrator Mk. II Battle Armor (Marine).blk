@@ -16,6 +16,10 @@ Infiltrator Mk. II Battle Armor
 (Marine)
 </Model>
 
+<mul id:>
+6730
+</mul id:>
+
 <chassis>
 biped
 </chassis>

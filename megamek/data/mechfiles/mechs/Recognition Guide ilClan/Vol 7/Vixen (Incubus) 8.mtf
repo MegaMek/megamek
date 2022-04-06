@@ -1,11 +1,12 @@
 Version:1.0
 Vixen (Incubus)
 8
+mul id:7543
 
 Config:Biped
 techbase:Clan
 era:2962
-source:Succession Wars
+source:Rec Guide:ilClan #7 - Late Succession Wars
 rules level:2
 
 mass:30

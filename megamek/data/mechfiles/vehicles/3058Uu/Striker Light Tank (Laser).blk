@@ -15,6 +15,10 @@ Striker Light Tank
 <Model>
 (Laser)
 </Model>
+
+<mul id:>
+3100
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

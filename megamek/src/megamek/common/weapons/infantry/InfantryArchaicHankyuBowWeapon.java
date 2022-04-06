@@ -24,31 +24,31 @@ import megamek.common.AmmoType;
  */
 public class InfantryArchaicHankyuBowWeapon extends InfantryWeapon {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = -3164871600230559641L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
 
-	public InfantryArchaicHankyuBowWeapon() {
-		super();
+    public InfantryArchaicHankyuBowWeapon() {
+        super();
 
-		name = "Bow (Hankyu)";
-		setInternalName(name);
-		addLookupName("InfantryHankyuBow");
-		addLookupName("Hankyu");
-		ammoType = AmmoType.T_NA;
-		cost = 15;
-		bv = 0.0;
+        name = "Bow (Hankyu)";
+        setInternalName(name);
+        addLookupName("InfantryHankyuBow");
+        addLookupName("Hankyu");
+        ammoType = AmmoType.T_NA;
+        cost = 15;
+        bv = 0.0;
         tonnage = .0008; 
-		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
-		infantryDamage = 0.0;
-		infantryRange = 0;
-		rulesRefs = " 272,TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
-				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
+        infantryDamage = 0.0;
+        infantryRange = 0;
+        rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
 
-	}
+    }
 }

@@ -1,6 +1,6 @@
 3034 House Kurita Vehicle - Assault
 Demolisher Heavy Tank (Standard Mk. I),1
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Schrek PPC Carrier (Standard),3
 Partisan Heavy Tank (Standard),4
 Demolisher Heavy Tank (Standard Mk. I),5
@@ -9,4 +9,4 @@ Behemoth Heavy Tank (Standard),5
 Schrek PPC Carrier (Standard),4
 Partisan Heavy Tank (Standard),3
 Behemoth Heavy Tank (Standard),2
-Sturmfeur Heavy Tank (Standard),1
+SturmFeur Heavy Tank (Standard),1

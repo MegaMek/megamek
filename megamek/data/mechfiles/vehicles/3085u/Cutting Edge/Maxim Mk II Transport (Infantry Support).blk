@@ -15,6 +15,10 @@ Maxim Mk II Transport
 <Model>
 (Infantry Support) 'Shiloh'
 </Model>
+
+<mul id:>
+2128
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

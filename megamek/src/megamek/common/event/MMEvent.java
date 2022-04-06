@@ -30,7 +30,7 @@ public abstract class MMEvent {
     }
 
     public void cancel() {
-        if(isCancellable()) {
+        if (isCancellable()) {
             cancelled = true;
         }
     }

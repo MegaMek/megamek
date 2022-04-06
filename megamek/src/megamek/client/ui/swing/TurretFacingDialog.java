@@ -42,23 +42,18 @@ import megamek.common.Tank;
 
 /**
  * @author beerockxs
- *
  */
 public class TurretFacingDialog extends JDialog implements ActionListener {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -4509638026655222982L;
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butOkay = new JButton(Messages.getString("Okay"));
+    private JButton butCancel = new JButton(Messages.getString("Cancel"));
     Mech mech;
     Tank tank;
     Mounted turret;
     ButtonGroup buttonGroup = new ButtonGroup();
     ClientGUI clientgui;
 
-    ArrayList<JRadioButton> facings = new ArrayList<JRadioButton>();
+    ArrayList<JRadioButton> facings = new ArrayList<>();
 
     public TurretFacingDialog(JFrame parent, Mech mech, Mounted turret, ClientGUI clientgui) {
         super(parent, "Turret facing", false);
@@ -141,7 +136,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, mech);
         Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
-        Image hexImage = ((TilesetManager) clientgui.bv.getTilesetManager()).baseFor(new Hex());
+        Image hexImage = ((TilesetManager) clientgui.getBoardView().getTilesetManager()).baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
@@ -211,7 +206,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         JLabel labImage = new JLabel();
         clientgui.loadPreviewImage(labImage, tank);
         Image mechImage = ((ImageIcon) labImage.getIcon()).getImage();
-        Image hexImage = ((TilesetManager) clientgui.bv.getTilesetManager()).baseFor(new Hex());
+        Image hexImage = ((TilesetManager) clientgui.getBoardView().getTilesetManager()).baseFor(new Hex());
         BufferedImage toDraw = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = toDraw.createGraphics();
         g2.drawImage(hexImage, 0, 0, null);
@@ -232,6 +227,7 @@ public class TurretFacingDialog extends JDialog implements ActionListener {
         setLocation((parent.getLocation().x + (parent.getSize().width / 2)) - (getSize().width / 2), (parent.getLocation().y + (parent.getSize().height / 2)) - (getSize().height / 2));
     }
 
+    @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butCancel)) {
             dispose();

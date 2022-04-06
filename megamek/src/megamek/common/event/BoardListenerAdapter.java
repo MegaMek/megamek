@@ -32,6 +32,7 @@ public class BoardListenerAdapter implements BoardListener {
      *
      * @param b an event containing information about the change
      */
+    @Override
     public void boardNewBoard(BoardEvent b) {
     }
 
@@ -40,6 +41,7 @@ public class BoardListenerAdapter implements BoardListener {
      *
      * @param b an event containing information about the change
      */
+    @Override
     public void boardChangedHex(BoardEvent b) {
     }
 
@@ -48,6 +50,7 @@ public class BoardListenerAdapter implements BoardListener {
      *
      * @param b an event containing information about the change
      */
+    @Override
     public void boardChangedAllHexes(BoardEvent b) {
     }
 

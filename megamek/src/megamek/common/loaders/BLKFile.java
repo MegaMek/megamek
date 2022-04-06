@@ -243,7 +243,7 @@ public class BLKFile {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }
@@ -523,6 +523,9 @@ public class BLKFile {
 
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());
+        if (t.hasMulId()) {
+            blk.writeBlockData(MtfFile.MUL_ID, t.getMulId());
+        }
         blk.writeBlockData("year", t.getYear());
         if (t.getOriginalBuildYear() >= 0) {
             blk.writeBlockData("originalBuildYear", t.getOriginalBuildYear());
@@ -593,7 +596,7 @@ public class BLKFile {
         blk.writeBlockData("transporters", transporter_array);
 
         if (!t.isConventionalInfantry()) {
-            if (t instanceof Aero){
+            if (t instanceof Aero) {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
@@ -607,23 +610,23 @@ public class BLKFile {
 
         int numLocs = t.locations();
         if (!(t instanceof Infantry)) {
-            if (t instanceof Aero){
+            if (t instanceof Aero) {
                 if (t.isFighter()) {
-                    blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
+                    blk.writeBlockData("cockpit_type", ((Aero) t).getCockpitType());
                     if (t.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER) && ((Aero) t).isVSTOL()) {
                         blk.writeBlockData("vstol", 1);
                     }
-                } else if ((t instanceof Dropship) && ((Aero)t).isPrimitive()) {
-                    blk.writeBlockData("collartype", ((Dropship)t).getCollarType());
+                } else if ((t instanceof Dropship) && t.isPrimitive()) {
+                    blk.writeBlockData("collartype", ((Dropship) t).getCollarType());
                 }
-                blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
-                blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
-                if (((Aero)t).getPodHeatSinks() > 0) {
-                    blk.writeBlockData("omnipodheatsinks", ((Aero)t).getPodHeatSinks());
+                blk.writeBlockData("heatsinks", ((Aero) t).getHeatSinks());
+                blk.writeBlockData("sink_type", ((Aero) t).getHeatType());
+                if (((Aero) t).getPodHeatSinks() > 0) {
+                    blk.writeBlockData("omnipodheatsinks", ((Aero) t).getPodHeatSinks());
                 }
-                blk.writeBlockData("fuel", ((Aero)t).getFuel());
+                blk.writeBlockData("fuel", ((Aero) t).getFuel());
             }
-            if(t.hasEngine()) {
+            if (t.hasEngine()) {
                 int engineCode = BLKFile.FUSION;
                 switch (t.getEngine().getEngineType()) {
                     case Engine.COMBUSTION_ENGINE:
@@ -720,7 +723,7 @@ public class BLKFile {
         for (Mounted m : t.getEquipment()) {
             // Ignore Mounteds that represent a WeaponGroup
             // BA anti-personnel weapons are written just after the mount
-            if (m.isWeaponGroup() || m.isAPMMounted()){
+            if (m.isWeaponGroup() || m.isAPMMounted()) {
                 continue;
             }
 
@@ -788,7 +791,7 @@ public class BLKFile {
         }
         
         if (t.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT) || t.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-            blk.writeBlockData("structural_integrity", ((Aero)t).get0SI());
+            blk.writeBlockData("structural_integrity", ((Aero) t).get0SI());
         }
 
         if (t.getFluff().getCapabilities().trim().length() > 0) {
@@ -862,7 +865,7 @@ public class BLKFile {
                 blk.writeBlockData("chassis", "quad");
                 if (ba.getTurretCapacity() > 0) {
                     blk.writeBlockData("turret",
-                            (ba.hasModularTurretMount()? "Modular:" : "Standard:") + ba.getTurretCapacity());
+                            (ba.hasModularTurretMount() ? "Modular:" : "Standard:") + ba.getTurretCapacity());
                 }
             }
             if (ba.isExoskeleton()) {
@@ -1013,9 +1016,9 @@ public class BLKFile {
             if (js.hasLF()) {
                 blk.writeBlockData("lithium-fusion", 1);
             }
-            blk.writeBlockData("sail", js.hasSail()? 1 : 0);
+            blk.writeBlockData("sail", js.hasSail() ? 1 : 0);
             if (js.getTotalGravDeck() > 0) {
-                blk.writeBlockData("grav_decks", (Vector<String>)js.getGravDecks().stream()
+                blk.writeBlockData("grav_decks", (Vector<String>) js.getGravDecks().stream()
                         .map(String::valueOf)
                         .collect(Collectors.toCollection(Vector::new)));
             }
@@ -1219,14 +1222,14 @@ public class BLKFile {
                     //Add values for collars so they can be parsed and assigned a 'bay' number
                     String numbers = "1.0:0";
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new DockingCollar(1,pbi.getBayNumber()));
+                    e.addTransporter(new DockingCollar(1, pbi.getBayNumber()));
                 }
 
             } // Handle the next transportation component.
 
         } // End has-transporters
     }
-    
+
     /**
      * Class that holds data relating to transport bays
      * and functionality to parse .blk file transport bay entries
@@ -1258,16 +1261,16 @@ public class BLKFile {
             String potentialBayTypeIndicator = "";
             boolean bayNumberPresent = false;
             
-            if(temp.length == 3) {
+            if (temp.length == 3) {
                 potentialBayTypeIndicator = temp[2];
             } else if (temp.length == 4) {
                 potentialBayTypeIndicator = temp[3];
                 bayNumberPresent = true; // a 4-length array indicates that the bay number is in the third element
             }
                         
-            if(!potentialBayTypeIndicator.isEmpty()) {
+            if (!potentialBayTypeIndicator.isEmpty()) {
                 // normally a great time for a switch statement, but we're using equalsignorecase for the comparator
-                if(potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
+                if (potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
                     isComstarBay = true;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("jump")) {
                     platoonType = InfantryBay.PlatoonType.JUMP;
@@ -1287,15 +1290,15 @@ public class BLKFile {
             
             // if we are looking for a bay number
             // and a bay number is present, parse it
-            if(usedBayNumbers != null && bayNumberPresent) {
+            if (usedBayNumbers != null && bayNumberPresent) {
                 bayNumber = Integer.parseInt(temp[2]);
             }
 
             // if a bay number was not specified, assign one
             // if a bay number was specified but is a duplicate, assign a different one
             int newBay = 1;
-            if(bayNumber == -1 || usedBayNumbers.contains(bayNumber)) {
-                while(usedBayNumbers.contains(newBay)) {
+            if (bayNumber == -1 || usedBayNumbers.contains(bayNumber)) {
+                while (usedBayNumbers.contains(newBay)) {
                     newBay++;
                 }
                 

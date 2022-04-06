@@ -1,5 +1,5 @@
 3145 Periphery General Assault Vehicles C
-Sturmfeur Heavy Tank (Standard), 1
+SturmFeur Heavy Tank (Standard), 1
 Demolisher Heavy Tank (MRM), 2
 Heavy LRM Carrier (Standard), 3
 Demolisher Heavy Tank (Standard Mk. II), 4

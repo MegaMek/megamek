@@ -1,40 +1,33 @@
-/**
+/*
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Sep 24, 2004
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.infantry;
 
-import java.util.Vector;
-
-import megamek.MegaMek;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
+ * @since Sept 24, 2004
  */
 public class InfantryWeaponHandler extends WeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1425176802065536326L;
 
     /**
@@ -42,7 +35,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
      * @param w
      * @param g
      */
-    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
             Server s) {
         super(t, w, g, s);
         bSalvo = true;
@@ -95,31 +88,22 @@ public class InfantryWeaponHandler extends WeaponHandler {
             troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod);
         }
-        double damage;
-        if (ae.isConventionalInfantry()) {
-            //for conventional infantry, we have to calculate primary and secondary weapons
-            //to get damage per trooper
-            damage = ((Infantry) ae).getDamagePerTrooper();
-        } else if (ae.isSupportVehicle()) {
-            // Damage for some weapons depends on what type of ammo is being used
-            if (((AmmoType) weapon.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO) {
-                damage = ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
-            } else {
-                damage = ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();
-            }
-        } else {
-            damage = ((InfantryWeapon) wtype).getInfantryDamage();
-        }
+        double damage = calculateBaseDamage(ae, weapon, wtype);
+        
         if ((ae instanceof Infantry)
                 && nRange == 0
                 && ae.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
-        if (target.isConventionalInfantry() && wtype.hasFlag(WeaponType.F_INF_BURST)) {
+        
+        // conventional infantry weapons with high damage get treated as if they have the infantry burst mod
+        if (target.isConventionalInfantry() && 
+                (wtype.hasFlag(WeaponType.F_INF_BURST) || 
+                (ae.isConventionalInfantry() && ((Infantry) ae).primaryWeaponDamageCapped()))) {
             damageDealt += Compute.d6();
         }
-        if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
+        if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
             damageDealt /= 2;
         }
         // this doesn't work...
@@ -152,10 +136,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
     }
 
     //we need to figure out AV damage to aeros for AA weapons
+    @Override
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
     }
 
+    @Override
     protected int calcAttackValue() {
         int av;
         //Sigh, another rules oversight - nobody bothered to figure this out
@@ -184,7 +170,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             }
             if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
                 // *shouldn't* fire.
-                MegaMek.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
+                LogManager.getLogger().error(String.format("Handler can't find any ammo for %s firing %s",
                                 ae.getShortName(), weapon.getName()));
                 return;
             }
@@ -198,6 +184,26 @@ public class InfantryWeaponHandler extends WeaponHandler {
                 weapon.getLinked().setLinked(ammo);
             }
             super.useAmmo();
+        }
+    }
+    
+    /**
+     * Utility function to calculate variable damage based only on the firing entity.
+     */
+    public static double calculateBaseDamage(Entity ae, Mounted weapon, WeaponType wtype) {
+        if (ae.isConventionalInfantry()) {
+            //for conventional infantry, we have to calculate primary and secondary weapons
+            //to get damage per trooper
+            return ((Infantry) ae).getDamagePerTrooper();
+        } else if (ae.isSupportVehicle()) {
+            // Damage for some weapons depends on what type of ammo is being used
+            if (((AmmoType) weapon.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO) {
+                return ((InfantryWeapon) wtype).getInfernoVariant().getInfantryDamage();
+            } else {
+                return ((InfantryWeapon) wtype).getNonInfernoVariant().getInfantryDamage();
+            }
+        } else {
+            return ((InfantryWeapon) wtype).getInfantryDamage();
         }
     }
 }

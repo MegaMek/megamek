@@ -13,20 +13,13 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
-/*
- * MMRoll.java
- *
- * Created on July 21, 2004, 7:49 AM
- */
-
 package megamek.common;
 
 /**
- * Subclass of the roll tracker for <code>Pool36Random</code> "entropy"
- * sources
+ * Subclass of the roll tracker for <code>Pool36Random</code> "entropy" sources
  *
  * @author Suvarov454
+ * @since July 21, 2004, 7:49 AM
  */
 public class MMShuffle extends Roll {
 
@@ -37,7 +30,7 @@ public class MMShuffle extends Roll {
     private int two;
 
     /**
-     * Record the order in which this "roll" was delt from its shuffle.
+     * Record the order in which this "roll" was dealt from its shuffle.
      */
     private int deal;
 
@@ -63,12 +56,12 @@ public class MMShuffle extends Roll {
     }
 
     /**
-     * Record when this "roll" is delt.
+     * Record when this "roll" is dealt.
      *
-     * @param delt - the <code>int</code> order of this "roll" in its shuffle
+     * @param dealt - the <code>int</code> order of this "roll" in its shuffle
      */
-    public void setDeal(int delt) {
-        this.deal = delt;
+    public void setDeal(int dealt) {
+        this.deal = dealt;
         this.shuffle++;
     }
 

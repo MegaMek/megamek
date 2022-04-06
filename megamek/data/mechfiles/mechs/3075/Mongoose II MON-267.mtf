@@ -1,6 +1,7 @@
 Version:1.0
 Mongoose II
 MON-267
+mul id:2217
 
 Config:Biped
 TechBase:Inner Sphere
@@ -145,4 +146,18 @@ Stealth
 -Empty-
 -Empty-
 
+overview:Luthien Armor Works was working on an upgrade of the Mongoose for ComStar to be a faster and tougher scout 'Mech, when the chaos on Luthien during the early years of the Jihad forced them to look elsewhere. 
 
+capabilities:The result is the Mongoose II, an effective hunter-killer that is able to find hidden enemies and provide long range fire support. Equipped with an impressive suite of electronics, the 'Mech carries a Beagle Active Probe, Guardian ECM Suite, C3i Computer, and MASC that enables it move up to 172 km/h in bursts. A respectable seven tons of armor protects the Mongoose II.
+
+deployment:This variant is built using a C3 Slave Unit so that it can integrate with the C3 systems in use by the Lyran Alliance. Six and a half tons of Stealth Armor use the ECM Suite to make the 267 a difficult target at range, taking advantage of the long range weapon. A Targeting Computer makes the laser even more accurate.
+
+history:ComStar financed a refit of a lost Rim Worlds Republic factory on Kwangjong-ni. New versions of the Zeus and Banshee were walking off the line for battlefield testing when Word of Blake conquered Hesperus II. Anxious to stay solvent, ComStar C-bills paid for the upgrade to the Kwangjong-ni facility. In exchange, Defiance sold them sixty-six percent of its production for its first two years.
+
+manufacturer:Arc-Royal MechWorks, Defiance Manufacturing Annex
+primaryfactory:Arc-Royal,Kwangjong-ni
+systemmanufacturer:CHASSIS:Alshain Type 69-40S
+systemmanufacturer:ENGINE:Pitban 320 XL
+systemmanufacturer:ARMOR:Unknown Stealth
+systemmanufacturer:COMMUNICATIONS:Nashan Comm-i U-284
+systemmanufacturer:TARGETING:Nashan Trac V-102 with Active Probe

@@ -1,37 +1,31 @@
 /*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-
-/*
- * GameLog.java
- *
- * Created on March 30, 2002, 2:40 PM
- * Renamed from ServerLog to GameLog in July 2005
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
+
+import megamek.common.preference.PreferenceManager;
+import megamek.common.util.StringUtil;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
-
-import megamek.common.preference.PreferenceManager;
-import megamek.common.util.StringUtil;
 
 /**
  * @author Ben
- * @version
+ * @since March 30, 2002, 2:40 PM
+ * Renamed from ServerLog to GameLog in July 2005
  */
 public class GameLog {
 
@@ -43,8 +37,6 @@ public class GameLog {
 
     /**
      * Creates GameLog named
-     * 
-     * @filename
      */
     public GameLog(String filename) {
         try {
@@ -52,38 +44,34 @@ public class GameLog {
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            // maxFilesize = maxSize;
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
             logfile = new File(LOG_DIR + File.separator + filename);
-            // writer = new BufferedWriter(new FileWriter(LOG_DIR +
-            // File.separator + filename, append));
             writer = new BufferedWriter(new FileWriter(logfile));
-            append("Log file opened " + LocalDate.now().toString());
-        } catch (IOException ex) {
+            append("Log file opened " + LocalDate.now());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             writer = null;
-            System.err.println("GameLog:" + ex.getMessage());
         }
     }
 
     public void append(String toLog) {
-        // if (writer == null || logfile.length() > maxFilesize) {
         if (writer == null) {
             return;
         }
         
         try {
-            writer.write("<pre>"+toLog+"</pre>");
+            writer.write("<pre>" + toLog + "</pre>");
             writer.newLine();
             writer.flush();
-        } catch (IOException ex) {
-            // duhhhh...
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             writer = null;
         }
     }
 
-    public void close() throws java.io.IOException {
+    public void close() throws Exception {
         if (writer != null) {
             writer.close();
         }

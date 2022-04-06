@@ -1,6 +1,7 @@
 Version:1.0
 Cougar
 A
+mul id:704
 
 Config:Biped Omnimech
 TechBase:Clan
@@ -150,4 +151,18 @@ Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
+overview:Based on the Adder, the Cougar is a powerful Clan Jade Falcon light OmniMech.
 
+capabilities:Though the two 'Mechs are visually similar and share the same weight, the Cougar is slower and better armed than the Adder, replacing its progenitor's 210 XL Engine with a lighter 175 XL model and mounting just five and a half tons of Ferro-Fibrous armor on an Endo Steel frame to boost the available pod-space to 19 tons. Though some Clan MechWarriors complained that the loss of speed was damning for a light 'Mech, the overall consensus was the increased firepower made up for this lack.
+
+deployment:The most popular alternate configuration, the Cougar A is built around a pair of LRM-20s, each with an Artemis IV FCS. This configuration is supported by a pair of ER Medium Lasers and a Small Pulse Laser.
+
+history:After the Refusal War with Clan Wolf, the Falcon's newly-vested Khan Marthe Pryde strove to rebuild her shattered touman, reaping the benefits of efforts by her predecessor Elias Crichell to step up the pace of the Falcon breeding program and to bring new and deadly OmniMechs into service. With regards the latter, the successful introduction of the Fire Falcon, Black Lanner, Night Gyr and Turkina pleased her, but Pryde desired the symbolic goal of a complete Star of new 'Mechs. Recognizing that she'd stretched her Clan's scientists to the limit to produce those four designs already, Khan Pryde directed her scientists to modify an existing design into an even more deadly machine for the fifth member. The design selected was the Adder, and in using an existing design the Falcon scientists were able to field a virtually new 'Mech in roughly half the time normally required to construct and test a new OmniMech. First seeing service during the fighting on Coventry in 3058, the Cougar quickly spread to other Clans, most notably Clan Smoke Jaguar's defenders during Operation BULLDOG. The visual similarity to the Adder caught the Inner Sphere forces who faced it on Coventry and Port Arthur off-guard, incorrectly assuming it was the older design and being shocked by the greater firepower the Cougar was capable of unleashing. Remaining popular with the Falcons, the Ironhold facility that produced the Cougar was destroyed by Clan Steel Viper in 3071 during the Wars of Reaving.
+
+manufacturer:Ironhold Alpha Complex
+primaryfactory:Ironhold
+systemmanufacturer:CHASSIS:JF 3 Light Endo Steel
+systemmanufacturer:ENGINE:175 JF Extralight
+systemmanufacturer:ARMOR:Compound JF Ferro-Fibrous
+systemmanufacturer:COMMUNICATIONS:JF Integrated
+systemmanufacturer:TARGETING:Series JFVIII KITT

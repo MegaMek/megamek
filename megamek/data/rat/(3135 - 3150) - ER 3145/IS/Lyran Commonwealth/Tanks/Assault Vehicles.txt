@@ -1,6 +1,6 @@
 Lyran Commonwealth Assault Vehicles 3135+
 Demolisher Heavy Tank (Standard Mk. II),1
-Sturmfeur Heavy Tank (Standard),2
+SturmFeur Heavy Tank (Standard),2
 Fortune Wheeled Assault Vehicle (Standard),3
 Demolisher II Heavy Tank (Standard),4
 DI Morgan Assault Tank (Standard),5

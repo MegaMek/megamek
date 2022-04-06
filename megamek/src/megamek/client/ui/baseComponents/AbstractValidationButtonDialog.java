@@ -21,8 +21,8 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.enums.ValidationState;
 import megamek.common.annotations.Nullable;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,12 +38,12 @@ import java.util.ResourceBundle;
  * and validateAction();
  *
  * The resources associated with this dialog need to contain at least the following keys:
- * - "Ok.text" -> text for the Ok button
- * - "Ok.toolTipText" -> toolTipText for the Ok button
- * - "Validate.text" -> text for the Validate button
- * - "Validate.toolTipText" -> toolTipText for the Validate button
- * - "Cancel.text" -> text for the Cancel button
- * - "Cancel.toolTipText" -> toolTipText for the Cancel button
+ * - "Ok.text" - text for the Ok button
+ * - "Ok.toolTipText" - toolTipText for the Ok button
+ * - "Validate.text" - text for the Validate button
+ * - "Validate.toolTipText" - toolTipText for the Validate button
+ * - "Cancel.text" - text for the Cancel button
+ * - "Cancel.toolTipText" - toolTipText for the Cancel button
  *
  * This is directly tied to MekHQ's AbstractMHQValidationButtonDialog, and any changes here MUST be
  * verified there.
@@ -70,7 +70,7 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
     protected AbstractValidationButtonDialog(final JFrame frame, final boolean modal,
                                              final String name, final String title) {
         this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
-                PreferenceManager.getClientPreferences().getLocale(), new EncodeControl()), name, title);
+                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name, title);
     }
 
     /**
@@ -135,7 +135,7 @@ public abstract class AbstractValidationButtonDialog extends AbstractButtonDialo
         if (getState().isSuccess()) {
             super.okButtonActionPerformed(evt);
         } else if (getState().isPending()) {
-            MegaMek.getLogger().error("Received a Pending validation state after performing validation, returning without closing the dialog.");
+            LogManager.getLogger().error("Received a Pending validation state after performing validation, returning without closing the dialog.");
         }
     }
 

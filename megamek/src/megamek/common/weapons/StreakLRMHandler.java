@@ -20,7 +20,7 @@ import java.util.Vector;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.Minefield;
 import megamek.common.Report;
@@ -38,7 +38,7 @@ public class StreakLRMHandler extends StreakHandler {
      * @param g
      * @param s
      */
-    public StreakLRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public StreakLRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 

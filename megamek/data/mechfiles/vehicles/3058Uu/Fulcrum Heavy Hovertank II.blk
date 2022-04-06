@@ -15,6 +15,10 @@ Fulcrum Heavy Hovertank
 <Model>
 II
 </Model>
+
+<mul id:>
+1155
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

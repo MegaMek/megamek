@@ -1,41 +1,41 @@
-Version:1.0
+Version:1.3
 Goliath
 GOL-3S
-
+mul id:1233
 Config:Quad
-TechBase:Inner Sphere
-Era:3066
-Source:Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3066
+source:Civil War
+rules level:2
 
-Mass:80
-Engine:320 Light Engine
-Structure:Standard
-Myomer:Standard
+mass:80
+engine:320 Light Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-FLL Armor:28
-FRL Armor:28
-LT Armor:21
-RT Armor:21
-CT Armor:29
-HD Armor:9
-RLL Armor:28
-RRL Armor:28
-RTL Armor:7
-RTR Armor:7
-RTC Armor:10
+armor:Standard(Inner Sphere)
+FLL armor:28
+FRL armor:28
+LT armor:21
+RT armor:21
+CT armor:29
+HD armor:9
+RLL armor:28
+RRL armor:28
+RTL armor:7
+RTR armor:7
+RTC armor:10
 
 Weapons:6
-LB 20-X AC, Rear Left Leg
+LB 20-X AC, Left Torso
 ER Medium Laser, Front Left Leg
 ER Medium Laser, Front Right Leg
 LRM 10, Right Torso
-ER Large Laser, Center Torso
+ER Large Laser, Right Torso
 ER Medium Laser, Head
 
 Front Left Leg:
@@ -83,14 +83,14 @@ ISLBXAC20
 Right Torso:
 Fusion Engine
 Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
 LRM 10
 LRM 10
 ISArtemisIV
 IS Ammo LRM-10 Artemis-capable
 IS Ammo LRM-10 Artemis-capable
 IS LB 20-X AC Ammo
-IS LB 20-X AC Ammo
-IS LB 20-X Cluster Ammo
 IS LB 20-X Cluster Ammo
 ISCASE
 
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERLargeLaser
-ISERLargeLaser
+ISLBXAC20
+-Empty-
 
 Head:
 Life Support
@@ -127,7 +127,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISLBXAC20
+IS LB 20-X AC Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -141,7 +141,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
+IS LB 20-X Cluster Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +150,15 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:The Goliath is used as a general assault 'Mech and until recently was not usually seen in large numbers because of the bias against quad 'Mechs prior to the 3060s.
+capabilities:The Goliath is armed with what would be considered a paltry armament for a 'Mech of its size.
+deployment:One of the "new generation" of Goliaths, the 3S's engine has been upgraded to a Light Fusion Engine, and, as a result, it now carries thirteen and an half tons of armor. The entire arsenal has been stripped from the 'Mech and the 3S carries as its primary weapon an LB-X Autocannon/20. This is backed up by three ER Medium Lasers. For longer-range engagements, the Goliath carries an LRM-10 launcher with an Artemis IV fire control system as well as an ER Large Laser.
+history:The Goliath is the second 'Mech built in 2652 by Brigadier Corporation. The Goliath is based on lessons that were learned from the Scorpion. The first and most important difference is that the Goliath weighs in at 80 tons allowing it to carry a much heavier weapons payload and armor at the cost of mobility. In the late 3060s the Goliath saw renewed production and renewed popularity and has since become a powerful and respected assault 'Mech. In 3143, The Corean Enterprises - MacAdams-Suharno plant on Stewart was captured by Clan Wolf, and it's GOL-6M variant production line converted to produce a Clan version of the 'Mech.
+manufacturer:Defiance Industries,TharHes Industries
+primaryfactory:Hesperus II,Tharkad
+systemmanufacturer:CHASSIS:Earthwerks GOL Quad-A
+systemmanufacturer:ENGINE:Pitban 320 Light Fusion Engine
+systemmanufacturer:ARMOR:Durallex Heavy with CASE
+systemmanufacturer:COMMUNICATIONS:Angst Clear Channel 3G
+systemmanufacturer:TARGETING:Angst Clear View Multitask
 

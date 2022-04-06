@@ -1,36 +1,36 @@
-Version:1.1
-Ryoken III-XP
+Version:1.3
+Ryoken III-XP (Skinwalker)
 Prime
-
+mul id:7378
 Config:Biped Omnimech
-TechBase:Mixed (IS Chassis)
-Era:3143
-Rules Level:4
+techbase:Mixed (Clan Chassis)
+era:3143
+rules level:4
 
-Mass:55
-Engine:330 XL (Clan) Engine
-Structure:Clan Endo Steel
-Myomer:Triple-Strength
-Cockpit:Interface Cockpit
-Gyro:None
+mass:55
+engine:330 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Triple-Strength
+cockpit:Interface Cockpit
+gyro:None
 
-Heat Sinks:13 Double
-Base Chassis Heat Sinks:11
-Walk MP:6
-Jump MP:0
+heat sinks:13 Clan Double
+base chassis heat sinks:11
+walk mp:6
+jump mp:0
 
-Armor:Ferro-Lamellor(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:21
-RT Armor:21
-CT Armor:24
-HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+armor:Ferro-Lamellor(Clan)
+LA armor:16
+RA armor:16
+LT armor:21
+RT armor:21
+CT armor:24
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:5
+RTR armor:5
+RTC armor:6
 
 Weapons:6
 ER Large Pulse Laser, Left Arm
@@ -46,11 +46,11 @@ Upper Arm Actuator
 Lower Arm Actuator
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLERLargePulseLaser (omnipod)
-CLERLargePulseLaser (omnipod)
-CLERLargePulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
+CLERLargePulseLaser (OMNIPOD)
+CLERLargePulseLaser (OMNIPOD)
+CLERLargePulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
 -Empty-
 -Empty-
 
@@ -58,14 +58,14 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-TSM
-TSM
-TSM
-CLERLargePulseLaser (omnipod)
-CLERLargePulseLaser (omnipod)
-CLERLargePulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
-CLERMediumPulseLaser (omnipod)
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+CLERLargePulseLaser (OMNIPOD)
+CLERLargePulseLaser (OMNIPOD)
+CLERLargePulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
+CLERMediumPulseLaser (OMNIPOD)
 -Empty-
 
 Left Torso:
@@ -78,9 +78,9 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLSRM6 (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLSRM6 (OMNIPOD)
 
 Right Torso:
 Fusion Engine
@@ -91,9 +91,9 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLSRM6 (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLSRM6 (OMNIPOD)
 -Empty-
 
 Center Torso:
@@ -103,11 +103,11 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-TSM
-TSM
-TSM
-Clan Ammo SRM-6 (omnipod)
-Clan Ammo SRM-6 (omnipod)
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Clan Ammo SRM-6 (OMNIPOD)
+Clan Ammo SRM-6 (OMNIPOD)
 -Empty-
 
 Head:
@@ -152,4 +152,15 @@ Clan Ferro-Lamellor
 -Empty-
 -Empty-
 
+overview:Developed during the mid-Dark Ages in the 32nd Century, the Ryoken III-XP was an experimental medium OmniMech which was first fielded by Clan Wolf.
+capabilities:Built with a mix of Inner Sphere and Clan technologies, the Ryoken III-XP is a powerful and swift design. Using a combination of a 330-rated Extra-Light Fusion Engine and Triple Strength Myomer, the 'Mech is able to achieve speeds up to 110 km/h. Perhaps the most startling innovation included in this design is the Clan Interface Armor, which allows a MechWarrior to interface with their 'Mech while being completely armored should they be forced to eject. This combination interface allows the Ryoken III pilot's a degree of control in combat, and removes the need to have a Gyro mounted in the 'Mech. This technology was thought to have been lost at the time of Ryoken III's baptism in combat by Inner Sphere powers. In addition to having its pilot encased in a power-armor interface, the Mech's hull is protected by 11.5 tons of Ferro-Lamellor Armor.
+deployment:The Prime configuration is armed with two pairs of Extended Range Large and Medium Pulse Lasers mounted on each of the 'Mech's arm actuators. Backing up the lasers is a pair of 6-tubed SRM launchers which are mounted in the torso sides. The launchers are supplied by two tons of ammunition from the center torso. To help alleviate the weapon system's heat burden, two additional Double Heat Sinks are added.
+history:Also known as the Skinwalker, it was created by the newly transplanted Clan Wolf, which had renovated a factory that had once belonged to the former Marik-Stewart Commonwealth. This 'Mech, when it was first deployed into combat, surprised many with its use of a mix of experimental and exotic technologies, the likes of which was rarely seen in Clan design before. The design was first encountered in combat in 3148, when Republic Remnant forces raided Kalidasa.
+manufacturer:Kali Yama Weapons Industries Inc.
+primaryfactory:Kalidasa
+systemmanufacturer:CHASSIS:Prototype Hybrid Chassis
+systemmanufacturer:ENGINE:330 Fusion Extralight
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:COMMUNICATIONS:Unknown
+systemmanufacturer:TARGETING:Unknown
 

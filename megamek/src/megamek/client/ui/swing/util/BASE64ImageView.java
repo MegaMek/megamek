@@ -1,19 +1,20 @@
-/**
- *  MegaMek - Copyright (C) 2020 - The MegaMek Team
+/*
+ * MegaMek - Copyright (C) 2020 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.util;
 
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
+
 import javax.imageio.ImageIO;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
@@ -26,7 +27,6 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Dictionary;
 import java.util.Hashtable;
-
 
 public class BASE64ImageView extends ImageView {
 
@@ -59,7 +59,7 @@ public class BASE64ImageView extends ImageView {
         }
     }
 
-    //decodes the Base64 string into an image and returns it
+    // decodes the Base64 string into an image and returns it
     private Image loadImage() {
         String b64 = getBASE64Image();
         if (b64 != null) {
@@ -68,7 +68,7 @@ public class BASE64ImageView extends ImageView {
                         Base64.getDecoder().decode(b64.getBytes()))) {
                 newImage = ImageIO.read(bais);
             } catch (Exception ex) {
-                MegaMek.getLogger().error(ex);
+                LogManager.getLogger().error("", ex);
             }
             return newImage;
         } else {
@@ -90,8 +90,8 @@ public class BASE64ImageView extends ImageView {
 
             try {
                 this.url = new URL("file:/" + this.getElement().toString());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                LogManager.getLogger().error("", e);
             }
 
             return this.url;
@@ -99,7 +99,7 @@ public class BASE64ImageView extends ImageView {
         return super.getImageURL();
     }
 
-    //checks if the given src is encoded
+    // checks if the given src is encoded
     private boolean isBase64Encoded(String src) {
         return src != null && src.contains("base64,");
     }

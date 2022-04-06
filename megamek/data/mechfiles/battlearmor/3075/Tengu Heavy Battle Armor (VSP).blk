@@ -19,6 +19,10 @@ Tengu Heavy Battle Armor
 (VSP)
 </Model>
 
+<mul id:>
+5203
+</mul id:>
+
 <chassis>
 biped
 </chassis>

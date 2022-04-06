@@ -1,6 +1,7 @@
 Version:1.0
 Enforcer III
 ENF-6G
+mul id:980
 
 Config:Biped
 TechBase:Inner Sphere

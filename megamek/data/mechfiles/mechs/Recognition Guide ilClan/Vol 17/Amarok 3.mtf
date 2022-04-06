@@ -1,0 +1,163 @@
+Version:1.0
+Amarok
+3
+mul id:8241
+
+Config:Biped
+techbase:Mixed (Clan Chassis)
+era:3150
+source:Rec Guide:ilClan #17 - Dark Age
+rules level:3
+
+mass:100
+engine:400 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:10 Clan Double
+walk mp:4
+jump mp:0
+
+armor:Hardened(Clan)
+LA armor:31
+RA armor:31
+LT armor:28
+RT armor:28
+CT armor:27
+HD armor:9
+LL armor:22
+RL armor:22
+RTL armor:12
+RTR armor:12
+RTC armor:18
+
+Weapons:9
+Small Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
+Small Pulse Laser, Right Arm
+Small Pulse Laser, Right Arm
+Small Pulse Laser, Right Arm
+HAG/20, Left Torso
+LRM 20, Right Torso
+Small Pulse Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLSmallPulseLaser
+CLSmallPulseLaser
+CLSmallPulseLaser
+Spikes
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLSmallPulseLaser
+CLSmallPulseLaser
+CLSmallPulseLaser
+Spikes
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+CLHAG20
+Hyper-Assault Gauss Rifle/20 Ammo
+Hyper-Assault Gauss Rifle/20 Ammo
+Spikes
+CLCASEII
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Spikes
+CLCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLSmallPulseLaser
+Spikes
+
+Head:
+Life Support
+Sensors
+Cockpit
+Spikes
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:Manufacturing Plant SFF-TU1
+primaryfactory:Tukayyid
+systemmanufacturer:CHASSIS:SFAM Endo 4
+systemmanufacturer:ENGINE:Type 79 400 XL Fusion
+systemmanufacturer:ARMOR:Double-Forged ZX20 Hardened
+systemmanufacturer:COMMUNICATIONS:Khan Series (Type 6c)
+systemmanufacturer:TARGETING:Series XIV OPT

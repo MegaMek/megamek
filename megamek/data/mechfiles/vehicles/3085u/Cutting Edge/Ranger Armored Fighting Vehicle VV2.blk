@@ -20,6 +20,10 @@ Ranger Armored Fighting Vehicle
 VV2
 </Model>
 
+<mul id:>
+2640
+</mul id:>
+
 <Tonnage>
 45
 </Tonnage>

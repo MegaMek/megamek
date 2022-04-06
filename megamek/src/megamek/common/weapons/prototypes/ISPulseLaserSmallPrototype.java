@@ -1,23 +1,20 @@
-/**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
- */
 /*
- * Created on Sep 12, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.IGame;
+import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -28,16 +25,11 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
+ * @since Sep 12, 2004
  */
 public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
-    /**
-     * 
-     */
     private static final long serialVersionUID = 2977404162226570144L;
 
-    /**
-     * 
-     */
     public ISPulseLaserSmallPrototype() {
         super();
         this.name = "Prototype Small Pulse Laser";
@@ -64,17 +56,18 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
-        this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);;
-        rulesRefs = "71,IO";
+        this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);
+        rulesRefs = "71, IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
-            .setIntroLevel(false)
-            .setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
-            .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
-            .setISApproximate(false, false, false, true, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+                .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
+                .setISApproximate(false, false, false, true, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     /*
@@ -86,9 +79,8 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new SmallPulseLaserPrototypeHandler(toHit, waa, game, server);
     }
-    
 }

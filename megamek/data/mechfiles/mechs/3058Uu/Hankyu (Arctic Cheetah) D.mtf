@@ -1,6 +1,7 @@
 Version:1.1
 Hankyu (Arctic Cheetah)
 D
+mul id:1381
 
 Config:Biped Omnimech
 TechBase:Clan
@@ -148,13 +149,16 @@ Jump Jet
 -Empty-
 -Empty-
 
-overview:The Arctic Cheetah was originally designed by Clan Ice Hellion to replace the Mist Lynx OmniMech. The Arctic Cheetah uses all the weight-saving materials that were available to the Clans in the 3030s: an Endo Steel structure, an XL Engine, and four tons of Ferro-Fibrous armor. It maintains enough jump jets in the base chassis to leap up to one hundred eighty meters at a time.
+overview:The Arctic Cheetah was originally designed by Clan Ice Hellion to replace the Mist Lynx OmniMech.
 
-capabilities:A capable long-range missile boat, configuration D mounts a pair of LRM-10s in each arm with a Medium Pulse Laser and a Flamer mounted in the Left Torso.
+capabilities:The Arctic Cheetah uses all the weight-saving materials that were available to the Clans in the 3030s: an Endo Steel structure, an XL Engine, and four tons of Ferro-Fibrous armor. It maintains enough jump jets in the base chassis to leap up to one hundred eighty meters at a time. Every variant of the Arctic Cheetah mounts a modular Flamer somewhere on the 'Mech for anti-infantry work.
+
+deployment:A capable long-range missile boat, configuration D mounts a pair of LRM-10s in each arm with a Medium Pulse Laser and a Flamer mounted in the Left Torso.
 
 history:Shortly after they began production in 3037, Clan Smoke Jaguar conquered the factory on Foster that produced the design, enabling the Jaguars to replace their Mist Lynx 'Mechs. The design was dubbed the Hankyu (Japanese for "short bow") by the Draconis Combine forces that first encountered it during the Battle of Luthien. The Ice Hellions subsequently recovered or recaptured Foster MechWorks Facility Beta, but by that point, the majority of the Ice Hellion MechWarriors preferred the Hellion OmniMech.
-manufacturer:Foster MechWorks Facility Beta
-primaryfactory:Foster
+
+manufacturer:Foster MechWorks Facility Beta,Mualang Alpha
+primaryfactory:Foster,Coudoux
 systemmanufacturer:CHASSIS:Hellion Light Endo Steel V3
 systemmanufacturer:ENGINE:Warrior 240 XL
 systemmanufacturer:ARMOR:Compound Beta Ferro-Fibrous

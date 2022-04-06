@@ -14,25 +14,14 @@
  */
 package megamek.common.verifier;
 
+import megamek.common.*;
+import megamek.common.util.StringUtil;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.Bay;
-import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.ITechManager;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
-import megamek.common.TechConstants;
-import megamek.common.WeaponType;
-import megamek.common.util.StringUtil;
 
 /**
  * Class for testing and validating instantiations for Small Craft and Dropships.
@@ -76,7 +65,7 @@ public class TestSmallCraft extends TestAero {
          */
         public boolean isClan;
         
-        AerospaceArmor(int t, boolean c){
+        AerospaceArmor(int t, boolean c) {
             type = t;
             isClan = c;
         }
@@ -90,9 +79,9 @@ public class TestSmallCraft extends TestAero {
          * @return   The <code>AeroArmor</code> that corresponds to the given 
          *              type or null if no match was found.
          */
-        public static AerospaceArmor getArmor(int t, boolean c){
-            for (AerospaceArmor a : values()){
-                if (a.type == t && a.isClan == c){
+        public static AerospaceArmor getArmor(int t, boolean c) {
+            for (AerospaceArmor a : values()) {
+                if (a.type == t && a.isClan == c) {
                     return a;
                 }
             }
@@ -151,7 +140,7 @@ public class TestSmallCraft extends TestAero {
      *  Computes the maximum number armor level in tons
      *   
      */
-    public static double maxArmorWeight(SmallCraft smallCraft){
+    public static double maxArmorWeight(SmallCraft smallCraft) {
         if (smallCraft.isSpheroid()) {
             return floor(smallCraft.get0SI() * 3.6, Ceil.HALFTON);
         } else {
@@ -233,21 +222,21 @@ public class TestSmallCraft extends TestAero {
                 sc.hasETypeFlag(Entity.ETYPE_DROPSHIP), sc.getOriginalBuildYear());
         if (sc.isSpheroid()) {
             if (sc.isPrimitive()) {
-                return (int)Math.floor(Math.sqrt(engineTonnage * 1.3));
+                return (int) Math.floor(Math.sqrt(engineTonnage * 1.3));
             } else if ((sc.getDesignType() == SmallCraft.MILITARY)
                     && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-                return (int)Math.floor(Math.sqrt(engineTonnage * 6.8));
+                return (int) Math.floor(Math.sqrt(engineTonnage * 6.8));
             } else {
-                return (int)Math.floor(Math.sqrt(engineTonnage * 1.6));
+                return (int) Math.floor(Math.sqrt(engineTonnage * 1.6));
             }
         } else {
             if (sc.isPrimitive()) {
-                return (int)Math.floor(engineTonnage / 75.0);
+                return (int) Math.floor(engineTonnage / 75.0);
             } else if ((sc.getDesignType() == SmallCraft.MILITARY)
                     && sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-                return (int)Math.floor(engineTonnage / 20.0);
+                return (int) Math.floor(engineTonnage / 20.0);
             } else {
-                return (int)Math.floor(engineTonnage / 60.0);
+                return (int) Math.floor(engineTonnage / 60.0);
             }
         }
     }
@@ -330,7 +319,7 @@ public class TestSmallCraft extends TestAero {
     public static int minimumBaseCrew(SmallCraft sc) {
         int crew = 3;
         if (sc.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            crew += (int)Math.ceil(sc.getWeight() / 5000);
+            crew += (int) Math.ceil(sc.getWeight() / 5000);
             if (sc.getDesignType() == SmallCraft.MILITARY) {
                 crew++;
             }
@@ -375,7 +364,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public double getWeightControls() {
         // Non primitives use the multiplier for 2500+ even if they were built before that date
-        int year = smallCraft.isPrimitive()? smallCraft.getOriginalBuildYear() : 2500;
+        int year = smallCraft.isPrimitive() ? smallCraft.getOriginalBuildYear() : 2500;
         // Small craft round up to the half ton and dropships to the full ton
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
             return ceil(smallCraft.getWeight()
@@ -449,7 +438,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public String printWeightMisc() {
         double weight = getWeightMisc();
-        if (weight > 0){
+        if (weight > 0) {
             return StringUtil.makeLength(
                     "Escape pods/Life boats: ", getPrintSize() - 5) + weight + "\n";
         }
@@ -617,7 +606,7 @@ public class TestSmallCraft extends TestAero {
                     continue;
                 }
                 if (w.getType() instanceof WeaponType) {
-                    ammoWeaponCount.merge(((WeaponType)w.getType()).getAmmoType(), 1, Integer::sum);
+                    ammoWeaponCount.merge(((WeaponType) w.getType()).getAmmoType(), 1, Integer::sum);
                 } else {
                     buff.append(w.getName()).append(" in bay ").append(bay.getName()).append(" is not a weapon\n");
                     illegal = true;
@@ -626,7 +615,7 @@ public class TestSmallCraft extends TestAero {
             for (Integer aNum : bay.getBayAmmo()) {
                 final Mounted a = smallCraft.getEquipment(aNum);
                 if (a.getType() instanceof AmmoType) {
-                    ammoTypeCount.merge(((AmmoType)a.getType()).getAmmoType(), a.getUsableShotsLeft(),
+                    ammoTypeCount.merge(((AmmoType) a.getType()).getAmmoType(), a.getUsableShotsLeft(),
                             Integer::sum);
                 } else {
                     buff.append(a.getName()).append(" in bay ").append(bay.getName()).append(" is not ammo\n");
@@ -663,8 +652,8 @@ public class TestSmallCraft extends TestAero {
         Map<EquipmentType,Integer> leftAft = new HashMap<>();
         Map<EquipmentType,Integer> rightFwd = new HashMap<>();
         Map<EquipmentType,Integer> rightAft = new HashMap<>();
-        BigInteger typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)?
-                MiscType.F_DS_EQUIPMENT : MiscType.F_SC_EQUIPMENT;
+        BigInteger typeFlag = smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)
+                ? MiscType.F_DS_EQUIPMENT : MiscType.F_SC_EQUIPMENT;
         for (Mounted m : smallCraft.getEquipment()) {
             if (m.getType() instanceof MiscType) {
                 if (!m.getType().hasFlag(typeFlag)) {
@@ -673,7 +662,7 @@ public class TestSmallCraft extends TestAero {
                 }
             } else if ((m.getType() instanceof AmmoType)
                     && (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP))
-                    && (((AmmoType)m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD)) {
+                    && (((AmmoType) m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD)) {
                 buff.append("Cannot mount ").append(m.getType().getName()).append("\n");
                 illegal = true;
             } else if (m.getType() instanceof WeaponType) {
@@ -705,7 +694,7 @@ public class TestSmallCraft extends TestAero {
         }
         if (lateralMatch) {
             //We've already checked counts, so in the reverse direction we only need to see if there's
-            //anything not found on the other side.
+            // anything not found on the other side.
             for (EquipmentType eq : rightFwd.keySet()) {
                 if (!leftFwd.containsKey(eq)) {
                     lateralMatch = false;

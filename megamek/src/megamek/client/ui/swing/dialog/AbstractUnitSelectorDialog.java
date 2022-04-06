@@ -1,40 +1,44 @@
 /*
- *  MechSelectorDialog.java - Copyright (C) 2002,2004 Josh Yockey
- *  Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
- *  Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * MechSelectorDialog.java - Copyright (C) 2002, 2004 Josh Yockey
+ * Renamed UnitSelectorDialog - Jay Lawson <jaylawson39 at yahoo.com>
+ * Renamed AbstractUnitSelectorDialog - Copyright (c) 2020 - The MegaMek Team
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ui.swing.dialog;
 
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.panes.EntityViewPane;
-import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.AdvancedSearchDialog;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.common.*;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.*;
+import megamek.common.annotations.Nullable;
+import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.sorter.NaturalOrderComparator;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.event.*;
-import javax.swing.table.*;
-
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
+import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import java.util.*;
 import java.util.regex.PatternSyntaxException;
 
@@ -106,7 +110,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     //endregion Variable Declarations
 
     protected AbstractUnitSelectorDialog(JFrame frame, UnitLoadingDialog unitLoadingDialog) {
-        super(frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
+        super(frame, Messages.getString("MechSelectorDialog.title"), true);
         setName("UnitSelectorDialog");
         this.frame = frame;
         this.unitLoadingDialog = unitLoadingDialog;
@@ -135,7 +139,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             sortList.add(new SortKey(guiPreferences.getMechSelectorSortColumn(),
                     SortOrder.valueOf(guiPreferences.getMechSelectorSortOrder())));
         } catch (Exception e) {
-            MegaMek.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
+            LogManager.getLogger().error("Failed to set based on user preferences, attempting to use default", e);
 
             sortList.add(new SortKey(guiPreferences.getMechSelectorDefaultSortColumn(),
                     SortOrder.valueOf(guiPreferences.getMechSelectorDefaultSortOrder())));
@@ -205,7 +209,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 column.setPreferredWidth(25);
             }
         }
-        tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
+        tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12));
 
         JScrollPane scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
@@ -223,13 +227,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         panelFilterButtons.setMinimumSize(new Dimension(300, 180));
         panelFilterButtons.setPreferredSize(new Dimension(300, 180));
 
-        JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType")); //$NON-NLS-1$
-        labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
+        JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
+        labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(labelType, gridBagConstraintsWest);
 
-        listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
+        listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
         JScrollPane techLevelScroll = new JScrollPane(listTechLevel);
         techLevelScroll.setMinimumSize(new Dimension(300, 100));
         techLevelScroll.setPreferredSize(new Dimension(300, 100));
@@ -237,7 +241,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
 
-        JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
+        JLabel labelWeight = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"));
         labelWeight.setName("labelWeight");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 1;
@@ -247,7 +251,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         for (int i = 0; i < EntityWeightClass.SIZE; i++) {
             weightModel.addElement(EntityWeightClass.getClassName(i));
         }
-        weightModel.addElement(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
+        weightModel.addElement(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setModel(weightModel);
         comboWeight.setName("comboWeight");
         comboWeight.setMinimumSize(new Dimension(300, 27));
@@ -257,7 +261,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 1;
         panelFilterButtons.add(comboWeight, gridBagConstraintsWest);
 
-        JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
+        JLabel labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"));
         labelUnitType.setName("labelUnitType");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -286,14 +290,17 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         textFilter.setMinimumSize(new Dimension(300, 28));
         textFilter.setPreferredSize(new Dimension(300, 28));
         textFilter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
             public void changedUpdate(DocumentEvent e) {
                 filterUnits();
             }
 
+            @Override
             public void insertUpdate(DocumentEvent e) {
                 filterUnits();
             }
 
+            @Override
             public void removeUpdate(DocumentEvent e) {
                 filterUnits();
             }
@@ -302,7 +309,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraintsWest.gridy = 3;
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
 
-        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter")); //$NON-NLS-1$
+        JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 3;
@@ -366,7 +373,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.weightx = gridBagConstraints.weighty = 1;
         getContentPane().add(splitPane, gridBagConstraints);
 
-        gridBagConstraints.insets = new Insets(5,0,5,0);
+        gridBagConstraints.insets = new Insets(5, 0, 5, 0);
         gridBagConstraints.weightx = gridBagConstraints.weighty = 0;
         gridBagConstraints.gridy = 1;
         getContentPane().add(panelButtons, gridBagConstraints);
@@ -377,6 +384,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         Action closeAction = new AbstractAction() {
             private static final long serialVersionUID = 2587225044226668664L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 close();
             }
@@ -385,6 +393,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         Action selectAction = new AbstractAction() {
             private static final long serialVersionUID = 4043951169453748540L;
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 select(false);
             }
@@ -506,9 +515,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
         final boolean checkSupportVee = Messages.getString("MechSelectorDialog.SupportVee")
                 .equals(comboUnitType.getSelectedItem());
-        //If current expression doesn't parse, don't update.
+        // If current expression doesn't parse, don't update.
         try {
-            unitTypeFilter = new RowFilter<MechTableModel, Integer>() {
+            unitTypeFilter = new RowFilter<>() {
                 @Override
                 public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
                     MechTableModel mechModel = entry.getModel();
@@ -524,21 +533,19 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                     if (
                             /* Year Limits */
                             (!enableYearLimits || (mech.getYear() <= allowedYear))
-                            /* Canon */
-                            && (!canonOnly || mech.isCanon())
-                            /* Invalid units */
-                            && (allowInvalid || !mech.getLevel().equals("F"))
-                            /* Weight */
-                            && ((nClass == EntityWeightClass.SIZE) || (nClass == mech.getWeightClass()))
-                            /* Technology Level */
-                            && (techLevelMatch)
-                            /* Support Vehicles */
-                            && ((nUnit == -1)
-                                    || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
-                                    || (checkSupportVee && mech.isSupport()))
-                            /* Advanced Search */
-                            && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))
-                    ) {
+                                    /* Canon */
+                                    && (!canonOnly || mech.isCanon())
+                                    /* Invalid units */
+                                    && (allowInvalid || !mech.getLevel().equals("F"))
+                                    /* Weight */
+                                    && ((nClass == EntityWeightClass.SIZE) || (nClass == mech.getWeightClass()))
+                                    /* Technology Level */
+                                    && (techLevelMatch)
+                                    /* Support Vehicles */
+                                    && ((nUnit == -1) || (checkSupportVee && mech.isSupport())
+                                            || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit))))
+                                    /* Advanced Search */
+                                    && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))) {
                         if (textFilter.getText().length() > 0) {
                             String text = textFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());
@@ -570,7 +577,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     /**
      * @return the selected entity
      */
-    public Entity getSelectedEntity() {
+    public @Nullable Entity getSelectedEntity() {
         int view = tableUnits.getSelectedRow();
         if (view < 0) {
             // selection got filtered away
@@ -582,13 +589,14 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             // For some unknown reason the base path gets screwed up after you
             // print so this sets the source file to the full path.
             return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-        } catch (EntityLoadingException e) {
-            MegaMek.getLogger().error("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
+        } catch (Exception e) {
+            LogManager.getLogger().error("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName()
                             + ": " + e.getMessage(), e);
             return null;
         }
     }
 
+    @Override
     public void run() {
         // Loading mechs can take a while, so it will have its own thread for MegaMek
         // This prevents the UI from freezing, and allows the
@@ -598,7 +606,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         // break out if there are no units to filter
         if (mechs == null) {
-            MegaMek.getLogger().error("No mechs were loaded");
+            LogManager.getLogger().error("No mechs were loaded");
         } else {
             unitModel.setData(mechs);
         }
@@ -647,6 +655,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This handles key released events
      * @param ke the key that was released
      */
+    @Override
     public void keyReleased(KeyEvent ke) {
     }
 
@@ -654,6 +663,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This handles key pressed events
      * @param ke the pressed key
      */
+    @Override
     public void keyPressed(KeyEvent ke) {
         long curTime = System.currentTimeMillis();
         if ((curTime - lastSearch) > KEY_TIMEOUT) {
@@ -684,6 +694,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
      * This handles key typed events
      * @param ke the typed key
      */
+    @Override
     public void keyTyped(KeyEvent ke) {
     }
 
@@ -752,10 +763,12 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         private MechSummary[] data = new MechSummary[0];
         //endregion Variable Declarations
 
+        @Override
         public int getRowCount() {
             return data.length;
         }
 
+        @Override
         public int getColumnCount() {
             return N_COL;
         }
@@ -802,6 +815,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             fireTableDataChanged();
         }
 
+        @Override
         public Object getValueAt(int row, int col) {
             if (data.length <= row) {
                 return "?";

@@ -1,18 +1,17 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common;
 
 import java.util.ArrayList;
@@ -27,13 +26,11 @@ import java.util.Vector;
 import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
 
-
 /**
  * Similar to the Compute class, this class contains various static methods for
  * common computations related to ECM.
  * 
  * @author arlith
- *
  */
 public class ComputeECM {
 
@@ -127,13 +124,13 @@ public class ComputeECM {
             return 0;
         }
         // Only grab enemies with active ECM
-        Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
-        Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
+        Vector<Coords> vEnemyECMCoords = new Vector<>(16);
+        Vector<Integer> vEnemyECMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyECCMCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyECCMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyBAPCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPRanges = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPFacings = new Vector<>(16);
         for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
@@ -145,20 +142,20 @@ public class ComputeECM {
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vEnemyECMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vFriendlyECCMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasBAP(false) && (entPos != null)) {
                 vFriendlyBAPCoords.addElement(entPos);
-                vFriendlyBAPRanges.addElement(Integer.valueOf(ent.getBAPRange()));
-                vFriendlyBAPFacings.addElement(Integer.valueOf(ent.getFacing()));
+                vFriendlyBAPRanges.addElement(ent.getBAPRange());
+                vFriendlyBAPFacings.addElement(ent.getFacing());
             }
     
-            // TODO: do docked dropships give ECM benefit?
+            // TODO: do docked DropShips give ECM benefit?
         }
     
         // none? get out of here
@@ -250,13 +247,13 @@ public class ComputeECM {
             return 0;
         }
         // Only grab enemies with active ECM
-        Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
-        Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
-        Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
-        Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
-        Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
+        Vector<Coords> vEnemyECMCoords = new Vector<>(16);
+        Vector<Integer> vEnemyECMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyECCMCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyECCMRanges = new Vector<>(16);
+        Vector<Coords> vFriendlyBAPCoords = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPRanges = new Vector<>(16);
+        Vector<Integer> vFriendlyBAPFacings = new Vector<>(16);
         for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
@@ -268,17 +265,17 @@ public class ComputeECM {
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && (entPos != null)
                 && ent.isLargeCraft()) {
                 vEnemyECMCoords.addElement(entPos);
-                vEnemyECMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vEnemyECMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && (entPos != null)
                 && !ent.isLargeCraft()) {
                 vFriendlyECCMCoords.addElement(entPos);
-                vFriendlyECCMRanges.addElement(Integer.valueOf(ent.getECMRange()));
+                vFriendlyECCMRanges.addElement(ent.getECMRange());
             }
             if (!ent.isEnemyOf(ae) && ent.hasBAP(false) && (entPos != null)) {
                 vFriendlyBAPCoords.addElement(entPos);
-                vFriendlyBAPRanges.addElement(Integer.valueOf(ent.getBAPRange()));
-                vFriendlyBAPFacings.addElement(Integer.valueOf(ent.getFacing()));
+                vFriendlyBAPRanges.addElement(ent.getBAPRange());
+                vFriendlyBAPFacings.addElement(ent.getFacing());
     
             }
             // TODO: do docked dropships give ECM benefit?
@@ -305,7 +302,7 @@ public class ComputeECM {
             // first, subtract 1 for each enemy ECM that affects us
             Enumeration<Integer> ranges = vEnemyECMRanges.elements();
             for (Coords enemyECMCoords : vEnemyECMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(enemyECMCoords);
                 if (nDist <= range) {
                     ecmStatus++;
@@ -314,7 +311,7 @@ public class ComputeECM {
             // now check for friendly small craft eccm
             ranges = vFriendlyECCMRanges.elements();
             for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(friendlyECCMCoords);
                 if (nDist <= range) {
                     ecmStatus--;
@@ -324,12 +321,11 @@ public class ComputeECM {
             ranges = vFriendlyBAPRanges.elements();
             Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
             for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(friendlyBAPCoords);
-                int facing = facings.nextElement().intValue();
+                int facing = facings.nextElement();
                 if (nDist <= range) {
-                    // still might need to check for right arc if using medium
-                    // range
+                    // still might need to check for right arc if using medium range
                     if ((range < 7)
                         || Compute.isInArc(friendlyBAPCoords, facing, c,
                                            Compute.ARC_NOSE)) {
@@ -345,7 +341,7 @@ public class ComputeECM {
             } else if ((x % 3) == 2) {
                 // if we are looking at the second split hex then both this one
                 // and the prior need to have ECM
-                // becaue the advantage should go to the defender
+                // because the advantage should go to the defender
                 if ((ecmStatus > 0) && (prevEcmStatus > 0)) {
                     totalECM++;
                 }
@@ -368,12 +364,12 @@ public class ComputeECM {
         Comparator<ECMInfo> ecmComparator;
         ecmComparator = new ECMInfo.ECCMComparator();
         
-        ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
-        ArrayList<ECMInfo> allEccmInfo = new ArrayList<ECMInfo>(entities.size());
+        ArrayList<ECMInfo> allEcmInfo = new ArrayList<>(entities.size());
+        ArrayList<ECMInfo> allEccmInfo = new ArrayList<>(entities.size());
         // ECCM that counter an ECM need to get removed from allEcmInfo later
-        LinkedList<ECMInfo> eccmToRemove = new LinkedList<ECMInfo>();
+        LinkedList<ECMInfo> eccmToRemove = new LinkedList<>();
         
-        IGame game = null;
+        Game game = null;
         for (Entity e : entities) {
             ECMInfo ecmInfo = e.getECMInfo();
             if (ecmInfo != null) {
@@ -407,7 +403,7 @@ public class ComputeECM {
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
         // ie; Angel ECCM can counter any number of ECM, however if an angel
         //  ECM counters it first...
-        Collections.sort(allEcmInfo, ecmComparator);
+        allEcmInfo.sort(ecmComparator);
         Collections.reverse(allEcmInfo);
         
         
@@ -416,7 +412,7 @@ public class ComputeECM {
                 && allEccmInfo.size() > 0) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;
-            while (ecmIterator.hasNext()){
+            while (ecmIterator.hasNext()) {
                 ECMInfo ecmInfo = ecmIterator.next();
                 // Ignore ECCM
                 if (ecmInfo.isECCM()) {

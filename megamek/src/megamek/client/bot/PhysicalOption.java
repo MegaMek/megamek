@@ -144,7 +144,7 @@ public class PhysicalOption {
 
     public Vector<EntityAction> getVector() {
         AbstractAttackAction aaa = toAction();
-        Vector<EntityAction> v = new Vector<EntityAction>();
+        Vector<EntityAction> v = new Vector<>();
         if (aaa != null) {
             v.addElement(aaa);
         }

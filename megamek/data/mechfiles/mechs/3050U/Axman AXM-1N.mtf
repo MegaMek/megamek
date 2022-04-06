@@ -1,39 +1,43 @@
-Version:1.0
+Version:1.2
 Axman
 AXM-1N
+mul id:184
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3048
-Source:TRO 3050 - Succession Wars
-Rules Level:2
+techbase:Inner Sphere
+era:3048
+source:TRO 3050 - Succession Wars
+rules level:2
 
-Mass:65
-Engine:260 XL Engine
-Structure:Standard
-Myomer:Standard
+mass:65
+engine:260 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+ejection:Full Head Ejection System
 
-Heat Sinks:10 Double
-Walk MP:4
-Jump MP:4
+heat sinks:10 IS Double
+walk mp:4
+jump mp:4
 
-Armor:Ferro-Fibrous
-LA Armor:17
-RA Armor:17
-LT Armor:21
-RT Armor:21
-CT Armor:28
-HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:17
+RA armor:17
+LT armor:21
+RT armor:21
+CT armor:28
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:6
+RTR armor:6
+RTC armor:6
 
-Weapons:3
-1 ISAC20, Center Torso, Ammo:10
-3 ISMediumLaser, Right Arm
-1 ISLargePulseLaser, Left Arm
+Weapons:5
+Large Pulse Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+AC/20, Center Torso
 
 Left Arm:
 Shoulder
@@ -42,12 +46,12 @@ Lower Arm Actuator
 Hand Actuator
 ISLargePulseLaser
 ISLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -59,37 +63,37 @@ Hatchet
 Hatchet
 Hatchet
 Hatchet
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
+Medium Laser
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISAC20 Ammo
-ISAC20 Ammo
+IS Ammo AC/20
+IS Ammo AC/20
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-ISAC20 (Split)
-Ferro-Fibrous
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -102,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISAC20 (Split)
-ISAC20 (Split)
+Autocannon/20
+Autocannon/20
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,19 +151,20 @@ Jump Jet
 -Empty-
 -Empty-
 
-Overview: If any one 'Mech was representative of the Federated Commonwealth alliance, it was the Axman. Constructed and supplied by parts from throughout the Commonwealth, some would call the Axman a result of "Steiner inspiration and Davion perspiration". Little more than an overgrown Hatchetman, the Axman would repeat the same general philosophy of the lighter 'Mech on a heavier, sturdier, and overall more dangerous chassis. The fact that it used a wide variety of cutting-edge (for the time) technologies for its construction proved the faith both nations had in the new interstellar alliance.
+overview:Developed by Team Banzai as the big brother of the highly successful Hatchetman, the Axman was designed exclusively to be a 'Mech killer
 
-Capabilities: A consumate brawler, the Axman is unsurprisingly build towards using its titanium-sheathed hatchet. Jump jets and a large secondary array of laser weapons give it a similar combat profile to the older Thunderbolt -5SE, though the massive AC/20 mounted in the right torso give the Axman a frightening punch even outside of melee combat. The all was only permitted by falling back on a Magna 260 XL engine. While the engine was without flaws, more than a few MechWarriors found the use of such a fragile engine to be suboptimal on a physically-oriented design.
+capabilities:The Axman has a ground speed of only 64.8 km/h, which is average for a Heavy weight, but improved in part by the inclusion of Jump Jets. The 'Mech is covered with eleven tons of Ferro-Fibrous armor that gives it a great deal of protection, with ten Double Heat Sinks offering average heat dissipation. Much like its lighter brother, the Axman was designed to utilize the Full-Head Ejection System to safe-guard its MechWarrior.
 
-Deployment: The Axman saw wide usage within the Federated Commonwealth and its closest allies. Though the sundering of the alliance would nearly kill the design, both manufacturing hubs on New Syrtis and Furillo would adapt to keep the design in production. Even so, the base -1N would gradually be supplanted by newer variants native to each realm; by the formation of the Republic, solely poorer Federated Suns, Filtvelt, or mercenary commands still found use for the design.
+deployment:The two primary weapons on board the Axman are its massive Hatchet, which alone weighs five tons and can cleave through enemy 'Mech armor like a knife through butter, and a Luxor Devastator-20 Autocannon/20, which can strip over a ton of armor off of an enemy 'Mech with ease. The 'Mech also carries a trio of Intek Medium Lasers and a highly accurate Sutel Precision Line Large Pulse Laser for short to intermediate range combat.
 
-systemmanufacturer:CHASSIS:Dorwinion
-systemmode:CHASSIS:AXM Standard
-systemmanufacturer:ENGINE:Magna
-systemmode:ENGINE:260 XL
-systemmanufacturer:ARMOR:Kallon
-systemmode:ARMOR:Unity Weave Ferro-Fibrous
-systemmanufacturer:COMMUNICATIONS:Johnston
-systemmode:COMMUNICATIONS:Wide Band
-systemmanufacturer:TARGETING:Rander
-systemmode:TARGETING:Pinpoint-HY
+history:The Axman was also intended as a symbol of solidarity throughout the Federated Commonwealth by using components that were produced in Federated Suns, Lyran Commonwealth, and even former Capellan Confederation space. The collapse of the Federated Commonwealth in 3057 almost rendered the design extinct because of this, production slowing to a trickle as both the Federated Suns and Lyran Alliance were forced to rely on surplus stores while developing new variants utilizing locally sourced components.
+
+manufacturer:Johnston Industries
+primaryfactory:New Syrtis
+systemmanufacturer:CHASSIS:Dorwinion AXM Standard
+systemmanufacturer:ENGINE:Magna 260 XL
+systemmanufacturer:ARMOR:Kallon Unity Weave Ferro-Fibrous
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:Johnston Wide Band
+systemmanufacturer:TARGETING:Rander Pinpoint-HY
+

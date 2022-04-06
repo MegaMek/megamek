@@ -2,7 +2,7 @@
 
 #
 # stats.pl - The MegaMek serverlog.txt file analysis tool.
-# Copyright 2004,2005 James Damour (suvarov454@users.sourceforge.net)
+# Copyright 2004, 2005 James Damour (suvarov454@users.sourceforge.net)
 #
 #
 # This program is free software; you can redistribute it and/or modify it

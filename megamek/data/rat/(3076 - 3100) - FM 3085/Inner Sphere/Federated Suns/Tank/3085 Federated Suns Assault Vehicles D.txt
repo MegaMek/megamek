@@ -1,5 +1,5 @@
 3085 Federated Suns Assault Vehicles D
-Sturmfeur Heavy Tank (Standard),1
+SturmFeur Heavy Tank (Standard),1
 Partisan Heavy Tank (Standard),2
 Demolisher Heavy Tank (Standard Mk. II),3
 Behemoth Heavy Tank (Standard),4

@@ -1,11 +1,12 @@
 Version:1.0
 Viper (Black Python)
 2
+mul id:3433
 
 Config:Biped
 techbase:Clan
 era:3052
-source:ilClan Vol 12 - Clan Invasion
+source:Rec Guide:ilClan #12 - Clan Invasion
 rules level:2
 
 mass:75

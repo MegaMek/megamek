@@ -34,7 +34,7 @@ public final class EventBus {
     
     public static EventBus getInstance() {
         synchronized(INSTANCE_LOCK) {
-            if(null == instance) {
+            if (null == instance) {
                 instance = new EventBus();
             }
         }
@@ -57,7 +57,7 @@ public final class EventBus {
     
     private List<Class<?>> getClasses(Class<?> leaf) {
         List<Class<?>> result = new ArrayList<>();
-        while(null != leaf) {
+        while (null != leaf) {
             result.add(leaf);
             leaf = leaf.getSuperclass();
         }
@@ -66,25 +66,25 @@ public final class EventBus {
     
     @SuppressWarnings("unchecked")
     public void register(Object handler) {
-        if(handlerMap.containsKey(handler)) {
+        if (handlerMap.containsKey(handler)) {
             return;
         }
         
-        for(Method method : handler.getClass().getMethods()) {
-            for(Class<?> cls : getClasses(handler.getClass())) {
+        for (Method method : handler.getClass().getMethods()) {
+            for (Class<?> cls : getClasses(handler.getClass())) {
                 try {
                     Method realMethod = cls.getDeclaredMethod(method.getName(), method.getParameterTypes());
-                    if(realMethod.isAnnotationPresent(Subscribe.class)) {
+                    if (realMethod.isAnnotationPresent(Subscribe.class)) {
                         Class<?>[] parameterTypes = method.getParameterTypes();
-                        if(parameterTypes.length != 1) {
+                        if (parameterTypes.length != 1) {
                             throw new IllegalArgumentException(
-                                String.format("@Subscribe annotation requires single-argument method; %s has %d", //$NON-NLS-1$
+                                String.format("@Subscribe annotation requires single-argument method; %s has %d",
                                     method, parameterTypes.length));
                         }
                         Class<?> eventType = parameterTypes[0];
-                        if(!MMEvent.class.isAssignableFrom(eventType)) {
+                        if (!MMEvent.class.isAssignableFrom(eventType)) {
                             throw new IllegalArgumentException(
-                                String.format("@Subscribe annotation of %s requires the argument type to be some subtype of MMEvent, not %s", //$NON-NLS-1$
+                                String.format("@Subscribe annotation of %s requires the argument type to be some subtype of MMEvent, not %s",
                                     method, eventType));
                         }
                         internalRegister(handler, realMethod, (Class<? extends MMEvent>) eventType);
@@ -100,13 +100,13 @@ public final class EventBus {
         synchronized(REGISTER_LOCK) {
             EventListener listener = new EventListener(handler, method, eventType);
             List<EventListener> handlerListeners = handlerMap.get(handler);
-            if(null == handlerListeners) {
+            if (null == handlerListeners) {
                 handlerListeners = new ArrayList<>();
                 handlerMap.put(handler, handlerListeners);
             }
             handlerListeners.add(listener);
             List<EventListener> eventListeners = eventMap.get(eventType);
-            if(null == eventListeners) {
+            if (null == eventListeners) {
                 eventListeners = new ArrayList<>();
                 eventMap.put(eventType, eventListeners);
             }
@@ -122,12 +122,12 @@ public final class EventBus {
     
     private void internalUnregister() {
         synchronized(REGISTER_LOCK) {
-            for(Object handler : unregisterQueue.keySet()) {
+            for (Object handler : unregisterQueue.keySet()) {
                 List<EventListener> listenerList = handlerMap.remove(handler);
-                if(null != listenerList) {
-                    for(EventListener listener : listenerList) {
+                if (null != listenerList) {
+                    for (EventListener listener : listenerList) {
                         List<EventListener> eventListeners = eventMap.get(listener.getEventType());
-                        if(null != eventListeners) {
+                        if (null != eventListeners) {
                             eventListeners.remove(listener);
                         }
                     }
@@ -141,20 +141,20 @@ public final class EventBus {
     @SuppressWarnings("unchecked")
     public boolean trigger(MMEvent event) {
         internalUnregister(); // Clean up unregister queue
-        for(Class<?> cls : getClasses(event.getClass())) {
-            if(MMEvent.class.isAssignableFrom(cls)) {
+        for (Class<?> cls : getClasses(event.getClass())) {
+            if (MMEvent.class.isAssignableFrom(cls)) {
                 // Run through the triggers for each superclass up to MMEvent itself
                 internalTrigger((Class<? extends MMEvent>) cls, event);
             }
         }
-        return event.isCancellable() ? event.isCancelled() : false;
+        return event.isCancellable() && event.isCancelled();
     }
     
     private void internalTrigger(Class<? extends MMEvent> eventClass, MMEvent event) {
         List<EventListener> eventListeners = eventMap.get(eventClass);
-        if(null != eventListeners) {
-            Collections.sort(eventListeners, EVENT_SORTER);
-            for(EventListener listener : eventListeners) {
+        if (null != eventListeners) {
+            eventListeners.sort(EVENT_SORTER);
+            for (EventListener listener : eventListeners) {
                 listener.trigger(event);
             }
         }

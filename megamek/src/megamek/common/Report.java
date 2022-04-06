@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -25,7 +27,7 @@ import java.util.Vector;
  * formatting information.
  * <p>
  * Typically, the report will be created by the relevant section in the
- * <code>Server</code>, and added to the phase report vector. The actual text
+ * <code>Server</code>, and added to the phase {@link Report} <code>Vector</code>. The actual text
  * of the report must also be added to the <i>report-messages.properties</i>
  * file.
  * <p>
@@ -55,7 +57,6 @@ import java.util.Vector;
  * <p> " Crusader (Bob) does 6 damage to the tank."
  *
  * @author Ryan McConnell (oscarmm)
- * @version $Revision$
  * @since 0.30
  */
 public class Report implements Serializable {
@@ -120,7 +121,7 @@ public class Report implements Serializable {
     public int newlines = 1;
 
     /** The data values to fill in the report with. */
-    private Vector<String> tagData = new Vector<String>();
+    private Vector<String> tagData = new Vector<>();
 
     /** How to translate the tagData or not at all. */
     private String tagTranslate = null;
@@ -142,22 +143,21 @@ public class Report implements Serializable {
      * if this report is not public and still does not belong to a specific
      * visible entity
      */
-    public transient int player = IPlayer.PLAYER_NONE;
+    public transient int player = Player.PLAYER_NONE;
 
     /**
      * This hash table will store the tagData Vector indexes that are supposed
      * to be obscured before sending to clients. This only applies when the
      * report type is "obscured".
      */
-    private Hashtable<Integer, Boolean> obscuredIndexes = 
-            new Hashtable<Integer, Boolean>();
+    private Hashtable<Integer, Boolean> obscuredIndexes = new Hashtable<>();
 
     /**
      * Vector to store the player names of those who received an obscured
      * version of this report. Used to reconstruct individual client's reports
      * from the master copy stored by the server.
      */
-    private Vector<String> obscuredRecipients = new Vector<String>();
+    private Vector<String> obscuredRecipients = new Vector<>();
 
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
@@ -242,8 +242,7 @@ public class Report implements Serializable {
      */
     public void add(int data, boolean obscure) {
         if (obscure) {
-            obscuredIndexes.put(Integer.valueOf(tagData.size()),
-                    Boolean.valueOf(true));
+            obscuredIndexes.put(tagData.size(), Boolean.TRUE);
         }
         tagData.addElement(String.valueOf(data));
     }
@@ -286,8 +285,7 @@ public class Report implements Serializable {
      */
     public void add(String data, boolean obscure) {
         if (obscure) {
-            obscuredIndexes.put(Integer.valueOf(tagData.size()),
-                    Boolean.valueOf(true));
+            obscuredIndexes.put(tagData.size(), Boolean.TRUE);
         }
         tagData.addElement(data);
     }
@@ -312,9 +310,9 @@ public class Report implements Serializable {
 
     /**
      * Indicate which of two possible messages should be substituted for the
-     * <code>&lt;msg:<i>n</i>,<i>m</i>&gt; tag.  An argument of
+     * <code>&lt;msg:<i>n</i>,<i>m</i>&gt;</code> tag. An argument of
      * <code>true</code> would select message <i>n</i> while an
-     * argument of <code>false</code> would select <i>m</i>.  In the
+     * argument of <code>false</code> would select <i>m</i>. In the
      * future, this capability may be expanded to support more than
      * two choices.
      *
@@ -346,7 +344,7 @@ public class Report implements Serializable {
     /**
      * Manually Toggle if the report should show an image of the entity
     */
-    public void setShowImage(boolean showImage){
+    public void setShowImage(boolean showImage) {
         this.showImage = showImage;
     }
 
@@ -361,10 +359,7 @@ public class Report implements Serializable {
      * @return true if the data value was marked obscured
      */
     public boolean isValueObscured(int index) {
-        if (obscuredIndexes.get(Integer.valueOf(index)) == null) {
-            return false;
-        }
-        return true;
+        return obscuredIndexes.get(index) != null;
     }
 
     /**
@@ -467,12 +462,10 @@ public class Report implements Serializable {
                         i++;
                         continue;
                     }
-                    // copy the preceeding characters into the buffer
-                    text.append(raw.substring(mark, i));
+                    // copy the preceding characters into the buffer
+                    text.append(raw, mark, i);
                     if (raw.substring(i + 1, endTagIdx).equals("data")) {
                         text.append(getTag());
-                        // System.out.println("Report-->getText(): " +
-                        // this.tagData.elementAt(this.tagCounter));
                         tagCounter++;
                     } else if (raw.substring(i + 1, endTagIdx).equals("list")) {
                         for (int j = tagCounter; j < tagData.size(); j++) {
@@ -481,8 +474,7 @@ public class Report implements Serializable {
                         text.setLength(text.length() - 2); // trim last comma
                     } else if (raw.substring(i + 1, endTagIdx).startsWith(
                             "msg:")) {
-                        boolean selector = Boolean.valueOf(getTag())
-                                .booleanValue();
+                        boolean selector = Boolean.parseBoolean(getTag());
                         if (selector) {
                             text.append(ReportMessages.getString(raw.substring(
                                     i + 5, raw.indexOf(',', i))));
@@ -491,19 +483,18 @@ public class Report implements Serializable {
                                     raw.indexOf(',', i) + 1, endTagIdx)));
                         }
                         tagCounter++;
-                    } else if (raw.substring(i + 1, endTagIdx)
-                            .equals("newline")) {
+                    } else if (raw.substring(i + 1, endTagIdx).equals("newline")) {
                         text.append("\n");
                     } else {
                         // not a special tag, so treat as literal text
-                        text.append(raw.substring(i, endTagIdx + 1));
+                        text.append(raw, i, endTagIdx + 1);
                     }
                     mark = endTagIdx + 1;
                     i = endTagIdx;
                 }
                 i++;
             }
-            //add the sprite code at the beginning of the line
+            // add the sprite code at the beginning of the line
             if (imageCode != null && !imageCode.isEmpty()) {
                 if (text.toString().startsWith("\n")) {
                     text.insert(1, imageCode);
@@ -539,19 +530,11 @@ public class Report implements Serializable {
     }
 
     private String getSpaces() {
-        StringBuffer spaces = new StringBuffer();
-        for (int i = 0; i < indentation; i++) {
-            spaces.append("&nbsp;");
-        }
-        return spaces.toString();
+        return "&nbsp;".repeat(Math.max(0, indentation));
     }
 
     private String getNewlines() {
-        StringBuffer sbNewlines = new StringBuffer();
-        for (int i = 0; i < newlines; i++) {
-            sbNewlines.append("\n");
-        }
-        return sbNewlines.toString();
+        return "\n".repeat(Math.max(0, newlines));
     }
 
     /**
@@ -560,12 +543,15 @@ public class Report implements Serializable {
      * @param v a Vector of Report objects
      */
     public static void addNewline(Vector<Report> v) {
+        if (v.isEmpty()) {
+            // We can't add a new line to an empty report vector
+            return;
+        }
+
         try {
             v.elementAt(v.size() - 1).newlines++;
-        }
-        catch (ArrayIndexOutOfBoundsException ex) {
-            System.err.println("Report.addNewline failed, array index out " +
-                    "of bounds");
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Cannot add a new line", ex);
         }
     }
 
@@ -609,19 +595,7 @@ public class Report implements Serializable {
      */
     @Override
     public String toString() {
-        String val = new String();
-        val = "Report(messageId=";
-        val += messageId;
-        val += ")";
-        return val;
-    }
-
-    /**
-     * DEBUG method - do not use
-     */
-    // debugReport method
-    public void markForTesting() {
-        type = Report.TESTING;
+        return "Report(messageId=" + messageId + ")";
     }
 
     // debugReport method

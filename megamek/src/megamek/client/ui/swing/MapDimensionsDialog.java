@@ -1,84 +1,58 @@
 /*
  * MegaMek - Copyright (C) 2002-2003 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
-/*
- * MapDimensionsDialog.java
- *
- * Created on February 12, 2010
- * 
- */
-
 package megamek.client.ui.swing;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.JTextField;
-import javax.swing.SpinnerModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.MapSettings;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Display a small dialog with adjustable settings for the dimensions of the playing board
  * 
  * @author Taharqa
+ * @since February 12, 2010
  */
-
 public class MapDimensionsDialog extends JDialog implements ActionListener {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6941422625466067948L;
 
     private ClientGUI clientGUI;
     private MapSettings mapSettings;
     
     private JPanel panMapSize = new JPanel();
-    private JLabel labBoardSize = new JLabel(Messages
-            .getString("BoardSelectionDialog.BoardSize"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JLabel labBoardDivider = new JLabel("x", SwingConstants.CENTER); //$NON-NLS-1$
+    private JLabel labBoardSize = new JLabel(Messages.getString("BoardSelectionDialog.BoardSize"),
+            SwingConstants.RIGHT);
+    private JLabel labBoardDivider = new JLabel("x", SwingConstants.CENTER);
     private JTextField texBoardWidth = new JTextField(2);
     private JTextField texBoardHeight = new JTextField(2);
 
-    private JLabel labMapSize = new JLabel(Messages
-            .getString("BoardSelectionDialog.MapSize"), SwingConstants.RIGHT); //$NON-NLS-1$
-    private JLabel labMapDivider = new JLabel("x", SwingConstants.CENTER); //$NON-NLS-1$
+    private JLabel labMapSize = new JLabel(Messages.getString("BoardSelectionDialog.MapSize"),
+            SwingConstants.RIGHT);
+    private JLabel labMapDivider = new JLabel("x", SwingConstants.CENTER);
     private JSpinner spnMapWidth = new JSpinner();
     private JSpinner spnMapHeight = new JSpinner();
     
     private JPanel panButtons = new JPanel();
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butOkay = new JButton(Messages.getString("Okay"));
+    private JButton butCancel = new JButton(Messages.getString("Cancel"));
     
     public MapDimensionsDialog(ClientGUI clientGUI, MapSettings mapSettings) {
-        super(clientGUI.frame, Messages
-                .getString("MapDimensionsDialog.MapDimensions"), true); //$NON-NLS-1$
+        super(clientGUI.frame, Messages.getString("MapDimensionsDialog.MapDimensions"), true);
         this.clientGUI = clientGUI;
         this.mapSettings = MapSettings.getInstance(mapSettings);
      
@@ -131,7 +105,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         texBoardWidth.addActionListener(this);
         texBoardHeight.addActionListener(this);
         
-        if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+        if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
             spnMapHeight.setEnabled(false);
             spnMapWidth.setEnabled(false);
         }
@@ -310,6 +284,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
     }
     
     
+    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
             apply();

@@ -15,6 +15,10 @@ Heavy Transport B1
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+4277
+</mul id:>
 <Tonnage>
 20
 </Tonnage>

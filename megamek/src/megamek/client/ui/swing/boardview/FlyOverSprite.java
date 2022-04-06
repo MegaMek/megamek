@@ -25,7 +25,7 @@ class FlyOverSprite extends Sprite {
 
     Color spriteColor;
 
-    public FlyOverSprite(BoardView1 boardView1, final Entity e) {
+    public FlyOverSprite(BoardView boardView1, final Entity e) {
         super(boardView1);
         en = e;
         spriteColor = e.getOwner().getColour().getColour();
@@ -47,7 +47,7 @@ class FlyOverSprite extends Sprite {
         double prevAngle = prev.radian(curr);
 
         Point currPoint = this.bv.getCentreHexLocation(curr, true);
-        final double lw = bv.scale * BoardView1.FLY_OVER_LINE_WIDTH;
+        final double lw = bv.scale * BoardView.FLY_OVER_LINE_WIDTH;
 
         // This is a bend
         double diff;
@@ -112,7 +112,7 @@ class FlyOverSprite extends Sprite {
         }
 
         // line width
-        final double lw = bv.scale * BoardView1.FLY_OVER_LINE_WIDTH;
+        final double lw = bv.scale * BoardView.FLY_OVER_LINE_WIDTH;
         int numPassedThrough = en.getPassedThrough().size();
         double angle;
         double xDiff, yDiff;

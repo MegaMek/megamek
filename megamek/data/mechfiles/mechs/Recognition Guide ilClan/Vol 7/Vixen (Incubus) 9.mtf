@@ -1,11 +1,12 @@
 Version:1.1
 Vixen (Incubus)
 9
+mul id:7544
 
 Config:Biped
 techbase:Mixed (Clan Chassis)
 era:3150
-source:Dark Age
+source:Rec Guide:ilClan #7 - Dark Age
 rules level:4
 
 mass:30

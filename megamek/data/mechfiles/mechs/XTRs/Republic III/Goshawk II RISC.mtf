@@ -1,6 +1,7 @@
 Version:1.0
 Goshawk II
 RISC
+mul id:7376
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)

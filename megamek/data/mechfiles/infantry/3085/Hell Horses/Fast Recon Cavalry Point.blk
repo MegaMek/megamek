@@ -15,6 +15,10 @@ Fast Recon
 <Model>
 Cavalry Point
 </Model>
+
+<mul id:>
+1035
+</mul id:>
 <squad_size>
 5
 </squad_size>

@@ -1,34 +1,27 @@
 /*
-* MegaAero - Copyright (C) 2007 Jay Lawson
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * MegaAero - Copyright (C) 2007 Jay Lawson
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-/*
- * Created on Jun 17, 2007
- *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
 
 /**
  * @author Jay Lawson
+ * @since Jun 17, 2007
  */
 public class TeleMissile extends Aero {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -5932720323745597199L;
 
-    public static final int        LOC_BODY               = 0;
+    public static final int LOC_BODY = 0;
 
-    private static String[] LOCATION_ABBRS = { "BODY"};
+    private static String[] LOCATION_ABBRS = { "BODY" };
     private static String[] LOCATION_NAMES = { "Body" };
 
     private int originalRideId;
@@ -41,11 +34,14 @@ public class TeleMissile extends Aero {
     
     public TeleMissile() {
         super();
-        damThresh = new int[] {0};
+        damThresh = new int[] { 0 };
     }
-    
+
+    /**
+     * Telemissiles shouldn't get a firing phase
+     * @return false
+     */
     @Override
-    //Telemissiles shouldn't get a firing phase
     public boolean isEligibleForFiring() {
         return false;
     }
@@ -56,25 +52,26 @@ public class TeleMissile extends Aero {
         //fuel
         int fuel = 0;
         String name = "T-Op Missile";
-        switch(type) {
-        case(AmmoType.T_KRAKEN_T):
-            fuel = 25;
-        name = "Kraken-T Missile";
-        break;
-        case(AmmoType.T_WHITE_SHARK_T):
-            fuel = 40;
-        name = "White Shark-T Missile";
-        break;
-        case(AmmoType.T_KILLER_WHALE_T):
-            fuel = 30;
-        name = "Killer Whale-T Missile";
-        break;
-        case(AmmoType.T_BARRACUDA_T):
-            fuel = 30;
-        name = "Barracuda-T Missile";
-        break;
-        default:
-            fuel = 30;
+        switch (type) {
+            case(AmmoType.T_KRAKEN_T):
+                fuel = 25;
+                name = "Kraken-T Missile";
+                break;
+            case(AmmoType.T_WHITE_SHARK_T):
+                fuel = 40;
+                name = "White Shark-T Missile";
+                break;
+            case(AmmoType.T_KILLER_WHALE_T):
+                fuel = 30;
+                name = "Killer Whale-T Missile";
+                break;
+            case(AmmoType.T_BARRACUDA_T):
+                fuel = 30;
+                name = "Barracuda-T Missile";
+                break;
+            default:
+                fuel = 30;
+                break;
         }
 
         setCritMod(capMisMod);
@@ -114,6 +111,7 @@ public class TeleMissile extends Aero {
     public int getOriginalRideId() {
         return originalRideId;
     }
+
     public void setOriginalRideId(int originalRideId) {
         this.originalRideId = originalRideId;
     }
@@ -129,19 +127,16 @@ public class TeleMissile extends Aero {
     }
 
     @Override
-    public void autoSetThresh()
-    {
-        for(int x = 0; x < locations(); x++)
-        {
+    public void autoSetThresh() {
+        for (int x = 0; x < locations(); x++) {
             initializeThresh(x);
         }
     }
 
     @Override
-    public void initializeThresh(int loc)
-    {
-        int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
-        setThresh(nThresh,loc);
+    public void initializeThresh(int loc) {
+        int nThresh = (int) Math.ceil(getArmor(loc) / 10.0);
+        setThresh(nThresh, loc);
     }
 
     @Override
@@ -153,15 +148,17 @@ public class TeleMissile extends Aero {
     public String[] getLocationNames() {
         return LOCATION_NAMES;
     }
-    
-    //Telemissiles don't mount Stealth systems. Would be kind of cool if they did, though.
+
+    /**
+     * Telemissiles don't mount Stealth systems. Would be kind of cool if they did, though.
+     */
     @Override
     public boolean hasStealth() {
         return false;
     }
 
     @Override
-    public int calculateBattleValue() {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
         return 0;
     }
     
@@ -172,11 +169,12 @@ public class TeleMissile extends Aero {
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int j = getCurrentFuel();
-        return j;
+        return getCurrentFuel();
     }
-    
-    //Telemissiles don't have runMP like other units
+
+    /**
+     * Telemissiles don't have runMP like other units
+     */
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
@@ -208,7 +206,7 @@ public class TeleMissile extends Aero {
 
     @Override
     public boolean isOutControlTotal() {
-        //due to control roll, heat, shut down, or crew unconscious
+        // due to control roll, heat, shut down, or crew unconscious
         return (isOutControl() || outContact || shutDown || getCrew().isUnconscious());
     }
 
@@ -230,8 +228,8 @@ public class TeleMissile extends Aero {
         return false;
     }
 
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_AERO & Entity.ETYPE_TELEMISSILE;
     }
-    
 }

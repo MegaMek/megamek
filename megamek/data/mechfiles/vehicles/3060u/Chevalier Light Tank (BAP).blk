@@ -15,6 +15,10 @@ Chevalier Light Tank
 <Model>
 (BAP)
 </Model>
+
+<mul id:>
+579
+</mul id:>
 <Tonnage>
 35
 </Tonnage>

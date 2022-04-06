@@ -1,15 +1,21 @@
-/**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+/*
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.weapons.missiles;
 
@@ -41,15 +47,15 @@ public class ISMML3 extends MMLWeapon {
         medAV = 2;
         longAV = 2;
         maxRange = RANGE_LONG;
-        rulesRefs = "229,TM";
+        rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_MERC)
-            .setProductionFactions(F_WB);
+            .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, true,false, false)
+            .setProductionFactions(F_MERC,F_WB);
     }
 }

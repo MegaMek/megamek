@@ -16,7 +16,7 @@ public class HeatEffects {
             }
             maxheat = 50;
         }
-        whichOne += "." + Integer.toString(Math.min(maxheat, heat));
+        whichOne += "." + Math.min(maxheat, heat);
         return Messages.getString(whichOne);
     }
 

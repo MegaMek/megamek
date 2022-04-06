@@ -1,6 +1,6 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -14,7 +14,7 @@
  */
 package megamek.server;
 
-import megamek.MegaMek;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.TimerTask;
 
@@ -42,15 +42,15 @@ public class ConnectionWatchdog extends TimerTask {
             return;
         }
 
-        MegaMek.getLogger().error("Bark Bark");
+        LogManager.getLogger().error("Bark Bark");
         if (failCount > 120) {
             server.getPendingConnection(id).close();
             cancel();
-            MegaMek.getLogger().error("Growl\n\n\n\n\n");
+            LogManager.getLogger().error("Growl\n\n\n\n\n");
             return;
         }
 
-        server.greeting(id);
+        server.clientVersionCheck(id);
         failCount++;
     }
 }

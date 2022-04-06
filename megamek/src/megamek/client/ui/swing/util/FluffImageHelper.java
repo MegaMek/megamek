@@ -29,17 +29,17 @@ import megamek.common.Tank;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 /**
- * 
- * @author Jay Lawson Looks for a fluff image for an entity based on model and
- *         chassis. Heavily based on code from {@link MegaMekLab#ImageHelper}.
+ * Looks for a fluff image for an entity based on model and chassis.
+ *
+ * Heavily based on code from MegaMekLab's ImageHelper.
+ * @author Jay Lawson
  */
 public class FluffImageHelper {
     public static final String DIR_NAME_MECH = "mech";
     public static final String DIR_NAME_AERO = "aero";
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_VEHICLE = "vehicle";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = 
-        { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
 
     /**
      * Get the fluff image for the specified unit, if available.
@@ -154,6 +154,7 @@ public class FluffImageHelper {
         //   Chassis + model + [ <author> ] + extension
         if (fluff_file == null) {
             File[] files = directory.listFiles(new FilenameFilter() {
+                @Override
                 public boolean accept(File direc, String name) {
                     boolean extMatch = false;
                     for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
@@ -170,6 +171,7 @@ public class FluffImageHelper {
         // If we still haven't found a file, see if ignoring the model helps
         if (fluff_file == null) {
             File[] files = directory.listFiles(new FilenameFilter() {
+                @Override
                 public boolean accept(File direc, String name) {
                     boolean extMatch = false;
                     for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {

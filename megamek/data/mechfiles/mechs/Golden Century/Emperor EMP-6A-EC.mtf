@@ -1,6 +1,7 @@
 Version:1.1
 Emperor
 EMP-6A-EC
+mul id:7685
 
 Config:Biped
 techbase:Mixed (IS Chassis)
@@ -76,8 +77,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISMediumPulseLaser
 Clan LB 10-X AC Ammo
-IS LB 10-X AC Ammo
-IS LB 10-X Cluster Ammo
+Clan LB 10-X AC Ammo
+Clan LB 10-X Cluster Ammo
 Clan LB 10-X Cluster Ammo
 ISCASE
 

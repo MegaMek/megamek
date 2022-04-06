@@ -1,24 +1,21 @@
-/**
-   * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 /*
- * Created on Sep 24, 2004
+ * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
  *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons.mortars;
 
 import megamek.common.AmmoType;
-import megamek.common.IGame;
+import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -28,14 +25,11 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
+ * @since Sep 24, 2004
  */
 public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
-
     private static final long serialVersionUID = 3343394645568467135L;
 
-    /**
-     *
-     */
     public VehicularGrenadeLauncherWeapon() {
         super();
       
@@ -50,21 +44,23 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         extremeRange = 1;
         tonnage = 0.5;
         criticals = 1;
-		flags = flags.or(F_MECH_WEAPON).or(F_PROTO_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
+        flags = flags.or(F_MECH_WEAPON).or(F_PROTO_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_BALLISTIC).or(F_ONESHOT).or(F_VGL);
-		explosive = false;
+        explosive = false;
         bv = 15;
         cost = 10000;
-        rulesRefs = "315,TO";
+        rulesRefs = "315, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
-            .setISAdvancement(DATE_PS, DATE_ES, 3078, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setClanAdvancement(DATE_PS, DATE_ES, 3078, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
+                .setISAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setClanAdvancement(DATE_NONE, DATE_PS, 3080, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, true, false, false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     /*
@@ -72,11 +68,11 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new VGLWeaponHandler(toHit, waa, game, server);
     }
 }

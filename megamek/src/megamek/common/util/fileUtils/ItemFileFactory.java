@@ -27,10 +27,10 @@ import java.util.zip.ZipFile;
 /**
  * This interface represents a factory that can produce items from categorizable files.
  * This interface extends the <code>FilenameFilter</code>, so the factory is aware of the files that
- * it can handle as input. Created on January 18, 2004
+ * it can handle as input.
  *
  * @author James Damour
- * @version 1
+ * @since January 18, 2004
  */
 public interface ItemFileFactory extends FilenameFilter {
     /**

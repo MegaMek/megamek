@@ -13,24 +13,18 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represents a single, targetable hex of a building. The building
- * itself may occupy multiple hexes.
+ * This class represents a single, targetable hex of a building. The building itself may occupy
+ * multiple hexes.
  *
- * @author Suvarov454@sourceforge.net (James A. Damour )
- * @version $Revision$
+ * @author Suvarov454@sourceforge.net (James A. Damour)
  */
 public class BuildingTarget implements Targetable {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 6432766092407639630L;
 
     /**
@@ -72,50 +66,48 @@ public class BuildingTarget implements Targetable {
      * @param coords - the <code>Coords</code> of the hext being targeted.
      * @param board  - the game's <code>Board</code> object.
      * @param nType
-     * @throws an <code>IllegalArgumentException</code> will be thrown if
+     * @throws IllegalArgumentException will be thrown if
      *            the given coordinates do not contain a building.
      */
-    protected void init(Coords coords, IBoard board, int nType) {
+    protected void init(Coords coords, Board board, int nType) {
         position = coords;
         type = nType;
 
         // Get the building at the given coordinates.
         Building bldg = board.getBuildingAt(position);
         if (bldg == null) {
-            throw new IllegalArgumentException("The coordinates, "
-                                               + position.getBoardNum()
-                                               + ", do not contain a building.");
+            throw new IllegalArgumentException("The coordinates, " + position.getBoardNum()
+                    + ", do not contain a building.");
         }
 
         // Save the building's ID.
         id = BuildingTarget.coordsToId(coords);
 
         // Generate a name.
-        StringBuffer buff = new StringBuffer();
-        buff.append("Hex ").append(position.getBoardNum()).append(" of ")
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hex ").append(position.getBoardNum()).append(" of ")
             .append(bldg.getName());
         switch (nType) {
             case Targetable.TYPE_BLDG_IGNITE:
-                buff.append(Messages.getString("BuildingTarget.Ignite"));
+                sb.append(Messages.getString("BuildingTarget.Ignite"));
                 break;
             case Targetable.TYPE_BUILDING:
-                buff.append(Messages.getString("BuildingTarget.Collapse"));
+                sb.append(Messages.getString("BuildingTarget.Collapse"));
                 break;
             case Targetable.TYPE_BLDG_TAG:
-                buff.append(Messages.getString("BuildingTarget.Tag"));
+                sb.append(Messages.getString("BuildingTarget.Tag"));
                 break;
         }
 
-        name = buff.toString();
+        name = sb.toString();
 
         // Bottom of building is at ground level, top of building is at
         // BLDG_ELEV.
         // Note that height of 0 is a single story building.
         // Bridges are always height 0, and the BRIDGE_ELEV indicates the
         // elevation
-        IHex targetHex = board.getHex(position);
-        elevation = Math.max(-targetHex.depth(), targetHex
-                .terrainLevel(Terrains.BRIDGE_ELEV));
+        Hex targetHex = board.getHex(position);
+        elevation = Math.max(-targetHex.depth(), targetHex.terrainLevel(Terrains.BRIDGE_ELEV));
         height = targetHex.terrainLevel(Terrains.BLDG_ELEV);
         if (height <= 0) {
             height = 0;
@@ -131,10 +123,10 @@ public class BuildingTarget implements Targetable {
      * @param board  - the game's <code>Board</code> object.
      * @param nType  - an <code>int</code> value that indicates whether the
      *               player is attempting to set the building on fire, or not.
-     * @throws an <code>IllegalArgumentException</code> will be thrown if
+     * @throws IllegalArgumentException will be thrown if
      *            the given coordinates do not contain a building.
      */
-    public BuildingTarget(Coords coords, IBoard board, int nType) {
+    public BuildingTarget(Coords coords, Board board, int nType) {
         init(coords, board, nType);
     }
 
@@ -145,48 +137,56 @@ public class BuildingTarget implements Targetable {
      * @param board  - the game's <code>Board</code> object.
      * @param ignite - a <code>boolean</code> flag that indicates whether the
      *               player is attempting to set the building on fire, or not.
-     * @throws an <code>IllegalArgumentException</code> will be thrown if
+     * @throws IllegalArgumentException will be thrown if
      *            the given coordinates do not contain a building.
      */
-    public BuildingTarget(Coords coords, IBoard board, boolean ignite) {
-        init(coords, board,
-             ignite ? Targetable.TYPE_BLDG_IGNITE : Targetable.TYPE_BUILDING);
+    public BuildingTarget(Coords coords, Board board, boolean ignite) {
+        init(coords, board, ignite ? Targetable.TYPE_BLDG_IGNITE : Targetable.TYPE_BUILDING);
     }
 
     // Implementation of Targetable
 
+    @Override
     public int getTargetType() {
         return type;
     }
 
+    @Override
     public int getTargetId() {
         return id;
     }
 
+    @Override
     public Coords getPosition() {
         return position;
     }
 
+    @Override
     public Map<Integer, Coords> getSecondaryPositions() {
-        return new HashMap<Integer, Coords>();
+        return new HashMap<>();
     }
 
+    @Override
     public int relHeight() {
         return getHeight() + getElevation();
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public int getElevation() {
         return elevation;
     }
 
+    @Override
     public boolean isImmobile() {
         return true;
     }
 
+    @Override
     public String getDisplayName() {
         return name;
     }
@@ -210,10 +210,12 @@ public class BuildingTarget implements Targetable {
         return new Coords(idNoType - (y * 1000), y);
     }
 
+    @Override
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
 
+    @Override
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -222,10 +224,12 @@ public class BuildingTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isOffBoard()
      */
+    @Override
     public boolean isOffBoard() {
         return false;
     }
 
+    @Override
     public boolean isAero() {
         return false;
     }
@@ -234,6 +238,7 @@ public class BuildingTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
      */
+    @Override
     public boolean isAirborne() {
         return false;
     }
@@ -242,14 +247,17 @@ public class BuildingTarget implements Targetable {
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
      */
+    @Override
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
 
+    @Override
     public int getAltitude() {
         return 0;
     }
 
+    @Override
     public boolean isEnemyOf(Entity other) {
         return true;
     }

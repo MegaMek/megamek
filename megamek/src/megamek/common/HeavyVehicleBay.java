@@ -11,19 +11,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
- * Represents a volume of space set aside for carrying vehicles <= 100 tons
- * aboard large spacecraft and mobile structures
+ * Represents a volume of space set aside for carrying vehicles &gt;= 100 tons aboard large
+ * spacecraft and mobile structures
  */
-
 public final class HeavyVehicleBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 3490408642054662664L;
 
     /**
@@ -108,7 +102,7 @@ public final class HeavyVehicleBay extends Bay {
 
     @Override
     public int getPersonnel(boolean clan) {
-        return (int)totalSpace * 8;
+        return (int) totalSpace * 8;
     }
 
     @Override

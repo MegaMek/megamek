@@ -15,6 +15,10 @@ Vedette Medium Tank
 <Model>
 (Ultra)
 </Model>
+
+<mul id:>
+3396
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

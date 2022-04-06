@@ -33,15 +33,7 @@ import java.util.StringTokenizer;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.BattleArmorHandlesTank;
-import megamek.common.Bay;
-import megamek.common.Entity;
-import megamek.common.FighterSquadron;
-import megamek.common.IGame;
-import megamek.common.IPlayer;
-import megamek.common.MapSettings;
-import megamek.common.TankTrailerHitch;
-import megamek.common.Transporter;
+import megamek.common.*;
 import megamek.common.force.Force;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -59,9 +51,9 @@ public class LobbyUtility {
      * and "Exclusive Starting Positions" are on and the starting position overlaps
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
-     * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
+     * <P>See also {@link #startPosOverlap(Player, Player)}
      */
-    static boolean isValidStartPos(IGame game, IPlayer player) {
+    static boolean isValidStartPos(Game game, Player player) {
         return isValidStartPos(game, player, player.getStartingPos());
     }
 
@@ -71,18 +63,18 @@ public class LobbyUtility {
      * and "Exclusive Starting Positions" are on and the starting position overlaps
      * with that of other players, if "Teams Share Vision" is off, or enemy players,
      * if "Teams Share Vision" is on.
-     * <P>See also {@link #startPosOverlap(IPlayer, IPlayer)}
+     * <P>See also {@link #startPosOverlap(Player, Player)}
      */
-    static boolean isValidStartPos(IGame game, IPlayer player, int pos) {
+    static boolean isValidStartPos(Game game, Player player, int pos) {
         if (!isExclusiveDeployment(game)) {
             return true;
         } else {
             if (isTeamsShareVision(game)) {
-                return !game.getPlayersVector().stream().filter(p -> p.isEnemyOf(player))
-                        .anyMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                return game.getPlayersVector().stream().filter(p -> p.isEnemyOf(player))
+                        .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             } else {
-                return !game.getPlayersVector().stream().filter(p -> !p.equals(player))
-                        .anyMatch(p -> startPosOverlap(pos, p.getStartingPos()));
+                return game.getPlayersVector().stream().filter(p -> !p.equals(player))
+                        .noneMatch(p -> startPosOverlap(pos, p.getStartingPos()));
             }
         }
     }
@@ -91,7 +83,7 @@ public class LobbyUtility {
      * Returns true when double blind and exclusive deployment are on,
      * meaning that player's deployment zones may not overlap.
      */
-    static boolean isExclusiveDeployment(IGame game) {
+    static boolean isExclusiveDeployment(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT);
@@ -100,7 +92,7 @@ public class LobbyUtility {
     /**
      * Returns true when blind drop is on.
      */
-    static boolean isBlindDrop(IGame game) {
+    static boolean isBlindDrop(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_BLIND_DROP);
     } 
@@ -108,7 +100,7 @@ public class LobbyUtility {
     /**
      * Returns true when real blind drop is on.
      */
-    static boolean isRealBlindDrop(IGame game) {
+    static boolean isRealBlindDrop(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
     }  
@@ -117,7 +109,7 @@ public class LobbyUtility {
      * Returns true when teams share vision is on, reagardless of whether
      * double blind is on.
      */
-    static boolean isTeamsShareVision(IGame game) {
+    static boolean isTeamsShareVision(Game game) {
         final GameOptions gOpts = game.getOptions();
         return gOpts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
     } 
@@ -191,7 +183,7 @@ public class LobbyUtility {
      * Removes the board size ("16x17") and file path from the given board name if it is
      * a board file. Also, reconstructs the text if it's a surprise map or generated map.
      */
-    static String cleanBoardName(String boardName, MapSettings mapSettings) {
+    public static String cleanBoardName(String boardName, MapSettings mapSettings) {
         // Remove the file path
         if (isBoardFile(boardName)) {
             boardName = new File(boardName).getName();
@@ -207,7 +199,7 @@ public class LobbyUtility {
         }
         // Remove board sizes ("16x17")
         String boardSize = mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight();
-        return boardName.replace(boardSize, "").trim();
+        return boardName.replace(boardSize, "").replace(".board", "").trim();
     }
     
     /** 
@@ -219,7 +211,7 @@ public class LobbyUtility {
             boardsString = boardsString.substring(MapSettings.BOARD_SURPRISE.length());
         }
         String[] boards = boardsString.split("\n");
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         result.addAll(Arrays.asList(boards));
         return result;
     }
@@ -228,7 +220,7 @@ public class LobbyUtility {
      * Converts an id list of the form 1,2,4,12 to a set of corresponding entities.
      * Ignores entity ids that don't exist. The resulting list may be empty but not null. 
      */ 
-    public static HashSet<Entity> getEntities(IGame game, String idList) {
+    public static HashSet<Entity> getEntities(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
         HashSet<Entity> result = new HashSet<>();
         while (st.hasMoreTokens()) {
@@ -245,7 +237,7 @@ public class LobbyUtility {
      * Converts an id list of the form 1,2,4,12 to a set of corresponding forces.
      * Ignores force ids that don't exist. The resulting list may be empty but not null. 
      */ 
-    public static HashSet<Force> getForces(IGame game, String idList) {
+    public static HashSet<Force> getForces(Game game, String idList) {
         StringTokenizer st = new StringTokenizer(idList, ",");
         HashSet<Force> result = new HashSet<>();
         while (st.hasMoreTokens()) {

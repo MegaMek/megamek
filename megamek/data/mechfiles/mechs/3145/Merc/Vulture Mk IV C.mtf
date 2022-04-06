@@ -1,6 +1,7 @@
 Version:1.0
 Vulture Mk IV (Mad Dog Mk IV)
 C
+mul id:6561
 
 Config:Biped Omnimech
 TechBase:Clan

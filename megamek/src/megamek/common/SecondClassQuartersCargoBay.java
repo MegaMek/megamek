@@ -80,7 +80,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("2nd Class Quarters ("
                 + getCurrentDoors() + " doors) - ");
-        returnString.append((int)currentSpace);
+        returnString.append((int) currentSpace);
         return returnString.toString();
     }
 

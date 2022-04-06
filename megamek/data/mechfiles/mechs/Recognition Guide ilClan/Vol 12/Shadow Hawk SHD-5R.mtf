@@ -1,11 +1,12 @@
 Version:1.0
 Shadow Hawk
 SHD-5R
+mul id:7787
 
 Config:Biped
 techbase:Inner Sphere
 era:3087
-source:ilClan Vol 12 - Early Republic
+source:Rec Guide:ilClan #12 - Early Republic
 rules level:2
 
 mass:55

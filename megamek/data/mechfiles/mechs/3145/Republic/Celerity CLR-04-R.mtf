@@ -1,119 +1,151 @@
 Version:1.1
 Celerity
 CLR-04-R
+mul id:6709
 
 Config:Quad
-TechBase:Inner Sphere
-Era:3138
-Rules Level:4
-Source:TRO 3145 Republic of the Sphere - Dark Ages
+techbase:Inner Sphere
+era:3138
+source:TRO 3145 Republic of the Sphere - Dark Ages
+rules level:4
 
-Mass:15
-Engine:225 XXL Fusion Engine
-Structure:Endo-Steel
-Gyro:XL Gyro
-Cockpit:Small Cockpit
-Myomer:Standard
+mass:15
+engine:225 XXL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:XL Gyro
 
-Heat Sinks:10 Double
-Walk MP:15
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:15
+jump mp:0
 
-Armor:Standard Armor
-LA Armor:1
-RA Armor:1
-LT Armor:2
-RT Armor:2
-CT Armor:2
-HD Armor:3
-LL Armor:1
-RL Armor:1
-RTL Armor:1
-RTR Armor:1
-RTC Armor:1
+armor:Standard(Inner Sphere)
+FLL armor:1
+FRL armor:1
+LT armor:2
+RT armor:2
+CT armor:2
+HD armor:3
+RLL armor:1
+RRL armor:1
+RTL armor:1
+RTR armor:1
+RTC armor:1
 
-Weapons:2
-1 ISDroneOperatingSystem, Right Torso
-1 ISTSEMPOS, Right Torso
+Weapons:1
+TSEMP One-Shot, Right Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
-Engine
-Engine
-Engine
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISDroneOperatingSystem
-ISTSEMPOS
-ISTSEMPOS
-ISTSEMPOS
-Endo-Steel
-Endo-Steel
+TSEMP_OS
+TSEMP_OS
+TSEMP_OS
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

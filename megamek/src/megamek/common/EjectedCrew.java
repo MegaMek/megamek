@@ -11,6 +11,7 @@ import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.logging.log4j.LogManager;
 
 /** This class describes a vehicle crew that has abandoned its vehicle and now
  * functions as a rifle foot platoon of equal size.
@@ -24,7 +25,7 @@ public class EjectedCrew extends Infantry {
     protected int currentVelocity = 0;
     protected int nextVelocity = currentVelocity;
     
-    // Maps "transported" crew,passengers to a host ship so we can match them up again post-game
+    // Maps "transported" crew, passengers to a host ship, so we can match them up again post-game
     private Map<String,Integer> nOtherCrew = new HashMap<>();
     private Map<String,Integer> passengers = new HashMap<>();
     
@@ -61,7 +62,7 @@ public class EjectedCrew extends Infantry {
         }
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
-        IGame tmpGame = originalRide.getGame();
+        Game tmpGame = originalRide.getGame();
         if (tmpGame != null
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
@@ -70,7 +71,7 @@ public class EjectedCrew extends Infantry {
                         Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LogManager.getLogger().error("", ex);
             }
         }
     }
@@ -104,12 +105,12 @@ public class EjectedCrew extends Infantry {
         setCrew(new Crew(CrewType.CREW));
         setChassis(VEE_EJECT_NAME);
         //this constructor is just so that the MUL parser can read these units in so
-        //assign some arbitrarily large number here for the internal so that locations will get 
+        // assign some arbitrarily large number here for the internal so that locations will get 
         //the actual current number of trooper correct.
         initializeInternal(Integer.MAX_VALUE, Infantry.LOC_INFANTRY);
     }
     
-    public EjectedCrew(Crew crew, IPlayer owner, IGame game) {
+    public EjectedCrew(Crew crew, Player owner, Game game) {
         super();
         setCrew(crew);
         setChassis(VEE_EJECT_NAME);
@@ -128,7 +129,7 @@ public class EjectedCrew extends Infantry {
             }
             setInternal(crew.getSize() - dead, Infantry.LOC_INFANTRY);
         }
-        IGame tmpGame = game;
+        Game tmpGame = game;
         if (tmpGame != null
             && (!(this instanceof MechWarrior) 
                     || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
@@ -137,7 +138,7 @@ public class EjectedCrew extends Infantry {
                         Infantry.LOC_INFANTRY);
                 setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LogManager.getLogger().error("", ex);
             }
         }
     }

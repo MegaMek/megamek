@@ -1,6 +1,6 @@
 /*
 * MegaMek -
-* Copyright (C) 2000, 2001, 2002, 2003, 2004, 2006 Ben Mazur (bmazur@sev.org)
+* Copyright (C) 2000-2004, 2006 Ben Mazur (bmazur@sev.org)
 * Copyright (C) 2015 Nicholas Walczak (walczak@cs.umn.edu)
 * Copyright (C) 2018 The MegaMek Team
 *
@@ -14,40 +14,31 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.widget;
-
-import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
-
-
-import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
-
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import java.awt.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
- * This class reads in an XML file that specifies different aspects of the
- * visual skin for Megamek.
+ * This class reads in an XML file that specifies different aspects of the visual skin for MegaMek.
  *
  * @author arlith
- *
  */
 public class SkinXMLHandler {
 
@@ -86,57 +77,57 @@ public class SkinXMLHandler {
     public static String NAME = "name";
 
     // Skin Specification XML Tags
-    public static final String FONT_COLOR = "font_color"; //$NON-NLS-1$
-    public static final String BORDER = "border"; //$NON-NLS-1$
-    public static final String PLAIN = "plain"; //$NON-NLS-1$
-    public static final String NO_BORDER = "no_border"; //$NON-NLS-1$
-    public static final String TILE_BACKGROUND = "tile_background"; //$NON-NLS-1$
-    public static final String TR_CORNER = "corner_top_right"; //$NON-NLS-1$
-    public static final String TL_CORNER = "corner_top_left"; //$NON-NLS-1$
-    public static final String BR_CORNER = "corner_bottom_right"; //$NON-NLS-1$
-    public static final String BL_CORNER = "corner_bottom_left"; //$NON-NLS-1$
-    public static final String EDGE = "edge"; //$NON-NLS-1$
-    public static final String EDGE_NAME = "edgeName"; //$NON-NLS-1$
-    public static final String EDGE_ICON = "edgeIcon"; //$NON-NLS-1$
-    public static final String ICON = "icon"; //$NON-NLS-1$
-    public static final String TILED = "tiled"; //$NON-NLS-1$
-    public static final String TOP_LINE = "line_top"; //$NON-NLS-1$
-    public static final String BOTTOM_LINE = "line_bottom"; //$NON-NLS-1$
-    public static final String RIGHT_LINE = "line_right"; //$NON-NLS-1$
-    public static final String LEFT_LINE = "line_left"; //$NON-NLS-1$
-    public static final String BACKGROUND_IMAGE = "background_image"; //$NON-NLS-1$
-    public static final String SHOW_SCROLL_BARS = "show_scroll_bars"; //$NON-NLS-1$
-    public static final String SHOULD_BOLD = "should_bold_mouseover"; //$NON-NLS-1$
-    public static final String FONT_NAME = "font_name"; //$NON-NLS-1$
-    public static final String FONT_SIZE = "font_size"; //$NON-NLS-1$
+    public static final String FONT_COLOR = "font_color";
+    public static final String BORDER = "border";
+    public static final String PLAIN = "plain";
+    public static final String NO_BORDER = "no_border";
+    public static final String TILE_BACKGROUND = "tile_background";
+    public static final String TR_CORNER = "corner_top_right";
+    public static final String TL_CORNER = "corner_top_left";
+    public static final String BR_CORNER = "corner_bottom_right";
+    public static final String BL_CORNER = "corner_bottom_left";
+    public static final String EDGE = "edge";
+    public static final String EDGE_NAME = "edgeName";
+    public static final String EDGE_ICON = "edgeIcon";
+    public static final String ICON = "icon";
+    public static final String TILED = "tiled";
+    public static final String TOP_LINE = "line_top";
+    public static final String BOTTOM_LINE = "line_bottom";
+    public static final String RIGHT_LINE = "line_right";
+    public static final String LEFT_LINE = "line_left";
+    public static final String BACKGROUND_IMAGE = "background_image";
+    public static final String SHOW_SCROLL_BARS = "show_scroll_bars";
+    public static final String SHOULD_BOLD = "should_bold_mouseover";
+    public static final String FONT_NAME = "font_name";
+    public static final String FONT_SIZE = "font_size";
 
     // Unit Display Skin Specification XML tags
-    public static final String GeneralTabIdle = "tab_general_idle"; //$NON-NLS-1$
-    public static final String PilotTabIdle = "tab_pilot_idle"; //$NON-NLS-1$
-    public static final String ArmorTabIdle = "tab_armor_idle"; //$NON-NLS-1$
-    public static final String SystemsTabIdle = "tab_systems_idle"; //$NON-NLS-1$
-    public static final String WeaponsTabIdle = "tab_weapon_idle"; //$NON-NLS-1$
-    public static final String ExtrasTabIdle = "tab_extras_idle"; //$NON-NLS-1$
-    public static final String GeneralTabActive = "tab_general_active"; //$NON-NLS-1$
-    public static final String PilotTabActive = "tab_pilot_active"; //$NON-NLS-1$
-    public static final String ArmorTabActive = "tab_armor_active"; //$NON-NLS-1$
-    public static final String SystemsTabActive = "tab_systems_active"; //$NON-NLS-1$
-    public static final String WeaponsTabActive = "tab_weapon_active"; //$NON-NLS-1$
-    public static final String ExtraTabActive = "tab_extras_active"; //$NON-NLS-1$
-    public static final String CornerIdle = "idle_corner"; //$NON-NLS-1$
-    public static final String CornerActive = "active_corner"; //$NON-NLS-1$
+    public static final String GeneralTabIdle = "tab_general_idle";
+    public static final String PilotTabIdle = "tab_pilot_idle";
+    public static final String ArmorTabIdle = "tab_armor_idle";
+    public static final String SystemsTabIdle = "tab_systems_idle";
+    public static final String WeaponsTabIdle = "tab_weapon_idle";
+    public static final String ExtrasTabIdle = "tab_extras_idle";
+    public static final String GeneralTabActive = "tab_general_active";
+    public static final String PilotTabActive = "tab_pilot_active";
+    public static final String ArmorTabActive = "tab_armor_active";
+    public static final String SystemsTabActive = "tab_systems_active";
+    public static final String WeaponsTabActive = "tab_weapon_active";
+    public static final String ExtraTabActive = "tab_extras_active";
+    public static final String CornerIdle = "idle_corner";
+    public static final String CornerActive = "active_corner";
 
-    public static final String BackgroundTile = "background_tile"; //$NON-NLS-1$
-    public static final String TopLine = "top_line"; //$NON-NLS-1$
-    public static final String BottomLine = "bottom_line"; //$NON-NLS-1$
-    public static final String LeftLine = "left_line"; //$NON-NLS-1$
-    public static final String RightLine = "right_line"; //$NON-NLS-1$
-    public static final String TopLeftCorner = "tl_corner"; //$NON-NLS-1$
-    public static final String BottomLeftCorner = "bl_corner"; //$NON-NLS-1$
-    public static final String TopRightCorner = "tr_corner"; //$NON-NLS-1$
-    public static final String BottomRightCorner = "br_corner"; //$NON-NLS-1$
+    public static final String BackgroundTile = "background_tile";
+    public static final String TopLine = "top_line";
+    public static final String BottomLine = "bottom_line";
+    public static final String LeftLine = "left_line";
+    public static final String RightLine = "right_line";
+    public static final String TopLeftCorner = "tl_corner";
+    public static final String BottomLeftCorner = "bl_corner";
+    public static final String TopRightCorner = "tr_corner";
+    public static final String BottomRightCorner = "br_corner";
 
-    public static final String MechOutline = "mech_outline"; //$NON-NLS-1$
+    public static final String MechOutline = "mech_outline";
 
     private static Map<String, SkinSpecification> skinSpecs;
 
@@ -173,153 +164,124 @@ public class SkinXMLHandler {
 
     /**
      * Initializes using the default skin file.
-     * @throws IOException
      */
     public static boolean initSkinXMLHandler() {
-        String skinFilePath = GUIPreferences.getInstance().getSkinFile();
-        return initSkinXMLHandler(skinFilePath);
+        return initSkinXMLHandler(GUIPreferences.getInstance().getSkinFile());
     }
 
     /**
      * Initializes using the supplied skin file.
-     * @throws IOException
      */
-    public synchronized static boolean initSkinXMLHandler(String fileName) {
+    public synchronized static boolean initSkinXMLHandler(final @Nullable String filename) {
         // Reset UnitDisplay spec
         udSpec = null;
 
-        if (fileName == null) {
-            System.out.println("ERROR: Bad skin specification file: " +
-                    "null filename!");
+        if (filename == null) {
+            LogManager.getLogger().error("Cannot initialize skin based on a null filename.");
             return false;
         }
 
-        File file = new MegaMekFile(Configuration.skinsDir(), fileName).getFile();
+        File file = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
         if (!file.exists() || !file.isFile()) {
-            System.out.println("ERROR: Bad skin specification file: " +
-                    "file doesn't exist!  File name: " + fileName);
+            LogManager.getLogger().error("Cannot initialize skin based on a non-existent file with filename " + filename);
             return false;
         }
 
         // Build the XML document.
         try {
             DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
-            System.out.println("Parsing " + file.getName());
+            LogManager.getLogger().info("Parsing " + file.getName());
             Document doc = builder.parse(file);
-            System.out.println("Parsing finished.");
 
             // Get the list of units.
             NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
             int totalComponents = listOfComponents.getLength();
-            skinSpecs = new HashMap<String, SkinSpecification>(
-                    (int)(totalComponents * 1.25));
+            skinSpecs = new HashMap<>((int) (totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
                 Element borderList = (Element) listOfComponents.item(comp);
+                String name = borderList.getElementsByTagName(NAME).item(0).getTextContent();
 
-                String name = borderList.getElementsByTagName(NAME).
-                        item(0).getTextContent();
-
-                if (name.equals(SkinSpecification.UIComponents.UnitDisplay.getComp())) {
+                if (name.equals(UIComponents.UnitDisplay.getComp())) {
                     parseUnitDisplaySkinSpec(borderList);
                     continue;
                 }
 
                 SkinSpecification skinSpec;
                 // Parse no border
-                Element noBorderEle = (Element) borderList
-                        .getElementsByTagName(NO_BORDER).item(0);
+                Element noBorderEle = (Element) borderList.getElementsByTagName(NO_BORDER).item(0);
                 boolean noBorder = false;
                 if (noBorderEle != null) {
-                    noBorder = Boolean
-                            .parseBoolean(noBorderEle.getTextContent());
+                    noBorder = Boolean.parseBoolean(noBorderEle.getTextContent());
                 }
 
                 // Get the first element of this node.
-                Element plainTag = (Element)
-                        borderList.getElementsByTagName(PLAIN).item(0);
+                Element plainTag = (Element) borderList.getElementsByTagName(PLAIN).item(0);
                 // If there is no plain tag, load the icons
-                if (plainTag == null && !noBorder) {
+                if ((plainTag == null) && !noBorder) {
                     // Get the border specs
-                    Element border = (Element)
-                            borderList.getElementsByTagName(BORDER).item(0);
+                    Element border = (Element) borderList.getElementsByTagName(BORDER).item(0);
                     if (border == null) {
-                        System.err.println("Missing <" + BORDER +
-                                "> tag in element #" + comp);
+                        LogManager.getLogger().error(String.format("Missing <%s> tag in element %s", BORDER, comp));
                         continue;
                     }
 
                     skinSpec = parseBorderTag(name, border);
-                } else { // Plain skin, no icons
+                } else {
+                    // Plain skin, no icons
                     skinSpec = new SkinSpecification(name);
                     skinSpec.noBorder = noBorder;
                 }
 
                 // Get the background specs
                 if (plainTag == null) {
-                    NodeList backgrounds =
-                            borderList.getElementsByTagName(BACKGROUND_IMAGE);
-                    if (backgrounds != null){
-                        for (int bg = 0; bg < backgrounds.getLength(); bg++){
-                            skinSpec.backgrounds.add(
-                                    backgrounds.item(bg).getTextContent());
-                        }
+                    NodeList backgrounds = borderList.getElementsByTagName(BACKGROUND_IMAGE);
+                    for (int bg = 0; bg < backgrounds.getLength(); bg++) {
+                        skinSpec.backgrounds.add(backgrounds.item(bg).getTextContent());
                     }
                 }
 
                 // Parse show scroll bars
-                Element showScrollEle = (Element) borderList
-                        .getElementsByTagName(SHOW_SCROLL_BARS).item(0);
+                Element showScrollEle = (Element) borderList.getElementsByTagName(SHOW_SCROLL_BARS).item(0);
                 if (showScrollEle != null) {
-                    skinSpec.showScrollBars = Boolean
-                            .parseBoolean(showScrollEle.getTextContent());
+                    skinSpec.showScrollBars = Boolean.parseBoolean(showScrollEle.getTextContent());
                 }
 
                 // Parse show should bold
-                Element shouldBoldEle = (Element) borderList
-                        .getElementsByTagName(SHOULD_BOLD).item(0);
+                Element shouldBoldEle = (Element) borderList.getElementsByTagName(SHOULD_BOLD).item(0);
                 if (shouldBoldEle != null) {
-                    skinSpec.shouldBoldMouseOver = Boolean
-                            .parseBoolean(shouldBoldEle.getTextContent());
+                    skinSpec.shouldBoldMouseOver = Boolean.parseBoolean(shouldBoldEle.getTextContent());
                 }
 
                 // Parse font name
-                Element fontNameEle = (Element) borderList
-                        .getElementsByTagName(FONT_NAME).item(0);
+                Element fontNameEle = (Element) borderList.getElementsByTagName(FONT_NAME).item(0);
                 if (fontNameEle != null) {
                     skinSpec.fontName = fontNameEle.getTextContent();
                 }
 
                 // Parse font size
-                Element fontSizeEle = (Element) borderList
-                        .getElementsByTagName(FONT_SIZE).item(0);
+                Element fontSizeEle = (Element) borderList.getElementsByTagName(FONT_SIZE).item(0);
                 if (fontSizeEle != null) {
                     skinSpec.fontSize = Integer.parseInt(fontSizeEle.getTextContent());
                 }
 
                 // Parse font colors
-                NodeList fontColors = borderList
-                        .getElementsByTagName(FONT_COLOR);
+                NodeList fontColors = borderList.getElementsByTagName(FONT_COLOR);
                 if (fontColors.getLength() > 0) {
                     skinSpec.fontColors.clear();
                     for (int fc = 0; fc < fontColors.getLength(); fc++) {
-                        String fontColorContent = fontColors.item(fc)
-                                .getTextContent();
+                        String fontColorContent = fontColors.item(fc).getTextContent();
                         skinSpec.fontColors.add(Color.decode(fontColorContent));
                     }
                 }
 
                 // Parse tile background
-                Element tileBGEle = (Element) borderList
-                        .getElementsByTagName(TILE_BACKGROUND).item(0);
+                Element tileBGEle = (Element) borderList.getElementsByTagName(TILE_BACKGROUND).item(0);
                 if (tileBGEle != null) {
-                    skinSpec.tileBackground = Boolean
-                            .parseBoolean(tileBGEle.getTextContent());
+                    skinSpec.tileBackground = Boolean.parseBoolean(tileBGEle.getTextContent());
                 }
 
-                if (SkinSpecification.UIComponents.getUIComponent(name) == null) {
-                    System.out.println("SKIN ERROR: "
-                            + "Unable to add unrecognized UI component: "
-                            + name + "!");
+                if (UIComponents.getUIComponent(name) == null) {
+                    LogManager.getLogger().error("Unable to add unrecognized UI component: " + name);
                 } else {
                     skinSpecs.put(name, skinSpec);
                 }
@@ -327,65 +289,57 @@ public class SkinXMLHandler {
 
             if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp())
                     || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
-                System.out.println("SKIN ERROR: Bad skin specification file: " +
-                        "file doesn't specify " + UIComponents.DefaultUIElement +
-                        " or " + UIComponents.DefaultButton + "!");
+                LogManager.getLogger().error(String.format("Skin specification file doesn't specify %s or %s",
+                        UIComponents.DefaultUIElement, UIComponents.DefaultButton));
                 return false;
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return false;
         }
+
         // Skin spec didn't specify UnitDisplay skin, use default
         if (udSpec == null) {
             udSpec = new UnitDisplaySkinSpecification();
         }
+
         return true;
     }
 
     /**
-     *  Create a new SkinSpecification and populate it from the supplied border
-     *  tag
-     *
-     * @param border
-     * @return
+     * Create a new SkinSpecification and populate it from the supplied border tag
      */
-    private static SkinSpecification parseBorderTag(String compName, Element border){
+    private static SkinSpecification parseBorderTag(String compName, Element border) {
         SkinSpecification skinSpec = new SkinSpecification(compName);
 
         // Parse Corner Icons
-        skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).
-                item(0).getTextContent();
-        skinSpec.tl_corner = border.getElementsByTagName(TL_CORNER).
-                item(0).getTextContent();
-        skinSpec.br_corner = border.getElementsByTagName(BR_CORNER).
-                item(0).getTextContent();
-        skinSpec.bl_corner = border.getElementsByTagName(BL_CORNER).
-                item(0).getTextContent();
+        skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).item(0).getTextContent();
+        skinSpec.tl_corner = border.getElementsByTagName(TL_CORNER).item(0).getTextContent();
+        skinSpec.br_corner = border.getElementsByTagName(BR_CORNER).item(0).getTextContent();
+        skinSpec.bl_corner = border.getElementsByTagName(BL_CORNER).item(0).getTextContent();
 
         // Parse Edge Icons from Edge tag
         NodeList edgeNodes = border.getElementsByTagName(EDGE);
-        for (int i = 0; i < edgeNodes.getLength(); i++){
+        for (int i = 0; i < edgeNodes.getLength(); i++) {
             // An edge tag will have some number of icons
-            ArrayList<String> icons = new ArrayList<String>();
+            ArrayList<String> icons = new ArrayList<>();
             // And icon can be tiled or static
-            ArrayList<Boolean> shouldTile = new ArrayList<Boolean>();
-            NodeList edgeIcons = ((Element) edgeNodes.item(i))
-                    .getElementsByTagName(EDGE_ICON);
+            ArrayList<Boolean> shouldTile = new ArrayList<>();
+            NodeList edgeIcons = ((Element) edgeNodes.item(i)).getElementsByTagName(EDGE_ICON);
             // Iterate through each icon/tiled pair
-            for (int j = 0; j < edgeIcons.getLength(); j++){
+            for (int j = 0; j < edgeIcons.getLength(); j++) {
                 String icon = ((Element) edgeIcons.item(j))
                         .getElementsByTagName(ICON).item(0).getTextContent();
                 String tiled = ((Element) edgeIcons.item(j))
                         .getElementsByTagName(TILED).item(0).getTextContent();
 
-                if (icon == null){
-                    System.err.println("Missing <" + ICON + "> tag");
+                if (icon == null) {
+                    LogManager.getLogger().error("Missing <" + ICON + "> tag");
                     continue;
                 }
-                if (tiled == null){
-                    System.err.println("Missing <" + TILED + "> tag");
+
+                if (tiled == null) {
+                    LogManager.getLogger().error("Missing <" + TILED + "> tag");
                     continue;
                 }
                 icons.add(icon);
@@ -395,23 +349,28 @@ public class SkinXMLHandler {
             String edgeName = ((Element) edgeNodes.item(i))
                     .getElementsByTagName(EDGE_NAME).item(0).getTextContent();
 
-            if (edgeName == null){
-                System.err.println("Missing <" + EDGE_NAME + "> tag");
+            if (edgeName == null) {
+                LogManager.getLogger().error("Missing <" + EDGE_NAME + "> tag");
                 continue;
             }
 
-            if (edgeName.equals("top")){
-                skinSpec.topEdge = icons;
-                skinSpec.topShouldTile = shouldTile;
-            } else if (edgeName.equals("bottom")){
-                skinSpec.bottomEdge = icons;
-                skinSpec.bottomShouldTile = shouldTile;
-            } else if (edgeName.equals("left")){
-                skinSpec.leftEdge = icons;
-                skinSpec.leftShouldTile = shouldTile;
-            } else if (edgeName.equals("right")){
-                skinSpec.rightEdge = icons;
-                skinSpec.rightShouldTile = shouldTile;
+            switch (edgeName) {
+                case "top":
+                    skinSpec.topEdge = icons;
+                    skinSpec.topShouldTile = shouldTile;
+                    break;
+                case "bottom":
+                    skinSpec.bottomEdge = icons;
+                    skinSpec.bottomShouldTile = shouldTile;
+                    break;
+                case "left":
+                    skinSpec.leftEdge = icons;
+                    skinSpec.leftShouldTile = shouldTile;
+                    break;
+                case "right":
+                    skinSpec.rightEdge = icons;
+                    skinSpec.rightShouldTile = shouldTile;
+                    break;
             }
         }
         return skinSpec;
@@ -549,23 +508,21 @@ public class SkinXMLHandler {
      * @param filename
      */
     public static void writeSkinToFile(String filename) {
-        File filePath = new MegaMekFile(Configuration.skinsDir(),
-                filename).getFile();
+        File filePath = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
 
         try (Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(filePath)));){
+                new FileOutputStream(filePath)))) {
             output.write(SKIN_HEADER);
             for (String component : skinSpecs.keySet()) {
                 writeSkinComponent(component, output);
             }
+
             if (udSpec != null) {
                 writeUnitDisplaySkinSpec(output);
             }
             output.write(SKIN_FOOTER);
-            output.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        } catch (Exception e) {
+            LogManager.getLogger().error("", e);
         }
     }
 
@@ -708,7 +665,7 @@ public class SkinXMLHandler {
 
         // Write Border
         out.write("\t\t<" + NO_BORDER + ">");
-        out.write(((Boolean)skinSpec.noBorder).toString());
+        out.write(((Boolean) skinSpec.noBorder).toString());
         out.write("</" + NO_BORDER + ">\n");
         writeBorder(skinSpec, out);
 
@@ -719,7 +676,7 @@ public class SkinXMLHandler {
             out.write("</" + BACKGROUND_IMAGE + ">\n");
         }
         out.write("\t\t<" + TILE_BACKGROUND + ">");
-        out.write(((Boolean)skinSpec.tileBackground).toString());
+        out.write(((Boolean) skinSpec.tileBackground).toString());
         out.write("</" + TILE_BACKGROUND + ">\n");
 
         // Write colors
@@ -732,12 +689,12 @@ public class SkinXMLHandler {
 
         // Write show scroll bars
         out.write("\t\t<" + SHOW_SCROLL_BARS + ">");
-        out.write(((Boolean)skinSpec.showScrollBars).toString());
+        out.write(((Boolean) skinSpec.showScrollBars).toString());
         out.write("</" + SHOW_SCROLL_BARS + ">\n");
 
         // Write should bold mouseover
         out.write("\t\t<" + SHOULD_BOLD + ">");
-        out.write(((Boolean)skinSpec.shouldBoldMouseOver).toString());
+        out.write(((Boolean) skinSpec.shouldBoldMouseOver).toString());
         out.write("</" + SHOULD_BOLD + ">\n");
 
         // Write font name
@@ -800,7 +757,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.topShouldTile.get(i)).toString());
+            out.write(skinSpec.topShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -821,7 +778,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.bottomShouldTile.get(i)).toString());
+            out.write(skinSpec.bottomShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -841,7 +798,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.leftShouldTile.get(i)).toString());
+            out.write(skinSpec.leftShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -861,7 +818,7 @@ public class SkinXMLHandler {
             out.write("</" + ICON + ">\n");
             // Tile state of icon
             out.write("\t\t\t\t\t<" + TILED + ">");
-            out.write(((Boolean)skinSpec.rightShouldTile.get(i)).toString());
+            out.write(skinSpec.rightShouldTile.get(i).toString());
             out.write("</" + TILED + ">\n");
             out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
@@ -874,11 +831,11 @@ public class SkinXMLHandler {
         out.write("\t\t</" + BORDER + ">\n");
     }
 
-    public static SkinSpecification getSkin(String component){
-        return getSkin(component,false, false);
+    public static SkinSpecification getSkin(String component) {
+        return getSkin(component, false, false);
     }
 
-    public static SkinSpecification getSkin(String component, boolean defaultToPlain){
+    public static SkinSpecification getSkin(String component, boolean defaultToPlain) {
         return getSkin(component, defaultToPlain, false);
     }
 
@@ -901,8 +858,8 @@ public class SkinXMLHandler {
      * @return
      */
     public synchronized static SkinSpecification getSkin(String component,
-            boolean defaultToPlain, boolean isBtn){
-        if (skinSpecs == null ){
+            boolean defaultToPlain, boolean isBtn) {
+        if (skinSpecs == null) {
             boolean rv = initSkinXMLHandler();
             if (!rv) {
                 // This will return a blank skin spec file, which will act like
@@ -912,10 +869,10 @@ public class SkinXMLHandler {
         }
 
         SkinSpecification spec = skinSpecs.get(component);
-        if (spec == null){
+        if (spec == null) {
             if (defaultToPlain) {
-                spec = new SkinSpecification("Plain"); //$NON-NLS-1$
-            } else if (isBtn){
+                spec = new SkinSpecification("Plain");
+            } else if (isBtn) {
                 spec = skinSpecs.get(UIComponents.DefaultButton.getComp());
             } else {
                 spec = skinSpecs.get(UIComponents.DefaultUIElement.getComp());
@@ -942,7 +899,7 @@ public class SkinXMLHandler {
      * @param component
      */
     public synchronized static void addNewComp(String component) {
-        if (skinSpecs == null ){
+        if (skinSpecs == null) {
             boolean rv = initSkinXMLHandler();
             if (!rv) {
                 return ;
@@ -953,7 +910,7 @@ public class SkinXMLHandler {
     }
 
     /**
-     * Remove the specified componenet from the SkinSpecs map.
+     * Remove the specified component from the SkinSpecs map.
      *
      * @param component
      */

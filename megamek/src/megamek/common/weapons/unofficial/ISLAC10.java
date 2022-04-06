@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -11,18 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-/*
- * Created on Sep 25, 2004
- */
 package megamek.common.weapons.unofficial;
 
+/**
+ * @since Sep 25, 2004
+ */
 import megamek.common.weapons.autocannons.LACWeapon;
 
 public class ISLAC10 extends LACWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 7715730019995031625L;
 
     public ISLAC10() {
@@ -44,15 +40,15 @@ public class ISLAC10 extends LACWeapon {
         bv = 74;
         cost = 225000;
         explosionDamage = damage;
-        rulesRefs = "207,TM";
+        rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(true)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_C)
-            .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_FS)
-            .setProductionFactions(F_FS);
+                .setIntroLevel(false)
+                .setUnofficial(true)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_C)
+                .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS);
     }
 }

@@ -1,11 +1,13 @@
 Version:1.1
 Marauder II
 MAD-10D
+mul id:7519
 
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3141
 rules level:4
+source:Rec Guide:ilClan #5 - Dark Age
 
 mass:100
 engine:400 XL Engine(IS)

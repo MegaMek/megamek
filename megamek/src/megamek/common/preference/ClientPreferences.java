@@ -19,28 +19,62 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
 
+import megamek.MMConstants;
 import megamek.common.MovePath;
 import megamek.common.util.LocaleParser;
+import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
-class ClientPreferences extends PreferenceStoreProxy implements
-        IClientPreferences {
-
-    ClientPreferences(IPreferenceStore store) {
+public class ClientPreferences extends PreferenceStoreProxy {
+    //region Variable Declarations
+    public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
+    public static final String LAST_CONNECT_PORT = "LastConnectPort";
+    public static final String LAST_PLAYER_NAME = "LastPlayerName";
+    public static final String LAST_SERVER_PASS = "LastServerPass";
+    public static final String LAST_SERVER_PORT = "LastServerPort";
+    public static final String LOCALE = "Locale";
+    public static final String MAP_TILESET = "MapTileset";
+    public static final String MAX_PATHFINDER_TIME = "MaxPathfinderTime";
+    public static final String DATA_DIRECTORY = "DataDirectory";
+    public static final String LOG_DIRECTORY = "LogDirectory";
+    public static final String MECH_DIRECTORY = "MechDirectory";
+    public static final String MEK_HIT_LOC_LOG = "MekHitLocLog";
+    public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
+    public static final String DEBUG_OUTPUT_ON = "DebugOutputOn";
+    public static final String GAMELOG_KEEP = "KeepGameLog";
+    public static final String GAMELOG_FILENAME = "GameLogFilename";
+    public static final String STAMP_FILENAMES = "StampFilenames";
+    public static final String STAMP_FORMAT = "StampFormat";
+    public static final String SHOW_UNIT_ID = "ShowUnitId";
+    public static final String UNIT_START_CHAR = "UnitStartChar";
+    public static final String DEFAULT_AUTOEJECT_DISABLED = "DefaultAutoejectDisabled";
+    public static final String USE_AVERAGE_SKILLS = "UseAverageSkills";
+    public static final String GENERATE_NAMES = "GenerateNames";
+    public static final String METASERVER_NAME = "MetaServerName";
+    public static final String GOAL_PLAYERS = "GoalPlayers";
+    public static final String GUI_NAME = "GUIName";
+    public static final String PRINT_ENTITY_CHANGE = "PrintEntityChange";
+    public static final String BOARD_WIDTH = "BoardWidth";
+    public static final String BOARD_HEIGHT = "BoardHeight";
+    public static final String MAP_WIDTH = "MapWidth";
+    public static final String MAP_HEIGHT = "MapHeight";
+    public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
+    //endregion Variable Declarations
+    
+    //region Constructors
+    public ClientPreferences(IPreferenceStore store) {
         this.store = store;
-        store.setDefault(LAST_CONNECT_ADDR, "localhost");
-        store.setDefault(LAST_CONNECT_PORT, 2346);
-        store.setDefault(LAST_SERVER_PORT, 2346);
+        store.setDefault(LAST_CONNECT_ADDR, MMConstants.LOCALHOST);
+        store.setDefault(LAST_CONNECT_PORT, MMConstants.DEFAULT_PORT);
+        store.setDefault(LAST_SERVER_PORT, MMConstants.DEFAULT_PORT);
         store.setDefault(MAP_TILESET, "saxarba.tileset");
-        store.setDefault(MAX_PATHFINDER_TIME,
-                MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
+        store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
         store.setDefault(DATA_DIRECTORY, "data");
         store.setDefault(LOG_DIRECTORY, "logs");
-        store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY)
-                + File.separator + "mechfiles");
+        store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mechfiles");
         store.setDefault(METASERVER_NAME, "https://api.megamek.org/servers/announce");
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.html");
-        // store.setDefault(GAMELOG_MAX_SIZE, 1);
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR, 'A');
         store.setDefault(GUI_NAME, "swing");
@@ -51,17 +85,19 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setDefault(BOARD_HEIGHT, 17);
         store.setDefault(MAP_WIDTH, 1);
         store.setDefault(MAP_HEIGHT, 1);
-        store.setDefault(DEBUG_OUTPUT_ON,false);
-        store.setDefault(MEMORY_DUMP_ON,false);
+        store.setDefault(DEBUG_OUTPUT_ON, false);
+        store.setDefault(MEMORY_DUMP_ON, false);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
+    //endregion Constructors
 
     public boolean getPrintEntityChange() {
         return store.getBoolean(PRINT_ENTITY_CHANGE);
     }
 
+    @Override
     public String[] getAdvancedProperties() {
         return store.getAdvancedProperties();
     }
@@ -144,10 +180,6 @@ class ClientPreferences extends PreferenceStoreProxy implements
         return store.getString(GAMELOG_FILENAME);
     }
 
-    // public int getGameLogMaxSize() {
-    // return store.getInt(GAMELOG_MAX_SIZE);
-    // }
-
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
     }
@@ -228,10 +260,6 @@ class ClientPreferences extends PreferenceStoreProxy implements
         store.setValue(PRINT_ENTITY_CHANGE, print);
     }
 
-    // public void setGameLogMaxSize(int i) {
-    // store.setValue(GAMELOG_MAX_SIZE, i);
-    // }
-
     public void setStampFilenames(boolean state) {
         store.setValue(STAMP_FILENAMES, state);
     }
@@ -276,7 +304,6 @@ class ClientPreferences extends PreferenceStoreProxy implements
 
     public Locale getLocale() {
         if (locale == null) {
-            // return Locale.getDefault();
             return Locale.US;
         }
         return locale;
@@ -286,13 +313,13 @@ class ClientPreferences extends PreferenceStoreProxy implements
         if (locale == null) {
             return "";
         }
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         if (locale.getLanguage().length() != 0) {
             result.append(locale.getLanguage());
             if (locale.getCountry().length() != 0) {
-                result.append("_" + locale.getCountry());
+                result.append("_").append(locale.getCountry());
                 if (locale.getVariant().length() != 0) {
-                    result.append("_" + locale.getVariant());
+                    result.append("_").append(locale.getVariant());
                 }
             }
         }
@@ -301,13 +328,12 @@ class ClientPreferences extends PreferenceStoreProxy implements
 
     protected void setMekHitLocLog() {
         String name = store.getString(MEK_HIT_LOC_LOG);
-        if (name.length() != 0) {
+        if (!name.isEmpty()) {
             try {
-                mekHitLocLog = new PrintWriter(new BufferedWriter(
-                        new FileWriter(name)));
+                mekHitLocLog = new PrintWriter(new BufferedWriter(new FileWriter(name)));
                 mekHitLocLog.println("Table\tSide\tRoll");
-            } catch (Throwable thrown) {
-                thrown.printStackTrace();
+            } catch (Throwable t) {
+                LogManager.getLogger().error("", t);
                 mekHitLocLog = null;
             }
         }
@@ -328,5 +354,4 @@ class ClientPreferences extends PreferenceStoreProxy implements
     public int getMapHeight() {
         return store.getInt(MAP_HEIGHT);
     }
-
 }

@@ -21,7 +21,7 @@ import java.util.Vector;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.IGame;
+import megamek.common.Game;
 import megamek.common.LosEffects;
 import megamek.common.Report;
 import megamek.common.Tank;
@@ -46,12 +46,12 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         super(entityId, targetType, targetId);
     }
 
-    public boolean isPossible(IGame game) {
+    public boolean isPossible(Game game) {
         return SearchlightAttackAction.isPossible(game, getEntityId(), game
                 .getTarget(getTargetType(), getTargetId()), this);
     }
 
-    public static boolean isPossible(IGame game, int attackerId,
+    public static boolean isPossible(Game game, int attackerId,
             Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
         
@@ -61,7 +61,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         
         // can't light up if you're stunned
-        if ((attacker instanceof Tank) && (((Tank)attacker).getStunnedTurns() > 0)) {
+        if ((attacker instanceof Tank) && (((Tank) attacker).getStunnedTurns() > 0)) {
             return false;
         }
         
@@ -99,7 +99,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     /**
      * illuminate an entity and all entities that are between us and the hex
      */
-    public Vector<Report> resolveAction(IGame game) {
+    public Vector<Report> resolveAction(Game game) {
         Vector<Report> reports = new Vector<>();
         Report r;
         if (!isPossible(game)) {
@@ -147,10 +147,10 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     /**
      * Updates the supplied Game's list of hexes illuminated.
      * 
-     * @param game      The game to update
+     * @param game The {@link Game} to update
      * @return          True if new hexes were added, else false.
      */
-    public boolean setHexesIlluminated(IGame game) {
+    public boolean setHexesIlluminated(Game game) {
         boolean hexesAdded = false;
         
         final Entity attacker = getEntity(game);
@@ -160,14 +160,14 @@ public class SearchlightAttackAction extends AbstractAttackAction {
 
         ArrayList<Coords> intervening = Coords.intervening(apos, tpos);
         for (Coords c : intervening) {
-            if (game.getBoard().contains(c)){
+            if (game.getBoard().contains(c)) {
                 hexesAdded |= game.addIlluminatedPosition(c);
             }
         }
         return hexesAdded;
     }
 
-    public boolean willIlluminate(IGame game, Entity who) {
+    public boolean willIlluminate(Game game, Entity who) {
         if (!isPossible(game)) {
             return false;
         }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,6 +19,10 @@ Cockatrice Monitor Platform
 <Model>
 (Drone)
 </Model>
+
+<mul id:>
+660
+</mul id:>
 
 <year>
 3062
@@ -129,6 +133,12 @@ ImprovedCasparIIDroneControlSystem
 15
 </structural_integrity>
 
+<notes>
+Improved Caspar II Advanced Smart Robotic Control System
+(Gunnery 3, Piloting 4)
+Weapons:
+</notes>
+
 <source>
 Jihad Hot Spots: Terra - Civil War
 </source>
@@ -176,3 +186,4 @@ Jihad Hot Spots: Terra - Civil War
 <escape_pod>
 0
 </escape_pod>
+

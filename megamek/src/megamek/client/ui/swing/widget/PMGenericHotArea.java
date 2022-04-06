@@ -31,10 +31,12 @@ public abstract class PMGenericHotArea implements PMHotArea {
     private ActionListener actionListener = null;
     private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
+    @Override
     public Cursor getCursor() {
         return cursor;
     }
 
+    @Override
     public void setCursor(Cursor c) {
         cursor = c;
     }
@@ -47,9 +49,10 @@ public abstract class PMGenericHotArea implements PMHotArea {
         actionListener = AWTEventMulticaster.remove(actionListener, l);
     }
 
+    @Override
     public void onMouseClick(MouseEvent e) {
         int modifiers = e.getModifiersEx();
-        String command = ""; //$NON-NLS-1$
+        String command = "";
 
         if (0 != (modifiers & InputEvent.BUTTON1_DOWN_MASK)) {
             command = PMHotArea.MOUSE_CLICK_LEFT;
@@ -65,6 +68,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
         dispatchEvent(ae);
     }
 
+    @Override
     public void onMouseOver(MouseEvent e) {
         int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_OVER;
@@ -74,6 +78,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
 
     }
 
+    @Override
     public void onMouseExit(MouseEvent e) {
         int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_EXIT;
@@ -82,6 +87,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
         dispatchEvent(ae);
     }
 
+    @Override
     public void onMouseDown(MouseEvent e) {
         int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_DOWN;
@@ -90,6 +96,7 @@ public abstract class PMGenericHotArea implements PMHotArea {
         dispatchEvent(ae);
     }
 
+    @Override
     public void onMouseUp(MouseEvent e) {
         int modifiers = e.getModifiersEx();
         String command = PMHotArea.MOUSE_UP;

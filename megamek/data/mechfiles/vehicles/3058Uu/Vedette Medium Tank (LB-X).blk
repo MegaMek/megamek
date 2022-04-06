@@ -15,6 +15,10 @@ Vedette Medium Tank
 <Model>
 (LB-X)
 </Model>
+
+<mul id:>
+3390
+</mul id:>
 <Tonnage>
 50
 </Tonnage>

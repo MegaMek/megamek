@@ -36,7 +36,7 @@ public class GameEntityNewEvent extends GameEvent {
      */
     public GameEntityNewEvent(Object source, Entity entity) {
         super(source);
-        entities = new Vector<Entity>();
+        entities = new Vector<>();
         entities.add(entity);
     }
 

@@ -18,29 +18,25 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.datatransfer.*;
-import java.awt.dnd.DnDConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.TransferHandler;
-import megamek.MegaMek;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.MapSettings;
 import megamek.common.util.ImageUtil;
-import static megamek.client.ui.swing.lobby.LobbyUtility.*;
-import static megamek.client.ui.swing.util.UIUtil.*;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import static megamek.client.ui.swing.lobby.LobbyUtility.cleanBoardName;
+import static megamek.client.ui.swing.lobby.LobbyUtility.drawMinimapLabel;
+import static megamek.client.ui.swing.util.UIUtil.scaleStringForGUI;
 
 /** A specialized JButton for the map preview panel of the Lobby. */
 public class MapPreviewButton extends JButton {
@@ -150,11 +146,11 @@ public class MapPreviewButton extends JButton {
         Dimension optSize = lobby.maxMapButtonSize();
         if (optSize.width > 1 && optSize.height > 1 && baseImage != null) {
             // Scale to the maximum size keeping aspect ratio
-            double factorX = (double)optSize.width / baseImage.getWidth(null);                    
-            double factorY = (double)optSize.height / baseImage.getHeight(null);
+            double factorX = (double) optSize.width / baseImage.getWidth(null);
+            double factorY = (double) optSize.height / baseImage.getHeight(null);
             double factor = Math.min(factorX, factorY);
-            int w = (int)(factor * baseImage.getWidth(null));
-            int h = (int)(factor * baseImage.getHeight(null));
+            int w = (int) (factor * baseImage.getWidth(null));
+            int h = (int) (factor * baseImage.getHeight(null));
             scaledImage = baseImage.getScaledInstance(w, h, Image.SCALE_SMOOTH);
             // Add the labels (index, name, example)
             BufferedImage drawableImage = ImageUtil.createAcceleratedImage(scaledImage);
@@ -258,14 +254,13 @@ public class MapPreviewButton extends JButton {
                     Component component = support.getComponent();
                     Object value = support.getTransferable().getTransferData(flavor);
                     if ((value instanceof String) && (component instanceof MapPreviewButton)) {
-                        lobby.changeMapDnD((String)value, button);
+                        lobby.changeMapDnD((String) value, button);
                         return true;
                     } else {
                         return false;
                     }
-                } catch (Exception exp) {
-                    MegaMek.getLogger().error("A problem has occurred with map drag-and-drop.");
-                    exp.printStackTrace();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("A problem has occurred with map drag-and-drop.", ex);
                 }
             }
             return false;

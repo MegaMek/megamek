@@ -1,6 +1,7 @@
 Version:1.1
 Enforcer III
 ENF-7X MUSE COMPACT
+mul id:987
 
 Config:Biped
 techbase:Mixed (IS Chassis)
@@ -10,12 +11,12 @@ rules level:4
 
 mass:50
 engine:250 XL (Clan) Engine
-structure:IS Endo Steel
+structure:Clan Endo Steel
 myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:12 Double
+heat sinks:12 Clan Double
 walk mp:5
 jump mp:8
 
@@ -44,9 +45,9 @@ Binary Laser (Blazer) Cannon
 Binary Laser (Blazer) Cannon
 Binary Laser (Blazer) Cannon
 Binary Laser (Blazer) Cannon
-IS Endo Steel
-IS Endo Steel
-IS Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 
@@ -58,8 +59,8 @@ Binary Laser (Blazer) Cannon
 Binary Laser (Blazer) Cannon
 Binary Laser (Blazer) Cannon
 Binary Laser (Blazer) Cannon
-IS Endo Steel
-IS Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 IS Ferro-Fibrous
 IS Ferro-Fibrous
 IS Ferro-Fibrous
@@ -75,7 +76,7 @@ Improved Jump Jet
 Improved Jump Jet
 Improved Jump Jet
 Improved Jump Jet
-IS Endo Steel
+Clan Endo Steel
 IS Ferro-Fibrous
 
 Right Torso:
@@ -89,7 +90,7 @@ Improved Jump Jet
 Improved Jump Jet
 Improved Jump Jet
 Improved Jump Jet
-IS Endo Steel
+Clan Endo Steel
 IS Ferro-Fibrous
 
 Center Torso:

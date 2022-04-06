@@ -19,6 +19,10 @@ Salamander Battle Armor
 (Standard)
 </Model>
 
+<mul id:>
+2789
+</mul id:>
+
 <chassis>
 biped
 </chassis>

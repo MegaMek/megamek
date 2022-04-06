@@ -20,6 +20,10 @@ Hammerhead
 HMR-HE
 </Model>
 
+<mul id:>
+1375
+</mul id:>
+
 <year>
 2672
 </year>
@@ -105,3 +109,31 @@ TRO 3050u - Star League
 <tonnage>
 75.0
 </tonnage>
+
+<overview>
+The Hammerhead was first deployed by the Terran Hegemony in 2407 during the Age of War as a ground-based defensive craft for protecting planets and patrolling jump points.
+</overview>
+
+<deployment>
+A variant popular with Com Guards aerospace pilots, the Hammerhead-E replaces the autocannon with two Magna Hellstar PPCs. An additional heat sink is added, and all 11 are upgraded to Double Heat Sinks, along with two additional tons of fuel.
+</deployment>
+
+<history>
+Over the next three centuries the Hammerhead would receive periodic refits to remain in service to the Star League Defense Force. Chief among these was the replacement of its older armor for Ferro-Aluminum in the twenty-sixth century, which greatly increased the craft's survivability, though like other retrofits the armor is ungainly in some areas and weak in others. This superior protection, combined with excellent acceleration capabilities for such a heavy craft, allowed the Hammerhead to penetrate defenses quickly and safely in order to wreak havoc, especially against enemy DropShips. Five tons of fuel also gave the fighter acceptable flight speeds and endurance. The only Hammerheads to survive the Succession Wars were those kept in the secret stockpiles maintained by ComStar. While the Federated Commonwealth tested prototypes based off plans from the recovered Helm Memory Core in the 3040s at the Hudson Gulf Aerospace Center on New Avalon, it would take the public unveiling of the Com Guards to see the design proliferate in the Clan Invasion era, especially among the Word of Blake and their allies, with new variants being fielded by both forces.
+</history>
+
+<manufacturer>
+Boeing Interstellar
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Lockheed BR65
+ENGINE:Pitban C375
+ARMOR:Boeing C-tran Ferro-Aluminum
+COMMUNICATIONS:Lassitor FibroLink
+TARGETING:BANDAR 9
+</systemManufacturers>

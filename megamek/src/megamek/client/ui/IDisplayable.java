@@ -1,20 +1,19 @@
 /*
  * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright (C) 2000-2006 Ben Mazur (bmazur@sev.org)
  * This file (C) 2008 Jörg Walter <j.walter@syntax-k.de>
  * MegaMek - Copyright (C) 2020 - The MegaMek Team  
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui;
 
 import java.awt.Dimension;
@@ -37,9 +36,9 @@ public interface IDisplayable {
      * this mouse action. 
      * The default for this method will always return false.
      */
-    default public boolean isBeingDragged() {
+    default boolean isBeingDragged() {
         return false;
-    };
+    }
 
     /** 
      * Returns true when this IDisplayable is dragged or resized
@@ -47,18 +46,18 @@ public interface IDisplayable {
      * this mouse action. 
      * The default for this method will always return false.
      */
-    default public boolean isDragged(Point point, Dimension backSize) {
+    default boolean isDragged(Point point, Dimension backSize) {
         return false;
-    };
+    }
     
     /** 
      * Returns true when the mouse position point is considered "within" 
      * this IDisplayable. This is called when a mouse button is pressed.
      * The default for this method will always return false.
      */
-    default public boolean isHit(Point point, Dimension size) {
+    default boolean isHit(Point point, Dimension size) {
         return false;
-    };
+    }
 
     /** 
      * Returns true when the mouse position point is considered "within" 
@@ -66,13 +65,13 @@ public interface IDisplayable {
      * backSize is the pixel size of the boardview.
      * The default for this method will always return false. 
      */
-    default public boolean isMouseOver(Point point, Dimension backSize) {
+    default boolean isMouseOver(Point point, Dimension backSize) {
         return false;
-    };
+    }
 
-    default public boolean isReleased() {
+    default boolean isReleased() {
         return false;
-    };
+    }
 
     /**
      * Draw this IDisplayable to the Graphics graph, which is the boardview
@@ -80,7 +79,7 @@ public interface IDisplayable {
      * the Rectangle rect, so the upper left corner of the visible
      * boardview is rect.x, rect.y.
      */
-    public void draw(Graphics graph, Rectangle rect);
+    void draw(Graphics graph, Rectangle rect);
 
     /** 
      * Return true while sliding.
@@ -89,9 +88,9 @@ public interface IDisplayable {
      * at some fps while an IDisplayable is sliding.  
      * The default for this method will always return false. 
      */
-    default public boolean isSliding() {
+    default boolean isSliding() {
         return false;
-    };
+    }
 
     /**
      * The boardview calls this to pass on the elapsed time elTime to the 
@@ -105,7 +104,7 @@ public interface IDisplayable {
      * See ChatterBox2 for examples. 
      * The default for this method will do nothing.
      */
-    default public void setIdleTime(long elTime, boolean add) { };
+    default void setIdleTime(long elTime, boolean add) { }
 
     /** 
      * Conducts a frame update when sliding.
@@ -116,8 +115,7 @@ public interface IDisplayable {
      * See ChatterBox2 and KeyBindingsOverlay for examples.
      * The default for this method will always return false.
      */
-    default public boolean slide() {
+    default boolean slide() {
         return false;
-    };
-
+    }
 }

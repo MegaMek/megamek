@@ -18,30 +18,6 @@
  */
 package megamek.client.ui.swing.lobby;
 
-import static megamek.client.ui.swing.util.UIUtil.*;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Vector;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -50,17 +26,30 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import static megamek.client.ui.swing.util.UIUtil.*;
+
 /** 
- *  A JPanel that holds a table giving an overview of the current relative strength
- *  of the teams of the game. The table does not listen to game changes and requires
- *  being notified through {@link #refreshData()}. It accesses data through the stored
- *  ClientGUI.
+ * A JPanel that holds a table giving an overview of the current relative strength
+ * of the teams of the game. The table does not listen to game changes and requires
+ * being notified through {@link #refreshData()}. It accesses data through the stored
+ * ClientGUI.
  */
 public class TeamOverviewPanel extends JPanel {
 
     private static final long serialVersionUID = -4754010220963493049L;
      
-    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS };
+    private enum TOMCOLS { TEAM, MEMBERS, TONNAGE, COST, BV, HIDDEN, UNITS }
     private final TeamOverviewModel teamOverviewModel = new TeamOverviewModel();
     private final JTable teamOverviewTable = new JTable(teamOverviewModel);
     private final TableColumnManager teamOverviewManager = new TableColumnManager(teamOverviewTable, false);
@@ -132,7 +121,7 @@ public class TeamOverviewPanel extends JPanel {
                     teamOverviewManager.hideColumn(TOMCOLS.BV.ordinal());
                 }
             }
-        };
+        }
     };
     
     /** Adapts the row heights and headers to the current GUI scaling. */
@@ -205,7 +194,7 @@ public class TeamOverviewPanel extends JPanel {
         }
 
         /** Updates the stored data from the provided game. */
-        public void updateTable(IGame game) {
+        public void updateTable(Game game) {
             clearData();
             for (Team team: game.getTeamsVector()) {
                 teams.add(team);
@@ -219,16 +208,16 @@ public class TeamOverviewPanel extends JPanel {
                 int hiddenBv = 0;
                 boolean[] unitCritical = { false, false, false, false, false };
                 boolean[] unitWarnings = { false, false, false, false, false };
-                for (IPlayer teamMember: team.getPlayersVector()) {
+                for (Player teamMember: team.getPlayersVector()) {
                     // Get the "real" player object, as the team's may be wrong
-                    IPlayer player = game.getPlayer(teamMember.getId());
+                    Player player = game.getPlayer(teamMember.getId());
                     bv += player.getBV();
                     for (Entity entity: game.getPlayerEntities(player, false)) {
                         // Avoid counting fighters in squadrons twice 
                         if (entity instanceof FighterSquadron) {
                             continue;
                         }
-                        cost += (long)entity.getCost(false);
+                        cost += (long) entity.getCost(false);
                         ton += entity.getWeight();
                         unitCounts[classIndex(entity)]++;
                         int mapType = clientGui.getClient().getMapSettings().getMedium();
@@ -236,13 +225,11 @@ public class TeamOverviewPanel extends JPanel {
                                 || (entity.doomedInAtmosphere() && mapType == MapSettings.MEDIUM_ATMOSPHERE)
                                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
-                                || (!entity.isDesignValid())
-                                ) {
+                                || (!entity.isDesignValid())) {
                             unitCritical[classIndex(entity)] = true;
                         }
                         if (((entity.hasC3i() || entity.hasNavalC3()) && (entity.calculateFreeC3Nodes() == 5))
-                                || ((entity.getC3Master() == null) && entity.hasC3S())
-                                ) {
+                                || ((entity.getC3Master() == null) && entity.hasC3S())) {
                             unitWarnings[classIndex(entity)] = true;
                         }
                         if (entity.isHidden()) {
@@ -251,10 +238,10 @@ public class TeamOverviewPanel extends JPanel {
                     }
                 }
                 units.add(unitSummary(unitCounts, unitCritical, unitWarnings));
-                bvs.add((long)bv);
-                hidden.add(bv != 0 ? (double)hiddenBv/bv : 0);
+                bvs.add((long) bv);
+                hidden.add(bv != 0 ? (double) hiddenBv / bv : 0);
                 costs.add(cost);
-                tons.add((long)(ton*1000));
+                tons.add((long) (ton * 1000));
             }
             teamOverviewTable.clearSelection();
             fireTableDataChanged();
@@ -325,65 +312,65 @@ public class TeamOverviewPanel extends JPanel {
             StringBuilder result = new StringBuilder("<HTML><NOBR>");
             TOMCOLS column = TOMCOLS.values()[col];
             switch (column) {
-            case TEAM:
-                boolean isEnemy = !teams.get(row).getPlayersVector().contains(clientGui.getClient().getLocalPlayer());
-                Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
-                result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
-                result.append(teamNames.get(row) + "</FONT>");
-                break;
+                case TEAM:
+                    boolean isEnemy = !teams.get(row).getPlayersVector().contains(clientGui.getClient().getLocalPlayer());
+                    Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
+                    result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
+                    result.append(teamNames.get(row) + "</FONT>");
+                    break;
 
-            case TONNAGE:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                double ton = (double)tons.get(row) / 1000;
-                if (ton < 10) {
-                    result.append(String.format("%.2f", ton) + " Tons");
-                } else {
-                    result.append(String.format("%,d", Math.round(ton)) + " Tons");
-                }
-                result.append(relativeValue(tons, row));
-                break;
+                case TONNAGE:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    double ton = (double) tons.get(row) / 1000;
+                    if (ton < 10) {
+                        result.append(String.format("%.2f", ton) + " Tons");
+                    } else {
+                        result.append(String.format("%,d", Math.round(ton)) + " Tons");
+                    }
+                    result.append(relativeValue(tons, row));
+                    break;
 
-            case COST:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                if (costs.get(row) < 10_000_000) {
-                    result.append(String.format("%,d", costs.get(row)) + " C-Bills");
-                } else {
-                    result.append(String.format("%,d", costs.get(row) / 1_000_000) + "\u00B7M C-Bills");
-                }
-                result.append(relativeValue(costs, row));
-                break;
+                case COST:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    if (costs.get(row) < 10_000_000) {
+                        result.append(String.format("%,d", costs.get(row)) + " C-Bills");
+                    } else {
+                        result.append(String.format("%,d", costs.get(row) / 1_000_000) + "\u00B7M C-Bills");
+                    }
+                    result.append(relativeValue(costs, row));
+                    break;
 
-            case MEMBERS:
-                return teams.get(row).getPlayersVector();
+                case MEMBERS:
+                    return teams.get(row).getPlayersVector();
 
-            case BV:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
-                result.append(relativeValue(bvs, row));
-                break;
-                
-            case UNITS:
-                if (!seeTeam(row)) {
-                    return "<HTML>" + guiScaledFontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
-                }
-                result.append(guiScaledFontHTML(textSizeDelta - 0.1f));
-                result.append(units.get(row));
-                break;
-                
-            case HIDDEN:
-                result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
-                var percentage = hidden.get(row);
-                result.append(percentage == 0 ? "--": NumberFormat.getPercentInstance().format(percentage));
-                
-            default:
-                break;
+                case BV:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    result.append(NumberFormat.getIntegerInstance().format(bvs.get(row)));
+                    result.append(relativeValue(bvs, row));
+                    break;
+
+                case UNITS:
+                    if (!seeTeam(row)) {
+                        return "<HTML>" + guiScaledFontHTML(UIUtil.uiGray(), textSizeDelta - 0.1f) + "Unavailable";
+                    }
+                    result.append(guiScaledFontHTML(textSizeDelta - 0.1f));
+                    result.append(units.get(row));
+                    break;
+
+                case HIDDEN:
+                    result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
+                    var percentage = hidden.get(row);
+                    result.append(percentage == 0 ? "--": NumberFormat.getPercentInstance().format(percentage));
+
+                default:
+                    break;
             }
 
             return result.toString();
         }
         
         private boolean seeTeam(int row) {
-            IGame game = clientGui.getClient().getGame();
+            Game game = clientGui.getClient().getGame();
             return !game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)
                     || game.getTeamForPlayer(clientGui.getClient().getLocalPlayer()).getId() == teamID.get(row);
         }
@@ -432,15 +419,15 @@ public class TeamOverviewPanel extends JPanel {
             }
             removeAll();
             add(Box.createVerticalGlue());
-            Vector<?> playerList = (Vector<?>)value;
+            Vector<?> playerList = (Vector<?>) value;
             int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
             int size = scaleForGUI(2 * baseSize);
             Font font = new Font("Dialog", Font.PLAIN, scaleForGUI(baseSize));
             for (Object obj: playerList) {
-                if (!(obj instanceof IPlayer)) {
+                if (!(obj instanceof Player)) {
                     continue;
                 }
-                IPlayer player = (IPlayer)obj;
+                Player player = (Player) obj;
                 JLabel lblPlayer = new JLabel(player.getName());
                 lblPlayer.setBorder(new EmptyBorder(3, 3, 3, 3));
                 lblPlayer.setFont(font);

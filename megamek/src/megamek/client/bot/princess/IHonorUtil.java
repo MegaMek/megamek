@@ -19,7 +19,6 @@ import megamek.common.Targetable;
 
 /**
  * @author Deric Page (deric dot page at usa dot net)
- * @version %Id%
  * @since 9/5/14 2:48 PM
  */
 public interface IHonorUtil {
@@ -49,9 +48,9 @@ public interface IHonorUtil {
     void setEnemyDishonored(int playerId);
 
     /**
-     * Checks the given {@link Targetable} to see if it should be counted as broken:<br/>
-     * Forced Withdrawal is turned on<br/>
-     * Given unit is Crippled<br/>
+     * Checks the given {@link Targetable} to see if it should be counted as broken:<br>
+     * Forced Withdrawal is turned on<br>
+     * Given unit is Crippled<br>
      *
      * @param target           The unit to be checked.
      * @param forcedWithdrawal Set TRUE if the Forced Withdrawal rule is in effect.

@@ -1,0 +1,172 @@
+Version:1.0
+Jenner
+JR7-N
+mul id:8247
+
+Config:Biped
+techbase:Inner Sphere
+era:3120
+source:Rec Guide:ilClan #18 - Late Republic
+rules level:2
+
+mass:35
+engine:245 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:11 IS Double
+walk mp:7
+jump mp:7
+
+armor:Heavy Ferro-Fibrous(Inner Sphere)
+LA armor:11
+RA armor:11
+LT armor:11
+RT armor:11
+CT armor:14
+HD armor:9
+LL armor:15
+RL armor:15
+RTL armor:4
+RTR armor:4
+RTC armor:4
+
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+SRM 4, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+ISERMediumLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERMediumLaser
+ISERMediumLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+Jump Jet
+BeagleActiveProbe
+BeagleActiveProbe
+IS Heavy Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+Jump Jet
+IS Ammo SRM-4
+ISCASEII
+IS Heavy Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+SRM 4
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Heavy Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre.
+
+capabilities:Five Smithson Lifter jump jets, two in each side torso and one in the center torso gave it a jumping distance of 150 meters, while its 245-rated Magna fusion engine allowed for a top speed of over 118 km/h, making it faster than most other 'Mechs. A favorite tactic of Jenner lances was to gang up on larger 'Mechs and unleash a devastating alpha strike. One or two of the 'Mechs would be equipped with inferno rounds, so even if the enemy survived the first strike they were badly damaged and running hot, allowing the Jenners to jump to safety and cool down themselves. A few seconds later the attack would be repeated until finally, the enemy was dead. It was also common practice to pair the Jenner with another Combine 'Mech, the Panther, creating a deadly combination of sheer speed and firepower with the slower Panther provided cover fire for the Jenner's flanking attack. The Jenner was such a favorite among Kurita MechWarriors that it became the benchmark against which all other newly designed Combine 'Mechs were compared.
+
+history:The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre. The Jenner became the standard light warhorse of the DCMS with the outbreak of the First Succession War, though its reputation would be forever tarnished following its role in the Kentares Massacre. Construction of new Jenners continued at Diplan MechYard's factory on Ozawa until a raw mineral shortage caused a halt in 2815, though they continued to produce new chassis. In 2823 production resumed on Ozawa, with some three thousand chassis shipped to Diplan's subsidiary on Luthien for final assembly, which itself was retooling to begin full-scale production; by 2830 both production lines were producing 1,350 Jenners a year. The sheer destruction of the Succession Wars finally took their toll when the last Jenner factory was destroyed in 2848, though so many Jenners had been produced by then that nearly every DCMS battalion had at least one of these 'Mechs well into the War of 3039. While the other Successor States eventually managed to procure operational Jenners (every AFFS regiment along the Combine border had at least one), the design remained in predominant use by House Kurita.
+
+manufacturer:Luthien Armor Works, Diplan 'Mechyards, Luthien Armor Works, Luthien Armor Works, Diplan 'Mechyards
+primaryfactory:Luthien, Abiy Adi, New Samarkand, Ozawa
+
+systemmanufacturer:CHASSIS:Alshain Class 48
+systemmanufacturer:ENGINE:Magna 245
+systemmanufacturer:ARMOR:New Samarkand Royal Ferro-Fibrous with CASE
+systemmanufacturer:JUMPJET:Lexington Ltd. Lifters
+systemmanufacturer:COMMUNICATIONS:Sipher Security Plus
+systemmanufacturer:TARGETING:Matabushi Sentinel
+
+
+
+
+

@@ -19,6 +19,10 @@ Nephilim Assault Battle Armor
 (Seeker) [MG]
 </Model>
 
+<mul id:>
+4704
+</mul id:>
+
 <chassis>
 biped
 </chassis>

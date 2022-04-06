@@ -15,6 +15,10 @@ Fortune Wheeled Assault Vehicle
 <Model>
 (Standard)
 </Model>
+
+<mul id:>
+4181
+</mul id:>
 <Tonnage>
 80
 </Tonnage>

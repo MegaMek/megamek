@@ -13,10 +13,10 @@
  */
 package megamek.client.bot;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Coords;
 import megamek.common.EntityMovementMode;
 import megamek.common.annotations.Nullable;
-import megamek.common.util.StringUtil;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -24,12 +24,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Maintains a cache of hexes and movement type against whether or not they have a valid path to the center of the
- * board.  This class does not maintain the actual movement path but rather a simple boolean flag of whether a path
- * to center exists.
+ * Maintains a cache of hexes and movement type against whether or not they have a valid path to the
+ * center of the board. This class does not maintain the actual movement path but rather a simple
+ * boolean flag of whether a path to center exists.
  *
  * @author Deric Page (dericpage@users.sourceforge.net)
- * @version %Id%
  * @since 10/20/2014 10:31 AM
  */
 public final class HexHasPathToCenterCache {
@@ -88,7 +87,7 @@ public final class HexHasPathToCenterCache {
      * @param hexCoords The coordinates, {@link Coords#toFriendlyString()}, of the starting hex.
      */
     void remove(String hexCoords) {
-        if (StringUtil.isNullOrEmpty(hexCoords)) {
+        if (StringUtility.isNullOrEmpty(hexCoords)) {
             return;
         }
         Set<Key> keySet = new HashSet<>(cache.keySet());
@@ -115,7 +114,7 @@ public final class HexHasPathToCenterCache {
          * @throws IllegalArgumentException if hexCoords is NULL or Empty or movementMode is NULL.
          */
         Key(String hexCoords, EntityMovementMode movementMode) {
-            if (StringUtil.isNullOrEmpty(hexCoords)) {
+            if (StringUtility.isNullOrEmpty(hexCoords)) {
                 throw new IllegalArgumentException("Starting Coords is NULL or Empty.");
             }
             if (movementMode == null) {

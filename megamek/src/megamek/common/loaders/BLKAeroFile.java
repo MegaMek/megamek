@@ -63,6 +63,10 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             a.setModel("");
         }
 
+        if (dataFile.exists(MtfFile.MUL_ID)) {
+            a.setMulId(dataFile.getDataAsInt(MtfFile.MUL_ID)[0]);
+        }
+
         setTechLevel(a);
         setFluff(a);
 
@@ -87,7 +91,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         a.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         if (dataFile.exists("omnipodheatsinks")) {
-        	a.setPodHeatSinks(dataFile.getDataAsInt("omnipodheatsinks")[0]);
+            a.setPodHeatSinks(dataFile.getDataAsInt("omnipodheatsinks")[0]);
         }
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
@@ -293,7 +297,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
 
                 if (etype != null) {
                     try {
-                        int useLoc = TestEntity.eqRequiresLocation(t, etype)? nLoc : Aero.LOC_FUSELAGE;
+                        int useLoc = TestEntity.eqRequiresLocation(t, etype) ? nLoc : Aero.LOC_FUSELAGE;
                         Mounted mount = t.addEquipment(etype, useLoc, rearMount);
                         mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
@@ -314,7 +318,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                } else if (!equipName.equals("")) {
+                } else if (!equipName.isBlank()) {
                     t.addFailedEquipment(equipName);
                 }
             }
@@ -329,25 +333,4 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             }
         }
     }
-
-    /*
-     * protected void organizeIntoGroups(Aero a) throws EntityLoadingException {
-     * //collect a hash of all the same weapons in each location by id
-     * Map<String, Integer> groups = new HashMap<String, Integer>(); for
-     * (Mounted mounted : a.getTotalWeaponList()) { int loc =
-     * mounted.getLocation(); if(loc == Aero.LOC_RWING || loc == Aero.LOC_LWING)
-     * { loc = Aero.LOC_WINGS; } if(mounted.isRearMounted()) { loc =
-     * Aero.LOC_AFT; } String key = mounted.getType().getInternalName() + ":" +
-     * loc; if(null == groups.get(key)) { groups.put(key, 1); } else {
-     * groups.put(key, groups.get(key) + 1); } } //now we just need to traverse
-     * the hash and add this new equipment Set<String> set= groups.keySet();
-     * Iterator<String> iter = set.iterator(); while(iter.hasNext()) { String
-     * key = iter.next(); String name = key.split(":")[0]; int loc =
-     * Integer.parseInt(key.split(":")[1]); EquipmentType etype =
-     * EquipmentType.get(name); Mounted newmount; if (etype != null) { try {
-     * newmount = a.addWeaponGroup(etype, loc);
-     * newmount.setNWeapons(groups.get(key)); } catch (LocationFullException ex)
-     * { throw new EntityLoadingException(ex.getMessage()); } } else if(name !=
-     * "0"){ a.addFailedEquipment(name); } } }
-     */
 }

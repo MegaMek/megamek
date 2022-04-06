@@ -38,6 +38,7 @@ VERSION HISTORY:
 + MML Issue #927: Add LAM FuelTank
 + PR #3525: RATGeneratorEditor: Allow deleting RAT Roles and show MUL Role
 + Data: Updating Clothing light to remove offending text. 
++ PR #3553: Improved Russian Name Data
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

@@ -107,7 +107,7 @@ public class VictoryResultTest {
     public void testGetPlayerScoreNull() {
         VictoryResult victoryResult = new VictoryResult(true);
 
-        assertEquals("0.0", victoryResult.getPlayerScore(1) + "");
+        assertEquals(0.0, victoryResult.getPlayerScore(1), 0.0);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class VictoryResultTest {
         VictoryResult victoryResult = new VictoryResult(true);
         victoryResult.addPlayerScore(1, 3);
 
-        assertEquals("3.0", victoryResult.getPlayerScore(1) + "");
+        assertEquals(3.0, victoryResult.getPlayerScore(1), 0.0);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class VictoryResultTest {
         victoryResult.addPlayerScore(1, 3);
 
         assertEquals(1, victoryResult.getPlayers().length);
-        assertEquals("3.0", victoryResult.getPlayerScore(1) + "");
+        assertEquals(3.0, victoryResult.getPlayerScore(1), 0.0);
     }
 
     @Test
@@ -153,7 +153,7 @@ public class VictoryResultTest {
         victoryResult.addTeamScore(1, 3);
 
         assertEquals(1, victoryResult.getTeams().length);
-        assertEquals("3.0", victoryResult.getTeamScore(1) + "");
+        assertEquals(3.0, victoryResult.getTeamScore(1), 0.0);
     }
 
     @Test

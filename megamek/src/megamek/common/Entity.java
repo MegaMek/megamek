@@ -14930,7 +14930,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
-            if (StringUtility.isNullOrEmpty(q.getLocation())) {
+            if (StringUtility.isNullOrBlank(q.getLocation())) {
 
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {

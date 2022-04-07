@@ -65,12 +65,12 @@ public class Victory implements Serializable {
     }
 
     public VictoryResult checkForVictory(Game game, Map<String, Object> context) {
-        VictoryResult reVal;
+
 
         // Check for ForceVictory
         // Always check for forced victory, so games without victory conditions
         // can be completed
-        reVal = force.victory(game, context);
+        VictoryResult reVal = force.victory(game, context);
         if (reVal.victory()) {
             return reVal;
         }

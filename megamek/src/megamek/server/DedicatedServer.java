@@ -29,7 +29,7 @@ import java.util.Properties;
 
 public class DedicatedServer {
 
-    public static void start(String[] args) {
+    public static void start(String... args) {
         ClientServerCommandLineParser parser = new ClientServerCommandLineParser(args,
                 MegaMekCommandLineFlag.DEDICATED.toString(),
                 true, false, false);
@@ -55,7 +55,7 @@ public class DedicatedServer {
             } catch (Exception ex) {
                 LogManager.getLogger().error(
                         "Error: could not load mail properties file \"" +
-                                propsFile.getAbsolutePath() + "\"", ex);
+                                propsFile.getAbsolutePath() + '"', ex);
                 return;
             }
         }
@@ -81,7 +81,7 @@ public class DedicatedServer {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         start(args);
     }
 

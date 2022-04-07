@@ -52,6 +52,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.Processor.*;
 import megamek.server.commands.*;
+import megamek.server.resolver.ResolverPunchAttack;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
 
@@ -818,7 +819,7 @@ public class Server implements Runnable {
                 send(connId, createAttackPacket(game.getRamsVector(), 1));
                 send(connId, createAttackPacket(game.getTeleMissileAttacksVector(), 1));
             }
-            
+
             if (game.getPhase().hasTurns() && game.hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
@@ -1585,12 +1586,7 @@ public class Server implements Runnable {
         Report r;
 
         // remove carcasses to the graveyard
-        Vector<Entity> toRemove = new Vector<>();
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.isCarcass() && !e.isDestroyed()) {
-                toRemove.add(e);
-            }
-        }
+        Vector<Entity> toRemove = game.getEntitiesVector().stream().filter(e -> e.isCarcass() && !e.isDestroyed()).collect(Collectors.toCollection(Vector::new));
         for (Entity e : toRemove) {
             destroyEntity(e, "crew death", false, true);
             game.removeEntity(e.getId(), IEntityRemovalConditions.REMOVE_SALVAGEABLE);
@@ -1730,7 +1726,7 @@ public class Server implements Runnable {
             // Record the player's alive, retreated, or salvageable units.
             for (int x = 0; x < vAllUnits.size(); x++) {
                 Entity e = vAllUnits.elementAt(x);
-                if (e.getOwner() == p) {
+                if (Objects.equals(e.getOwner(), p)) {
                     sb.append(UnitStatusFormatter.format(e));
                 }
             }
@@ -1742,7 +1738,7 @@ public class Server implements Runnable {
                 sb.append("The following utterly destroyed units are not available for salvage:\n");
                 while (devastated.hasMoreElements()) {
                     Entity e = devastated.nextElement();
-                    if (e.getOwner() == p) {
+                    if (Objects.equals(e.getOwner(), p)) {
                         sb.append(e.getShortName());
                         for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
                             sb.append(", ").append(e.getCrew().getNameAndRole(pos)).append(" (")
@@ -9178,11 +9174,10 @@ public class Server implements Runnable {
         } else {
             direction = src.direction(dest);
         }
-        Report r;
         // check entity in target hex
         Entity affaTarget = game.getAffaTarget(dest, entity);
         // falling mech falls
-        r = new Report(2205);
+        Report r = new Report(2205);
         r.subject = entity.getId();
         r.addDesc(entity);
         r.add(fallElevation);
@@ -11881,7 +11876,7 @@ public class Server implements Runnable {
      *                          depending on if it was an unarmed attack (both arms) or a weapon
      *                          attack (the arm with the weapon).
      */
-    private void applyZweihanderSelfDamage(Entity ae, boolean missed, int... criticalLocations) {
+    public void applyZweihanderSelfDamage(Entity ae, boolean missed, int... criticalLocations) {
         Report r = new Report(4022);
         r.subject = ae.getId();
         r.indent();
@@ -11893,264 +11888,6 @@ public class Server implements Runnable {
 
         if (missed) {
             game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
-        }
-    }
-
-    /**
-     * Handle a punch attack
-     */
-    private void resolvePunchAttack(PhysicalResult pr, int lastEntityId) {
-        final PunchAttackAction paa = (PunchAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(paa.getEntityId());
-        final Targetable target = game.getTarget(paa.getTargetType(), paa.getTargetId());
-        Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            te = (Entity) target;
-        }
-        boolean throughFront = true;
-        if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
-        }
-        final String armName = (paa.getArm() == PunchAttackAction.LEFT) ? "Left Arm" : "Right Arm";
-        final int armLoc = (paa.getArm() == PunchAttackAction.LEFT) ? Mech.LOC_LARM : Mech.LOC_RARM;
-
-        // get damage, ToHitData and roll from the PhysicalResult
-        int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage : pr.damageRight;
-        // LAMs in airmech mode do half damage if airborne.
-        if (ae.isAirborneVTOLorWIGE()) {
-            damage = (int) ceil(damage * 0.5);
-        }
-        final ToHitData toHit = paa.getArm() == PunchAttackAction.LEFT ? pr.toHit : pr.toHitRight;
-        int roll = paa.getArm() == PunchAttackAction.LEFT ? pr.roll : pr.rollRight;
-        final boolean targetInBuilding = Compute.isInBuilding(game, te);
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
-                && (roll == toHit.getValue());
-
-        Report r;
-
-        // Set Margin of Success/Failure.
-        toHit.setMoS(roll - max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
-                && ((toHit.getMoS() / 3) >= 1);
-
-        // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
-
-        if (lastEntityId != paa.getEntityId()) {
-            // report who is making the attacks
-            r = new Report(4005);
-            r.subject = ae.getId();
-            r.addDesc(ae);
-            addReport(r);
-        }
-
-        r = new Report(4010);
-        r.subject = ae.getId();
-        r.indent();
-        r.add(armName);
-        r.add(target.getDisplayName());
-        r.newlines = 0;
-        addReport(r);
-
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(4015);
-            r.subject = ae.getId();
-            r.add(toHit.getDesc());
-            addReport(r);
-            if ((ae instanceof LandAirMech) && ae.isAirborneVTOLorWIGE()) {
-                game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed punch attack"));
-            }
-            return;
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(4020);
-            r.subject = ae.getId();
-            r.add(toHit.getDesc());
-            r.newlines = 0;
-            addReport(r);
-            roll = Integer.MAX_VALUE;
-        } else {
-            r = new Report(4025);
-            r.subject = ae.getId();
-            r.add(toHit);
-            r.add(roll);
-            r.newlines = 0;
-            addReport(r);
-            if (glancing) {
-                r = new Report(3186);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                addReport(r);
-            }
-
-            if (directBlow) {
-                r = new Report(3189);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                addReport(r);
-            }
-        }
-
-        // do we hit?
-        if (roll < toHit.getValue()) {
-            // nope
-            r = new Report(4035);
-            r.subject = ae.getId();
-            addReport(r);
-
-            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
-                game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed punch attack"));
-            }
-            // If the target is in a building, the building absorbs the damage.
-            if (targetInBuilding && (bldg != null)) {
-                // Only report if damage was done to the building.
-                if (damage > 0) {
-                    Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
-                    for (Report report : buildingReport) {
-                        report.subject = ae.getId();
-                    }
-                    addReport(buildingReport);
-                }
-            }
-
-            if (paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, true, Mech.LOC_RARM, Mech.LOC_LARM);
-            }
-
-            return;
-        }
-
-        // Targeting a building.
-        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
-            // The building takes the full brunt of the attack.
-            r = new Report(4040);
-            r.subject = ae.getId();
-            addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = ae.getId();
-            }
-            addReport(buildingReport);
-
-            // Damage any infantry in the hex.
-            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
-
-            if (paa.isZweihandering()) {
-                applyZweihanderSelfDamage(ae, false,  Mech.LOC_RARM, Mech.LOC_LARM);
-            }
-
-            // And we're done!
-            return;
-        }
-
-        HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-        r = new Report(4045);
-        r.subject = ae.getId();
-        r.add(toHit.getTableDesc());
-        r.add(te.getLocationAbbr(hit));
-        addReport(r);
-
-        // The building shields all units from a certain amount of damage.
-        // The amount is based upon the building's CF at the phase's start.
-        if (targetInBuilding && (bldg != null)) {
-            int bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
-            int toBldg = min(bldgAbsorbs, damage);
-            damage -= toBldg;
-            addNewLines();
-            Vector<Report> buildingReport = damageBuilding(bldg, toBldg, target.getPosition());
-            for (Report report : buildingReport) {
-                report.subject = ae.getId();
-            }
-            addReport(buildingReport);
-
-            // some buildings scale remaining damage that is not absorbed
-            // TODO : this isn't quite right for castles brian
-            damage = (int) floor(bldg.getDamageToScale() * damage);
-        }
-
-        // A building may absorb the entire shot.
-        if (damage == 0) {
-            r = new Report(4050);
-            r.subject = ae.getId();
-            r.add(te.getShortName());
-            r.add(te.getOwner().getName());
-            r.indent();
-            addReport(r);
-        } else {
-            if (glancing) {
-                // Round up glancing blows against conventional infantry
-                damage = (int) (te.isConventionalInfantry() ? ceil(damage / 2.0) : floor(damage / 2.0));
-            }
-
-            if (directBlow) {
-                damage += toHit.getMoS() / 3;
-                hit.makeDirectBlow(toHit.getMoS() / 3);
-            }
-
-            damage = checkForSpikes(te, hit.getLocation(), damage, ae,
-                    (paa.getArm() == PunchAttackAction.LEFT) ?  Mech.LOC_LARM : Mech.LOC_RARM);
-            DamageType damageType = DamageType.NONE;
-            addReport(damageEntity(te, hit, damage, false, damageType, false,
-                    false, throughFront));
-            if (target instanceof VTOL) {
-                // destroy rotor
-                addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
-                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM, VTOL.CRIT_ROTOR_DESTROYED),
-                        false, 0, false));
-            }
-            // check for extending retractable blades
-            if (paa.isBladeExtended(paa.getArm())) {
-                addNewLines();
-                r = new Report(4455);
-                r.indent(2);
-                r.subject = ae.getId();
-                r.newlines = 0;
-                addReport(r);
-                // conventional infantry don't take crits and battle armor need
-                // to be handled differently
-                if (!(target instanceof Infantry)) {
-                    addNewLines();
-                    addReport(criticalEntity(te, hit.getLocation(), hit.isRear(), 0,
-                            true, false, damage));
-                }
-
-                if ((target instanceof BattleArmor) && (hit.getLocation() < te.locations())
-                        && (te.getInternal(hit.getLocation()) > 0)) {
-                    // TODO : we should really apply BA criticals through the critical
-                    // TODO : hits methods. Right now they are applied in damageEntity
-                    HitData baHit = new HitData(hit.getLocation(), false, HitData.EFFECT_CRITICAL);
-                    addReport(damageEntity(te, baHit, 0));
-                }
-                // extend the blade
-                // since retracting/extending is a freebie in the movement
-                // phase, lets assume that the
-                // blade retracts to its original mode
-                // ae.extendBlade(paa.getArm());
-                // check for breaking a nail
-                if (Compute.d6(2) > 9) {
-                    addNewLines();
-                    r = new Report(4456);
-                    r.indent(2);
-                    r.subject = ae.getId();
-                    r.newlines = 0;
-                    addReport(r);
-                    ae.destroyRetractableBlade(armLoc);
-                }
-            }
-        }
-
-        addNewLines();
-
-        if (paa.isZweihandering()) {
-            applyZweihanderSelfDamage(ae, false,  Mech.LOC_RARM, Mech.LOC_LARM);
-        }
-
-        addNewLines();
-
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
-        if ((target instanceof Mech) && ((Mech) target).isIndustrial()) {
-            ((Mech) target).setCheckForCrit(true);
         }
     }
 
@@ -14381,7 +14118,7 @@ public class Server implements Runnable {
             // TODO : What if the building collapses?
         } else {
             // Resolve the damage.
-            resolveChargeDamage(ae, te, toHit, direction, glancing, throughFront, false);
+            resolveChargeDamage(this, game, ae, te, toHit, direction, glancing, throughFront, false);
         }
     }
 
@@ -14542,7 +14279,7 @@ public class Server implements Runnable {
             // TODO : What if the building collapses?
         } else {
             // Resolve the damage.
-            resolveChargeDamage(ae, te, toHit, direction, glancing, throughFront, true);
+            resolveChargeDamage(this, game, ae, te, toHit, direction, glancing, throughFront, true);
         }
     }
 
@@ -14870,11 +14607,10 @@ public class Server implements Runnable {
      * Handle a charge's damage
      */
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction) {
-        resolveChargeDamage(ae, te, toHit, direction, false, true, false);
+        resolveChargeDamage(this, game, ae, te, toHit, direction, false, true, false);
     }
 
-    private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction,
-                                     boolean glancing, boolean throughFront, boolean airmechRam) {
+    private static void resolveChargeDamage(Server server, Game game, Entity ae, Entity te, ToHitData toHit, int direction, boolean glancing, boolean throughFront, boolean airmechRam) {
         // we hit...
 
         PilotingRollData chargePSR = null;
@@ -14935,16 +14671,16 @@ public class Server implements Runnable {
         r.subject = ae.getId();
         r.add(damageTaken);
         r.indent();
-        addReport(r);
+        server.addReport(r);
 
         // Charging vehicles check for possible motive system hits.
         if (ae instanceof Tank) {
             r = new Report(4241);
             r.indent();
-            addReport(r);
+            server.addReport(r);
             int side = Compute.targetSideTable(te, ae);
             int mod = ae.getMotiveSideMod(side);
-            addReport(vehicleMotiveDamage((Tank) ae, mod));
+            server.addReport(server.vehicleMotiveDamage((Tank) ae, mod));
         }
 
         while (damageTaken > 0) {
@@ -14960,8 +14696,8 @@ public class Server implements Runnable {
             }
             damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-            cluster = checkForSpikes(ae, hit.getLocation(), cluster, te, Mech.LOC_CT);
-            addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE,
+            cluster = server.checkForSpikes(ae, hit.getLocation(), cluster, te, Mech.LOC_CT);
+            server.addReport(server.damageEntity(ae, hit, cluster, false, DamageType.NONE,
                     false, false, throughFront));
         }
 
@@ -14979,7 +14715,7 @@ public class Server implements Runnable {
                 r.indent(2);
                 r.subject = ae.getId();
                 r.add(spikeDamage);
-                addReport(r);
+                server.addReport(r);
             }
             damage += spikeDamage;
         }
@@ -14988,7 +14724,7 @@ public class Server implements Runnable {
         r.add(damage);
         r.add(toHit.getTableDesc());
         r.indent();
-        addReport(r);
+        server.addReport(r);
 
         // Vehicles that have *been* charged check for motive system damage,
         // too...
@@ -14998,11 +14734,11 @@ public class Server implements Runnable {
         if ((te instanceof Tank) && !(te instanceof VTOL)) {
             r = new Report(4242);
             r.indent();
-            addReport(r);
+            server.addReport(r);
 
             int side = Compute.targetSideTable(ae, te);
             int mod = te.getMotiveSideMod(side);
-            addReport(vehicleMotiveDamage((Tank) te, mod));
+            server.addReport(server.vehicleMotiveDamage((Tank) te, mod));
         }
 
         // track any additional damage to the attacker due to the target having spikes
@@ -15016,12 +14752,12 @@ public class Server implements Runnable {
             if (bldgAbsorbs > 0) {
                 int toBldg = min(bldgAbsorbs, cluster);
                 cluster -= toBldg;
-                addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage, te.getPosition());
+                server.addNewLines();
+                Vector<Report> buildingReport = server.damageBuilding(bldg, damage, te.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
-                addReport(buildingReport);
+                server.addReport(buildingReport);
 
                 // some buildings scale remaining damage that is not absorbed
                 // TODO : this isn't quite right for castles brian
@@ -15034,15 +14770,15 @@ public class Server implements Runnable {
                 r.subject = ae.getId();
                 r.addDesc(te);
                 r.indent();
-                addReport(r);
+                server.addReport(r);
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                 hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 if (bDirect) {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
-                cluster = checkForSpikes(te, hit.getLocation(), cluster, ae, Mech.LOC_CT);
-                addReport(damageEntity(te, hit, cluster, false,
+                cluster = server.checkForSpikes(te, hit.getLocation(), cluster, ae, Mech.LOC_CT);
+                server.addReport(server.damageEntity(te, hit, cluster, false,
                         DamageType.NONE, false, false, throughFront));
             }
         }
@@ -15067,15 +14803,15 @@ public class Server implements Runnable {
                 if (diceRoll < controlRoll.getValue()) {
                     r.choose(false);
                     reports.add(r);
-                    crashAirMech(ae, controlRoll, reports);
+                    server.crashAirMech(ae, controlRoll, reports);
                 } else {
                     r.choose(true);
                     reports.addElement(r);
                     if (ae instanceof LandAirMech) {
-                        reports.addAll(landAirMech((LandAirMech) ae, ae.getPosition(), 1, ae.delta_distance));
+                        reports.addAll(server.landAirMech((LandAirMech) ae, ae.getPosition(), 1, ae.delta_distance));
                     }
                 }
-                addReport(reports);
+                server.addReport(reports);
             }
         } else {
             // move attacker and target, if possible
@@ -15083,13 +14819,13 @@ public class Server implements Runnable {
             Coords dest = src.translated(direction);
 
             if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(), direction)) {
-                addNewLines();
-                addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(
+                server.addNewLines();
+                server.addReport(server.doEntityDisplacement(te, src, dest, new PilotingRollData(
                         te.getId(), 2, "was charged")));
-                addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
+                server.addReport(server.doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
             }
 
-            addNewLines();
+            server.addNewLines();
         }
 
         // if the target is an industrial mech, it needs to check for crits at the end of turn
@@ -15112,8 +14848,7 @@ public class Server implements Runnable {
      *                          can't be damaged by spikes in this attack.
      * @return          The damage after applying any reduction due to spikes
      */
-    private int checkForSpikes(Entity target, int targetLocation, int damage,
-                               Entity attacker, int attackerLocation) {
+    public int checkForSpikes(Entity target, int targetLocation, int damage, Entity attacker, int attackerLocation) {
         return checkForSpikes(target, targetLocation, damage, attacker, attackerLocation, Entity.LOC_NONE);
     }
 
@@ -29793,13 +29528,13 @@ public class Server implements Runnable {
             if (paa.getArm() == PunchAttackAction.BOTH) {
                 paa.setArm(PunchAttackAction.LEFT);
                 pr.aaa = paa;
-                resolvePunchAttack(pr, cen);
+                ResolverPunchAttack.resolvePunchAttack(this, pr, cen);
                 cen = paa.getEntityId();
                 paa.setArm(PunchAttackAction.RIGHT);
                 pr.aaa = paa;
-                resolvePunchAttack(pr, cen);
+                ResolverPunchAttack.resolvePunchAttack(this, pr, cen);
             } else {
-                resolvePunchAttack(pr, cen);
+                ResolverPunchAttack.resolvePunchAttack(this, pr, cen);
                 cen = paa.getEntityId();
             }
         } else if (aaa instanceof KickAttackAction) {

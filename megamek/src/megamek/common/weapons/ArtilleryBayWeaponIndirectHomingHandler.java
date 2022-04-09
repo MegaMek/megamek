@@ -44,6 +44,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 import megamek.common.enums.DamageType;
 
@@ -328,12 +329,12 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                         BattleArmor ba = (BattleArmor) entity;
                         for (int loc = 1; loc <= ba.getTroopers(); loc++) {
                             hit.setLocation(loc);
-                            vPhaseReport.addAll(server.damageEntity(entity, hit,
+                            vPhaseReport.addAll(DamageEntityControl.damageEntity(server, entity, hit,
                                     ratedDamage, false, DamageType.NONE, false,
                                     true, throughFront, underWater));
                         }
                     } else {
-                        vPhaseReport.addAll(server.damageEntity(entity, hit,
+                        vPhaseReport.addAll(DamageEntityControl.damageEntity(server, entity, hit,
                                 ratedDamage, false, DamageType.NONE, false, true,
                                 throughFront, underWater));
                     }

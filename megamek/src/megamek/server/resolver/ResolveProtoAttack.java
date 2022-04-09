@@ -4,6 +4,7 @@ import megamek.common.*;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
 import megamek.common.enums.DamageType;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 
 import java.util.Vector;
@@ -183,7 +184,7 @@ public class ResolveProtoAttack {
                 damage += toHit.getMoS() / 3;
                 hit.makeDirectBlow(toHit.getMoS() / 3);
             }
-            server.addReport(server.damageEntity(te, hit, damage, false, DamageType.NONE,
+            server.addReport(DamageEntityControl.damageEntity(server, te, hit, damage, false, DamageType.NONE,
                     false, false, throughFront));
             if (((Protomech) ae).isEDPCharged()) {
                 r = new Report(3701);

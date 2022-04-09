@@ -22,6 +22,7 @@ import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.enums.DamageType;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
@@ -1559,7 +1560,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
             
             vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                    .addAll(DamageEntityControl.damageEntity(server, entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,

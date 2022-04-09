@@ -28,6 +28,7 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 import megamek.common.enums.DamageType;
 
@@ -212,7 +213,7 @@ public class MGAWeaponHandler extends MGHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                    .addAll(DamageEntityControl.damageEntity(server, entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,

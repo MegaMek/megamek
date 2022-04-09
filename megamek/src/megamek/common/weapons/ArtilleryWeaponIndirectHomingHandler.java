@@ -24,6 +24,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 import megamek.common.enums.DamageType;
 
@@ -296,7 +297,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                         waa.getAimingMode(), toHit.getCover());
                 hit.setAttackerId(getAttackerId());
                 // BA gets damage to all troopers
-                vPhaseReport.addAll(server.damageEntity(entity, hit,
+                vPhaseReport.addAll(DamageEntityControl.damageEntity(server, entity, hit,
                             ratedDamage, false, DamageType.NONE, false, true,
                             throughFront, underWater));
                 server.creditKill(entity, ae);

@@ -27,6 +27,7 @@ import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 import megamek.common.enums.DamageType;
 
@@ -112,9 +113,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             int damage = 4;
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             // specialDamage = damageEntity(entityTarget, hit, damage);
-            specialDamageReport = server
-                    .damageEntity(
-                            entityTarget,
+            specialDamageReport = DamageEntityControl
+                    .damageEntity(server, entityTarget,
                             hit,
                             damage,
                             false,

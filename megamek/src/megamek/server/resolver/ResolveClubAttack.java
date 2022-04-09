@@ -5,6 +5,7 @@ import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.enums.DamageType;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 
 import java.util.Vector;
@@ -307,7 +308,7 @@ public class ResolveClubAttack {
             damage = server.checkForSpikes(te, hit.getLocation(), damage, ae, Entity.LOC_NONE);
 
             DamageType damageType = DamageType.NONE;
-            server.addReport(server.damageEntity(te, hit, damage, false, damageType, false,
+            server.addReport(DamageEntityControl.damageEntity(server, te, hit, damage, false, damageType, false,
                     false, throughFront));
             if (target instanceof VTOL) {
                 // destroy rotor
@@ -333,7 +334,7 @@ public class ResolveClubAttack {
             server.addReport(r);
             if (roll >= 10) {
                 hit.makeGlancingBlow();
-                server.addReport(server.damageEntity(te, hit, 1, false, DamageType.NONE,
+                server.addReport(DamageEntityControl.damageEntity(server, te, hit, 1, false, DamageType.NONE,
                         true, false, throughFront));
             }
         }

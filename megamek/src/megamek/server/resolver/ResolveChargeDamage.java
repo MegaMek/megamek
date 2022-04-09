@@ -5,6 +5,7 @@ import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.enums.DamageType;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 
 import java.util.Vector;
@@ -108,7 +109,7 @@ public class ResolveChargeDamage {
             damageTaken -= cluster;
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             cluster = server.checkForSpikes(ae, hit.getLocation(), cluster, te, Mech.LOC_CT);
-            server.addReport(server.damageEntity(ae, hit, cluster, false, DamageType.NONE,
+            server.addReport(DamageEntityControl.damageEntity(server, ae, hit, cluster, false, DamageType.NONE,
                     false, false, throughFront));
         }
 
@@ -189,7 +190,7 @@ public class ResolveChargeDamage {
                     hit.makeDirectBlow(directBlowCritMod);
                 }
                 cluster = server.checkForSpikes(te, hit.getLocation(), cluster, ae, Mech.LOC_CT);
-                server.addReport(server.damageEntity(te, hit, cluster, false,
+                server.addReport(DamageEntityControl.damageEntity(server, te, hit, cluster, false,
                         DamageType.NONE, false, false, throughFront));
             }
         }

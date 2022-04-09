@@ -4,6 +4,7 @@ import megamek.common.*;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.enums.DamageType;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 
 import java.util.Vector;
@@ -209,7 +210,7 @@ public class ResolverPunchAttack {
             damage = server.checkForSpikes(te, hit.getLocation(), damage, ae,
                     (paa.getArm() == PunchAttackAction.LEFT) ?  Mech.LOC_LARM : Mech.LOC_RARM);
             DamageType damageType = DamageType.NONE;
-            server.addReport(server.damageEntity(te, hit, damage, false, damageType, false,
+            server.addReport(DamageEntityControl.damageEntity(server, te, hit, damage, false, damageType, false,
                     false, throughFront));
             if (target instanceof VTOL) {
                 // destroy rotor

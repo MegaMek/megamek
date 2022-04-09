@@ -33,6 +33,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 
 /**
@@ -90,7 +91,7 @@ public class LegAttackHandler extends WeaponHandler {
         }
 
         // ASSUMPTION: buildings CAN'T absorb *this* damage.
-        vPhaseReport.addAll(server.damageEntity(entityTarget, hit, damage,
+        vPhaseReport.addAll(DamageEntityControl.damageEntity(server, entityTarget, hit, damage,
                 false, damageType, false, false, throughFront, underWater));
         Report.addNewline(vPhaseReport);
         // Do criticals.

@@ -4,6 +4,7 @@ import megamek.common.*;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.enums.DamageType;
 import megamek.common.options.OptionsConstants;
+import megamek.server.DamageEntityControl;
 import megamek.server.Server;
 
 import java.util.Vector;
@@ -225,7 +226,7 @@ public class ResolveKickAttack {
             }
             damage = server.checkForSpikes(te, hit.getLocation(), damage, ae, leg);
             DamageType damageType = DamageType.NONE;
-            server.addReport(server.damageEntity(te, hit, damage, false, damageType, false,
+            server.addReport(DamageEntityControl.damageEntity(server, te, hit, damage, false, damageType, false,
                     false, throughFront));
             if (target instanceof VTOL) {
                 // destroy rotor

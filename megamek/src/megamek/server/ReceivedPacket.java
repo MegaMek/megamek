@@ -11,6 +11,4 @@ public class ReceivedPacket {
             packet = p;
             connId = cid;
         }
-
-
 }

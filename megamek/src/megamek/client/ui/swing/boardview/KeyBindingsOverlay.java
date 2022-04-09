@@ -94,9 +94,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             );
     
     /** The keybinds to be shown in the Board Editor */
-    private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
-            KeyCommandBind.HEX_COORDS
-            );
+    private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = List.of(KeyCommandBind.HEX_COORDS);
 
     private static final List<String> ADDTL_BINDS = Arrays.asList(
             Messages.getString("KeyBindingsDisplay.fixedBinds").split("\n"));
@@ -149,7 +147,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             graph.setFont(FONT);
             FontMetrics fm = graph.getFontMetrics(FONT);
             List<String> allLines = assembleTextLines();
-            Rectangle r = getSize(graph, allLines, fm);
+            Rectangle r = getSize(allLines, fm);
             r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
             
             displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
@@ -186,13 +184,8 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     }
 
     /** Calculates the pixel size of the display from the necessary text lines. */ 
-    private Rectangle getSize(Graphics graph, List<String> lines, FontMetrics fm) {
-        int width = 0;
-        for (String line: lines) {
-            if (fm.stringWidth(line) > width) {
-                width = fm.stringWidth(line);
-            }
-        }
+    private Rectangle getSize(List<String> lines, FontMetrics fm) {
+        int width = lines.stream().mapToInt(fm::stringWidth).filter(line -> line >= 0).max().orElse(0);
         int height = fm.getHeight() * lines.size();
         return new Rectangle(width, height);
     }
@@ -204,7 +197,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         KeyCommandBind kcb = KeyCommandBind.KEY_BINDS;
         String mod = KeyEvent.getModifiersExText(kcb.modifiers);
         String key = KeyEvent.getKeyText(kcb.key);
-        String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
+        String toggleKey = (mod.isEmpty() ? "" : mod + '+') + key;
         result.add(Messages.getString("KeyBindingsDisplay.heading", toggleKey));
         
         if (clientGui != null) {

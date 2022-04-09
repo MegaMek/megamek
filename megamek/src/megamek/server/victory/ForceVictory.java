@@ -42,28 +42,12 @@ public class ForceVictory implements IVictoryConditions, Serializable {
 
         // Individual victory.
         if (victoryPlayerId != Player.PLAYER_NONE) {
-            for (int i = 0; i < players.size(); i++) {
-                Player player = players.get(i);
-
-                if (player.getId() != victoryPlayerId && !player.isObserver()) {
-                    if (!player.admitsDefeat()) {
-                        forceVictory = false;
-                        break;
-                    }
-                }
-            }
+            forceVictory = players.stream().filter(player -> player.getId() != victoryPlayerId && !player.isObserver()).allMatch(Player::admitsDefeat);
         }
         // Team victory.
         if (victoryTeam != Player.TEAM_NONE) {
-            for (int i = 0; i < players.size(); i++) {
-                Player player = players.get(i);
-
-                if (player.getTeam() != victoryTeam && !player.isObserver()) {
-                    if (!player.admitsDefeat()) {
-                        forceVictory = false;
-                        break;
-                    }
-                }
+            if (players.stream().filter(player -> player.getTeam() != victoryTeam && !player.isObserver()).anyMatch(player -> !player.admitsDefeat())) {
+                forceVictory = false;
             }
         }
 

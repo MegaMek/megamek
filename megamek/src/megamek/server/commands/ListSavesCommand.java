@@ -14,6 +14,7 @@
 package megamek.server.commands;
 
 import java.io.File;
+import java.util.Objects;
 
 import megamek.MMConstants;
 import megamek.server.Server;
@@ -41,7 +42,7 @@ public class ListSavesCommand extends ServerCommand {
         server.sendServerChat(connId, "Listing all saved games...");
         File[] saveGames = sDir.listFiles();
         boolean listedAFile = false;
-        for (int i = 0; i < saveGames.length; i++) {
+        for (int i = 0; i < Objects.requireNonNull(saveGames).length; i++) {
             if (saveGames[i].isFile()) {
                 File save = saveGames[i];
                 if (save.getName().endsWith(MMConstants.SAVE_FILE_EXT)

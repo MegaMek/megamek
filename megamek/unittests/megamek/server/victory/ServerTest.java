@@ -47,12 +47,12 @@ public class ServerTest {
         //test whether the server.victory() returns false when mocking VictoryResult as false
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
         testServer.setGame(testGame);
-        assertFalse(testServer.victory());
+        assertFalse(VictoryChecker.victory(testServer));
 
         //test whether the server.victory() returns true when mocking VictoryResult as true
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         testServer.setGame(testGame);
-        assertTrue(testServer.victory());
+        assertTrue(VictoryChecker.victory(testServer));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class ServerTest {
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
-        testServer.victory();
+        VictoryChecker.victory(testServer);
         Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(Player.PLAYER_NONE);
         Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(Player.TEAM_NONE);
     }
@@ -76,7 +76,7 @@ public class ServerTest {
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
-        testServer.victory();
+        VictoryChecker.victory(testServer);
         Mockito.verify(testGame, Mockito.times(1)).cancelVictory();
 
 
@@ -92,7 +92,7 @@ public class ServerTest {
 
 
         testServer.setGame(testGame);
-        testServer.victory();
+        VictoryChecker.victory(testServer);
         Mockito.verify(testGame, Mockito.times(1)).cancelVictory();
 
     }
@@ -122,7 +122,7 @@ public class ServerTest {
         Mockito.when(testGame.getPlayer(winner)).thenReturn(mockedPlayer);
 
         testServer.setGame(testGame);
-        testServer.victory();
+        VictoryChecker.victory(testServer);
 
         assertSame(1, testServer.getvPhaseReport().size());
 
@@ -133,7 +133,7 @@ public class ServerTest {
         Mockito.when(victoryResult.getWinningTeam()).thenReturn(10);
         Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());
         testServer2.setGame(testGame);
-        testServer2.victory();
+        VictoryChecker.victory(testServer2);
 
         assertSame(2, testServer2.getvPhaseReport().size());
     }

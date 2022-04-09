@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +39,7 @@ public class EntityFluff implements Serializable {
 
         public static @Nullable System parse(String string) {
             if (null != string) {
-                for (final System c : values()) {
-                    if (c.toString().equals(string.toUpperCase())) {
-                        return c;
-                    }
-                }
+                return Arrays.stream(values()).filter(c -> c.toString().equals(string.toUpperCase())).findFirst().orElse(null);
             }
             return null;
         }
@@ -165,7 +162,7 @@ public class EntityFluff implements Serializable {
      *            to remove the entry.
      */
     public void setSystemManufacturer(System system, @Nullable String manu) {
-        if ((null != manu) && (manu.length() > 0)) {
+        if ((null != manu) && (!manu.isEmpty())) {
             systemManufacturers.put(system, manu);
         } else {
             systemManufacturers.remove(system);
@@ -194,7 +191,7 @@ public class EntityFluff implements Serializable {
      *            entry.
      */
     public void setSystemModel(System system, @Nullable String model) {
-        if ((null != model) && (model.length() > 0)) {
+        if ((null != model) && (!model.isEmpty())) {
             systemModels.put(system, model);
         } else {
             systemModels.remove(system);
@@ -279,8 +276,8 @@ public class EntityFluff implements Serializable {
      * @return A list of all system manufacturers formatted as "system:manufacturer"
      */
     public List<String> createSystemManufacturersList() {
-        return systemManufacturers.entrySet().stream().filter(e -> e.getValue().length() > 0)
-                .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
+        return systemManufacturers.entrySet().stream().filter(e -> !e.getValue().isEmpty())
+                .map(e -> e.getKey().toString() + ':' + e.getValue()).collect(Collectors.toList());
     }
 
     /**
@@ -289,7 +286,7 @@ public class EntityFluff implements Serializable {
      * @return A list of all system models formatted as "system:model"
      */
     public List<String> createSystemModelsList() {
-        return systemModels.entrySet().stream().filter(e -> e.getValue().length() > 0)
+        return systemModels.entrySet().stream().filter(e -> !e.getValue().isEmpty())
                 .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
     }
 }

@@ -1821,11 +1821,6 @@ public class Protomech extends Entity {
         return NUM_PMECH_LOCATIONS;
     }
 
-    @Override
-    public int getBodyLocation() {
-        return LOC_BODY;
-    }
-
     /**
      * Protomechs have no piloting skill (set to 5 for BV purposes)
      */
@@ -2336,6 +2331,7 @@ public class Protomech extends Entity {
     /**
      * Based on the protomech's current damage status, return valid brace locations.
      */
+    @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
         

@@ -68,8 +68,9 @@ public abstract class ServerCommand {
             return true;
         }
 
-        if (server.getPlayer(connId).isGhost())
+        if (server.getPlayer(connId).isGhost()) {
             return false; // Just in case something funky happens
+        }
 
         if (server.getPlayer(connId).isObserver()) {
             for (Enumeration<Player> e = server.getGame().getPlayers(); e.hasMoreElements();) {

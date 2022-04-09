@@ -16,6 +16,7 @@ package megamek.client.ui.swing.boardview;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.stream.Stream;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -116,9 +117,7 @@ class StepSprite extends Sprite {
                 col = GUIP.getColor("AdvancedMoveIllegalColor");
                 break;
             default:
-                if ((step.getType() == MoveStepType.BACKWARDS)
-                        || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
-                        || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
+                if (Stream.of(MoveStepType.BACKWARDS, MoveStepType.LATERAL_LEFT_BACKWARDS, MoveStepType.LATERAL_RIGHT_BACKWARDS).anyMatch(moveStepType -> (step.getType() == moveStepType))) {
                     col = GUIP.getColor("AdvancedMoveBackColor");
                 } else {
                     col = GUIP.getColor("AdvancedMoveDefaultColor");
@@ -152,7 +151,7 @@ class StepSprite extends Sprite {
                 // forward movement arrow
                 drawArrowShape(g2D, moveArrow, col);
                 drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, true);
-                drawRemainingVelocity(step, graph, true);
+                drawRemainingVelocity(step, graph);
                 break;
             case GO_PRONE:
             case HULL_DOWN:
@@ -164,7 +163,7 @@ class StepSprite extends Sprite {
                 currentArrow = upDownOffset.createTransformedShape(bv.downArrow);
                 drawArrowShape(g2D, currentArrow, col);
                 drawMovementCost(step, isLastStep, new Point(1, 15), graph, col, false);
-                drawRemainingVelocity(step, graph, true);
+                drawRemainingVelocity(step, graph);
                 break;
             case GET_UP:
             case UP:
@@ -173,7 +172,7 @@ class StepSprite extends Sprite {
                 currentArrow = upDownOffset.createTransformedShape(bv.upArrow);
                 drawArrowShape(g2D, currentArrow, col);
                 drawMovementCost(step, isLastStep, new Point(0, 15), graph, col, false);
-                drawRemainingVelocity(step, graph, true);
+                drawRemainingVelocity(step, graph);
                 break;
             case CLIMB_MODE_ON:
                 String climb;
@@ -288,8 +287,6 @@ class StepSprite extends Sprite {
 
         if (step.isVTOLBombingStep() || step.isStrafingStep()) {
             graph.setColor(col);
-//            g2D.fill(AffineTransform.getTranslateInstance(stepPos.x, stepPos.y)
-//                    .createTransformedShape(HexDrawUtilities.getHexFullBorderArea(3, 0)));
             g2D.fill(HexDrawUtilities.getHexFullBorderArea(3, 0));
         }
 
@@ -397,7 +394,7 @@ class StepSprite extends Sprite {
         return new Font(fontName, fontStyle, fontSize);
     }
 
-    private void drawRemainingVelocity(MoveStep step, Graphics graph, boolean shiftFlag) {
+    private void drawRemainingVelocity(MoveStep step, Graphics graph) {
         StringBuilder velStringBuf = new StringBuilder();
 
         if (bv.game.useVectorMove()) {
@@ -428,9 +425,7 @@ class StepSprite extends Sprite {
         String velString = velStringBuf.toString();
         graph.setFont(new Font("SansSerif", Font.PLAIN, 12));
         int costX = 42;
-        if (shiftFlag) {
-            costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(velString) / 2);
-        }
+        costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(velString) / 2);
         graph.setColor(Color.darkGray);
         graph.drawString(velString, costX, 28);
         graph.setColor(col);
@@ -469,9 +464,7 @@ class StepSprite extends Sprite {
         }
 
         // Show WiGE descent bonus
-        for (int i = 0; i < step.getWiGEBonus(); i++) {
-            costStringBuf.append("+");
-        }
+        costStringBuf.append("+".repeat(Math.max(0, step.getWiGEBonus())));
 
         // If the step is dangerous, mark it.
         if (step.isDanger()) {

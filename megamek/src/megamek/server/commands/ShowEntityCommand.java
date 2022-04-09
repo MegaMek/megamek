@@ -26,7 +26,7 @@ public class ShowEntityCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      * 
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
+     * @see ServerCommand#run(int, String[])
      */
     @Override
     public void run(int connId, String[] args) {
@@ -44,9 +44,7 @@ public class ShowEntityCommand extends ServerCommand {
             } else {
                 server.sendServerChat(connId, "No such entity.");
             }
-        } catch (NumberFormatException nfe) {
-        } catch (NullPointerException npe) {
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (NumberFormatException | NullPointerException | IndexOutOfBoundsException ignored) {
         }
     }
 

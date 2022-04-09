@@ -35,7 +35,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      * 
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
+     * @see ServerCommand#run(int, String[])
      */
     @Override
     public void run(int connId, String[] args) {

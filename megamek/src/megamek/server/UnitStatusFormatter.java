@@ -17,6 +17,9 @@ package megamek.server;
 import megamek.common.*;
 import megamek.common.util.StringUtil;
 
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public abstract class UnitStatusFormatter {
     /**
      * Much of the layout for the status string is heavily inspired by the
@@ -68,13 +71,7 @@ public abstract class UnitStatusFormatter {
     }
 
     private static String formatAmmo(Entity e) {
-        StringBuilder sb = new StringBuilder(1024);
-        for (Mounted ammo : e.getAmmo()) {
-            sb.append(ammo.getName());
-            sb.append(": ").append(ammo.getBaseShotsLeft())
-                    .append("\n");
-        }
-        return sb.toString();
+        return e.getAmmo().stream().map(ammo -> ammo.getName() + ": " + ammo.getBaseShotsLeft() + "\n").collect(Collectors.joining());
     }
 
     private static String formatCrits(Entity e) {
@@ -254,14 +251,7 @@ public abstract class UnitStatusFormatter {
     }
 
     private static String formatArmorBattleArmor(BattleArmor b) {
-        StringBuilder sb = new StringBuilder(32);
-        for (int i = 1; i < b.locations(); i++) {
-            sb.append("Trooper ").append(i).append(": ")
-                    .append(renderArmor(b.getArmor(i))).append(" / ")
-                    .append(renderArmor(b.getInternal(i)))
-                    .append("\n");
-        }
-        return sb.toString();
+        return IntStream.range(1, b.locations()).mapToObj(i -> "Trooper " + i + ": " + renderArmor(b.getArmor(i)) + " / " + renderArmor(b.getInternal(i)) + "\n").collect(Collectors.joining());
     }
 
     private static String formatArmorProtomech(Protomech m) {

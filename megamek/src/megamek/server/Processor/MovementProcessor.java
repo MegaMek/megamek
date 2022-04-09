@@ -2,10 +2,9 @@ package megamek.server.Processor;
 
 import megamek.MMConstants;
 import megamek.common.*;
+import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
-import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.EntityVerifier;
 import megamek.server.Applier.DropShipApplier;
@@ -17,6 +16,8 @@ import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.lang.Math.max;
@@ -45,77 +46,8 @@ public class MovementProcessor {
     public static String ORIGIN = "***Server";
 
     /**
-     *
-     * @param serverAddress
-     * @return valid hostName
-     * @throws AbstractCommandLineParser.ParseException for null or empty serverAddress
-     */
-    public static String validateServerAddress(String serverAddress) throws AbstractCommandLineParser.ParseException {
-        if ((serverAddress == null) || serverAddress.isBlank()) {
-            String msg = "serverAddress must not be null or empty";
-            LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
-        }
-        return serverAddress.trim();
-    }
-
-    /**
-     *
-     * @param playerName throw ParseException if null or empty
-     * @return valid playerName
-     */
-    public static String validatePlayerName(String playerName) throws AbstractCommandLineParser.ParseException {
-        if (playerName == null) {
-            String msg = "playerName must not be null";
-            LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
-        }
-
-        if (playerName.isBlank()) {
-            String msg = "playerName must not be empty string";
-            LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
-        }
-
-        return playerName.trim();
-    }
-
-    /**
-     *
-     * @param password
-     * @return valid password or null if no password or password is blank string
-     */
-    @Nullable
-    public static String validatePassword(@Nullable String password) {
-        if ((password == null) || password.isBlank()) return null;
-        return password.trim();
-    }
-
-    /**
-     *
-     * @param port if 0 or less, will return default, if illegal number, throws ParseException
-     * @return valid port number
-     */
-    public static int validatePort(int port) throws AbstractCommandLineParser.ParseException {
-        if (port <= 0) {
-            return MMConstants.DEFAULT_PORT;
-        }
-
-        if ((port < MMConstants.MIN_PORT) || (port > MMConstants.MAX_PORT)) {
-            String msg = String.format("Port number %d outside allowed range %d-%d", port, MMConstants.MIN_PORT, MMConstants.MAX_PORT);
-            LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
-
-        }
-        return port;
-    }
-
-    /**
      * Steps through an entity movement packet, executing it.
      *
-     * @param server
-     * @param game
-     * @param vPhaseReport
      * @param entity   The Entity that is moving
      * @param md       The MovePath that defines how the Entity moves
      * @param losCache A cache that stores Los between various Entities and
@@ -133,12 +65,12 @@ public class MovementProcessor {
         PilotingRollData rollTarget;
 
         // check for fleeing
-        if (md.contains(MovePath.MoveStepType.FLEE)) {
+        if (md.contains(MoveStepType.FLEE)) {
             server.addReport(server.processLeaveMap(md, false, -1));
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.EJECT)) {
+        if (md.contains(MoveStepType.EJECT)) {
             if (entity.isLargeCraft() && !entity.isCarcass()) {
                 r = new Report(2026);
                 r.subject = entity.getId();
@@ -152,7 +84,7 @@ public class MovementProcessor {
                 for (final Enumeration<MoveStep> i = md.getSteps(); i
                         .hasMoreElements();) {
                     final MoveStep step = i.nextElement();
-                    if (step.getType() == MovePath.MoveStepType.EJECT) {
+                    if (step.getType() == MoveStepType.EJECT) {
                         legalPos = step.getTargetPosition();
                     }
                 }
@@ -179,17 +111,17 @@ public class MovementProcessor {
             }
         }
 
-        if (md.contains(MovePath.MoveStepType.CAREFUL_STAND)) {
+        if (md.contains(MoveStepType.CAREFUL_STAND)) {
             entity.setCarefulStand(true);
         }
-        if (md.contains(MovePath.MoveStepType.BACKWARDS)) {
+        if (md.contains(MoveStepType.BACKWARDS)) {
             entity.setMovedBackwards(true);
             if (md.getMpUsed() > entity.getWalkMP()) {
                 entity.setPowerReverse(true);
             }
         }
 
-        if (md.contains(MovePath.MoveStepType.TAKEOFF) && entity.isAero()) {
+        if (md.contains(MoveStepType.TAKEOFF) && entity.isAero()) {
             IAero a = (IAero) entity;
             a.setCurrentVelocity(1);
             a.liftOff(1);
@@ -203,7 +135,7 @@ public class MovementProcessor {
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.VTAKEOFF) && entity.isAero()) {
+        if (md.contains(MoveStepType.VTAKEOFF) && entity.isAero()) {
             IAero a = (IAero) entity;
             rollTarget = a.checkVerticalTakeOff();
             if (server.doVerticalTakeOffCheck(entity, rollTarget)) {
@@ -219,7 +151,7 @@ public class MovementProcessor {
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.LAND) && entity.isAero()) {
+        if (md.contains(MoveStepType.LAND) && entity.isAero()) {
             IAero a = (IAero) entity;
             rollTarget = a.checkLanding(md.getLastStepMovementType(), md.getFinalVelocity(),
                     md.getFinalCoords(), md.getFinalFacing(), false);
@@ -232,7 +164,7 @@ public class MovementProcessor {
             return;
         }
 
-        if (md.contains(MovePath.MoveStepType.VLAND) && entity.isAero()) {
+        if (md.contains(MoveStepType.VLAND) && entity.isAero()) {
             IAero a = (IAero) entity;
             rollTarget = a.checkLanding(md.getLastStepMovementType(),
                     md.getFinalVelocity(), md.getFinalCoords(),
@@ -265,14 +197,11 @@ public class MovementProcessor {
         int distance = entity.delta_distance;
         int mpUsed = entity.mpUsed;
         EntityMovementType moveType = entity.moved;
-        EntityMovementType overallMoveType;
-        boolean firstStep;
         boolean wasProne = entity.isProne();
         boolean fellDuringMovement = false;
         boolean crashedDuringMovement = false;
         boolean dropshipStillUnloading = false;
         boolean detectedHiddenHazard = false;
-        boolean turnOver;
         int prevFacing = curFacing;
         Hex prevHex = game.getBoard().getHex(curPos);
         final boolean isInfantry = entity instanceof Infantry;
@@ -307,7 +236,7 @@ public class MovementProcessor {
         // move path
         entity.setVectors(md.getFinalVectors());
 
-        overallMoveType = md.getLastStepMovementType();
+        EntityMovementType overallMoveType = md.getLastStepMovementType();
 
         // check for starting in liquid magma
         if ((game.getBoard().getHex(entity.getPosition())
@@ -322,7 +251,7 @@ public class MovementProcessor {
         }
 
         // check for dropping troops and drop them
-        if (entity.isDropping() && !md.contains(MovePath.MoveStepType.HOVER)) {
+        if (entity.isDropping() && !md.contains(MoveStepType.HOVER)) {
             entity.setAltitude(entity.getAltitude() - game.getPlanetaryConditions().getDropRate());
             // they may have changed their facing
             if (md.length() > 0) {
@@ -333,7 +262,7 @@ public class MovementProcessor {
             passedThroughFacing.add(entity.getFacing());
             entity.setPassedThroughFacing(passedThroughFacing);
             // We may still need to process any conversions for dropping LAMs
-            if (entity instanceof LandAirMech && md.contains(MovePath.MoveStepType.CONVERT_MODE)) {
+            if (entity instanceof LandAirMech && md.contains(MoveStepType.CONVERT_MODE)) {
                 entity.setMovementMode(md.getFinalConversionMode());
                 entity.setConvertingNow(true);
                 r = new Report(1210);
@@ -354,18 +283,14 @@ public class MovementProcessor {
         }
 
         // iterate through steps
-        firstStep = true;
-        turnOver = false;
+        boolean firstStep = true;
+        boolean turnOver = false;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
 
         List<Entity> hiddenEnemies = new ArrayList<>();
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
-            for (Entity e : game.getEntitiesVector()) {
-                if (e.isHidden() && e.isEnemyOf(entity) && (e.getPosition() != null)) {
-                    hiddenEnemies.add(e);
-                }
-            }
+            hiddenEnemies = game.getEntitiesVector().stream().filter(e -> e.isHidden() && e.isEnemyOf(entity) && (e.getPosition() != null)).collect(Collectors.toList());
         }
 
         Vector<UnitLocation> movePath = new Vector<>();
@@ -463,12 +388,12 @@ public class MovementProcessor {
             }
 
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                if (step.getType() == MovePath.MoveStepType.UP && !entity.isAirborneVTOLorWIGE()) {
+                if (step.getType() == MoveStepType.UP && !entity.isAirborneVTOLorWIGE()) {
                     entity.setWigeLiftoffHover(true);
-                } else if (step.getType() == MovePath.MoveStepType.HOVER) {
+                } else if (step.getType() == MoveStepType.HOVER) {
                     entity.setWigeLiftoffHover(true);
                     entity.setAssaultDropInProgress(false);
-                } else if (step.getType() == MovePath.MoveStepType.DOWN && step.getClearance() == 0) {
+                } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
                     // If this is the first step, use the Entity's starting elevation
                     int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
                     if (entity instanceof LandAirMech) {
@@ -559,7 +484,7 @@ public class MovementProcessor {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.CONVERT_MODE) {
+            if (step.getType() == MoveStepType.CONVERT_MODE) {
                 entity.setConvertingNow(true);
 
                 // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
@@ -661,14 +586,14 @@ public class MovementProcessor {
                     thrustUsed = 0;
                 }
 
-                if (step.getType() == MovePath.MoveStepType.RETURN) {
+                if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
                     server.processLeaveMap(md, true, Compute.roundsUntilReturn(game, entity));
                     return;
                 }
 
-                if (step.getType() == MovePath.MoveStepType.OFF) {
+                if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
                     entity.setAltitude(curAltitude);
                     server.processLeaveMap(md, true, -1);
@@ -771,7 +696,7 @@ public class MovementProcessor {
                             Entity target;
                             Coords destination;
 
-                            if (potentialSpaceStation.size() > 0) {
+                            if (!potentialSpaceStation.isEmpty()) {
                                 chosen = Compute.randomInt(potentialSpaceStation.size());
                                 target = game.getEntity(potentialSpaceStation.elementAt(chosen));
                                 destination = target.getPosition();
@@ -779,7 +704,7 @@ public class MovementProcessor {
                                     curPos = destination;
                                     break;
                                 }
-                            } else if (potentialWarShip.size() > 0) {
+                            } else if (!potentialWarShip.isEmpty()) {
                                 chosen = Compute.randomInt(potentialWarShip.size());
                                 target = game.getEntity(potentialWarShip.elementAt(chosen));
                                 destination = target.getPosition();
@@ -787,7 +712,7 @@ public class MovementProcessor {
                                     curPos = destination;
                                     break;
                                 }
-                            } else if (potentialJumpShip.size() > 0) {
+                            } else if (!potentialJumpShip.isEmpty()) {
                                 chosen = Compute.randomInt(potentialJumpShip.size());
                                 target = game.getEntity(potentialJumpShip.elementAt(chosen));
                                 destination = target.getPosition();
@@ -795,7 +720,7 @@ public class MovementProcessor {
                                     curPos = destination;
                                     break;
                                 }
-                            } else if (potentialDropShip.size() > 0) {
+                            } else if (!potentialDropShip.isEmpty()) {
                                 chosen = Compute.randomInt(potentialDropShip.size());
                                 target = game.getEntity(potentialDropShip.elementAt(chosen));
                                 destination = target.getPosition();
@@ -803,7 +728,7 @@ public class MovementProcessor {
                                     curPos = destination;
                                     break;
                                 }
-                            } else if (potentialSmallCraft.size() > 0) {
+                            } else if (!potentialSmallCraft.isEmpty()) {
                                 chosen = Compute.randomInt(potentialSmallCraft.size());
                                 target = game.getEntity(potentialSmallCraft.elementAt(chosen));
                                 destination = target.getPosition();
@@ -811,7 +736,7 @@ public class MovementProcessor {
                                     curPos = destination;
                                     break;
                                 }
-                            } else if (potentialASF.size() > 0) {
+                            } else if (!potentialASF.isEmpty()) {
                                 chosen = Compute.randomInt(potentialASF.size());
                                 target = game.getEntity(potentialASF.elementAt(chosen));
                                 destination = target.getPosition();
@@ -835,7 +760,7 @@ public class MovementProcessor {
                 }
 
                 // handle fighter launching
-                if (step.getType() == MovePath.MoveStepType.LAUNCH) {
+                if (step.getType() == MoveStepType.LAUNCH) {
                     TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
                     Set<Integer> bays = launched.keySet();
                     Iterator<Integer> bayIter = bays.iterator();
@@ -913,12 +838,10 @@ public class MovementProcessor {
                 }
 
                 // handle DropShip undocking
-                if (step.getType() == MovePath.MoveStepType.UNDOCK) {
+                if (step.getType() == MoveStepType.UNDOCK) {
                     TreeMap<Integer, Vector<Integer>> launched = step.getLaunched();
                     Set<Integer> collars = launched.keySet();
-                    Iterator<Integer> collarIter = collars.iterator();
-                    while (collarIter.hasNext()) {
-                        int collarId = collarIter.next();
+                    for (int collarId : collars) {
                         Vector<Integer> launches = launched.get(collarId);
                         int nLaunched = launches.size();
                         // ok, now lets launch them
@@ -931,20 +854,15 @@ public class MovementProcessor {
                         for (int dropShipId : launches) {
                             // check to see if we are in the same door
                             Entity ds = game.getEntity(dropShipId);
-                            if (!server.launchUnit(entity, ds, curPos, curFacing,
-                                    step.getVelocity(), step.getAltitude(),
-                                    step.getVectors(), 0)) {
-                                LogManager.getLogger().error("Error! Server was told to unload "
-                                                + ds.getDisplayName() + " from "
-                                                + entity.getDisplayName() + " into "
-                                                + curPos.getBoardNum());
+                            if (!server.launchUnit(entity, ds, curPos, curFacing, step.getVelocity(), step.getAltitude(), step.getVectors(), 0)) {
+                                LogManager.getLogger().error("Error! Server was told to unload " + ds.getDisplayName() + " from " + entity.getDisplayName() + " into " + curPos.getBoardNum());
                             }
                         }
                     }
                 }
 
                 // handle combat drops
-                if (step.getType() == MovePath.MoveStepType.DROP) {
+                if (step.getType() == MoveStepType.DROP) {
                     TreeMap<Integer, Vector<Integer>> dropped = step.getLaunched();
                     Set<Integer> bays = dropped.keySet();
                     Iterator<Integer> bayIter = bays.iterator();
@@ -1009,7 +927,7 @@ public class MovementProcessor {
                 entity.setHullDown(false);
             }
 
-            if (step.getType() == MovePath.MoveStepType.UNJAM_RAC) {
+            if (step.getType() == MoveStepType.UNJAM_RAC) {
                 entity.setUnjammingRAC(true);
                 game.addAction(new UnjamAction(entity.getId()));
 
@@ -1020,19 +938,19 @@ public class MovementProcessor {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.LAY_MINE) {
+            if (step.getType() == MoveStepType.LAY_MINE) {
                 server.layMine(entity, step.getMineToLay(), step.getPosition());
                 continue;
             }
 
-            if (step.getType() == MovePath.MoveStepType.CLEAR_MINEFIELD) {
+            if (step.getType() == MoveStepType.CLEAR_MINEFIELD) {
                 ClearMinefieldAction cma = new ClearMinefieldAction(entity.getId(), step.getMinefield());
                 entity.setClearingMinefield(true);
                 game.addAction(cma);
                 break;
             }
 
-            if ((step.getType() == MovePath.MoveStepType.SEARCHLIGHT)
+            if ((step.getType() == MoveStepType.SEARCHLIGHT)
                     && entity.hasSearchlight()) {
                 final boolean SearchOn = !entity.isUsingSearchlight();
                 entity.setSearchlightState(SearchOn);
@@ -1070,7 +988,7 @@ public class MovementProcessor {
                         : entity.getRunningGravityLimit();
             }
             // check for charge
-            if (step.getType() == MovePath.MoveStepType.CHARGE) {
+            if (step.getType() == MoveStepType.CHARGE) {
                 if (entity.canCharge()) {
                     server.checkExtremeGravityMovement(entity, step, lastStepMoveType, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
@@ -1121,7 +1039,7 @@ public class MovementProcessor {
             }
 
             // check for dfa
-            if (step.getType() == MovePath.MoveStepType.DFA) {
+            if (step.getType() == MoveStepType.DFA) {
                 if (entity.canDFA()) {
                     server.checkExtremeGravityMovement(entity, step, lastStepMoveType, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
@@ -1169,7 +1087,7 @@ public class MovementProcessor {
             }
 
             // check for ram
-            if (step.getType() == MovePath.MoveStepType.RAM) {
+            if (step.getType() == MoveStepType.RAM) {
                 if (entity.canRam()) {
                     Targetable target = step.getTarget(game);
                     RamAttackAction raa = new RamAttackAction(entity.getId(),
@@ -1199,10 +1117,10 @@ public class MovementProcessor {
                 ((VTOL) entity).getStrafingCoords().add(step.getPosition());
             }
 
-            if ((step.getType() == MovePath.MoveStepType.ACC) || (step.getType() == MovePath.MoveStepType.ACCN)) {
+            if ((step.getType() == MoveStepType.ACC) || (step.getType() == MoveStepType.ACCN)) {
                 if (entity.isAero()) {
                     IAero a = (IAero) entity;
-                    if (step.getType() == MovePath.MoveStepType.ACCN) {
+                    if (step.getType() == MoveStepType.ACCN) {
                         a.setAccLast(true);
                     } else {
                         a.setAccDecNow(true);
@@ -1212,10 +1130,10 @@ public class MovementProcessor {
                 }
             }
 
-            if ((step.getType() == MovePath.MoveStepType.DEC) || (step.getType() == MovePath.MoveStepType.DECN)) {
+            if ((step.getType() == MoveStepType.DEC) || (step.getType() == MoveStepType.DECN)) {
                 if (entity.isAero()) {
                     IAero a = (IAero) entity;
-                    if (step.getType() == MovePath.MoveStepType.DECN) {
+                    if (step.getType() == MoveStepType.DECN) {
                         a.setAccLast(true);
                     } else {
                         a.setAccDecNow(true);
@@ -1225,29 +1143,29 @@ public class MovementProcessor {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.EVADE) {
+            if (step.getType() == MoveStepType.EVADE) {
                 entity.setEvading(true);
             }
 
-            if (step.getType() == MovePath.MoveStepType.BRACE) {
+            if (step.getType() == MoveStepType.BRACE) {
                 entity.setBraceLocation(step.getBraceLocation());
             }
 
-            if (step.getType() == MovePath.MoveStepType.SHUTDOWN) {
+            if (step.getType() == MoveStepType.SHUTDOWN) {
                 entity.performManualShutdown();
                 server.sendServerChat(entity.getDisplayName() + " has shutdown.");
             }
 
-            if (step.getType() == MovePath.MoveStepType.STARTUP) {
+            if (step.getType() == MoveStepType.STARTUP) {
                 entity.performManualStartup();
                 server.sendServerChat(entity.getDisplayName() + " has started up.");
             }
 
-            if (step.getType() == MovePath.MoveStepType.SELF_DESTRUCT) {
+            if (step.getType() == MoveStepType.SELF_DESTRUCT) {
                 entity.setSelfDestructing(true);
             }
 
-            if (step.getType() == MovePath.MoveStepType.ROLL) {
+            if (step.getType() == MoveStepType.ROLL) {
                 if (entity.isAero()) {
                     IAero a = (IAero) entity;
                     a.setRolled(!a.isRolled());
@@ -1257,10 +1175,10 @@ public class MovementProcessor {
             // check for dig in or fortify
             if (entity instanceof Infantry) {
                 Infantry inf = (Infantry) entity;
-                if (step.getType() == MovePath.MoveStepType.DIG_IN) {
+                if (step.getType() == MoveStepType.DIG_IN) {
                     inf.setDugIn(Infantry.DUG_IN_WORKING);
                     continue;
-                } else if (step.getType() == MovePath.MoveStepType.FORTIFY) {
+                } else if (step.getType() == MoveStepType.FORTIFY) {
                     if (!entity.hasWorkingMisc(MiscType.F_TOOLS,
                             MiscType.S_VIBROSHOVEL)) {
                         server.sendServerChat(entity.getDisplayName()
@@ -1268,13 +1186,13 @@ public class MovementProcessor {
                     }
                     inf.setDugIn(Infantry.DUG_IN_FORTIFYING1);
                     continue;
-                } else if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
-                        && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)) {
+                } else if ((step.getType() != MoveStepType.TURN_LEFT)
+                        && (step.getType() != MoveStepType.TURN_RIGHT)) {
                     // other movement clears dug in status
                     inf.setDugIn(Infantry.DUG_IN_NONE);
                 }
 
-                if (step.getType() == MovePath.MoveStepType.TAKE_COVER) {
+                if (step.getType() == MoveStepType.TAKE_COVER) {
                     if (Infantry.hasValidCover(game, step.getPosition(),
                             step.getElevation())) {
                         inf.setTakingCover(true);
@@ -1288,7 +1206,7 @@ public class MovementProcessor {
             }
 
             // If we have turned, check whether we have fulfilled any turn mode requirements.
-            if ((step.getType() == MovePath.MoveStepType.TURN_LEFT || step.getType() == MovePath.MoveStepType.TURN_RIGHT)
+            if ((step.getType() == MoveStepType.TURN_LEFT || step.getType() == MoveStepType.TURN_RIGHT)
                     && entity.usesTurnMode()) {
                 int straight = 0;
                 if (prevStep != null) {
@@ -1324,7 +1242,7 @@ public class MovementProcessor {
                 }
             }
 
-            if (step.getType() == MovePath.MoveStepType.BOOTLEGGER) {
+            if (step.getType() == MoveStepType.BOOTLEGGER) {
                 rollTarget = entity.getBasePilotingRoll();
                 entity.addPilotingModifierForTerrain(rollTarget);
                 rollTarget.addModifier(0, "bootlegger maneuver");
@@ -1506,7 +1424,7 @@ public class MovementProcessor {
                     || (entity.getMovementMode() == EntityMovementMode.WIGE
                             && step.getClearance() > 0)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex,
-                        overallMoveType, prevStep, prevFacing, curFacing,
+                        overallMoveType, prevFacing, curFacing,
                         lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int moF = server.doSkillCheckWhileMoving(entity, lastElevation,
@@ -1516,10 +1434,7 @@ public class MovementProcessor {
                         int sideslipDistance;
                         int skidDirection;
                         Coords start;
-                        if (step.getType() == MovePath.MoveStepType.LATERAL_LEFT
-                                || step.getType() == MovePath.MoveStepType.LATERAL_RIGHT
-                                || step.getType() == MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS
-                                || step.getType() == MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS) {
+                        if (Stream.of(MoveStepType.LATERAL_LEFT, MoveStepType.LATERAL_RIGHT, MoveStepType.LATERAL_LEFT_BACKWARDS, MoveStepType.LATERAL_RIGHT_BACKWARDS).anyMatch(moveStepType -> step.getType() == moveStepType)) {
                             // A failed controlled sideslip always results in moving one additional hex
                             // in the direction of the intentional sideslip.
                             elev = step.getElevation();
@@ -1896,7 +1811,7 @@ public class MovementProcessor {
             }
 
             // Handle loading units.
-            if (step.getType() == MovePath.MoveStepType.LOAD) {
+            if (step.getType() == MoveStepType.LOAD) {
 
                 // Find the unit being loaded.
                 Entity loaded = null;
@@ -1941,11 +1856,10 @@ public class MovementProcessor {
             } // End STEP_LOAD
 
          // Handle towing units.
-            if (step.getType() == MovePath.MoveStepType.TOW) {
+            if (step.getType() == MoveStepType.TOW) {
 
                 // Find the unit being loaded.
-                Entity loaded;
-                loaded = game.getEntity(entity.getTowing());
+                Entity loaded = game.getEntity(entity.getTowing());
 
                 // This should never ever happen, but just in case...
                 if (loaded == null) {
@@ -1968,7 +1882,7 @@ public class MovementProcessor {
             } // End STEP_TOW
 
             // Handle mounting units to small craft/DropShip
-            if (step.getType() == MovePath.MoveStepType.MOUNT) {
+            if (step.getType() == MoveStepType.MOUNT) {
                 Targetable mountee = step.getTarget(game);
                 if (mountee instanceof Entity) {
                     Entity dropShip = (Entity) mountee;
@@ -1996,7 +1910,7 @@ public class MovementProcessor {
             } // End STEP_MOUNT
 
             // handle fighter recovery, and also DropShip docking with another large craft
-            if (step.getType() == MovePath.MoveStepType.RECOVER) {
+            if (step.getType() == MoveStepType.RECOVER) {
 
                 loader = game.getEntity(step.getRecoveryUnit());
                 boolean isDS = (entity instanceof Dropship);
@@ -2047,13 +1961,13 @@ public class MovementProcessor {
             }
 
             // handle fighter squadron joining
-            if (step.getType() == MovePath.MoveStepType.JOIN) {
+            if (step.getType() == MoveStepType.JOIN) {
                 loader = game.getEntity(step.getRecoveryUnit());
                 recovered = true;
             }
 
             // Handle unloading units.
-            if (step.getType() == MovePath.MoveStepType.UNLOAD) {
+            if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable unloaded = step.getTarget(game);
                 Coords unloadPos = curPos;
                 int unloadFacing = curFacing;
@@ -2085,9 +1999,9 @@ public class MovementProcessor {
                     server.entityUpdate(entity.getId());
                     // ok now add another turn for the transport so it can
                     // continue to unload units
-                    if (entity.getUnitsUnloadableFromBays().size() > 0) {
+                    if (!entity.getUnitsUnloadableFromBays().isEmpty()) {
                         dropshipStillUnloading = true;
-                        GameTurn newTurn = new GameTurn.SpecificEntityTurn(
+                        GameTurn newTurn = new SpecificEntityTurn(
                                 entity.getOwner().getId(), entity.getId());
                         // Need to set the new turn's multiTurn state
                         newTurn.setMultiTurn(true);
@@ -2096,7 +2010,7 @@ public class MovementProcessor {
                     // ok add another turn for the unloaded entity so that it
                     // can move
                     if (!(unloaded instanceof Infantry)) {
-                        GameTurn newTurn = new GameTurn.SpecificEntityTurn(
+                        GameTurn newTurn = new SpecificEntityTurn(
                                 ((Entity) unloaded).getOwner().getId(),
                                 ((Entity) unloaded).getId());
                         // Need to set the new turn's multiTurn state
@@ -2111,8 +2025,6 @@ public class MovementProcessor {
             // Handle disconnecting trailers.
             if (step.getType() == MoveStepType.DISCONNECT) {
                 Targetable unloaded = step.getTarget(game);
-                if (null != step.getTargetPosition()) {
-                }
                 if (!server.disconnectUnit(entity, unloaded)) {
                     LogManager.getLogger().error("Server was told to disconnect "
                                     + unloaded.getDisplayName() + " from "
@@ -2339,7 +2251,7 @@ public class MovementProcessor {
             }
 
             // dropping prone intentionally?
-            if (step.getType() == MovePath.MoveStepType.GO_PRONE) {
+            if (step.getType() == MoveStepType.GO_PRONE) {
                 mpUsed = step.getMpUsed();
                 rollTarget = entity.checkDislodgeSwarmers(step, overallMoveType);
                 if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
@@ -2366,7 +2278,7 @@ public class MovementProcessor {
             }
 
             // going hull down
-            if (step.getType() == MovePath.MoveStepType.HULL_DOWN) {
+            if (step.getType() == MoveStepType.HULL_DOWN) {
                 mpUsed = step.getMpUsed();
                 entity.setHullDown(true);
             }
@@ -2415,7 +2327,7 @@ public class MovementProcessor {
 
             // if we moved at all, we are no longer bracing "for free", except for when
             // the current step IS bracing
-            if ((mpUsed > 0) && (step.getType() != MovePath.MoveStepType.BRACE)) {
+            if ((mpUsed > 0) && (step.getType() != MoveStepType.BRACE)) {
                 entity.setBraceLocation(Entity.LOC_NONE);
             }
         }
@@ -2501,7 +2413,7 @@ public class MovementProcessor {
                 double penalty = 0.0;
                 // JumpShips do not accumulate thrust when they make a turn or
                 // change velocity
-                if (md.contains(MovePath.MoveStepType.TURN_LEFT) || md.contains(MovePath.MoveStepType.TURN_RIGHT)) {
+                if (md.contains(MoveStepType.TURN_LEFT) || md.contains(MoveStepType.TURN_RIGHT)) {
                     // I need to subtract the station keeping thrust from their
                     // accumulated thrust
                     // because they did not actually use it
@@ -2598,7 +2510,7 @@ public class MovementProcessor {
         // If the entity is being swarmed, erratic movement may dislodge the
         // fleas.
         final int swarmerId = entity.getSwarmAttackerId();
-        if ((Entity.NONE != swarmerId) && md.contains(MovePath.MoveStepType.SHAKE_OFF_SWARMERS)) {
+        if ((Entity.NONE != swarmerId) && md.contains(MoveStepType.SHAKE_OFF_SWARMERS)) {
             final Entity swarmer = game.getEntity(swarmerId);
             rollTarget = entity.getBasePilotingRoll(overallMoveType);
 
@@ -2614,12 +2526,8 @@ public class MovementProcessor {
 
             // If the swarmer has Assault claws, give a 1 modifier.
             // We can stop looking when we find our first match.
-            for (Mounted mount : swarmer.getMisc()) {
-                EquipmentType equip = mount.getType();
-                if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
-                    rollTarget.addModifier(1, "swarmer has magnetic claws");
-                    break;
-                }
+            if (swarmer.getMisc().stream().map(Mounted::getType).anyMatch(equip -> equip.hasFlag(MiscType.F_MAGNET_CLAW))) {
+                rollTarget.addModifier(1, "swarmer has magnetic claws");
             }
 
             // okay, print the info
@@ -2884,9 +2792,7 @@ public class MovementProcessor {
             // a jumping tank needs to roll for movement damage
             if (entity instanceof Tank) {
                 int modifier = 0;
-                if (curHex.containsTerrain(Terrains.ROUGH)
-                        || curHex.containsTerrain(Terrains.WOODS)
-                        || curHex.containsTerrain(Terrains.JUNGLE)) {
+                if (IntStream.of(Terrains.ROUGH, Terrains.WOODS, Terrains.JUNGLE).anyMatch(curHex::containsTerrain)) {
                     modifier = 1;
                 }
                 r = new Report(2126);
@@ -2976,7 +2882,7 @@ public class MovementProcessor {
             entity.setDone(false);
             entity.setTurnInterrupted(true);
 
-            GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
+            GameTurn newTurn = new SpecificEntityTurn(entity.getOwner().getId(), entity.getId());
             // Need to set the new turn's multiTurn state
             newTurn.setMultiTurn(true);
             game.insertNextTurn(newTurn);
@@ -3195,7 +3101,7 @@ public class MovementProcessor {
         if ((entity instanceof Mech) && entity.hasEngine() && ((Mech) entity).isIndustrial()
                 && !entity.hasEnvironmentalSealing()
                 && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
-            ((Mech) entity).setJustMovedIntoIndustrialKillingWater((!entity.isProne() && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) >= 2)) || (entity.isProne() && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) == 1)));
+            ((Mech) entity).setJustMovedIntoIndustrialKillingWater(entity.isProne() ? game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) == 1 : game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.WATER) >= 2);
         }
     }
 

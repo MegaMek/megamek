@@ -374,15 +374,12 @@ public class DamageEntityControl {
                     damage = 0;
                     r = new Report(6050); // For some reason this report never
                     // actually shows up...
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
                 } else {
                     r = new Report(6045); // ...but this one displays just fine.
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
                 }
+                r.subject = te_n;
+                r.indent(2);
+                vDesc.addElement(r);
                 break;
             case NONPENETRATING:
                 if (!isPlatoon) {
@@ -399,15 +396,12 @@ public class DamageEntityControl {
                 if (!isPlatoon) {
                     damage /= 2;
                     r = new Report(6060);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
                 } else {
                     r = new Report(6055);
-                    r.subject = te_n;
-                    r.indent(2);
-                    vDesc.addElement(r);
                 }
+                r.subject = te_n;
+                r.indent(2);
+                vDesc.addElement(r);
                 break;
             case ACID:
                 if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor

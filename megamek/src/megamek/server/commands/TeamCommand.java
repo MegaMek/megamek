@@ -17,6 +17,8 @@ import megamek.common.net.AbstractConnection;
 import megamek.server.Server;
 
 import java.util.Enumeration;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Team Chat
@@ -41,21 +43,17 @@ public class TeamCommand extends ServerCommand {
                 return;
             }
 
-            StringBuilder message = new StringBuilder();
-
             String origin = "Team Chat[" + server.getPlayer(connId).getName()
                     + "]";
 
-            for (int pos = 1; pos < args.length; pos++) {
-                message.append(" ");
-                message.append(args[pos]);
-            }
+            String message = IntStream.range(1, args.length).mapToObj(pos -> " " + args[pos]).collect(Collectors.joining());
 
             for (Enumeration<AbstractConnection> i = server.getConnections(); i.hasMoreElements();) {
                 AbstractConnection conn = i.nextElement();
 
-                if (server.getPlayer(conn.getId()).getTeam() == team)
-                    server.sendChat(conn.getId(), origin, message.toString());
+                if (server.getPlayer(conn.getId()).getTeam() == team) {
+                    server.sendChat(conn.getId(), origin, message);
+                }
             }
         }
     }

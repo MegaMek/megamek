@@ -82,8 +82,9 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
             vr.addReport(r);
         }
         
-        if (victory)
+        if (victory) {
             return vr;
+        }
         return VictoryResult.noResult();
     }
     

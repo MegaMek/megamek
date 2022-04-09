@@ -19,10 +19,8 @@ import megamek.common.Report;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * A Victory Result stores player scores and a flag if a game-ending victory is achieved or not
@@ -63,7 +61,7 @@ public class VictoryResult {
         double max = Double.MIN_VALUE;
         int maxEntity = defaultEntity;
         boolean draw = false;
-        for (Map.Entry<Integer, Double> entry : entities.entrySet()) {
+        for (Entry<Integer, Double> entry : entities.entrySet()) {
             if (entry.getValue() == max) {
                 draw = true;
             }
@@ -73,8 +71,9 @@ public class VictoryResult {
                 maxEntity = entry.getKey();
             }
         }
-        if (draw)
+        if (draw) {
             return defaultEntity;
+        }
         return maxEntity;
     }
 
@@ -96,13 +95,15 @@ public class VictoryResult {
         // used to calculate winner
         hiScore = Double.MIN_VALUE;
         for (Double d : playerScore.values()) {
-            if (d > hiScore)
+            if (d > hiScore) {
                 hiScore = d;
+            }
         }
 
         for (Double d : teamScore.values()) {
-            if (d > hiScore)
+            if (d > hiScore) {
                 hiScore = d;
+            }
         }
     }
 
@@ -114,24 +115,6 @@ public class VictoryResult {
     public void addTeamScore(int id, double score) {
         teamScore.put(id, score);
         updateHiScore();
-    }
-
-    /**
-     * @return true if this is a winning player id (draw == win in this case)
-     */
-    public boolean isWinningPlayer(int id) {
-        double d = getPlayerScore(id);
-        // two decimal compare..
-        return ((d * 100) % 100) == ((hiScore * 100) % 100);
-    }
-
-    /**
-     * @return true if this is a winning team id (draw == win in this case)
-     */
-    public boolean isWinningTeam(int id) {
-        double d = getTeamScore(id);
-        // two decimal compare..
-        return ((d * 100) % 100) == ((hiScore * 100) % 100);
     }
 
     /**
@@ -147,8 +130,9 @@ public class VictoryResult {
     }
 
     public double getPlayerScore(int id) {
-        if (playerScore.get(id) == null)
+        if (playerScore.get(id) == null) {
             return 0.0;
+        }
         return playerScore.get(id);
     }
 
@@ -157,8 +141,9 @@ public class VictoryResult {
     }
 
     public double getTeamScore(int id) {
-        if (teamScore.get(id) == null)
+        if (teamScore.get(id) == null) {
             return 0.0;
+        }
         return teamScore.get(id);
     }
 
@@ -232,10 +217,7 @@ public class VictoryResult {
     }
 
     private int[] intify(Integer... ar) {
-        int[] ret = new int[ar.length];
-        for (int i = 0; i < ar.length; i++)
-            ret[i] = ar[i];
-        return ret;
+        return Arrays.stream(ar).mapToInt(integer -> integer).toArray();
     }
 
     @Override

@@ -66,13 +66,7 @@ public class KickCommand extends ServerCommand {
                 server.send(kickedId, new Packet(Packet.COMMAND_CLOSE_CONNECTION));
                 server.getConnection(kickedId).close();
 
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                server
-                        .sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
-            } catch (NumberFormatException ex) {
-                server
-                        .sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
-            } catch (NullPointerException ex) {
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException ex) {
                 server
                         .sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
             }

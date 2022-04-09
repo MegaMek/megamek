@@ -390,7 +390,7 @@ public class Compute {
                 thisLowStackingLevel = entering.calcElevation(game.getBoard()
                         .getHex(origPosition), game.getBoard()
                         .getHex(coords), elevation, entering
-                        .climbMode(), false);
+                        .climbMode());
             }
             int thisHighStackingLevel = thisLowStackingLevel;
             // mechs only occupy one level of a building

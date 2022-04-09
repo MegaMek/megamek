@@ -59,11 +59,10 @@ public class SeeAllCommand extends ServerCommand {
                 && (args.length < 2 || !server.isPassword(args[1]))) {
             server.sendServerChat(connId, "The password is incorrect.  "
                     + "Usage: /seeall <password> <id#>");
-        } else
+        } else {
             try {
                 int playerId;
                 String give_take;
-                boolean has_see_all;
                 // No playerArg provided. Use connId as playerId
                 if (args.length <= playerArg) {
                     playerId = connId;
@@ -71,7 +70,7 @@ public class SeeAllCommand extends ServerCommand {
                     playerId = Integer.parseInt(args[playerArg]);
                 }
 
-                has_see_all = server.getPlayer(playerId).getSeeAll();
+                boolean has_see_all = server.getPlayer(playerId).getSeeAll();
 
                 if (has_see_all) {
                     give_take = " no longer has";
@@ -91,16 +90,11 @@ public class SeeAllCommand extends ServerCommand {
                 server.getPlayer(playerId).setSeeAll(!has_see_all);
                 server.sendEntities(playerId);
 
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                server.sendServerChat("/seeall : seeall failed.  "
-                        + "Type /who for a list of players with id #s.");
-            } catch (NumberFormatException ex) {
-                server.sendServerChat("/seeall : seeall failed.  "
-                        + "Type /who for a list of players with id #s.");
-            } catch (NullPointerException ex) {
+            } catch (ArrayIndexOutOfBoundsException | NumberFormatException | NullPointerException ex) {
                 server.sendServerChat("/seeall : seeall failed.  "
                         + "Type /who for a list of players with id #s.");
             }
+        }
     }
 
 }

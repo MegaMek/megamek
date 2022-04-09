@@ -15,6 +15,9 @@ package megamek.server;
 
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
+import megamek.common.Compute;
+import megamek.common.commandline.AbstractCommandLineParser.ParseException;
+import megamek.common.commandline.ClientServerCommandLineParser.Resolver;
 import megamek.common.commandline.MegaMekCommandLineFlag;
 import megamek.common.commandline.MegaMekCommandLineParser;
 import megamek.common.preference.PreferenceManager;
@@ -35,11 +38,11 @@ public class DedicatedServer {
                 true, false, false);
         try {
             parser.parse();
-        } catch (AbstractCommandLineParser.ParseException e) {
+        } catch (ParseException e) {
             LogManager.getLogger().error(parser.formatErrorMessage(e));
         }
 
-        ClientServerCommandLineParser.Resolver resolver = parser.getResolver(
+        Resolver resolver = parser.getResolver(
                 PreferenceManager.getClientPreferences().getLastServerPass(),
                 PreferenceManager.getClientPreferences().getLastServerPort(),
                 null, null
@@ -61,7 +64,7 @@ public class DedicatedServer {
         }
 
         // kick off a RNG check
-        megamek.common.Compute.d6();
+        Compute.d6();
 
         // start server
         Server server;

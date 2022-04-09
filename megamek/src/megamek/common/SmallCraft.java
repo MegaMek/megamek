@@ -310,11 +310,6 @@ public class SmallCraft extends Aero {
         return 5;
     }
 
-    @Override
-    public int getBodyLocation() {
-        return LOC_HULL;
-    }
-
     // what is different - hit table is about it
     @Override
     public HitData rollHitLocation(int table, int side) {

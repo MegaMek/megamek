@@ -34,11 +34,11 @@ public class ResolveKickAttack {
                 || (kaa.getLeg() == KickAttackAction.LEFTMULE) ? "Left " : "Right ";
         if ((kaa.getLeg() == KickAttackAction.LEFTMULE)
                 || (kaa.getLeg() == KickAttackAction.RIGHTMULE)) {
-            legName = legName.concat("rear ");
+            legName = legName + "rear ";
         } else if (ae instanceof QuadMech) {
-            legName = legName.concat("front ");
+            legName = legName + "front ";
         }
-        legName = legName.concat("leg");
+        legName = legName + "leg";
         Report r;
 
         // get damage, ToHitData and roll from the PhysicalResult

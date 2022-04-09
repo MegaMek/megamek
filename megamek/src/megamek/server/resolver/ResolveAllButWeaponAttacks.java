@@ -1,6 +1,7 @@
 package megamek.server.resolver;
 
 import megamek.common.*;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
@@ -87,7 +88,7 @@ public class ResolveAllButWeaponAttacks {
                 }
             } else if (ea instanceof DisengageAction) {
                 MovePath path = new MovePath(game, entity);
-                path.addStep(MovePath.MoveStepType.FLEE);
+                path.addStep(MoveStepType.FLEE);
                 server.addReport(server.processLeaveMap(path, false, -1));
             } else if (ea instanceof ActivateBloodStalkerAction) {
                 ActivateBloodStalkerAction bloodStalkerAction = (ActivateBloodStalkerAction) ea;

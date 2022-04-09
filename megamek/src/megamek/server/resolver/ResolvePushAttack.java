@@ -58,7 +58,7 @@ public class ResolvePushAttack {
 
         // check if our target has a push against us, too, and get it
         PhysicalResult targetPushResult = null;
-        for (PhysicalResult tpr : server.physicalResults) {
+        for (PhysicalResult tpr : server.getPhysicalResults()) {
             if ((tpr.aaa.getEntityId() == te.getId()) && (tpr.aaa instanceof PushAttackAction)
                     && (tpr.aaa.getTargetId() == ae.getId())) {
                 targetPushResult = tpr;

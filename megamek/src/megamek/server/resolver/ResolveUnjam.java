@@ -4,6 +4,8 @@ import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
+import java.util.stream.IntStream;
+
 public class ResolveUnjam {
     /**
      * Resolve an Unjam Action object
@@ -40,12 +42,7 @@ public class ResolveUnjam {
                 }
                 // Unofficial option to unjam UACs, ACs, and LACs like Rotary
                 // Autocannons
-                if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
-                        || (wtype.getAmmoType() == AmmoType.T_AC)
-                        || (wtype.getAmmoType() == AmmoType.T_AC_IMP)
-                        || (wtype.getAmmoType() == AmmoType.T_PAC)
-                        || (wtype.getAmmoType() == AmmoType.T_LAC))
+                if ((IntStream.of(AmmoType.T_AC_ULTRA, AmmoType.T_AC_ULTRA_THB, AmmoType.T_AC, AmmoType.T_AC_IMP, AmmoType.T_PAC, AmmoType.T_LAC).anyMatch(i -> (wtype.getAmmoType() == i)))
                         && server.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);

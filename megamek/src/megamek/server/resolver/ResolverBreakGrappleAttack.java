@@ -77,15 +77,7 @@ public class ResolverBreakGrappleAttack {
         server.addReport(r);
 
         // is there a counterattack?
-        PhysicalResult targetGrappleResult = null;
-        for (PhysicalResult tpr : server.getPhysicalResults()) {
-            if ((tpr.aaa.getEntityId() == te.getId())
-                    && (tpr.aaa instanceof GrappleAttackAction)
-                    && (tpr.aaa.getTargetId() == ae.getId())) {
-                targetGrappleResult = tpr;
-                break;
-            }
-        }
+        PhysicalResult targetGrappleResult = server.getPhysicalResults().stream().filter(tpr -> (tpr.aaa.getEntityId() == te.getId()) && (tpr.aaa instanceof GrappleAttackAction) && (tpr.aaa.getTargetId() == ae.getId())).findFirst().orElse(null);
 
         if (targetGrappleResult != null) {
             targetGrappleResult.pushBackResolved = true;

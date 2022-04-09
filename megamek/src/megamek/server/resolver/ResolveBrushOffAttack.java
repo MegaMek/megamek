@@ -121,6 +121,8 @@ public class ResolveBrushOffAttack {
                 server.addReport(r);
                 break;
             // TODO : add a default: case and handle it appropriately.
+            default:
+                throw new IllegalStateException("Unexpected value: " + target.getTargetType());
         }
     }
 }

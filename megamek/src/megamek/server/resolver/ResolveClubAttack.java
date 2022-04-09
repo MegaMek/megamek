@@ -118,15 +118,7 @@ public class ResolveClubAttack {
             if (roll == 2) {
                 Mounted club = caa.getClub();
 
-                for (Mounted eq : ae.getWeaponList()) {
-                    if ((eq.getLocation() == club.getLocation())
-                            && (eq.getType() instanceof MiscType)
-                            && eq.getType().hasFlag(MiscType.F_CLUB)
-                            && eq.getType().hasSubType(MiscType.S_BUZZSAW)) {
-                        eq.setHit(true);
-                        break;
-                    }
-                }
+                ae.getWeaponList().stream().filter(eq -> (eq.getLocation() == club.getLocation()) && (eq.getType() instanceof MiscType) && eq.getType().hasFlag(MiscType.F_CLUB) && eq.getType().hasSubType(MiscType.S_BUZZSAW)).findFirst().ifPresent(eq -> eq.setHit(true));
                 r = new Report(4037);
                 r.subject = ae.getId();
                 server.addReport(r);

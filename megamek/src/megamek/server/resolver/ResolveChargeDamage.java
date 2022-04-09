@@ -56,8 +56,6 @@ public class ResolveChargeDamage {
             damage = (int) (te.isConventionalInfantry() ? ceil(damage / 2.0) : floor(damage / 2.0));
             damageTaken = (int) floor(damageTaken / 2.0);
         }
-        boolean bDirect = false;
-        int directBlowCritMod = toHit.getMoS() / 3;
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1)) {
             damage += toHit.getMoS() / 3;
@@ -76,10 +74,8 @@ public class ResolveChargeDamage {
             bldgAbsorbs = bldg.getAbsorbtion(te.getPosition());
         }
 
-        Report r;
-
         // damage to attacker
-        r = new Report(4240);
+        Report r = new Report(4240);
         r.subject = ae.getId();
         r.add(damageTaken);
         r.indent();
@@ -186,9 +182,6 @@ public class ResolveChargeDamage {
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
                 hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                if (bDirect) {
-                    hit.makeDirectBlow(directBlowCritMod);
-                }
                 cluster = server.checkForSpikes(te, hit.getLocation(), cluster, ae, Mech.LOC_CT);
                 server.addReport(DamageEntityControl.damageEntity(server, te, hit, cluster, false,
                         DamageType.NONE, false, false, throughFront));

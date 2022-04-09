@@ -77,16 +77,13 @@ public class ResolveFindClub {
             if (found) {
                 clubType = EquipmentType.get(EquipmentTypeLookup.GIRDER_CLUB);
                 r = new Report(3045);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                server.addReport(r);
             } else {
                 // Sorry, no club for you.
                 r = new Report(3050);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                server.addReport(r);
             }
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            server.addReport(r);
         }
 
         // Are there woods in the hex?

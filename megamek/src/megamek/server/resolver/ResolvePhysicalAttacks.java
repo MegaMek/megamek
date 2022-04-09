@@ -53,14 +53,14 @@ public class ResolvePhysicalAttacks {
                 SearchlightAttackAction saa = (SearchlightAttackAction) aaa;
                 server.addReport(saa.resolveAction(server.getGame()));
             } else {
-                server.physicalResults.addElement(server.preTreatPhysicalAttack(aaa));
+                server.getPhysicalResults().addElement(server.preTreatPhysicalAttack(aaa));
             }
         }
         int cen = Entity.NONE;
-        for (PhysicalResult pr : server.physicalResults) {
+        for (PhysicalResult pr : server.getPhysicalResults()) {
             server.resolvePhysicalAttack(pr, cen);
             cen = pr.aaa.getEntityId();
         }
-        server.physicalResults.removeAllElements();
+        server.getPhysicalResults().removeAllElements();
     }
 }

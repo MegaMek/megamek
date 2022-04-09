@@ -474,8 +474,7 @@ public class MovementProcessor {
                         server.addReport(server.landAirMech((LandAirMech) entity, step.getPosition(), elevation,
                                 distance));
                     } else if (entity instanceof Protomech) {
-                        server.addReport(server.landGliderPM((Protomech) entity, step.getPosition(), elevation,
-                                distance));
+                        server.addReport(server.landGliderPM((Protomech) entity, step.getPosition(), elevation));
                     }
                     // landing always ends movement whether successful or not
                 }
@@ -2999,7 +2998,7 @@ public class MovementProcessor {
                                 entity.delta_distance));
                     } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                         vPhaseReport.addAll(server.landGliderPM((Protomech) entity, entity.getPosition(),
-                                elevation, entity.delta_distance));
+                                elevation));
                     } else {
                         r = new Report(2123);
                         r.addDesc(entity);

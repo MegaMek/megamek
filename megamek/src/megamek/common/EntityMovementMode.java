@@ -129,13 +129,7 @@ public enum EntityMovementMode {
         return this == INF_JUMP;
     }
 
-    public boolean isBipedSwim() {
-        return this == BIPED_SWIM;
-    }
 
-    public boolean isQuadSwim() {
-        return this == QUAD_SWIM;
-    }
 
     public boolean isWiGE() {
         return this == WIGE;
@@ -149,9 +143,6 @@ public enum EntityMovementMode {
         return this == SPHEROID;
     }
 
-    public boolean isUMUInfantry() {
-        return this == INF_UMU;
-    }
 
     public boolean isAerospace() {
         return this == AEROSPACE;

@@ -170,7 +170,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         smokeList.add(currentCoords.translated((windDirection + 1) % 6));
                         smokeList.add(currentCoords.translated((windDirection + 5) % 6));
 
-                        server.addSmoke(smokeList, windDirection, bInferno);
+                        server.addSmoke(smokeList, bInferno);
                         board.initializeAround(currentXCoord, currentYCoord);
                     }
 

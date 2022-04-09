@@ -16280,7 +16280,7 @@ public class Server implements Runnable {
         }
 
         if ((eqType instanceof MiscType) && eqType.hasFlag(MiscType.F_HARJEL)) {
-            reports.addAll(breachLocation(en, loc, null, true));
+            reports.addAll(breachLocation(en, loc, true));
         }
 
         // HarJel II/III hits trigger another possible critical hit on
@@ -18601,18 +18601,18 @@ public class Server implements Runnable {
             vDesc.addElement(r);
             boolean advancedCrit = game.getOptions().booleanOption(
                     OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL);
-            if ((!advancedCrit && (roll <= 7)) || (advancedCrit && (roll <= 8))) {
+            if (roll <= (advancedCrit ? 8 : 7)) {
                 // no effect
                 r = new Report(6005);
                 r.subject = en.getId();
                 vDesc.addElement(r);
                 return vDesc;
-            } else if (!advancedCrit && roll <= 9 || advancedCrit && roll <= 10) {
+            } else if (roll <= (advancedCrit ? 10 : 9)) {
                 hits = 1;
                 r = new Report(6315);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-            } else if (!advancedCrit && roll <= 11 || advancedCrit && roll <= 12) {
+            } else if (advancedCrit ? roll <= 12 : roll <= 11) {
                 hits = 2;
                 r = new Report(6320);
                 r.subject = en.getId();
@@ -18993,7 +18993,7 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                     return vDesc;
                 }
-                vDesc.addAll(breachLocation(entity, loc, hex, false));
+                vDesc.addAll(breachLocation(entity, loc, false));
             }
         }
         return vDesc;
@@ -19005,13 +19005,10 @@ public class Server implements Runnable {
      * @param entity the <code>Entity</code> that needs to be checked.
      * @param loc    the <code>int</code> location on the entity that needs to be
      *               checked for a breach.
-     * @param hex    the <code>Hex</code> the entity occupies when checking. This
-     *               value will be <code>null</code> if the check is the result of
-     *               an attack, and non-null if it occurs during movement.
      * @param harJel a <code>boolean</code> value indicating if the uselessness is
      *               the cause of a critically hit HarJel system
      */
-    private Vector<Report> breachLocation(Entity entity, int loc, Hex hex, boolean harJel) {
+    private Vector<Report> breachLocation(Entity entity, int loc, boolean harJel) {
         Vector<Report> vDesc = new Vector<>();
         Report r;
 
@@ -19118,10 +19115,10 @@ public class Server implements Runnable {
             }
 
             if (loc == Mech.LOC_LT) {
-                vDesc.addAll(breachLocation(entity, Mech.LOC_LARM, hex, false));
+                vDesc.addAll(breachLocation(entity, Mech.LOC_LARM, false));
             }
             if (loc == Mech.LOC_RT) {
-                vDesc.addAll(breachLocation(entity, Mech.LOC_RARM, hex, false));
+                vDesc.addAll(breachLocation(entity, Mech.LOC_RARM, false));
             }
         }
 
@@ -20379,21 +20376,6 @@ public class Server implements Runnable {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Returns true if the hex is set on fire with the specified roll. Of
-     * course, also checks to see that fire is possible in the specified hex.
-     * This version of the method will not report the attempt roll.
-     *
-     * @param c        - the <code>Coords</code> to be lit.
-     * @param roll     - the <code>int</code> target number for the ignition roll
-     * @param bInferno - <code>true</code> if the fire can be lit in any terrain. If
-     *                 this value is <code>false</code> the hex will be lit only if
-     *                 it contains Woods, jungle or a Building.
-     */
-    public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno) {
-        return checkIgnition(c, roll, bInferno, Entity.NONE, null);
     }
 
     /**

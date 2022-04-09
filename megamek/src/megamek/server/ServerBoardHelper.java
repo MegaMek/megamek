@@ -28,14 +28,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-class ServerBoardHelper {
+public class ServerBoardHelper {
     
     /**
      * Returns a list of path names of available boards of the size set in the given
      * mapSettings. The path names are minus the '.board' extension and relative to
      * the boards data directory.
      */
-    static ArrayList<String> scanForBoards(MapSettings mapSettings) {
+    public static ArrayList<String> scanForBoards(MapSettings mapSettings) {
         BoardDimensions boardSize = mapSettings.getBoardSize();
         ArrayList<String> result = new ArrayList<>();
         

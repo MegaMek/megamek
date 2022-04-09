@@ -362,7 +362,7 @@ public class SharedUtility {
                     || (entity.getMovementMode() == EntityMovementMode.WIGE
                             && step.getClearance() > 0)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex,
-                        overallMoveType, prevStep, prevFacing, curFacing,
+                        overallMoveType, prevFacing, curFacing,
                         lastPos, curPos, distance);
                 checkNag(rollTarget, nagReport, psrList);
             }

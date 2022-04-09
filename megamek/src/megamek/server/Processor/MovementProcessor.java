@@ -1506,7 +1506,7 @@ public class MovementProcessor {
                     || (entity.getMovementMode() == EntityMovementMode.WIGE
                             && step.getClearance() > 0)) {
                 rollTarget = entity.checkSideSlip(moveType, prevHex,
-                        overallMoveType, prevStep, prevFacing, curFacing,
+                        overallMoveType, prevFacing, curFacing,
                         lastPos, curPos, distance);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int moF = server.doSkillCheckWhileMoving(entity, lastElevation,

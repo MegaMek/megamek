@@ -12061,7 +12061,7 @@ public class Server implements Runnable {
 
             } else {
                 // same effect as successful DFA
-                ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
+                ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false));
                 addReport(doEntityDisplacement(ae, ae.getPosition(),
                         daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
                                 "executed death from above")));
@@ -12300,7 +12300,7 @@ public class Server implements Runnable {
             || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return;
         }
-        ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
+        ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false));
         // HACK: to avoid automatic falls, displace from dest to dest
         addReport(doEntityDisplacement(ae, dest, dest, new PilotingRollData(
                 ae.getId(), 4, "executed death from above")));
@@ -22555,7 +22555,7 @@ public class Server implements Runnable {
                 transmitPlayerUpdate(getPlayer(connId));
                 break;
             case COMMAND_PLAYER_TEAMCHANGE:
-                ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, game, this);
+                ServerLobbyHelper.receiveLobbyTeamChange(packet, game, this);
                 break;
             case COMMAND_PLAYER_READY:
                 receivePlayerDone(packet, connId);
@@ -22647,15 +22647,15 @@ public class Server implements Runnable {
                 resetPlayersDone();
                 break;
             case COMMAND_ENTITY_ASSIGN:
-                ServerLobbyHelper.receiveEntitiesAssign(packet, connId, game, this);
+                ServerLobbyHelper.receiveEntitiesAssign(packet, game, this);
                 resetPlayersDone();
                 break;
             case COMMAND_FORCE_UPDATE:
-                ServerLobbyHelper.receiveForceUpdate(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceUpdate(packet, game, this);
                 resetPlayersDone();
                 break;
             case COMMAND_FORCE_ADD:
-                ServerLobbyHelper.receiveForceAdd(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceAdd(packet, game, this);
                 resetPlayersDone();
                 break;
             case COMMAND_FORCE_DELETE:
@@ -22663,15 +22663,15 @@ public class Server implements Runnable {
                 resetPlayersDone();
                 break;
             case COMMAND_FORCE_PARENT:
-                ServerLobbyHelper.receiveForceParent(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceParent(packet, game, this);
                 resetPlayersDone();
                 break;
             case COMMAND_FORCE_ADD_ENTITY:
-                ServerLobbyHelper.receiveAddEntititesToForce(packet, connId, game, this);
+                ServerLobbyHelper.receiveAddEntititesToForce(packet, game, this);
                 resetPlayersDone();
                 break;
             case COMMAND_FORCE_ASSIGN_FULL:
-                ServerLobbyHelper.receiveForceAssignFull(packet, connId, game, this);
+                ServerLobbyHelper.receiveForceAssignFull(packet, game, this);
                 resetPlayersDone();
                 break;
             case COMMAND_ENTITY_LOAD:

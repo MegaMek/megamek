@@ -290,11 +290,6 @@ public class Jumpship extends Aero {
         return 7;
     }
 
-    @Override
-    public int getBodyLocation() {
-        return LOC_HULL;
-    }
-    
     /**
      * Get the docking collar type used by the ship.
      *

@@ -33,6 +33,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#";
@@ -537,7 +539,7 @@ public class ScenarioLoader {
                         e.setExternalIdAsString(p.getString(key));
                         break;
                     case PARAM_ADVANTAGES:
-                        parseAdvantages(e, p.getString(key, SEPARATOR_SPACE));
+                        parseAdvantages(e, Objects.requireNonNull(p.getString(key, SEPARATOR_SPACE)));
                         break;
                     case PARAM_AUTO_EJECT:
                         parseAutoEject(e, p.getString(key));
@@ -692,13 +694,8 @@ public class ScenarioLoader {
         }
     }
 
-    private int findIndex(String[] sa, String s) {
-        for (int x = 0; x < sa.length; x++) {
-            if (sa[x].equalsIgnoreCase(s)) {
-                return x;
-            }
-        }
-        return -1;
+    private int findIndex(String s) {
+        return IntStream.range(0, IStartingPositions.START_LOCATION_NAMES.length).filter(x -> IStartingPositions.START_LOCATION_NAMES[x].equalsIgnoreCase(s)).findFirst().orElse(-1);
     }
 
     private String getFactionParam(String faction, String param) {
@@ -727,7 +724,7 @@ public class ScenarioLoader {
             if (loc == null) {
                 loc = "Any";
             }
-            int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
+            int dir = Math.max(findIndex(loc), 0);
             player.setStartingPos(dir);
             
             final Camouflage camouflage = parseCamouflage(p.getString(getFactionParam(faction, PARAM_CAMO)));
@@ -825,7 +822,7 @@ public class ScenarioLoader {
         for (String dir: allDirs) {
             File curDir = new File(Configuration.boardsDir(), dir);
             if (curDir.exists()) {
-                for (String file : curDir.list()) {
+                for (String file : Objects.requireNonNull(curDir.list())) {
                     if (file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
                         boards.add(dir+"/"+file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
                     }
@@ -888,7 +885,7 @@ public class ScenarioLoader {
             while ((line = reader.readLine()) != null) {
                 lineNum++;
                 line = line.trim();
-                if (line.startsWith(COMMENT_MARK) || (line.length() == 0)) {
+                if (line.startsWith(COMMENT_MARK) || (line.isEmpty())) {
                     continue;
                 } else if (!line.contains(SEPARATOR_PROPERTY)) {
                     LogManager.getLogger().error(String.format("Equality sign in scenario file %s on line %d missing; ignoring",
@@ -942,13 +939,7 @@ public class ScenarioLoader {
     private boolean parseBoolean(StringMultiMap p, String key, boolean defaultValue) {
         boolean result = defaultValue;
         if (p.containsKey(key)) {
-            if (p.getString(key).equalsIgnoreCase("true") 
-                    || p.getString(key).equalsIgnoreCase("on")
-                    || p.getString(key).equalsIgnoreCase("1")) {
-                result = true;
-            } else {
-                result = false;
-            }
+            result = Stream.of("true", "on", "1").anyMatch(s -> p.getString(key).equalsIgnoreCase(s));
         }
         return result;
     }
@@ -978,7 +969,7 @@ public class ScenarioLoader {
      * This class is used to store the critical hit plan for a entity it is
      * loaded from the scenario file. It contains a vector of CritHit.
      */
-    private class CritHitPlan {
+    private static class CritHitPlan {
         public Entity entity;
         List<CritHit> critHits = new ArrayList<>();
 
@@ -1026,7 +1017,7 @@ public class ScenarioLoader {
      * This class is used to store the ammo Adjustments it is loaded from the
      * scenario file. It contains a vector of SetAmmoTo.
      */
-    private class SetAmmoPlan {
+    private static class SetAmmoPlan {
         public final Entity entity;
         public final List<SetAmmoTo> ammoSetTo = new ArrayList<>();
         public final List<SetAmmoType> ammoSetType = new ArrayList<>();
@@ -1085,7 +1076,7 @@ public class ScenarioLoader {
      * This class is used to store the damage plan for a entity it is loaded
      * from the scenario file. It contains a vector of SpecDam.
      */
-    private class DamagePlan {
+    private static class DamagePlan {
         public final Entity entity;
         public final int nBlocks;
         public final List<SpecDam> specificDammage = new ArrayList<>();
@@ -1164,7 +1155,7 @@ public class ScenarioLoader {
 
         public String getString(String key, String separator) {
             Collection<String> values = get(key);
-            if ((values == null) || (values.size() == 0)) {
+            if ((values == null) || (values.isEmpty())) {
                 return null;
             }
             

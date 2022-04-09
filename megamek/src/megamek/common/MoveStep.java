@@ -616,9 +616,7 @@ public class MoveStep implements Serializable {
                                     game.getBoard().getHex(prev.getPosition()),
                                     game.getBoard().getHex(getPosition()),
                                     elevation,
-                                    climbMode(),
-                                    (entity.getMovementMode() == EntityMovementMode.WIGE)
-                                            && (prev.getType() == MoveStepType.CLIMB_MODE_OFF)));
+                                    climbMode()));
                 }
             } else {
                 setElevation(entity
@@ -626,9 +624,7 @@ public class MoveStep implements Serializable {
                                 game.getBoard().getHex(prev.getPosition()),
                                 game.getBoard().getHex(getPosition()),
                                 elevation,
-                                climbMode(),
-                                (entity.getMovementMode() == EntityMovementMode.WIGE)
-                                        && (prev.getType() == MoveStepType.CLIMB_MODE_OFF)));
+                                climbMode()));
             }
         }
 

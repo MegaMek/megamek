@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.server.DamageEntityControl;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.Server;
 import megamek.common.enums.DamageType;
 import org.apache.logging.log4j.LogManager;
@@ -293,7 +294,7 @@ public class AreaEffectHelper {
         }
         // we have to do it this way to avoid a concurrent error problem
         for (Minefield mf : mfRemoved) {
-            server.removeMinefield(mf);
+            MineFieldController.removeMinefield(server, mf);
         }
     }
 

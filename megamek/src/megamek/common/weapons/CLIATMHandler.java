@@ -40,6 +40,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.Server;
 
 /**
@@ -349,7 +350,7 @@ public class CLIATMHandler extends ATMHandler {
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
+                MineFieldController.removeMinefield(server, mf);
             }
             return true;
         }

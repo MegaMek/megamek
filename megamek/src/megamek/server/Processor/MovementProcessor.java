@@ -9,6 +9,7 @@ import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.EntityVerifier;
 import megamek.server.Applier.DropShipApplier;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.EntityTargetPair;
 import megamek.server.Server;
 import megamek.server.ServerHelper;
@@ -1793,7 +1794,7 @@ public class MovementProcessor {
                             r.subject = entity.getId();
                             r.add(entity.getShortName(), true);
                             server.addReport(r);
-                            server.revealMinefield(owner, mf);
+                            MineFieldController.revealMinefield(server, owner, mf);
                         }
                     }
                 }

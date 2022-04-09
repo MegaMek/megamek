@@ -18,6 +18,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
@@ -498,7 +499,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
+                MineFieldController.removeMinefield(server, mf);
             }
         }
         if (!bMissed) {
@@ -515,7 +516,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 }
                 // we have to do it this way to avoid a concurrent error problem
                 for (Minefield mf : mfRemoved) {
-                    server.removeMinefield(mf);
+                    MineFieldController.removeMinefield(server, mf);
                 }
             }
             // Here we're doing damage for each hit with more standard artillery shells
@@ -539,7 +540,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                         }
                     }
                     for (Minefield mf : mfRemoved) {
-                        server.removeMinefield(mf);
+                        MineFieldController.removeMinefield(server, mf);
                     }
                 }
                 server.artilleryDamageArea(c, aaa.getCoords(), atype, subjectId, ae, isFlak,

@@ -1,6 +1,7 @@
 package megamek.server.resolver;
 
 import megamek.common.*;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.Server;
 
 public class ResolveClearMinefield {
@@ -42,7 +43,7 @@ public class ResolveClearMinefield {
         server.addReport(r);
 
         if (server.clearMinefield(mf, ent, clear, boom, server.getvPhaseReport())) {
-            server.removeMinefield(mf);
+            MineFieldController.removeMinefield(server, mf);
         }
         // some mines might have blown up
         server.resetMines();

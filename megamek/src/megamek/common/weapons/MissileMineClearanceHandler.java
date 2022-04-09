@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.weapons.lrms.LRMWeapon;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.Server;
 
 import java.util.ArrayList;
@@ -157,7 +158,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
             }
         }
         for (Minefield mf : mfRemoved) {
-            server.removeMinefield(mf);
+            MineFieldController.removeMinefield(server, mf);
         }
         if (updateMinefields) {
             server.sendChangedMines(targetPos);

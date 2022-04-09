@@ -21,6 +21,7 @@ package megamek.server;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.TSEMPWeapon;
+import megamek.server.entityControler.MineFieldController;
 
 import java.util.*;
 
@@ -521,7 +522,7 @@ public class ServerHelper {
                         r.add(potentialMineCoords.toFriendlyString());
                         vPhaseReport.add(r);
                         
-                        server.revealMinefield(entity.getOwner(), minefield);
+                        MineFieldController.revealMinefield(server, entity.getOwner(), minefield);
                     }
                 }
             }

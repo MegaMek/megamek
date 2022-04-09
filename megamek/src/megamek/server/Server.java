@@ -59,6 +59,7 @@ import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.AreaEffectHelper.NukeStats;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.other.TSEMPWeapon;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.Processor.*;
 import megamek.server.commands.*;
 import megamek.server.resolver.*;
@@ -6649,10 +6650,10 @@ public class Server implements Runnable {
                     minefield = Minefield.createMinefield(mfCoord, playerId,
                             Minefield.TYPE_CONVENTIONAL, hexDamage);
                     game.addMinefield(minefield);
-                    checkForRevealMinefield(minefield, game.getEntity(entityId));
+                    checkForRevealMinefield(this, minefield, game.getEntity(entityId));
                 } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
                     // Yup. Replace the old one.
-                    removeMinefield(minefield);
+                    MineFieldController.removeMinefield(this, minefield);
                     hexDamage += minefield.getDensity();
 
                     // Damage from Thunder minefields are capped.
@@ -6661,7 +6662,7 @@ public class Server implements Runnable {
                     }
                     minefield.setDensity(hexDamage);
                     game.addMinefield(minefield);
-                    checkForRevealMinefield(minefield, game.getEntity(entityId));
+                    checkForRevealMinefield(this, minefield, game.getEntity(entityId));
                 }
             } // End coords-on-board
         } // Handle the next coords
@@ -6691,16 +6692,16 @@ public class Server implements Runnable {
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_CONVENTIONAL, damage);
             game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
             // Add to the old one
-            removeMinefield(minefield);
+            MineFieldController.removeMinefield(this, minefield);
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = min(damage, Minefield.MAX_DAMAGE);
             minefield.setDensity(damage);
             game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         }
     }
 
@@ -6728,16 +6729,16 @@ public class Server implements Runnable {
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_INFERNO, damage);
             game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
             // Add to the old one
-            removeMinefield(minefield);
+            MineFieldController.removeMinefield(this, minefield);
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = min(damage, Minefield.MAX_DAMAGE);
             minefield.setDensity(damage);
             game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         }
     }
 
@@ -6762,16 +6763,16 @@ public class Server implements Runnable {
                 minefield = Minefield.createMinefield(coords, playerId,
                         Minefield.TYPE_CONVENTIONAL, damage);
                 game.addMinefield(minefield);
-                checkForRevealMinefield(minefield, game.getEntity(entityId));
+                checkForRevealMinefield(this, minefield, game.getEntity(entityId));
             } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
                 // Add to the old one.
-                removeMinefield(minefield);
+                MineFieldController.removeMinefield(this, minefield);
                 int oldDamage = minefield.getDensity();
                 damage += oldDamage;
                 damage = min(damage, Minefield.MAX_DAMAGE);
                 minefield.setDensity(damage);
                 game.addMinefield(minefield);
-                checkForRevealMinefield(minefield, game.getEntity(entityId));
+                checkForRevealMinefield(this, minefield, game.getEntity(entityId));
             }
         } // End coords-on-board
     }
@@ -6799,16 +6800,16 @@ public class Server implements Runnable {
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId, Minefield.TYPE_ACTIVE, damage);
             game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
             // Add to the old one
-            removeMinefield(minefield);
+            MineFieldController.removeMinefield(this, minefield);
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = min(damage, Minefield.MAX_DAMAGE);
             minefield.setDensity(damage);
             game.addMinefield(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         }
     }
 
@@ -6834,17 +6835,17 @@ public class Server implements Runnable {
                     Minefield.TYPE_VIBRABOMB, damage, sensitivity);
             game.addMinefield(minefield);
             game.addVibrabomb(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
             // Add to the old one
-            removeMinefield(minefield);
+            MineFieldController.removeMinefield(this, minefield);
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = min(damage, Minefield.MAX_DAMAGE);
             minefield.setDensity(damage);
             game.addMinefield(minefield);
             game.addVibrabomb(minefield);
-            checkForRevealMinefield(minefield, game.getEntity(entityId));
+            checkForRevealMinefield(this, minefield, game.getEntity(entityId));
         }
     }
 
@@ -7789,11 +7790,11 @@ public class Server implements Runnable {
 
             // check the direct reduction
             mf.checkReduction(0, true);
-            revealMinefield(mf);
+            MineFieldController.revealMinefield(this, mf);
         }
 
         for (Minefield mf : fieldsToRemove) {
-            removeMinefield(mf);
+            MineFieldController.removeMinefield(this, mf);
         }
 
         return trippedMine;
@@ -7842,7 +7843,7 @@ public class Server implements Runnable {
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                removeMinefield(mf);
+                MineFieldController.removeMinefield(this, mf);
             }
             // update the mines at these coords
             sendChangedMines(c);
@@ -7961,7 +7962,7 @@ public class Server implements Runnable {
         }
         // we have to do it this way to avoid a concurrent error problem
         for (Minefield mf : mfRemoved) {
-            removeMinefield(mf);
+            MineFieldController.removeMinefield(this, mf);
         }
     }
 
@@ -8041,7 +8042,7 @@ public class Server implements Runnable {
                 }
             }
             for (Minefield mf : fieldsToRemove) {
-                removeMinefield(mf);
+                MineFieldController.removeMinefield(this, mf);
             }
         }
 
@@ -8122,7 +8123,7 @@ public class Server implements Runnable {
             if (mf.hasDetonated()) {
                 boom = true;
                 mf.checkReduction(0, true);
-                revealMinefield(mf);
+                MineFieldController.revealMinefield(this, mf);
             }
 
         }
@@ -8130,89 +8131,11 @@ public class Server implements Runnable {
     }
 
     /**
-     * Removes the minefield from the game.
-     *
-     * @param mf The <code>Minefield</code> to remove
-     */
-    public void removeMinefield(Minefield mf) {
-        if (game.containsVibrabomb(mf)) {
-            game.removeVibrabomb(mf);
-        }
-        game.removeMinefield(mf);
-
-        Enumeration<Player> players = game.getPlayers();
-        while (players.hasMoreElements()) {
-            Player player = players.nextElement();
-            removeMinefield(player, mf);
-        }
-    }
-
-    /**
-     * Removes the minefield from a player.
-     *
-     * @param player The <code>Player</code> whose minefield should be removed
-     * @param mf     The <code>Minefield</code> to be removed
-     */
-    private void removeMinefield(Player player, Minefield mf) {
-        if (player.containsMinefield(mf)) {
-            player.removeMinefield(mf);
-            send(player.getId(), new Packet(COMMAND_REMOVE_MINEFIELD, mf));
-        }
-    }
-
-    /**
-     * Reveals a minefield for all players.
-     *
-     * @param mf The <code>Minefield</code> to be revealed
-     */
-    private void revealMinefield(Minefield mf) {
-        Enumeration<Team> teams = game.getTeams();
-        while (teams.hasMoreElements()) {
-            Team team = teams.nextElement();
-            revealMinefield(team, mf);
-        }
-    }
-
-    /**
-     * Reveals a minefield for all players on a team.
-     *
-     * @param team The <code>team</code> whose minefield should be revealed
-     * @param mf   The <code>Minefield</code> to be revealed
-     */
-    public void revealMinefield(Team team, Minefield mf) {
-        Enumeration<Player> players = team.getPlayers();
-        while (players.hasMoreElements()) {
-            Player player = players.nextElement();
-            if (!player.containsMinefield(mf)) {
-                player.addMinefield(mf);
-                send(player.getId(), new Packet(COMMAND_REVEAL_MINEFIELD, mf));
-            }
-        }
-    }
-    
-    /**
-     * Reveals a minefield for a specific player
-     * If on a team, does it for the whole team. Otherwise, just the player.
-     */
-    public void revealMinefield(Player player, Minefield mf) {
-        Team team = game.getTeamForPlayer(player);
-        
-        if (team != null) {
-            revealMinefield(team, mf);
-        } else {
-            if (!player.containsMinefield(mf)) {
-                player.addMinefield(mf);
-                send(player.getId(), new Packet(COMMAND_REVEAL_MINEFIELD, mf));
-            }
-        }
-    }
-
-    /**
      * checks whether a newly set mine should be revealed to players based on
      * LOS. If so, then it reveals the mine
      */
-    private void checkForRevealMinefield(Minefield mf, Entity layer) {
-        Enumeration<Team> teams = game.getTeams();
+    private static void checkForRevealMinefield(Server server, Minefield mf, Entity layer) {
+        Enumeration<Team> teams = server.game.getTeams();
         // loop through each team and determine if they can see the mine, then
         // loop through players on team
         // and reveal the mine
@@ -8221,32 +8144,32 @@ public class Server implements Runnable {
             boolean canSee = false;
 
             // the players own team can always see the mine
-            if (team.equals(game.getTeamForPlayer(game.getPlayer(mf.getPlayerId())))) {
+            if (team.equals(server.game.getTeamForPlayer(server.game.getPlayer(mf.getPlayerId())))) {
                 canSee = true;
             } else {
                 // need to loop through all entities on this team and find the
                 // one with the best shot of seeing
                 // the mine placement
                 int target = Integer.MAX_VALUE;
-                Iterator<Entity> entities = game.getEntities();
+                Iterator<Entity> entities = server.game.getEntities();
                 while (entities.hasNext()) {
                     Entity en = entities.next();
                     // are we on the right team?
-                    if (!team.equals(game.getTeamForPlayer(en.getOwner()))) {
+                    if (!team.equals(server.game.getTeamForPlayer(en.getOwner()))) {
                         continue;
                     }
-                    if (LosEffects.calculateLOS(game, en,
+                    if (LosEffects.calculateLOS(server.game, en,
                             new HexTarget(mf.getCoords(), Targetable.TYPE_HEX_CLEAR)).canSee()) {
                         target = 0;
                         break;
                     }
-                    LosEffects los = LosEffects.calculateLOS(game, en, layer);
+                    LosEffects los = LosEffects.calculateLOS(server.game, en, layer);
                     if (los.canSee()) {
                         // TODO : need to add mods
                         ToHitData current = new ToHitData(4, "base");
-                        current.append(Compute.getAttackerMovementModifier(game, en.getId()));
-                        current.append(Compute.getTargetMovementModifier(game, layer.getId()));
-                        current.append(los.losModifiers(game));
+                        current.append(Compute.getAttackerMovementModifier(server.game, en.getId()));
+                        current.append(Compute.getTargetMovementModifier(server.game, layer.getId()));
+                        current.append(los.losModifiers(server.game));
                         if (current.getValue() < target) {
                             target = current.getValue();
                         }
@@ -8258,7 +8181,7 @@ public class Server implements Runnable {
                 }
             }
             if (canSee) {
-                revealMinefield(team, mf);
+                MineFieldController.revealMinefield(server, team, mf);
             }
         }
     }
@@ -10511,6 +10434,8 @@ public class Server implements Runnable {
                             maxDist = 2;
                             break;
                     // Anything above is the same as the default
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + numTroopers);
                     }
                 }
                 for (int dist = 1; dist <= maxDist; dist++) {

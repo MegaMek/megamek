@@ -25,6 +25,7 @@ import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.entityControler.MineFieldController;
 import megamek.server.Server;
 
 /**
@@ -77,7 +78,7 @@ public class MRMHandler extends MissileWeaponHandler {
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
+                MineFieldController.removeMinefield(server, mf);
             }
             return true;
         }

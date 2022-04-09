@@ -8,6 +8,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.EntityVerifier;
+import megamek.server.Applier.DropShipApplier;
 import megamek.server.EntityTargetPair;
 import megamek.server.Server;
 import megamek.server.ServerHelper;
@@ -192,7 +193,7 @@ public class MovementProcessor {
             a.setCurrentVelocity(1);
             a.liftOff(1);
             if (entity instanceof Dropship) {
-                Server.applyDropShipProximityDamage(server, md.getFinalCoords(), true, md.getFinalFacing(), entity);
+                DropShipApplier.applyDropShipProximityDamage(server, md.getFinalCoords(), true, md.getFinalFacing(), entity);
             }
             server.checkForTakeoffDamage(a);
             entity.setPosition(entity.getPosition().translated(entity.getFacing(), a.getTakeOffLength()));
@@ -208,7 +209,7 @@ public class MovementProcessor {
                 a.setCurrentVelocity(0);
                 a.liftOff(1);
                 if (entity instanceof Dropship) {
-                    Server.applyDropShipProximityDamage(server, md.getFinalCoords(), (Dropship) a);
+                    DropShipApplier.applyDropShipProximityDamage(server, md.getFinalCoords(), (Dropship) a);
                 }
                 server.checkForTakeoffDamage(a);
             }
@@ -237,7 +238,7 @@ public class MovementProcessor {
                     md.getFinalFacing(), true);
             server.attemptLanding(entity, rollTarget);
             if (entity instanceof Dropship) {
-                Server.applyDropShipLandingDamage(server, md.getFinalCoords(), (Dropship) a);
+                DropShipApplier.applyDropShipLandingDamage(server, md.getFinalCoords(), (Dropship) a);
             }
             a.land();
             entity.setPosition(md.getFinalCoords());

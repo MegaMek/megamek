@@ -1375,7 +1375,7 @@ public class Server implements Runnable {
     /**
      * Check a list of entity Ids for doomed entities and destroy those.
      */
-    private void destroyDoomedEntities(Vector<Integer> entityIds) {
+    public void destroyDoomedEntities(Vector<Integer> entityIds) {
         Vector<Entity> toRemove = new Vector<>(0, 10);
         for (Integer entityId : entityIds) {
             Entity entity = game.getEntity(entityId);
@@ -3720,109 +3720,6 @@ public class Server implements Runnable {
                 addNewLines();
             }
         }
-    }
-
-    public static void applyDropShipLandingDamage(Server server, Coords centralPos, Entity killer) {
-        // first cycle through hexes to figure out final elevation
-        Hex centralHex = server.game.getBoard().getHex(centralPos);
-        if (null == centralHex) {
-            // shouldn't happen
-            return;
-        }
-        int finalElev = centralHex.getLevel();
-        if (!centralHex.containsTerrain(Terrains.PAVEMENT)
-            && !centralHex.containsTerrain(Terrains.ROAD)) {
-            finalElev--;
-        }
-        Vector<Coords> positions = new Vector<>();
-        positions.add(centralPos);
-        for (int i = 0; i < 6; i++) {
-            Coords pos = centralPos.translated(i);
-            Hex hex = server.game.getBoard().getHex(pos);
-            if (null == hex) {
-                continue;
-            }
-            if (hex.getLevel() < finalElev) {
-                finalElev = hex.getLevel();
-            }
-            positions.add(pos);
-        }
-        // ok now cycle through hexes and make all changes
-        for (Coords pos : positions) {
-            Hex hex = server.game.getBoard().getHex(pos);
-            hex.setLevel(finalElev);
-            // get rid of woods and replace with rough
-            if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
-                hex.removeTerrain(Terrains.WOODS);
-                hex.removeTerrain(Terrains.JUNGLE);
-                hex.removeTerrain(Terrains.FOLIAGE_ELEV);
-                hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
-            }
-            server.sendChangedHex(pos);
-        }
-
-        Server.applyDropShipProximityDamage(server, centralPos, killer);
-    }
-
-    public static void applyDropShipProximityDamage(Server server, Coords centralPos, Entity killer) {
-        Server.applyDropShipProximityDamage(server, centralPos, false, 0, killer);
-    }
-
-    /**
-     * apply damage to units and buildings within a certain radius of a landing
-     * or lifting off DropShip
-     *
-     * @param server
-     * @param centralPos - the Coords for the central position of the DropShip
-     */
-    public static void applyDropShipProximityDamage(Server server, Coords centralPos, boolean rearArc, int facing, Entity killer) {
-
-        Vector<Integer> alreadyHit = new Vector<>();
-
-        // anything in the central hex or adjacent hexes is destroyed
-        Hashtable<Coords, Vector<Entity>> positionMap = server.game.getPositionMap();
-        for (Entity en : server.game.getEntitiesVector(centralPos)) {
-            if (!en.isAirborne()) {
-                server.addReport(server.destroyEntity(en, "DropShip proximity damage", false,
-                                        false));
-                alreadyHit.add(en.getId());
-            }
-        }
-        Building bldg = server.game.getBoard().getBuildingAt(centralPos);
-        if (null != bldg) {
-            server.collapseBuilding(bldg, positionMap, centralPos, server.vPhaseReport);
-        }
-        for (int i = 0; i < 6; i++) {
-            Coords pos = centralPos.translated(i);
-            for (Entity en : server.game.getEntitiesVector(pos)) {
-                if (!en.isAirborne()) {
-                    server.addReport(server.destroyEntity(en, "DropShip proximity damage",
-                                            false, false));
-                }
-                alreadyHit.add(en.getId());
-            }
-            bldg = server.game.getBoard().getBuildingAt(pos);
-            if (null != bldg) {
-                server.collapseBuilding(bldg, positionMap, pos, server.vPhaseReport);
-            }
-        }
-
-        // Report r;
-        // ok now I need to look at the damage rings - start at 2 and go to 7
-        for (int i = 2; i < 8; i++) {
-            int damageDice = (8 - i) * 2;
-            List<Coords> ring = centralPos.allAtDistance(i);
-            for (Coords pos : ring) {
-                if (rearArc && !Compute.isInArc(centralPos, facing, pos, Compute.ARC_AFT)) {
-                    continue;
-                }
-
-                alreadyHit = server.artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(),
-                        killer, null, false, 0, server.vPhaseReport, false,
-                        alreadyHit, true);
-            }
-        }
-        server.destroyDoomedEntities(alreadyHit);
     }
 
     /**
@@ -11417,184 +11314,6 @@ public class Server implements Runnable {
         if (missed) {
             game.addPSR(new PilotingRollData(ae.getId(), 0, "Zweihander miss"));
         }
-    }
-
-    /**
-     * Handle a break grapple attack
-     */
-    public static void resolveBreakGrappleAttack(Server server, PhysicalResult pr, int lastEntityId) {
-        final BreakGrappleAttackAction paa = (BreakGrappleAttackAction) pr.aaa;
-        final Entity ae = server.game.getEntity(paa.getEntityId());
-        // PLEASE NOTE: buildings are *never* the target of a "push".
-        final Entity te = server.game.getEntity(paa.getTargetId());
-        // get roll and ToHitData from the PhysicalResult
-        int roll = pr.roll;
-        final ToHitData toHit = pr.toHit;
-        Report r;
-
-        if (lastEntityId != paa.getEntityId()) {
-            // who is making the attack
-            r = new Report(4005);
-            r.subject = ae.getId();
-            r.addDesc(ae);
-            server.addReport(r);
-        }
-
-        r = new Report(4305);
-        r.subject = ae.getId();
-        r.indent();
-        r.addDesc(te);
-        r.newlines = 0;
-        server.addReport(r);
-
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(4310);
-            r.subject = ae.getId();
-            r.add(toHit.getDesc());
-            server.addReport(r);
-            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
-                server.game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
-            }
-            return;
-        }
-
-        if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(4320);
-            r.subject = ae.getId();
-            r.add(toHit.getDesc());
-        } else {
-            // report the roll
-            r = new Report(4025);
-            r.subject = ae.getId();
-            r.add(toHit);
-            r.add(roll);
-            r.newlines = 0;
-            server.addReport(r);
-
-            // do we hit?
-            if (roll < toHit.getValue()) {
-                // miss
-                r = new Report(4035);
-                r.subject = ae.getId();
-                server.addReport(r);
-                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
-                    server.game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
-                }
-                return;
-            }
-
-            // hit
-            r = new Report(4040);
-            r.subject = ae.getId();
-        }
-        server.addReport(r);
-
-        // is there a counterattack?
-        PhysicalResult targetGrappleResult = null;
-        for (PhysicalResult tpr : server.physicalResults) {
-            if ((tpr.aaa.getEntityId() == te.getId())
-                    && (tpr.aaa instanceof GrappleAttackAction)
-                    && (tpr.aaa.getTargetId() == ae.getId())) {
-                targetGrappleResult = tpr;
-                break;
-            }
-        }
-
-        if (targetGrappleResult != null) {
-            targetGrappleResult.pushBackResolved = true;
-            // counterattack
-            r = new Report(4315);
-            r.subject = te.getId();
-            r.newlines = 0;
-            r.addDesc(te);
-            server.addReport(r);
-
-            // report the roll
-            r = new Report(4025);
-            r.subject = te.getId();
-            r.add(targetGrappleResult.toHit);
-            r.add(targetGrappleResult.roll);
-            r.newlines = 0;
-            server.addReport(r);
-
-            // do we hit?
-            if (roll < toHit.getValue()) {
-                // miss
-                r = new Report(4035);
-                r.subject = ae.getId();
-                server.addReport(r);
-            } else {
-                // hit
-                r = new Report(4040);
-                r.subject = ae.getId();
-                server.addReport(r);
-
-                // exchange attacker and defender
-                ae.setGrappled(te.getId(), false);
-                te.setGrappled(ae.getId(), true);
-
-                return;
-            }
-        }
-
-        // score the adjacent hexes
-        Coords[] hexes = new Coords[6];
-        int[] scores = new int[6];
-
-        Hex curHex = server.game.getBoard().getHex(ae.getPosition());
-        for (int i = 0; i < 6; i++) {
-            hexes[i] = ae.getPosition().translated(i);
-            scores[i] = 0;
-            Hex hex = server.game.getBoard().getHex(hexes[i]);
-            if (hex.containsTerrain(Terrains.MAGMA)) {
-                scores[i] += 10;
-            }
-
-            if (hex.containsTerrain(Terrains.WATER)) {
-                scores[i] += hex.terrainLevel(Terrains.WATER);
-            }
-
-            if ((curHex.getLevel() - hex.getLevel()) >= 2) {
-                scores[i] += 2 * (curHex.getLevel() - hex.getLevel());
-            }
-        }
-
-        int bestScore = 99999;
-        int best = 0;
-        int worstScore = -99999;
-        int worst = 0;
-
-        for (int i = 0; i < 6; i++) {
-            if (bestScore > scores[i]) {
-                best = i;
-                bestScore = scores[i];
-            }
-            if (worstScore < scores[i]) {
-                worst = i;
-                worstScore = scores[i];
-            }
-        }
-
-        // attacker doesn't fall, unless off a cliff
-        if (ae.isGrappleAttacker()) {
-            // move self to least dangerous hex
-            PilotingRollData psr = ae.getBasePilotingRoll();
-            psr.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "break grapple");
-            server.addReport(server.doEntityDisplacement(ae, ae.getPosition(), hexes[best], psr));
-            ae.setFacing(hexes[best].direction(te.getPosition()));
-        } else {
-            // move enemy to most dangerous hex
-            PilotingRollData psr = te.getBasePilotingRoll();
-            psr.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "break grapple");
-            server.addReport(server.doEntityDisplacement(te, te.getPosition(), hexes[worst], psr));
-            te.setFacing(hexes[worst].direction(ae.getPosition()));
-        }
-
-        // grapple is broken
-        ae.setGrappled(Entity.NONE, false);
-        te.setGrappled(Entity.NONE, false);
-
-        server.addNewLines();
     }
 
     /**
@@ -25146,7 +24865,7 @@ public class Server implements Runnable {
             ResolveGrappleAttack.resolveGrappleAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof BreakGrappleAttackAction) {
-            resolveBreakGrappleAttack(this, pr, cen);
+            ResolverBreakGrappleAttack.resolveBreakGrappleAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof RamAttackAction) {
             resolveRamAttack(pr, cen);
@@ -27329,5 +27048,9 @@ public class Server implements Runnable {
 
     public Set<Coords> getHexUpdateSet() {
         return hexUpdateSet;
+    }
+
+    public Vector<PhysicalResult> getPhysicalResults() {
+        return physicalResults;
     }
 }

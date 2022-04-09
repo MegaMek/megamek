@@ -31,13 +31,28 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-class ServerLobbyHelper {
 
+public class ServerLobbyHelper {
+
+    /**
+     * Returns true when the given new force (that is not part of the given game's forces)
+     * can be integrated into game's forces without error; i.e.:
+     * if the force's parent exists or it is top-level,
+     * if it has no entities and no subforces,
+     * if the client sending it is the owner
+     */
+    static boolean isNewForceValid(Game game, Force force) {
+        if ((!force.isTopLevel() && !game.getForces().contains(force.getParentId()))
+                || (force.getChildCount() != 0)) {
+            return false;
+        }
+        return true;
+    }
     /** 
      * Writes a "Unit XX has been customized" message to the chat. The message
      * is adapted to blind drop conditions. 
      */
-    static String entityUpdateMessage(Entity entity, Game game) {
+    public static String entityUpdateMessage(Entity entity, Game game) {
         StringBuilder result = new StringBuilder();
         if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
             result.append("A Unit of ");
@@ -67,7 +82,7 @@ class ServerLobbyHelper {
      * Returns a set of entities that received changes. The set may be empty, but not null.
      * <P>NOTE: This is a simplified unload that is only valid in the lobby!
      */
-    static HashSet<Entity> lobbyUnload(Game game, Collection<Entity> entities) {
+    public static HashSet<Entity> lobbyUnload(Game game, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
         for (Entity entity: entities) {
             result.addAll(lobbyDisembark(game, entity));
@@ -129,7 +144,7 @@ class ServerLobbyHelper {
      * This is a simplified version that is only valid in the lobby.
      * Returns a set of entities that received changes.
      */
-    static HashSet<Entity> performC3Disconnect(Game game, Collection<Entity> entities) {
+    public static HashSet<Entity> performC3Disconnect(Game game, Collection<Entity> entities) {
         HashSet<Entity> result = new HashSet<>();
         // Disconnect the entity from networks
         for (Entity entity: entities) {
@@ -155,7 +170,7 @@ class ServerLobbyHelper {
      * Creates a packet for an update for the given entities. 
      * Only valid in the lobby.
      */
-    static Packet createMultiEntityPacket(Collection<Entity> entities) {
+    public static Packet createMultiEntityPacket(Collection<Entity> entities) {
         return new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, entities);
     }
     

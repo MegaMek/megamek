@@ -47,13 +47,10 @@ import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.*;
 import megamek.common.options.GameOptions;
-import megamek.common.options.IBasicOption;
-import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.*;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
 import megamek.common.weapons.*;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.AreaEffectHelper.NukeStats;
@@ -62,6 +59,7 @@ import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.server.entityControler.MineFieldController;
 import megamek.server.Processor.*;
 import megamek.server.commands.*;
+import megamek.server.receiver.*;
 import megamek.server.resolver.*;
 import megamek.server.victory.VictoryChecker;
 import org.apache.logging.log4j.LogManager;
@@ -91,7 +89,7 @@ import static megamek.common.net.Packet.COMMAND_CLIENT_FEEDBACK_REQUEST;
 public class Server implements Runnable {
 
     // server setup
-    private final String password;
+    public final String password;
 
     private final String metaServerUrl;
 
@@ -131,7 +129,7 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private MapSettings mapSettings = MapSettings.getInstance();
+    public MapSettings mapSettings = MapSettings.getInstance();
 
     // commands
     private final Hashtable<String, ServerCommand> commandsHash = new Hashtable<>();
@@ -147,7 +145,7 @@ public class Server implements Runnable {
 
     // Track Physical Action results, HACK to deal with opposing pushes
     // canceling each other
-    private final Vector<PhysicalResult> physicalResults = new Vector<>();
+    public final Vector<PhysicalResult> physicalResults = new Vector<>();
 
     private final Vector<DynamicTerrainProcessor> terrainProcessors = new Vector<>();
 
@@ -1814,7 +1812,7 @@ public class Server implements Runnable {
      * Called when a player declares that he is "done." Checks to see if all
      * players are done, and if so, moves on to the next phase.
      */
-    private void checkReady() {
+    public void checkReady() {
         // check if all active players are done
         for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
             final Player player = i.nextElement();
@@ -1850,7 +1848,7 @@ public class Server implements Runnable {
      * Game.INF_AND_PROTOS_MOVE_MULTI - 1 more infantry/proto-specific turns
      * after the current turn.
      */
-    private void endCurrentTurn(Entity entityUsed) {
+    public void endCurrentTurn(Entity entityUsed) {
         // Enforce "inf_move_multi" and "protos_move_multi" options.
         // The "isNormalTurn" flag is checking to see if any non-Infantry
         // or non-ProtoMech units can move during the current turn.
@@ -11507,14 +11505,14 @@ public class Server implements Runnable {
     /**
      * Handle a telemissile attack
      */
-    public void resolveTeleMissileAttack(PhysicalResult pr, int lastEntityId) {
+    public static void resolveTeleMissileAttack(Server server, PhysicalResult pr, int lastEntityId) {
         final TeleMissileAttackAction taa = (TeleMissileAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(taa.getEntityId());
+        final Entity ae = server.game.getEntity(taa.getEntityId());
         if (!(ae instanceof TeleMissile)) {
             return;
         }
         TeleMissile tm = (TeleMissile) ae;
-        final Targetable target = game.getTarget(taa.getTargetType(), taa.getTargetId());
+        final Targetable target = server.game.getTarget(taa.getTargetType(), taa.getTargetId());
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         int amsDamage = taa.CounterAVInt;
@@ -11525,7 +11523,7 @@ public class Server implements Runnable {
 
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(server.game, ae.getPosition(), te);
         }
 
         Report r;
@@ -11535,7 +11533,7 @@ public class Server implements Runnable {
             r = new Report(4005);
             r.subject = ae.getId();
             r.addDesc(ae);
-            addReport(r);
+            server.addReport(r);
         }
 
         // should we even bother?
@@ -11545,7 +11543,7 @@ public class Server implements Runnable {
             r = new Report(4191);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
+            server.addReport(r);
             return;
         }
 
@@ -11554,7 +11552,7 @@ public class Server implements Runnable {
         r.indent();
         r.add(target.getDisplayName());
         r.newlines = 1;
-        addReport(r);
+        server.addReport(r);
 
         // If point defenses engaged the missile, handle that damage
         if (amsDamage > 0) {
@@ -11562,20 +11560,20 @@ public class Server implements Runnable {
             r = new Report(3362);
             r.newlines = 1;
             r.subject = Objects.requireNonNull(te).getId();
-            vPhaseReport.add(r);
+            server.vPhaseReport.add(r);
 
             // If the target's point defenses overheated, report that
             if (taa.getPDOverheated()) {
                 r = new Report(3361);
                 r.newlines = 1;
                 r.subject = te.getId();
-                vPhaseReport.add(r);
+                server.vPhaseReport.add(r);
             }
 
             // Damage the missile
             HitData hit = tm.rollHitLocation(ToHitData.HIT_NORMAL,
                     tm.sideTable(te.getPosition(), true));
-            addReport(DamageEntityControl.damageEntity(this, ae, hit, amsDamage, false,
+            server.addReport(DamageEntityControl.damageEntity(server, ae, hit, amsDamage, false,
                     DamageType.NONE, false, false, false));
 
             // If point defense fire destroys the missile, don't process a hit
@@ -11592,7 +11590,7 @@ public class Server implements Runnable {
         }
 
         // add modifiers for the originating unit missing CIC, FCS, or sensors
-        Entity ride = game.getEntity(tm.getOriginalRideId());
+        Entity ride = server.game.getEntity(tm.getOriginalRideId());
         if (ride instanceof Aero) {
             Aero aride = (Aero) ride;
             int cic = aride.getCICHits();
@@ -11631,24 +11629,24 @@ public class Server implements Runnable {
             r.add(roll);
             r.newlines = 0;
         }
-        addReport(r);
+        server.addReport(r);
 
         // do we hit?
         if (roll < toHit.getValue()) {
             // miss
             r = new Report(4035);
             r.subject = ae.getId();
-            addReport(r);
+            server.addReport(r);
         } else {
             // Resolve the damage.
             HitData hit = Objects.requireNonNull(te).rollHitLocation(ToHitData.HIT_NORMAL,
                     te.sideTable(ae.getPosition(), true));
             hit.setCapital(true);
             hit.setCapMisCritMod(tm.getCritMod());
-            addReport(DamageEntityControl.damageEntity(this, te, hit,
+            server.addReport(DamageEntityControl.damageEntity(server, te, hit,
                     TeleMissileAttackAction.getDamageFor(ae), false,
                     DamageType.NONE, false, false, throughFront));
-            destroyEntity(ae, "successful attack");
+            server.destroyEntity(ae, "successful attack");
         }
 
     }
@@ -20614,7 +20612,7 @@ public class Server implements Runnable {
      * Send the complete list of entities to the players. If double_blind is in
      * effect, enforce it by filtering the entities
      */
-    private void entityAllUpdate() {
+    public void entityAllUpdate() {
         // If double-blind is in effect, filter each players' list individually,
         // and then quit out...
         if (doBlind()) {
@@ -20940,347 +20938,7 @@ public class Server implements Runnable {
             }
         }
     }
-
-    /**
-     * Checks if an entity added by the client is valid and if so, adds it to
-     * the list
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityAdd(Packet c, int connIndex) {
-        @SuppressWarnings("unchecked")
-        final List<Entity> entities = (List<Entity>) c.getObject(0);
-        List<Integer> entityIds = new ArrayList<>(entities.size());
-        // Map client-received to server-given IDs: 
-        Map<Integer, Integer> idMap = new HashMap<>();
-        // Map MUL force ids to real Server-given force ids;
-        Map<Integer, Integer> forceMapping = new HashMap<>();
-
-        // Need to use a new ArrayLiut to prevent a concurrent modification exception when removing
-        // illegal entities
-        for (final Entity entity : new ArrayList<>(entities)) {
-            // Verify the entity's design
-            if (MovementProcessor.entityVerifier == null) {
-                MovementProcessor.entityVerifier = EntityVerifier.getInstance(new MegaMekFile(
-                        Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
-            }
-
-            // Create a TestEntity instance for supported unit types
-            TestEntity testEntity = null;
-            entity.restore();
-            if (entity instanceof Mech) {
-                testEntity = new TestMech((Mech) entity, MovementProcessor.entityVerifier.mechOption, null);
-            } else if ((entity.getEntityType() == Entity.ETYPE_TANK)
-                       && (entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT)) {
-                if (entity.isSupportVehicle()) {
-                    testEntity = new TestSupportVehicle(entity, MovementProcessor.entityVerifier.tankOption, null);
-                } else {
-                    testEntity = new TestTank((Tank) entity, MovementProcessor.entityVerifier.tankOption, null);
-                }
-            } else if ((entity.getEntityType() == Entity.ETYPE_AERO)
-                       && (entity.getEntityType() != Entity.ETYPE_DROPSHIP)
-                       && (entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT)
-                       && (entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON)
-                       && (entity.getEntityType() != Entity.ETYPE_JUMPSHIP)
-                       && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
-                testEntity = new TestAero((Aero) entity, MovementProcessor.entityVerifier.aeroOption, null);
-            } else if (entity instanceof BattleArmor) {
-                testEntity = new TestBattleArmor((BattleArmor) entity, MovementProcessor.entityVerifier.baOption, null);
-            }
-
-            if (testEntity != null) {
-                StringBuffer sb = new StringBuffer();
-                if (testEntity.correctEntity(sb, TechConstants.getGameTechLevel(game, entity.isClan()))) {
-                    entity.setDesignValid(true);
-                } else {
-                    LogManager.getLogger().error(sb.toString());
-                    if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS)) {
-                        entity.setDesignValid(false);
-                    } else {
-                        Player cheater = game.getPlayer(connIndex);
-                        sendServerChat(String.format(
-                                "Player %s attempted to add an illegal unit design (%s), the unit was rejected.",
-                                cheater.getName(), entity.getShortNameRaw()));
-                        entities.remove(entity);
-                        continue;
-                    }
-                }
-            }
-
-            // If we're adding a ProtoMech, calculate it's unit number.
-            if (entity instanceof Protomech) {
-                // How many ProtoMechs does the player already have?
-                int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
-                    private final int ownerId = entity.getOwnerId();
-
-                    @Override
-                    public boolean accept(Entity entity) {
-                        return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
-                    }
-                });
-
-                // According to page 54 of the BMRr, ProtoMechs must be
-                // deployed in full Points of five, unless circumstances have
-                // reduced the number to less than that.
-                entity.setUnitNumber((short) (numPlayerProtos / 5));
-            }
-
-            // Only assign an entity ID when the client hasn't.
-            if (Entity.NONE == entity.getId()) {
-                entity.setId(getFreeEntityId());
-            }
-
-            int clientSideId = entity.getId();
-            game.addEntity(entity);
-            
-            // Remember which received ID corresponds to which actual ID
-            idMap.put(clientSideId, entity.getId());
-
-            // Now we relink C3/NC3/C3i to our guys! Yes, this is hackish... but, we
-            // do what we must. Its just too bad we have to loop over the entire entities array..
-            if (entity.hasC3() || entity.hasC3i() || entity.hasNavalC3()) {
-                boolean C3iSet = false;
-
-                for (Entity e : game.getEntitiesVector()) {
-
-                    // C3 Checks
-                    if (entity.hasC3()) {
-                        if ((entity.getC3MasterIsUUIDAsString() != null)
-                                && entity.getC3MasterIsUUIDAsString().equals(e.getC3UUIDAsString())) {
-                            entity.setC3Master(e, false);
-                            entity.setC3MasterIsUUIDAsString(null);
-                        } else if ((e.getC3MasterIsUUIDAsString() != null)
-                                && e.getC3MasterIsUUIDAsString().equals(entity.getC3UUIDAsString())) {
-                            e.setC3Master(entity, false);
-                            e.setC3MasterIsUUIDAsString(null);
-                            // Taharqa: we need to update the other entity for
-                            // the
-                            // client
-                            // or it won't show up right. I am not sure if I
-                            // like
-                            // the idea of updating other entities in this
-                            // method,
-                            // but it
-                            // will work for now.
-                            if (!entities.contains(e)) {
-                                entityUpdate(e.getId());
-                            }
-                        }
-                    }
-
-                    // C3i Checks
-                    if (entity.hasC3i() && !C3iSet) {
-                        entity.setC3NetIdSelf();
-                        int pos = 0;
-                        while (pos < Entity.MAX_C3i_NODES) {
-                            // We've found a network, join it.
-                            if ((entity.getC3iNextUUIDAsString(pos) != null)
-                                    && (e.getC3UUIDAsString() != null)
-                                    && entity.getC3iNextUUIDAsString(pos)
-                                    .equals(e.getC3UUIDAsString())) {
-                                entity.setC3NetId(e);
-                                C3iSet = true;
-                                break;
-                            }
-
-                            pos++;
-                        }
-                    }
-
-                    // NC3 Checks
-                    if (entity.hasNavalC3() && !C3iSet) {
-                        entity.setC3NetIdSelf();
-                        int pos = 0;
-                        while (pos < Entity.MAX_C3i_NODES) {
-                            // We've found a network, join it.
-                            if ((entity.getNC3NextUUIDAsString(pos) != null)
-                                    && (e.getC3UUIDAsString() != null)
-                                    && entity.getNC3NextUUIDAsString(pos)
-                                    .equals(e.getC3UUIDAsString())) {
-                                entity.setC3NetId(e);
-                                C3iSet = true;
-                                break;
-                            }
-
-                            pos++;
-                        }
-                    }
-                }
-            }
-            // Give the unit a spotlight, if it has the spotlight quirk
-            entity.setExternalSearchlight(entity.hasExternalSearchlight()
-                    || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
-            entityIds.add(entity.getId());
-
-            if (game.getPhase() != GamePhase.LOUNGE) {
-                entity.getOwner().changeInitialEntityCount(1);
-                entity.getOwner().changeInitialBV(entity.calculateBattleValue());
-            }
-
-            // Restore forces from MULs or other external sources from the forceString, if any
-            if (!entity.getForceString().isEmpty()) {
-                List<Force> forceList = Forces.parseForceString(entity);
-                int realId = Force.NO_FORCE;
-                boolean topLevel = true;
-
-                for (Force force: forceList) {
-                    if (!forceMapping.containsKey(force.getId())) {
-                        if (topLevel) {
-                            realId = game.getForces().addTopLevelForce(force, entity.getOwner());
-                        } else {
-                            Force parent = game.getForces().getForce(realId);
-                            realId = game.getForces().addSubForce(force, parent);
-                        }
-                        forceMapping.put(force.getId(), realId);
-                    } else {
-                        realId = forceMapping.get(force.getId());
-                    }
-                    topLevel = false;
-                }
-                entity.setForceString("");
-                game.getForces().addEntity(entity, realId);
-            }
-        }
-
-        // Cycle through the entities again and update any carried units
-        // and carrier units to use the correct server-given IDs.
-        // Typically necessary when loading a MUL containing transported units.
-        
-        // First, deal with units loaded into bays. These are saved for the carrier
-        // in MULs and must be restored exactly to recreate the bay loading.
-        Set<Entity> transportCorrected = new HashSet<>();
-        for (final Entity carrier : entities) {
-            for (int carriedId : carrier.getBayLoadedUnitIds()) {
-                // First, see if a bay loaded unit can be found and unloaded,
-                // because it might be the wrong unit
-                Entity carried = game.getEntity(carriedId);
-                if (carried == null) {
-                    continue;
-                }
-                int bay = carrier.getBay(carried).getBayNumber();
-                carrier.unload(carried);
-                // Now, load the correct unit if there is one
-                if (idMap.containsKey(carriedId)) {
-                    Entity newCarried = game.getEntity(idMap.get(carriedId));
-                    if (carrier.canLoad(newCarried, false)) {
-                        carrier.load(newCarried, false, bay);
-                        newCarried.setTransportId(carrier.getId());
-                        // Remember that the carried unit should not be treated again below
-                        transportCorrected.add(newCarried);
-                    }
-                }
-            }
-        }
-
-        // Now restore the transport settings from the entities' transporter IDs
-        // With anything other than bays, MULs only show the carrier, not the carried units 
-        for (final Entity entity : entities) {
-            // Don't correct those that are already corrected
-            if (transportCorrected.contains(entity)) {
-                continue;
-            }
-            // Get the original (client side) ID of the transporter
-            int origTrsp = entity.getTransportId();
-            // Only act if the unit thinks it is transported
-            if (origTrsp != Entity.NONE) {
-                // If the transporter is among the new units, go on with loading 
-                if (idMap.containsKey(origTrsp)) {
-                    // The wrong transporter doesn't know of anything and does not need an update
-                    Entity carrier = game.getEntity(idMap.get(origTrsp)); 
-                    if (carrier.canLoad(entity, false)) {
-                        // The correct transporter must be told it's carrying something and
-                        // the carried unit must be told where it is embarked
-                        carrier.load(entity, false);
-                        entity.setTransportId(idMap.get(origTrsp));
-                    } else {
-                        // This seems to be an invalid carrier; update the entity accordingly
-                        entity.setTransportId(Entity.NONE);
-                    }
-                } else {
-                    // this transporter does not exist; update the entity accordingly
-                    entity.setTransportId(Entity.NONE);
-                }
-            }
-        }
-        
-        // Set the "loaded keepers" which is apparently used for deployment unloading to
-        // differentiate between units loaded in the lobby and other carried units
-        // When entering a game from the lobby, this list is generated again, but not when 
-        // the added entities are loaded during a game. When getting loaded units from a MUL,
-        // act as if they were loaded in the lobby.
-        for (final Entity entity : entities) {
-            if (!entity.getLoadedUnits().isEmpty()) {
-                Vector<Integer> v = entity.getLoadedUnits().stream().map(Entity::getId).collect(Collectors.toCollection(Vector::new));
-                entity.setLoadedKeepers(v);
-            }
-        }
-
-        List<Integer> changedForces = new ArrayList<>(forceMapping.values());
-
-        send(createAddEntityPacket(entityIds, changedForces));
-    }
-
-    /**
-     * adds a squadron to the game
-     * @param c the packet to be processed
-     */
-    @SuppressWarnings("unchecked")
-    private void receiveSquadronAdd(Packet c) {
-
-        final FighterSquadron fs = (FighterSquadron) c.getObject(0);
-        final Collection<Integer> fighters = (Collection<Integer>) c.getObject(1);
-        if (fighters.isEmpty()) {
-            return;
-        }
-        // Only assign an entity ID when the client hasn't.
-        if (Entity.NONE == fs.getId()) {
-            fs.setId(getFreeEntityId());
-        }
-        game.addEntity(fs);
-        var formerCarriers = new HashSet<Entity>();
-
-        for (int id : fighters) {
-            Entity fighter = game.getEntity(id);
-            if (null != fighter) {
-                formerCarriers.addAll(ServerLobbyHelper.lobbyUnload(game, List.of(fighter)));
-                fs.load(fighter, false);
-                fs.autoSetMaxBombPoints();
-                fighter.setTransportId(fs.getId());
-                // If this is the lounge, we want to configure bombs
-                if (game.getPhase() == GamePhase.LOUNGE) {
-                    ((IBomber) fighter).setBombChoices(fs.getBombChoices());
-                }
-                entityUpdate(fighter.getId());
-            }
-        }
-        if (!formerCarriers.isEmpty()) {
-            send(new Packet(COMMAND_ENTITY_MULTIUPDATE, formerCarriers));
-        }
-        send(createAddEntityPacket(fs.getId()));
-
-    }
-
-    /**
-     * Updates an entity with the info from the client. Only valid to do this
-     * during the lounge phase, except for heat sink changing.
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityUpdate(Packet c, int connIndex) {
-        Entity entity = (Entity) c.getObject(0);
-        Entity oldEntity = game.getEntity(entity.getId());
-        if ((oldEntity != null) && (!oldEntity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
-            game.setEntity(entity.getId(), entity);
-            entityUpdate(entity.getId());
-            // In the chat lounge, notify players of customizing of unit
-            if (game.getPhase() == GamePhase.LOUNGE) {
-                sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
-            }
-        }
-    }
-
-    /**
+/**
      * Updates multiple entities with the info from the client. Only valid
      * during the lobby phase!
      * Will only update units that are teammates of the sender. Other entities
@@ -21362,484 +21020,6 @@ public class Server implements Runnable {
                 loadee.setLoadedThisTurn(false);
             }
         }
-    }
-
-    /**
-     *
-     * @param c the packet to be processed
-     */
-    private void receiveCustomInit(Packet c) {
-        // In the chat lounge, notify players of customizing of unit
-        if (game.getPhase() == GamePhase.LOUNGE) {
-            Player p = (Player) c.getObject(0);
-            sendServerChat("" + p.getName() + " has customized initiative.");
-        }
-    }
-    
-    /**
-     * receive and process an entity mode change packet
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityModeChange(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        int mode = c.getIntValue(2);
-        Entity e = game.getEntity(entityId);
-        if (!Objects.equals(e.getOwner(), getPlayer(connIndex))) {
-            return;
-        }
-        Mounted m = e.getEquipment(equipId);
-
-        if (m == null) {
-            return;
-        }
-
-        try {
-            // Check for BA dumping body mounted missile launchers
-            if ((e instanceof BattleArmor) && (!m.isMissing())
-                    && m.isBodyMounted()
-                    && m.getType().hasFlag(WeaponType.F_MISSILE)
-                    && (m.getLinked() != null)
-                    && (m.getLinked().getUsableShotsLeft() > 0)
-                    && (mode <= 0)) {
-                m.setPendingDump(mode == -1);
-            // a mode change for ammo means dumping or hot loading
-            } else if ((m.getType() instanceof AmmoType)
-                && !m.getType().hasInstantModeSwitch() && (mode < 0
-                            || mode == 0 && m.isPendingDump())) {
-                m.setPendingDump(mode == -1);
-            } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted()
-                       && (mode <= 0)) {
-                m.setPendingDump(mode == -1);
-            } else {
-                if (!m.setMode(mode)) {
-                    String message = e.getShortName() + ": " + m.getName() + ": " + e.getLocationName(m.getLocation())
-                            + " trying to compensate";
-                    LogManager.getLogger().error(message);
-                    sendServerChat(message);
-                    e.setGameOptions();
-
-                    if (!m.setMode(mode)) {
-                        message = e.getShortName() + ": " + m.getName() + ": " + e.getLocationName(m.getLocation())
-                                + " unable to compensate";
-                        LogManager.getLogger().error(message);
-                        sendServerChat(message);
-                    }
-
-                }
-            }
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-        }
-
-    }
-
-    /**
-     * Receive and process an Entity Sensor Change Packet
-     * @param c the packet to be processed
-     */
-    private void receiveEntitySensorChange(Packet c) {
-        int entityId = c.getIntValue(0);
-        int sensorId = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        e.setNextSensor(e.getSensors().elementAt(sensorId));
-    }
-
-    /**
-     * Receive and process an Entity Heat Sinks Change Packet
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntitySinksChange(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        int numSinks = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        if ((e instanceof Mech) && (connIndex == e.getOwnerId())) {
-            ((Mech) e).setActiveSinksNextRound(numSinks);
-        }
-    }
-
-    /**
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityActivateHidden(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        GamePhase phase = (GamePhase) c.getObject(1);
-        Entity e = game.getEntity(entityId);
-        if (connIndex != e.getOwnerId()) {
-            LogManager.getLogger().error("Player " + connIndex 
-                    + " tried to activate a hidden unit owned by Player " + e.getOwnerId());
-            return;
-        }
-        e.setHiddenActivationPhase(phase);
-        entityUpdate(entityId);
-    }
-
-
-    /**
-     * receive and process an entity nova network mode change packet
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityNovaNetworkModeChange(Packet c, int connIndex) {
-
-        try {
-            int entityId = c.getIntValue(0);
-            String networkID = c.getObject(1).toString();
-            Entity e = game.getEntity(entityId);
-            if (!Objects.equals(e.getOwner(), getPlayer(connIndex))) {
-                return;
-            }
-            // FIXME: Greg: This can result in setting the network to link to
-            // hostile units.
-            // However, it should be caught by both the isMemberOfNetwork test
-            // from the c3 module as well as
-            // by the clients possible input.
-            e.setNewRoundNovaNetworkString(networkID);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    /**
-     * receive and process an entity mounted facing change packet
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityMountedFacingChange(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        int facing = c.getIntValue(2);
-        Entity e = game.getEntity(entityId);
-        if (!Objects.equals(e.getOwner(), getPlayer(connIndex))) {
-            return;
-        }
-        Mounted m = e.getEquipment(equipId);
-
-        if (m == null) {
-            return;
-        }
-        m.setFacing(facing);
-    }
-
-    /**
-     * receive and process an entity mode change packet
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityCalledShotChange(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        Entity e = game.getEntity(entityId);
-        if (!Objects.equals(getPlayer(connIndex), e.getOwner())) {
-            return;
-        }
-        Mounted m = e.getEquipment(equipId);
-
-        if (m == null) {
-            return;
-        }
-        m.getCalledShot().switchCalledShot();
-    }
-
-    /**
-     * receive and process an entity system mode change packet
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntitySystemModeChange(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        int equipId = c.getIntValue(1);
-        int mode = c.getIntValue(2);
-        Entity e = game.getEntity(entityId);
-        if (!Objects.equals(e.getOwner(), getPlayer(connIndex))) {
-            return;
-        }
-        if ((e instanceof Mech) && (equipId == Mech.SYSTEM_COCKPIT)) {
-            ((Mech) e).setCockpitStatus(mode);
-        }
-    }
-
-    /**
-     * Receive a packet that contains an Entity ammo change
-     *
-     * @param c the packet to be processed
-     * @param connIndex the id for connection that received the packet.
-     */
-    private void receiveEntityAmmoChange(Packet c, int connIndex) {
-        int entityId = c.getIntValue(0);
-        int weaponId = c.getIntValue(1);
-        int ammoId = c.getIntValue(2);
-        Entity e = game.getEntity(entityId);
-
-        // Did we receive a request for a valid Entity?
-        if (null == e) {
-            LogManager.getLogger().error("Could not find entity# " + entityId);
-            return;
-        }
-        Player player = getPlayer(connIndex);
-        if ((null != player) && (!Objects.equals(e.getOwner(), player))) {
-            LogManager.getLogger().error("Player " + player.getName() + " does not own the entity " + e.getDisplayName());
-            return;
-        }
-
-        // Make sure that the entity has the given equipment.
-        Mounted mWeap = e.getEquipment(weaponId);
-        Mounted mAmmo = e.getEquipment(ammoId);
-        if (null == mAmmo) {
-            LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have ammo #" + ammoId);
-            return;
-        }
-        if (!(mAmmo.getType() instanceof AmmoType)) {
-            LogManager.getLogger().error("Item #" + ammoId + " of entity " + e.getDisplayName()
-                    + " is a " + mAmmo.getName() + " and not ammo.");
-            return;
-        }
-        if (null == mWeap) {
-            LogManager.getLogger().error("Entity " + e.getDisplayName() + " does not have weapon #" + weaponId);
-            return;
-        }
-        if (!(mWeap.getType() instanceof WeaponType)) {
-            LogManager.getLogger().error("Item #" + weaponId + " of entity " + e.getDisplayName()
-                    + " is a " + mWeap.getName() + " and not a weapon.");
-            return;
-        }
-        if (((WeaponType) mWeap.getType()).getAmmoType() == AmmoType.T_NA) {
-            LogManager.getLogger().error("Item #" + weaponId + " of entity " + e.getDisplayName()
-                    + " is a " + mWeap.getName() + " and does not use ammo.");
-            return;
-        }
-        if (mWeap.getType().hasFlag(WeaponType.F_ONESHOT)
-                && !mWeap.getType().hasFlag(WeaponType.F_DOUBLE_ONESHOT)) {
-            LogManager.getLogger().error("Item #" + weaponId + " of entity " + e.getDisplayName()
-                    + " is a " + mWeap.getName() + " and cannot use external ammo.");
-            return;
-        }
-
-        // Load the weapon.
-        e.loadWeapon(mWeap, mAmmo);
-    }
-
-    /**
-     * Deletes an entity owned by a certain player from the list
-     */
-    private void receiveEntityDelete(Packet c, int connIndex) {
-        @SuppressWarnings("unchecked")
-        List<Integer> ids = (List<Integer>) c.getObject(0);
-
-        Set<Entity> delEntities = new HashSet<>();
-        ids.stream().map(id -> game.getEntity(id)).forEach(delEntities::add);
-
-        // Unload units and disconnect any C3 networks
-        Set<Entity> updateCandidates = new HashSet<>();
-        updateCandidates.addAll(ServerLobbyHelper.lobbyUnload(game, delEntities));
-        updateCandidates.addAll(ServerLobbyHelper.performC3Disconnect(game, delEntities));
-
-        // Units that get deleted must not receive updates
-        updateCandidates.removeIf(delEntities::contains);
-        if (!updateCandidates.isEmpty()) {
-            send(ServerLobbyHelper.createMultiEntityPacket(updateCandidates));
-        }
-
-        ArrayList<Force> affectedForces = new ArrayList<>();
-        for (Integer entityId : ids) {
-            final Entity entity = game.getEntity(entityId);
-
-            // Players can delete units of their teammates
-            if ((entity != null) && (!entity.getOwner().isEnemyOf(getPlayer(connIndex)))) {
-
-                affectedForces.addAll(game.getForces().removeEntityFromForces(entity));
-
-                // If we're deleting a ProtoMech, recalculate unit numbers.
-                if (entity instanceof Protomech) {
-
-                    // How many ProtoMechs does the player have (include this one)?
-                    int numPlayerProtos = game.getSelectedEntityCount(new EntitySelector() {
-                        private final int ownerId = entity.getOwnerId();
-
-                        @Override
-                        public boolean accept(Entity entity) {
-                            return (entity instanceof Protomech) && (ownerId == entity.getOwnerId());
-                        }
-                    });
-
-                    // According to page 54 of the BMRr, ProtoMechs must be
-                    // deployed in full Points of five, unless "losses" have
-                    // reduced the number to less than that.
-                    final char oldMax = (char) (ceil(numPlayerProtos / 5.0) - 1);
-                    char newMax = (char) (ceil((numPlayerProtos - 1) / 5.0) - 1);
-                    short deletedUnitNum = entity.getUnitNumber();
-
-                    // Do we have to update a ProtoMech from the last unit?
-                    if ((oldMax != deletedUnitNum) && (oldMax != newMax)) {
-
-                        // Yup. Find a ProtoMech from the last unit, and
-                        // set it's unit number to the deleted entity.
-                        Iterator<Entity> lastUnit =
-                                game.getSelectedEntities(new EntitySelector() {
-                                    private final int ownerId = entity.getOwnerId();
-
-                                    private final char lastUnitNum = oldMax;
-
-                                    @Override
-                                    public boolean accept(Entity entity) {
-                                        return (entity instanceof Protomech)
-                                                && (ownerId == entity.getOwnerId())
-                                                && (lastUnitNum == entity.getUnitNumber());
-                                    }
-                                });
-                        Entity lastUnitMember = lastUnit.next();
-                        lastUnitMember.setUnitNumber(deletedUnitNum);
-                        entityUpdate(lastUnitMember.getId());
-                    } // End update-unit-number
-                } // End added-ProtoMech
-
-                if (game.getPhase() != GamePhase.DEPLOYMENT) {
-                    // if a unit is removed during deployment just keep going
-                    // without adjusting the turn vector.
-                    game.removeTurnFor(entity);
-                    game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
-                }
-                
-                if (!game.getPhase().isLounge()) {
-                    ServerHelper.clearBloodStalkers(game, entityId, this);
-                }
-            }
-        }
-
-        // during deployment this absolutely must be called before game.removeEntity(), otherwise the game hangs
-        // when a unit is removed. Cause unknown.
-        send(createRemoveEntityPacket(ids, affectedForces, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
-
-        // Prevents deployment hanging. Only do this during deployment.
-        if (game.getPhase() == GamePhase.DEPLOYMENT) {
-            for (Integer entityId : ids) {
-                final Entity entity = game.getEntity(entityId);
-                game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
-                endCurrentTurn(entity);
-            }
-        }
-    }
-
-    /**
-     * Sets a player's ready status
-     */
-    private void receivePlayerDone(Packet pkt, int connIndex) {
-        boolean ready = pkt.getBooleanValue(0);
-        Player player = getPlayer(connIndex);
-        if (null != player) {
-            player.setDone(ready);
-        }
-    }
-
-    private void receiveInitiativeRerollRequest(int connIndex) {
-        Player player = getPlayer(connIndex);
-        if (GamePhase.INITIATIVE_REPORT != game.getPhase()) {
-            StringBuilder message = new StringBuilder();
-            if (null == player) {
-                message.append("Player #").append(connIndex);
-            } else {
-                message.append(player.getName());
-            }
-            message.append(" is not allowed to ask for a reroll at this time.");
-            LogManager.getLogger().error(message.toString());
-            sendServerChat(message.toString());
-            return;
-        }
-        if (game.hasTacticalGenius(player)) {
-            game.addInitiativeRerollRequest(game.getTeamForPlayer(player));
-        }
-        if (null != player) {
-            player.setDone(true);
-        }
-        checkReady();
-    }
-
-    /**
-     * Sets game options, providing that the player has specified the password
-     * correctly.
-     *
-     * @return true if any options have been successfully changed.
-     */
-    private boolean receiveGameOptions(Packet packet, int connId) {
-        Player player = game.getPlayer(connId);
-        // Check player
-        if (null == player) {
-            LogManager.getLogger().error("Server does not recognize player at connection " + connId);
-            return false;
-        }
-
-        // check password
-        if ((password != null) && (!password.isEmpty()) && !password.equals(packet.getObject(0))) {
-            sendServerChat(connId, "The password you specified to change game options is incorrect.");
-            return false;
-        }
-
-        if (game.getPhase().isDuringOrAfter(GamePhase.DEPLOYMENT)) {
-            return false;
-        }
-
-        int changed = 0;
-
-        for (Enumeration<?> i = ((Vector<?>) packet.getObject(1)).elements(); i.hasMoreElements(); ) {
-            IBasicOption option = (IBasicOption) i.nextElement();
-            IOption originalOption = game.getOptions().getOption(option.getName());
-
-            if (originalOption == null) {
-                continue;
-            }
-
-            String message = "Player " + player.getName() + " changed option \"" +
-                    originalOption.getDisplayableName() + "\" to " + option.getValue().toString() + '.';
-            sendServerChat(message);
-            originalOption.setValue(option.getValue());
-            changed++;
-        }
-
-        // Set proper RNG
-        Compute.setRNG(game.getOptions().intOption(OptionsConstants.BASE_RNG_TYPE));
-
-        if (changed > 0) {
-            for (Entity en : game.getEntitiesVector()) {
-                en.setGameOptions();
-            }
-            entityAllUpdate();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Performs the additional processing of the received options after the the
-     * <code>receiveGameOptions<code> done its job; should be called after
-     * <code>receiveGameOptions<code> only if the <code>receiveGameOptions<code>
-     * returned <code>true</code>
-     *
-     * @param packet the packet to be processed
-     */
-    private void receiveGameOptionsAux(Packet packet) {
-        for (Enumeration<?> i = ((Vector<?>) packet.getObject(1)).elements(); i.hasMoreElements(); ) {
-            IBasicOption option = (IBasicOption) i.nextElement();
-            IOption originalOption = game.getOptions().getOption(option.getName());
-            if (originalOption != null) {
-                if ("maps_include_subdir".equals(originalOption.getName())) {
-                    mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
-                    mapSettings.removeUnavailable();
-                    mapSettings.setNullBoards(MovementProcessor.DEFAULT_BOARD);
-                    send(createMapSettingsPacket());
-                }
-            }
-        }
-
     }
 
     /**
@@ -21966,7 +21146,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet containing the map settings
      */
-    private Packet createMapSettingsPacket() {
+    public Packet createMapSettingsPacket() {
         return new Packet(COMMAND_SENDING_MAP_SETTINGS, mapSettings);
     }
 
@@ -22093,7 +21273,7 @@ public class Server implements Runnable {
     /**
      * Creates a packet detailing the addition of an entity
      */
-    Packet createAddEntityPacket(List<Integer> entityIds, List<Integer> forceIds) {
+    public Packet createAddEntityPacket(List<Integer> entityIds, List<Integer> forceIds) {
         ArrayList<Entity> entities = entityIds.stream().map(id -> game.getEntity(id)).collect(Collectors.toCollection(() -> new ArrayList<>(entityIds.size())));
         ArrayList<Force> forceList = forceIds.stream().map(id -> game.getForces().getForce(id)).collect(Collectors.toCollection(() -> new ArrayList<>(forceIds.size())));
         final Object[] data = new Object[3];
@@ -22143,7 +21323,7 @@ public class Server implements Runnable {
      *                  must be updated
      * @return A <code>Packet</code> to be sent to clients.
      */
-    private Packet createRemoveEntityPacket(List<Integer> entityIds, List<Force> affectedForces, int condition) {
+    public Packet createRemoveEntityPacket(List<Integer> entityIds, List<Force> affectedForces, int condition) {
         if ((condition != IEntityRemovalConditions.REMOVE_UNKNOWN)
                 && (condition != IEntityRemovalConditions.REMOVE_IN_RETREAT)
                 && (condition != IEntityRemovalConditions.REMOVE_PUSHED)
@@ -22491,7 +21671,7 @@ public class Server implements Runnable {
                 ServerLobbyHelper.receiveLobbyTeamChange(packet, game, this);
                 break;
             case COMMAND_PLAYER_READY:
-                receivePlayerDone(packet, connId);
+                ReceiveEntityPlayerDoner.receivePlayerDone(this, packet, connId);
                 send(createPlayerDonePacket(connId));
                 checkReady();
                 break;
@@ -22505,7 +21685,7 @@ public class Server implements Runnable {
                 }
                 break;
             case COMMAND_REROLL_INITIATIVE:
-                receiveInitiativeRerollRequest(connId);
+                ReceiveEntityInitiativeRerollRequest.receiveInitiativeRerollRequest(this, connId);
                 break;
             case COMMAND_FORWARD_INITIATIVE:
                 receiveForwardIni(connId);
@@ -22568,11 +21748,11 @@ public class Server implements Runnable {
                 receiveGroundToAirHexSelectPacket(packet);
                 break;
             case COMMAND_ENTITY_ADD:
-                receiveEntityAdd(packet, connId);
+                ReceiveEntityAdder.receiveEntityAdd(this, packet, connId);
                 resetPlayersDone();
                 break;
             case COMMAND_ENTITY_UPDATE:
-                receiveEntityUpdate(packet, connId);
+                ReceiveEntityUpdater.receiveEntityUpdate(this, packet, connId);
                 resetPlayersDone();
                 break;
             case COMMAND_ENTITY_MULTIUPDATE:
@@ -22613,34 +21793,34 @@ public class Server implements Runnable {
                 transmitAllPlayerDones();
                 break;
             case COMMAND_ENTITY_MODECHANGE:
-                receiveEntityModeChange(packet, connId);
+                ReceiveEntityModeChanger.receiveEntityModeChange(this, packet, connId);
                 break;
             case COMMAND_ENTITY_SENSORCHANGE:
-                receiveEntitySensorChange(packet);
+                ReceiveEntitySensorChanger.receiveEntitySensorChange(this, packet);
                 break;
             case COMMAND_ENTITY_SINKSCHANGE:
-                receiveEntitySinksChange(packet, connId);
+                ReceiveEntitySinksChanger.receiveEntitySinksChange(this, packet, connId);
                 break;
             case COMMAND_ENTITY_ACTIVATE_HIDDEN:
-                receiveEntityActivateHidden(packet, connId);
+                ReceiveEntityActivaterHidden.receiveEntityActivateHidden(this, packet, connId);
                 break;
             case COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
-                receiveEntityNovaNetworkModeChange(packet, connId);
+                ReceiveEntityNovaNetworkModeChanger.receiveEntityNovaNetworkModeChange(this, packet, connId);
                 break;
             case COMMAND_ENTITY_MOUNTED_FACINGCHANGE:
-                receiveEntityMountedFacingChange(packet, connId);
+                ReceiveEntityMountedFacingChanger.receiveEntityMountedFacingChange(this, packet, connId);
                 break;
             case COMMAND_ENTITY_CALLEDSHOTCHANGE:
-                receiveEntityCalledShotChange(packet, connId);
+                ReceiveEntityCalledShotChanger.receiveEntityCalledShotChange(this, packet, connId);
                 break;
             case COMMAND_ENTITY_SYSTEMMODECHANGE:
-                receiveEntitySystemModeChange(packet, connId);
+                ReceiveEntitySystemModeChange.receiveEntitySystemModeChange(this, packet, connId);
                 break;
             case COMMAND_ENTITY_AMMOCHANGE:
-                receiveEntityAmmoChange(packet, connId);
+                ReceiveEntityAmmoChange.receiveEntityAmmoChange(this, packet, connId);
                 break;
             case COMMAND_ENTITY_REMOVE:
-                receiveEntityDelete(packet, connId);
+                ReceiveEntityDeleter.receiveEntityDelete(this, packet, connId);
                 resetPlayersDone();
                 break;
             case COMMAND_ENTITY_WORDER_UPDATE:
@@ -22661,11 +21841,11 @@ public class Server implements Runnable {
                 }
                 break;
             case COMMAND_SENDING_GAME_SETTINGS:
-                if (receiveGameOptions(packet, connId)) {
+                if (ReceiveEntityGamerOptions.receiveGameOptions(this, packet, connId)) {
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createGameSettingsPacket());
-                    receiveGameOptionsAux(packet);
+                    ReceiveEntityGamerOptionsAux.receiveGameOptionsAux(this, packet);
                 }
                 break;
             case COMMAND_SENDING_MAP_SETTINGS:
@@ -22716,7 +21896,7 @@ public class Server implements Runnable {
                 receiveArtyAutoHitHexes(packet);
                 break;
             case COMMAND_CUSTOM_INITIATIVE:
-                receiveCustomInit(packet);
+                ReceiveEntityCustomerInit.receiveCustomInit(this, packet);
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 break;
@@ -22732,7 +21912,7 @@ public class Server implements Runnable {
                 }
                 break;
             case COMMAND_SQUADRON_ADD:
-                receiveSquadronAdd(packet);
+                ReceiveEntitySquadonAdder.receiveSquadronAdd(this, packet);
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 break;
@@ -24528,7 +23708,7 @@ public class Server implements Runnable {
             resolveRamAttack(pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof TeleMissileAttackAction) {
-            resolveTeleMissileAttack(pr, cen);
+            resolveTeleMissileAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof BAVibroClawAttackAction) {
             ResolveBAVibroClawAttack.resolveBAVibroClawAttack(this, game, pr, cen);

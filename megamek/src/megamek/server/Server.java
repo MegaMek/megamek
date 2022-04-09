@@ -63,11 +63,10 @@ import megamek.server.entityControler.MineFieldController;
 import megamek.server.Processor.*;
 import megamek.server.commands.*;
 import megamek.server.resolver.*;
-import megamek.server.victory.VictoryResult;
+import megamek.server.victory.VictoryChecker;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -2758,7 +2757,7 @@ public class Server implements Runnable {
                 // remove any entities that died in the heat/end phase before
                 // checking for victory
                 resetEntityPhase(GamePhase.END);
-                boolean victory = victory(); // note this may add reports
+                boolean victory = VictoryChecker.victory(this); // note this may add reports
                 // check phase report
                 // HACK: hardcoded message ID check
                 if ((vPhaseReport.size() > 3) || ((vPhaseReport.size() > 1)
@@ -2785,7 +2784,7 @@ public class Server implements Runnable {
                 if (changePlayersTeam) {
                     processTeamChange();
                 }
-                if (victory()) {
+                if (VictoryChecker.victory(this)) {
                     changePhase(GamePhase.VICTORY);
                 } else {
                     changePhase(GamePhase.INITIATIVE);
@@ -3065,19 +3064,6 @@ public class Server implements Runnable {
         Player player = getPlayer(turn.getPlayerNum());
         return (null == player) || player.isGhost() || (game.getFirstEntity() == null);
     }
-
-    /**
-     * Returns true if victory conditions have been met. Victory conditions are
-     * when there is only one player left with mechs or only one team. will also
-     * add some reports to reporting
-     */
-    public boolean victory() {
-        VictoryResult vr = game.getVictoryResult();
-        for (Report r : vr.processVictory(game)) {
-            addReport(r);
-        }
-        return vr.victory();
-    }// end victory
 
     private boolean isPlayerForcedVictory() {
         // check game options

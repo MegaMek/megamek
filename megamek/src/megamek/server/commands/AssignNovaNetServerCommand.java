@@ -3,13 +3,13 @@
  */
 package megamek.server.commands;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.server.Server;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author dirk This command exists to print entity information to the chat
@@ -36,7 +36,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      *
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
+     * @see ServerCommand#run(int, String[])
      */
     @Override
     public void run(int connID, String[] args) {
@@ -180,7 +180,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
 
     }
 
-    private void setNewNetworkID(int connID, Entity ent, String net) {
+    private void setNewNetworkID(Entity ent, String net) {
         ent.setNewRoundNovaNetworkString(net);
         // TODO: Send packet to client.
 
@@ -220,8 +220,8 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         rval += strUnlinkID(connID, id2);
         rval += strUnlinkID(connID, id3);
 
-        setNewNetworkID(connID, ent2, ent1.getNewRoundNovaNetworkString());
-        setNewNetworkID(connID, ent3, ent1.getNewRoundNovaNetworkString());
+        setNewNetworkID(ent2, ent1.getNewRoundNovaNetworkString());
+        setNewNetworkID(ent3, ent1.getNewRoundNovaNetworkString());
 
         return rval + "New Network! Linked Units: " + id1 + ", " + id2 + ", "
                 + id3 + "\n";
@@ -250,7 +250,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
 
         rval += strUnlinkID(connID, id1);
         rval += strUnlinkID(connID, id2);
-        setNewNetworkID(connID, ent2, ent1.getNewRoundNovaNetworkString());
+        setNewNetworkID(ent2, ent1.getNewRoundNovaNetworkString());
 
         return rval + "New Network! Linked Units: " + id1 + ", " + id2 + "\n";
     }
@@ -274,12 +274,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         // there are other members in that network. Need to find a different ID
         // for them.
         // first remove the unit from the network list.
-        for (Iterator<Entity> i = network.iterator(); i.hasNext();) {
-            Entity e = i.next();
-            if (e.getId() == id) {
-                i.remove();
-            }
-        }
+        network.removeIf(e -> e.getId() == id);
         // now set the network ID of the remaining units to something different.
         String newID = network.get(0).getOriginalNovaC3NetId(); // this resets
                                                                 // the C3i
@@ -288,17 +283,17 @@ public class AssignNovaNetServerCommand extends ServerCommand {
                                                                 // default
                                                                 // 'Nova.ID'
         for (Entity e : network) {
-            setNewNetworkID(connID, e, newID);
+            setNewNetworkID(e, newID);
         }
         // finally set the unlinked units network ID to default value.
-        setNewNetworkID(connID, ent, ent.getOriginalNovaC3NetId());
+        setNewNetworkID(ent, ent.getOriginalNovaC3NetId());
         return "Unit " + id + " unlinked\n";
     }
 
     private String strUnlinkAll(int connID) {
         List<Entity> novaUnits = getMyNovaUnits(connID);
         for (Entity e : novaUnits) {
-            setNewNetworkID(connID, e, e.getOriginalNovaC3NetId());
+            setNewNetworkID(e, e.getOriginalNovaC3NetId());
         }
         return "Everything unlinked";
     }
@@ -405,13 +400,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
      * @return
      */
     private List<Entity> getMyNovaUnits(int connID) {
-        List<Entity> novaUnits = new LinkedList<>();
-        for (Entity ent : server.getGame().getEntitiesVector()) {
-            if ((ent.getOwnerId() == connID) && ent.hasNovaCEWS()) {
-                novaUnits.add(ent);
-            }
-        }
-        return novaUnits;
+        return server.getGame().getEntitiesVector().stream().filter(ent -> (ent.getOwnerId() == connID) && ent.hasNovaCEWS()).collect(Collectors.toCollection(LinkedList::new));
     }
 
 }

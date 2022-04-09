@@ -43,18 +43,15 @@ class MovementSprite extends Sprite {
 
     private Coords end;
 
-    private Entity en;
-
     private int vel;
 
-    public MovementSprite(BoardView boardView1, Entity e, int[] v, Color col, boolean isCurrent) {
+    public MovementSprite(BoardView boardView1, Entity e, int[] v, Color col) {
         // this.mv = en.getMV();
 
         super(boardView1);
-        en = e;
         vectors = v;// en.getVectors();
         // get the starting and ending position
-        start = en.getPosition();
+        start = e.getPosition();
         end = Compute.getFinalPosition(start, vectors);
 
         // what is the velocity
@@ -65,7 +62,7 @@ class MovementSprite extends Sprite {
 
         // color?
         // player colors
-        moveColor = en.getOwner().getColour().getColour();
+        moveColor = e.getOwner().getColour().getColour();
         // TODO: Its not going transparent. Oh well, it is a minor issue at
         // the moment
         /*
@@ -82,7 +79,7 @@ class MovementSprite extends Sprite {
             moveColor = new Color(colour | (transparency << 24), true);
         }
         // dark gray if done
-        if (en.isDone()) {
+        if (e.isDone()) {
             int colour = 0x696969; // gray
             int transparency = GUIPreferences.getInstance().getInt(
                     GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);

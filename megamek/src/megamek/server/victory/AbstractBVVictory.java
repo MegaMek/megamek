@@ -25,38 +25,17 @@ public abstract class AbstractBVVictory implements IVictoryConditions, Serializa
     private static final long serialVersionUID = -689891568905531049L;
 
     public int getFriendlyBV(Game game, Player player) {
-        int ret = 0;
-        for (Player other : game.getPlayersVector()) {
-            if (other.isObserver())
-                continue;
-            if (!other.isEnemyOf(player)) {
-                ret += other.getBV();
-            }
-        }
+        int ret = game.getPlayersVector().stream().filter(other -> !other.isObserver()).filter(other -> !other.isEnemyOf(player)).mapToInt(Player::getBV).sum();
         return ret;
     }
 
     public int getEnemyBV(Game game, Player player) {
-        int ret = 0;
-        for (Player other : game.getPlayersVector()) {
-            if (other.isObserver())
-                continue;
-            if (other.isEnemyOf(player)) {
-                ret += other.getBV();
-            }
-        }
+        int ret = game.getPlayersVector().stream().filter(other -> !other.isObserver()).filter(other -> other.isEnemyOf(player)).mapToInt(Player::getBV).sum();
         return ret;
     }
 
     public int getEnemyInitialBV(Game game, Player player) {
-        int ret = 0;
-        for (Player other : game.getPlayersVector()) {
-            if (other.isObserver())
-                continue;
-            if (other.isEnemyOf(player)) {
-                ret += other.getInitialBV();
-            }
-        }
+        int ret = game.getPlayersVector().stream().filter(other -> !other.isObserver()).filter(other -> other.isEnemyOf(player)).mapToInt(Player::getInitialBV).sum();
         return ret;
     }
 }

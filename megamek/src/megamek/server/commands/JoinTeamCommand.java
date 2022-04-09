@@ -44,7 +44,7 @@ public class JoinTeamCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      * 
-     * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
+     * @see ServerCommand#run(int, String[])
      */
     @Override
     public void run(int connId, String[] args) {
@@ -81,12 +81,10 @@ public class JoinTeamCommand extends ServerCommand {
                             + SERVER_VOTE_PROMPT_MSG);
                 }
             }
-            
+
             server.requestTeamChange(teamId, player);
-            
-            for (Player p : server.getGame().getPlayersVector()) {
-                p.setAllowTeamChange(false);
-            }
+
+            server.getGame().getPlayersVector().forEach(p -> p.setAllowTeamChange(false));
             player.setAllowTeamChange(true);
         } catch (NumberFormatException nfe) {
             server.sendServerChat(connId,"Failed to parse team number!");

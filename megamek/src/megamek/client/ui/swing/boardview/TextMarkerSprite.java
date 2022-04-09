@@ -54,6 +54,6 @@ public class TextMarkerSprite extends HexSprite {
         graph.setFont(textFontS);
         Point pos = new Point((int) (bounds.getWidth() / 2),(int) (bounds.getHeight() / 2));
         bv.drawTextShadow(graph, spriteText, pos, textFontS);
-        bv.drawCenteredText(graph, spriteText, pos, spriteColor, false);
+        BoardView.drawCenteredText(graph, spriteText, pos, spriteColor, false);
     }
 }

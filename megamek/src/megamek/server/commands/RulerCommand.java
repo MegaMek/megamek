@@ -5,6 +5,7 @@ package megamek.server.commands;
 
 import megamek.common.Coords;
 import megamek.common.LosEffects;
+import megamek.common.LosEffects.AttackInfo;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.server.Server;
@@ -28,58 +29,47 @@ public class RulerCommand extends ServerCommand {
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
-    public void run(int connId, String[] args) {
-        try {
-            int elev1 = 1, elev2 = 1;
-            Coords start = null, end = null;
-            String toHit1 = "", toHit2 = "";
-            ToHitData thd;
+    public void run(int connId, String[] args) throws NumberFormatException, NullPointerException, IndexOutOfBoundsException {
+        int elev1 = 1, elev2 = 1;
+        String toHit1 = "", toHit2 = "";
 
-            start = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                                                                      .parseInt(args[2]) - 1);
-            end = new Coords(Integer.parseInt(args[3]) - 1, Integer
-                                                                    .parseInt(args[4]) - 1);
-            if (args.length > 5) {
+        Coords start = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
+        Coords end = new Coords(Integer.parseInt(args[3]) - 1, Integer.parseInt(args[4]) - 1);
+        if (args.length > 5) {
+            try {
+                elev1 = Integer.parseInt(args[5]);
+            } catch (NumberFormatException e) {
+                // leave at default value
+            }
+            if (args.length > 6) {
                 try {
-                    elev1 = Integer.parseInt(args[5]);
+                    elev1 = Integer.parseInt(args[6]);
                 } catch (NumberFormatException e) {
                     // leave at default value
                 }
-                if (args.length > 6) {
-                    try {
-                        elev1 = Integer.parseInt(args[6]);
-                    } catch (NumberFormatException e) {
-                        // leave at default value
-                    }
-                }
             }
-
-            thd = LosEffects.calculateLos(server.getGame(),
-                                          buildAttackInfo(start, end, elev1, elev2)).losModifiers(
-                    server.getGame());
-            if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit1 = thd.getValue() + " because ";
-            }
-            toHit1 += thd.getDesc();
-
-            thd = LosEffects.calculateLos(server.getGame(),
-                                          buildAttackInfo(end, start, elev2, elev1)).losModifiers(
-                    server.getGame());
-            if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
-                toHit2 = thd.getValue() + " because  ";
-            }
-            toHit2 += thd.getDesc();
-
-            server.sendServerChat(connId, "The ToHit from hex ("
-                                          + (start.getX() + 1) + ", " + (start.getY() + 1) + ") at elevation "
-                                          + elev1 + " to (" + (end.getX() + 1) + ", " + (end.getY() + 1)
-                                          + ") at elevation " + elev2 + " has a range of "
-                                          + start.distance(end) + " and a modifier of " + toHit1
-                                          + " and return fire has a modifier of " + toHit2 + ".");
-        } catch (NumberFormatException nfe) {
-        } catch (NullPointerException npe) {
-        } catch (IndexOutOfBoundsException ioobe) {
         }
+
+        ToHitData thd = LosEffects.calculateLos(server.getGame(), buildAttackInfo(start, end, elev1, elev2)).losModifiers(server.getGame());
+        if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
+            toHit1 = thd.getValue() + " because ";
+        }
+        toHit1 += thd.getDesc();
+
+        thd = LosEffects.calculateLos(server.getGame(),
+                                      buildAttackInfo(end, start, elev2, elev1)).losModifiers(
+                server.getGame());
+        if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
+            toHit2 = thd.getValue() + " because  ";
+        }
+        toHit2 += thd.getDesc();
+
+        server.sendServerChat(connId, "The ToHit from hex ("
+                                      + (start.getX() + 1) + ", " + (start.getY() + 1) + ") at elevation "
+                                      + elev1 + " to (" + (end.getX() + 1) + ", " + (end.getY() + 1)
+                                      + ") at elevation " + elev2 + " has a range of "
+                                      + start.distance(end) + " and a modifier of " + toHit1
+                                      + " and return fire has a modifier of " + toHit2 + ".");
     }
 
     /**
@@ -92,9 +82,9 @@ public class RulerCommand extends ServerCommand {
      * @param h2 the height of the target tile to shoot for.
      * @return an attackInfo object that describes the apliable modifiers.
      */
-    private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
+    private AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
                                                   int h2) {
-        LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+        AttackInfo ai = new AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;
         ai.attackHeight = h1;

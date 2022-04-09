@@ -15,11 +15,11 @@ package megamek.server.victory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import megamek.common.Game;
-import megamek.common.Report;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -102,18 +102,12 @@ public class Victory implements Serializable {
         // combine scores
         for (IVictoryConditions v : VCs) {
             VictoryResult res = v.victory(game, context);
-            for (Report r : res.getReports()) {
-                vr.addReport(r);
-            }
+            res.getReports().forEach(vr::addReport);
             if (res.victory()) {
                 victory = true;
             }
-            for (int pl : res.getPlayers()) {
-                vr.addPlayerScore(pl, vr.getPlayerScore(pl) + res.getPlayerScore(pl));
-            }
-            for (int t : res.getTeams()) {
-                vr.addTeamScore(t, vr.getTeamScore(t) + res.getTeamScore(t));
-            }
+            Arrays.stream(res.getPlayers()).forEach(pl -> vr.addPlayerScore(pl, vr.getPlayerScore(pl) + res.getPlayerScore(pl)));
+            Arrays.stream(res.getTeams()).forEach(t -> vr.addTeamScore(t, vr.getTeamScore(t) + res.getTeamScore(t)));
         }
         // find highscore for thresholding, also divide the score
         // to an average

@@ -1342,7 +1342,7 @@ public class Board implements Serializable {
         // determine type of rubble
         // Terrain type can be a max of 4 for harded building
         // 5 for walls, but the only place where we actually check
-        // for rubble type is resolveFindClub in Server, and we
+        // for rubble type is ResolveFindClub in Server, and we
         // make it impossible to find clubs in wallrubble there
         int type = curHex.terrainLevel(Terrains.BUILDING);
         type = Math.max(type, curHex.terrainLevel(Terrains.BRIDGE));

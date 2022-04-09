@@ -18,7 +18,10 @@ import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
-import megamek.server.Processor.MovementProcessor;
+import megamek.server.Connectivity.PasswordValidator;
+import megamek.server.Connectivity.PortValidator;
+import megamek.server.Connectivity.ValidateServerAddress;
+import megamek.server.Utils.PlayerValidator;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -194,7 +197,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                         "port number must be a number. '%s' is not valid\n%s",
                         getTokenValue(), ex.getMessage()));
             }
-            port = MovementProcessor.validatePort(newPort);
+            port = PortValidator.validatePort(newPort);
         } else {
             throw new ParseException("port number expected");
         }
@@ -210,7 +213,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private void parsePassword() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            password = MovementProcessor.validatePassword(getTokenValue());
+            password = PasswordValidator.validatePassword(getTokenValue());
         } else {
             throw new ParseException("password expected");
         }
@@ -226,7 +229,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private void parsePlayerName() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            playerName = MovementProcessor.validatePlayerName(getTokenValue());
+            playerName = PlayerValidator.validatePlayerName(getTokenValue());
         } else {
             throw new ParseException("playerName expected");
         }
@@ -234,7 +237,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
     private void parseServerAddress() throws ParseException {
         if (getTokenType() == TOK_LITERAL) {
-            serverAddress = MovementProcessor.validateServerAddress(getTokenValue());
+            serverAddress = ValidateServerAddress.validateServerAddress(getTokenValue());
         } else {
             throw new ParseException("host name or url expected");
         }

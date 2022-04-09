@@ -192,7 +192,7 @@ public class MovementProcessor {
             a.setCurrentVelocity(1);
             a.liftOff(1);
             if (entity instanceof Dropship) {
-                server.applyDropShipProximityDamage(md.getFinalCoords(), true, md.getFinalFacing(), entity);
+                Server.applyDropShipProximityDamage(server, md.getFinalCoords(), true, md.getFinalFacing(), entity);
             }
             server.checkForTakeoffDamage(a);
             entity.setPosition(entity.getPosition().translated(entity.getFacing(), a.getTakeOffLength()));
@@ -208,7 +208,7 @@ public class MovementProcessor {
                 a.setCurrentVelocity(0);
                 a.liftOff(1);
                 if (entity instanceof Dropship) {
-                    server.applyDropShipProximityDamage(md.getFinalCoords(), (Dropship) a);
+                    Server.applyDropShipProximityDamage(server, md.getFinalCoords(), (Dropship) a);
                 }
                 server.checkForTakeoffDamage(a);
             }
@@ -237,7 +237,7 @@ public class MovementProcessor {
                     md.getFinalFacing(), true);
             server.attemptLanding(entity, rollTarget);
             if (entity instanceof Dropship) {
-                server.applyDropShipLandingDamage(md.getFinalCoords(), (Dropship) a);
+                Server.applyDropShipLandingDamage(server, md.getFinalCoords(), (Dropship) a);
             }
             a.land();
             entity.setPosition(md.getFinalCoords());

@@ -3722,9 +3722,9 @@ public class Server implements Runnable {
         }
     }
 
-    public void applyDropShipLandingDamage(Coords centralPos, Entity killer) {
+    public static void applyDropShipLandingDamage(Server server, Coords centralPos, Entity killer) {
         // first cycle through hexes to figure out final elevation
-        Hex centralHex = game.getBoard().getHex(centralPos);
+        Hex centralHex = server.game.getBoard().getHex(centralPos);
         if (null == centralHex) {
             // shouldn't happen
             return;
@@ -3738,7 +3738,7 @@ public class Server implements Runnable {
         positions.add(centralPos);
         for (int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
-            Hex hex = game.getBoard().getHex(pos);
+            Hex hex = server.game.getBoard().getHex(pos);
             if (null == hex) {
                 continue;
             }
@@ -3749,7 +3749,7 @@ public class Server implements Runnable {
         }
         // ok now cycle through hexes and make all changes
         for (Coords pos : positions) {
-            Hex hex = game.getBoard().getHex(pos);
+            Hex hex = server.game.getBoard().getHex(pos);
             hex.setLevel(finalElev);
             // get rid of woods and replace with rough
             if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
@@ -3758,51 +3758,52 @@ public class Server implements Runnable {
                 hex.removeTerrain(Terrains.FOLIAGE_ELEV);
                 hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
             }
-            sendChangedHex(pos);
+            server.sendChangedHex(pos);
         }
 
-        applyDropShipProximityDamage(centralPos, killer);
+        Server.applyDropShipProximityDamage(server, centralPos, killer);
     }
 
-    public void applyDropShipProximityDamage(Coords centralPos, Entity killer) {
-        applyDropShipProximityDamage(centralPos, false, 0, killer);
+    public static void applyDropShipProximityDamage(Server server, Coords centralPos, Entity killer) {
+        Server.applyDropShipProximityDamage(server, centralPos, false, 0, killer);
     }
 
     /**
      * apply damage to units and buildings within a certain radius of a landing
      * or lifting off DropShip
      *
+     * @param server
      * @param centralPos - the Coords for the central position of the DropShip
      */
-    public void applyDropShipProximityDamage(Coords centralPos, boolean rearArc, int facing, Entity killer) {
+    public static void applyDropShipProximityDamage(Server server, Coords centralPos, boolean rearArc, int facing, Entity killer) {
 
         Vector<Integer> alreadyHit = new Vector<>();
 
         // anything in the central hex or adjacent hexes is destroyed
-        Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
-        for (Entity en : game.getEntitiesVector(centralPos)) {
+        Hashtable<Coords, Vector<Entity>> positionMap = server.game.getPositionMap();
+        for (Entity en : server.game.getEntitiesVector(centralPos)) {
             if (!en.isAirborne()) {
-                addReport(destroyEntity(en, "DropShip proximity damage", false,
+                server.addReport(server.destroyEntity(en, "DropShip proximity damage", false,
                                         false));
                 alreadyHit.add(en.getId());
             }
         }
-        Building bldg = game.getBoard().getBuildingAt(centralPos);
+        Building bldg = server.game.getBoard().getBuildingAt(centralPos);
         if (null != bldg) {
-            collapseBuilding(bldg, positionMap, centralPos, vPhaseReport);
+            server.collapseBuilding(bldg, positionMap, centralPos, server.vPhaseReport);
         }
         for (int i = 0; i < 6; i++) {
             Coords pos = centralPos.translated(i);
-            for (Entity en : game.getEntitiesVector(pos)) {
+            for (Entity en : server.game.getEntitiesVector(pos)) {
                 if (!en.isAirborne()) {
-                    addReport(destroyEntity(en, "DropShip proximity damage",
+                    server.addReport(server.destroyEntity(en, "DropShip proximity damage",
                                             false, false));
                 }
                 alreadyHit.add(en.getId());
             }
-            bldg = game.getBoard().getBuildingAt(pos);
+            bldg = server.game.getBoard().getBuildingAt(pos);
             if (null != bldg) {
-                collapseBuilding(bldg, positionMap, pos, vPhaseReport);
+                server.collapseBuilding(bldg, positionMap, pos, server.vPhaseReport);
             }
         }
 
@@ -3816,12 +3817,12 @@ public class Server implements Runnable {
                     continue;
                 }
 
-                alreadyHit = artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(),
-                        killer, null, false, 0, vPhaseReport, false,
+                alreadyHit = server.artilleryDamageHex(pos, centralPos, damageDice, null, killer.getId(),
+                        killer, null, false, 0, server.vPhaseReport, false,
                         alreadyHit, true);
             }
         }
-        destroyDoomedEntities(alreadyHit);
+        server.destroyDoomedEntities(alreadyHit);
     }
 
     /**
@@ -11419,191 +11420,13 @@ public class Server implements Runnable {
     }
 
     /**
-     * Handle a trip attack
-     */
-    public void resolveTripAttack(PhysicalResult pr, int lastEntityId) {
-        final TripAttackAction paa = (TripAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(paa.getEntityId());
-        // PLEASE NOTE: buildings are *never* the target of a "trip".
-        final Entity te = game.getEntity(paa.getTargetId());
-        // get roll and ToHitData from the PhysicalResult
-        int roll = pr.roll;
-        final ToHitData toHit = pr.toHit;
-        Report r;
-
-        if (lastEntityId != paa.getEntityId()) {
-            // who is making the attack
-            r = new Report(4005);
-            r.subject = ae.getId();
-            r.addDesc(ae);
-            addReport(r);
-        }
-
-        r = new Report(4280);
-        r.subject = ae.getId();
-        r.indent();
-        r.addDesc(te);
-        r.newlines = 0;
-        addReport(r);
-
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(4285);
-            r.subject = ae.getId();
-            r.add(toHit.getDesc());
-            addReport(r);
-            return;
-        }
-
-        // report the roll
-        r = new Report(4025);
-        r.subject = ae.getId();
-        r.add(toHit);
-        r.add(roll);
-        r.newlines = 0;
-        addReport(r);
-
-        // do we hit?
-        if (roll < toHit.getValue()) {
-            // miss
-            r = new Report(4035);
-            r.subject = ae.getId();
-            addReport(r);
-            return;
-        }
-
-        // we hit...
-        if (te.canFall()) {
-            PilotingRollData pushPRD = getKickPushPSR(te, te, "was tripped");
-            game.addPSR(pushPRD);
-        }
-
-        r = new Report(4040);
-        r.subject = ae.getId();
-        addReport(r);
-        addNewLines();
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
-        if ((te instanceof Mech) && ((Mech) te).isIndustrial()) {
-            ((Mech) te).setCheckForCrit(true);
-        }
-    }
-
-    /**
-     * Handle a grapple attack
-     */
-    public void resolveGrappleAttack(PhysicalResult pr, int lastEntityId) {
-        resolveGrappleAttack(pr, lastEntityId, Entity.GRAPPLE_BOTH, Entity.GRAPPLE_BOTH);
-    }
-
-    /**
-     * Resolves a grapple attack.
-     *
-     * @param pr            the result of a physical attack - this one specifically being a grapple
-     * @param lastEntityId  the entity making the attack
-     * @param aeGrappleSide
-     *            The side that the attacker is grappling with. For normal
-     *            grapples this will be both, for chain whip grapples this will
-     *            be the arm with the chain whip in it.
-     * @param teGrappleSide
-     *            The that the the target is grappling with. For normal grapples
-     *            this will be both, for chain whip grapples this will be the
-     *            arm that is being whipped.
-     */
-    public void resolveGrappleAttack(PhysicalResult pr, int lastEntityId, int aeGrappleSide,
-                                      int teGrappleSide) {
-        final GrappleAttackAction paa = (GrappleAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(paa.getEntityId());
-        // PLEASE NOTE: buildings are *never* the target of a "push".
-        final Entity te = game.getEntity(paa.getTargetId());
-        // get roll and ToHitData from the PhysicalResult
-        int roll = pr.roll;
-        final ToHitData toHit = pr.toHit;
-        Report r;
-
-        // same method as push, for counterattacks
-        if (pr.pushBackResolved) {
-            return;
-        }
-
-        if ((te.getGrappled() != Entity.NONE) || (ae.getGrappled() != Entity.NONE)) {
-            toHit.addModifier(TargetRoll.IMPOSSIBLE, "Already Grappled");
-        }
-
-        if (lastEntityId != paa.getEntityId()) {
-            // who is making the attack
-            r = new Report(4005);
-            r.subject = ae.getId();
-            r.addDesc(ae);
-            addReport(r);
-        }
-
-        r = new Report(4295);
-        r.subject = ae.getId();
-        r.indent();
-        r.addDesc(te);
-        r.newlines = 0;
-        addReport(r);
-
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(4300);
-            r.subject = ae.getId();
-            r.add(toHit.getDesc());
-            addReport(r);
-            return;
-        }
-
-        // report the roll
-        r = new Report(4025);
-        r.subject = ae.getId();
-        r.add(toHit);
-        r.add(roll);
-        r.newlines = 0;
-        addReport(r);
-
-        // do we hit?
-        if (roll < toHit.getValue()) {
-            // miss
-            r = new Report(4035);
-            r.subject = ae.getId();
-            addReport(r);
-            return;
-        }
-
-        // we hit...
-        ae.setGrappled(te.getId(), true);
-        te.setGrappled(ae.getId(), false);
-        ae.setGrappledThisRound(true);
-        te.setGrappledThisRound(true);
-        // For normal grapples, AE moves into targets hex.
-        if (aeGrappleSide == Entity.GRAPPLE_BOTH) {
-            Coords pos = te.getPosition();
-            ae.setPosition(pos);
-            ae.setElevation(te.getElevation());
-            te.setFacing((ae.getFacing() + 3) % 6);
-            addReport(doSetLocationsExposure(ae, game.getBoard().getHex(pos), false, ae.getElevation()));
-        }
-
-        ae.setGrappleSide(aeGrappleSide);
-        te.setGrappleSide(teGrappleSide);
-
-        r = new Report(4040);
-        r.subject = ae.getId();
-        addReport(r);
-        addNewLines();
-
-        // if the target is an industrial mech, it needs to check for crits at the end of turn
-        if ((te instanceof Mech) && ((Mech) te).isIndustrial()) {
-            ((Mech) te).setCheckForCrit(true);
-        }
-    }
-
-    /**
      * Handle a break grapple attack
      */
-    public void resolveBreakGrappleAttack(PhysicalResult pr, int lastEntityId) {
+    public static void resolveBreakGrappleAttack(Server server, PhysicalResult pr, int lastEntityId) {
         final BreakGrappleAttackAction paa = (BreakGrappleAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(paa.getEntityId());
+        final Entity ae = server.game.getEntity(paa.getEntityId());
         // PLEASE NOTE: buildings are *never* the target of a "push".
-        final Entity te = game.getEntity(paa.getTargetId());
+        final Entity te = server.game.getEntity(paa.getTargetId());
         // get roll and ToHitData from the PhysicalResult
         int roll = pr.roll;
         final ToHitData toHit = pr.toHit;
@@ -11614,7 +11437,7 @@ public class Server implements Runnable {
             r = new Report(4005);
             r.subject = ae.getId();
             r.addDesc(ae);
-            addReport(r);
+            server.addReport(r);
         }
 
         r = new Report(4305);
@@ -11622,15 +11445,15 @@ public class Server implements Runnable {
         r.indent();
         r.addDesc(te);
         r.newlines = 0;
-        addReport(r);
+        server.addReport(r);
 
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4310);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
-            addReport(r);
+            server.addReport(r);
             if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
-                game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
+                server.game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
             }
             return;
         }
@@ -11646,16 +11469,16 @@ public class Server implements Runnable {
             r.add(toHit);
             r.add(roll);
             r.newlines = 0;
-            addReport(r);
+            server.addReport(r);
 
             // do we hit?
             if (roll < toHit.getValue()) {
                 // miss
                 r = new Report(4035);
                 r.subject = ae.getId();
-                addReport(r);
+                server.addReport(r);
                 if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
-                    game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
+                    server.game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
                 }
                 return;
             }
@@ -11664,11 +11487,11 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
         }
-        addReport(r);
+        server.addReport(r);
 
         // is there a counterattack?
         PhysicalResult targetGrappleResult = null;
-        for (PhysicalResult tpr : physicalResults) {
+        for (PhysicalResult tpr : server.physicalResults) {
             if ((tpr.aaa.getEntityId() == te.getId())
                     && (tpr.aaa instanceof GrappleAttackAction)
                     && (tpr.aaa.getTargetId() == ae.getId())) {
@@ -11684,7 +11507,7 @@ public class Server implements Runnable {
             r.subject = te.getId();
             r.newlines = 0;
             r.addDesc(te);
-            addReport(r);
+            server.addReport(r);
 
             // report the roll
             r = new Report(4025);
@@ -11692,19 +11515,19 @@ public class Server implements Runnable {
             r.add(targetGrappleResult.toHit);
             r.add(targetGrappleResult.roll);
             r.newlines = 0;
-            addReport(r);
+            server.addReport(r);
 
             // do we hit?
             if (roll < toHit.getValue()) {
                 // miss
                 r = new Report(4035);
                 r.subject = ae.getId();
-                addReport(r);
+                server.addReport(r);
             } else {
                 // hit
                 r = new Report(4040);
                 r.subject = ae.getId();
-                addReport(r);
+                server.addReport(r);
 
                 // exchange attacker and defender
                 ae.setGrappled(te.getId(), false);
@@ -11718,11 +11541,11 @@ public class Server implements Runnable {
         Coords[] hexes = new Coords[6];
         int[] scores = new int[6];
 
-        Hex curHex = game.getBoard().getHex(ae.getPosition());
+        Hex curHex = server.game.getBoard().getHex(ae.getPosition());
         for (int i = 0; i < 6; i++) {
             hexes[i] = ae.getPosition().translated(i);
             scores[i] = 0;
-            Hex hex = game.getBoard().getHex(hexes[i]);
+            Hex hex = server.game.getBoard().getHex(hexes[i]);
             if (hex.containsTerrain(Terrains.MAGMA)) {
                 scores[i] += 10;
             }
@@ -11757,13 +11580,13 @@ public class Server implements Runnable {
             // move self to least dangerous hex
             PilotingRollData psr = ae.getBasePilotingRoll();
             psr.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "break grapple");
-            addReport(doEntityDisplacement(ae, ae.getPosition(), hexes[best], psr));
+            server.addReport(server.doEntityDisplacement(ae, ae.getPosition(), hexes[best], psr));
             ae.setFacing(hexes[best].direction(te.getPosition()));
         } else {
             // move enemy to most dangerous hex
             PilotingRollData psr = te.getBasePilotingRoll();
             psr.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "break grapple");
-            addReport(doEntityDisplacement(te, te.getPosition(), hexes[worst], psr));
+            server.addReport(server.doEntityDisplacement(te, te.getPosition(), hexes[worst], psr));
             te.setFacing(hexes[worst].direction(ae.getPosition()));
         }
 
@@ -11771,16 +11594,16 @@ public class Server implements Runnable {
         ae.setGrappled(Entity.NONE, false);
         te.setGrappled(Entity.NONE, false);
 
-        addNewLines();
+        server.addNewLines();
     }
 
     /**
      * Handle a charge attack
      */
-    public void resolveChargeAttack(PhysicalResult pr, int lastEntityId) {
+    public static void resolveChargeAttack(Server server, PhysicalResult pr, int lastEntityId) {
         final ChargeAttackAction caa = (ChargeAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(caa.getEntityId());
-        final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
+        final Entity ae = server.game.getEntity(caa.getEntityId());
+        final Targetable target = server.game.getTarget(caa.getTargetType(), caa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
         final ToHitData toHit = pr.toHit;
@@ -11792,20 +11615,20 @@ public class Server implements Runnable {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(server.game, ae.getPosition(), te);
         }
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
+        final boolean glancing = server.game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                 && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        final boolean directBlow = server.game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(caa.getTargetPos());
+        Building bldg = server.game.getBoard().getBuildingAt(caa.getTargetPos());
 
         // is the attacker dead? because that sure messes up the calculations
         if (ae == null) {
@@ -11822,7 +11645,7 @@ public class Server implements Runnable {
             r = new Report(4005);
             r.subject = ae.getId();
             r.addDesc(ae);
-            addReport(r);
+            server.addReport(r);
         }
 
         // should we even bother?
@@ -11831,7 +11654,7 @@ public class Server implements Runnable {
             r = new Report(4190);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
+            server.addReport(r);
             // doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(),
             // null);
             // Randall said that if a charge fails because of target
@@ -11847,7 +11670,7 @@ public class Server implements Runnable {
             r = new Report(4195);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
+            server.addReport(r);
             return;
         }
 
@@ -11856,7 +11679,7 @@ public class Server implements Runnable {
             r = new Report(4200);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
+            server.addReport(r);
             return;
         }
 
@@ -11865,7 +11688,7 @@ public class Server implements Runnable {
             r = new Report(4205);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
+            server.addReport(r);
             return;
         }
 
@@ -11874,14 +11697,14 @@ public class Server implements Runnable {
         r.indent();
         r.add(target.getDisplayName());
         r.newlines = 0;
-        addReport(r);
+        server.addReport(r);
 
         // target still in the same position?
         if (!target.getPosition().equals(caa.getTargetPos())) {
             r = new Report(4215);
             r.subject = ae.getId();
-            addReport(r);
-            addReport(doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(), null));
+            server.addReport(r);
+            server.addReport(server.doEntityDisplacement(ae, ae.getPosition(), caa.getTargetPos(), null));
             return;
         }
 
@@ -11891,86 +11714,86 @@ public class Server implements Runnable {
             r = new Report(4220);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
-            addReport(r);
+            server.addReport(r);
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             roll = Integer.MAX_VALUE;
             r = new Report(4225);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
-            addReport(r);
+            server.addReport(r);
         } else {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
             r.add(toHit);
             r.add(roll);
-            addReport(r);
+            server.addReport(r);
             if (glancing) {
                 r = new Report(3186);
                 r.subject = ae.getId();
-                addReport(r);
+                server.addReport(r);
             }
 
             if (directBlow) {
                 r = new Report(3189);
                 r.subject = ae.getId();
-                addReport(r);
+                server.addReport(r);
             }
         }
 
         // do we hit?
         if (roll < toHit.getValue()) {
             Coords src = ae.getPosition();
-            Coords dest = Compute.getMissedChargeDisplacement(game, ae.getId(), src, direction);
+            Coords dest = Compute.getMissedChargeDisplacement(server.game, ae.getId(), src, direction);
 
             // TODO : handle movement into/out of/through a building. Do it here?
 
             // miss
             r = new Report(4035);
             r.subject = ae.getId();
-            addReport(r);
+            server.addReport(r);
             // move attacker to side hex
-            addReport(doEntityDisplacement(ae, src, dest, null));
+            server.addReport(server.doEntityDisplacement(ae, src, dest, null));
         } else if ((target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) { // Targeting
             // a building.
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
-            addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+            server.addReport(r);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
-            addReport(buildingReport);
+            server.addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
+            server.addReport(server.damageInfantryIn(bldg, damage, target.getPosition()));
 
             // Apply damage to the attacker.
             int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg, target.getPosition());
             HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(target.getPosition()));
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-            addReport(DamageEntityControl.damageEntity(this, ae, hit, toAttacker, false, DamageType.NONE,
+            server.addReport(DamageEntityControl.damageEntity(server, ae, hit, toAttacker, false, DamageType.NONE,
                     false, false, throughFront));
-            addNewLines();
-            entityUpdate(ae.getId());
+            server.addNewLines();
+            server.entityUpdate(ae.getId());
 
             // TODO : Does the attacker enter the building?
             // TODO : What if the building collapses?
         } else {
             // Resolve the damage.
-            ResolveChargeDamage.resolveChargeDamage(this, game, ae, te, toHit, direction, glancing, throughFront, false);
+            ResolveChargeDamage.resolveChargeDamage(server, server.game, ae, te, toHit, direction, glancing, throughFront, false);
         }
     }
 
     /**
      * Handle an Airmech ram attack
      */
-    public void resolveAirmechRamAttack(PhysicalResult pr, int lastEntityId) {
+    public static void resolveAirmechRamAttack(Server server, PhysicalResult pr, int lastEntityId) {
         final AirmechRamAttackAction caa = (AirmechRamAttackAction) pr.aaa;
-        final Entity ae = game.getEntity(caa.getEntityId());
-        final Targetable target = game.getTarget(caa.getTargetType(), caa.getTargetId());
+        final Entity ae = server.game.getEntity(caa.getEntityId());
+        final Targetable target = server.game.getTarget(caa.getTargetType(), caa.getTargetId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
         final ToHitData toHit = pr.toHit;
@@ -11982,20 +11805,20 @@ public class Server implements Runnable {
         }
         boolean throughFront = true;
         if (te != null) {
-            throughFront = Compute.isThroughFrontHex(game, ae.getPosition(), te);
+            throughFront = Compute.isThroughFrontHex(server.game, ae.getPosition(), te);
         }
-        final boolean glancing = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
+        final boolean glancing = server.game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                 && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - max(2, toHit.getValue()));
-        final boolean directBlow = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+        final boolean directBlow = server.game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
 
         // Which building takes the damage?
-        Building bldg = game.getBoard().getBuildingAt(caa.getTargetPos());
+        Building bldg = server.game.getBoard().getBuildingAt(caa.getTargetPos());
 
         // is the attacker dead? because that sure messes up the calculations
         if (ae == null) {
@@ -12012,7 +11835,7 @@ public class Server implements Runnable {
             r = new Report(4005);
             r.subject = ae.getId();
             r.addDesc(ae);
-            addReport(r);
+            server.addReport(r);
         }
 
         // should we even bother?
@@ -12021,8 +11844,8 @@ public class Server implements Runnable {
             r = new Report(4192);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
-            game.addControlRoll(new PilotingRollData(
+            server.addReport(r);
+            server.game.addControlRoll(new PilotingRollData(
                     ae.getId(), 0, "missed a ramming attack"));
             return;
         }
@@ -12032,7 +11855,7 @@ public class Server implements Runnable {
             r = new Report(4197);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
+            server.addReport(r);
             return;
         }
 
@@ -12041,7 +11864,7 @@ public class Server implements Runnable {
             r = new Report(4202);
             r.subject = ae.getId();
             r.indent();
-            addReport(r);
+            server.addReport(r);
             return;
         }
 
@@ -12050,7 +11873,7 @@ public class Server implements Runnable {
         r.indent();
         r.add(target.getDisplayName());
         r.newlines = 0;
-        addReport(r);
+        server.addReport(r);
 
         // if the attacker's prone, fudge the roll
         if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -12058,30 +11881,30 @@ public class Server implements Runnable {
             r = new Report(4222);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
-            addReport(r);
+            server.addReport(r);
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             roll = Integer.MAX_VALUE;
             r = new Report(4227);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
-            addReport(r);
+            server.addReport(r);
         } else {
             // report the roll
             r = new Report(4025);
             r.subject = ae.getId();
             r.add(toHit);
             r.add(roll);
-            addReport(r);
+            server.addReport(r);
             if (glancing) {
                 r = new Report(3186);
                 r.subject = ae.getId();
-                addReport(r);
+                server.addReport(r);
             }
 
             if (directBlow) {
                 r = new Report(3189);
                 r.subject = ae.getId();
-                addReport(r);
+                server.addReport(r);
             }
         }
 
@@ -12090,38 +11913,38 @@ public class Server implements Runnable {
             // miss
             r = new Report(4035);
             r.subject = ae.getId();
-            addReport(r);
+            server.addReport(r);
             // attacker must make a control roll
-            game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed ramming attack"));
+            server.game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed ramming attack"));
         } else if ((target.getTargetType() == Targetable.TYPE_BUILDING)
                 || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) { // Targeting a building.
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
-            addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
+            server.addReport(r);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
-            addReport(buildingReport);
+            server.addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
+            server.addReport(server.damageInfantryIn(bldg, damage, target.getPosition()));
 
             // Apply damage to the attacker.
             int toAttacker = AirmechRamAttackAction.getDamageTakenBy(ae, target, ae.delta_distance);
             HitData hit = new HitData(Mech.LOC_CT);
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-            addReport(DamageEntityControl.damageEntity(this, ae, hit, toAttacker, false, DamageType.NONE,
+            server.addReport(DamageEntityControl.damageEntity(server, ae, hit, toAttacker, false, DamageType.NONE,
                     false, false, throughFront));
-            addNewLines();
-            entityUpdate(ae.getId());
+            server.addNewLines();
+            server.entityUpdate(ae.getId());
 
             // TODO : Does the attacker enter the building?
             // TODO : What if the building collapses?
         } else {
             // Resolve the damage.
-            ResolveChargeDamage.resolveChargeDamage(this, game, ae, te, toHit, direction, glancing, throughFront, true);
+            ResolveChargeDamage.resolveChargeDamage(server, server.game, ae, te, toHit, direction, glancing, throughFront, true);
         }
     }
 
@@ -25302,10 +25125,10 @@ public class Server implements Runnable {
             ResolvePushAttack.resolvePushAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof ChargeAttackAction) {
-            resolveChargeAttack(pr, cen);
+            resolveChargeAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof AirmechRamAttackAction) {
-            resolveAirmechRamAttack(pr, cen);
+            resolveAirmechRamAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof DfaAttackAction) {
             resolveDfaAttack(pr, cen);
@@ -25314,16 +25137,16 @@ public class Server implements Runnable {
             resolveLayExplosivesAttack(pr);
             cen = aaa.getEntityId();
         } else if (aaa instanceof TripAttackAction) {
-            resolveTripAttack(pr, cen);
+            ResolveTripAttack.resolveTripAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof JumpJetAttackAction) {
             ResolveJumpJetAttack.resolveJumpJetAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof GrappleAttackAction) {
-            resolveGrappleAttack(pr, cen);
+            ResolveGrappleAttack.resolveGrappleAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof BreakGrappleAttackAction) {
-            resolveBreakGrappleAttack(pr, cen);
+            resolveBreakGrappleAttack(this, pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof RamAttackAction) {
             resolveRamAttack(pr, cen);

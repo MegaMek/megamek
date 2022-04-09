@@ -430,7 +430,7 @@ public class ResolveClubAttack {
                 grappleResult.aaa = gaa;
                 grappleResult.toHit = grappleHit;
                 grappleResult.roll = Compute.d6(2);
-                server.resolveGrappleAttack(grappleResult, lastEntityId, grappleSide,
+                ResolveGrappleAttack.resolveGrappleAttack(server, grappleResult, lastEntityId, grappleSide,
                         (hit.getLocation() == Mech.LOC_RARM) ? Entity.GRAPPLE_RIGHT : Entity.GRAPPLE_LEFT);
             }
         }

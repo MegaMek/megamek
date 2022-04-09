@@ -40,6 +40,7 @@ VERSION HISTORY:
 + Data: Updating Clothing light to remove offending text. 
 + PR #3553: Improved Russian Name Data
 + Issue #2841: Fixed a bug that prevented AR-10 launchers from switching between available ammos
++ PR #3560: Data fix: Screen Launchers are now correctly classified as Capital Weapons and available to Large Craft in MML
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

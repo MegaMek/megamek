@@ -43,12 +43,10 @@ public class ServerTest {
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
         Game testGame = createMockedGame();
-
         //test whether the server.victory() returns false when mocking VictoryResult as false
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
         testServer.setGame(testGame);
         assertFalse(VictoryChecker.victory(testServer));
-
         //test whether the server.victory() returns true when mocking VictoryResult as true
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         testServer.setGame(testGame);
@@ -61,7 +59,6 @@ public class ServerTest {
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
         Game testGame = createMockedGame();
         Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
-
         testServer.setGame(testGame);
         VictoryChecker.victory(testServer);
         Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(Player.PLAYER_NONE);
@@ -78,8 +75,6 @@ public class ServerTest {
         testServer.setGame(testGame);
         VictoryChecker.victory(testServer);
         Mockito.verify(testGame, Mockito.times(1)).cancelVictory();
-
-
     }
 
     @Test

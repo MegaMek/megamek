@@ -102,4 +102,5 @@ public class VictoryResultTest {
         assertTrue(victoryResult6.processVictory(gameMock).isEmpty());
     }
 
+
 }

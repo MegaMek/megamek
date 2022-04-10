@@ -17,7 +17,8 @@ public class EnemyCommanderDestroyedVictoryTest {
         //arrange
         var EnemyCommanderDestroyedVictory = new EnemyCmdrDestroyedVictory();
 
-        var game = GameMockUtils.createMockedGame();
+        var game = GameMockUtils.createMockedGameWithCommanderVictory();
+
         //act
         var victoryResult=   EnemyCommanderDestroyedVictory.victory(game,null);
         //assert

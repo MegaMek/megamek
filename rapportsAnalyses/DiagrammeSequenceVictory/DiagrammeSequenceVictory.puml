@@ -1,0 +1,171 @@
+@startuml
+title = "Digramme de séquence victory"
+participant Actor
+Actor -> Victory : new
+activate Victory
+Victory -> AbstractOptions : booleanOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : booleanValue
+activate IOption
+IOption -> Option : booleanValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> Victory : buildVClist
+activate Victory
+Victory -> AbstractOptions : intOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : intValue
+activate IOption
+IOption -> Option : intValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> AbstractOptions : booleanOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : booleanValue
+activate IOption
+IOption -> Option : booleanValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> AbstractOptions : intOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : intValue
+activate IOption
+IOption -> Option : intValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> BVDestroyedVictory : new
+activate BVDestroyedVictory
+BVDestroyedVictory --> Victory
+deactivate BVDestroyedVictory
+Victory -> AbstractOptions : booleanOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : booleanValue
+activate IOption
+IOption -> Option : booleanValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> AbstractOptions : intOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : intValue
+activate IOption
+IOption -> Option : intValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> BVRatioVictory : new
+activate BVRatioVictory
+BVRatioVictory --> Victory
+deactivate BVRatioVictory
+Victory -> AbstractOptions : booleanOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : booleanValue
+activate IOption
+IOption -> Option : booleanValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> AbstractOptions : intOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : intValue
+activate IOption
+IOption -> Option : intValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> KillCountVictory : new
+activate KillCountVictory
+KillCountVictory --> Victory
+deactivate KillCountVictory
+Victory -> AbstractOptions : booleanOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : booleanValue
+activate IOption
+IOption -> Option : booleanValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Victory
+deactivate AbstractOptions
+Victory -> EnemyCmdrDestroyedVictory : new
+activate EnemyCmdrDestroyedVictory
+EnemyCmdrDestroyedVictory --> Victory
+deactivate EnemyCmdrDestroyedVictory
+Victory --> Victory
+deactivate Victory
+return
+@enduml

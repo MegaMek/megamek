@@ -1,0 +1,147 @@
+@startuml
+title = Victory conditions score
+participant Actor
+Actor -> Victory : checkOptionalVictory
+activate Victory
+Victory -> VictoryResult : new
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> IVictoryConditions : victory
+activate IVictoryConditions
+IVictoryConditions --> Victory
+deactivate IVictoryConditions
+Victory -> VictoryResult : addReport
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : victory
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : getPlayerScore
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : getPlayerScore
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : addPlayerScore
+activate VictoryResult
+VictoryResult -> VictoryResult : updateHiScore
+activate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : getTeamScore
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : getTeamScore
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : addTeamScore
+activate VictoryResult
+VictoryResult -> VictoryResult : updateHiScore
+activate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : getPlayerScore
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : addPlayerScore
+activate VictoryResult
+VictoryResult -> VictoryResult : updateHiScore
+activate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : getTeamScore
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : addTeamScore
+activate VictoryResult
+VictoryResult -> VictoryResult : updateHiScore
+activate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : victory
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> VictoryResult : victory
+activate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+Victory -> Game : gameTimerIsExpired
+activate Game
+Game -> AbstractOptions : booleanOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : booleanValue
+activate IOption
+IOption -> Option : booleanValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Game
+deactivate AbstractOptions
+Game -> AbstractOptions : intOption
+activate AbstractOptions
+AbstractOptions -> AbstractOptions : getOption
+activate AbstractOptions
+AbstractOptions --> AbstractOptions
+deactivate AbstractOptions
+AbstractOptions -> IOption : intValue
+activate IOption
+IOption -> Option : intValue
+activate Option
+Option --> IOption
+deactivate Option
+IOption --> AbstractOptions
+deactivate IOption
+AbstractOptions --> Game
+deactivate AbstractOptions
+Game --> Victory
+deactivate Game
+Victory -> VictoryResult : drawResult
+activate VictoryResult
+VictoryResult -> VictoryResult : new
+activate VictoryResult
+VictoryResult -> VictoryResult : addPlayerScore
+activate VictoryResult
+VictoryResult -> VictoryResult : updateHiScore
+activate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult -> VictoryResult : addTeamScore
+activate VictoryResult
+VictoryResult -> VictoryResult : updateHiScore
+activate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> VictoryResult
+deactivate VictoryResult
+VictoryResult --> Victory
+deactivate VictoryResult
+return
+@enduml

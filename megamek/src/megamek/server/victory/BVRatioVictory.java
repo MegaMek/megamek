@@ -20,6 +20,8 @@ import megamek.common.Report;
 import java.util.HashSet;
 import java.util.Map;
 
+import static megamek.server.victory.BVDestroyedVictory.verifyVictory;
+
 /**
  * implements bv-ratio victory checking ratio is defined as
  * friendlybv / enemybv &gt; (bvratiopercent / 100) =&gt; win so this comparison is valid for
@@ -71,5 +73,9 @@ public class BVRatioVictory extends AbstractBVVictory {
             }
         }
         return victory ? vr : VictoryResult.noResult();
+    }
+
+    private boolean isVictory(VictoryResult vr, Player player, int team, Report r) {
+        return verifyVictory(vr, player, team, r);
     }
 }

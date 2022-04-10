@@ -72,4 +72,21 @@ public class BVDestroyedVictory extends AbstractBVVictory {
             return vr;
         return VictoryResult.noResult();
     }
+
+    private boolean isVictory(VictoryResult vr, Player player, int team, Report r) {
+        return verifyVictory(vr, player, team, r);
+    }
+
+    static boolean verifyVictory(VictoryResult vr, Player player, int team, Report r) {
+        boolean victory;
+        victory = true;
+        if (team == Player.TEAM_NONE) {
+            r.add(player.getName());
+            vr.addPlayerScore(player.getId(), 1.0);
+        } else {
+            r.add("Team " + team);
+            vr.addTeamScore(team, 1.0);
+        }
+        return victory;
+    }
 }

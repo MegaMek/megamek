@@ -450,9 +450,6 @@ public class MtfFile implements IMechLoader {
             for (String equipment : noCritEquipment) {
                 parseNoCritEquipment(mech, equipment);
             }
-            if (mech.isClan()) {
-                mech.addClanCase();
-            }
 
             // add any heat sinks not allocated
             if (laserSinks) {

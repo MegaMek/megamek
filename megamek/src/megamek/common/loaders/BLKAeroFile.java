@@ -206,10 +206,6 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
             a.setOmni(true);
         }
 
-        if (a.isClan()) {
-            a.addClanCase();
-        }
-
         addTransports(a);
         a.setArmorTonnage(a.getArmorWeight());
         return a;

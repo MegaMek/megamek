@@ -1808,10 +1808,11 @@ public class Aero extends Entity implements IAero, IBomber {
 
     }
 
-    /**
-     * Adds clan CASE in every location
-     */
+    @Override
     public void addClanCase() {
+        if (!(isClan() && isFighter())) {
+            return;
+        }
         boolean explosiveFound = false;
         EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
@@ -1821,7 +1822,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
             explosiveFound = false;
             for (Mounted m : getEquipment()) {
-                if (m.getType().isExplosive(m) && (m.getLocation() == i)) {
+                if (m.getType().isExplosive(m, true) && (m.getLocation() == i)) {
                     explosiveFound = true;
                 }
             }

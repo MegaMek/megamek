@@ -81,7 +81,18 @@ megamek/userdata/**
 /megamek/*.ps
 /megamek/*.png
 /megamek/*.ps
+/megamek/*.html
 /megamek/atlasedImages.txt
 /megamek/Entity Issues.txt
 /megamek/apidocs/
 #End MegaMek Other Outputs
+*.zip
+*.html
+*.hprof
+.env
+/ns-*
+/megamek-windows-0.48.0
+/css
+/img
+/js
+/LOG530_TP.und

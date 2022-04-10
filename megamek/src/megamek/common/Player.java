@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * Represents a player in the game.
@@ -521,18 +522,7 @@ public final class Player extends TurnOrdered {
      */
     public Vector<Integer> getAirborneVTOL() {
         // a vector of unit ids
-        Vector<Integer> units = new Vector<>();
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity.getOwner().equals(this)) {
-                if (((entity instanceof VTOL)
-                     || (entity.getMovementMode() == EntityMovementMode.WIGE)) &&
-                    (!entity.isDestroyed()) &&
-                    (entity.getElevation() > 0)) {
-                    units.add(entity.getId());
-                }
-            }
-        }
-        return units;
+        return game.getEntitiesVector().stream().filter(entity -> entity.getOwner().equals(this)).filter(entity -> ((entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.WIGE)) && (!entity.isDestroyed()) && (entity.getElevation() > 0)).map(Entity::getId).collect(Collectors.toCollection(Vector::new));
     }
 
     public String getColorForPlayer() {

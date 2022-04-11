@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -14,13 +14,10 @@
 package megamek.common;
 
 /**
- * Represents a volume of space set aside for carrying infantry platoons
- * aboard large spacecraft and mobile structures.  Marines count as crew and should have at least steerage quarters.
+ * Represents a volume of space set aside for carrying infantry platoons aboard large spacecraft
+ * and mobile structures. Marines count as crew and should have at least steerage quarters.
  */
 public final class InfantryBay extends Bay {
-
-    // Protected constructors and methods.
-
     private static final long serialVersionUID = 946578184870030662L;
     
     /** The amount of space taken up by an infantry unit in a transport bay differs from the space
@@ -90,8 +87,6 @@ public final class InfantryBay extends Bay {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. This is the total tonnage of the bay;

@@ -335,7 +335,7 @@ class FovHighlightingAndDarkening {
             ai.attackHeight = this.boardView1.selectedEntity.getHeight();
             // Elevation of entity above the hex surface
             int elevation;
-            if (this.boardView1.pathSprites.size() > 0) {
+            if (!boardView1.pathSprites.isEmpty()) {
                 // If we've got a step, get the elevation from it
                 int lastStepIdx = this.boardView1.pathSprites.size() - 1;
                 MoveStep lastMS = this.boardView1.pathSprites.get(lastStepIdx)

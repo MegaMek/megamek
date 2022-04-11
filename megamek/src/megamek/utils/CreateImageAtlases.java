@@ -1,33 +1,32 @@
 /*
- * MegaMek - Copyright (C) 2000-2016 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2016 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.utils;
-
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.common.Configuration;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
 
 /**
  * Program that will scan the data/images directory for images and take all of
@@ -105,14 +104,11 @@ public class CreateImageAtlases {
      */
     void processDirectory(File dir) {
         System.out.println("Processing: " + dir.toString());
-        File[] imageFiles = dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                // Ignore other atlas files, just in case
-                return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif")
-                        || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"))
-                        && !name.endsWith("_atlas.png");
-            }
+        File[] imageFiles = dir.listFiles((dir1, name) -> {
+            // Ignore other atlas files, just in case
+            return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif")
+                    || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"))
+                    && !name.endsWith("_atlas.png");
         });
 
         int numRows = (int) Math.ceil(imageFiles.length / (imagesPerRow + 0.0));

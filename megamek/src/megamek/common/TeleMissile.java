@@ -28,8 +28,8 @@ public class TeleMissile extends Aero {
 
     private int critMod = 0;
 
-    //need another type of boolean for out-of-control status that indicates
-    //lack of contact with originating unit
+    // need another type of boolean for out-of-control status that indicates
+    // lack of contact with originating unit
     private boolean outContact = false;
     
     public TeleMissile() {
@@ -38,7 +38,7 @@ public class TeleMissile extends Aero {
     }
 
     /**
-     * Telemissiles shouldn't get a firing phase
+     * Tele-missiles shouldn't get a firing phase
      * @return false
      */
     @Override
@@ -48,28 +48,28 @@ public class TeleMissile extends Aero {
 
     public TeleMissile(Entity originalRide, int damageValue, int armorValue, double weight, int type, int capMisMod) {
         this();
-                
-        //fuel
-        int fuel = 0;
-        String name = "T-Op Missile";
+
+        String name;
+        int fuel;
         switch (type) {
-            case(AmmoType.T_KRAKEN_T):
-                fuel = 25;
+            case AmmoType.T_KRAKEN_T:
                 name = "Kraken-T Missile";
+                fuel = 25;
                 break;
-            case(AmmoType.T_WHITE_SHARK_T):
-                fuel = 40;
+            case AmmoType.T_WHITE_SHARK_T:
                 name = "White Shark-T Missile";
+                fuel = 40;
                 break;
-            case(AmmoType.T_KILLER_WHALE_T):
-                fuel = 30;
+            case AmmoType.T_KILLER_WHALE_T:
                 name = "Killer Whale-T Missile";
-                break;
-            case(AmmoType.T_BARRACUDA_T):
                 fuel = 30;
+                break;
+            case AmmoType.T_BARRACUDA_T:
                 name = "Barracuda-T Missile";
+                fuel = 30;
                 break;
             default:
+                name = "T-Op Missile";
                 fuel = 30;
                 break;
         }
@@ -183,7 +183,6 @@ public class TeleMissile extends Aero {
     @Override
     public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
         return roll;
     }
@@ -191,7 +190,6 @@ public class TeleMissile extends Aero {
     @Override
     public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
         return roll;
     }

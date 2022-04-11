@@ -236,16 +236,16 @@ public class UnitTable {
     }
 
     /**
-     * @return - true if the generated table has any unit entries
+     * @return true if the generated table has any unit entries
      */
     public boolean hasUnits() {
-        return unitTable.size() > 0;
+        return !unitTable.isEmpty();
     }
 
     /**
      * Selects a unit from the full table.
      *
-     * @return - a selected unit
+     * @return the selected unit
      */
     public MechSummary generateUnit() {
         return generateUnit(null);

@@ -60,8 +60,9 @@ public abstract class PMGenericHotArea implements PMHotArea {
             command = PMHotArea.MOUSE_CLICK_RIGHT;
         }
 
-        if (e.getClickCount() > 1)
+        if (e.getClickCount() > 1) {
             command = PMHotArea.MOUSE_DOUBLE_CLICK;
+        }
 
         ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
                 command, modifiers);

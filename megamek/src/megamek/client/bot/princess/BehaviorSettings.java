@@ -14,6 +14,7 @@
 package megamek.client.bot.princess;
 
 import megamek.codeUtilities.StringUtility;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
@@ -490,9 +491,10 @@ public class BehaviorSettings implements Serializable {
      *
      * @param destinationEdge The {@link CardinalEdge} princess should flee to.
      */
-    public void setDestinationEdge(final CardinalEdge destinationEdge) {
-        if (null == destinationEdge)
+    public void setDestinationEdge(final @Nullable CardinalEdge destinationEdge) {
+        if (null == destinationEdge) {
             return;
+        }
 
         this.destinationEdge = destinationEdge;
     }
@@ -533,9 +535,10 @@ public class BehaviorSettings implements Serializable {
      *
      * @param retreatEdge The {@link CardinalEdge} princess should flee to.
      */
-    public void setRetreatEdge(final CardinalEdge retreatEdge) {
-        if (null == retreatEdge)
+    public void setRetreatEdge(final @Nullable CardinalEdge retreatEdge) {
+        if (null == retreatEdge) {
             return;
+        }
 
         this.retreatEdge = retreatEdge;
     }
@@ -834,36 +837,44 @@ public class BehaviorSettings implements Serializable {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BehaviorSettings)) return false;
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof BehaviorSettings)) {
+            return false;
+        }
 
         final BehaviorSettings that = (BehaviorSettings) o;
-
-        if (autoFlee != that.autoFlee) return false;
-        if (braveryIndex != that.braveryIndex) return false;
-        if (fallShameIndex != that.fallShameIndex) return false;
-        if (forcedWithdrawal != that.forcedWithdrawal) return false;
-        if (goHome != that.goHome) return false;
-        if (herdMentalityIndex != that.herdMentalityIndex) return false;
-        if (hyperAggressionIndex != that.hyperAggressionIndex) return false;
-        if (selfPreservationIndex != that.selfPreservationIndex) return false;
-        if (!description.equals(that.description)) return false;
-        if (destinationEdge != that.destinationEdge) return false;
-        if (retreatEdge != that.retreatEdge) return false;
-
-        if (!strategicBuildingTargets.equals(that.strategicBuildingTargets)) {
+        if (autoFlee != that.autoFlee) {
             return false;
-        }
-
-        if (!priorityUnitTargets.equals(that.priorityUnitTargets)) {
+        } else if (braveryIndex != that.braveryIndex) {
             return false;
-        }
-        
-        if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
+        } else if (fallShameIndex != that.fallShameIndex) {
             return false;
+        } else if (forcedWithdrawal != that.forcedWithdrawal) {
+            return false;
+        } else if (goHome != that.goHome) {
+            return false;
+        } else if (herdMentalityIndex != that.herdMentalityIndex) {
+            return false;
+        } else if (hyperAggressionIndex != that.hyperAggressionIndex) {
+            return false;
+        } else if (selfPreservationIndex != that.selfPreservationIndex) {
+            return false;
+        } else if (!description.equals(that.description)) {
+            return false;
+        } else if (destinationEdge != that.destinationEdge) {
+            return false;
+        } else if (retreatEdge != that.retreatEdge) {
+            return false;
+        } else if (!strategicBuildingTargets.equals(that.strategicBuildingTargets)) {
+            return false;
+        } else if (!priorityUnitTargets.equals(that.priorityUnitTargets)) {
+            return false;
+        } else if (!ignoredUnitTargets.equals(that.ignoredUnitTargets)) {
+            return false;
+        } else {
+            return true;
         }
-
-        return true;
     }
 
     @Override

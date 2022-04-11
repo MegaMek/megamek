@@ -18,9 +18,9 @@
  */
 package megamek.server;
 
+import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.other.TSEMPWeapon;
 
 import java.util.*;
 
@@ -210,7 +210,7 @@ public class ServerHelper {
         if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
             // only start up if not shut down by taser or a TSEMP
             if ((entity.getTaserShutdownRounds() == 0)
-                    && (entity.getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
+                    && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                 if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);

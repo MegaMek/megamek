@@ -42,8 +42,9 @@ public class MechSlotLabel extends PicMap {
         int w = d.width;
         int h = d.height;
         Image BGImage = createImage(w, h);
-        if (BGImage == null)
+        if (BGImage == null) {
             return;
+        }
         Graphics g = BGImage.getGraphics();
         g.setColor(Color.green.darker().darker());
         g.fillRect(0, 0, w, h);

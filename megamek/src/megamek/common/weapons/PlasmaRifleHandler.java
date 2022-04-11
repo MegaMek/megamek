@@ -13,24 +13,12 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
+
+import java.util.Vector;
 
 public class PlasmaRifleHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -2092721653693187140L;
@@ -40,26 +28,16 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
-            Server s) {
+    public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
-     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                nCluster, bldgAbsorbs);
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         if (!missed && entityTarget.tracksHeat()) {
             Report r = new Report(3400);
             r.subject = subjectId;
@@ -78,8 +56,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 r.choose(true);
                 r.messageId = 3406;
                 r.add(extraHeat);
-                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit
-                        .getLocation())]);
+                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
             } else if (entityTarget.getArmor(hit) > 0
                     && (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += extraHeat / 2;
@@ -87,8 +64,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 r.choose(true);
                 r.messageId = 3406;
                 r.add(extraHeat);
-                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit
-                        .getLocation())]);
+                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
             } else {
                 entityTarget.heatFromExternal += extraHeat;
                 r.add(extraHeat);
@@ -98,11 +74,6 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         if (target.tracksHeat()) {
@@ -123,11 +94,6 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         return 1;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
-     */
     @Override
     protected int calcnCluster() {
         if (target.tracksHeat()) {
@@ -147,11 +113,6 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         return toReturn;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         int toReturn;
@@ -174,8 +135,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -192,8 +152,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -223,20 +182,18 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
+
         vPhaseReport.addAll(clearReports);
-        return;
     }
 
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, Coords coords) {
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
+                                        Coords coords) {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }
-
 }

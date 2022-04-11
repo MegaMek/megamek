@@ -52,23 +52,22 @@ public class RangeType {
 
     // returns short/med/long range
     public int getRangeID(int range) {
-        if (range <= r_short)
+        if (range <= r_short) {
             return RANGE_SHORT;
-        else if (range <= r_med)
+        } else if (range <= r_med) {
             return RANGE_MEDIUM;
-        else if (range <= r_long)
+        } else if (range <= r_long) {
             return RANGE_LONG;
-        else if (range <= r_extreme)
+        } else if (range <= r_extreme) {
             return RANGE_EXTREME;
-        else
+        } else {
             return RANGE_OUT;
+        }
     }
 
     // This quickly returns the minimum range modifier
     public int getMinRangeMod(int range) {
-        if (range <= r_min)
-            return (r_min - range + 1);
-        return 0;
+        return (range > r_min) ? 0 : (r_min - range + 1);
     }
 
     /**
@@ -112,5 +111,4 @@ public class RangeType {
         // Return the range.
         return range;
     }
-
 }

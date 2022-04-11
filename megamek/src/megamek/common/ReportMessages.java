@@ -44,8 +44,9 @@ public class ReportMessages {
      */
     public static String getString(String key, Object... args) {
         String s = getString(key);
-        if (s != null)
+        if (s != null) {
             return MessageFormat.format(getString(key), args);
+        }
         return null;
     }
 }

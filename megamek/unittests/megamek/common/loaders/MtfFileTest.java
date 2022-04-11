@@ -1,6 +1,5 @@
 /*
- * MegaMek
- * Copyright (C) 2020 The MegaMek Team
+ * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,15 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-
 package megamek.common.loaders;
 
 import megamek.common.*;
 import org.junit.Test;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MtfFileTest {
 
@@ -40,7 +40,7 @@ public class MtfFileTest {
     }
 
     @Test
-    public void testLoadEquipment() throws LocationFullException, EntityLoadingException {
+    public void testLoadEquipment() throws Exception {
         Mech mech = new BipedMech();
         Mounted mount = new Mounted(mech, EquipmentType.get("Medium Laser"));
         mount.setOmniPodMounted(true);
@@ -58,7 +58,7 @@ public class MtfFileTest {
     }
 
     @Test
-    public void setVGLFacing() throws LocationFullException, EntityLoadingException {
+    public void setVGLFacing() throws Exception {
         Mech mech = new BipedMech();
         EquipmentType vgl = EquipmentType.get("ISVehicularGrenadeLauncher");
         mech.addEquipment(vgl, Mech.LOC_LT).setFacing(0);
@@ -80,7 +80,7 @@ public class MtfFileTest {
     }
 
     @Test
-    public void loadSuperheavyDoubleSlot() throws LocationFullException, EntityLoadingException {
+    public void loadSuperheavyDoubleSlot() throws Exception {
         Mech mech = new BipedMech();
         mech.setWeight(120.0);
         mech.setEngine(new Engine(360, Engine.NORMAL_ENGINE, 0));

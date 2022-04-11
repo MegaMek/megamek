@@ -60,11 +60,14 @@ public class CircularIntegerBuffer {
         end++;
         if (end > begin) {
             begin++;
-            if (begin == buffer.length)
+            if (begin == buffer.length) {
                 begin = 0;
+            }
         }
-        if (end == buffer.length)
+
+        if (end == buffer.length) {
             end = 0;
+        }
         buffer[end] = value;
     }
 
@@ -73,8 +76,9 @@ public class CircularIntegerBuffer {
         StringBuffer result = new StringBuffer();
 
         int indexBegin = begin + 1;
-        if (indexBegin == buffer.length)
+        if (indexBegin == buffer.length) {
             indexBegin = 0;
+        }
 
         if (indexBegin <= end) {
             for (int i = indexBegin; i <= end; i++) {

@@ -23,7 +23,6 @@ import megamek.common.Coords;
  * @author Simon
  */
 public class FieldofFireSprite extends MovementEnvelopeSprite {
-    
     // ### Control values
     
     // thick border
@@ -85,7 +84,9 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
         
         // when the zoom hasn't changed and there is already
         // a prepared image for these borders, then do nothing more
-        if ((bv.scale == oldZoom) && isReady()) return;
+        if ((bv.scale == oldZoom) && isReady()) {
+            return;
+        }
         
         // when the board is rezoomed, ditch all images
         if (bv.scale != oldZoom) {
@@ -191,28 +192,22 @@ public class FieldofFireSprite extends MovementEnvelopeSprite {
     
     @Override
     public boolean isReady() {
-        if (bv.scale != oldZoom) return false;
-        return images[borders][rangeBracket] != null;
+        return (bv.scale == oldZoom) && (images[borders][rangeBracket] != null);
     }
 
     @Override
-    public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
-            boolean makeTranslucent) {
+    public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
         if (isReady()) {
             if (makeTranslucent) {
                 Graphics2D g2 = (Graphics2D) g;
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 0.5f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                 g2.drawImage(images[borders][rangeBracket], x, y, observer);
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1.0f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             } else {
                 g.drawImage(images[borders][rangeBracket], x, y, observer);
             }
         } else {
-            // grrr... we'll be ready next time!
             prepare();
         }
     }
-
 }

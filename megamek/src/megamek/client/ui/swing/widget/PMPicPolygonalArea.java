@@ -1,33 +1,27 @@
-/**
- * MegaMek - Copyright (C) 2003 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
- *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
- *  for more details.
+/*
+ * Copyright (c) 2003 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 /**
  * Simple polygonal area for PicMap component. Is represented by a set of
  * "Active"/"Idle" images but active area will be anyway defined by polygon.
  */
-
 public class PMPicPolygonalArea extends PMGenericHotArea {
-
     private Image idleImage;
     private Image activeImage;
     private boolean highlight = true;
@@ -65,11 +59,7 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
 
     public void setActiveImage(Image im) {
         this.activeImage = im;
-        if (activeImage != null) {
-            highlight = true;
-        } else {
-            highlight = false;
-        }
+        highlight = activeImage != null;
     }
 
     // PMElement interface methods
@@ -85,15 +75,15 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
 
     @Override
     public void drawInto(Graphics g) {
-        if ((g == null) || (!visible))
+        if ((g == null) || (!visible)) {
             return;
+        }
         Rectangle r = getBounds();
         if (selected) {
             g.drawImage(activeImage, r.x, r.y, null);
         } else {
             g.drawImage(idleImage, r.x, r.y, null);
         }
-
     }
 
     @Override
@@ -109,17 +99,18 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
 
     @Override
     public void onMouseOver(MouseEvent e) {
-        if (highlight)
+        if (highlight) {
             selected = true;
+        }
         super.onMouseOver(e);
 
     }
 
     @Override
     public void onMouseExit(MouseEvent e) {
-        if (highlight)
+        if (highlight) {
             selected = false;
+        }
         super.onMouseExit(e);
     }
-
 }

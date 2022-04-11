@@ -1,40 +1,30 @@
-/**
+/*
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * @author arlith
  */
 public class MekMortarFlareHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -2073773899108954657L;
 
     /**
@@ -56,7 +46,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         return 0;
     }
-    
+
     /*
      * (non-Javadoc)
      *
@@ -71,11 +61,10 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
         
         if ((atype == null) || atype.getMunitionType() != AmmoType.M_FLARE) {
-            System.err.println("MekMortarFlareHandler: not using flare ammo!");
+            LogManager.getLogger().error("Trying to use a Mek Mortar Flare with non-flare ammo");
             return true;
         }
 
@@ -159,5 +148,4 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         server.deliverMortarFlare(targetPos, duration);
         return false;
     }
-
 }

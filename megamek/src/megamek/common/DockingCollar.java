@@ -1,7 +1,6 @@
 /*
- * MegaMek -
- * Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2018-2022 The MegaMek Team
+ * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -25,11 +24,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Represents a Docking Collar (Docking Hardpoint, TO: AUE p.116) with which a Jumpship,
+ * Represents a Docking Collar (Docking Hardpoint, TO: AUE p.116) with which a JumpShip,
  * WarShip, Space Station or Mobile Structure can carry one DropShip.
  */
 public class DockingCollar implements Transporter {
-
     private static final long serialVersionUID = -4699786673513410716L;
 
     private final Set<Integer> dockedUnits = new HashSet<>();
@@ -38,7 +36,7 @@ public class DockingCollar implements Transporter {
     transient Game game;
 
     /**
-     * Creates a Jumpship Docking Collar that can carry one dropship.
+     * Creates a JumpShip Docking Collar that can carry one dropship.
      *
      * @param collarId the Id of this collar, used for tracking in MHQ
      */

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,18 +11,12 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
  * Represents a volume of space set aside for carrying second class passengers
  */
-
 public final class SecondClassQuartersCargoBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -30,12 +24,10 @@ public final class SecondClassQuartersCargoBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected SecondClassQuartersCargoBay() {
+    private SecondClassQuartersCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the
@@ -45,9 +37,9 @@ public final class SecondClassQuartersCargoBay extends Bay {
      * @param weight The weight of troops (in tons) this space can carry.
      */
     public SecondClassQuartersCargoBay(double weight, int doors) {
-        totalSpace = (int) weight/7;
+        totalSpace = (int) weight / 7;
         this.weight = weight;
-        currentSpace = (int) weight/7;
+        currentSpace = (int) weight / 7;
         this.doors = doors;
         currentdoors = doors;
     }
@@ -65,10 +57,8 @@ public final class SecondClassQuartersCargoBay extends Bay {
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
@@ -108,5 +98,4 @@ public final class SecondClassQuartersCargoBay extends Bay {
     public long getCost() {
         return 15000L * (long) totalSpace;
     }
-
 }

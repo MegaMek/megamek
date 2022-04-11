@@ -32,7 +32,7 @@ public class StringUtility {
     /**
      * @param text The string to be evaluated.
      * @return true if the passed in <code>StringBuilder</code> is null, or its contents are null
-     * or empty
+     * or blank
      */
     public static boolean isNullOrBlank(final @Nullable StringBuilder text) {
         return (text == null) || isNullOrBlank(text.toString());

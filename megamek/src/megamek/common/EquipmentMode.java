@@ -78,8 +78,10 @@ public class EquipmentMode {
      */
     public String getDisplayableName(boolean wantNormal) {
         String result = EquipmentMessages.getString("EquipmentMode." + name);
-        if ((result != null) && (!wantNormal || result.length() > 0))
+        if ((result != null) && (!wantNormal || !result.isBlank())) {
             return result;
+        }
+
         if (wantNormal) {
             return EquipmentMessages.getString("EquipmentMode.Normal");
         } else {

@@ -1103,7 +1103,7 @@ public abstract class TestEntity implements TestEntityOption {
         for (String atName : armors) {
             EquipmentType at = EquipmentType.get(atName);
             // Can be null in the case of vehicle body or asf wings.   
-            if (null ==  at) {
+            if (at == null) {
                 continue;
             }
             int eqRulesLevel = getEntity().isMixedTech() ? at.findMinimumRulesLevel().ordinal()
@@ -1122,9 +1122,8 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("): ");
                 buff.append(atName);
                 buff.append(" (");
-                buff.append(TechConstants
-                        .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel,
-                                at.isClan())));
+                buff.append(TechConstants.getLevelDisplayableName(TechConstants.convertFromSimplelevel(
+                        eqRulesLevel, at.isClan())));
                 buff.append(")\n");
                 buff.append("\n");
                 retVal = true;
@@ -1138,7 +1137,7 @@ public abstract class TestEntity implements TestEntityOption {
      * Compares intro dates of all components to the unit intro year.
      * 
      * @param buff Descriptions of problems will be added to the buffer.
-     * @return     Whether the unit has an intro year equal to or later than all the components.
+     * @return Whether the unit has an intro year equal to or later than all the components.
      */
     public boolean hasIncorrectIntroYear(StringBuffer buff) {
         boolean retVal = false;
@@ -1147,8 +1146,8 @@ public abstract class TestEntity implements TestEntityOption {
         }
         int useIntroYear = getEntity().getYear() + getIntroYearMargin();
         if (getEntity().isOmni()) {
-            int introDate = Entity.getOmniAdvancement(getEntity())
-                    .getIntroductionDate(getEntity().isClan() || getEntity().isMixedTech());
+            int introDate = Entity.getOmniAdvancement(getEntity()).getIntroductionDate(
+                    getEntity().isClan() || getEntity().isMixedTech());
             if (useIntroYear < introDate) {
                 retVal = true;
                 buff.append("Omni technology has intro date of ");
@@ -1167,6 +1166,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (getEntity().isMixedTech()) {
                 introDate = nextE.getIntroductionDate();
             }
+
             if (introDate > useIntroYear) {
                 retVal = true;
                 buff.append(nextE.getName());
@@ -1202,7 +1202,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
             checked.add(at);
             // Can be null in the case of vehicle body or asf wings.   
-            if (null ==  at) {
+            if (at == null) {
                 continue;
             }
             int introDate = at.getIntroductionDate(getEntity().isClan());

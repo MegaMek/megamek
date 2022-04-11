@@ -38,7 +38,8 @@ public class ISNarcOS extends NarcWeapon {
         bv = 6;
         cost = 100000;
         rulesRefs = "232, TM";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement
+                .setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
@@ -49,6 +50,6 @@ public class ISNarcOS extends NarcWeapon {
                 .setClanApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FS,F_LC);
+                .setReintroductionFactions(F_FS, F_LC);
     }
 }

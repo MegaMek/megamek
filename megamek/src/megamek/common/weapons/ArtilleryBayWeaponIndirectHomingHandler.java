@@ -21,6 +21,7 @@ package megamek.common.weapons;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -386,13 +387,13 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
                 v.add(ti);
             }
         }
-        assert (newTarget != null);
-        if (v.size() == 0) {
+
+        Objects.requireNonNull(newTarget);
+        if (v.isEmpty()) {
             aaa.setTargetId(newTarget.getTargetId());
             aaa.setTargetType(newTarget.getTargetType());
             target = newTarget;
-            toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "tag missed the target");
+            toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "tag missed the target");
             return;
         }
         // get TAGs that are on the same map
@@ -405,7 +406,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends ArtilleryBayWeaponI
             }
         }
         
-        if (allowed.size() == 0) {
+        if (allowed.isEmpty()) {
             aaa.setTargetId(newTarget.getTargetId());
             aaa.setTargetType(newTarget.getTargetType());
             target = newTarget;

@@ -19,18 +19,11 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.Building;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
-import megamek.common.Game;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+
+import java.util.Vector;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -6816799343788643259L;
@@ -39,17 +32,9 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         super(toHit, waa, g, s);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
-     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         if (entityTarget instanceof Mech) {
             if (!bSalvo) {
                 // hits
@@ -57,8 +42,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
 
             if (missed) {
                 return;
@@ -67,18 +51,15 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            if (entityTarget.getArmor(hit) > 0 && 
-                    ((entityTarget.getArmorType(hit.getLocation()) == 
-                        EquipmentType.T_ARMOR_HEAT_DISSIPATING) ||
-                     (entityTarget.getArmorType(hit.getLocation()) == 
-                        EquipmentType.T_ARMOR_REFLECTIVE))) {
+            if ((entityTarget.getArmor(hit) > 0)
+                    && ((entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)
+                    || (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))) {
                 entityTarget.heatFromExternal += 2;
                 r.add(2);
                 r.choose(true);
                 r.messageId=3406;
                 r.add(5);
-                r.add(EquipmentType.armorNames
-                        [entityTarget.getArmorType(hit.getLocation())]);
+                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit.getLocation())]);
             } else {
                 entityTarget.heatFromExternal += 5;
                 r.add(5);
@@ -86,14 +67,12 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             }
             vPhaseReport.addElement(r);
         } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, bldgAbsorbs);
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
     }
 
     @Override
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -110,8 +89,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     }
 
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -128,22 +106,17 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         // Any clear attempt can result in accidental ignition, even
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
-        // TODO: change this for TacOps - now you roll another 2d6 first and on
-        // a 5 or less
-        // you do a normal ignition as though for intentional fires
+        // TODO : change this for TacOps - now you roll another 2d6 first and on a 5 or less
+        // TODO : you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, true,
-                        false,
-                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
-                        vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 }

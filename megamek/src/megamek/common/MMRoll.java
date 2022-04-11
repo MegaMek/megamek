@@ -261,16 +261,18 @@ public class MMRoll extends Roll {
 
         // Roll the virtual dice.
         MMRoll roll = new MMRoll(rng, sides, start);
-        for (int loop = 1; loop < count; loop++)
+        for (int loop = 1; loop < count; loop++) {
             roll.addRoll(rng);
+        }
 
         // Output results.
         Roll.output(roll);
 
         // Get a second roll.
         MMRoll roll2 = new MMRoll(rng, sides, start);
-        for (int loop = 1; loop < count; loop++)
+        for (int loop = 1; loop < count; loop++) {
             roll2.addRoll(rng);
+        }
 
         // Output second results.
         Roll.output(roll2);

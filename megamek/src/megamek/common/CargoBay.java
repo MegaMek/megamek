@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,38 +11,29 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
- * Represents a volume of space set aside for carrying general cargo
- * aboard large spacecraft and mobile structures.
+ * Represents a volume of space set aside for carrying general cargo aboard large spacecraft and
+ * mobile structures.
  */
-
 public final class CargoBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected CargoBay() {
+    private CargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      */
     public CargoBay(double space, int doors, int bayNumber) {
         totalSpace = space;
@@ -64,9 +55,7 @@ public final class CargoBay extends Bay {
     @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
-        boolean result = false;
-
-        return result;
+        return false;
     }
 
     @Override
@@ -98,5 +87,4 @@ public final class CargoBay extends Bay {
     public boolean isCargo() {
         return true;
     }
-
-} // End package class TroopSpace implements Transporter
+}

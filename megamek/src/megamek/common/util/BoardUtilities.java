@@ -341,7 +341,7 @@ public class BoardUtilities {
         // add buildings
         ArrayList<BuildingTemplate> buildings = mapSettings.getBoardBuildings();
         CityBuilder cityBuilder = new CityBuilder(mapSettings, result);
-        if (buildings.size() == 0) {
+        if (buildings.isEmpty()) {
             buildings = cityBuilder.generateCity(roadNeeded);
         }
 

@@ -335,17 +335,17 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         }
 
         @Override
-        public void changedUpdate(DocumentEvent arg0) {
+        public void changedUpdate(DocumentEvent evt) {
             skinPanel.notifySkinChanges(false);
         }
 
         @Override
-        public void insertUpdate(DocumentEvent arg0) {
+        public void insertUpdate(DocumentEvent evt) {
             skinPanel.notifySkinChanges(false);
         }
 
         @Override
-        public void removeUpdate(DocumentEvent arg0) {
+        public void removeUpdate(DocumentEvent evt) {
             skinPanel.notifySkinChanges(false);
         }
     }
@@ -508,7 +508,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
             skinSpec.backgrounds.add(background.path.get(i).getText());
         }
         skinSpec.tileBackground = false;
-        if (background.tiled.size() > 0) {
+        if (!background.tiled.isEmpty()) {
             skinSpec.tileBackground = background.tiled.get(0).isSelected();
         }
 

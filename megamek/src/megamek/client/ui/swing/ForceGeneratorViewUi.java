@@ -20,6 +20,7 @@ import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.UnitType;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.SkillLevel;
 import org.apache.logging.log4j.LogManager;
@@ -120,11 +121,12 @@ public class ForceGeneratorViewUi {
         forceTree.setVisibleRowCount(12);
         forceTree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
-            public void treeCollapsed(TreeExpansionEvent arg0) {
+            public void treeCollapsed(TreeExpansionEvent evt) {
+
             }
 
             @Override
-            public void treeExpanded(TreeExpansionEvent arg0) {
+            public void treeExpanded(TreeExpansionEvent evt) {
                 if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
                     rightPanel.setMinimumSize(new Dimension(forceTree.getMinimumSize().width, rightPanel.getMinimumSize().height));
                     rightPanel.setPreferredSize(new Dimension(forceTree.getPreferredSize().width, rightPanel.getPreferredSize().height));
@@ -301,24 +303,22 @@ public class ForceGeneratorViewUi {
             lblFaction.setText("");
             lblRating.setText("");
         }
-
     }
 
     private MouseListener treeMouseListener = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent evt) {
+            showPopup(evt);
+        }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            showPopup(e);
+        public void mouseReleased(MouseEvent evt) {
+            showPopup(evt);
         }
-        
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-        
-        private void showPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                TreePath path = forceTree.getPathForLocation(e.getX(), e.getY());
+
+        private void showPopup(MouseEvent evt) {
+            if (evt.isPopupTrigger()) {
+                TreePath path = forceTree.getPathForLocation(evt.getX(), evt.getY());
                 if (path == null) {
                     return;
                 }
@@ -326,75 +326,66 @@ public class ForceGeneratorViewUi {
                 if (node instanceof ForceDescriptor) {
                     final ForceDescriptor fd = (ForceDescriptor) node;
                     JPopupMenu menu = new JPopupMenu();
-                    
+
                     JMenuItem item = new JMenuItem("Add to game");
                     item.addActionListener(ev -> modelChosen.addEntities(fd));
                     menu.add(item);
-                    
+
                     item = new JMenuItem("Export as MUL");
                     item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
-                    menu.show(e.getComponent(), e.getX(), e.getY());
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         }
     };
 
     private MouseListener tableMouseListener = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent evt) {
+            showPopup(evt);
+        }
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            showPopup(e);
+        public void mouseReleased(MouseEvent evt) {
+            showPopup(evt);
         }
-        
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            showPopup(e);
-        }
-        
-        private void showPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
+
+        private void showPopup(MouseEvent evt) {
+            if (evt.isPopupTrigger()) {
                 if (tblChosen.getSelectedRowCount() > 0) {
                     JPopupMenu menu = new JPopupMenu();
-                    
+
                     JMenuItem item = new JMenuItem("Remove");
                     item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
                     menu.add(item);
-                    
-                    menu.show(e.getComponent(), e.getX(), e.getY());
-                    
+
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         }
-        
     };
-    
+
     private KeyListener tableKeyListener = new KeyListener() {
-
         @Override
-        public void keyTyped(KeyEvent e) {
-            // TODO Auto-generated method stub
+        public void keyTyped(KeyEvent evt) {
 
         }
 
         @Override
-        public void keyPressed(KeyEvent e) {
-            // TODO Auto-generated method stub
-            
+        public void keyPressed(KeyEvent evt) {
+
         }
 
         @Override
-        public void keyReleased(KeyEvent e) {
-            if ((e.getKeyCode() == KeyEvent.VK_DELETE)
-                    && (tblChosen.getSelectedRowCount() > 0)) {
+        public void keyReleased(KeyEvent evt) {
+            if ((evt.getKeyCode() == KeyEvent.VK_DELETE) && (tblChosen.getSelectedRowCount() > 0)) {
                 modelChosen.removeEntities(tblChosen.getSelectedRows());
             }
         }
-        
     };
 
     static class ForceTreeModel implements TreeModel {
-
         private ForceDescriptor root;
         private ArrayList<TreeModelListener> listeners;
 
@@ -456,23 +447,19 @@ public class ForceGeneratorViewUi {
 
         @Override
         public void valueForPathChanged(TreePath arg0, Object arg1) {
-            // TODO Auto-generated method stub
 
         }
-
     }
-    
-    class UnitRenderer extends DefaultTreeCellRenderer {
-        private static final long serialVersionUID = -5915350078441133119L;
 
+    private class UnitRenderer extends DefaultTreeCellRenderer {
         public UnitRenderer() {
 
         }
 
         @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value,
-                boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+                                                      boolean expanded, boolean leaf, int row,
+                                                      boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
             setBackground(UIManager.getColor("Tree.textBackground"));
             setForeground(UIManager.getColor("Tree.textForeground"));
@@ -522,21 +509,18 @@ public class ForceGeneratorViewUi {
             return this;
         }
     }
-    
+
     private static class ChosenEntityModel extends AbstractTableModel {
-        
-        private static final long serialVersionUID = 779497693159590878L;
-        
         public static final int COL_ENTITY = 0;
         public static final int COL_BV     = 1;
         public static final int COL_MOVE   = 2;
         public static final int NUM_COLS   = 3;
-        
+
         private List<Entity> entities = new ArrayList<>();
         private Set<String> entityIds = new HashSet<>();
-        
-        public boolean hasEntity(Entity en) {
-            return (null != en) && entityIds.contains(en.getExternalIdAsString());
+
+        public boolean hasEntity(final @Nullable Entity en) {
+            return (en != null) && entityIds.contains(en.getExternalIdAsString());
         }
         
         public void addEntity(Entity en) {
@@ -546,7 +530,7 @@ public class ForceGeneratorViewUi {
             }
             fireTableDataChanged();
         }
-        
+
         public void clearData() {
             entityIds.clear();
             entities.clear();
@@ -573,7 +557,7 @@ public class ForceGeneratorViewUi {
             fd.getSubforces().forEach(this::addEntities);
             fd.getAttached().forEach(this::addEntities);
         }
-        
+
         public List<Entity> allEntities() {
             return entities;
         }
@@ -598,22 +582,23 @@ public class ForceGeneratorViewUi {
                     return en.calculateBattleValue();
                 case COL_MOVE:
                     return en.getWalkMP() + "/" + en.getRunMPasString() + "/" + en.getJumpMP();
+                default:
+                    return "";
             }
-            return "";
         }
 
         @Override
         public String getColumnName(int column) {
             switch (column) {
-                case (COL_ENTITY):
+                case COL_ENTITY:
                     return Messages.getString("RandomArmyDialog.colUnit");
-                case (COL_MOVE):
+                case COL_MOVE:
                     return Messages.getString("RandomArmyDialog.colMove");
-                case (COL_BV):
+                case COL_BV:
                     return Messages.getString("RandomArmyDialog.colBV");
+                default:
+                    return "??";
             }
-            return "??";
         }
-
     }
 }

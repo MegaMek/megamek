@@ -60,8 +60,7 @@ public class MoveOption extends MovePath {
             if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) > ((damage_weight
                     * e1.damage) - (utility_weight * e1.getUtility()))) {
                 return -1;
-            }
-            else if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) < ((damage_weight
+            } else if (((damage_weight * e0.damage) - (utility_weight * e0.getUtility())) < ((damage_weight
                     * e1.damage) - (utility_weight * e1.getUtility()))) {
                 return 1;
             } else {

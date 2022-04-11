@@ -11,21 +11,15 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
- /*
- * Created on March 20, 2022
- * @author Hammer
- */
-
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
+/**
+ * @since March 20, 2022
+ * @author Hammer
+ */
 public class InfantryPistolNambu480 extends InfantryWeapon {
-
-    /**
-    *
-    */
    private static final long serialVersionUID = -3164871600230559641L;
 
    public InfantryPistolNambu480() {
@@ -35,23 +29,23 @@ public class InfantryPistolNambu480 extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Nambu 480");
        ammoType = AmmoType.T_INFANTRY;
-       bv = .21;
-       tonnage =  0.0008;
-       infantryDamage =  0.21;
-       infantryRange =  1;
-       ammoWeight =  0.00004;
+       bv = 0.21;
+       tonnage = 0.0008;
+       infantryDamage = 0.21;
+       infantryRange = 1;
+       ammoWeight = 0.00004;
        cost = 350;
-       ammoCost =  20;
-       shots =  14;
-       bursts =  1;
+       ammoCost = 20;
+       shots = 14;
+       bursts = 1;
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #3";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_C)
-       .setAvailability(RATING_C,RATING_C,RATING_C,RATING_C)
-       .setISAdvancement(DATE_NONE, DATE_NONE,2100,DATE_NONE,DATE_NONE)
-       .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_DC);
+               .setTechBase(TECH_BASE_IS)
+               .setTechRating(RATING_C)
+               .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+               .setISAdvancement(DATE_NONE, DATE_NONE, 2100, DATE_NONE, DATE_NONE)
+               .setISApproximate(false, false, true, false, false)
+               .setProductionFactions(F_DC);
    }
 }

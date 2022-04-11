@@ -550,7 +550,7 @@ public class BoardEditor extends JPanel
         button.setDisabledImage(imageButton);
 
         String tt = Messages.getString("BoardEditor."+iconName+"TT");
-        if (tt.length() != 0) {
+        if (!tt.isBlank()) {
             button.setToolTipText(tt);
         }
         button.setMargin(new Insets(0, 0, 0, 0));
@@ -890,7 +890,11 @@ public class BoardEditor extends JPanel
         choTerrainType.setRenderer(renderer);
         // Selecting a terrain type in the Dropdown should deselect
         // all in the terrain overview list except when selected from there
-        choTerrainType.addActionListener(e -> { if (!terrListBlocker) lisTerrain.clearSelection(); });
+        choTerrainType.addActionListener(e -> {
+            if (!terrListBlocker) {
+                lisTerrain.clearSelection();
+            }
+        });
         choTerrainType.setFont(fontComboTerr);
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain"));
         butTerrUp = prepareButton("ButtonTLUP", "Increase Terrain Level", null, BASE_ARROWBUTTON_ICON_WIDTH);
@@ -930,7 +934,9 @@ public class BoardEditor extends JPanel
         choTheme = new JComboBox<>();
         TilesetManager tileMan = bv.getTilesetManager();
         Set<String> themes = tileMan.getThemes();
-        for (String s: themes) choTheme.addItem(s);
+        for (String s : themes) {
+            choTheme.addItem(s);
+        }
         choTheme.addActionListener(this);
         panTheme.add(labTheme);
         panTheme.add(choTheme);
@@ -1738,7 +1744,7 @@ public class BoardEditor extends JPanel
             scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight() / 2));
             JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
         } else {
-            String title =  Messages.getString("BoardEditor.validBoard.title");
+            String title = Messages.getString("BoardEditor.validBoard.title");
             String msg = Messages.getString("BoardEditor.validBoard.report");
             JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.INFORMATION_MESSAGE);
         }

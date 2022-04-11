@@ -111,13 +111,12 @@ public class GALance extends GA {
                         && min.getUtility() < .5 * next.getUtility()) {
                     result += next.getCEntity().bv; // it is being endangered
                     // in the future
-                    if (m > 0)
-                        chrom.genes[m]--; // go so far as to mutate the
-                    // gene
+                    if (m > 0) {
+                        chrom.genes[m]--; // go so far as to mutate the gene
+                    }
                 }
             }
         }
-        // int difference = this.tb.NumEnemies - this.tb.NumFriends;
         double distance_mod = 0;
         // if outnumbered and loosing, clump together.
         try {

@@ -1,15 +1,15 @@
 /*
- * MegaMek - Copyright (C) 2016 The MegaMek Team
+ * Copyright (c) 2016-2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.ratgenerator;
 
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import megamek.common.Compute;
 
+import megamek.common.annotations.Nullable;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -25,21 +26,19 @@ import org.w3c.dom.NodeList;
  * used when one is expected, and provides information on how to make the selection.
  * 
  * @author Neoancient
- *
  */
 public class OptionGroupNode extends RulesetNode {
-
     protected ArrayList<ValueNode> options; 
 
     protected OptionGroupNode() {
         options = new ArrayList<>();
     }
 
-    public ValueNode selectOption(ForceDescriptor fd) {
+    public @Nullable ValueNode selectOption(ForceDescriptor fd) {
         return selectOption(fd, false);
     }
 
-    public ValueNode selectOption(ForceDescriptor fd, boolean apply) {
+    public @Nullable ValueNode selectOption(ForceDescriptor fd, boolean apply) {
         ArrayList<ValueNode> list = new ArrayList<>();
         for (ValueNode o : options) {
             if (o.matches(fd)) {
@@ -48,7 +47,8 @@ public class OptionGroupNode extends RulesetNode {
                 }
             }
         }
-        if (list.size() > 0) {
+
+        if (!list.isEmpty()) {
             ValueNode n = list.get(Compute.randomInt(list.size()));
             if (apply) {
                 n.apply(fd);

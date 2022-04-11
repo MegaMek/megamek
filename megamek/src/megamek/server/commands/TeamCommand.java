@@ -31,7 +31,6 @@ public class TeamCommand extends ServerCommand {
 
     @Override
     public void run(int connId, String[] args) {
-
         if (args.length > 1) {
 
             int team = server.getPlayer(connId).getTeam();
@@ -54,10 +53,10 @@ public class TeamCommand extends ServerCommand {
             for (Enumeration<AbstractConnection> i = server.getConnections(); i.hasMoreElements();) {
                 AbstractConnection conn = i.nextElement();
 
-                if (server.getPlayer(conn.getId()).getTeam() == team)
+                if (server.getPlayer(conn.getId()).getTeam() == team) {
                     server.sendChat(conn.getId(), origin, message.toString());
+                }
             }
         }
     }
-
 }

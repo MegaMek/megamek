@@ -13,24 +13,21 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-
-import megamek.common.annotations.Nullable;
 
 /**
  * Tracks fluff details for entities.
  *
  * @author Neoancient
- *
  */
 public class EntityFluff implements Serializable {
-    /**
-     *
-     */
     private static final long serialVersionUID = -8018098140016149185L;
 
     public enum System {
@@ -76,11 +73,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setCapabilities(String newCapabilities) {
-        if (null != newCapabilities) {
-            capabilities = newCapabilities;
-        } else {
-            capabilities = "";
-        }
+        capabilities = Objects.requireNonNullElse(newCapabilities, "");
     }
 
     public String getOverview() {
@@ -88,11 +81,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setOverview(String newOverview) {
-        if (null != newOverview) {
-            overview = newOverview;
-        } else {
-            overview = "";
-        }
+        overview = Objects.requireNonNullElse(newOverview, "");
     }
 
     public String getDeployment() {
@@ -100,19 +89,11 @@ public class EntityFluff implements Serializable {
     }
 
     public void setDeployment(String newDeployment) {
-        if (null != newDeployment) {
-            deployment = newDeployment;
-        } else {
-            deployment = "";
-        }
+        deployment = Objects.requireNonNullElse(newDeployment, "");
     }
 
     public void setHistory(String newHistory) {
-        if (null != newHistory) {
-            history = newHistory;
-        } else {
-            history = "";
-        }
+        history = Objects.requireNonNullElse(newHistory, "");
     }
 
     public String getHistory() {
@@ -124,11 +105,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setManufacturer(String manufacturer) {
-        if (null != manufacturer) {
-            this.manufacturer = manufacturer;
-        } else {
-            this.manufacturer = "";
-        }
+        this.manufacturer = Objects.requireNonNullElse(manufacturer, "");
     }
 
     public String getPrimaryFactory() {
@@ -136,20 +113,14 @@ public class EntityFluff implements Serializable {
     }
 
     public void setPrimaryFactory(String primaryFactory) {
-        if (null != primaryFactory) {
-            this.primaryFactory = primaryFactory;
-        } else {
-            this.primaryFactory = "";
-        }
+        this.primaryFactory = Objects.requireNonNullElse(primaryFactory, "");
     }
 
     /**
      * Retrieves the manufacturer of particular system component
      *
-     * @param system
-     *            The system component
-     * @return The name of the manufacturer, or an empty string if it has not been
-     *         set.
+     * @param system The system component
+     * @return The name of the manufacturer, or an empty string if it has not been set.
      */
     public String getSystemManufacturer(System system) {
         return systemManufacturers.getOrDefault(system, "");
@@ -158,15 +129,14 @@ public class EntityFluff implements Serializable {
     /**
      * Sets the name of the manufacturer of a particular system component.
      *
-     * @param system
-     *            The system component
-     * @param manu
+     * @param system The system component
+     * @param manufacturer
      *            The name of the manufacturer, or {@code null} or an empty string
      *            to remove the entry.
      */
-    public void setSystemManufacturer(System system, @Nullable String manu) {
-        if ((null != manu) && (manu.length() > 0)) {
-            systemManufacturers.put(system, manu);
+    public void setSystemManufacturer(System system, @Nullable String manufacturer) {
+        if ((null != manufacturer) && !manufacturer.isBlank()) {
+            systemManufacturers.put(system, manufacturer);
         } else {
             systemManufacturers.remove(system);
         }
@@ -194,7 +164,7 @@ public class EntityFluff implements Serializable {
      *            entry.
      */
     public void setSystemModel(System system, @Nullable String model) {
-        if ((null != model) && (model.length() > 0)) {
+        if ((null != model) && !model.isBlank()) {
             systemModels.put(system, model);
         } else {
             systemModels.remove(system);
@@ -206,11 +176,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setMMLImagePath(String filePath) {
-        if (null != filePath) {
-            mmlImageFilePath = filePath;
-        } else {
-            mmlImageFilePath = "";
-        }
+        mmlImageFilePath = Objects.requireNonNullElse(filePath, "");
     }
 
     public String getNotes() {
@@ -218,11 +184,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setNotes(String notes) {
-        if (null != notes) {
-            this.notes = notes;
-        } else {
-            this.notes = "";
-        }
+        this.notes = Objects.requireNonNullElse(notes, "");
     }
 
     public String getUse() {
@@ -230,11 +192,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setUse(String use) {
-        if (null != use) {
-            this.use = use;
-        } else {
-            this.use = "";
-        }
+        this.use = Objects.requireNonNullElse(use, "");
     }
 
     public String getLength() {
@@ -242,11 +200,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setLength(String length) {
-        if (null != length) {
-            this.length = length;
-        } else {
-            this.length = "";
-        }
+        this.length = Objects.requireNonNullElse(length, "");
     }
 
     public String getWidth() {
@@ -254,11 +208,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setWidth(String width) {
-        if (null != width) {
-            this.width = width;
-        } else {
-            this.width = "";
-        }
+        this.width = Objects.requireNonNullElse(width, "");
     }
 
     public String getHeight() {
@@ -266,11 +216,7 @@ public class EntityFluff implements Serializable {
     }
 
     public void setHeight(String height) {
-        if (null != height) {
-            this.height = height;
-        } else {
-            this.height = "";
-        }
+        this.height = Objects.requireNonNullElse(height, "");
     }
 
     /**
@@ -279,7 +225,7 @@ public class EntityFluff implements Serializable {
      * @return A list of all system manufacturers formatted as "system:manufacturer"
      */
     public List<String> createSystemManufacturersList() {
-        return systemManufacturers.entrySet().stream().filter(e -> e.getValue().length() > 0)
+        return systemManufacturers.entrySet().stream().filter(e -> !e.getValue().isBlank())
                 .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
     }
 
@@ -289,7 +235,7 @@ public class EntityFluff implements Serializable {
      * @return A list of all system models formatted as "system:model"
      */
     public List<String> createSystemModelsList() {
-        return systemModels.entrySet().stream().filter(e -> e.getValue().length() > 0)
+        return systemModels.entrySet().stream().filter(e -> !e.getValue().isBlank())
                 .map(e -> e.getKey().toString() + ":" + e.getValue()).collect(Collectors.toList());
     }
 }

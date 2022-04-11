@@ -827,8 +827,7 @@ public class Game implements Serializable {
 
     public boolean shouldDeployForRound(int round) {
         Vector<Entity> vec = getEntitiesToDeployForRound(round);
-
-        return (((null == vec) || (vec.size() == 0)) ? false : true);
+        return (null != vec) && !vec.isEmpty();
     }
 
     private Vector<Entity> getEntitiesToDeployForRound(int round) {
@@ -1400,7 +1399,7 @@ public class Game implements Serializable {
 
         // We also need to remove it from the list of things to be deployed...
         // we might still be in this list if we never joined the game
-        if (deploymentTable.size() > 0) {
+        if (!deploymentTable.isEmpty()) {
             Enumeration<Vector<Entity>> iter = deploymentTable.elements();
 
             while (iter.hasMoreElements()) {
@@ -2068,7 +2067,7 @@ public class Game implements Serializable {
      * Used when, say, an entity dies mid-phase.
      */
     public void removeTurnFor(Entity entity) {
-        if (turnVector.size() == 0) {
+        if (turnVector.isEmpty()) {
             return;
         }
         // If the game option "move multiple infantry per mech" is selected,

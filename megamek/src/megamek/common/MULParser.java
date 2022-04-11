@@ -1,6 +1,5 @@
 /*
-* MegaMek -
-* Copyright (C) 2014 The MegaMek Team
+* Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -15,9 +14,9 @@
 package megamek.common;
 
 import megamek.client.generator.RandomNameGenerator;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -465,9 +464,9 @@ public class MULParser {
             if (nodeType == Node.ELEMENT_NODE) {
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(KILL)) {
-                    String killed =  ((Element) currNode).getAttribute(KILLED);
+                    String killed = ((Element) currNode).getAttribute(KILLED);
                     String killer = ((Element) currNode).getAttribute(KILLER);
-                    if ((killed != null) && (killer != null) && !killed.isEmpty() && !killer.isEmpty()) {
+                    if (!killed.isBlank() && !killer.isBlank()) {
                         kills.put(killed, killer);
                     }
                 }
@@ -477,7 +476,7 @@ public class MULParser {
 
     /**
      * Parse an Entity tag. Entity tags will have a number of attributes such as model, chassis,
-     * type, etc. They should also have a child Pilot tag and they may also contain some number of
+     * type, etc. They should also have a child Pilot tag, and they may also contain some number of
      * location tags.
      *
      * @param entityNode the node to parse the entity tag from
@@ -486,14 +485,12 @@ public class MULParser {
      */
     private void parseEntity(final Element entityNode, final @Nullable GameOptions options,
                              final Vector<Entity> list) {
-        Entity entity;
-
         // We need to get a new Entity, use the chassis and model to create one
-        String chassis =  entityNode.getAttribute(CHASSIS);
+        String chassis = entityNode.getAttribute(CHASSIS);
         String model = entityNode.getAttribute(MODEL);
 
         // Create a new entity
-        entity = getEntity(chassis, model);
+        Entity entity = getEntity(chassis, model);
 
         // Make sure we've got an Entity
         if (entity == null) {
@@ -586,10 +583,10 @@ public class MULParser {
      * @param model
      * @return
      */
-    private Entity getEntity(String chassis, String model) {
+    private Entity getEntity(String chassis, @Nullable String model) {
         Entity newEntity = null;
 
-        //first check for ejected mechwarriors, vee crews, escape pods and spacecraft crews
+        // First check for ejected MechWarriors, vee crews, escape pods and spacecraft crews
         if (chassis.equals(EjectedCrew.VEE_EJECT_NAME) 
                 || chassis.equals(EjectedCrew.SPACE_EJECT_NAME)) {
             return new EjectedCrew();
@@ -601,14 +598,13 @@ public class MULParser {
         }
 
         // Did we find required attributes?
-        if ((chassis == null) || (chassis.length() == 0)) {
+        if (chassis.isBlank()) {
             warning.append("Could not find chassis for Entity.\n");
         } else {
             // Try to find the entity.
-            MechSummary ms = null;
             StringBuffer key = new StringBuffer(chassis);
-            ms = MechSummaryCache.getInstance().getMech(key.toString());
-            if ((model != null) && (model.length() > 0)) {
+            MechSummary ms = MechSummaryCache.getInstance().getMech(key.toString());
+            if (!StringUtility.isNullOrBlank(model)) {
                 key.append(" ").append(model);
                 ms = MechSummaryCache.getInstance().getMech(key.toString());
                 // That didn't work. Try swapping model and chassis.
@@ -621,15 +617,14 @@ public class MULParser {
             // We should have found the mech.
             if (ms == null) {
                 warning.append("Could not find Entity with chassis: ").append(chassis);
-                if ((model != null) && (model.length() > 0)) {
+                if (!StringUtility.isNullOrBlank(model)) {
                     warning.append(", and model: ").append(model);
                 }
                 warning.append(".\n");
             } else {
                 // Try to load the new mech.
                 try {
-                    newEntity = new MechFileParser(ms.getSourceFile(),
-                            ms.getEntryName()).getEntity();
+                    newEntity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
                 } catch (Exception ex) {
                     LogManager.getLogger().error("", ex);
                     warning.append("Unable to load mech: ")
@@ -700,8 +695,8 @@ public class MULParser {
         try {
             String ndeploy = entityTag.getAttribute(NEVER_DEPLOYED);
             boolean wasNeverDeployed = Boolean.parseBoolean(entityTag.getAttribute(NEVER_DEPLOYED));
-            if ((ndeploy == null) || ndeploy.isEmpty()) {
-                //this will default to false above, but we want it to default to true
+            if (ndeploy.isBlank()) {
+                // this will default to false above, but we want it to default to true
                 wasNeverDeployed = true;
             }
             entity.setNeverDeployed(wasNeverDeployed);
@@ -714,12 +709,13 @@ public class MULParser {
             String altString = entityTag.getAttribute(ALTITUDE);
 
             IAero a = (IAero) entity;
-            if (velString.length() > 0) {
+            if (!velString.isBlank()) {
                 int velocity = Integer.parseInt(velString);
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
             }
-            if (altString.length() > 0) {
+
+            if (!altString.isBlank()) {
                 int altitude = Integer.parseInt(altString);
                 if (altitude <= 0) {
                     a.land();
@@ -735,7 +731,7 @@ public class MULParser {
 
         // external id
         String extId = entityTag.getAttribute(EXT_ID);
-        if ((null == extId) || (extId.length() == 0)) {
+        if (extId.isBlank()) {
             extId = "-1";
         }
         entity.setExternalIdAsString(extId);
@@ -743,16 +739,15 @@ public class MULParser {
         // external id
         if (entity instanceof MechWarrior) {
             String pickUpId = entityTag.getAttribute(PICKUP_ID);
-            if ((null == pickUpId) || (pickUpId.length() == 0)) {
+            if (pickUpId.isBlank()) {
                 pickUpId = "-1";
             }
             ((MechWarrior) entity).setPickedUpByExternalId(pickUpId);
         }
 
-
         // quirks
         String quirks = entityTag.getAttribute(QUIRKS);
-        if ((null != quirks) && (quirks.trim().length() > 0)) {
+        if (!quirks.isBlank()) {
             StringTokenizer st = new StringTokenizer(quirks, "::");
             while (st.hasMoreTokens()) {
                 String quirk = st.nextToken();
@@ -761,7 +756,7 @@ public class MULParser {
 
                 try {
                     entity.getQuirks().getOption(quirkName).setValue(value);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     warning.append("Error restoring quirk: ").append(quirk).append(".\n");
                 }
             }
@@ -769,11 +764,11 @@ public class MULParser {
 
         // Setup for C3 Relinking
         String c3masteris = entityTag.getAttribute(C3MASTERIS);
-        if (c3masteris.length() > 0) {
+        if (!c3masteris.isBlank()) {
             entity.setC3MasterIsUUIDAsString(c3masteris);
         }
         String c3uuid = entityTag.getAttribute(C3UUID);
-        if (c3uuid.length() > 0) {
+        if (!c3uuid.isBlank()) {
             entity.setC3UUIDAsString(c3uuid);
         }
 
@@ -781,34 +776,41 @@ public class MULParser {
         if (entity.isConventionalInfantry()) {
             Infantry inf = (Infantry) entity;
             String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
-            if (armorDiv.length() > 0) {
+            if (!armorDiv.isBlank()) {
                 inf.setArmorDamageDivisor(Double.parseDouble(armorDiv));
             }
-            if (entityTag.getAttribute(ARMOR_ENC).length() > 0) {
+
+            if (!entityTag.getAttribute(ARMOR_ENC).isBlank()) {
                 inf.setArmorEncumbering(true);
             }
-            if (entityTag.getAttribute(SPACESUIT).length() > 0) {
+
+            if (!entityTag.getAttribute(SPACESUIT).isBlank()) {
                 inf.setSpaceSuit(true);
             }
-            if (entityTag.getAttribute(DEST_ARMOR).length() > 0) {
+
+            if (!entityTag.getAttribute(DEST_ARMOR).isBlank()) {
                 inf.setDEST(true);
             }
-            if (entityTag.getAttribute(SNEAK_CAMO).length() > 0) {
+
+            if (!entityTag.getAttribute(SNEAK_CAMO).isBlank()) {
                 inf.setSneakCamo(true);
             }
-            if (entityTag.getAttribute(SNEAK_IR).length() > 0) {
+
+            if (!entityTag.getAttribute(SNEAK_IR).isBlank()) {
                 inf.setSneakIR(true);
             }
-            if (entityTag.getAttribute(SNEAK_ECM).length() > 0) {
+
+            if (!entityTag.getAttribute(SNEAK_ECM).isBlank()) {
                 inf.setSneakECM(true);
             }
+
             String infSpec = entityTag.getAttribute(INF_SPEC);
-            if (infSpec.length() > 0) {
+            if (!infSpec.isBlank()) {
                 inf.setSpecializations(Integer.parseInt(infSpec));
             }
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
-            if (infSquadNum.length() > 0) {
+            if (!infSquadNum.isBlank()) {
                 inf.setSquadN(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }
@@ -929,7 +931,7 @@ public class MULParser {
                     pilotAttr.put(node.getNodeName(), node.getTextContent());
                 }
                 int slot = -1;
-                if (pilotAttr.containsKey(SLOT) && pilotAttr.get(SLOT).length() > 0) {
+                if (pilotAttr.containsKey(SLOT) && !pilotAttr.get(SLOT).isBlank()) {
                     try {
                         slot = Integer.parseInt(pilotAttr.get(SLOT));
                     } catch (NumberFormatException ex) {
@@ -1394,7 +1396,7 @@ public class MULParser {
         String type = armorTag.getAttribute(TYPE);
 
         // Did we find required attributes?
-        if ((points == null) || (points.length() == 0)) {
+        if (points.isBlank()) {
             warning.append("Could not find points for armor.\n");
         } else {
 
@@ -1487,10 +1489,10 @@ public class MULParser {
         String bayIndex = slotTag.getAttribute(WEAPONS_BAY_INDEX);
 
         // Did we find required attributes?
-        if ((index == null) || (index.length() == 0)) {
+        if (index.isBlank()) {
             warning.append("Could not find index for slot.\n");
             return locAmmoCount;
-        } else if ((type == null) || (type.length() == 0)) {
+        } else if (type.isBlank()) {
             warning.append("Could not find type for slot.\n");
             return locAmmoCount;
         } else {
@@ -1623,7 +1625,7 @@ public class MULParser {
             // it's possible that this is "extra" ammo in a weapons bay, so we may attempt
             // to shove it in there
             if (slot == null) {
-                if ((entity.usesWeaponBays() || (entity instanceof Dropship)) && !bayIndex.isEmpty()) {
+                if ((entity.usesWeaponBays() || (entity instanceof Dropship)) && !bayIndex.isBlank()) {
                     addExtraAmmoToBay(entity, loc, type, bayIndex);
                     slot = entity.getCritical(loc, indexVal);
                 }
@@ -1660,7 +1662,7 @@ public class MULParser {
                 mounted.restore();
 
                 // quirks
-                if ((null != quirks) && (quirks.trim().length() > 0)) {
+                if (!quirks.isBlank()) {
                     StringTokenizer st = new StringTokenizer(quirks, "::");
                     while (st.hasMoreTokens()) {
                         String quirk = st.nextToken();
@@ -1676,9 +1678,8 @@ public class MULParser {
                 }
 
                 // trooper missing equipment
-                if ((null != trooperMiss) && (trooperMiss.trim().length() > 0)) {
-                    StringTokenizer st = new StringTokenizer(trooperMiss,
-                            "::");
+                if (!trooperMiss.isBlank()) {
+                    StringTokenizer st = new StringTokenizer(trooperMiss, "::");
                     int i = BattleArmor.LOC_TROOPER_1;
                     while (st.hasMoreTokens() && i <= BattleArmor.LOC_TROOPER_6) {
                         String tmiss = st.nextToken();
@@ -1776,7 +1777,7 @@ public class MULParser {
                 }
 
                 // Check for munition attribute.
-                if (munition.length() > 0) {
+                if (!munition.isBlank()) {
                     // Retrieve munition by name.
                     EquipmentType munType = EquipmentType.get(munition);
 
@@ -1795,13 +1796,13 @@ public class MULParser {
                 if (entity.isSupportVehicle() && (mounted.getType() instanceof InfantryWeapon)) {
                     for (Mounted ammo = mounted.getLinked(); ammo != null; ammo = ammo.getLinked()) {
                         if (((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_INFERNO) {
-                            if (!inferno.isEmpty()) {
+                            if (!inferno.isBlank()) {
                                 String[] fields = inferno.split(":");
                                 ammo.setShotsLeft(Integer.parseInt(fields[0]));
                                 ammo.setOriginalShots(Integer.parseInt(fields[1]));
                             }
                         } else {
-                            if (!standard.isEmpty()) {
+                            if (!standard.isBlank()) {
                                 String[] fields = standard.split(":");
                                 ammo.setShotsLeft(Integer.parseInt(fields[0]));
                                 ammo.setOriginalShots(Integer.parseInt(fields[1]));
@@ -1983,39 +1984,39 @@ public class MULParser {
 
         Aero a = (Aero) entity;
 
-        if (avionics.length() > 0) {
+        if (!avionics.isBlank()) {
             a.setAvionicsHits(Integer.parseInt(avionics));
         }
 
-        if (sensors.length() > 0) {
+        if (!sensors.isBlank()) {
             a.setSensorHits(Integer.parseInt(sensors));
         }
 
-        if (engine.length() > 0) {
+        if (!engine.isBlank()) {
             a.setEngineHits(Integer.parseInt(engine));
         }
 
-        if (fcs.length() > 0) {
+        if (!fcs.isBlank()) {
             a.setFCSHits(Integer.parseInt(fcs));
         }
 
-        if (cic.length() > 0) {
+        if (!cic.isBlank()) {
             a.setCICHits(Integer.parseInt(cic));
         }
 
-        if (leftThrust.length() > 0) {
+        if (!leftThrust.isBlank()) {
             a.setLeftThrustHits(Integer.parseInt(leftThrust));
         }
 
-        if (rightThrust.length() > 0) {
+        if (!rightThrust.isBlank()) {
             a.setRightThrustHits(Integer.parseInt(rightThrust));
         }
 
-        if (lifeSupport.length() > 0) {
+        if (!lifeSupport.isBlank()) {
             a.setLifeSupport(false);
         }
 
-        if (gear.length() > 0) {
+        if (!gear.isBlank()) {
             a.setGearHit(true);
         }
     }
@@ -2031,10 +2032,11 @@ public class MULParser {
 
         Dropship d = (Dropship) entity;
 
-        if (dockingcollar.length() > 0) {
+        if (!dockingcollar.isBlank()) {
             d.setDamageDockCollar(true);
         }
-        if (kfboom.length() > 0) {
+
+        if (!kfboom.isBlank()) {
             d.setDamageKFBoom(true);
         }
     }
@@ -2051,7 +2053,7 @@ public class MULParser {
 
         int bay;
         // Did we find the required index?
-        if ((index == null) || (index.length() == 0)) {
+        if (index.isBlank()) {
             warning.append("Could not find index for bay.\n");
             return;
         } else {
@@ -2059,20 +2061,21 @@ public class MULParser {
             bay = -1;
             try {
                 bay = Integer.parseInt(index);
-            } catch (NumberFormatException excep) {
+            } catch (NumberFormatException ignored) {
                 // Handled by the next if test
             }
+
             if (bay < 0) {
                 warning.append("Found invalid index value for bay: ").append(index).append(".\n");
                 return;
             } else if (entity.getBayById(bay) == null) {
                 warning.append("The entity, ")
-                .append(entity.getShortName())
-                .append(" does not have a bay at index: ")
-                .append(bay).append(".\n");
+                    .append(entity.getShortName())
+                    .append(" does not have a bay at index: ")
+                    .append(bay).append(".\n");
                 return;
             }
-        } // End check for required fields
+        }
 
         Bay currentbay = entity.getBayById(bay);
 
@@ -2096,7 +2099,7 @@ public class MULParser {
                 }
             }
         }
-    } // End parseTransportBay
+    }
 
     /**
      * Parse a tankCrit tag for the given <code>Entity</code>.
@@ -2112,7 +2115,7 @@ public class MULParser {
 
         Tank t = (Tank) entity;
 
-        if (sensors.length() > 0) {
+        if (!sensors.isBlank()) {
             t.setSensorHits(Integer.parseInt(sensors));
         }
 
@@ -2130,7 +2133,6 @@ public class MULParser {
         } else if (commander.equalsIgnoreCase("hit")) {
             t.setCommanderHit(true);
         }
-
     }
 
     /**
@@ -2171,8 +2173,6 @@ public class MULParser {
                         ((IBomber) entity).setBombChoices(bombChoices);
                     }
                 }
-            } else {
-                continue;
             }
         }
     }
@@ -2204,8 +2204,6 @@ public class MULParser {
                         entity.setC3iNextUUIDAsString(pos, link);
                     }
                 }
-            } else {
-                continue;
             }
         }
     }
@@ -2237,8 +2235,6 @@ public class MULParser {
                         entity.setNC3NextUUIDAsString(pos, link);
                     }
                 }
-            } else {
-                continue;
             }
         }
     }
@@ -2255,6 +2251,7 @@ public class MULParser {
                     "Crewed Spacecraft!\n");
             return;
         }
+
         try {
             String id = escCraftTag.getAttribute(ID);
             ((Aero) entity).addEscapeCraft(id);
@@ -2287,13 +2284,13 @@ public class MULParser {
                 int value = Integer.parseInt(number);
                 if (entity instanceof EjectedCrew) {
                     ((EjectedCrew) entity).addPassengers(id, value);
-                } else if (entity instanceof SmallCraft) {
+                } else {
                     ((SmallCraft) entity).addPassengers(id, value);
                 }
             }
         }
     }
-    
+
     /**
      * Parse an EscapedCrew tag for the given <code>Entity</code>.
      *
@@ -2318,7 +2315,7 @@ public class MULParser {
                 int value = Integer.parseInt(number);
                 if (entity instanceof EjectedCrew) {
                     ((EjectedCrew) entity).addNOtherCrew(id, value);
-                } else if (entity instanceof SmallCraft) {
+                } else {
                     ((SmallCraft) entity).addNOtherCrew(id, value);
                 }
             }
@@ -2336,7 +2333,7 @@ public class MULParser {
         try {
             int newSI = Integer.parseInt(value);
             ((Aero) entity).set0SI(newSI);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             warning.append("Invalid SI value in original structural integrity tag.\n");
         }
     }
@@ -2352,7 +2349,7 @@ public class MULParser {
         try {
             int newMen = Integer.parseInt(value);
             entity.initializeInternal(newMen, Infantry.LOC_INFANTRY);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             warning.append("Invalid internal value in original number of men tag.\n");
         }
     }
@@ -2388,7 +2385,7 @@ public class MULParser {
         try {
             int id = Integer.parseInt(value);
             entity.setId(id);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             warning.append("Invalid id in conveyance tag.\n");
         }
     }
@@ -2417,9 +2414,8 @@ public class MULParser {
         String manipTypeName = meaTag.getAttribute(BA_MEA_TYPE_NAME);
 
         // Make sure we got a mount number
-        if (meaMountLocString.length() == 0) {
-            warning.append("antiPersonnelMount tag does not specify " +
-                    "a baMeaMountLoc!\n");
+        if (meaMountLocString.isBlank()) {
+            warning.append("antiPersonnelMount tag does not specify a baMeaMountLoc!\n");
             return;
         }
 
@@ -2478,8 +2474,7 @@ public class MULParser {
      */
     private void parseBAAPM(Element apmTag, Entity entity) {
         if (!(entity instanceof BattleArmor)) {
-            warning.append("Found a BA APM tag but Entity is not " +
-                    "BattleArmor!\n");
+            warning.append("Found a BA APM tag but Entity is not BattleArmor!\n");
             return;
         }
 
@@ -2487,9 +2482,8 @@ public class MULParser {
         String apTypeName = apmTag.getAttribute(BA_APM_TYPE_NAME);
 
         // Make sure we got a mount number
-        if (mountNumber.length() == 0) {
-            warning.append("antiPersonnelMount tag does not specify " +
-                    "a baAPMountNum!\n");
+        if (mountNumber.isBlank()) {
+            warning.append("antiPersonnelMount tag does not specify a baAPMountNum!\n");
             return;
         }
 
@@ -2557,7 +2551,7 @@ public class MULParser {
         try {
             entity.addEquipment(ammo, loc, bay.isRearMounted());
         } catch (LocationFullException ignored) {
-            // silently swallow it, since dropship locations have about a hundred crit slots
+            // silently swallow it, since DropShip locations have about a hundred crit slots
         }
 
         bay.addAmmoToBay(entity.getEquipmentNum(ammo));

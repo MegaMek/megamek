@@ -622,6 +622,9 @@ public class MechFileParser {
             // set RACs and UACs at maximum firing rate if aero
             ent.setRapidFire();
         }
+
+        ent.addClanCase();
+
         if (ent instanceof BattleArmor) {
             // now, depending on equipment and chassis, BA might be able to do
             // leg

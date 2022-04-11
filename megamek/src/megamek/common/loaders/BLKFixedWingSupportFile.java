@@ -175,10 +175,6 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
             a.setOmni(true);
         }
 
-        if (a.isClan()) {
-            a.addClanCase();
-        }
-
         // how many bombs can it carry
         // do this here, after equipment has been loaded, because fixed wing
         // support vees need equipment for this

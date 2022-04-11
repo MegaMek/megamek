@@ -16246,4 +16246,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean hasMulId() {
         return mulId > 0;
     }
+
+
+    /**
+     * For clan units that get automatic Clan CASE, adds clan CASE in every location that has
+     * potentially explosive equipment (this includes uncharged PPC Capacitors).
+     * <P>As clan CASE does not need critical slots, this method does not perform checks whether
+     * other CASE types are already present on a location.
+     * <P>This method does nothing by default and must be overridden for unit types that get Clan CASE.
+     */
+    public void addClanCase() { }
 }

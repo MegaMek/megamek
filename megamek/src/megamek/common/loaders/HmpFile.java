@@ -514,10 +514,6 @@ public class HmpFile implements IMechLoader {
 
             setupCriticals(mech);
 
-            if (mech.isClan()) {
-                mech.addClanCase();
-            }
-
             mech.setArmorTonnage(mech.getArmorWeight());
 
             // add any heat sinks not allocated

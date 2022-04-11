@@ -316,10 +316,6 @@ public class MepFile implements IMechLoader {
                 }
             }
 
-            if (mech.isClan()) {
-                mech.addClanCase();
-            }
-
             mech.setArmorTonnage(mech.getArmorWeight());
 
             return mech;

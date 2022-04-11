@@ -19,22 +19,14 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.lrms.LRMWeapon;
 
 /**
  * @author Sebastian Brocks
  */
 public class ISLRM4 extends LRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 5929285415982964603L;
 
-    /**
-     *
-     */
     public ISLRM4() {
         super();
         name = "LRM 4";
@@ -47,11 +39,11 @@ public class ISLRM4 extends LRMWeapon {
         bv = 38;
         rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        .setIntroLevel(false)
-        .setUnofficial(true)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
-        .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false, false, false);
+                .setIntroLevel(false)
+                .setUnofficial(true)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false);
     }
 }

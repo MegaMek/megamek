@@ -33,7 +33,16 @@ VERSION HISTORY:
 + PR #3490: RATGeneratorEditor UX Improvements
 + PR #3515: Modernizing a bunch of Legacy Logging
 + Data #3262 - BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
++ Data #3533, #3529, #3528, #3527, #3518, #3517, #3516, #3430, and #3410 fixes for various unit files. 
+	RAT Generator Rec Guide 18 updates, Tech Progression errata. 
 + MML Issue #927: Add LAM FuelTank
++ PR #3525: RATGeneratorEditor: Allow deleting RAT Roles and show MUL Role
++ Data: Updating Clothing light to remove offending text. 
++ PR #3553: Improved Russian Name Data
++ Issue #2841: Fixed a bug that prevented AR-10 launchers from switching between available ammos
++ PR #3560: Data fix: Screen Launchers are now correctly classified as Capital Weapons and available to Large Craft in MML
++ Issue #3257: Fixes the BV and auto CASE placement for PPC Capacitors on Clan units
++ PR #3556: Change the internal representation of BV calcs and offer text and HTML style export of BV calc reports
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

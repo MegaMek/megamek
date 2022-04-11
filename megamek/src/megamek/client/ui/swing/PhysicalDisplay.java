@@ -258,8 +258,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             selectEntity(clientgui.getClient().getFirstEntityNum());
             setNextEnabled(true);
             butDone.setEnabled(true);
-            if (numButtonGroups > 1)
+            if (numButtonGroups > 1) {
                 buttons.get(PhysicalCommand.PHYSICAL_MORE).setEnabled(true);
+            }
         }
         clientgui.getBoardView().select(null);
     }
@@ -271,11 +272,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         // end my turn, then.
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((GamePhase.PHYSICAL == clientgui.getClient().getGame()
-                .getPhase())
-            && (null != next)
-            && (null != ce())
-            && (next.getOwnerId() != ce().getOwnerId())) {
+        if (clientgui.getClient().getGame().getPhase().isPhysical() && (null != next)
+                && (null != ce()) && (next.getOwnerId() != ce().getOwnerId())) {
             clientgui.setUnitDisplayVisible(false);
         }
         cen = Entity.NONE;
@@ -314,8 +312,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty()
-                && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
             ConfirmDialog response = clientgui
                     .doYesNoBotherDialog(
@@ -344,7 +341,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      */
     @Override
     public void clear() {
-        if (attacks.size() > 0) {
+        if (!attacks.isEmpty()) {
             attacks.removeAllElements();
         }
         if (ce() != null) {
@@ -1054,10 +1051,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 }
                 ready();
             }
-        }
-
-        // If only the left arm is available, confirm that choice.
-        else if (canHitLeft) {
+        } else if (canHitLeft) {
+            // If only the left arm is available, confirm that choice.
             choices = new String[1];
             choices[0] = left;
             String input = (String) JOptionPane.showInputDialog(clientgui,
@@ -1070,12 +1065,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         BrushOffAttackAction.LEFT));
                 ready();
 
-            } // End not-cancel
-
-        } // End confirm-left
-
-        // If only the right arm is available, confirm that choice.
-        else if (canHitRight) {
+            }
+        } else if (canHitRight) {
+            // If only the right arm is available, confirm that choice.
             choices = new String[1];
             choices[0] = right;
             String input = (String) JOptionPane.showInputDialog(clientgui,

@@ -1,46 +1,45 @@
-Version:1.1
+Version:1.3
 Vanquisher
-VQR-2A (Pravuil)
+VQR-7V (Pravuil)
 mul id:7342
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3073
-Source:TP:Arcturus - Jihad
-Rules Level:3
+techbase:Inner Sphere
+era:3073
+source:TP:Arcturus - Jihad
+rules level:3
 
-Mass:100
-Engine:300 Fusion Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
-Cockpit:Small Cockpit
-Gyro:Compact Gyro
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Compact Gyro
 
-Heat Sinks:15 Double
-Walk MP:3
-Jump MP:0
+heat sinks:15 IS Double
+walk mp:3
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:34
-RA Armor:34
-LT Armor:32
-RT Armor:32
-CT Armor:45
-HD Armor:9
-LL Armor:42
-RL Armor:42
-RTL Armor:10
-RTR Armor:10
-RTC Armor:14
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:45
+HD armor:9
+LL armor:42
+RL armor:42
+RTL armor:10
+RTR armor:10
+RTC armor:14
 
 Weapons:7
-ER Medium Laser, Right Torso
-ER Medium Laser, Right Torso
 Large VSP Laser, Left Arm
 Large VSP Laser, Left Arm
-MML 3, Left Torso
-MML 3, Left Torso
 Gauss Rifle, Right Arm
+MML 3, Left Torso
+MML 3, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -155,13 +154,9 @@ IS Endo Steel
 -Empty-
 
 overview:Based on the King Crab, and built in the same factory that first produced the Mackie, the Vanquisher has a legendary pedigree.
-
 capabilities:In order to allow it to carry as heavy a payload as possible without sacrificing durability, the 'Mech is built on a Hollis Alteration Mark VI Endo Steel that carries a Vlar 300 fusion engine, which propels the 'Mech to a top speed of 54 km/h. The Vanquisher is protected by nineteen and a half tons of armor with CASE in both side torsos to protect the 'Mech from going down in an ammunition explosion.
-
 deployment:This variant is based on the VQR-7V, but replaces the heavy duty gyro with a Compact Gyro. It has a Gauss Rifle in the right arm and two Large Variable Speed Pulse Lasers in the left arm as its main striking power. Supporting these are twin MML-3s and two ER Medium Lasers. Two tons of ammo are carried for the MMLs and Gauss Rifle. This variant was used by Demi-Precentor Pravuil, who was second in command of the 40th Shadow Division.
-
 history:The Vanquisher has its genesis in the development of reverse engineered Improved C3 Computers. Once the Word of Blake had perfected their version of C3i, Cameron St. Jamais contacted Skobel MechWorks and contracted them to produce a 'Mech that would showcase the features of the new system. The Vanquisher was the result of that request.
-
 manufacturer:Skobel MechWorks
 primaryfactory:Russia, Terra
 systemmanufacturer:CHASSIS:Hollis Alteration Mark VI
@@ -169,3 +164,4 @@ systemmanufacturer:ENGINE:Vlar 300
 systemmanufacturer:ARMOR:Aldis Plate with CASE
 systemmanufacturer:COMMUNICATIONS:Skobel Wave VI Comm with C3i Computer
 systemmanufacturer:TARGETING:Falcon 12b Watcher
+

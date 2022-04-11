@@ -43,14 +43,16 @@ public class BVRatioVictory extends AbstractBVVictory {
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<>();
         for (Player player : game.getPlayersVector()) {
-            if (player.isObserver())
+            if (player.isObserver()) {
                 continue;
+            }
             int fbv = 0;
             int ebv = 0;
             int team = player.getTeam();
             if (team != Player.TEAM_NONE) {
-                if (doneTeams.contains(team))
+                if (doneTeams.contains(team)) {
                     continue; // skip if already
+                }
                 doneTeams.add(team);
             }
             fbv = getFriendlyBV(game, player);

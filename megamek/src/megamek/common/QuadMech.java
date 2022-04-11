@@ -1,33 +1,31 @@
 /*
  * MegaMek -
- *  Copyright (C) 2000-2002
- *    Ben Mazur (bmazur@sev.org)
- *    Cord Awtry (kipsta@bs-interactive.com)
+ * Copyright (C) 2000-2002
+ *  Ben Mazur (bmazur@sev.org)
+ *  Cord Awtry (kipsta@bs-interactive.com)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common;
-
-import java.io.PrintWriter;
-import java.util.List;
 
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.stream.IntStream;
+
 public class QuadMech extends Mech {
-    /**
-     *
-     */
     private static final long serialVersionUID = 7183093787457804717L;
 
     private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg", "Rear Right Leg", "Rear Left Leg" };
@@ -90,7 +88,7 @@ public class QuadMech extends Mech {
         int hipHits = 0;
         int actuatorHits = 0;
 
-        //A Mech using tracks has its movement reduced by 25% per leg or track destroyed.
+        // A Mech using tracks has its movement reduced by 25% per leg or track destroyed.
         if (movementMode == EntityMovementMode.TRACKED) {
             for (Mounted m : getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_TRACKS)) {
@@ -186,9 +184,8 @@ public class QuadMech extends Mech {
     }
 
     /**
-     * Returns this mech's running/flank mp modified for leg loss and stuff.
+     * @return this mek's running/flank mp modified for leg loss and stuff.
      */
-
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (countBadLegs() <= 1
@@ -893,8 +890,10 @@ public class QuadMech extends Mech {
         boolean rearLeftLeg = false;
 
         for (Mounted mounted : getMisc()) {
-            if ((mounted.getLocation() == Mech.LOC_LLEG) || (mounted.getLocation() == Mech.LOC_RLEG) || (mounted.getLocation() == Mech.LOC_LARM) || (mounted.getLocation() == Mech.LOC_RARM)) {
-                if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM) && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
+            if (IntStream.of(Mech.LOC_LLEG, Mech.LOC_RLEG, Mech.LOC_LARM, Mech.LOC_RARM)
+                    .anyMatch(i -> (mounted.getLocation() == i))) {
+                if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+                        && !mounted.isDestroyed() && !mounted.isBreached() && !mounted.isMissing()) {
                     if (mounted.getLocation() == Mech.LOC_LLEG) {
                         rearLeftLeg = true;
                     } else if (mounted.getLocation() == Mech.LOC_RLEG) {
@@ -904,9 +903,8 @@ public class QuadMech extends Mech {
                     } else {
                         frontLeftLeg = true;
                     }
-
-                }// AES is destroyed their for it cannot be used.
-                else if (((MiscType) mounted.getType()).hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                } else if (mounted.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                    // AES is destroyed, so it cannot be used.
                     return false;
                 }
             }
@@ -923,18 +921,15 @@ public class QuadMech extends Mech {
             return false;
         }
         // check the locations
-        int[] locations = {Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG};
+        int[] locations = { Mech.LOC_RARM, Mech.LOC_LARM, Mech.LOC_LLEG, Mech.LOC_RLEG };
         int badLocs = 0;
-        for ( int loc = locations.length -1; loc >= 0; loc--) {
+        for ( int loc = locations.length - 1; loc >= 0; loc--) {
             if ( isLocationBad(locations[loc]) || isLocationDoomed(locations[loc])) {
                 badLocs++;
             }
         }
-        if (!(badLocs <2)) {
-            return false;
-        }
-        // check the Gyro
-        return !isGyroDestroyed();
+
+        return (badLocs < 2) && !isGyroDestroyed();
     }
 
     /**
@@ -950,10 +945,8 @@ public class QuadMech extends Mech {
 
     @Override
     public boolean hasMPReducingHardenedArmor() {
-        return (armorType[LOC_LLEG] == EquipmentType.T_ARMOR_HARDENED)
-            || (armorType[LOC_RLEG] == EquipmentType.T_ARMOR_HARDENED)
-            || (armorType[LOC_LARM] == EquipmentType.T_ARMOR_HARDENED)
-            || (armorType[LOC_RARM] == EquipmentType.T_ARMOR_HARDENED);
+        return IntStream.of(LOC_LLEG, LOC_RLEG, LOC_LARM, LOC_RARM)
+                .anyMatch(i -> (armorType[i] == EquipmentType.T_ARMOR_HARDENED));
     }
 
     @Override

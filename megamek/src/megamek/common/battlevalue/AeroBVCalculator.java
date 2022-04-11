@@ -232,9 +232,9 @@ public class AeroBVCalculator {
 
         if (aero instanceof FixedWingSupport) {
             if (aero.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
-                targetingSystemBVMod = .9;
+                targetingSystemBVMod = 0.9;
             } else if (!aero.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                targetingSystemBVMod = .8;
+                targetingSystemBVMod = 0.8;
             }
         }
 

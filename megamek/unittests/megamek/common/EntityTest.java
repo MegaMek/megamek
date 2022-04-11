@@ -16,6 +16,8 @@ package megamek.common;
 
 import junit.framework.TestCase;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -36,7 +38,8 @@ public class EntityTest {
         testEntity.bvText = new StringBuffer();
         Mockito.when(testEntity.calculateBattleValue()).thenCallRealMethod();
         Mockito.when(testEntity.calculateBattleValue(Mockito.anyBoolean(), Mockito.anyBoolean())).thenCallRealMethod();
-        Mockito.when(testEntity.doBattleValueCalculation(Mockito.anyBoolean(), Mockito.anyBoolean())).thenCallRealMethod();
+        Mockito.when(testEntity.doBattleValueCalculation(Mockito.anyBoolean(), Mockito.anyBoolean(),
+                Mockito.any(CalculationReport.class))).thenCallRealMethod();
         Mockito.when(testEntity.getTotalArmor()).thenReturn(100);
         ArrayList<Mounted> equipment = new ArrayList<>(2);
         WeaponType ppcType = Mockito.mock(WeaponType.class);

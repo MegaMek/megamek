@@ -47,8 +47,11 @@ public class BVDisplayDialog extends AbstractDialog {
     @Override
     protected void finalizeInitialization() {
         super.finalizeInitialization();
-        UIUtil.adjustDialog(this.getContentPane());
+        setTitle(getTitle() + " (" + entity.getShortName() + ")");
+        UIUtil.adjustDialog(getContentPane());
         pack();
+        Dimension screenSize = UIUtil.getScaledScreenSize(this);
+        setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));
     }
 
     public Entity getEntity() {
@@ -61,11 +64,12 @@ public class BVDisplayDialog extends AbstractDialog {
         entity.calculateBattleValue(bvReport);
 
         JButton exportText = new JButton("Copy as Text");
-        exportText.addActionListener(e -> copyToClipboard(bvReport.getTextReport().toString()));
+        exportText.addActionListener(evt -> copyToClipboard(bvReport.getTextReport().toString()));
         JButton exportHTML = new JButton("Copy as HTML");
-        exportHTML.addActionListener(e -> copyToClipboard(bvReport.getHtmlReport().toString()));
+        exportHTML.addActionListener(evt -> copyToClipboard(bvReport.getHtmlReport().toString()));
 
-        var scrollPane = new JScrollPane(bvReport.toJComponent());
+        var scrollPane = new JScrollPane(bvReport.toJComponent(), ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(new EmptyBorder(10, 0, 0, 0));
 

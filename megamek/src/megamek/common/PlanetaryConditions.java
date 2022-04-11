@@ -26,17 +26,17 @@ public class PlanetaryConditions implements Serializable {
 
     private static final long serialVersionUID = 6838624193286089781L;
 
-    //light
+    // light
     public static final int L_DAY          = 0;
     public static final int L_DUSK         = 1;
     public static final int L_FULL_MOON    = 2;
     public static final int L_MOONLESS     = 3;
     public static final int L_PITCH_BLACK  = 4;
     private static String[] lightNames = { "Daylight", "Dusk", "Full Moon Night", "Moonless Night",
-                                           "Pitch Black"};
+                                           "Pitch Black" };
     public static final int L_SIZE = lightNames.length;
 
-    //Weather
+    // Weather
     public static final int WE_NONE             = 0;
     public static final int WE_LIGHT_RAIN       = 1;
     public static final int WE_MOD_RAIN         = 2;
@@ -55,10 +55,10 @@ public class PlanetaryConditions implements Serializable {
     //  public static final int WE_BLIZZARD         = 11; does not exist anymore
     private static String[] weatherNames = { "Clear", "Light Rain", "Moderate Rain", "Heavy Rain", "Gusting Rain", "Torrential Downpour",
                                              "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", 
-                                             "Ice Storm"};//, "Light Hail", "Heavy Hail", "Lightning Storm"};
+                                             "Ice Storm" };//, "Light Hail", "Heavy Hail", "Lightning Storm" };
     public static final int WE_SIZE = weatherNames.length;
 
-    //Wind
+    // Wind
     public static final int WI_NONE        = 0;
     public static final int WI_LIGHT_GALE  = 1;
     public static final int WI_MOD_GALE    = 2;
@@ -67,10 +67,10 @@ public class PlanetaryConditions implements Serializable {
     public static final int WI_TORNADO_F13 = 5;
     public static final int WI_TORNADO_F4  = 6;
 
-    private static String[] windNames = { "Calm", "Light Gale", "Moderate Gale", "Strong Gale", "Storm", "Tornado F1-F3", "Tornado F4"};
+    private static String[] windNames = { "Calm", "Light Gale", "Moderate Gale", "Strong Gale", "Storm", "Tornado F1-F3", "Tornado F4" };
     public static final int WI_SIZE = windNames.length;
 
-    //wind direction
+    // wind direction
     private static String[] dirNames = { "North", "Northeast", "Southeast", "South", "Southwest", "Northwest", "RandomWindDirection" };
     public static final int DIR_SIZE = dirNames.length;
     public static final int DIR_RANDOM = 6;
@@ -84,23 +84,23 @@ public class PlanetaryConditions implements Serializable {
     public static final int ATMO_HIGH     = 4;
     public static final int ATMO_VHIGH    = 5;
 
-    public static String[] atmoNames = {"Vacuum", "Trace", "Thin", "Standard", "High", "Very High" };
+    public static String[] atmoNames = { "Vacuum", "Trace", "Thin", "Standard", "High", "Very High" };
     public static final int ATMO_SIZE = atmoNames.length;
 
-    //fog
+    // fog
     public static final int FOG_NONE  = 0;
     public static final int FOG_LIGHT = 1;
     public static final int FOG_HEAVY = 2;
 
-    private static String[] fogNames = {"None", "Light Fog", "Heavy Fog" };
+    private static String[] fogNames = { "None", "Light Fog", "Heavy Fog" };
     public static final int FOG_SIZE = fogNames.length;
 
-    //misc
+    // misc
     private boolean blowingSand = false;
     private boolean sandStorm = false;
     private boolean runOnce = false;
 
-    //set up the specific conditions
+    // set up the specific conditions
     private int lightConditions = L_DAY;
     private int weatherConditions = WE_NONE;
     private int oldWeatherConditions = WE_NONE;
@@ -113,7 +113,7 @@ public class PlanetaryConditions implements Serializable {
     private int fog = FOG_NONE;
     private int temperature = 25;
     private int oldTemperature = 25;
-    private float gravity = (float)1.0;
+    private float gravity = (float) 1.0;
     private boolean emi = false;
     private boolean terrainAffected = true;
     private int maxWindStrength = PlanetaryConditions.WI_TORNADO_F4;
@@ -355,12 +355,12 @@ public class PlanetaryConditions implements Serializable {
         int penalty = 0;
 
         switch (windStrength) {
-            case (WI_MOD_GALE):
+            case WI_MOD_GALE:
                 if ((en instanceof VTOL) || (en.getMovementMode() == EntityMovementMode.WIGE)) {
                     penalty = 1;
                 }
                 break;
-            case (WI_STRONG_GALE):
+            case WI_STRONG_GALE:
                 if ((en instanceof VTOL) || (en.getMovementMode() == EntityMovementMode.WIGE)
                         || (en.getMovementMode() == EntityMovementMode.HOVER)) {
                     penalty = 2;
@@ -368,7 +368,7 @@ public class PlanetaryConditions implements Serializable {
                     penalty = 1;
                 }
                 break;
-            case (WI_STORM):
+            case WI_STORM:
                 if ((en instanceof VTOL) || (en instanceof Mech) || (en.getMovementMode() == EntityMovementMode.WIGE)
                         || (en.getMovementMode() == EntityMovementMode.HOVER)) {
                     penalty = 3;
@@ -376,10 +376,10 @@ public class PlanetaryConditions implements Serializable {
                     penalty = 2;
                 }
                 break;
-            case (WI_TORNADO_F13):
+            case WI_TORNADO_F13:
                 penalty = 3;
                 break;
-            case (WI_TORNADO_F4):
+            case WI_TORNADO_F4:
                 penalty = 5;
                 break;
             default:
@@ -474,23 +474,23 @@ public class PlanetaryConditions implements Serializable {
     public boolean putOutFire() {
         int roll = Compute.d6(2);
         switch (weatherConditions) {
-            case (WE_LIGHT_HAIL):
-            case (WE_LIGHT_RAIN):
-            case (WE_LIGHT_SNOW):
+            case WE_LIGHT_HAIL:
+            case WE_LIGHT_RAIN:
+            case WE_LIGHT_SNOW:
                 roll = roll + 1;
                 break;
-            case (WE_HEAVY_HAIL):
-            case (WE_MOD_RAIN):
-            case (WE_MOD_SNOW):
+            case WE_HEAVY_HAIL:
+            case WE_MOD_RAIN:
+            case WE_MOD_SNOW:
             case WE_SNOW_FLURRIES:
                 roll = roll + 2;
                 break;
-            case (WE_HEAVY_RAIN):
-            case (WE_GUSTING_RAIN):
-            case (WE_HEAVY_SNOW):
+            case WE_HEAVY_RAIN:
+            case WE_GUSTING_RAIN:
+            case WE_HEAVY_SNOW:
                 roll = roll + 3;
                 break;
-            case (WE_DOWNPOUR):
+            case WE_DOWNPOUR:
                 roll = roll + 4;
                 break;
             default:
@@ -557,27 +557,27 @@ public class PlanetaryConditions implements Serializable {
 
         // wind mods
         switch (windStrength) {
-            case(WI_LIGHT_GALE):
+            case WI_LIGHT_GALE:
                 if (!(en instanceof BattleArmor)
                         && ((en.getMovementMode() == EntityMovementMode.INF_LEG)
                                 || (en.getMovementMode() == EntityMovementMode.INF_JUMP))) {
                     mod -= 1;
                 }
                 break;
-            case (WI_MOD_GALE):
+            case WI_MOD_GALE:
                 if (en.isConventionalInfantry()) {
                     mod -= 1;
                 }
                 break;
-            case (WI_STRONG_GALE):
-            case (WI_STORM):
+            case WI_STRONG_GALE:
+            case WI_STORM:
                 if (en instanceof BattleArmor) {
                     mod -= 1;
                 } else if (en instanceof Infantry) {
                     mod -= 2;
                 }
                 break;
-            case (WI_TORNADO_F13):
+            case WI_TORNADO_F13:
                 if (en.isAirborne()) {
                     mod -= 1;
                 } else {
@@ -588,25 +588,22 @@ public class PlanetaryConditions implements Serializable {
 
         // atmospheric pressure mods
         switch (atmosphere) {
-            case (ATMO_THIN):
-                if ((en.getMovementMode() == EntityMovementMode.HOVER)
-                        || (en.getMovementMode() == EntityMovementMode.WIGE)
-                        || (en.getMovementMode() == EntityMovementMode.VTOL)) {
+            case ATMO_THIN:
+                if (en.getMovementMode().isHoverVTOLOrWiGE()) {
                     mod -= 2;
                 }
                 break;
-            case (ATMO_HIGH):
-            case (ATMO_VHIGH):
-                if ((en.getMovementMode() == EntityMovementMode.HOVER)
-                        || (en.getMovementMode() == EntityMovementMode.WIGE)
-                        || (en.getMovementMode() == EntityMovementMode.VTOL)) {
+            case ATMO_HIGH:
+            case ATMO_VHIGH:
+                if (en.getMovementMode().isHoverVTOLOrWiGE()) {
                     mod += 1;
                 }
                 break;
         }
 
         // temperature difference
-        if ((en instanceof Tank) || ((en instanceof Infantry) && !((Infantry) en).isXCT()) || (en instanceof Protomech)) {
+        if ((en instanceof Tank)
+                || ((en instanceof Infantry) && !((Infantry) en).isXCT()) || (en instanceof Protomech)) {
             mod -= Math.abs(getTemperatureDifference(50,-30));
         }
 
@@ -778,13 +775,13 @@ public class PlanetaryConditions implements Serializable {
     public int getDropRate() {
         // atmospheric pressure mods
         switch (atmosphere) {
-            case(ATMO_TRACE):
+            case ATMO_TRACE:
                 return 8;
-            case(ATMO_THIN):
+            case ATMO_THIN:
                 return 5;
-            case(ATMO_HIGH):
+            case ATMO_HIGH:
                 return 2;
-            case(ATMO_VHIGH):
+            case ATMO_VHIGH:
                 return 1;
             default:
                 return 3;

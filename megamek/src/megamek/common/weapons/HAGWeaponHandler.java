@@ -123,9 +123,4 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
     protected boolean usesClusterTable() {
         return true;
     }
-
-    @Override
-    protected boolean canDoDirectBlowDamage() {
-        return false;
-    }
 }

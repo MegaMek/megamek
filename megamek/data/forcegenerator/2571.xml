@@ -2537,13 +2537,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:3,LA:3,SL:6,FWL:3,IS:3,RWR:2,FS:3,DC:3</availability>
+		<model name='WVR-1R'>
+			<availability>FS:3</availability>
+		</model>
+		<model name='WVR-3R'>
+			<availability>FS:3</availability>
+		</model>
 		<model name='WVR-6K'>
 			<roles>recon</roles>
 			<availability>DC:6</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>General:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='XCT Marine' unitType='Infantry'>

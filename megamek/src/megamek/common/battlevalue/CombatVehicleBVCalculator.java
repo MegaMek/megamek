@@ -465,7 +465,7 @@ public class CombatVehicleBVCalculator {
         double runMP = combatVee.getRunMP(false, true, true);
 
         // Trains use cruise instead of flank MP for speed factor
-        if (combatVee.getMovementMode().equals(EntityMovementMode.RAIL) || combatVee.getMovementMode().equals(EntityMovementMode.MAGLEV)) {
+        if (combatVee.getMovementMode().isTrain()) {
             runMP = combatVee.getWalkMP(false, true, true);
         }
         // trailers have original run MP of 0, but should count at 1 for speed factor calculation

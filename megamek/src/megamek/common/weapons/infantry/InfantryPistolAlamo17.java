@@ -1,31 +1,25 @@
-/**
- * MegaMek - Copyright (C) 2004,2005, 2022 MegaMekTeam
+/*
+ * Copyright (c) - 2004-2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
- /*
- * Created on March 20, 2022
- * @author Hammer
- */
-
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
+/**
+ * @since March 20, 2022
+ * @author Hammer
+ */
 public class InfantryPistolAlamo17 extends InfantryWeapon {
-
-    /**
-    *
-    */
    private static final long serialVersionUID = -3164871600230559641L;
 
    public InfantryPistolAlamo17() {
@@ -35,8 +29,8 @@ public class InfantryPistolAlamo17 extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Alamo17");
        ammoType = AmmoType.T_INFANTRY;
-       bv = .28;
-       tonnage =  0.001;
+       bv = 0.28;
+       tonnage = 0.001;
        infantryDamage =  0.28;
        infantryRange =  1;
        ammoWeight =  0.00004;

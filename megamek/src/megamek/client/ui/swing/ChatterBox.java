@@ -13,36 +13,16 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import megamek.client.Client;
+import megamek.client.ui.Messages;
+import megamek.common.event.*;
+import megamek.common.preference.PreferenceManager;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.LinkedList;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
-import megamek.client.Client;
-import megamek.client.ui.Messages;
-import megamek.common.event.GameEntityChangeEvent;
-import megamek.common.event.GameEntityNewEvent;
-import megamek.common.event.GameEntityRemoveEvent;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GameTurnChangeEvent;
-import megamek.common.preference.PreferenceManager;
 
 /**
  * ChatterBox keeps track of a player list and a (chat) message buffer. Although
@@ -236,9 +216,6 @@ public class ChatterBox implements KeyListener {
         moveToEnd();
     }
 
-    /**
-     *
-     */
     public void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));

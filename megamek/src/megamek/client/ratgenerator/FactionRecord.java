@@ -14,6 +14,7 @@
 package megamek.client.ratgenerator;
 
 import megamek.common.UnitType;
+import megamek.common.annotations.Nullable;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
@@ -281,11 +282,11 @@ public class FactionRecord {
     }
 
     public HashMap<String, Integer> getSalvage(int era) {
-        if (salvage.containsKey(era) && salvage.get(era).size() > 0) {
+        if (salvage.containsKey(era) && !salvage.get(era).isEmpty()) {
             return salvage.get(era);
         }
         HashMap<String,Integer> retVal = new HashMap<>();
-        if (parentFactions.size() > 0) {
+        if (!parentFactions.isEmpty()) {
             for (String pKey : parentFactions) {
                 FactionRecord fRec = RATGenerator.getInstance().getFaction(pKey);
                 if (fRec != null) {
@@ -418,19 +419,20 @@ public class FactionRecord {
         return 0;
     }
 
-    public ArrayList<Integer> getWeightDistribution(int era, int unitType) {
+    public @Nullable ArrayList<Integer> getWeightDistribution(int era, int unitType) {
         if (weightDistribution.containsKey(era)
                 && weightDistribution.get(era).containsKey(unitType)) {
             return weightDistribution.get(era).get(unitType);
         }
-        if (parentFactions.size() > 0) {
+
+        if (!parentFactions.isEmpty()) {
             ArrayList<Integer> retVal = new ArrayList<>();
             for (String fKey : parentFactions) {
                 FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
                 if (fRec != null) {
                     ArrayList<Integer> wd = fRec.getWeightDistribution(era, unitType);
                     if (wd != null) {
-                        if (retVal.size() == 0) {
+                        if (retVal.isEmpty()) {
                             retVal.addAll(wd);
                         } else {
                             for (int i = 0; i < retVal.size(); i++) {

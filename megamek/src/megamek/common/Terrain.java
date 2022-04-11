@@ -367,7 +367,7 @@ public class Terrain implements Serializable {
     }
 
     /**
-     * @return the additional movement cost for this terrain
+     * @return The additional movement cost for this terrain
      */
     public int movementCost(Entity e) {
         EntityMovementMode moveMode = e.getMovementMode();
@@ -393,7 +393,7 @@ public class Terrain implements Serializable {
                     mp -= 1;
                 }
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                        && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
                 return Math.max(0, mp);
@@ -424,7 +424,7 @@ public class Terrain implements Serializable {
                     mp -= 1;
                 }
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                        && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
                 if (e.hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
@@ -475,11 +475,13 @@ public class Terrain implements Serializable {
                 if (e.isAirborneVTOLorWIGE() || (e.getMovementMode() == EntityMovementMode.HOVER)) {
                     return 0;
                 }
+
                 if (level == 2) {
                     mp = 2;
                 } else {
                     mp = 1;
                 }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
@@ -497,7 +499,7 @@ public class Terrain implements Serializable {
                     mp -= 1;
                 }
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                                && (moveMode == EntityMovementMode.INF_LEG))) {
+                        && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
                 return Math.max(0, mp);
@@ -528,10 +530,7 @@ public class Terrain implements Serializable {
             case Terrains.JUNGLE:
                 return 1;
             case Terrains.SNOW:
-                if (level == 2) {
-                    return 2;
-                }
-                return 0;
+                return (level == 2) ? 2 : 0;
             case Terrains.FIELDS:
                 return -1;
             default:
@@ -544,42 +543,35 @@ public class Terrain implements Serializable {
         if (moveMode.isHoverOrWiGE() || moveMode.isNaval()) {
             return TargetRoll.AUTOMATIC_SUCCESS;
         }
+
         switch (type) {
-            case (Terrains.SWAMP):
+            case Terrains.SWAMP:
                 // if this is quicksand, then you automatically fail
                 if (level > 1) {
                     return TargetRoll.AUTOMATIC_FAIL;
-                }
-                if (moveMode == EntityMovementMode.VTOL) {
+                } else if (moveMode.isVTOL()) {
                     return TargetRoll.AUTOMATIC_FAIL;
-                }
-                return 0;
-            case (Terrains.MAGMA):
-                if (level == 2) {
+                } else {
                     return 0;
                 }
-                return TargetRoll.AUTOMATIC_SUCCESS;
-            case (Terrains.MUD):
-                if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
+            case Terrains.MAGMA:
+                return (level == 2) ? 0 : TargetRoll.AUTOMATIC_SUCCESS;
+            case Terrains.MUD:
+                if (moveMode.isBiped() || moveMode.isQuad()) {
                     return TargetRoll.AUTOMATIC_SUCCESS;
                     // any kind of infantry just gets a flat roll
-                } else if (moveMode == EntityMovementMode.INF_LEG || moveMode == EntityMovementMode.INF_MOTORIZED ||
-                        moveMode == EntityMovementMode.INF_JUMP || moveMode == EntityMovementMode.INF_UMU) {
+                } else if (moveMode.isLegInfantry() || moveMode.isMotorizedInfantry()
+                        || moveMode.isJumpInfantry() || moveMode.isUMUInfantry()) {
                     return 0;
-                }
-                return -1;
-            case (Terrains.TUNDRA):
-                return -1;
-            case (Terrains.SNOW):
-                if (level == 2) {
+                } else {
                     return -1;
                 }
-                return TargetRoll.AUTOMATIC_SUCCESS;
-            case (Terrains.SAND):
-                if (largeVee) {
-                    return 0;
-                }
-                return TargetRoll.AUTOMATIC_SUCCESS;
+            case Terrains.TUNDRA:
+                return -1;
+            case Terrains.SNOW:
+                return (level == 2) ? -1 : TargetRoll.AUTOMATIC_SUCCESS;
+            case Terrains.SAND:
+                return largeVee ? 0 : TargetRoll.AUTOMATIC_SUCCESS;
             default:
                 return TargetRoll.AUTOMATIC_SUCCESS;
         }
@@ -587,25 +579,25 @@ public class Terrain implements Serializable {
 
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
         switch (type) {
-            case (Terrains.SWAMP):
+            case Terrains.SWAMP:
                 if (level > 1) {
-                    rollTarget.addModifier((3 + ((-3) * elev)), "Quicksand");
-                    break;
+                    rollTarget.addModifier((3 + (-3 * elev)), "Quicksand");
+                } else {
+                    rollTarget.addModifier(0, "Swamp");
                 }
-                rollTarget.addModifier(0, "Swamp");
                 break;
-            case (Terrains.MAGMA):
+            case Terrains.MAGMA:
                 if (level == 2) {
                     rollTarget.addModifier(0, "Liquid Magma");
                 }
                 break;
-            case (Terrains.MUD):
+            case Terrains.MUD:
                 rollTarget.addModifier(-1, "Mud");
                 break;
-            case (Terrains.TUNDRA):
+            case Terrains.TUNDRA:
                 rollTarget.addModifier(-1, "Tundra");
                 break;
-            case (Terrains.SNOW):
+            case Terrains.SNOW:
                 rollTarget.addModifier(-1, "Deep Snow");
                 break;
             default:
@@ -615,11 +607,11 @@ public class Terrain implements Serializable {
 
     public boolean isValid(StringBuffer errBuff) {
         boolean rv = true;
-        if (type == Terrains.WOODS && (level < 1 || level > 3)) {
+        if ((type == Terrains.WOODS) && ((level < 1) || (level > 3))) {
             rv = false;
-        } else if (type == Terrains.SWAMP && (level < 1 || level > 3)) {
+        } else if ((type == Terrains.SWAMP) && ((level < 1) || (level > 3))) {
             rv = false;
-        } else if (type == Terrains.ROUGH && (level < 1 || level > 2)) {
+        } else if ((type == Terrains.ROUGH) && ((level < 1) || (level > 2))) {
             rv = false;
         } else if (type == Terrains.JUNGLE && (level < 1 || level > 3)) {
             rv = false;

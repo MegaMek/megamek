@@ -65,8 +65,8 @@ public class InfantryPathFinder {
             infantryPaths.addAll(rotatedPaths);
             
             // add "flee" option if we haven't done anything else
-            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
-                    startingEdge.getStepVector().size() == 0) {
+            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords())
+                    && startingEdge.getStepVector().isEmpty()) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
                 infantryPaths.add(fleePath);
@@ -77,7 +77,6 @@ public class InfantryPathFinder {
              * save in memory too many paths. Usually we can recover from this
              * by ending prematurely while preserving already computed results.
              */
-
             final String memoryMessage = "Not enough memory to analyse all options."
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";

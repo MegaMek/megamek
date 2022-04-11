@@ -16,8 +16,6 @@ package megamek.common;
 
 import junit.framework.TestCase;
 import megamek.common.options.GameOptions;
-import megamek.server.SmokeCloud;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -45,8 +43,7 @@ public class ComputeECMTest {
         
         // Mock Options
         GameOptions mockOptions = Mockito.mock(GameOptions.class);
-        Mockito.when(mockOptions.booleanOption(Mockito.anyString()))
-                .thenReturn(false);
+        Mockito.when(mockOptions.booleanOption(Mockito.anyString())).thenReturn(false);
         Mockito.when(mockOptions.booleanOption("tacops_eccm")).thenReturn(true);
         
         // Mock the game
@@ -97,7 +94,7 @@ public class ComputeECMTest {
         ecmInfo = archer.getECMInfo();
         TestCase.assertEquals(testInfoECM, ecmInfo);
         eccmInfo = archer.getECCMInfo();
-        TestCase.assertEquals(null, eccmInfo);
+        TestCase.assertNull(eccmInfo);
         
         /*********************************************************************/
         // Change mode from ECM to ECCM
@@ -116,7 +113,7 @@ public class ComputeECMTest {
         testInfoECCM = new ECMInfo(6, pos, mockPlayer, 0, 0);
         testInfoECCM.setECCMStrength(1);
         ecmInfo = archer.getECMInfo();
-        TestCase.assertEquals(null, ecmInfo);
+        TestCase.assertNull(ecmInfo);
         eccmInfo = archer.getECCMInfo();
         TestCase.assertEquals(testInfoECCM, eccmInfo);
         

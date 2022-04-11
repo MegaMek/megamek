@@ -260,7 +260,7 @@ public class RandomUnitGenerator implements Serializable {
         RatTreeNode result = root;
         String[] pathElements = path.split("/", -1);
         for (int i = 0; i < pathElements.length - 1; i++) {
-            if (pathElements[i].length() == 0) {
+            if (pathElements[i].isBlank()) {
                 continue;
             }
             RatTreeNode subNode = null;
@@ -418,7 +418,7 @@ public class RandomUnitGenerator implements Serializable {
                     }
                     re = filtered;
                 }
-                if ((null != re) && (re.getUnits().size() > 0)) {
+                if ((null != re) && !re.getUnits().isEmpty()) {
                     for (int roll = 0; roll < numRolls; roll++) {
                         double rand = getRandom();
                         int i = 0;

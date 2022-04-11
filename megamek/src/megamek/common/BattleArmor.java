@@ -1229,22 +1229,22 @@ public class BattleArmor extends Infantry {
                 break;
             case EquipmentType.T_ARMOR_BA_MIMETIC:
             case EquipmentType.T_ARMOR_BA_STEALTH:
-                baseArmorCost =  15000;
+                baseArmorCost = 15000;
                 break;
             case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
-                baseArmorCost =  12000;
+                baseArmorCost = 12000;
                 break;
             case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
-                baseArmorCost =  20000;
+                baseArmorCost = 20000;
                 break;
             case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
-                baseArmorCost =  50000;
+                baseArmorCost = 50000;
                 break;
             case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
             case EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE:
             case EquipmentType.T_ARMOR_BA_STANDARD:
             default:
-                baseArmorCost =  10000;
+                baseArmorCost = 10000;
                 break;
         }
 
@@ -1260,8 +1260,7 @@ public class BattleArmor extends Infantry {
             }
         }
 
-        // TODO: we do not track the modular weapons mount for 1000 C-bills in
-        // the unit files
+        // TODO : we do not track the modular weapons mount for 1000 C-bills in the unit files
         cost += getWeaponsAndEquipmentCost(ignoreAmmo) - manipulatorCost;
 
         return getSquadSize() * cost;
@@ -2097,25 +2096,25 @@ public class BattleArmor extends Infantry {
             mediumStealthMod = 1;
             longStealthMod = 2;
             stealthName = BattleArmor.BASIC_STEALTH_ARMOR;
-        } else if (armType ==  EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE) {
+        } else if (armType == EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE) {
             isStealthy = true;
             shortStealthMod = 0;
             mediumStealthMod = 1;
             longStealthMod = 2;
             stealthName = BattleArmor.STEALTH_PROTOTYPE;
-        } else if (armType ==  EquipmentType.T_ARMOR_BA_STEALTH) {
+        } else if (armType == EquipmentType.T_ARMOR_BA_STEALTH) {
             isStealthy = true;
             shortStealthMod = 1;
             mediumStealthMod = 1;
             longStealthMod = 2;
             stealthName = BattleArmor.STANDARD_STEALTH_ARMOR;
-        } else if (armType ==  EquipmentType.T_ARMOR_BA_STEALTH_IMP) {
+        } else if (armType == EquipmentType.T_ARMOR_BA_STEALTH_IMP) {
             isStealthy = true;
             shortStealthMod = 1;
             mediumStealthMod = 2;
             longStealthMod = 3;
             stealthName = BattleArmor.IMPROVED_STEALTH_ARMOR;
-        } else if (armType ==  EquipmentType.T_ARMOR_BA_MIMETIC) {
+        } else if (armType == EquipmentType.T_ARMOR_BA_MIMETIC) {
             isMimetic = true;
             stealthName = BattleArmor.MIMETIC_ARMOR;
         }

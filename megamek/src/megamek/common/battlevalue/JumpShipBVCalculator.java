@@ -461,7 +461,7 @@ public class JumpShipBVCalculator {
 
         double obv; // offensive bv
         obv = weaponBV * speedFactor;
-        bvReport.addLine("Weapons BV * Speed Factor ",weaponBV + " * " + speedFactor, "", obv);
+        bvReport.addLine("Weapons BV * Speed Factor ", weaponBV + " * " + speedFactor, "", obv);
 
         double finalBV = dbv + obv;
         bvReport.addLine("Offensive BV + Defensive BV",obv + " + " + dbv, "");
@@ -484,6 +484,6 @@ public class JumpShipBVCalculator {
             pilotFactor = jumpShip.getCrew().getBVSkillMultiplier(jumpShip.getGame());
         }
 
-        return (int) Math.round((finalBV) * pilotFactor);
+        return (int) Math.round(finalBV * pilotFactor);
     }
 }

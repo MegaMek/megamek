@@ -49,16 +49,23 @@ public class TargetRollModifier implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof TargetRollModifier)) return false;
+        if (this == o) {
+            return true;
+        } else if (!(o instanceof TargetRollModifier)) {
+            return false;
+        }
 
         TargetRollModifier that = (TargetRollModifier) o;
 
-        if (cumulative != that.cumulative) return false;
-        if (value != that.value) return false;
-        if (!desc.equals(that.desc)) return false;
-
-        return true;
+        if (cumulative != that.cumulative) {
+            return false;
+        } else if (value != that.value) {
+            return false;
+        } else if (!desc.equals(that.desc)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override

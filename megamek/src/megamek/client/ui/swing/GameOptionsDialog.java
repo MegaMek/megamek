@@ -172,7 +172,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 DialogOptionComponent comp = comps.get(0);
                 if (comp.hasChanged()) {
                     changed.addElement(comp.changedOption());
@@ -181,7 +181,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
 
-        if ((clientGui != null) && (changed.size() > 0)) {
+        if ((clientGui != null) && !changed.isEmpty()) {
             clientGui.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
@@ -196,7 +196,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking
             // the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 IBasicOption option = comps.get(0).changedOption();
                 output.addElement(option);
             }
@@ -241,7 +241,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private void toggleOptions() {
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 DialogOptionComponent comp = comps.get(0);
                 if (isUnofficialOption(comp) || isLegacyOption(comp)) {
                     comp.setVisible(shouldShow(comp));

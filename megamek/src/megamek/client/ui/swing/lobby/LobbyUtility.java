@@ -146,7 +146,7 @@ public class LobbyUtility {
      * lower edge of the image for which the graphics g is given.
      */
     static void drawMinimapLabel(String text, int w, int h, Graphics g, boolean invalid) {
-        if (text.length() == 0) {
+        if (text.isBlank()) {
             return;
         }
         GUIPreferences.AntiAliasifSet(g);

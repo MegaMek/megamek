@@ -59,23 +59,23 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         flags = flags.or(F_PROTOTYPE);
         explosionDamage = 20;
         rulesRefs = "71, IO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        .setIntroLevel(false)
-        .setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
-        .setISAdvancement(2587, DATE_NONE, DATE_NONE, 2590, 3038)
-        .setISApproximate(false, false, false, true, true)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH)
-        .setReintroductionFactions(F_FS,F_LC)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-
+        techAdvancement
+                .setTechBase(TECH_BASE_IS)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+                .setISAdvancement(2587, DATE_NONE, DATE_NONE, 2590, 3038)
+                .setISApproximate(false, false, false, true, true)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FS, F_LC)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              Server server) {
         return new PrototypeGaussHandler(toHit, waa, game, server);
     }
 }

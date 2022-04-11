@@ -15,22 +15,16 @@
  */
 package megamek;
 
-import megamek.client.ui.Messages;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.swing.ButtonOrderPreferences;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.MegaMekGUI;
-import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.commandline.AbstractCommandLineParser;
+import megamek.common.commandline.ClientServerCommandLineParser;
 import megamek.common.commandline.MegaMekCommandLineFlag;
 import megamek.common.commandline.MegaMekCommandLineParser;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.commandline.AbstractCommandLineParser;
-import megamek.common.commandline.ClientServerCommandLineParser;
-import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.verifier.*;
 import megamek.server.DedicatedServer;
-import megamek.server.Server;
 import megamek.utils.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
@@ -46,7 +40,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;

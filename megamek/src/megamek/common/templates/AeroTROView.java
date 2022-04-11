@@ -84,7 +84,7 @@ public class AeroTROView extends TROView {
         }
         setModelData("cockpitMass", NumberFormat.getInstance().format(testAero.getWeightControls()));
         final String atName = formatArmorType(aero, true);
-        if (atName.length() > 0) {
+        if (!atName.isBlank()) {
             setModelData("armorType", " (" + atName + ")");
         } else {
             setModelData("armorType", "");

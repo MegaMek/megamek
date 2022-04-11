@@ -23,18 +23,10 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.autocannons.ACWeapon;
-import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
-import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
-import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
-import megamek.common.weapons.lasers.ISRISCHyperLaser;
-import megamek.common.weapons.other.ISMekTaser;
-import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.common.weapons.prototypes.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;
@@ -1055,7 +1047,7 @@ public abstract class Mech extends Entity {
     public String getRunMPasString() {
         MPBoosters mpBoosters = getMPBoosters();
         if (mpBoosters.hasMASCAndOrSupercharger()) {
-            String str =  getRunMPwithoutMASC() + "(" + getRunMP()+")";
+            String str = getRunMPwithoutMASC() + "(" + getRunMP()+")";
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
 
@@ -2882,16 +2874,17 @@ public abstract class Mech extends Entity {
         }
     }
 
-    /**
-     * Adds clan CASE in every location
-     */
+    @Override
     public void addClanCase() {
+        if (!isClan()) {
+            return;
+        }
         boolean explosiveFound = false;
         EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
             explosiveFound = false;
             for (Mounted m : getEquipment()) {
-                if (m.getType().isExplosive(m) && (m.getLocation() == i)) {
+                if (m.getType().isExplosive(m, true) && (m.getLocation() == i)) {
                     explosiveFound = true;
                 }
             }
@@ -3093,7 +3086,7 @@ public abstract class Mech extends Entity {
         return getTechAdvancement(getEntityType(), isPrimitive(), isIndustrial(), getWeightClass());
     }
 
-    private static final TechAdvancement[] GYRO_TA =  {
+    private static final TechAdvancement[] GYRO_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
                 .setApproximate(true, false, false).setPrototypeFactions(F_TA)
                 .setProductionFactions(F_TH).setTechRating(RATING_D)
@@ -3824,11 +3817,11 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean isVoidSigActive() {
-        // per the rules questions forum, externally mounted BA invalidates Void
-        // Sig
-        if (getLoadedUnits().size() > 0) {
+        // per the rules questions forum, externally mounted BA invalidates Void Sig
+        if (!getLoadedUnits().isEmpty()) {
             return false;
         }
+
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -3865,11 +3858,11 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean isChameleonShieldActive() {
-        // TO pg 300 states that generates heat but doesn't operate if the unit
-        //  has mounted BA
-        if (getLoadedUnits().size() > 0) {
+        // TO pg 300 states that generates heat but doesn't operate if the unit has mounted BA
+        if (!getLoadedUnits().isEmpty()) {
             return false;
         }
+
         if (!isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -3998,10 +3991,8 @@ public abstract class Mech extends Entity {
             }
         }
 
-        // Return the result.
         return result;
-
-    } // End public TargetRoll getStealthModifier( char )
+    }
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
@@ -4022,16 +4013,14 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean canCharge() {
-        // Mechs can charge, unless they are Clan and the "no clan physicals"
-        // option is set
+        // Mechs can charge, unless they are Clan and the "no clan physicals" option is set
         return super.canCharge()
                 && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
     }
 
     @Override
     public boolean canDFA() {
-        // Mechs can DFA, unless they are Clan and the "no clan physicals"
-        // option is set
+        // Mechs can DFA, unless they are Clan and the "no clan physicals" option is set
         return super.canDFA()
                 && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
     }
@@ -4043,6 +4032,7 @@ public abstract class Mech extends Entity {
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
+
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinks++;
             } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
@@ -4075,6 +4065,7 @@ public abstract class Mech extends Entity {
                     break;
                 }
             }
+
             if (hasLaserHeatSinks == HAS_UNKNOWN) {
                 hasLaserHeatSinks = HAS_FALSE;
             }
@@ -4137,8 +4128,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectAmmo
-     *            The condEjectAmmo to set.
+     * @param condEjectAmmo The condEjectAmmo to set.
      */
     public void setCondEjectAmmo(boolean condEjectAmmo) {
         this.condEjectAmmo = condEjectAmmo;
@@ -4152,8 +4142,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectEngine
-     *            The condEjectEngine to set.
+     * @param condEjectEngine The condEjectEngine to set.
      */
     public void setCondEjectEngine(boolean condEjectEngine) {
         this.condEjectEngine = condEjectEngine;
@@ -4167,8 +4156,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectCTDest
-     *            The condEjectCTDest to set.
+     * @param condEjectCTDest The condEjectCTDest to set.
      */
     public void setCondEjectCTDest(boolean condEjectCTDest) {
         this.condEjectCTDest = condEjectCTDest;
@@ -4182,8 +4170,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @param condEjectHeadshot
-     *            The condEjectHeadshot to set.
+     * @param condEjectHeadshot The condEjectHeadshot to set.
      */
     public void setCondEjectHeadshot(boolean condEjectHeadshot) {
         this.condEjectHeadshot = condEjectHeadshot;
@@ -4606,7 +4593,7 @@ public abstract class Mech extends Entity {
         }
         sb.append(newLine);
         sb.append(MtfFile.ERA).append(year).append(newLine);
-        if ((source != null) && (source.trim().length() > 0)) {
+        if ((source != null) && !source.isBlank()) {
             sb.append(MtfFile.SOURCE).append(source).append(newLine);
         }
         sb.append(MtfFile.RULES_LEVEL).append(
@@ -4763,62 +4750,63 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
 
-        if (getFluff().getOverview().trim().length() > 0) {
+        if (!getFluff().getOverview().isBlank()) {
             sb.append(MtfFile.OVERVIEW);
             sb.append(getFluff().getOverview());
             sb.append(newLine);
         }
 
-        if (getFluff().getCapabilities().trim().length() > 0) {
+        if (!getFluff().getCapabilities().isBlank()) {
             sb.append(MtfFile.CAPABILITIES);
             sb.append(getFluff().getCapabilities());
             sb.append(newLine);
         }
 
-        if (getFluff().getDeployment().trim().length() > 0) {
+        if (!getFluff().getDeployment().isBlank()) {
             sb.append(MtfFile.DEPLOYMENT);
             sb.append(getFluff().getDeployment());
             sb.append(newLine);
         }
 
-        if (getFluff().getHistory().trim().length() > 0) {
+        if (!getFluff().getHistory().isBlank()) {
             sb.append(MtfFile.HISTORY);
             sb.append(getFluff().getHistory());
             sb.append(newLine);
         }
 
-        if (getFluff().getManufacturer().trim().length() > 0) {
+        if (!getFluff().getManufacturer().isBlank()) {
             sb.append(MtfFile.MANUFACTURER);
             sb.append(getFluff().getManufacturer());
             sb.append(newLine);
         }
 
-        if (getFluff().getPrimaryFactory().trim().length() > 0) {
+        if (!getFluff().getPrimaryFactory().isBlank()) {
             sb.append(MtfFile.PRIMARY_FACTORY);
             sb.append(getFluff().getPrimaryFactory());
             sb.append(newLine);
         }
 
-        if (getFluff().getNotes().trim().length() > 0) {
+        if (!getFluff().getNotes().isBlank()) {
             sb.append(MtfFile.NOTES);
             sb.append(getFluff().getNotes());
             sb.append(newLine);
         }
 
-        if (getFluff().getMMLImagePath().trim().length() > 0) {
+        if (!getFluff().getMMLImagePath().isBlank()) {
             sb.append(MtfFile.IMAGE_FILE);
             sb.append(getFluff().getMMLImagePath());
             sb.append(newLine);
         }
 
         for (EntityFluff.System system : EntityFluff.System.values()) {
-            if (getFluff().getSystemManufacturer(system).length() > 0) {
+            if (!getFluff().getSystemManufacturer(system).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MANUFACTURER);
                 sb.append(system.toString()).append(":");
                 sb.append(getFluff().getSystemManufacturer(system));
                 sb.append(newLine);
             }
-            if (getFluff().getSystemModel(system).length() > 0) {
+
+            if (!getFluff().getSystemModel(system).isBlank()) {
                 sb.append(MtfFile.SYSTEM_MODEL);
                 sb.append(system.toString()).append(":");
                 sb.append(getFluff().getSystemModel(system));

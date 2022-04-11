@@ -1616,8 +1616,9 @@ public class Protomech extends Entity {
     }
     
     /**
-     * Based on the protomech's current damage status, return valid brace locations.
+     * Based on the ProtoMek's current damage status, return valid brace locations.
      */
+    @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
         

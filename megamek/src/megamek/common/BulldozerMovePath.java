@@ -260,7 +260,7 @@ public class BulldozerMovePath extends MovePath {
      * Whether this path will require terrain reduction to fully accomplish
      */
     public boolean needsLeveling() {
-        return coordLevelingCosts.size() > 0;
+        return !coordLevelingCosts.isEmpty();
     }
     
     /**

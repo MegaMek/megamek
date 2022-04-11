@@ -312,7 +312,7 @@ public class WeaponOrderHandler {
         unitId += " " + model;
         WeaponOrder weapOrder = new WeaponOrder();
         weapOrder.orderType = type;
-        weapOrder.customWeaponOrderMap =  customWeapOrder;
+        weapOrder.customWeaponOrderMap = customWeapOrder;
         weaponOrderMap.put(unitId, weapOrder);
         updated.set(true);
     }

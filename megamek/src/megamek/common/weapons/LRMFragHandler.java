@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,19 +14,12 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
+
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
@@ -76,13 +70,6 @@ public class LRMFragHandler extends LRMHandler {
         return (int) toReturn;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
-     * megamek.common.Building, int, boolean)
-     */
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
             Building bldg, int nDamage) {
@@ -114,25 +101,16 @@ public class LRMFragHandler extends LRMHandler {
             return;
         }
 
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector
-     * , megamek.common.Building, int, boolean, Coords)
-     */
     @Override
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, Coords coords) {
-        return;
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage,
+                                        Coords coords) {
+
     }
 }

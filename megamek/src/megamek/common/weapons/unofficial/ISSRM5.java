@@ -19,22 +19,14 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.srms.SRMWeapon;
 
 /**
  * @author Sebastian Brocks
  */
 public class ISSRM5 extends SRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 2564548381701365334L;
 
-    /**
-     *
-     */
     public ISSRM5() {
         super();
         name = "SRM 5";
@@ -51,11 +43,11 @@ public class ISSRM5 extends SRMWeapon {
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
         rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        .setIntroLevel(false)
-        .setUnofficial(true)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
-        .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false, false, false);
+                .setIntroLevel(false)
+                .setUnofficial(true)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false);
     }
 }

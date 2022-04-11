@@ -43,7 +43,7 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_SCREEN;
-        this.capital = false;
+        this.capital = true;
         rulesRefs = "237, TM";
     }
 

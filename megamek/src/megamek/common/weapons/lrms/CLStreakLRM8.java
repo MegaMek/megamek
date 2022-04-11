@@ -19,21 +19,12 @@
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.SimpleTechLevel;
-
 /**
  * @author Sebastian Brocks
  */
 public class CLStreakLRM8 extends StreakLRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 5240577239366457930L;
 
-    /**
-     *
-     */
     public CLStreakLRM8() {
         super();
         name = "Streak LRM 8";
@@ -51,10 +42,10 @@ public class CLStreakLRM8 extends StreakLRMWeapon {
         bv = 137;
         cost = 120000;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
-        //But LRM Tech Base and Avail Ratings.
+        // But LRM Tech Base and Avail Ratings.
         rulesRefs = "327, TO";
-        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
-        //Tech Advancement moved to StreakLRMWeapon.java
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON)
+                .andNot(F_TANK_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
+        // Tech Advancement moved to StreakLRMWeapon.java
     }
 }

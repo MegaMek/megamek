@@ -21,20 +21,12 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.weapons.missiles.RLWeapon;
 
-
 /**
  * @author Sebastian Brocks
  */
 public class ISBARL2 extends RLWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -3501679876316953438L;
 
-    /**
-     *
-     */
     public ISBARL2() {
         super();
         name = "Rocket Launcher 2";
@@ -50,18 +42,19 @@ public class ISBARL2 extends RLWeapon {
         extremeRange = 14;
         bv = 3;
         cost = 3000;
-        tonnage = .05;
+        tonnage = 0.05;
         criticals = 2;
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON)
+                .andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
-        .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_FS,F_LC)
-        .setProductionFactions(F_FS,F_LC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+                .setISAdvancement(3050, 3050, 3052, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_FS, F_LC)
+                .setProductionFactions(F_FS, F_LC);
     }
 }

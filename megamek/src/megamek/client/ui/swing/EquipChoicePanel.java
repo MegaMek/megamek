@@ -28,7 +28,6 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
@@ -857,7 +856,7 @@ public class EquipChoicePanel extends JPanel {
                     
                 // Add the newly mounted weapon
                 try {
-                    Mounted newWeap =  entity.addEquipment(apType, m_APmounted.getLocation());
+                    Mounted newWeap = entity.addEquipment(apType, m_APmounted.getLocation());
                     m_APmounted.setLinked(newWeap);
                     newWeap.setLinked(m_APmounted);
                     newWeap.setAPMMounted(true);

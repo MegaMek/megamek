@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,16 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.util.Vector;
 
 /**
- * Represents a volume of space set aside for carrying ASFs and Small Craft
- * aboard large spacecraft and mobile structures
+ * Represents a volume of space set aside for carrying ASFs and Small Craft aboard large spacecraft
+ * and mobile structures
  */
-
 public final class SmallCraftBay extends Bay {
 
     private static final long serialVersionUID = -8275147432497460821L;
@@ -30,13 +28,11 @@ public final class SmallCraftBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected SmallCraftBay() {
+    private SmallCraftBay() {
         totalSpace = 0;
         currentSpace = 0;
         arts = false;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given number of small craft or fighters.
@@ -49,14 +45,14 @@ public final class SmallCraftBay extends Bay {
         this(space, doors, bayNumber, false);
     }
 
-        /**
-         * Create a space for the given number of small craft or fighters.
-         *
-         * @param space The number of cubicles
-         * @param doors The number of bay doors
-         * @param bayNumber The id number for the bay
-         * @param arts      Whether the bay has the advanced robotic transport system
-         */
+    /**
+     * Create a space for the given number of small craft or fighters.
+     *
+     * @param space The number of cubicles
+     * @param doors The number of bay doors
+     * @param bayNumber The id number for the bay
+     * @param arts      Whether the bay has the advanced robotic transport system
+     */
     public SmallCraftBay(double space, int doors, int bayNumber, boolean arts) {
         totalSpace = space;
         currentSpace = space;
@@ -81,10 +77,8 @@ public final class SmallCraftBay extends Bay {
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
@@ -230,15 +224,15 @@ public final class SmallCraftBay extends Bay {
     // destroy a door
     @Override
     public void destroyDoorNext() {
-
         setDoorsNext(getDoorsNext() - 1);
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones
-        if (recoverySlots.size() > 0) {
+        if (!recoverySlots.isEmpty()) {
             recoverySlots.remove(0);
         }
-        if (recoverySlots.size() > 0) {
+
+        if (!recoverySlots.isEmpty()) {
             recoverySlots.remove(0);
         }
     }
@@ -252,10 +246,11 @@ public final class SmallCraftBay extends Bay {
     
         // get rid of two empty recovery slots
         // it doesn't matter which ones
-        if (recoverySlots.size() > 0) {
+        if (!recoverySlots.isEmpty()) {
             recoverySlots.remove(0);
         }
-        if (recoverySlots.size() > 0) {
+
+        if (!recoverySlots.isEmpty()) {
             recoverySlots.remove(0);
         }
     }
@@ -277,12 +272,13 @@ public final class SmallCraftBay extends Bay {
     }
 
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES, DATE_ES)
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
                 .setTechRating(RATING_C)
                 .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
-    
+
     @Override
     public TechAdvancement getTechAdvancement() {
         if (arts) {
@@ -297,5 +293,4 @@ public final class SmallCraftBay extends Bay {
         // Based on the number of cubicles
         return 20000L * (long) totalSpace;
     }
-
-} // End package class TroopSpace implements Transporter
+}

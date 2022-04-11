@@ -149,11 +149,6 @@ public class RACHandler extends UltraWeaponHandler {
     }
 
     @Override
-    protected boolean canDoDirectBlowDamage() {
-        return false;
-    }
-
-    @Override
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
     }

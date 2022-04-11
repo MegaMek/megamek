@@ -11,21 +11,15 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
- /*
- * Created on March 20, 2022
- * @author Hammer
- */
-
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 
-
+/**
+ * @since March 20, 2022
+ * @author Hammer
+ */
 public class InfantrySniperRifleThorshammer extends InfantryWeapon {
-
-    /**
-    *
-    */
    private static final long serialVersionUID = -3164871600230559641L;
 
    public InfantrySniperRifleThorshammer() {
@@ -35,24 +29,23 @@ public class InfantrySniperRifleThorshammer extends InfantryWeapon {
        setInternalName(name);
        addLookupName("Thorshammer");
        ammoType = AmmoType.T_INFANTRY;
-       bv = .28;
-       tonnage =  0.007;
-       infantryDamage =  0.28;
-       infantryRange =  6;
-       ammoWeight =  0.007;
+       bv = 0.28;
+       tonnage = 0.007;
+       infantryDamage = 0.28;
+       infantryRange = 6;
+       ammoWeight = 0.007;
        cost = 750;
-       ammoCost =  12;
-       shots =  10;
-       bursts =  1;
+       ammoCost = 12;
+       shots = 10;
+       bursts = 1;
        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
        rulesRefs = "Shrapnel #1";
        techAdvancement
-       .setTechBase(TECH_BASE_IS)
-       .setTechRating(RATING_D)
-       .setAvailability(RATING_X,RATING_C,RATING_C,RATING_C)
-       .setISAdvancement(DATE_NONE, DATE_NONE,2800,DATE_NONE,DATE_NONE)
-       .setISApproximate(false, false, true, false, false)
-       .setProductionFactions(F_LC);
-
+               .setTechBase(TECH_BASE_IS)
+               .setTechRating(RATING_D)
+               .setAvailability(RATING_X, RATING_C, RATING_C, RATING_C)
+               .setISAdvancement(DATE_NONE, DATE_NONE, 2800, DATE_NONE, DATE_NONE)
+               .setISApproximate(false, false, true, false, false)
+               .setProductionFactions(F_LC);
    }
 }

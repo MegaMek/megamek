@@ -285,21 +285,21 @@ public class RandomArmyCreator {
                 * averageTankBV + p.infantry * averageInfBV + p.ba * averageBaBV);
 
         int baBV = (p.ba * averageBaBV * p.maxBV) / helpWeight;
-        if ((p.ba > 0) && (allBA.size() > 0)) {
+        if ((p.ba > 0) && !allBA.isEmpty()) {
             baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
             baBV = Math.min(baBV, p.ba * allBA.get(allBA.size() - 1).getBV());
         } else {
             baBV = 0;
         }
         int mechBV = (p.mechs * averageMechBV * p.maxBV) / helpWeight;
-        if ((p.mechs > 0) && (allMechs.size() > 0)) {
+        if ((p.mechs > 0) && !allMechs.isEmpty()) {
             mechBV = Math.max(mechBV, p.mechs * allMechs.get(0).getBV());
             mechBV = Math.min(mechBV, p.mechs * allMechs.get(allMechs.size() - 1).getBV());
         } else {
             mechBV = 0;
         }
         int tankBV = (p.tanks * averageTankBV * p.maxBV) / helpWeight;
-        if ((p.tanks > 0) && (allTanks.size() > 0)) {
+        if ((p.tanks > 0) && !allTanks.isEmpty()) {
             tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
             tankBV = Math.min(tankBV, p.tanks * allTanks.get(allTanks.size() - 1).getBV());
         } else {

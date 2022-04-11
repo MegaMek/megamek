@@ -23,15 +23,8 @@ package megamek.common.weapons.lrms;
  * @author Sebastian Brocks
  */
 public class ISLRM20 extends LRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 3287950524687857609L;
 
-    /**
-     *
-     */
     public ISLRM20() {
         super();
         name = "LRM 20";
@@ -53,15 +46,15 @@ public class ISLRM20 extends LRMWeapon {
         rulesRefs = "229, TM";
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(true)
-        	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-            .setISAdvancement(2295, 2300, 2400, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setClanAdvancement(2295, 2300, 2400, 2830, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_TA)
-            .setProductionFactions(F_TA);
+                .setIntroLevel(true)
+                .setUnofficial(false)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setISAdvancement(2295, 2300, 2400, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setClanAdvancement(2295, 2300, 2400, 2830, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TA);
     }
 }

@@ -16,10 +16,12 @@ import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.DropShipBVCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.BayWeapon;
 
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson
@@ -199,7 +201,7 @@ public class Dropship extends SmallCraft {
         }
         // DS on more than 2 different elevations
         // or not on an elevation, what?
-        if ((elevations.size() > 2) || (elevations.size() == 0)) {
+        if ((elevations.size() > 2) || elevations.isEmpty()) {
             return true;
         }
 

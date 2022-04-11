@@ -16,13 +16,10 @@ package megamek.test;
 import megamek.MMConstants;
 import megamek.common.Board;
 import megamek.common.net.*;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
@@ -134,44 +131,23 @@ public class PacketTool extends Frame implements Runnable {
         hostPort = new TextField( String.valueOf(MMConstants.DEFAULT_PORT), 10);
         panConnect.add(hostPort);
         button = new Button("Listen");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                (new Thread(PacketTool.this, "Packet Reader")).start();
-            }
-        });
+        button.addActionListener(evt -> (new Thread(this, "Packet Reader")).start());
         panConnect.add(button);
         button = new Button("Connect");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                connect();
-            }
-        });
+        button.addActionListener(evt -> connect());
         panConnect.add(button);
 
         // Populate the transmission panel.
         button = new Button("Load Board");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boardLoad();
-            }
-        });
+        button.addActionListener(evt -> boardLoad());
         panXmit.add(button);
         boardName = new Label();
         boardName.setAlignment(Label.CENTER);
         panXmit.add(boardName);
         butSend = new Button("Send");
-        butSend.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                send();
-            }
-        });
+        butSend.addActionListener(evt -> send());
         butSend.setEnabled(false);
         panXmit.add(butSend);
-
     }
 
     /**
@@ -192,8 +168,7 @@ public class PacketTool extends Frame implements Runnable {
         int port = 0;
         try {
             port = Integer.parseInt(hostPort.getText());
-            conn = ConnectionFactory.getInstance().createServerConnection(
-                    new Socket(host, port), 1);
+            conn = ConnectionFactory.getInstance().createServerConnection(new Socket(host, port), 1);
             Timer t = new Timer(true);
             final Runnable packetUpdate = () -> {
                 AbstractConnection connection = conn;
@@ -207,14 +182,13 @@ public class PacketTool extends Frame implements Runnable {
                 public void run() {
                     try {
                         SwingUtilities.invokeAndWait(packetUpdate);
-                    } catch (Exception ie) {
-                        //this should never fail
+                    } catch (Exception ignored) {
+                        // this should never fail
                     }
                 }
             };
             t.schedule(packetUpdate2, 500, 150);
 
-            // conn = new XmlConnection( this, new Socket(host, port), 1 );
             System.out.println("Connected to peer.");
             conn.addConnectionListener(connectionListener);
 
@@ -232,7 +206,7 @@ public class PacketTool extends Frame implements Runnable {
     public void boardLoad() {
         FileDialog fd = new FileDialog(this, "Load Board...", FileDialog.LOAD);
         fd.setDirectory("data" + File.separator + "boards");
-        if (boardName.getText().length() > 0) {
+        if (!boardName.getText().isBlank()) {
             fd.setFile(boardName.getText());
         }
         fd.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
@@ -268,10 +242,6 @@ public class PacketTool extends Frame implements Runnable {
     public void send() {
         long start = conn.bytesSent();
         Packet packet = new Packet(Packet.COMMAND_SENDING_BOARD, board);
-        /*
-         * 2003-12-21 : prove connectivity first, then add refinements * like
-         * data compression. packet.zipData();
-         */
         conn.send(packet);
         System.out.print("Bytes sent: ");
         System.out.print(conn.bytesSent() - start);
@@ -294,13 +264,11 @@ public class PacketTool extends Frame implements Runnable {
             System.out.println("Accepted peer connection.");
 
             conn = ConnectionFactory.getInstance().createServerConnection(s, 0);
-            // conn = new XmlConnection(this, s, 0);
             conn.addConnectionListener(connectionListener);
 
             board = new Board();
             panConnect.setEnabled(false);
             panXmit.setEnabled(true);
-
         } catch (Throwable err) {
             err.printStackTrace();
         }

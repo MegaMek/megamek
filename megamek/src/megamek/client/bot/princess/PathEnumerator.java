@@ -23,7 +23,6 @@ import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
-import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;

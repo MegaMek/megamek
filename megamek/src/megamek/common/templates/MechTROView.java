@@ -85,7 +85,7 @@ public class MechTROView extends TROView {
         }
         setModelData("cockpitMass", NumberFormat.getInstance().format(testMech.getWeightCockpit()));
         final String atName = formatArmorType(mech, true);
-        if (atName.length() > 0) {
+        if (!atName.isBlank()) {
             setModelData("armorType", " (" + atName + ")");
         } else {
             setModelData("armorType", "");

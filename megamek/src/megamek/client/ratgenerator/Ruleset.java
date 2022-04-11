@@ -14,6 +14,7 @@
 package megamek.client.ratgenerator;
 
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.annotations.Nullable;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
@@ -400,15 +401,13 @@ public class Ruleset {
         initializing = false;
     }
 
-    private static Ruleset createFromFile(File f) {
-        Document xmlDoc = null;
+    private static @Nullable Ruleset createFromFile(File f) {
+        Document xmlDoc;
 
         DocumentBuilder db;
-        try {
-            FileInputStream fis = new FileInputStream(f);
+        try (FileInputStream fis = new FileInputStream(f)) {
             db = MegaMekXmlUtil.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
-            fis.close();
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed loading force template from file " + f.getName(), ex);
             return null;
@@ -421,13 +420,14 @@ public class Ruleset {
             LogManager.getLogger().error("Could not find ruleset element in file " + f.getName());
             return null;
         }
-        if (elem.getAttribute("faction").length() > 0) {
+
+        if (!elem.getAttribute("faction").isBlank()) {
             retVal.faction = elem.getAttribute("faction");
         } else {
             LogManager.getLogger().error("Faction is not declared in ruleset file " + f.getName());
             return null;
         }
-        if (elem.getAttribute("parent").length() > 0) {
+        if (!elem.getAttribute("parent").isBlank()) {
             retVal.parent = elem.getAttribute("parent");
         } else {
             if (retVal.faction.contains(".")) {
@@ -443,13 +443,14 @@ public class Ruleset {
                 } else {
                     retVal.parent = "IS";
                 }
+
                 if (retVal.faction.equals(retVal.parent)) {
                     retVal.parent = null;
                 }
             }
         }
-        //Rating system defaults to IS if not present. If present but cannot be parsed, is set to NONE.
-        if (elem.getAttribute("ratingSystem").length() > 0) {
+        // Rating system defaults to IS if not present. If present but cannot be parsed, is set to NONE.
+        if (!elem.getAttribute("ratingSystem").isBlank()) {
             switch (elem.getAttribute("ratingSystem")) {
                 case "IS":
                     retVal.ratingSystem = RatingSystem.IS;

@@ -591,10 +591,10 @@ public class TestSmallCraft extends TestAero {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = false;
         
-        // For dropships, make sure all bays have at least one weapon and that there are at least
+        // For DropShips, make sure all bays have at least one weapon and that there are at least
         // ten shots of ammo for each ammo-using weapon in the bay.
         for (Mounted bay : smallCraft.getWeaponBayList()) {
-            if (bay.getBayWeapons().size() == 0) {
+            if (bay.getBayWeapons().isEmpty()) {
                 buff.append("Bay ").append(bay.getName()).append(" has no weapons\n");
                 illegal = true;
             }
@@ -612,6 +612,7 @@ public class TestSmallCraft extends TestAero {
                     illegal = true;
                 }
             }
+
             for (Integer aNum : bay.getBayAmmo()) {
                 final Mounted a = smallCraft.getEquipment(aNum);
                 if (a.getType() instanceof AmmoType) {
@@ -622,6 +623,7 @@ public class TestSmallCraft extends TestAero {
                     illegal = true;
                 }
             }
+
             for (Integer at : ammoWeaponCount.keySet()) {
                 if (at != AmmoType.T_NA) {
                     int needed = ammoWeaponCount.get(at) * 10;
@@ -630,14 +632,15 @@ public class TestSmallCraft extends TestAero {
                     } else if ((at == AmmoType.T_AC_ROTARY)) {
                         needed *= 6;
                     }
-                    if (!ammoTypeCount.containsKey(at)
-                            || ammoTypeCount.get(at) < needed) {
+
+                    if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
                         buff.append("Bay ").append(bay.getName()).append(" does not have the minimum 10 shots of ammo for each weapon\n");
                         illegal = true;
                         break;
                     }
                 }
             }
+
             for (Integer at : ammoTypeCount.keySet()) {
                 if (!ammoWeaponCount.containsKey(at)) {
                     buff.append("Bay ").append(bay.getName()).append(" has ammo for a weapon not in the bay\n");
@@ -646,7 +649,7 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
-        
+
         // Count lateral weapons to make sure both sides match
         Map<EquipmentType,Integer> leftFwd = new HashMap<>();
         Map<EquipmentType,Integer> leftAft = new HashMap<>();
@@ -692,6 +695,7 @@ public class TestSmallCraft extends TestAero {
                 break;
             }
         }
+
         if (lateralMatch) {
             //We've already checked counts, so in the reverse direction we only need to see if there's
             // anything not found on the other side.
@@ -702,6 +706,7 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
+
         if (lateralMatch) {
             for (EquipmentType eq : leftAft.keySet()) {
                 if (!rightAft.containsKey(eq) || !leftAft.get(eq).equals(rightAft.get(eq))) {
@@ -710,6 +715,7 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
+
         if (lateralMatch) {
             for (EquipmentType eq : rightAft.keySet()) {
                 if (!leftAft.containsKey(eq)) {
@@ -718,6 +724,7 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
+
         if (!lateralMatch) {
             buff.append("Left and right side weapon loads do not match.\n");
             illegal = true;
@@ -734,6 +741,7 @@ public class TestSmallCraft extends TestAero {
                 }
             }
         }
+
         if (bayDoors > maxBayDoors(smallCraft)) {
             buff.append("Exceeds maximum number of bay doors.\n");
             illegal = true;
@@ -755,6 +763,7 @@ public class TestSmallCraft extends TestAero {
             buffer.append("Requires ").append(reqCrew).append(" crew and only has ").append(crewSize).append("\n");
             illegal = true;
         }
+
         if (getSmallCraft().getNOfficers() * 5 < reqCrew) {
             buffer.append("Requires at least ").append((int) Math.ceil(reqCrew / 5.0)).append(" officers\n");
             illegal = true;
@@ -769,6 +778,7 @@ public class TestSmallCraft extends TestAero {
                 quarters += bay.getCapacity();
             }
         }
+
         if (quarters < crewSize) {
             buffer.append("Requires quarters for ").append(crewSize).append(" crew but only has ").append(quarters).append("\n");
             illegal = true;
@@ -779,23 +789,20 @@ public class TestSmallCraft extends TestAero {
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
-        buff.append("Small Craft/Dropship: ").append(smallCraft.getDisplayName()).append("\n");
+        buff.append("Small Craft / DropShip: ").append(smallCraft.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");        
         buff.append(printTechLevel());
         buff.append("Intro year: ").append(getEntity().getYear()).append("\n");
         buff.append(printSource());
         buff.append(printShortMovement());
         if (correctWeight(buff, true, true)) {
-            buff.append("Weight: ").append(getWeight()).append(" (")
-                    .append(calculateWeight()).append(")\n");
+            buff.append("Weight: ").append(getWeight()).append(" (").append(calculateWeight()).append(")\n");
         }
         buff.append(printWeightCalculation()).append("\n");
         buff.append(printArmorPlacement());
         correctArmor(buff);
         buff.append(printLocations());
         correctCriticals(buff);
-
-        // printArmor(buff);
         printFailedEquipment(buff);
         return buff;
     }
@@ -872,7 +879,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public String getName() {
         if (smallCraft.hasETypeFlag(Entity.ETYPE_DROPSHIP)) {
-            return "Dropship: " + smallCraft.getDisplayName();
+            return "DropShip: " + smallCraft.getDisplayName();
         } else {
             return "Small Craft: " + smallCraft.getDisplayName();
         }

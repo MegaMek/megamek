@@ -12389,13 +12389,16 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:6,HL:4,FRR:6,IS:6,Periphery.Deep:5,WOB:3-,SIC:5,FS:7,Periphery:5,TC:5,CS:3-,LA:6,CNC:2,FWL:9,NIOPS:3-,MH:4,DC:6</availability>
+		<model name='WVR-6D'>
+			<availability>FS:1</availability>
+		</model>
 		<model name='WVR-6M'>
 			<roles>recon</roles>
 			<availability>Periphery.MW:4,PIR:4,Periphery.ME:4,FWL:6,MH:4</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>HL:3,General:5,Periphery.Deep:8,Periphery:5</availability>
+			<availability>HL:3,General:4,Periphery:5</availability>
 		</model>
 		<model name='WVR-7D'>
 			<roles>recon</roles>

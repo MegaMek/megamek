@@ -99,7 +99,6 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        int nDamage;
         missed = false;
 
         hit.setGeneralDamageType(generalDamageType);
@@ -129,14 +128,14 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.
-        nDamage = nDamPerHit * Math.min(nCluster, hits);
+        int nDamage = nDamPerHit * Math.min(nCluster, hits);
 
         if (bDirect) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
 
         // Report calcDmgPerHitReports here
-        if (calcDmgPerHitReport.size() > 0) {
+        if (!calcDmgPerHitReport.isEmpty()) {
             vPhaseReport.addAll(calcDmgPerHitReport);
         }
 

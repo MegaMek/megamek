@@ -71,16 +71,8 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         return (int) Math.ceil(toReturn);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
-     * megamek.common.Building, int, boolean)
-     */
     @Override
-    protected void handleClearDamage(Vector<Report> vPhaseReport,
-                                     Building bldg, int nDamage) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -102,19 +94,15 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
-            && server.tryIgniteHex(target.getPosition(), subjectId, false,
-                                   false,
-                                   new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
-                                   vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
 
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                                                         nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 }

@@ -41,18 +41,11 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<>();
         for (Player player : game.getPlayersVector()) {
-            if (player.isObserver())
-                continue;
-            int ebv = 0;
-            int eibv = 0;
-            int team = player.getTeam();
-            if (team != Player.TEAM_NONE) {
-                if (doneTeams.contains(team))
-                    continue; // skip if already
-                doneTeams.add(team);
-            }
-            ebv = getEnemyBV(game, player);
-            eibv = getEnemyInitialBV(game, player);
+            Integer team = getIntegerTeam(doneTeams, player);
+            if (team == null)
+                continue; // skip if already
+            int ebv = getEnemyBV(game, player);
+            int eibv = getEnemyInitialBV(game, player);
 
             if (eibv != 0 && (ebv * 100) / eibv <= 100 - destroyedPercent) {
                 Report r = new Report(7105, Report.PUBLIC);
@@ -71,6 +64,20 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         if (victory)
             return vr;
         return VictoryResult.noResult();
+    }
+
+    private Integer getIntegerTeam(HashSet<Integer> doneTeams, Player player) {
+        if (player.isObserver())
+            return null;
+        int ebv = 0;
+        int eibv = 0;
+        int team = player.getTeam();
+        if (team != Player.TEAM_NONE) {
+            if (doneTeams.contains(team))
+                return null;
+            doneTeams.add(team);
+        }
+        return team;
     }
 
     private boolean isVictory(VictoryResult vr, Player player, int team, Report r) {

@@ -2633,7 +2633,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public String getShortNameRaw() {
-        return StringUtility.isNullOrEmpty(model) ? chassis : chassis + ' ' + model;
+        return StringUtility.isNullOrBlank(model) ? chassis : chassis + ' ' + model;
     }
 
     /**

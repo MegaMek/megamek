@@ -786,7 +786,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         switch (ke.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                if (!StringUtility.isNullOrEmpty(message)) {
+                if (!StringUtility.isNullOrBlank(message)) {
                     cb.history.addFirst(message);
                     cb.historyBookmark = -1;
 

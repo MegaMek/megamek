@@ -604,7 +604,7 @@ public class MULParser {
             // Try to find the entity.
             StringBuffer key = new StringBuffer(chassis);
             MechSummary ms = MechSummaryCache.getInstance().getMech(key.toString());
-            if (!StringUtility.isNullOrEmpty(model)) {
+            if (!StringUtility.isNullOrBlank(model)) {
                 key.append(" ").append(model);
                 ms = MechSummaryCache.getInstance().getMech(key.toString());
                 // That didn't work. Try swapping model and chassis.
@@ -617,7 +617,7 @@ public class MULParser {
             // We should have found the mech.
             if (ms == null) {
                 warning.append("Could not find Entity with chassis: ").append(chassis);
-                if (!StringUtility.isNullOrEmpty(model)) {
+                if (!StringUtility.isNullOrBlank(model)) {
                     warning.append(", and model: ").append(model);
                 }
                 warning.append(".\n");

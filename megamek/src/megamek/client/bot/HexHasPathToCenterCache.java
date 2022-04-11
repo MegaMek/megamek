@@ -87,7 +87,7 @@ public final class HexHasPathToCenterCache {
      * @param hexCoords The coordinates, {@link Coords#toFriendlyString()}, of the starting hex.
      */
     void remove(String hexCoords) {
-        if (StringUtility.isNullOrEmpty(hexCoords)) {
+        if (StringUtility.isNullOrBlank(hexCoords)) {
             return;
         }
         Set<Key> keySet = new HashSet<>(cache.keySet());
@@ -114,7 +114,7 @@ public final class HexHasPathToCenterCache {
          * @throws IllegalArgumentException if hexCoords is NULL or Empty or movementMode is NULL.
          */
         Key(String hexCoords, EntityMovementMode movementMode) {
-            if (StringUtility.isNullOrEmpty(hexCoords)) {
+            if (StringUtility.isNullOrBlank(hexCoords)) {
                 throw new IllegalArgumentException("Starting Coords is NULL or Empty.");
             }
             if (movementMode == null) {

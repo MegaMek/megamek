@@ -45,8 +45,9 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
         }
 
         int roll = Compute.d6() - 1;
-        if (elevators[roll].positions.size() == 0)
+        if (elevators[roll].positions.isEmpty()) {
             return;
+        }
 
         Report r = new Report(5290, Report.PUBLIC);
         vPhaseReport.add(r);

@@ -59,7 +59,7 @@ public class ConvFighter extends Aero {
         if (!hasEngine()) {
             return 0;
         }
-        int overThrust =  Math.max(thrust - getWalkMP(), 0);
+        int overThrust = Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
         int used = safeThrust + (2 * overThrust);
         if (!getEngine().isFusion()) {

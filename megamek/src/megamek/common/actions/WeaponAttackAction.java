@@ -20,7 +20,6 @@ import megamek.common.*;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
@@ -36,7 +35,6 @@ import megamek.common.weapons.lasers.ISBombastLaser;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.lrms.LRTWeapon;
 import megamek.common.weapons.mortars.MekMortarWeapon;
-import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.srms.SRTWeapon;
 import org.apache.logging.log4j.LogManager;
 
@@ -1347,7 +1345,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // limit large craft to zero net heat and to heat by arc
         final int heatcap = ae.getHeatCapacity();
-        if (ae.usesWeaponBays() && weapon != null && (weapon.getBayWeapons().size() > 0)) {
+        if (ae.usesWeaponBays() && (weapon != null) && !weapon.getBayWeapons().isEmpty()) {
             int totalheat = 0;
 
             // first check to see if there are any usable weapons
@@ -1582,9 +1580,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.AttackerTooHigh");
                 }
                 // Additional Nape-of-Earth restrictions for strafing
-                if (ae.getAltitude() == 1 && isStrafing) {
+                if ((ae.getAltitude() == 1) && isStrafing) {
                     Vector<Coords> passedThrough = ae.getPassedThrough();
-                    if ((passedThrough.size() == 0) || passedThrough.get(0).equals(target.getPosition())) {
+                    if (passedThrough.isEmpty() || passedThrough.get(0).equals(target.getPosition())) {
                         // TW pg 243 says units flying at NOE have a harder time
                         // establishing LoS while strafing and hence have to
                         // consider the adjacent hex along the flight place in the
@@ -3365,7 +3363,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Attacker affected by TSEMP interference
-        if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
+        if (ae.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
             toHit.addModifier(+2, Messages.getString("WeaponAttackAction.AeTsemped"));
         }
         
@@ -4104,7 +4102,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // Infantry taking cover per TacOps special rules
-        if (te != null && (te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
+        if ((te instanceof Infantry) && ((Infantry) te).isTakingCover()) {
             if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
                 toHit.addModifier(+3, Messages.getString("WeaponAttackAction.FireThruCover"));
             }
@@ -4115,8 +4113,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((te != null) && te.isProne()) {
             // easier when point-blank
             if (distance <= 1) {
-                // TW, pg. 221: Swarm Mek attacks apply prone/immobile mods as
-                // normal.
+                // TW, pg. 221: Swarm Mek attacks apply prone/immobile mods as normal.
                 proneMod = new ToHitData(-2, Messages.getString("WeaponAttackAction.ProneAdj"));
             } else {
                 // Harder at range.
@@ -4185,7 +4182,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
-        
+
         // Movement and Position modifiers
         
         // target movement - ignore for pointblank shots from hidden units
@@ -4262,15 +4259,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Unit-specific modifiers
         
         // -1 to hit a SuperHeavy mech
-        if ((te != null) && (te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeSuperheavyMech"));
         }
-        
+
         // large support tanks get a -1 per TW
         if ((te != null) && (te.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) && !te.isAirborne() && !te.isSpaceborne()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeLargeSupportUnit"));
         }
-        
+
         // "grounded small craft" get a -1 per TW
         if ((te instanceof SmallCraft) && (te.getUnitType() == UnitType.SMALL_CRAFT) && !te.isAirborne() && !te.isSpaceborne()) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.TeGroundedSmallCraft"));
@@ -4293,12 +4290,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, Messages.getString("WeaponAttackAction.PlMasc"));
         }
 
-
         // Ejected MechWarriors are harder to hit
         if (te instanceof MechWarrior) {
             toHit.addModifier(2, Messages.getString("WeaponAttackAction.MwTarget"));
         }
-        
+
         // Aerospace target modifiers
         if (te != null && te.isAero() && te.isAirborne()) {
             IAero a = (IAero) te;
@@ -4307,11 +4303,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
                 toHit.addModifier(-2, Messages.getString("WeaponAttackAction.ImmobileAero"));
             }
-            
+
             // get mods for direction of attack
             if (!(a.isSpheroid() && !game.getBoard().inSpace())) {
                 int side = Compute.targetSideTable(ae.getPosition(), te);
-                
+
                 // +1 if shooting at an aero approaching nose-on
                 if (side == ToHitData.SIDE_FRONT) {
                     toHit.addModifier(+1, Messages.getString("WeaponAttackAction.AeroNoseAttack"));
@@ -4341,7 +4337,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
         }
-        
+
         // blood stalker SPA
         if (ae.getBloodStalkerTarget() > Entity.NONE) {
             if (ae.getBloodStalkerTarget() == target.getTargetId()) {
@@ -4350,15 +4346,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.BloodStalkerNonTarget"));
             }
         }
-        
+
         return toHit;
     }
-    
+
     /**
      * Convenience method that compiles the ToHit modifiers applicable to the terrain and line of sight (LOS)
      * Woods along the LOS?  Target Underwater?  Partial cover? You'll find that here.
      * Also, if the to-hit table is changed due to cover/angle/elevation, look here.
-     * -4 for shooting at an immobile target?  Using a weapon with a TH penalty?  Those are in other methods.
+     * -4 for shooting at an immobile target?  Using a weapon with a TH penalty? Those are in other methods.
      * 
      * @param game The current {@link Game}
      * @param ae The Entity making this attack
@@ -4367,7 +4363,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
      * @param aElev An int value representing the attacker's elevation
      * @param tElev An int value representing the target's elevation
      * @param targEl An int value representing the target's relative elevation
-     * @param distance  The distance in hexes from attacker to target
+     * @param distance The distance in hexes from attacker to target
      * @param los The calculated LOS between attacker and target
      * @param toHit The running total ToHitData for this WeaponAttackAction
      * @param losMods A cached set of LOS-related modifiers

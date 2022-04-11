@@ -26,7 +26,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -706,7 +704,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     // WindowListener
     //
     @Override
-    public void windowActivated(WindowEvent windowEvent) {
+    public void windowActivated(WindowEvent evt) {
         // TODO: this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI
         // window doesn't deiconify. This fix doesn't allow me to iconify the
@@ -716,26 +714,26 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     }
 
     @Override
-    public void windowClosed(WindowEvent windowEvent) {
-        // ignored
+    public void windowClosed(WindowEvent evt) {
+
     }
 
     @Override
-    public void windowClosing(WindowEvent windowEvent) {
-        if (windowEvent.getWindow().equals(skinSpecEditorD)) {
+    public void windowClosing(WindowEvent evt) {
+        if (evt.getWindow().equals(skinSpecEditorD)) {
             setDisplayVisible(false);
             die();
         }
     }
 
     @Override
-    public void windowDeactivated(WindowEvent windowEvent) {
-        // ignored
+    public void windowDeactivated(WindowEvent evt) {
+
     }
 
     @Override
-    public void windowDeiconified(WindowEvent windowEvent) {
-        // TODO: this is a kludge to fix a window iconify issue
+    public void windowDeiconified(WindowEvent evt) {
+        // TODO : this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI
         // window doesn't deiconify. This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
@@ -744,13 +742,13 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     }
 
     @Override
-    public void windowIconified(WindowEvent windowEvent) {
-        // ignored
+    public void windowIconified(WindowEvent evt) {
+
     }
 
     @Override
-    public void windowOpened(WindowEvent windowEvent) {
-        // ignored
+    public void windowOpened(WindowEvent evt) {
+
     }
 
     /**
@@ -765,66 +763,63 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp)));
     }
 
-   
     @Override
-    public void hexMoused(BoardViewEvent b) {
-        if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
-            
-        }
-    }
-
-    @Override
-    public void hexCursor(BoardViewEvent b) {
-        // ignored
-    }
-
-    @Override
-    public void boardHexHighlighted(BoardViewEvent b) {
-        // ignored
-    }
-
-    @Override
-    public void hexSelected(BoardViewEvent b) {
-        // ignored
-    }
-
-    @Override
-    public void firstLOSHex(BoardViewEvent b) {
-        // ignored
-    }
-
-    @Override
-    public void secondLOSHex(BoardViewEvent b, Coords c) {
-        // ignored
-    }
-
-    @Override
-    public void finishedMovingUnits(BoardViewEvent b) {
-        // ignored
-    }
-
-    @Override
-    public void unitSelected(BoardViewEvent b) {
-        // ignored
-    }
-
-    @Override
-    public void componentHidden(ComponentEvent arg0) {
+    public void hexMoused(BoardViewEvent evt) {
 
     }
 
     @Override
-    public void componentMoved(ComponentEvent arg0) {
+    public void hexCursor(BoardViewEvent evt) {
 
     }
 
     @Override
-    public void componentResized(ComponentEvent arg0) {
+    public void boardHexHighlighted(BoardViewEvent evt) {
+
+    }
+
+    @Override
+    public void hexSelected(BoardViewEvent evt) {
+
+    }
+
+    @Override
+    public void firstLOSHex(BoardViewEvent evt) {
+
+    }
+
+    @Override
+    public void secondLOSHex(BoardViewEvent evt, Coords c) {
+
+    }
+
+    @Override
+    public void finishedMovingUnits(BoardViewEvent evt) {
+
+    }
+
+    @Override
+    public void unitSelected(BoardViewEvent evt) {
+
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent evt) {
+
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent evt) {
+
+    }
+
+    @Override
+    public void componentResized(ComponentEvent evt) {
         bv.setPreferredSize(getSize());
     }
 
     @Override
-    public void componentShown(ComponentEvent arg0) {
+    public void componentShown(ComponentEvent evt) {
 
     }
 

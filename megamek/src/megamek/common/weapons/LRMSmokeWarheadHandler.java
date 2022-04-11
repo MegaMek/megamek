@@ -19,28 +19,17 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Report;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
+
+import java.util.Vector;
 
 /**
  * @author FogHat
  */
 public class LRMSmokeWarheadHandler extends LRMHandler {
-
-    /**
-     *
-     */
-
     private static final long serialVersionUID = -30934685350251837L;
 
     /**
@@ -49,8 +38,7 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      * @param g
      * @param s
      */
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
@@ -62,8 +50,7 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      * megamek.common.Entity, boolean)
      */
     @Override
-    protected boolean specialResolution(Vector<Report> vPhaseReport,
-            Entity entityTarget) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget) {
         Coords coords = target.getPosition();
         Coords center = coords;
 

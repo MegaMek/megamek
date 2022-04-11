@@ -34,7 +34,6 @@ public class PMAreasGroup implements PMElement {
     /**
      * Remoes area from group
      */
-
     public boolean removeArea(PMElement ag) {
         return gr.removeElement(ag);
     }
@@ -42,7 +41,6 @@ public class PMAreasGroup implements PMElement {
     /**
      * Removes all elements from group
      */
-
     public void removeAll() {
         gr.removeAllElements();
     }
@@ -50,7 +48,6 @@ public class PMAreasGroup implements PMElement {
     /**
      * Returns element at specific index.
      */
-
     public PMElement elementAt(int i) {
         return gr.elementAt(i);
     }
@@ -70,15 +67,15 @@ public class PMAreasGroup implements PMElement {
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {
             PMElement pme = iter.nextElement();
-            if (pme != null)
+            if (pme != null) {
                 pme.translate(x, y);
+            }
         }
     }
 
     /**
      * Sets bounding box of all elements in group at (x, y)
      */
-
     public void moveTo(int x, int y) {
         Rectangle r = getBounds();
         translate(x - r.x, y - r.y);
@@ -107,21 +104,20 @@ public class PMAreasGroup implements PMElement {
     /**
      * Draws all elements in group into specifyed Graphics
      */
-
     @Override
     public void drawInto(Graphics g) {
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {
             PMElement pme = iter.nextElement();
-            if (pme != null)
+            if (pme != null) {
                 pme.drawInto(g);
+            }
         }
     }
 
     /**
      * Sets visibility of all elements in roup to true or false.
      */
-
     @Override
     public void setVisible(boolean v) {
         Enumeration<PMElement> iter = gr.elements();
@@ -130,5 +126,4 @@ public class PMAreasGroup implements PMElement {
             pme.setVisible(v);
         }
     }
-
 }

@@ -197,6 +197,10 @@ public enum EntityMovementMode {
         return isVTOL() || isWiGE();
     }
 
+    public boolean isHoverVTOLOrWiGE() {
+        return isHover() || isVTOLOrWiGE();
+    }
+
     public boolean isMarine() {
         return isNaval() || isHydrofoil() || isSubmarine();
     }

@@ -1,6 +1,5 @@
 /*
- * MegaMek -
- * Copyright (C) 2020 The MegaMek Team
+ * Copyright (c) 2020-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -14,31 +13,29 @@
  */
 package megamek.common.templates;
 
+import megamek.common.*;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestAdvancedAerospace;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import megamek.common.Aero;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
-import megamek.common.Messages;
-import megamek.common.Mounted;
-import megamek.common.Warship;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestAdvancedAerospace;
-
 /**
- * Creates a TRO template model for advanced aerospace units (jumpships,
- * warships, space stations)
+ * Creates a TRO template model for advanced aerospace units (JumpShips, warships, space stations)
  *
  * @author Neoancient
- *
  */
 public class CapitalShipTROView extends AeroTROView {
-
     private final Jumpship aero;
+
+    private static final String[][] ARCS = { { "Nose" }, { "FRS", "FLS" }, { "RBS", "LBS" }, { "ARS", "ALS" },
+            { "Aft" } };
+
+    private static final int[][] ARMOR_LOCS = { { Jumpship.LOC_NOSE }, { Jumpship.LOC_FRS, Jumpship.LOC_FLS },
+            { Jumpship.LOC_ARS, Jumpship.LOC_ALS }, { Jumpship.LOC_AFT } };
 
     public CapitalShipTROView(Jumpship aero) {
         super(aero);
@@ -47,10 +44,7 @@ public class CapitalShipTROView extends AeroTROView {
 
     @Override
     protected String getTemplateFileName(boolean html) {
-        if (html) {
-            return "aero_vessel.ftlh";
-        }
-        return "aero_vessel.ftl";
+        return html ? "aero_vessel.ftlh" : "aero_vessel.ftl";
     }
 
     @Override
@@ -110,25 +104,26 @@ public class CapitalShipTROView extends AeroTROView {
     private void addFluff() {
         addEntityFluff(aero);
         final Map<String, String> dimensions = new HashMap<>();
-        if (aero.getFluff().getLength().length() > 0) {
+        if (!aero.getFluff().getLength().isBlank()) {
             dimensions.put("length", aero.getFluff().getLength());
         }
-        if (aero.getFluff().getWidth().length() > 0) {
+
+        if (!aero.getFluff().getWidth().isBlank()) {
             dimensions.put("width", aero.getFluff().getWidth());
         }
-        if (aero.getFluff().getHeight().length() > 0) {
+
+        if (!aero.getFluff().getHeight().isBlank()) {
             dimensions.put("height", aero.getFluff().getHeight());
         }
+
         if (!dimensions.isEmpty()) {
             setModelData("dimensions", dimensions);
         }
-        if (aero.getFluff().getUse().length() > 0) {
+
+        if (!aero.getFluff().getUse().isBlank()) {
             setModelData("use", aero.getFluff().getUse());
         }
     }
-
-    private static final String[][] ARCS = { { "Nose" }, { "FRS", "FLS" }, { "RBS", "LBS" }, { "ARS", "ALS" },
-            { "Aft" } };
 
     @Override
     protected String getArcAbbr(Mounted m) {
@@ -149,12 +144,10 @@ public class CapitalShipTROView extends AeroTROView {
                 return ARCS[2][0];
             case Warship.LOC_LBS:
                 return ARCS[2][1];
+            default:
+                return super.getArcAbbr(m);
         }
-        return super.getArcAbbr(m);
     }
-
-    private static final int[][] ARMOR_LOCS = { { Jumpship.LOC_NOSE }, { Jumpship.LOC_FRS, Jumpship.LOC_FLS },
-            { Jumpship.LOC_ARS, Jumpship.LOC_ALS }, { Jumpship.LOC_AFT } };
 
     private void addArmor() {
         setModelData("armorValues", addArmorStructureEntries(aero, Entity::getOArmor, ARMOR_LOCS));
@@ -162,28 +155,34 @@ public class CapitalShipTROView extends AeroTROView {
 
     protected void addCrew() {
         setModelData("crew", new ArrayList<>());
+
         if (aero.getNOfficers() > 0) {
             addCrewEntry("officer", aero.getNOfficers());
         }
+
         final int nEnlisted = aero.getNCrew() - aero.getBayPersonnel() - aero.getNGunners() - aero.getNOfficers();
         if (nEnlisted > 0) {
             addCrewEntry("enlisted", nEnlisted);
         }
+
         if (aero.getNGunners() > 0) {
             addCrewEntry("gunner", aero.getNGunners());
         }
+
         if (aero.getBayPersonnel() > 0) {
             addCrewEntry("bayPersonnel", aero.getBayPersonnel());
         }
+
         if (aero.getNPassenger() > 0) {
             addCrewEntry("passenger", aero.getNPassenger());
         }
+
         if (aero.getNMarines() > 0) {
             addCrewEntry("marine", aero.getNMarines());
         }
+
         if (aero.getNBattleArmor() > 0) {
             addCrewEntry("baMarine", aero.getNBattleArmor());
         }
     }
-
 }

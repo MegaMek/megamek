@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,18 +11,12 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 /**
  * Represents a volume of space set aside for carrying crew or passengers in more luxury than standard quarters.
  */
-
 public final class FirstClassQuartersCargoBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 4161027191694822726L;
 
     private double weight = 0;
@@ -30,25 +24,22 @@ public final class FirstClassQuartersCargoBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected FirstClassQuartersCargoBay() {
+    private FirstClassQuartersCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param weight
-     *            - The weight of troops (in tons) this space can carry.
+     * @param weight The weight of troops (in tons) this space can carry.
      */
     public FirstClassQuartersCargoBay(double weight, int doors) {
-        totalSpace = (int) weight/10;
+        totalSpace = (int) weight / 10;
         this.weight = weight;
-        currentSpace = (int) weight/10;
+        currentSpace = (int) weight / 10;
         this.doors = doors;
         currentdoors = doors;
     }
@@ -109,5 +100,4 @@ public final class FirstClassQuartersCargoBay extends Bay {
     public long getCost() {
         return 30000L * (long) totalSpace;
     }
-
 }

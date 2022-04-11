@@ -64,10 +64,13 @@ class FiringSolutionSprite extends HexSprite {
         // modifier
         int thm = fsoln.getToHitData().getValue();
         toHitMod = Integer.toString(thm);
-        if (thm >= 0) toHitMod = "+" + toHitMod;
-        if ((thm == TargetRoll.IMPOSSIBLE)
-                || (thm == TargetRoll.AUTOMATIC_FAIL)) 
+        if (thm >= 0) {
+            toHitMod = "+" + toHitMod;
+        }
+
+        if ((thm == TargetRoll.IMPOSSIBLE) || (thm == TargetRoll.AUTOMATIC_FAIL)) {
             noHitPossible = true;
+        }
         
         // range
         int r = fsoln.getToHitData().getRange();

@@ -1288,7 +1288,7 @@ public class FireControlTest {
             failure.append("\nExpected: ").append(expected.getDesc());
             failure.append("\nActual:   ").append(actualTHD.getDesc());
         }
-        if (!StringUtility.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrBlank(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }
@@ -2639,7 +2639,7 @@ public class FireControlTest {
             }
         }
 
-        if (!StringUtility.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrBlank(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }

@@ -19,21 +19,12 @@
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.SimpleTechLevel;
-
 /**
  * @author Sebastian Brocks
  */
 public class CLStreakLRM18 extends StreakLRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 5240577239366457930L;
 
-    /**
-     *
-     */
     public CLStreakLRM18() {
         super();
         name = "Streak LRM 18";
@@ -51,8 +42,8 @@ public class CLStreakLRM18 extends StreakLRMWeapon {
         bv = 310;
         cost = 270000;
         rulesRefs = "327, TO";
-        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
-        //Tech Advancement moved to StreakLRMWeapon.java
+        flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON).andNot(F_MECH_WEAPON)
+                .andNot(F_TANK_WEAPON).andNot(F_ARTEMIS_COMPATIBLE);
+        // Tech Advancement moved to StreakLRMWeapon.java
     }
 }

@@ -288,14 +288,15 @@ public class EntityListFile {
                     if (CriticalSlot.TYPE_EQUIPMENT == slot.getType()) {
                         mount = slot.getMount();
                     }
-                    
+
                     // if the "equipment" is a weapons bay, 
                     // then let's make a note of it
-                    if (entity.usesWeaponBays() && mount != null && mount.getBayAmmo().size() > 0) {
+                    if (entity.usesWeaponBays() && (mount != null)
+                            && !mount.getBayAmmo().isEmpty()) {
                         baySlotMap.put(slot.getMount(), loop + 1);
                     }
 
-                    if (mount != null && mount.getType() instanceof BombType) {
+                    if ((mount != null) && (mount.getType() instanceof BombType)) {
                         continue;
                     }
 
@@ -998,7 +999,7 @@ public class EntityListFile {
             }
 
             // Write the force hierarchy
-            if (entity.getForceString().length() > 0) {
+            if (!entity.getForceString().isBlank()) {
                 output.write(indentStr(indentLvl + 1) + "<Force force=\"");
                 output.write(entity.getForceString());
                 output.write("\"/>\n");
@@ -1146,7 +1147,7 @@ public class EntityListFile {
         }
 
         String extraData = crew.writeExtraDataToXMLLine(pos);
-        if (!StringUtility.isNullOrEmpty(extraData)) {
+        if (!StringUtility.isNullOrBlank(extraData)) {
             output.write(extraData);
         }
     }

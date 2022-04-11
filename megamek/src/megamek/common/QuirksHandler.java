@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -299,7 +300,7 @@ public class QuirksHandler {
                 // Add the unit to the default quirks list.
                 if (quirkList.isEmpty()) {
                     log.append("\n\t\tNo quirks found for ")
-                            .append((unitId.length() > 0) ? unitId : "<BlankUnitId>");
+                            .append(!unitId.isBlank() ? unitId : "<BlankUnitId>");
                 }
 
                 if (quirkMap.containsKey(unitId)) {
@@ -309,9 +310,9 @@ public class QuirksHandler {
             }
             log.append("\n\tTotal number of quirk entries: ").append(quirkMap.size());
             return quirkMap;
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
-            throw e;
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            throw ex;
         } finally {
             LogManager.getLogger().info(log.toString());
         }
@@ -374,7 +375,7 @@ public class QuirksHandler {
                 output.write(getCloseTag(CHASSIS) + "\n");
 
                 // Write Model
-                if ((null != model) && model.length() > 0) {
+                if (!StringUtility.isNullOrBlank(model)) {
                     output.write("\t\t" + getOpenTag(MODEL));
                     output.write(model);
                     output.write(getCloseTag(MODEL) + "\n");

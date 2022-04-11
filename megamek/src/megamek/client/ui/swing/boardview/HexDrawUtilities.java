@@ -95,8 +95,9 @@ public class HexDrawUtilities {
     private static Shape getHFBLU() {
         Path2D.Double area = new Path2D.Double();
         area.append(getHBLU(), false);
-        for (int dir = 1; dir < 6; dir++)
+        for (int dir = 1; dir < 6; dir++) {
             area.append(getHBLU(dir), true);
+        }
         area.closePath();
         return area; 
     }

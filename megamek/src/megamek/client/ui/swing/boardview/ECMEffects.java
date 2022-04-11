@@ -17,12 +17,11 @@ package megamek.client.ui.swing.boardview;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.ECMInfo;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class contains a collection of <code>ECMInfo</code> instances that all
@@ -68,7 +67,7 @@ public class ECMEffects {
      *
      * @return  The color to use to represent the ECM effects in this hex
      */
-    public Color getHexColor() {
+    public @Nullable Color getHexColor() {
         Color c = null;
         Map<Player, ECMInfo> ecmEffectsForPlayer = new HashMap<>();
         // Total the ECM effects for each Player
@@ -89,8 +88,7 @@ public class ECMEffects {
             ECMInfo playerECM = new ECMInfo(ecmEffectsForPlayer.get(p));
             for (Player other : ecmEffectsForPlayer.keySet()) {
                 // Don't add info for p again
-                if (((p == null) && (other == null))
-                        || ((p != null) && p.equals(other))) {
+                if (Objects.equals(p, other)) {
                     continue;
                 }
                 playerECM.addAlliedECMEffects(ecmEffectsForPlayer.get(other));
@@ -103,13 +101,13 @@ public class ECMEffects {
         }
 
         // It's possible all effects cancel each other out; then return null
-        if ((ecmColors.size() == 0) && (eccmColors.size() == 0)) {
+        if (ecmColors.isEmpty() && eccmColors.isEmpty()) {
             return null;
         }
         // If there is ECCM present, but no ECM, then shade as ECCM.
         // ECM shading subsumes ECCM shading, so if ECM is present,
         // ECCM shading isn't needed
-        if ((ecmColors.size() < 1) && (eccmColors.size() > 0)) {
+        if ((ecmColors.size() < 1) && !eccmColors.isEmpty()) {
             isECCM = true;
             c = getColorAverage(eccmColors);
         } else {

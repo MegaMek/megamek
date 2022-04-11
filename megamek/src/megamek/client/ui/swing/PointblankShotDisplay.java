@@ -462,12 +462,12 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         clientgui.getBoardView().clearFieldofF();
 
         butDone.setEnabled(true);
-        if (numButtonGroups > 1)
+        if (numButtonGroups > 1) {
             buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
+        }
         setFireCalledEnabled(clientgui.getClient().getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
-        setStatusBarText(Messages
-                .getString("StatusBarPhaseDisplay.pointblankShot"));
+        setStatusBarText(Messages.getString("StatusBarPhaseDisplay.pointblankShot"));
     }
 
     /**

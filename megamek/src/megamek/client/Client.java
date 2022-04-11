@@ -1150,7 +1150,8 @@ public class Client implements IClientCommandHandler {
                 newMines.add(mf);
             }
         }
-        if (newMines.size() > 0) {
+
+        if (!newMines.isEmpty()) {
             game.resetMinefieldDensity(newMines);
         }
     }
@@ -1227,7 +1228,7 @@ public class Client implements IClientCommandHandler {
         // add all instances to a hashset to prevent duplicates
         while (m.find()) {
             String cleanedText = m.group(1).replaceAll("\\D", "");
-            if (cleanedText.length() > 0) {
+            if (!cleanedText.isBlank()) {
                 set.add(Integer.parseInt(cleanedText));
             }
         }
@@ -1646,7 +1647,7 @@ public class Client implements IClientCommandHandler {
                 int cfrType = (int) c.getData()[0];
                 GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                 switch (cfrType) {
-                    case (Packet.COMMAND_CFR_DOMINO_EFFECT):
+                    case Packet.COMMAND_CFR_DOMINO_EFFECT:
                         cfrEvt.setEntityId((int) c.getData()[1]);
                         break;
                     case Packet.COMMAND_CFR_AMS_ASSIGN:

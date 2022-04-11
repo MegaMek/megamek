@@ -419,7 +419,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         if (selectedIndices.length == 0) {
             String option = preferences.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
-            if (option.length() > 0) {
+            if (!option.isBlank()) {
                 String[] strSelections = option.split("[,]");
                 selectedIndices = new int[strSelections.length];
                 for (int i = 0; i < strSelections.length; i++) {
@@ -546,7 +546,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                                             || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit))))
                                     /* Advanced Search */
                                     && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))) {
-                        if (textFilter.getText().length() > 0) {
+                        if (!textFilter.getText().isBlank()) {
                             String text = textFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());
                         }

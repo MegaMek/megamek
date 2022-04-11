@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.preference;
 
 import java.util.Enumeration;
@@ -19,7 +18,6 @@ import java.util.Properties;
 import java.util.Vector;
 
 class PreferenceStore implements IPreferenceStore {
-
     protected boolean dirty = false;
 
     protected Properties properties;
@@ -293,14 +291,12 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     @Override
-    public void removePreferenceChangeListener(
-            IPreferenceChangeListener listener) {
+    public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
         listeners.removeElement(listener);
     }
 
-    protected void firePropertyChangeEvent(String name, Object oldValue,
-            Object newValue) {
-        if (listeners.size() > 0
+    protected void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
+        if (!listeners.isEmpty()
                 && (oldValue == null || !oldValue.equals(newValue))) {
             final PreferenceChangeEvent pe = new PreferenceChangeEvent(this,
                     name, oldValue, newValue);

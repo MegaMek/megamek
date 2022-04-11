@@ -15,7 +15,7 @@
 # 
 
 # Define script constants.
-MEGAMEK_NIX_NAME="megamek"  # Assuming on *nix name is lower case (megamek-*)
+MEGAMEK_NIX_NAME="megamek"  # Assuming on *nix name is lowercase (megamek-*)
 MEGAMEK_MAIN_CLASS="megamek.MegaMek"
 MEGAMEK_DEFAULT_JARNAME="MegaMek.jar"
 MEGAMEK_DEFAULT_CLASSPATH="/usr/share/java"

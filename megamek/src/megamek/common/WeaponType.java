@@ -592,97 +592,93 @@ public class WeaponType extends EquipmentType {
 
     // Probably not the best place for this
     public EquipmentType getBayType() {
-        // return the correct weapons bay for the given type of weapon
+        // Return the correct weapons bay for the given type of weapon
         switch (getAtClass()) {
-            case (CLASS_LASER):
+            case CLASS_LASER:
                 return EquipmentType.get(EquipmentTypeLookup.LASER_BAY);
-            case (CLASS_AMS):
+            case CLASS_AMS:
                 return EquipmentType.get(EquipmentTypeLookup.AMS_BAY);
-            case (CLASS_POINT_DEFENSE):
+            case CLASS_POINT_DEFENSE:
                 return EquipmentType.get(EquipmentTypeLookup.POINT_DEFENSE_BAY);
-            case (CLASS_PPC):
+            case CLASS_PPC:
                 return EquipmentType.get(EquipmentTypeLookup.PPC_BAY);
-            case (CLASS_PULSE_LASER):
+            case CLASS_PULSE_LASER:
                 return EquipmentType.get(EquipmentTypeLookup.PULSE_LASER_BAY);
-            case (CLASS_ARTILLERY):
+            case CLASS_ARTILLERY:
                 return EquipmentType.get(EquipmentTypeLookup.ARTILLERY_BAY);
-            case (CLASS_PLASMA):
+            case CLASS_PLASMA:
                 return EquipmentType.get(EquipmentTypeLookup.PLASMA_BAY);
-            case (CLASS_AC):
+            case CLASS_AC:
                 return EquipmentType.get(EquipmentTypeLookup.AC_BAY);
-/*            case (CLASS_GAUSS):
-                return EquipmentType.get(EquipmentTypeLookup.GAUSS_BAY);*/
-            case (CLASS_LBX_AC):
+            case CLASS_LBX_AC:
                 return EquipmentType.get(EquipmentTypeLookup.LBX_AC_BAY);
-            case (CLASS_LRM):
+            case CLASS_LRM:
                 return EquipmentType.get(EquipmentTypeLookup.LRM_BAY);
-            case (CLASS_SRM):
+            case CLASS_SRM:
                 return EquipmentType.get(EquipmentTypeLookup.SRM_BAY);
-            case (CLASS_MRM):
+            case CLASS_MRM:
                 return EquipmentType.get(EquipmentTypeLookup.MRM_BAY);
-            case (CLASS_MML):
+            case CLASS_MML:
                 return EquipmentType.get(EquipmentTypeLookup.MML_BAY);
-            case (CLASS_THUNDERBOLT):
+            case CLASS_THUNDERBOLT:
                 return EquipmentType.get(EquipmentTypeLookup.THUNDERBOLT_BAY);
-            case (CLASS_ATM):
+            case CLASS_ATM:
                 return EquipmentType.get(EquipmentTypeLookup.ATM_BAY);
-            case (CLASS_ROCKET_LAUNCHER):
+            case CLASS_ROCKET_LAUNCHER:
                 return EquipmentType.get(EquipmentTypeLookup.ROCKET_LAUNCHER_BAY);
-            case (CLASS_CAPITAL_LASER):
-                if (isSubCapital()) {
-                    return EquipmentType.get(EquipmentTypeLookup.SCL_BAY);
-                }
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
-            case (CLASS_CAPITAL_PPC):
+            case CLASS_CAPITAL_LASER:
+                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SCL_BAY)
+                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_LASER_BAY);
+            case CLASS_CAPITAL_PPC:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_PPC_BAY);
-            case (CLASS_CAPITAL_AC):
-                if (isSubCapital()) {
-                    return EquipmentType.get(EquipmentTypeLookup.SCC_BAY);
-                }
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
-            case (CLASS_CAPITAL_GAUSS):
+            case CLASS_CAPITAL_AC:
+                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SCC_BAY)
+                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_AC_BAY);
+            case CLASS_CAPITAL_GAUSS:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_GAUSS_BAY);
-            case (CLASS_CAPITAL_MD):
+            case CLASS_CAPITAL_MD:
                 return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MASS_DRIVER_BAY);
-            case (CLASS_CAPITAL_MISSILE):
-                if (isSubCapital()) {
-                    return EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY);
-                }
-                return EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
-            case (CLASS_TELE_MISSILE):
+            case CLASS_CAPITAL_MISSILE:
+                return isSubCapital() ? EquipmentType.get(EquipmentTypeLookup.SC_MISSILE_BAY)
+                        : EquipmentType.get(EquipmentTypeLookup.CAPITAL_MISSILE_BAY);
+            case CLASS_TELE_MISSILE:
                 return EquipmentType.get(EquipmentTypeLookup.TELE_CAPITAL_MISSILE_BAY);
-            case (CLASS_AR10):
+            case CLASS_AR10:
                 return EquipmentType.get(EquipmentTypeLookup.AR10_BAY);
-            case (CLASS_SCREEN):
+            case CLASS_SCREEN:
                 return EquipmentType.get(EquipmentTypeLookup.SCREEN_LAUNCHER_BAY);
             default:
                 return EquipmentType.get(EquipmentTypeLookup.MISC_BAY);
         }
     }
-    
+
     /**
      * Damage calculation for BattleForce and AlphaStrike
-     * @param range - the range in hexes
-     * @return - damage in BattleForce scale
+     * @param range The range in hexes
+     * @return Damage in BattleForce scale
      */
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
-            //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
-            if (getDamage() == DAMAGE_VARIABLE
-                    && range == BattleForceElement.MEDIUM_RANGE
-                    && getLongRange() < BattleForceElement.LONG_RANGE) {
+            // Variable damage weapons that cannot reach into the BF long range band use LR damage
+            // for the MR band
+            if ((getDamage() == DAMAGE_VARIABLE)
+                    && (range == BattleForceElement.MEDIUM_RANGE)
+                    && (getLongRange() < BattleForceElement.LONG_RANGE)) {
                 damage = getDamage(BattleForceElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
             }
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+
+            if ((range == BattleForceElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
+
             if (getToHitModifier() != 0) {
                 damage -= damage * getToHitModifier() * 0.05; 
             }
         }
+
         return damage / 10.0;
     }
     

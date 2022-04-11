@@ -29,6 +29,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -42,19 +43,13 @@ public class SRMInfernoHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
+    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
-        damageType = Server.DamageType.INFERNO;
+        damageType = DamageType.INFERNO;
         sSalvoType = " inferno missile(s) ";
         bSalvo = false;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         return 0;
@@ -156,16 +151,13 @@ public class SRMInfernoHandler extends SRMHandler {
 
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
-            // Works out fire setting, AMS shots, and whether continuation is
-            // necessary.
-            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
-                    vPhaseReport)) {
+            // Works out fire setting, AMS shots, and whether continuation is necessary.
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg, vPhaseReport)) {
                 return false;
             }
         }
 
-        // yeech. handle damage. . different weapons do this in very different
-        // ways
+        // yeech. handle damage. . different weapons do this in very different ways
         int hits = calcHits(vPhaseReport);
         Report.addNewline(vPhaseReport);
 
@@ -301,10 +293,9 @@ public class SRMInfernoHandler extends SRMHandler {
         }
         Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
                 nDamage, subjectId);
-        if (clearReports.size() > 0) {
+        if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }
         vPhaseReport.addAll(clearReports);
-        return;
     }
 }

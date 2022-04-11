@@ -93,7 +93,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         for (int loc = 0; loc < locationNames.length; loc++) {
             weaponLocations[loc] = new WeaponLocation();
             locationNames[loc] = en.getAlphaStrikeLocationName(loc);
-            if (locationNames[loc].length() > 0) {
+            if (!locationNames[loc].isBlank()) {
                 locationNames[loc] += ":";
             }
         }
@@ -177,7 +177,7 @@ public class AlphaStrikeElement extends BattleForceElement {
             return "";
         }
         StringBuilder str = new StringBuilder(locationNames[loc]);
-        if (locationNames[loc].length() > 0) {
+        if (!locationNames[loc].isBlank()) {
             str.append("(");
         }
         str.append(weaponLocations[loc].formatDamageRounded(true));
@@ -193,12 +193,15 @@ public class AlphaStrikeElement extends BattleForceElement {
                     .append(weaponLocations[loc].formatDamageRounded(i, true));
             }
         }
+
         if (weaponLocations[loc].getIF() >= 0.5) {
             str.append(";IF").append((int) Math.round(weaponLocations[loc].getIF()));
         }
-        if (locationNames[loc].length() > 0) {
+
+        if (!locationNames[loc].isBlank()) {
             str.append(")");
         }
+
         return str.toString();
     }
     
@@ -214,7 +217,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.write("\t");
         w.write(Integer.toString((int) Math.round(armor)));
         if (threshold >= 0) {
-            w.write("-" + (int) Math.ceil(threshold));//TODO: threshold
+            w.write("-" + (int) Math.ceil(threshold)); // TODO : threshold
         }
         w.write("\t");
         w.write(Integer.toString(structure));
@@ -223,7 +226,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         for (int loc = 0; loc < weaponLocations.length; loc++) {
             StringBuilder str = new StringBuilder();
             String damStr = getASDamageString(loc, false);
-            if (damStr.length() > 0) {
+            if (!damStr.isBlank()) {
                 str.append(damStr);
                 sj.add(str.toString());
             }
@@ -249,8 +252,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.write(Integer.toString(getFinalPoints()));
         w.write("\t");
         w.write(specialAbilities.keySet().stream()
-                .filter(spa -> spa.usedByAlphaStrike()
-                        && !spa.isDoor())
+                .filter(spa -> spa.usedByAlphaStrike() && !spa.isDoor())
                 .map(this::formatSPAString)
                 .collect(Collectors.joining(", ")));
         w.newLine();

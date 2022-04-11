@@ -238,25 +238,25 @@ public final class Forces implements Serializable {
      * be empty or contain "|" or "\".
      */
     public boolean verifyForceName(String name) {
-        return name != null && name.trim().length() > 0 && !name.contains("|") && !name.contains("\\");
+        return name != null && !name.isBlank() && !name.contains("|") && !name.contains("\\");
     }
-    
+
     /** 
-     * Returns the owner Id of the owner of this force. 
+     * @return the force owner's id
      */
     public int getOwnerId(Force force) {
         return force.getOwnerId();
     }
-    
+
     /** 
-     * Returns the owner of this force. 
+     * @return the owner of this force.
      */
     public Player getOwner(Force force) {
         return game.getPlayer(getOwnerId(force));
     }
     
     /** 
-     * Returns the owner of this force. 
+     * @return the owner of this force.
      */
     public Player getOwner(int forceId) {
         return getOwner(getForce(forceId));

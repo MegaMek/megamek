@@ -482,7 +482,9 @@ public class EntityImage {
         return null;
     }
     
-    /** Returns the smoke/fire image based on damage level. */
+    /**
+     * @return the smoke/fire image based on damage level.
+     */
     private Image getSmokeImage(Entity entity, int pos) {
         try {
             // No smoke and fire for damage up to moderate
@@ -517,7 +519,7 @@ public class EntityImage {
     }
 
     /** 
-     * Returns a random image of all the images in the category (= directory) cat.
+     * @return a random image of all the images in the category (= directory) cat.
      * To have reproducible images for individual units the image is chosen 
      * based on the hash value of the name (and the hex in multi-hex units).
      */
@@ -531,10 +533,14 @@ public class EntityImage {
         return (Image) DecalImages.getItem(cat, n);
     }
     
-    /** Returns the size of the collection of an iterator. Local helper function for DirectoryItems. */
+    /**
+     * @return the size of the collection of an iterator. Local helper function for DirectoryItems.
+     */
     private static <T> int getSize(Iterator<T> iter) {
         int result = 0;
-        for (;iter.hasNext();iter.next(), result++);
+        for (; iter.hasNext(); iter.next()) {
+            result++;
+        }
         return result;
     }
 }

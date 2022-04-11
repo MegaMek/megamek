@@ -248,7 +248,7 @@ public class Precognition implements Runnable {
                     int cfrType = (int) c.getData()[0];
                     GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                     switch (cfrType) {
-                        case (Packet.COMMAND_CFR_DOMINO_EFFECT):
+                        case Packet.COMMAND_CFR_DOMINO_EFFECT:
                             cfrEvt.setEntityId((int) c.getData()[1]);
                             break;
                         case Packet.COMMAND_CFR_AMS_ASSIGN:
@@ -511,15 +511,16 @@ public class Precognition implements Runnable {
                         toRemove.add(index);
                     }
                 }
+
                 for (Integer i : toRemove) {
                     toDirty.remove(i);
                 }
 
-                if (toDirty.size() != 0) {
+                if (!toDirty.isEmpty()) {
                     StringBuilder msg = new StringBuilder("The following units have become dirty");
                     if (getGame().getEntity(id) != null) {
                         msg.append(" as a result of a nearby move of ")
-                           .append(getGame().getEntity(id).getDisplayName());
+                                .append(getGame().getEntity(id).getDisplayName());
                     }
 
                     Iterator<Integer> dirtyIterator = toDirty.descendingIterator();
@@ -750,7 +751,8 @@ public class Precognition implements Runnable {
                 newMines.add(mf);
             }
         }
-        if (newMines.size() > 0) {
+
+        if (!newMines.isEmpty()) {
             getGame().resetMinefieldDensity(newMines);
         }
     }

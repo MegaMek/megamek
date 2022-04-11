@@ -8760,6 +8760,9 @@
 		<model name='Prime'>
 			<availability>General:8</availability>
 		</model>
+		<model name='X'>
+			<availability>CDS:2,ROS:2,CNC:2,RA:2,CGB:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Kinnol MBT' unitType='Tank'>
 		<availability>CC:1,MOC:1,ROS:5,IS:3,MERC:4,TC:1,CGB:3</availability>
@@ -16595,13 +16598,16 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:5,HL:3,IS:5,Periphery.Deep:5,FS:6,Periphery:4,TC:4,LA:5,CNC:2,FWL:8,NIOPS:3-,MH:4,DC:5,CGB:1</availability>
+		<model name='WVR-1R'>
+			<availability>CC:2-,FWL:2-,FS:2-,MERC:2,RCM:2,DC:2-</availability>
+		</model>
 		<model name='WVR-6M'>
 			<roles>recon</roles>
 			<availability>Periphery.MW:4-,PIR:4-,Periphery.ME:4-,FWL:2-,MH:4-</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>General:3-,Periphery.Deep:8,Periphery:3-</availability>
+			<availability>General:1-,Periphery:2-</availability>
 		</model>
 		<model name='WVR-7D'>
 			<roles>recon</roles>
@@ -16614,6 +16620,9 @@
 		<model name='WVR-7M'>
 			<roles>recon</roles>
 			<availability>CC:4,MOC:4,FWL:5,MH:2,MERC:6,DC:4</availability>
+		</model>
+		<model name='WVR-7M2'>
+			<availability>CC:6,MOC:3,MERC.KH:4,DO:6,MERC:6,DTA:5,MERC.WD:2,FWL:6,MH:3,MSC:4,DA:6,RCM:2,DC:4</availability>
 		</model>
 		<model name='WVR-8C'>
 			<availability>ROS:4,MERC:3,DC:6</availability>

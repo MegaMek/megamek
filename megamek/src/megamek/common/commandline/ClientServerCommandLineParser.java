@@ -14,12 +14,10 @@
 package megamek.common.commandline;
 
 import megamek.MMConstants;
-import megamek.MMOptions;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
-import megamek.common.preference.PreferenceManager;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 

@@ -794,27 +794,27 @@ public class BLKFile {
             blk.writeBlockData("structural_integrity", ((Aero) t).get0SI());
         }
 
-        if (t.getFluff().getCapabilities().trim().length() > 0) {
+        if (!t.getFluff().getCapabilities().isBlank()) {
             blk.writeBlockData("capabilities", t.getFluff().getCapabilities());
         }
 
-        if (t.getFluff().getOverview().trim().length() > 0) {
+        if (!t.getFluff().getOverview().isBlank()) {
             blk.writeBlockData("overview", t.getFluff().getOverview());
         }
 
-        if (t.getFluff().getDeployment().trim().length() > 0) {
+        if (!t.getFluff().getDeployment().isBlank()) {
             blk.writeBlockData("deployment", t.getFluff().getDeployment());
         }
 
-        if (t.getFluff().getHistory().trim().length() > 0) {
+        if (!t.getFluff().getHistory().isBlank()) {
             blk.writeBlockData("history", t.getFluff().getHistory());
         }
 
-        if (t.getFluff().getManufacturer().trim().length() > 0) {
+        if (!t.getFluff().getManufacturer().isBlank()) {
             blk.writeBlockData("manufacturer", t.getFluff().getManufacturer());
         }
 
-        if (t.getFluff().getPrimaryFactory().trim().length() > 0) {
+        if (!t.getFluff().getPrimaryFactory().isBlank()) {
             blk.writeBlockData("primaryFactory", t.getFluff().getPrimaryFactory());
         }
         
@@ -828,31 +828,31 @@ public class BLKFile {
             blk.writeBlockData("systemModels", list);
         }
 
-        if (t.getFluff().getMMLImagePath().trim().length() > 0) {
+        if (!t.getFluff().getMMLImagePath().isBlank()) {
             blk.writeBlockData("imagepath", t.getFluff().getMMLImagePath());
         }
 
-        if (t.getFluff().getNotes().trim().length() > 0) {
+        if (!t.getFluff().getNotes().isBlank()) {
             blk.writeBlockData("notes", t.getFluff().getNotes());
         }
 
-        if (t.getFluff().getUse().trim().length() > 0) {
+        if (!t.getFluff().getUse().isBlank()) {
             blk.writeBlockData("use", t.getFluff().getUse());
         }
 
-        if (t.getFluff().getLength().trim().length() > 0) {
+        if (!t.getFluff().getLength().isBlank()) {
             blk.writeBlockData("length", t.getFluff().getLength());
         }
 
-        if (t.getFluff().getWidth().trim().length() > 0) {
+        if (!t.getFluff().getWidth().isBlank()) {
             blk.writeBlockData("width", t.getFluff().getWidth());
         }
 
-        if (t.getFluff().getHeight().trim().length() > 0) {
+        if (!t.getFluff().getHeight().isBlank()) {
             blk.writeBlockData("height", t.getFluff().getHeight());
         }
 
-        if (t.getSource().trim().length() > 0) {
+        if (!t.getSource().isBlank()) {
             blk.writeBlockData("source", t.getSource());
         }
 
@@ -932,8 +932,8 @@ public class BLKFile {
                     augmentations.add(o.getName());
                 }
             }
-            if (augmentations.size() > 0) {
-                blk.writeBlockData("augmentation", augmentations.toArray(new String[augmentations.size()]));
+            if (!augmentations.isEmpty()) {
+                blk.writeBlockData("augmentation", augmentations.toArray(new String[0]));
             }
         } else {
             blk.writeBlockData("tonnage", t.getWeight());
@@ -1222,7 +1222,7 @@ public class BLKFile {
                     //Add values for collars so they can be parsed and assigned a 'bay' number
                     String numbers = "1.0:0";
                     ParsedBayInfo pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                    e.addTransporter(new DockingCollar(1, pbi.getBayNumber()));
+                    e.addTransporter(new DockingCollar(pbi.getBayNumber()));
                 }
 
             } // Handle the next transportation component.

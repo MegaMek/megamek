@@ -41,14 +41,16 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<>();
         for (Player player : game.getPlayersVector()) {
-            if (player.isObserver())
+            if (player.isObserver()) {
                 continue;
+            }
             int ebv = 0;
             int eibv = 0;
             int team = player.getTeam();
             if (team != Player.TEAM_NONE) {
-                if (doneTeams.contains(team))
+                if (doneTeams.contains(team)) {
                     continue; // skip if already
+                }
                 doneTeams.add(team);
             }
             ebv = getEnemyBV(game, player);
@@ -67,9 +69,7 @@ public class BVDestroyedVictory extends AbstractBVVictory {
                 r.add(100 - ((ebv * 100) / eibv));
                 vr.addReport(r);
             }
-        }// end for
-        if (victory)
-            return vr;
-        return VictoryResult.noResult();
+        }
+        return victory ? vr : VictoryResult.noResult();
     }
 }

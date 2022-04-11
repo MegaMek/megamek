@@ -241,8 +241,7 @@ public class SkinSpecification {
         }
         
         // Return false if any edge doesn't exsit
-        if (topEdge.size() == 0 || rightEdge.size() == 0
-                || bottomEdge.size() == 0 || leftEdge.size() == 0) {
+        if (topEdge.isEmpty() || rightEdge.isEmpty() || bottomEdge.isEmpty() || leftEdge.isEmpty()) {
             return false;
         }
         
@@ -275,7 +274,7 @@ public class SkinSpecification {
     }
     
     public boolean hasBackgrounds() {
-        if (backgrounds.size() == 0) {
+        if (backgrounds.isEmpty()) {
             return false;
         }
         

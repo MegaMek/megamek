@@ -100,7 +100,7 @@ public class InfantryTROView extends TROView {
                 sj.add(Infantry.getSpecializationName(1 << i));
             }
         }
-        if (sj.toString().length() > 0) {
+        if (!sj.toString().isBlank()) {
             setModelData("specialty", sj.toString());
         } else {
             setModelData("specialty", Messages.getString("TROView.None"));
@@ -175,7 +175,7 @@ public class InfantryTROView extends TROView {
         if (fieldGuns.size() > 1) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.FieldGuns"), fieldGuns.size(),
                     fieldGuns.get(0).getName(), shots / fieldGuns.size(), (int) fieldGuns.get(0).getTonnage(inf)));
-        } else if (fieldGuns.size() > 0) {
+        } else if (!fieldGuns.isEmpty()) {
             notes.add(String.format(Messages.getString("TROView.InfantryNote.SingleFieldGun"),
                     fieldGuns.get(0).getName(), shots, (int) fieldGuns.get(0).getTonnage(inf)));
         }

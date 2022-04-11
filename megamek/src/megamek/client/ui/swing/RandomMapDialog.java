@@ -305,7 +305,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         fileChooser.setDialogTitle(title);
 
         // If we have a file to start with, select it.
-        if (!StringUtility.isNullOrEmpty(fileName)) {
+        if (!StringUtility.isNullOrBlank(fileName)) {
             fileChooser.setSelectedFile(new File(targetDir + fileName));
         }
 
@@ -431,7 +431,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     }
     
     public boolean activateDialog(Set<String> themeList) {
-        for (String s: themeList) choTheme.addItem(s);
+        for (String s : themeList) {
+            choTheme.addItem(s);
+        }
         choTheme.setSelectedItem(mapSettings.getTheme());
         userCancel = false;
         setVisible(true);

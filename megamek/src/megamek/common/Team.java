@@ -124,7 +124,7 @@ public final class Team extends TurnOrdered {
     public int getId() {
         // If Team Initiative is not turned on, id will be 0 for all teams,
         //  however the players accurately store their team id
-        if (players.size() > 0) {
+        if (!players.isEmpty()) {
             return players.get(0).getTeam();
         } else {
             return id;

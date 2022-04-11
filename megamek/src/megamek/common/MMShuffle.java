@@ -154,8 +154,8 @@ public class MMShuffle extends Roll {
         Roll.output(rng.d6());
 
         // Handle 36 more "rolls".
-        for (int loop = 0; loop < 36; loop++)
+        for (int loop = 0; loop < 36; loop++) {
             Roll.output(rng.d6(2));
+        }
     }
-
 }

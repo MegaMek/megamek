@@ -13,24 +13,12 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
-import megamek.common.IArmorState;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
+
+import java.util.Vector;
 
 /**
  * @author Jason Tighe
@@ -65,7 +53,6 @@ public class SRMTandemChargeHandler extends SRMHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
-        int nDamage;
         missed = false;
 
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
@@ -91,10 +78,10 @@ public class SRMTandemChargeHandler extends SRMHandler {
             vPhaseReport.addElement(r);
         }
         // Resolve damage normally.
-        nDamage = nDamPerHit * Math.min(nCluster, hits);
+        int nDamage = nDamPerHit * Math.min(nCluster, hits);
 
         // Report calcDmgPerHitReports here
-        if (calcDmgPerHitReport.size() > 0) {
+        if (!calcDmgPerHitReport.isEmpty()) {
             vPhaseReport.addAll(calcDmgPerHitReport);
         }
 
@@ -164,11 +151,6 @@ public class SRMTandemChargeHandler extends SRMHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
@@ -184,5 +166,4 @@ public class SRMTandemChargeHandler extends SRMHandler {
         }
         return 2;
     }
-
 }

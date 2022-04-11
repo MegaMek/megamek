@@ -62,11 +62,12 @@ public class Hex implements Serializable {
         this.level = level;
         coords = c;
         for (final Terrain t : terrains) {
-            if (t != null)
+            if (t != null) {
                 this.terrains.put(t.getType(), t);
+            }
         }
 
-        if ((theme == null) || (theme.length() > 0)) {
+        if ((theme == null) || !theme.isBlank()) {
             this.theme = theme;
         } else {
             this.theme = null;

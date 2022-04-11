@@ -53,29 +53,6 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
 
     }
 
-    /**
-     * This debug/profiling function will print the current time
-     * (in milliseconds) to the log.  If the boolean is true, the
-     * garbage collector will be called in an attempt to minimize
-     * timing errors.  You should try and minimize applications
-     * being run in the background when using this function.
-     * Note that MS Windows only has 10 milisecond resolution.
-     *
-     * The function should be optimized completely out of the code
-     * when the first if-statement below reads "if (false)...", so
-     * performance shouldn't be impacted if you leave calls to this
-     * function in the code (I think).
-     */
-    @SuppressWarnings("unused")
-    private void debugTime(String s, boolean collectGarbage) {
-        //Change the "false" below to "true" to enable this function
-        if (false) {
-            if (collectGarbage)
-                System.gc();
-            System.out.println(s + ": " + System.currentTimeMillis());
-        }
-    }
-
     private void resolveWeather() {
         Board board = game.getBoard();
         int width = board.getWidth();
@@ -85,12 +62,11 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         boolean deepSnow = false;
         boolean ice = false;
 
-        if (!conditions.isTerrainAffected())
+        if (!conditions.isTerrainAffected()) {
             return;
+        }
 
-        debugTime("resolve weather 1", true);
-
-        //first we need to increment the conditions
+        // first we need to increment the conditions
         if (conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW
                 || conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
                 && game.getBoard().onGround()) {
@@ -152,7 +128,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
 
                 // check for fires and potentially put them out
                 if (currentHex.containsTerrain(Terrains.FIRE)) {
-                    //only standard fires get put out
+                    // only standard fires get put out
                     if (currentHex.terrainLevel(Terrains.FIRE)
                             == Terrains.FIRE_LVL_NORMAL) {
                         if (conditions.putOutFire()) {
@@ -231,7 +207,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 }
 
                 // check for rapids/torrents created by wind
-                //FIXME: This doesn't seem to be doing anything
+                // FIXME: This doesn't seem to be doing anything
                 if (conditions.getWindStrength() > PlanetaryConditions.WI_MOD_GALE
                         && currentHex.containsTerrain(Terrains.WATER) 
                         && currentHex.depth(true) > 0) {
@@ -248,7 +224,5 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 }
             }
         }
-        debugTime("resolve weather 1 end", true);
     }
-
 }

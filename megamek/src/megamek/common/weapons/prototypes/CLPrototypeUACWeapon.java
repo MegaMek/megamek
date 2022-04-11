@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -24,7 +24,7 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * @since Sep 29, 2004
+ * @since Sept 29, 2004
  */
 public abstract class CLPrototypeUACWeapon extends UACWeapon {
     private static final long serialVersionUID = 8905222321912752035L;

@@ -3728,13 +3728,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:7,LA:7,SL:5,FWL:8,IS:7,Periphery.Deep:6,RWR:6,FS:7,DC:6,TC:4</availability>
+		<model name='WVR-1R'>
+			<availability>FS:2-</availability>
+		</model>
+		<model name='WVR-3R'>
+			<availability>FS:1</availability>
+		</model>
 		<model name='WVR-6K'>
 			<roles>recon</roles>
 			<availability>DC:6</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>General:6,Periphery:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Wyvern' unitType='Mek'>

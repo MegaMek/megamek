@@ -1,18 +1,21 @@
 package megamek.common.verifier;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+import megamek.common.*;
 import org.junit.Test;
 
-import megamek.common.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BayDataTest {
     
     private Entity createEntity(long etype) {
         Entity entity = mock(Entity.class);
         when(entity.hasETypeFlag(anyLong())).thenAnswer(inv ->
-            (((Long) inv.getArguments()[0]).longValue() & etype) != 0);
+            ((Long) inv.getArguments()[0] & etype) != 0);
         return entity;
     }
 

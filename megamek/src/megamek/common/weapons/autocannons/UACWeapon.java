@@ -25,7 +25,7 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * @since Sep 29, 2004
+ * @since Sept 29, 2004
  */
 public abstract class UACWeapon extends AmmoWeapon {
     private static final long serialVersionUID = -8041750694509751561L;

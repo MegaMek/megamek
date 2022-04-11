@@ -163,7 +163,8 @@ public enum MissionRole {
         for (int i = 0; i < avAdj.length; i++) {
             avAdj[i] = (i + 1) * strictness / 3.0;
         }
-        if (desiredRoles.size() > 0) {
+
+        if (!desiredRoles.isEmpty()) {
             roleApplied = true;
             for (MissionRole role : desiredRoles) {
                 switch (role) {

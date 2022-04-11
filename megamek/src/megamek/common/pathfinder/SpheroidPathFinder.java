@@ -94,44 +94,40 @@ public class SpheroidPathFinder {
             visitedCoords.clear();
             
             // add "flee" option if we haven't done anything else
-            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords()) &&
-                    startingEdge.getStepVector().size() == 0) {
+            if (game.getBoard().isOnBoardEdge(startingEdge.getFinalCoords())
+                    && startingEdge.getStepVector().isEmpty()) {
                 MovePath fleePath = startingEdge.clone();
                 fleePath.addStep(MoveStepType.FLEE);
                 spheroidPaths.add(fleePath);
             }
-        } catch (OutOfMemoryError e) {
-            /*
-             * Some implementations can run out of memory if they consider and
-             * save in memory too many paths. Usually we can recover from this
-             * by ending prematurely while preserving already computed results.
-             */
-
+        } catch (OutOfMemoryError ex) {
+            // Some implementations can run out of memory if they consider and save in memory too
+            // many paths. Usually we can recover from this by ending prematurely while preserving
+            // already computed results.
             final String memoryMessage = "Not enough memory to analyse all options."
                     + " Try setting time limit to lower value, or "
                     + "increase java memory limit.";
             
-            LogManager.getLogger().error(memoryMessage, e);
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e); // do something, don't just swallow the exception, good lord
+            LogManager.getLogger().error(memoryMessage, ex);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex); // do something, don't just swallow the exception, good lord
         }
     }
-    
+
     public static SpheroidPathFinder getInstance(Game game) {
         return new SpheroidPathFinder(game);
     }
-    
+
     private MovePath generateHoverPath(MovePath startingPath) {
         MovePath hoverPath = startingPath.clone();
         hoverPath.addStep(MoveStepType.HOVER);
-        
-        // if we can hover, then hover. If not (due to battle damage or whatever), then we fall down.
-        if (hoverPath.isMoveLegal()) {
-            return hoverPath;
-        } else {
+
+        // If we can hover, then hover. If not (due to battle damage or whatever), then we fall down.
+        if (!hoverPath.isMoveLegal()) {
             hoverPath.removeLastStep();
-            return hoverPath;
         }
+
+        return hoverPath;
     }
     
     /**
@@ -152,11 +148,11 @@ public class SpheroidPathFinder {
                 (startingPath.getMpUsed() > startingPath.getEntity().getRunMP())) {
             return retval;
         }
-        
+
         visitedCoords.add(startingPath.getFinalCoords());
         
         // generate all possible children, add them to list
-        // for units acting as in-atmo spheroid jumpships, facing changes are free, so children are always
+        // for units acting as in-atmo spheroid JumpShips, facing changes are free, so children are always
         // forward, left-forward, left-left-forward, right-forward, right-right-forward, right-right-right-forward
         // there is never a reason to "back up"
         // there are also very little built-in error control, since these things are flying
@@ -167,20 +163,20 @@ public class SpheroidPathFinder {
             for (MoveStepType stepType : AeroPathUtil.TURNS.get(direction)) {
                 childPath.addStep(stepType);
             }
-            
+
             // finally, move forward
             childPath.addStep(MoveStepType.FORWARDS);
-            
+
             // having generated the child, we add it and (recursively) any of its children to the list of children to be returned            
             // of course, if it winds up not being legal anyway for some other reason, then we discard it and move on
             if (!childPath.isMoveLegal()) {
                 continue;
             }
-            
+
             retval.add(childPath.clone());
             retval.addAll(generateChildren(childPath));
         }
-                
+
         return retval;
     }
 }

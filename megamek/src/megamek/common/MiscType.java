@@ -3823,7 +3823,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createClothingLightInfArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Clothing, Light/Naked ;)";
+        misc.name = "Clothing, Light (e.g. Summer Wear/None)";
         misc.setInternalName(misc.name);
         misc.addLookupName("ClothingLightNone");
         misc.damageDivisor = 0.5;
@@ -4122,7 +4122,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createSnowSuitInfArmor() {
         MiscType misc = new MiscType();
-        misc.name = "Snow suit";
+        misc.name = "Snowsuit";
         misc.setInternalName(misc.name);
         misc.addLookupName("SnowSuit");
         misc.damageDivisor = 1.0;
@@ -6788,8 +6788,9 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "238, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3052, 3062, 3067, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setISAdvancement(3052, 3061, 3067, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, true, false, false)
+                .setPrototypeFactions(F_FS, F_LC)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;

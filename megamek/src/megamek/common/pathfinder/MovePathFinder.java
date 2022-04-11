@@ -1,6 +1,5 @@
 /*
-* MegaMek -
-* Copyright (C) 2014 The MegaMek Team
+* Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -12,45 +11,28 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.pathfinder;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityMovementType;
-import megamek.common.Facing;
-import megamek.common.Game;
-import megamek.common.MovePath;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
+import megamek.common.annotations.Nullable;
+import megamek.common.pathfinder.MovePathFinder.CoordsWithFacing;
+
+import java.util.*;
 
 /**
  * Generic implementation of AbstractPathFinder when we restrict graph nodes to
  * (coordinates x facing) and edges to MovePaths. Provides useful
  * implementations of functional interfaces defined in AbstractPathFinder.
  */
-public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsWithFacing, C, MovePath> {
-
+public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, MovePath> {
     /**
      * Node defined by coordinates and unit facing.
      * @author Saginatio
      */
     public static class CoordsWithFacing {
         /**
-         * Returns a list containing six instances of CoordsWithFacing, one for
-         * each facing.
+         * Returns a list containing six instances of CoordsWithFacing, one for each facing.
          *
          * @param c
          */
@@ -112,7 +94,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * FIXME : Current implementation uses MoveStep.isDanger(). This implementation is broken :(
      * FIXME : It does not work properly for movement paths that use running mp.
      */
-    public static class MovePathRiskFilter extends AbstractPathFinder.Filter<MovePath> {
+    public static class MovePathRiskFilter extends Filter<MovePath> {
         @Override
         public boolean shouldStay(MovePath mp) {
             MoveStep step = mp.getLastStep();
@@ -126,8 +108,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     /**
      * Returns the final CoordsWithFacing for a given MovePath.
      */
-    public static class MovePathDestinationMap
-            implements AbstractPathFinder.DestinationMap<CoordsWithFacing, MovePath> {
+    public static class MovePathDestinationMap implements DestinationMap<CoordsWithFacing, MovePath> {
         @Override
         public CoordsWithFacing getDestination(MovePath e) {
             MoveStep lastStep = e.getLastStep();
@@ -152,7 +133,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * <p>
      * Current implementation uses MoveStep.isMovementPossible() to verify legality.
      */
-    public static class MovePathLegalityFilter extends AbstractPathFinder.Filter<MovePath> {
+    public static class MovePathLegalityFilter extends Filter<MovePath> {
         Game game;
 
         public MovePathLegalityFilter(Game game) {
@@ -263,7 +244,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          * set.
          *
          * @param mp the MovePath to be extended
-         * @see AbstractPathFinder.AdjacencyMap
+         * @see AdjacencyMap
          */
         @Override
         public Collection<MovePath> getAdjacent(MovePath mp) {
@@ -359,10 +340,10 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * If none paths are present then {@code null} is returned.
      *
      * @param coords
-     * @param comp - comparator used if multiple paths are present
+     * @param comp comparator used if multiple paths are present
      * @return shortest path to the hex at c coordinates or {@code null}
      */
-    protected C getCost(Coords coords, Comparator<C> comp) {
+    protected @Nullable C getCost(Coords coords, Comparator<C> comp) {
         List<CoordsWithFacing> allFacings = CoordsWithFacing.getAllFacingsAt(coords);
         List<C> paths = new ArrayList<>();
         for (ShortestPathFinder.CoordsWithFacing n : allFacings) {
@@ -372,7 +353,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             }
         }
 
-        return paths.size() > 0 ? Collections.min(paths, comp) : null;
+        return paths.isEmpty() ? null : Collections.min(paths, comp);
     }
-
 }

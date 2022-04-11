@@ -138,7 +138,7 @@ public class BoardsValidator {
         validator.setIsVerbose(!a.isQuiet);
 
         try {
-            if (a.paths.size() == 0) {
+            if (a.paths.isEmpty()) {
                 File boardDir = Configuration.boardsDir();
                 validator.scanForBoards(boardDir);
             } else {

@@ -13,11 +13,9 @@
  */
 package megamek.client.ui.swing.util;
 
-
 import megamek.client.Client;
 import megamek.client.ui.swing.AbstractPhaseDisplay;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Game;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
@@ -31,7 +29,6 @@ import java.awt.event.ActionListener;
  * This class takes a time limit, which is to be set in Basic Options and counts down to zero
  * When zero is reached, the ready() method of the given {@link AbstractPhaseDisplay} is called
  * to end the users current turn.
- *
  */
 public class TurnTimer {
     private Timer timer;
@@ -93,6 +90,7 @@ public class TurnTimer {
 
         });
     }
+
     public void stopTimer() {
         display.setVisible(false);
         phaseDisplay.getClientgui().getMenuBar().remove(display);

@@ -9442,7 +9442,7 @@
 			<availability>General:8</availability>
 		</model>
 		<model name='X'>
-			<availability>CGB:1</availability>
+			<availability>CDS:1:3081,ROS:1:3081,CNC:1:3081,CGB:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Kintaro' unitType='Mek'>
@@ -17931,13 +17931,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:5,HL:4,FRR:3,IS:5,Periphery.Deep:5,WOB:3-,FS:6,Periphery:5,TC:5,CS:3-,LA:5,CGB.FRR:3,CNC:2,FWL:8,NIOPS:3-,MH:4,DC:5</availability>
+		<model name='WVR-1R'>
+			<availability>CC:2-,FWL:2-,FS:2-,MERC:2,RCM:2,DC:2-</availability>
+		</model>
+		<model name='WVR-6D'>
+			<availability>FS:1-</availability>
+		</model>
 		<model name='WVR-6M'>
 			<roles>recon</roles>
 			<availability>Periphery.MW:5,PIR:4,Periphery.ME:5,FWL:3-,MH:4</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>HL:1-,General:3-,Periphery.Deep:8,Periphery:4-</availability>
+			<availability>HL:1-,General:2-,Periphery:3-</availability>
 		</model>
 		<model name='WVR-7D'>
 			<roles>recon</roles>
@@ -17950,6 +17956,9 @@
 		<model name='WVR-7M'>
 			<roles>recon</roles>
 			<availability>CC:4,FWL:6,WOB:5,MERC:6,DC:4</availability>
+		</model>
+		<model name='WVR-7M2'>
+			<availability>CC:6,MOC:2:3081,MERC.KH:5,WOB:6,DO:6,MERC:6,DTA:5,MERC.WD:4,FWL:6,MH:2:3081,DA:6,RCM:2,DC:4</availability>
 		</model>
 		<model name='WVR-8C'>
 			<availability>ROS:4,DC:5</availability>

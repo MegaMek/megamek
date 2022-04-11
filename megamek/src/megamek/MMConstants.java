@@ -72,4 +72,11 @@ public final class MMConstants extends SuiteConstants {
     public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
     public static final double INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP = 0.6;
     //endregion Unsorted Constants
+
+    //region Magic Numbers That Should Be Enums
+    // FIXME : TSEMP Constants
+    public static final int TSEMP_EFFECT_NONE = 0;
+    public static final int TSEMP_EFFECT_INTERFERENCE = 1;
+    public static final int TSEMP_EFFECT_SHUTDOWN = 2;
+    //endregion Magic Numbers That Should Be Enums
 }

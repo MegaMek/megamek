@@ -1635,6 +1635,7 @@ public class TripodMech extends Mech {
     /**
      * Based on the mech's current damage status, return valid brace locations.
      */
+    @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
         

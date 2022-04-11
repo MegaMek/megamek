@@ -26,6 +26,7 @@ import java.security.PrivilegedExceptionAction;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
 
 /**
  * Borrowed code from http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle
@@ -36,7 +37,7 @@ import java.util.ResourceBundle;
  *
  * @author Xenon
  */
-public class EncodeControl extends ResourceBundle.Control {
+public class EncodeControl extends Control {
     @Override
     public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
             throws IllegalAccessException, InstantiationException, IOException {
@@ -49,7 +50,7 @@ public class EncodeControl extends ResourceBundle.Control {
                     throw new ClassCastException(resourceName.getName() + " cannot be cast to ResourceBundle");
                 }
 
-                bundle = (ResourceBundle) resourceName.newInstance();
+                bundle = resourceName.newInstance();
             } catch (ClassNotFoundException var19) {
                 throw (IOException) var19.getException();
             }
@@ -68,25 +69,22 @@ public class EncodeControl extends ResourceBundle.Control {
             InputStream stream = null;
 
             try {
-                stream = (InputStream) AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
-                    @Override
-                    public InputStream run() throws IOException {
-                        InputStream is = null;
-                        if (reloadFlag) {
-                            URL url = classLoader.getResource(resourceName1);
-                            if (url != null) {
-                                URLConnection connection = url.openConnection();
-                                if (connection != null) {
-                                    connection.setUseCaches(false);
-                                    is = connection.getInputStream();
-                                }
+                stream = AccessController.doPrivileged((PrivilegedExceptionAction<InputStream>) () -> {
+                    InputStream is = null;
+                    if (reloadFlag) {
+                        URL url = classLoader.getResource(resourceName1);
+                        if (url != null) {
+                            URLConnection connection = url.openConnection();
+                            if (connection != null) {
+                                connection.setUseCaches(false);
+                                is = connection.getInputStream();
                             }
-                        } else {
-                            is = classLoader.getResourceAsStream(resourceName1);
                         }
-
-                        return is;
+                    } else {
+                        is = classLoader.getResourceAsStream(resourceName1);
                     }
+
+                    return is;
                 });
             } catch (PrivilegedActionException var18) {
                 throw (IOException) var18.getException();

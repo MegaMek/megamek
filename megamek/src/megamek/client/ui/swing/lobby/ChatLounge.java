@@ -42,7 +42,6 @@ import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -54,7 +53,10 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import megamek.common.preference.*;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
@@ -1664,7 +1666,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     public void gameClientFeedbackRequest(GameCFREvent evt) {
         // Do nothing
     }
-
     
     private ActionListener lobbyListener = new ActionListener() {
         @Override
@@ -2156,13 +2157,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     && (game.getEntitiesOwnedBy(localPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
             }
+
             for (Client bc : clientgui.getBots().values()) {
                 if ((game.getLiveCommandersOwnedBy(bc.getLocalPlayer()) < 1)
                         && (game.getEntitiesOwnedBy(bc.getLocalPlayer()) > 0)) {
                     players.add(bc.getLocalPlayer().getName());
                 }
             }
-            if (players.size() > 0) {
+
+            if (!players.isEmpty()) {
                 String title = Messages.getString("ChatLounge.noCmdr.title"); 
                 String msg = Messages.getString("ChatLounge.noCmdr.msg"); 
                 for (String player : players) {
@@ -2171,7 +2174,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 clientgui.doAlertDialog(title, msg);
                 return;
             }
-
         }
 
         boolean done = !localPlayer().isDone();
@@ -2186,6 +2188,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if ((tablePlayers == null) || (tablePlayers.getSelectedRowCount() == 0)) {
             return null;
         }
+
         Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
         if (localPlayer().equals(player)) {
             return client();
@@ -2422,64 +2425,54 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
     
-    private ActionListener playerTableActionListener = new ActionListener() {
-        
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (tablePlayers.getSelectedRowCount() == 0) {
-                return;
-            }
-        
-            StringTokenizer st = new StringTokenizer(e.getActionCommand(), "|");
-            String command = st.nextToken();
-            switch (command) {
-                case PlayerTablePopup.PTP_CONFIG:
-                    configPlayer();
-                    break;
+    private ActionListener playerTableActionListener = evt -> {
+        if (tablePlayers.getSelectedRowCount() == 0) {
+            return;
+        }
 
-                case PlayerTablePopup.PTP_TEAM:
-                    int newTeam = Integer.parseInt(st.nextToken());
-                    lobbyActions.changeTeam(getselectedPlayers(), newTeam);
-                    break;
+        StringTokenizer st = new StringTokenizer(evt.getActionCommand(), "|");
+        String command = st.nextToken();
+        switch (command) {
+            case PlayerTablePopup.PTP_CONFIG:
+                configPlayer();
+                break;
+            case PlayerTablePopup.PTP_TEAM:
+                int newTeam = Integer.parseInt(st.nextToken());
+                lobbyActions.changeTeam(getselectedPlayers(), newTeam);
+                break;
+            case PlayerTablePopup.PTP_BOTREMOVE:
+                removeBot();
+                break;
+            case PlayerTablePopup.PTP_BOTSETTINGS:
+                doBotSettings();
+                break;
+            case PlayerTablePopup.PTP_DEPLOY:
+                int startPos = Integer.parseInt(st.nextToken());
+                if (game().getOptions().booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
+                        && (startPos >= 1) && (startPos <= 9)) {
+                    startPos += 10;
+                }
 
-                case PlayerTablePopup.PTP_BOTREMOVE:
-                    removeBot();
-                    break;
-
-                case PlayerTablePopup.PTP_BOTSETTINGS:
-                    doBotSettings();
-                    break;
-
-                case PlayerTablePopup.PTP_DEPLOY:
-                    int startPos = Integer.parseInt(st.nextToken());
-                    if (game().getOptions().booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
-                            && (startPos >= 1) && (startPos <= 9)) {
-                        startPos += 10;
-                    }
-
-                    for (Player player: getselectedPlayers()) {
-                        if (lobbyActions.isSelfOrLocalBot(player)) {
-                            if (client().isLocalBot(player)) {
-                                // must use the bot's own player object:
-                                client().getBotClient(player).getLocalPlayer().setStartingPos(startPos);
-                                client().getBotClient(player).sendPlayerInfo();
-                            } else {
-                                player.setStartingPos(startPos);
-                                client().sendPlayerInfo();
-                            }
+                for (Player player: getselectedPlayers()) {
+                    if (lobbyActions.isSelfOrLocalBot(player)) {
+                        if (client().isLocalBot(player)) {
+                            // must use the bot's own player object:
+                            client().getBotClient(player).getLocalPlayer().setStartingPos(startPos);
+                            client().getBotClient(player).sendPlayerInfo();
+                        } else {
+                            player.setStartingPos(startPos);
+                            client().sendPlayerInfo();
                         }
                     }
-                    break;
-
-                case PlayerTablePopup.PTP_REPLACE:
-                    Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
-                    configAndCreateBot(player);
-                    break;
-            }
+                }
+                break;
+            case PlayerTablePopup.PTP_REPLACE:
+                Player player = playerModel.getPlayerAt(tablePlayers.getSelectedRow());
+                configAndCreateBot(player);
+                break;
         }
     };
-    
-    
+
     private ArrayList<Player> getselectedPlayers() {
         var result = new ArrayList<Player>(); 
         for (int row: tablePlayers.getSelectedRows()) {
@@ -2492,22 +2485,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     KeyListener mekTableKeyListener = new KeyAdapter() {
-
         @Override
-        public void keyPressed(KeyEvent e) {
+        public void keyPressed(KeyEvent evt) {
             if (mekTable.getSelectedRowCount() == 0) {
                 return;
             }
             List<Entity> entities = getSelectedEntities();
-            int code = e.getKeyCode();
+            int code = evt.getKeyCode();
             if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
-                e.consume();
+                evt.consume();
                 lobbyActions.delete(new ArrayList<>(), entities, true);
             } else if (code == KeyEvent.VK_SPACE) {
-                e.consume();
+                evt.consume();
                 mechReadoutAction(entities);
             } else if (code == KeyEvent.VK_ENTER) {
-                e.consume();
+                evt.consume();
                 if (entities.size() == 1) {
                     lobbyActions.customizeMech(entities.get(0));
                 } else if (canConfigureMultipleDeployment(entities)) {

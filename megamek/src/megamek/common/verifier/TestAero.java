@@ -743,8 +743,9 @@ public class TestAero extends TestEntity {
         int numBombs = 0;
         
         for (Mounted m : aero.getWeaponList()) {
-            if (m.getLocation() == Entity.LOC_NONE)
+            if (m.getLocation() == Entity.LOC_NONE) {
                 continue;
+            }
             
             // Aeros can't use special munitions except for artemis, exceptions
             //  LBX's must use clusters
@@ -1417,7 +1418,7 @@ public class TestAero extends TestEntity {
      * 
      * @param eq       The equipment
      * @param fighter  If the aero is a fighter (including fixed wing support), the ammo is mounted in the
-     *                 fuselage. Otherwise it's in the location with the weapon.
+     *                 fuselage. Otherwise, it's in the location with the weapon.
      * @return         Whether the equipment needs to be assigned to a location with a firing arc.
      */
     public static boolean eqRequiresLocation(EquipmentType eq, boolean fighter) {
@@ -1435,7 +1436,9 @@ public class TestAero extends TestEntity {
         } else if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_CASE)) {
                 return eq.isClan();
-            } else return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
+            } else {
+                return !eq.hasFlag(MiscType.F_BLUE_SHIELD) && !eq.hasFlag(MiscType.F_LIFTHOIST);
+            }
         } else {
             return !(eq instanceof AmmoType);
         }

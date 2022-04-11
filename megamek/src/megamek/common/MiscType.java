@@ -3823,7 +3823,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createClothingLightInfArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Clothing, Light/Naked ;)";
+        misc.name = "Clothing, Light (e.g. Summer Wear/None)";
         misc.setInternalName(misc.name);
         misc.addLookupName("ClothingLightNone");
         misc.damageDivisor = 0.5;
@@ -4122,7 +4122,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createSnowSuitInfArmor() {
         MiscType misc = new MiscType();
-        misc.name = "Snow suit";
+        misc.name = "Snowsuit";
         misc.setInternalName(misc.name);
         misc.addLookupName("SnowSuit");
         misc.damageDivisor = 1.0;

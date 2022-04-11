@@ -247,9 +247,4 @@ public final class TroopSpace implements Transporter {
         troops = new HashMap<>();
         currentSpace = totalSpace;
     }
-    
-    @Override
-    public int hardpointCost() {
-        return 0;
-    }
 }

@@ -300,11 +300,6 @@ class BattleArmorHandles implements Transporter {
     }
     
     @Override
-    public int hardpointCost() {
-        return 0;
-    }
-
-    @Override
     public String toString() {
         return "BattleArmorHandles - troopers:" + troopers;
     }

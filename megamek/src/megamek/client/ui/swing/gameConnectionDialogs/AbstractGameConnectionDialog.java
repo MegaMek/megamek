@@ -99,7 +99,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         initComponents();
 
         // if the player name is specified, overwrite the preference with it
-        if (!StringUtility.isNullOrEmpty(playerName)) {
+        if (!StringUtility.isNullOrBlank(playerName)) {
             setPlayerName(playerName);
         }
     }

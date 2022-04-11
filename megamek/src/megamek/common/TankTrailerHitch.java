@@ -253,11 +253,6 @@ public class TankTrailerHitch implements Transporter {
     }
     
     @Override
-    public int hardpointCost() {
-        return 0;
-    }
-
-    @Override
     public String toString() {
         return "Trailer Hitch:" + getUnused();
     }

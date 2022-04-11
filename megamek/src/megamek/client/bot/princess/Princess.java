@@ -1268,7 +1268,7 @@ public class Princess extends BotClient {
             final List<Entity> ents = game.getEntitiesVector();
             for (final Entity ent : ents) {
                 final String errors = getFireControl(ent).checkAllGuesses(ent, game);
-                if (!StringUtility.isNullOrEmpty(errors)) {
+                if (!StringUtility.isNullOrBlank(errors)) {
                     LogManager.getLogger().warn(errors);
                 }
             }
@@ -1719,7 +1719,7 @@ public class Princess extends BotClient {
 
     public int calculateAdjustment(final String ticks) {
         int adjustment = 0;
-        if (StringUtility.isNullOrEmpty(ticks)) {
+        if (StringUtility.isNullOrBlank(ticks)) {
             return 0;
         }
         for (final char tick : ticks.toCharArray()) {

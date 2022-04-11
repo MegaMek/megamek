@@ -43,6 +43,7 @@ import java.math.BigInteger;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -8354,32 +8355,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Damages a randomly determined docking collar on the entity, if one exists
+     * Damages a randomly determined docking collar on the entity, if one exists.
+     *
+     * @return true if a docking collar was found, false otherwise
      */
     public boolean damageDockCollar() {
-        boolean result = false;
-
-        Vector<DockingCollar> potential;
-        potential = new Vector<>();
-
-        Enumeration<Transporter> iter = transports.elements();
-        while (iter.hasMoreElements()) {
-            Transporter next = iter.nextElement();
-            if (next instanceof DockingCollar) {
-                DockingCollar nextDC = (DockingCollar) next;
-                if (!nextDC.isDamaged()) {
-                    potential.add(nextDC);
-                }
-            }
-        }
-
-        if (!potential.isEmpty()) {
-            DockingCollar chosenDC = potential.elementAt(Compute.randomInt(potential.size()));
+        Vector<DockingCollar> dockingCollars = getDockingCollars();
+        if (!dockingCollars.isEmpty()) {
+            DockingCollar chosenDC = dockingCollars.elementAt(Compute.randomInt(dockingCollars.size()));
             chosenDC.setDamaged(true);
-            result = true;
+            return true;
+        } else {
+            return false;
         }
-
-        return result;
     }
 
     public void pickUp(MechWarrior mw) {
@@ -8514,18 +8502,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return null;
     }
     
+    /**
+     * Returns the DockingCollar with the given ID or null if this unit doesn't have such a
+     * Docking Collar.
+     *
+     * @return the DockingCollar with the given ID or null
+     */
     @Nullable
     public DockingCollar getCollarById(int collarNumber) {
-        //TODO: Change transports to a map or other indexed data structure to avoid
-        // linear-time algorithm.
-        for (Transporter next : transports) {
-            if (next instanceof DockingCollar) {
-                if (((DockingCollar) next).getCollarNumber() == collarNumber) {
-                    return (DockingCollar) next;
-                }
-            }
-        }
-        return null;
+        return getDockingCollars().stream()
+                .filter(dc -> dc.getCollarNumber() == collarNumber)
+                .findAny().orElse(null);
     }
 
     /**
@@ -8659,19 +8646,15 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @return get the bays separately
+     * Returns a list of all Docking Collars (Hardpoints) of this unit.
+     *
+     * @return a list of all Docking Collars.
      */
     public Vector<DockingCollar> getDockingCollars() {
-        Vector<DockingCollar> result = new Vector<>();
-
-        for (Transporter next : transports) {
-            if (next instanceof DockingCollar) {
-                result.addElement((DockingCollar) next);
-            }
-        }
-
-        // Return the list.
-        return result;
+        return transports.stream()
+                .filter(t -> t instanceof DockingCollar)
+                .map(t -> (DockingCollar) t)
+                .collect(Collectors.toCollection(Vector::new));
     }
 
     /**
@@ -8772,39 +8755,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return result;
     }
 
-    public Vector<Entity> getLoadedDropships() {
-        Vector<Entity> result = new Vector<>();
-
-        // Walk through this entity's transport components;
-        // add all of their lists to ours.
-        for (Transporter next : transports) {
-            if (next instanceof DockingCollar) {
-                for (Entity e : next.getLoadedUnits()) {
-                    result.addElement(e);
-                }
-            }
-        }
-
-        // Return the list.
-        return result;
-    }
-
-    public Vector<Entity> getLaunchableDropships() {
-        Vector<Entity> result = new Vector<>();
-
-        // Walk through this entity's transport components;
-        // add all of their lists to ours.
-        for (Transporter next : transports) {
-            if (next instanceof DockingCollar) {
-                DockingCollar collar = (DockingCollar) next;
-                for (Entity e : collar.getLaunchableUnits()) {
-                    result.addElement(e);
-                }
-            }
-        }
-
-        // Return the list.
-        return result;
+    /**
+     * Returns a list of DropShips launchable from any of the Transport
+     * facilities of this unit. The list may be empty but not null.
+     *
+     * @return A list of launchable DropShips.
+     */
+    public List<Entity> getLaunchableDropships() {
+        return transports.stream()
+                .filter(t -> t instanceof DockingCollar)
+                .map(t -> ((DockingCollar) t).getLaunchableUnits())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -9080,11 +9042,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public int getTransportId() {
         return conveyance;
-    }
-
-    @Override
-    public int hardpointCost() {
-        return 0;
     }
 
     /**
@@ -14917,7 +14874,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         for (QuirkEntry q : quirks) {
             // If the quirk doesn't have a location, then it is a unit quirk,
             // not a weapon quirk.
-            if (StringUtility.isNullOrEmpty(q.getLocation())) {
+            if (StringUtility.isNullOrBlank(q.getLocation())) {
 
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {

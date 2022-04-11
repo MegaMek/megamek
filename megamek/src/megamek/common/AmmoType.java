@@ -13720,6 +13720,10 @@ public class AmmoType extends EquipmentType {
                 && (otherAmmo.getAmmoType() == AmmoType.T_MML)
                 && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
 
+        // AR10 ammo is explicitly excluded in equalsAmmoTypeOnly(), therefore check here
+        boolean ar10Match = (currentAmmoType.getAmmoType() == AmmoType.T_AR10)
+                && (otherAmmo.getAmmoType() == AmmoType.T_AR10);
+
         // LBXs can swap between cluster and slug ammo types
         boolean lbxAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX)
                 && (otherAmmo.getAmmoType() == AmmoType.T_AC_LBX)
@@ -13733,6 +13737,6 @@ public class AmmoType extends EquipmentType {
         boolean staticFeedMismatch = hasStaticFeed
                 && (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
 
-        return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch) && !caselessMismatch && !staticFeedMismatch;
+        return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch || ar10Match) && !caselessMismatch && !staticFeedMismatch;
     }
 }

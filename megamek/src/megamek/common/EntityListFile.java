@@ -1147,7 +1147,7 @@ public class EntityListFile {
         }
 
         String extraData = crew.writeExtraDataToXMLLine(pos);
-        if (!StringUtility.isNullOrEmpty(extraData)) {
+        if (!StringUtility.isNullOrBlank(extraData)) {
             output.write(extraData);
         }
     }

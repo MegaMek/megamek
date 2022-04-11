@@ -515,11 +515,6 @@ public class Bay implements Transporter, ITechnology {
     }
 
     @Override
-    public int hardpointCost() {
-        return 0;
-    }
-
-    @Override
     public void setGame(Game game) {
         this.game = game;
     }

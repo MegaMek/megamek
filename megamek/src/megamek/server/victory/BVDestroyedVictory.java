@@ -95,8 +95,7 @@ public class BVDestroyedVictory extends AbstractBVVictory {
     }
 
     static boolean verifyVictory(VictoryResult vr, Player player, int team, Report r) {
-        boolean victory;
-        victory = true;
+        boolean victory = true;
         if (team == Player.TEAM_NONE) {
             r.add(player.getName());
             vr.addPlayerScore(player.getId(), 1.0);

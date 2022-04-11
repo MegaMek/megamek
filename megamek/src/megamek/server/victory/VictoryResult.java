@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A Victory Result stores player scores and a flag if a game-ending victory is achieved or not
@@ -63,7 +64,7 @@ public class VictoryResult {
         double max = Double.MIN_VALUE;
         int maxEntity = defaultEntity;
         boolean draw = false;
-        for (Map.Entry<Integer, Double> entry : entities.entrySet()) {
+        for (Entry<Integer, Double> entry : entities.entrySet()) {
             if (entry.getValue() == max) {
                 draw = true;
             }

@@ -40,6 +40,13 @@ public class BVDestroyedVictory extends AbstractBVVictory {
         VictoryResult vr = new VictoryResult(true);
         // now check for detailed victory conditions...
         HashSet<Integer> doneTeams = new HashSet<>();
+        victory = checkVictoryConditions(game, false, vr, doneTeams);
+        if (victory)
+            return vr;
+        return VictoryResult.noResult();
+    }
+
+    private boolean checkVictoryConditions(Game game, boolean victory, VictoryResult vr, HashSet<Integer> doneTeams) {
         for (Player player : game.getPlayersVector()) {
             Integer team = getIntegerTeam(doneTeams, player);
             if (team == null)
@@ -47,23 +54,26 @@ public class BVDestroyedVictory extends AbstractBVVictory {
             int ebv = getEnemyBV(game, player);
             int eibv = getEnemyInitialBV(game, player);
 
-            if (eibv != 0 && (ebv * 100) / eibv <= 100 - destroyedPercent) {
-                Report r = new Report(7105, Report.PUBLIC);
-                victory = true;
-                if (team == Player.TEAM_NONE) {
-                    r.add(player.getName());
-                    vr.addPlayerScore(player.getId(), 1.0);
-                } else {
-                    r.add("Team " + team);
-                    vr.addTeamScore(team, 1.0);
-                }
-                r.add(100 - ((ebv * 100) / eibv));
-                vr.addReport(r);
-            }
+            victory = addVictoryToRepport(victory, vr, player, team, ebv, eibv);
         }// end for
-        if (victory)
-            return vr;
-        return VictoryResult.noResult();
+        return victory;
+    }
+
+    private boolean addVictoryToRepport(boolean victory, VictoryResult vr, Player player, Integer team, int ebv, int eibv) {
+        if (eibv != 0 && (ebv * 100) / eibv <= 100 - destroyedPercent) {
+            Report r = new Report(7105, Report.PUBLIC);
+            victory = true;
+            if (team == Player.TEAM_NONE) {
+                r.add(player.getName());
+                vr.addPlayerScore(player.getId(), 1.0);
+            } else {
+                r.add("Team " + team);
+                vr.addTeamScore(team, 1.0);
+            }
+            r.add(100 - ((ebv * 100) / eibv));
+            vr.addReport(r);
+        }
+        return victory;
     }
 
     private Integer getIntegerTeam(HashSet<Integer> doneTeams, Player player) {

@@ -464,7 +464,7 @@ public class JumpShipBVCalculator {
         bvReport.addLine("Weapons BV * Speed Factor ", weaponBV + " * " + speedFactor, "", obv);
 
         double finalBV = dbv + obv;
-        bvReport.addLine("Offensive BV + Defensive BV",obv + " + " + dbv, "");
+        bvReport.addLine("Offensive BV + Defensive BV", obv + " + " + dbv, "");
         bvReport.addResultLine("Final BV", "", finalBV);
 
         // we get extra bv from some stuff

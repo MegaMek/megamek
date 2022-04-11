@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.BattleArmorBVCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
@@ -865,8 +867,8 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**
@@ -887,7 +889,8 @@ public class BattleArmor extends Infantry {
         if (useManualBV) {
             return manualBV; // TODO : divide by the number of troopers when singleTrooper is true?
         }
-        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText, singleTrooper);
+        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill,
+                new DummyCalculationReport(), singleTrooper);
     }
 
     /**

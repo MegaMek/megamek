@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -100,7 +101,7 @@ public class MechWarrior extends EjectedCrew {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
         return 0;
     }
 

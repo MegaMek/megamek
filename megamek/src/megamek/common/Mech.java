@@ -15,6 +15,8 @@
 */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.MekBVCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.loaders.MtfFile;
@@ -3299,8 +3301,8 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return MekBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return MekBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**

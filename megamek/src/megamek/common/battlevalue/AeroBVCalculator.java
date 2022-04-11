@@ -18,43 +18,35 @@
  */
 package megamek.common.battlevalue;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.weapons.ppc.PPCWeapon;
 
 import java.util.*;
 
-public class AeroBVCalculator extends BVCalculator {
+public class AeroBVCalculator {
 
-    public static int calculateBV(Aero aero, boolean ignoreC3, boolean ignoreSkill, StringBuffer bvText) {
-        bvText.delete(0, bvText.length());
-        bvText.append("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-        bvText.append(aero.getChassis());
-        bvText.append(" ");
-        bvText.append(aero.getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
+    public static int calculateBV(Aero aero, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+        bvReport.addHeader("Battle Value Calculations For");
+        bvReport.addHeader(aero.getChassis() + " " + aero.getModel());
 
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
-
+        bvReport.addSubHeader("Defensive Battle Rating Calculation:");
         double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
-
-        double armorMultiplier = 1.0;
-
         boolean blueShield = aero.hasWorkingMisc(MiscType.F_BLUE_SHIELD);
+        double armorMultiplier;
 
         // Ignore any hull/fuselage or capital fighter wing locations
         for (int loc = 0; loc < aero.locations() - ((aero instanceof SmallCraft) ? 1 : 2); loc++) {
             int modularArmor = 0;
             for (Mounted mounted : aero.getEquipment()) {
-                if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
+                if ((mounted.getType() instanceof MiscType)
+                        && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
                         && (mounted.getLocation() == loc)) {
                     modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
                 }
             }
-            // total armor points
 
+            // total armor points
             switch (aero.getArmorType(loc)) {
                 case EquipmentType.T_ARMOR_COMMERCIAL:
                     armorMultiplier = 0.5;
@@ -83,53 +75,19 @@ public class AeroBVCalculator extends BVCalculator {
             if (blueShield) {
                 armorMultiplier += 0.2;
             }
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
             int armor = aero.getArmor(loc) + modularArmor;
-            bvText.append("Total Armor " + aero.getLocationAbbr(loc) + " (" + armor + ") x ");
-            bvText.append(armorMultiplier);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
             double armorBV = (aero.getArmor(loc) + modularArmor) * armorMultiplier;
-            bvText.append(armorBV);
             dbv += armorBV;
-            bvText.append(endColumn);
+            bvReport.addLine("Total Armor " + aero.getLocationAbbr(loc) + " ("
+                    + armor + ") x " + armorMultiplier, "", armorBV);
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total modified armor BV x 2.5 ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
         dbv *= 2.5;
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total SI x 2 x SI modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
+        bvReport.addLine("Total modified armor BV x 2.5", "= ", dbv);
         double dbvSI = aero.getSI() * 2.0 * (blueShield ? 1.2 : 1);
         dbv += dbvSI;
-
-        bvText.append(aero.getSI());
-        bvText.append(" x 2 x ");
-        bvText.append(blueShield ? 1.2 : 1);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(dbvSI);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total SI x 2 x SI modifier",
+                aero.getSI() + " x 2 x " + (blueShield ? 1.2 : 1),
+                "= ", dbvSI);
 
         // add defensive equipment
         double amsBV = 0;
@@ -140,164 +98,53 @@ public class AeroBVCalculator extends BVCalculator {
         for (Mounted mounted : aero.getEquipment()) {
             EquipmentType etype = mounted.getType();
 
-            // don't count destroyed equipment
             if (mounted.isDestroyed()) {
                 continue;
             }
-            // don't count weapon groups
             if (mounted.isWeaponGroup()) {
                 continue;
             }
             if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS)) {
                 amsBV += etype.getBV(aero);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(aero));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + etype.getBV(aero), "");
             } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
                 amsAmmoBV += etype.getBV(aero);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(aero));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + etype.getBV(aero), "");
             } else if ((etype instanceof AmmoType)
                     && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
                 screenAmmoBV += etype.getBV(aero);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(aero));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + etype.getBV(aero), "");
             } else if ((etype instanceof WeaponType)
                     && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
                 screenBV += etype.getBV(aero);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(etype.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(aero));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(etype.getName(), "+ " + etype.getBV(aero), "");
             } else if ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP)
                     || etype.hasFlag(MiscType.F_CHAFF_POD))) {
                 defEqBV += etype.getBV(aero);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append("+");
-                bvText.append(etype.getBV(aero));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(mounted.getName(), "+ " + etype.getBV(aero), "");
             }
         }
         if (amsBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total AMS BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(amsBV);
             dbv += amsBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total AMS BV:", "+ ", amsBV);
         }
         if (screenBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total Screen BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(screenBV);
             dbv += screenBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total Screen BV:", "", screenBV);
         }
         if (amsAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total AMS Ammo BV (to a maximum of AMS BV):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(Math.min(amsBV, amsAmmoBV));
             dbv += Math.min(amsBV, amsAmmoBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total AMS Ammo BV (to a maximum of AMS BV):", "", Math.min(amsBV, amsAmmoBV));
         }
         if (screenAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total Screen Ammo BV (to a maximum of Screen BV):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(Math.min(screenBV, screenAmmoBV));
             dbv += Math.min(screenBV, screenAmmoBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total Screen Ammo BV (to a maximum of Screen BV):", "", Math.min(screenBV, screenAmmoBV));
         }
         if (defEqBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total misc defensive equipment BV:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(defEqBV);
             dbv += defEqBV;
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Total misc defensive equipment BV:", "", defEqBV);
         }
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("", dbv);
 
         // subtract for explosive ammo
         double explosivePenalty = 0;
@@ -361,127 +208,32 @@ public class AeroBVCalculator extends BVCalculator {
         }
         explosivePenalty += ammos.size() * 15;
         dbv = Math.max(1, dbv - explosivePenalty);
+        bvReport.addLine("Explosive Weapons / Equipment Penalty ", "= -", explosivePenalty);
+        bvReport.addResultLine("", dbv);
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Explosive Weapons / Equipment Penalty ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= -");
-        bvText.append(explosivePenalty);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Unit Type Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(aero.getBVTypeModifier());
+        String typeModText = "" + aero.getBVTypeModifier();
         if (aero.hasStealth()) {
-            bvText.append("+ 0.3 for Stealth");
+            typeModText += "+ 0.3 for Stealth";
         }
-        bvText.append(endColumn);
-        // unit type multiplier
         dbv *= (aero.getBVTypeModifier() + (aero.hasStealth() ? 0.3 : 0));
-        bvText.append(startColumn);
-        bvText.append("x" + (aero.getBVTypeModifier() + (aero.hasStealth() ? 0.3 : 0)));
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Multiply by Unit Type Modifier", typeModText,
+                "x ", aero.getBVTypeModifier() + (aero.hasStealth() ? 0.3 : 0));
+        bvReport.addResultLine("", dbv);
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addSubHeader("Offensive Battle Rating Calculation:");
         // calculate heat efficiency
         int aeroHeatEfficiency = 6 + aero.getHeatCapacity();
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Base Heat Efficiency ");
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(aeroHeatEfficiency);
-
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Unmodified Weapon BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Base Heat Efficiency", "", aeroHeatEfficiency);
+        bvReport.addLine("Unmodified Weapon BV:", "", "");
 
         double weaponBV = 0;
         boolean hasTargComp = aero.hasTargComp();
-
         double targetingSystemBVMod = 1.0;
 
         if (aero instanceof FixedWingSupport) {
-            if (aero.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
-                targetingSystemBVMod = 1.0;
-            } else if (aero.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
+            if (aero.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)) {
                 targetingSystemBVMod = 0.9;
-            } else {
+            } else if (!aero.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
                 targetingSystemBVMod = 0.8;
             }
         }
@@ -531,50 +283,23 @@ public class AeroBVCalculator extends BVCalculator {
                 }
                 dBV = mgBV * 0.67;
             }
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append(name);
+            String wName = name;
             if (weapon.isRearMounted() || (weapon.getLocation() == Aero.LOC_AFT)) {
                 bvRear += dBV;
-                bvText.append(" (R)");
+                wName += " (R)";
             } else {
                 bvFront += dBV;
             }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(dBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine(wName, "", dBV);
         }
         boolean halveRear = true;
         if (bvFront <= bvRear) {
             halveRear = false;
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("halving front instead of rear weapon BVs");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startRow);
-            bvText.append(startColumn);
+            bvReport.addLine("halving front instead of rear weapon BVs", "", "");
         }
+        bvReport.addLine("Weapon Heat:", "", "");
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapon Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // here we store the modified BV and heat of all heat-using weapons,
-        // to later be sorted by BV
+        // here we store the modified BV and heat of all heat-using weapons, to later be sorted by BV
         ArrayList<ArrayList<Object>> heatBVs = new ArrayList<>();
         // BVs of non-heat-using weapons
         ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<>();
@@ -628,28 +353,15 @@ public class AeroBVCalculator extends BVCalculator {
             }
             String name = wtype.getName();
 
-            // check to see if the weapon is a PPC and has a Capacitor attached
-            // to it
+            // check to see if the weapon is a PPC and has a Capacitor attached to it
             if (wtype.hasFlag(WeaponType.F_PPC) && (mounted.getLinkedBy() != null)) {
                 name = name.concat(" with Capacitor");
                 weaponHeat += 5;
             }
 
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append(name);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+ ");
-            bvText.append(weaponHeat);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine(name, "", "+ ", weaponHeat);
 
             double dBV = wtype.getBV(aero);
-
             if (aero.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
                 dBV *= 0.8;
             }
@@ -684,11 +396,9 @@ public class AeroBVCalculator extends BVCalculator {
                 }
                 dBV = mgBV * 0.67;
             }
-            // artemis bumps up the value
-            // PPC caps do, too
+            // artemis bumps up the value, PPC caps do, too
             if (mounted.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
+                // check to see if the weapon is a PPC and has a Capacitor attached to it
                 if (wtype.hasFlag(WeaponType.F_PPC)) {
                     dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(aero, mounted);
                     name = name.concat(" with Capacitor");
@@ -738,14 +448,13 @@ public class AeroBVCalculator extends BVCalculator {
             // then a String (weapon name)
             // for 0 heat weapons, just stores BV and name
             ArrayList<Object> weaponValues = new ArrayList<>();
+            weaponValues.add(dBV);
             if (weaponHeat > 0) {
                 // store heat and BV, for sorting a few lines down;
-                weaponValues.add(dBV);
                 weaponValues.add(weaponHeat);
                 weaponValues.add(weaponName);
                 heatBVs.add(weaponValues);
             } else {
-                weaponValues.add(dBV);
                 weaponValues.add(weaponName);
                 nonHeatBVs.add(weaponValues);
             }
@@ -765,93 +474,24 @@ public class AeroBVCalculator extends BVCalculator {
             }
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(maximumHeat);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapons with no heat at full BV:");
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("Total Heat:", "= ", maximumHeat);
+        bvReport.addLine("Weapons with no heat at full BV:", "", "");
         // count heat-free weapons always at full modified BV
         for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
             weaponBV += (Double) nonHeatWeapon.get(0);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(nonHeatWeapon.get(1));
-            if (nonHeatWeapon.get(1).toString().length() < 8) {
-                bvText.append("\t");
-            }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(nonHeatWeapon.get(0));
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine((String) nonHeatWeapon.get(1), "", "", (Double) nonHeatWeapon.get(0));
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Heat Modified Weapons BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Heat Modified Weapons BV: ", "", "");
         if (maximumHeat > aeroHeatEfficiency) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("(Heat Exceeds Aero Heat Efficiency) ");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("(Heat Exceeds Aero Heat Efficiency) ", "", "");
         }
 
         if (maximumHeat <= aeroHeatEfficiency) {
-            // count all weapons equal, adjusting for rear-firing and excessive
-            // ammo
+            // count all weapons equal, adjusting for rear-firing and excessive ammo
             for (ArrayList<Object> weaponValues : heatBVs) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(2));
                 weaponBV += (Double) weaponValues.get(0);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(0));
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine((String) weaponValues.get(2), "", (Double) weaponValues.get(0));
             }
         } else {
             // this will count heat-generating weapons at full modified BV until
@@ -876,75 +516,25 @@ public class AeroBVCalculator extends BVCalculator {
             });
 
             // count heat-generating weapons at full modified BV until
-            // heatefficiency is reached or
-            // passed with one weapon
+            // heatefficiency is reached or passed with one weapon
             double heatAdded = 0;
             for (ArrayList<Object> weaponValues : heatBVs) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(2));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
                 double dBV = (Double) weaponValues.get(0);
                 if (heatAdded >= aeroHeatEfficiency) {
                     dBV /= 2;
                 }
+                String heatText = "";
                 if (heatAdded >= aeroHeatEfficiency) {
-                    bvText.append("Heat efficiency reached, half BV");
+                    heatText = "Heat efficiency reached, half BV";
                 }
                 heatAdded += (Double) weaponValues.get(1);
                 weaponBV += dBV;
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(dBV);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append("Heat count: " + heatAdded);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine((String) weaponValues.get(2), heatText, "", dBV);
+                bvReport.addLine("Heat count: " + heatAdded, "", "");
             }
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Weapons BV Adjusted For Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Misc Offensive Equipment: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("Total Weapons BV Adjusted For Heat:", "", weaponBV);
+        bvReport.addLine("Misc Offensive Equipment:", "", "");
 
         // add offensive misc. equipment BV
         double oEquipmentBV = 0;
@@ -962,32 +552,11 @@ public class AeroBVCalculator extends BVCalculator {
             }
             double bv = mtype.getBV(aero);
             if (bv > 0) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(bv);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(mounted.getName(), "", bv);
             }
             oEquipmentBV += bv;
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Misc Offensive Equipment BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(oEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Total Misc Offensive Equipment BV: ", "", oEquipmentBV);
         weaponBV += oEquipmentBV;
 
         // add ammo bv
@@ -1035,8 +604,7 @@ public class AeroBVCalculator extends BVCalculator {
                                     tagBV += atype.getBV(aero);
                                 }
                                 // A player can't be on two teams.
-                                // If we check his team and don't give the
-                                // penalty, that's it.
+                                // If we check his team and don't give the penalty, that's it.
                                 break;
                             }
                         }
@@ -1056,8 +624,7 @@ public class AeroBVCalculator extends BVCalculator {
 
         // Excessive ammo rule:
         // Only count BV for ammo for a weapontype until the BV of all weapons
-        // of that
-        // type on the mech is reached.
+        // of that type on the mech is reached.
         for (String key : keys) {
             if (weaponsForExcessiveAmmo.get(key) != null) {
                 if (ammo.get(key) > weaponsForExcessiveAmmo.get(key)) {
@@ -1068,65 +635,17 @@ public class AeroBVCalculator extends BVCalculator {
             }
         }
         weaponBV += ammoBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Ammo BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(ammoBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total Ammo BV: ", "", ammoBV);
 
         // adjust further for speed factor
         double speedFactor = Math.pow(1 + (((double) aero.getRunMP() - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
+        bvReport.addLine("Final Speed Factor: ", "", speedFactor);
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Final Speed Factor: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        double obv; // offensive bv
         obv = weaponBV * speedFactor;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Weapons BV * Speed Factor ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(weaponBV);
-        bvText.append(" * ");
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        if (aero.useGeometricMeanBV()) {
-            bvText.append("2 * sqrt(Offensive BV * Defensive BV");
-        } else {
-            bvText.append("Offensive BV + Defensive BV");
-        }
-        bvText.append(endColumn);
-        bvText.append(startColumn);
+        bvReport.addLine("Weapons BV * Speed Factor ",
+                weaponBV + " x " + speedFactor, "= ", obv);
 
         double finalBV;
         if (aero.useGeometricMeanBV()) {
@@ -1134,28 +653,14 @@ public class AeroBVCalculator extends BVCalculator {
             if (finalBV == 0) {
                 finalBV = dbv + obv;
             }
-            bvText.append("2 * sqrt(");
-            bvText.append(obv);
-            bvText.append(" + ");
-            bvText.append(dbv);
-            bvText.append(")");
+            bvReport.addLine("2 * sqrt(Offensive BV * Defensive BV",
+                    "2 * sqrt(" + obv + " + " + dbv + ")", "= ", finalBV);
         } else {
             finalBV = dbv + obv;
-            bvText.append(dbv);
-            bvText.append(" + ");
-            bvText.append(obv);
+            bvReport.addLine("Offensive BV + Defensive BV",
+                    obv + " + " + dbv, "= ", finalBV);
         }
         double totalBV = finalBV;
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
 
         double cockpitMod = 1;
         if (aero.getCockpitType() == Aero.COCKPIT_SMALL) {
@@ -1165,45 +670,12 @@ public class AeroBVCalculator extends BVCalculator {
             finalBV *= 0.95;
         }
         finalBV = Math.round(finalBV);
-        bvText.append("Total BV * Cockpit Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(totalBV);
-        bvText.append(" * ");
-        bvText.append(cockpitMod);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Final BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total BV * Cockpit Modifier",
+                totalBV + " x " + cockpitMod, "= ", finalBV);
+        bvReport.addResultLine("Final BV", "", finalBV);
 
         // We need to consider external stores. Per TechManual Pg314,
-        // TM BV Errata Pg23, the external stores BV is added to the
-        // units base BV
+        // TM BV Errata Pg23, the external stores BV is added to the units base BV
         boolean hasBombs = false;
         double bombBV = 0;
         for (int bombType = 0; bombType < BombType.B_NUM; bombType++) {
@@ -1215,44 +687,9 @@ public class AeroBVCalculator extends BVCalculator {
         }
         finalBV += bombBV;
         if (hasBombs) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("External Stores BV");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(bombBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append("-------------");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Final BV");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(finalBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("External Stores BV", "", bombBV);
+            bvReport.addResultLine("Final BV", "", finalBV);
         }
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
 
         // we get extra bv from some stuff
         double xbv = 0.0;
@@ -1260,10 +697,8 @@ public class AeroBVCalculator extends BVCalculator {
         xbv += tagBV;
         // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here. could be better
-        // also, each 'has' loops through all equipment. inefficient to do it 3
-        // times
+        // also, each 'has' loops through all equipment. inefficient to do it 3 times
         if (!ignoreC3 && (aero.getGame() != null)) {
-
             xbv += aero.getExtraC3BV((int) Math.round(finalBV));
         }
         finalBV += xbv;
@@ -1274,8 +709,6 @@ public class AeroBVCalculator extends BVCalculator {
             pilotFactor = aero.getCrew().getBVSkillMultiplier(aero.getGame());
         }
 
-        int retVal = (int) Math.round(finalBV * pilotFactor);
-
-        return retVal;
+        return (int) Math.round(finalBV * pilotFactor);
     }
 }

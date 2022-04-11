@@ -18,6 +18,7 @@
  */
 package megamek.common.battlevalue;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
@@ -35,25 +36,16 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MekBVCalculator extends BVCalculator {
+public class MekBVCalculator {
 
-    public static int calculateBV(Mech mek, boolean ignoreC3, boolean ignoreSkill, StringBuffer bvText) {
-        bvText.delete(0, bvText.length());
-        bvText.append("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-        bvText.append(mek.getChassis());
-        bvText.append(" ");
-        bvText.append(mek.getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
+    public static int calculateBV(Mech mek, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+        bvReport.addHeader("Battle Value Calculations For " + mek.getChassis() + " " + mek.getModel());
+        bvReport.addSubHeader("Defensive Battle Rating Calculation:");
 
         double dbv = 0; // defensive battle value
         double obv; // offensive bv
 
-        double armorMultiplier = 1.0;
-        bvText.append(startTable);
+        double armorMultiplier;
         for (int loc = 0; loc < mek.locations(); loc++) {
             // total armor points
             switch (mek.getArmorType(loc)) {
@@ -91,59 +83,27 @@ public class MekBVCalculator extends BVCalculator {
             }
 
             // BV for torso mounted cockpit.
-            if ((mek.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                    && (loc == Mech.LOC_CT)) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                double cockpitArmor = mek.getArmor(Mech.LOC_CT)
-                        + mek.getArmor(Mech.LOC_CT, true);
+            if ((mek.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (loc == Mech.LOC_CT)) {
+                double cockpitArmor = mek.getArmor(Mech.LOC_CT) + mek.getArmor(Mech.LOC_CT, true);
                 cockpitArmor *= armorMultiplier;
-                bvText.append("extra BV for torso mounted cockpit");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(cockpitArmor);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine("Extra BV for torso mounted cockpit", "" + cockpitArmor);
                 dbv += cockpitArmor;
             }
             int modularArmor = 0;
             for (Mounted mounted : mek.getMisc()) {
-                if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
-                        && (mounted.getLocation() == loc)) {
-                    modularArmor += mounted.getBaseDamageCapacity()
-                            - mounted.getDamageTaken();
+                if (mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR) && (mounted.getLocation() == loc)) {
+                    modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
                 }
             }
-            int armor = mek.getArmor(loc)
-                    + (mek.hasRearArmor(loc) ? mek.getArmor(loc, true) : 0);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Total Armor "
-                    + mek.getLocationAbbr(loc)
-                    + " ("
-                    + armor
-                    + (modularArmor > 0 ? " +" + modularArmor + " modular" : "")
-                    + ") x ");
-            bvText.append(armorMultiplier);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
+            int armor = mek.getArmor(loc) + (mek.hasRearArmor(loc) ? mek.getArmor(loc, true) : 0);
             double armorBV = (armor + modularArmor) * armorMultiplier;
             dbv += armorBV;
-            bvText.append(armorBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            String type = "Total Armor " + mek.getLocationAbbr(loc) + " (" + armor
+                    + (modularArmor > 0 ? " +" + modularArmor + " modular" : "") + ") x " + armorMultiplier;
+            bvReport.addLine(type, "" + armorBV);
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total modified armor BV x 2.5 ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
         dbv *= 2.5;
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total modified armor BV x 2.5 ", "= ", dbv);
 
         // total internal structure
         double internalMultiplier = 1.0;
@@ -159,57 +119,17 @@ public class MekBVCalculator extends BVCalculator {
 
         dbv += mek.getTotalInternal() * internalMultiplier * 1.5
                 * (mek.hasEngine() ? mek.getEngine().getBVMultiplier() : 1.0);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total I.S. Points x IS Multipler x 1.5 x Engine Multipler");
-
-        bvText.append(endColumn + startColumn);
-        bvText.append(mek.getTotalInternal());
-        bvText.append(" x ");
-        bvText.append(internalMultiplier);
-        bvText.append(" x ");
-        bvText.append("1.5 x ");
-        bvText.append(mek.hasEngine() ? mek.getEngine().getBVMultiplier() : 1.0);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= ");
-        bvText.append(mek.getTotalInternal() * internalMultiplier * 1.5
-                * (mek.hasEngine() ? mek.getEngine().getBVMultiplier() : 1.0));
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        double structMult = mek.hasEngine() ? mek.getEngine().getBVMultiplier() : 1.0;
+        bvReport.addLine("Total I.S. Points x IS Multipler x 1.5 x Engine Multipler",
+                mek.getTotalInternal() + " x " + internalMultiplier + " x 1.5 x " + structMult,
+                "= " + mek.getTotalInternal() * internalMultiplier * 1.5 * structMult);
 
         // add gyro
         dbv += mek.getWeight() * mek.getGyroMultiplier();
+        bvReport.addLine("Weight x Gyro Multipler ", mek.getWeight() + " x " + mek.getGyroMultiplier(),
+                "= " + mek.getWeight() * mek.getGyroMultiplier());
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Weight x Gyro Multipler ");
-        bvText.append(endColumn + startColumn);
-        bvText.append(mek.getWeight());
-        bvText.append(" x ");
-        bvText.append(mek.getGyroMultiplier());
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= ");
-        bvText.append(mek.getWeight() * mek.getGyroMultiplier());
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Defensive Equipment:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Defensive Equipment:", "", "");
         double amsAmmoBV = 0;
         for (Mounted mounted : mek.getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
@@ -229,7 +149,8 @@ public class MekBVCalculator extends BVCalculator {
             }
 
             if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)
-                    || etype.hasFlag(WeaponType.F_M_POD) || etype.hasFlag(WeaponType.F_B_POD)))
+                    || etype.hasFlag(WeaponType.F_M_POD)
+                    || etype.hasFlag(WeaponType.F_B_POD)))
                     || ((etype instanceof MiscType) && (etype.hasFlag(MiscType.F_ECM)
                     || etype.hasFlag(MiscType.F_BAP)
                     || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
@@ -242,8 +163,10 @@ public class MekBVCalculator extends BVCalculator {
                     || etype.hasFlag(MiscType.F_CHAFF_POD)
                     || etype.hasFlag(MiscType.F_HARJEL_II)
                     || etype.hasFlag(MiscType.F_HARJEL_III)
-                    || etype.hasFlag(MiscType.F_SPIKES) || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE)
-                    || etype.hasSubType(MiscType.S_SHIELD_MEDIUM) || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
+                    || etype.hasFlag(MiscType.F_SPIKES)
+                    || (etype.hasFlag(MiscType.F_CLUB) && (etype.hasSubType(MiscType.S_SHIELD_LARGE)
+                    || etype.hasSubType(MiscType.S_SHIELD_MEDIUM)
+                    || etype.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
                 double bv = etype.getBV(mek);
                 if (etype instanceof WeaponType) {
                     WeaponType wtype = (WeaponType) etype;
@@ -253,68 +176,23 @@ public class MekBVCalculator extends BVCalculator {
                     }
                 }
                 dEquipmentBV += bv;
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                bvText.append("+");
-                bvText.append(bv);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(mounted.getName(), "+" + bv);
             }
         }
         if (amsAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("AMS Ammo (to a maximum of AMS BV)");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+");
-            bvText.append(Math.min(amsBV, amsAmmoBV));
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("AMS Ammo (to a maximum of AMS BV)", "+" + Math.min(amsBV, amsAmmoBV));
             dEquipmentBV += Math.min(amsBV, amsAmmoBV);
         }
 
         dbv += dEquipmentBV;
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
         double armoredBVCal = mek.getArmoredComponentBV();
-
         if (armoredBVCal > 0) {
-            bvText.append("Armored Components BV Modification");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append("+");
-            bvText.append(armoredBVCal);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Armored Components BV Modification", "+" + armoredBVCal);
             dbv += armoredBVCal;
         }
 
-        bvText.append("Total BV of all Defensive Equipment ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= ");
-        bvText.append(dEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total BV of all Defensive Equipment ", "= " + dEquipmentBV);
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
@@ -329,7 +207,7 @@ public class MekBVCalculator extends BVCalculator {
             }
 
             // don't count oneshot ammo
-            if (loc == Mech.LOC_NONE) {
+            if (loc == Entity.LOC_NONE) {
                 continue;
             }
 
@@ -337,8 +215,7 @@ public class MekBVCalculator extends BVCalculator {
                 continue;
             }
 
-            // gauss rifles only subtract 1 point per slot, same for HVACs and
-            // iHeavy Lasers and mektasers
+            // Gauss rifles only subtract 1 point per slot, same for HVACs and iHeavy Lasers and mektasers
             if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)
                     || (etype instanceof CLImprovedHeavyLaserLarge)
                     || (etype instanceof CLImprovedHeavyLaserMedium)
@@ -359,6 +236,7 @@ public class MekBVCalculator extends BVCalculator {
                     continue;
                 }
             }
+
             if ((etype instanceof MiscType)
                     && (etype.hasFlag(MiscType.F_PPC_CAPACITOR)
                     || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
@@ -371,7 +249,6 @@ public class MekBVCalculator extends BVCalculator {
                     && ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 toSubtract = 1;
             }
-
 
             if ((etype instanceof MiscType)
                     && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {
@@ -421,6 +298,7 @@ public class MekBVCalculator extends BVCalculator {
             toSubtract *= criticals;
             ammoPenalty += toSubtract;
         }
+
         // special case for blueshield, need to check each non-head location
         // seperately for CASE
         if (mek.hasWorkingMisc(MiscType.F_BLUE_SHIELD)) {
@@ -434,10 +312,9 @@ public class MekBVCalculator extends BVCalculator {
                     // BMRr).
                     // Also count ammo in side torsos if mech has xxl engine
                     // (extrapolated from rule intent - not covered in rules)
-                    if (((loc != Mech.LOC_CT) && (loc != Mech.LOC_RLEG)
-                            && (loc != Mech.LOC_LLEG) && (loc != Mech.LOC_HEAD))
-                            && !(((loc == Mech.LOC_RT) || (loc == Mech.LOC_LT)) && mek.hasEngine() && (mek.getEngine()
-                            .getSideTorsoCriticalSlots().length > 2))) {
+                    if (((loc != Mech.LOC_CT) && (loc != Mech.LOC_RLEG) && (loc != Mech.LOC_LLEG))
+                            && !(((loc == Mech.LOC_RT) || (loc == Mech.LOC_LT)) && mek.hasEngine() &&
+                            (mek.getEngine().getSideTorsoCriticalSlots().length > 2))) {
                         continue;
                     }
                 } else {
@@ -462,42 +339,8 @@ public class MekBVCalculator extends BVCalculator {
             ammoPenalty += unProtectedCrits;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Explosive Weapons/Equipment Penalty ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= -");
-        bvText.append(ammoPenalty);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Explosive Weapons/Equipment Penalty ", "= -" + ammoPenalty);
+        bvReport.addResultLine("", "", "" + dbv);
 
         // adjust for target movement modifier
         // we use full possible movement, ignoring gravity, heat and modular
@@ -529,33 +372,9 @@ public class MekBVCalculator extends BVCalculator {
         if (mek.hasMPReducingHardenedArmor()) {
             runMP--;
         }
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false,
-                mek.getGame()).getValue();
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Run MP");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(runMP);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Target Movement Modifier For Run");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(tmmRan);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false, mek.getGame()).getValue();
+        bvReport.addLine("Run MP", "" + runMP);
+        bvReport.addLine("Target Movement Modifier For Run", "" + tmmRan);
 
         // Calculate modifiers for jump and UMU movement where applicable.
         final int jumpMP = Math.max(mek.getJumpMP(false, true), airmechMP);
@@ -568,180 +387,45 @@ public class MekBVCalculator extends BVCalculator {
                 Compute.getTargetMovementModifier(umuMP, false, false, mek.getGame()).getValue()
                 : 0;
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        if (airmechMP == 0) {
-            bvText.append("Target Movement Modifier For Jumping");
-        } else {
-            bvText.append("Target Movement Modifier For AirMech Flank");
-        }
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(tmmJumped);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append("Target Movement Modifier For UMUs");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(tmmUMU);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        double targetMovementModifier = Math.max(tmmRan, Math.max(tmmJumped,
-                tmmUMU));
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Target Movement Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(targetMovementModifier);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        String tmmType = "Target Movement Modifier for " + ((airmechMP == 0) ? "Jumping" : "AirMech Flank");
+        bvReport.addLine(tmmType, "" + tmmJumped);
+        bvReport.addLine("Target Movement Modifier For UMUs", "" + tmmUMU);
+        double targetMovementModifier = Math.max(tmmRan, Math.max(tmmJumped, tmmUMU));
+        bvReport.addLine("Target Movement Modifier", "" + targetMovementModifier);
 
         // Try to find a Mek Stealth or similar system.
         if (mek.hasStealth() || mek.hasNullSig()) {
             targetMovementModifier += 2;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Stealth +2");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append("+2");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Stealth +2", "+2");
         }
-
         if (mek.hasChameleonShield()) {
             targetMovementModifier += 2;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Chameleon +2");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append("+2");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Chameleon +2", "+2");
         }
-
         if (mek.hasVoidSig()) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Void Sig");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
+            String modifier = "-";
             if (targetMovementModifier < 3) {
                 targetMovementModifier = 3;
-                bvText.append("3");
+                modifier = "3";
             } else if (targetMovementModifier == 3) {
                 targetMovementModifier++;
-                bvText.append("+1");
-            } else {
-                bvText.append("-");
+                modifier = "+1";
             }
-
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Void Sig", modifier);
         }
-
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
+        bvReport.addLine("Multiply by Defensive Movement Factor of ", "" + tmmFactor, " x " + tmmFactor);
+        bvReport.addResultLine("Defensive Battle Value", "= ", dbv);
+        bvReport.addSubHeader("Offensive Battle Rating Calculation:");
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Defensive Movement Factor of ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" x ");
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Defensive Battle Value");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= ");
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + mek.getHeatCapacity();
         if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
             mechHeatEfficiency += 3;
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Base Heat Efficiency ");
+        bvReport.addLine("Base Heat Efficiency ", "" + (6 + mek.getHeatCapacity()), "");
 
         double coolantPods = 0;
         for (Mounted ammo : mek.getAmmo()) {
@@ -753,82 +437,49 @@ public class MekBVCalculator extends BVCalculator {
         // account for coolant pods
         if (coolantPods > 0) {
             mechHeatEfficiency += (int) Math.ceil((mek.getNumberOfSinks() * coolantPods) / 5d);
-            bvText.append(" + Coolant Pods ");
+            bvReport.addLine(" + Coolant Pods ", " + " + Math.ceil((mek.getNumberOfSinks() * coolantPods) / 5), "");
         }
         if (mek.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
             mechHeatEfficiency += 4;
-            bvText.append(" + RISC Emergency Coolant System");
+            bvReport.addLine(" + RISC Emergency Coolant System", " + 4", "");
         }
 
         int moveHeat;
+        String moveHeatType = " - Run Heat ";
         if ((mek instanceof LandAirMech) && (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD)) {
             moveHeat = (int) Math.round(((LandAirMech) mek).getAirMechFlankMP(false, true) / 3d);
         } else if ((mek.getJumpMP(false, true) > 0)
                 && (mek.getJumpHeat(mek.getJumpMP(false, true)) > mek.getRunHeat())) {
             moveHeat = mek.getJumpHeat(mek.getJumpMP(false, true));
-            bvText.append(" - Jump Heat ");
+            moveHeatType = " - Jump Heat ";
         } else {
             moveHeat = mek.getRunHeat();
             if (mek.hasSCM()) {
                 moveHeat = 0;
             }
-            bvText.append(" - Run Heat ");
         }
+
         mechHeatEfficiency -= moveHeat;
         if (mek.hasStealth()) {
             mechHeatEfficiency -= 10;
-            bvText.append(" - Stealth Heat ");
+            bvReport.addLine(" - Stealth Heat ", " - 10", "");
         }
         if (mek.hasChameleonShield()) {
             mechHeatEfficiency -= 6;
-            bvText.append(" - Chameleon LPS Heat ");
+            bvReport.addLine(" - Chameleon LPS Heat ", " - 6", "");
         }
         if (mek.hasNullSig()) {
             mechHeatEfficiency -= 10;
-            bvText.append(" - Null-signature system Heat ");
+            bvReport.addLine(" - Null-signature system Heat ", " - 10", "");
         }
         if (mek.hasVoidSig()) {
             mechHeatEfficiency -= 10;
-            bvText.append(" - Void-signature system Heat ");
+            bvReport.addLine(" - Void-signature system Heat ", " - 10", "");
         }
+        bvReport.addLine(moveHeatType, " - " + moveHeat, "");
+        bvReport.addLine("= " + mechHeatEfficiency);
 
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(6 + mek.getHeatCapacity());
-
-        if (coolantPods > 0) {
-            bvText.append(" + ");
-            bvText.append(Math.ceil((mek.getNumberOfSinks() * coolantPods) / 5));
-        }
-
-        if (mek.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-            mechHeatEfficiency += 4;
-            bvText.append(" + 4");
-        }
-
-        bvText.append(" - ").append(moveHeat);
-        if (mek.hasStealth()) {
-            bvText.append(" - 10");
-        }
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= ");
-        bvText.append(mechHeatEfficiency);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Unmodified Weapon BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Unmodified Weapon BV:", "", "");
         double weaponBV = 0;
         boolean hasTargComp = mek.hasTargComp();
         // first, add up front-faced and rear-faced unmodified BV,
@@ -863,14 +514,11 @@ public class MekBVCalculator extends BVCalculator {
                 dBV = mgBV * 0.67;
             }
             String name = wtype.getName();
-            // artemis bumps up the value
-            // PPC caps do, too
+            // artemis bumps up the value, PPC caps do, too
             if (weapon.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
+                // check to see if the weapon is a PPC and has a Capacitor attached to it
                 if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(
-                            mek, weapon);
+                    dBV += ((MiscType) weapon.getLinkedBy().getType()).getBV(mek, weapon);
                     name = name.concat(" with Capacitor");
                 }
                 Mounted mLinker = weapon.getLinkedBy();
@@ -906,10 +554,7 @@ public class MekBVCalculator extends BVCalculator {
                 name = name.concat(" augmented by AES");
             }
 
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append(name);
+            String weaponName = name;
             boolean rearVGL = false;
             if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
                 // vehicular grenade launchers facing to the rear sides count
@@ -920,10 +565,10 @@ public class MekBVCalculator extends BVCalculator {
             }
             if (weapon.isMechTurretMounted()) {
                 bvTurret += dBV;
-                bvText.append(" (T)");
+                weaponName += " (T)";
             } else if (weapon.isRearMounted() || rearVGL) {
                 bvRear += dBV;
-                bvText.append(" (R)");
+                weaponName += " (R)";
             } else {
                 bvFront += dBV;
             }
@@ -935,137 +580,32 @@ public class MekBVCalculator extends BVCalculator {
                 }
             }
 
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(dBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine(weaponName, "" + dBV);
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Unmodified Front BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(bvFront);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Unmodfied Rear BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(bvRear);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Unmodfied Turret BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(bvTurret);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Unmodfied BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(bvRear + bvFront + bvTurret);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append("Unmodified Front non-arm BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(nonArmFront);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Unmodfied Rear non-arm BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(nonArmRear);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Unmodified Front BV:", "" + bvFront);
+        bvReport.addLine("Unmodified Rear BV:", "" + bvRear);
+        bvReport.addLine("Unmodfied Turret BV:", "" + bvTurret);
+        bvReport.addLine("Total Unmodfied BV:", "" + (bvRear + bvFront + bvTurret));
+        bvReport.addLine("Unmodified Front non-arm BV:", "" + nonArmFront);
+        bvReport.addLine("Unmodfied Rear non-arm BV:", "" + nonArmRear);
 
         boolean halveRear = true;
         boolean turretFront = true;
         if (nonArmFront <= nonArmRear) {
             halveRear = false;
             turretFront = false;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("halving front instead of rear weapon BVs");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("turret mounted weapon BVs count as rear firing");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("halving front instead of rear weapon BVs", "");
+            bvReport.addLine("turret mounted weapon BVs count as rear firing", "");
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapon Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Weapon Heat:", "");
 
-        // here we store the modified BV and heat of all heat-using weapons,
-        // to later be sorted by BV
+        // here we store the modified BV and heat of all heat-using weapons, to later be sorted by BV
         ArrayList<ArrayList<Object>> heatBVs = new ArrayList<>();
         // BVs of non-heat-using weapons
         ArrayList<ArrayList<Object>> nonHeatBVs = new ArrayList<>();
-        // total up maximum heat generated
-        // and add up BVs for ammo-using weapon types for excessive ammo rule
+        // total up maximum heat generated and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<>();
         double maximumHeat = 0;
         for (Mounted mounted : mek.getWeaponList()) {
@@ -1111,7 +651,6 @@ public class MekBVCalculator extends BVCalculator {
 
             String name = wtype.getName();
 
-
             // RISC laser pulse module adds 2 heat
             if ((wtype.hasFlag(WeaponType.F_LASER)) && (mounted.getLinkedBy() != null)
                     && (mounted.getLinkedBy().getType() instanceof MiscType)
@@ -1125,8 +664,7 @@ public class MekBVCalculator extends BVCalculator {
                     && (mounted.getLinkedBy() != null)
                     && !mounted.getLinkedBy().isInoperable()
                     && (mounted.getLinkedBy().getType() instanceof MiscType)
-                    && mounted.getLinkedBy().getType()
-                    .hasFlag(MiscType.F_LASER_INSULATOR)) {
+                    && mounted.getLinkedBy().getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
                 weaponHeat -= 1;
                 if (weaponHeat == 0) {
                     weaponHeat++;
@@ -1141,31 +679,17 @@ public class MekBVCalculator extends BVCalculator {
             }
             // check to see if the weapon is a PPC and has a Capacitor attached
             // to it
-            if (wtype.hasFlag(WeaponType.F_PPC)
-                    && (mounted.getLinkedBy() != null)) {
+            if (wtype.hasFlag(WeaponType.F_PPC) && (mounted.getLinkedBy() != null)) {
                 name = name.concat(" with Capacitor");
                 weaponHeat += 5;
             }
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append(name);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+ ");
-            bvText.append(weaponHeat);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine(name, "+ " + weaponHeat);
 
             double dBV = wtype.getBV(mek);
             if (mek.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
                 dBV *= 0.8;
             }
-            String weaponName = mounted.getName()
-                    + (mounted.isRearMounted() ? "(R)" : "");
+            String weaponName = mounted.getName() + (mounted.isRearMounted() ? "(R)" : "");
 
             // don't count AMS, it's defensive
             if (wtype.hasFlag(WeaponType.F_AMS)) {
@@ -1183,14 +707,11 @@ public class MekBVCalculator extends BVCalculator {
                 dBV = mgBV * 0.67;
             }
 
-            // artemis bumps up the value
-            // PPC caps do, too
+            // artemis bumps up the value,  PPC caps do, too
             if (mounted.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
+                // check to see if the weapon is a PPC and has a Capacitor attached to it
                 if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(
-                            mek, mounted);
+                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(mek, mounted);
                     weaponName = weaponName.concat(" with Capacitor");
                 }
                 Mounted mLinker = mounted.getLinkedBy();
@@ -1225,27 +746,23 @@ public class MekBVCalculator extends BVCalculator {
             }
             // half for being rear mounted (or front mounted, when more rear-
             // than front-mounted un-modded BV
-            // or for being turret mounted, when more rear-mounted BV than front
-            // mounted BV
+            // or for being turret mounted, when more rear-mounted BV than front mounted BV
             if ((!mek.isArm(mounted.getLocation())
-                    && !mounted.isMechTurretMounted() && (mounted.isRearMounted() ? halveRear : !halveRear))
-                    || (mounted.isMechTurretMounted() && (turretFront ? !halveRear : halveRear))) {
+                    && !mounted.isMechTurretMounted() && (mounted.isRearMounted() == halveRear))
+                    || (mounted.isMechTurretMounted() && (turretFront != halveRear))) {
                 dBV /= 2;
             }
 
-            // ArrayList that stores weapon values
-            // stores a double first (BV), then an Integer (heat),
-            // then a String (weapon name)
-            // for 0 heat weapons, just stores BV and name
+            // ArrayList that stores weapon values stores a double first (BV), then an Integer (heat),
+            // then a String (weapon name) for 0 heat weapons, just stores BV and name
             ArrayList<Object> weaponValues = new ArrayList<>();
+            weaponValues.add(dBV);
             if (weaponHeat > 0) {
                 // store heat and BV, for sorting a few lines down;
-                weaponValues.add(dBV);
                 weaponValues.add(weaponHeat);
                 weaponValues.add(weaponName);
                 heatBVs.add(weaponValues);
             } else {
-                weaponValues.add(dBV);
                 weaponValues.add(weaponName);
                 nonHeatBVs.add(weaponValues);
             }
@@ -1255,11 +772,11 @@ public class MekBVCalculator extends BVCalculator {
             // to compare with ammo BV later for excessive ammo BV rule
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !((wtype.getAmmoType() == AmmoType.T_PLASMA)
                     || (wtype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER)
-                    || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER) || (wtype
-                    .getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
+                    || (wtype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)
+                    || (wtype.getAmmoType() == AmmoType.T_CHEMICAL_LASER)))
                     || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY) || (wtype
-                    .getAmmoType() == AmmoType.T_NA))) {
+                    || wtype.hasFlag(WeaponType.F_INFANTRY)
+                    || (wtype.getAmmoType() == AmmoType.T_NA))) {
                 String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(mek));
@@ -1290,19 +807,7 @@ public class MekBVCalculator extends BVCalculator {
                             weaponValues.add((double) mek.getActiveVibrobladeHeat(location, true));
                             weaponValues.add(mount.getName());
                             heatBVs.add(weaponValues);
-
-                            bvText.append(startRow);
-                            bvText.append(startColumn);
-
-                            bvText.append(mount.getName());
-                            bvText.append(endColumn);
-                            bvText.append(startColumn);
-                            bvText.append(endColumn);
-                            bvText.append(startColumn);
-                            bvText.append("+ ");
-                            bvText.append(mek.getActiveVibrobladeHeat(location, true));
-                            bvText.append(endColumn);
-                            bvText.append(endRow);
+                            bvReport.addLine(mount.getName(), "+ " + mek.getActiveVibrobladeHeat(location, true));
                             maximumHeat += mek.getActiveVibrobladeHeat(location, true);
                             break;
                         }
@@ -1310,105 +815,33 @@ public class MekBVCalculator extends BVCalculator {
                 }
             }
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
+        bvReport.addResultLine("Total Heat:", "", "= " + maximumHeat);
 
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(maximumHeat);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapons with no heat at full BV:");
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Weapons with no heat at full BV:", "", "");
         // count heat-free weapons always at full modified BV
         for (ArrayList<Object> nonHeatWeapon : nonHeatBVs) {
             weaponBV += (Double) nonHeatWeapon.get(0);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(nonHeatWeapon.get(1));
-            if (nonHeatWeapon.get(1).toString().length() < 8) {
-                bvText.append("\t");
-            }
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(nonHeatWeapon.get(0));
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine(nonHeatWeapon.get(1).toString(), nonHeatWeapon.get(0).toString());
         }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Heat Modified Weapons BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Heat Modified Weapons BV: ", "", "");
 
         if (maximumHeat > mechHeatEfficiency) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("(Heat Exceeds Mech Heat Efficiency) ");
-
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("(Heat Exceeds Mech Heat Efficiency) ", "", "");
         }
 
         if (maximumHeat <= mechHeatEfficiency) {
             // count all weapons equal
             for (ArrayList<Object> weaponValues : heatBVs) {
-                // name
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(2));
                 weaponBV += (Double) weaponValues.get(0);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(0));
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(weaponValues.get(2).toString(), weaponValues.get(0).toString());
             }
         } else {
             // this will count heat-generating weapons at full modified BV until
             // heat efficiency is reached or passed with one weapon
-
             // sort the heat-using weapons by modified BV
             heatBVs.sort((obj1, obj2) -> {
                 Double obj1BV = (Double) obj1.get(0); // BV
                 Double obj2BV = (Double) obj2.get(0); // BV
-
                 // first element in the ArrayList is BV, second is heat
                 // if same BV, lower heat first
                 if (obj1BV.equals(obj2BV)) {
@@ -1417,7 +850,6 @@ public class MekBVCalculator extends BVCalculator {
 
                     return Double.compare(obj1Heat, obj2Heat);
                 }
-
                 // higher BV first
                 return Double.compare(obj2BV, obj1BV);
             });
@@ -1426,13 +858,7 @@ public class MekBVCalculator extends BVCalculator {
             // passed with one weapon
             double heatAdded = 0;
             for (ArrayList<Object> weaponValues : heatBVs) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(weaponValues.get(2));
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
+                String heatEffText = "Heat efficiency reached, ";
                 double dBV = (Double) weaponValues.get(0);
                 if (heatAdded >= mechHeatEfficiency) {
                     if (mek.useReducedOverheatModifierBV()) {
@@ -1443,69 +869,24 @@ public class MekBVCalculator extends BVCalculator {
                 }
                 if (heatAdded >= mechHeatEfficiency) {
                     if (mek.useReducedOverheatModifierBV()) {
-                        bvText.append("Heat efficiency reached, BV * 0.1");
+                        heatEffText += "BV * 0.1";
                     } else {
-                        bvText.append("Heat efficiency reached, half BV");
+                        heatEffText += "half BV";
                     }
                 }
                 heatAdded += (Double) weaponValues.get(1);
                 weaponBV += dBV;
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(dBV);
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append("Heat count: ").append(heatAdded);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(weaponValues.get(2).toString(), heatEffText, "" + dBV);
+                bvReport.addLine("Heat count: ", "" + heatAdded, "");
             }
         }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
+        bvReport.addResultLine("Total Weapons BV Adjusted For Heat:", "", "" + weaponBV);
 
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Weapons BV Adjusted For Heat:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Misc Offensive Equipment: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
-        // BMR p152)
+        bvReport.addLine("Misc Offensive Equipment: ", "", "");
+        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
         double oEquipmentBV = 0;
         for (Mounted mounted : mek.getMisc()) {
             MiscType mtype = (MiscType) mounted.getType();
-
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {
                 continue;
@@ -1543,34 +924,12 @@ public class MekBVCalculator extends BVCalculator {
             }
 
             if (bv > 0) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(bv);
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(mounted.getName(), "" + bv);
             }
 
             oEquipmentBV += bv;
         }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Misc Offensive Equipment BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(oEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Total Misc Offensive Equipment BV: ", "" + oEquipmentBV);
         weaponBV += oEquipmentBV;
 
         // add ammo bv
@@ -1635,8 +994,7 @@ public class MekBVCalculator extends BVCalculator {
         }
 
         // Excessive ammo rule:
-        // Only count BV for ammo for a weapontype until the BV of all weapons
-        // of that
+        // Only count BV for ammo for a weapontype until the BV of all weapons of that
         // type on the mech is reached.
         for (String key : keys) {
 
@@ -1647,8 +1005,7 @@ public class MekBVCalculator extends BVCalculator {
                     ammoBV += ammo.get(key);
                 }
             } else {
-                // Ammo with no matching weapons counts 0, unless it's a coolant
-                // pod
+                // Ammo with no matching weapons counts 0, unless it's a coolant pod
                 // because coolant pods have no matching weapon
                 if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString() + "1")) {
                     ammoBV += ammo.get(key);
@@ -1656,19 +1013,7 @@ public class MekBVCalculator extends BVCalculator {
             }
         }
         weaponBV += ammoBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Total Ammo BV: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(ammoBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total Ammo BV: ", "" + ammoBV);
 
         double aesMultiplier = 1;
         if (mek.hasFunctionalArmAES(Mech.LOC_LARM)) {
@@ -1688,167 +1033,50 @@ public class MekBVCalculator extends BVCalculator {
         double weight = mek.getWeight() * aesMultiplier;
 
         if (aesMultiplier > 1) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Weight x AES Multiplier ");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(mek.getWeight());
-            bvText.append(" x ");
-            bvText.append(aesMultiplier);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(" = ");
-            bvText.append(weight);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Weight x AES Multiplier ", weight + " x " + aesMultiplier, "= " + weight);
         }
         // add tonnage, adjusted for TSM
         if (mek.hasTSM(true)) {
             weaponBV += weight * 1.5;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Add weight + TSM Modifier");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(weight);
-            bvText.append(" * 1.5");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(weight * 1.5);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Add weight + TSM Modifier", weight + " * 1.5", "= " + weight * 1.5);
         } else if (mek.hasIndustrialTSM()) {
             weaponBV += weight * 1.15;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Add weight + Industrial TSM Modifier");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(weight);
-            bvText.append(" * 1.115");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-
-            bvText.append(weight * 1.15);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Add weight + Industrial TSM Modifier", weight + " * 1.15", "= " + weight * 1.15);
         } else {
             weaponBV += weight;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("Add weight");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+");
-            bvText.append(weight);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Add weight", "+ " + weight);
         }
 
         if ((mek.getCockpitType() == Mech.COCKPIT_INDUSTRIAL)
                 || (mek.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)) {
-            // industrial without advanced firing control get's 0.9 mod to
-            // offensive BV
-            bvText.append("Weapon BV * Firing Control Modifier");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(weaponBV);
-            bvText.append(" * ");
-            bvText.append("0.9");
-            bvText.append(endColumn);
+            // industrial without advanced firing control get's 0.9 mod to offensive BV
             weaponBV *= 0.9;
-            bvText.append(startColumn);
-            bvText.append(" = ");
-            bvText.append(weaponBV);
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Weapon BV * Firing Control Modifier", weaponBV + " x 0.9", "= " + weaponBV);
         }
 
-        double speedFactor = Math
-                .pow(1 + ((((double) runMP + (Math
-                        .round(Math.max(jumpMP, umuMP) / 2.0))) - 5) / 10), 1.2);
+        double speedFactor = Math.pow(1 + ((((double) runMP
+                + (Math.round(Math.max(jumpMP, umuMP) / 2.0))) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Final Speed Factor: ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Final Speed Factor: ", "" + speedFactor);
         obv = weaponBV * speedFactor;
+        bvReport.addLine("Weapons BV * Speed Factor ", weaponBV + " x " + speedFactor, "= " + obv);
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Weapons BV * Speed Factor ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(weaponBV);
-        bvText.append(" * ");
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        if (mek.useGeometricMeanBV()) {
-            bvText.append("2 * sqrt(Offensive BV * Defensive BV");
-        } else {
-            bvText.append("Offensive BV + Defensive BV");
-        }
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
+        String sumBVType = mek.useGeometricMeanBV() ? "2 * sqrt(Offensive BV * Defensive BV" : "Offensive BV + Defensive BV";
+        String sumBVcalc;
         double finalBV;
         if (mek.useGeometricMeanBV()) {
             finalBV = 2 * Math.sqrt(obv * dbv);
             if (finalBV == 0) {
                 finalBV = dbv + obv;
             }
-            bvText.append("2 * sqrt(");
-            bvText.append(obv);
-            bvText.append(" + ");
-            bvText.append(dbv);
-            bvText.append(")");
+            sumBVcalc = "2 * sqrt(" + obv + " + " + dbv + ")";
         } else {
             finalBV = dbv + obv;
-            bvText.append(dbv);
-            bvText.append(" + ");
-            bvText.append(obv);
+            sumBVcalc = dbv + " + " + obv;
         }
         double totalBV = finalBV;
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
+        bvReport.addLine(sumBVType, sumBVcalc, "= " + finalBV);
 
         double cockpitMod = 1;
         if ((mek.getCockpitType() == Mech.COCKPIT_SMALL)
@@ -1863,44 +1091,8 @@ public class MekBVCalculator extends BVCalculator {
             finalBV *= cockpitMod;
         }
         finalBV = Math.round(finalBV);
-        bvText.append("Total BV * Cockpit Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(totalBV);
-        bvText.append(" * ");
-        bvText.append(cockpitMod);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" = ");
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Final BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append(finalBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
+        bvReport.addLine("Total BV * Cockpit Modifier", totalBV + " x " + cockpitMod, "= " + finalBV);
+        bvReport.addResultLine("Final BV", "", "" + finalBV);
 
         // we get extra bv from some stuff
         double xbv = 0.0;

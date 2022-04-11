@@ -18,28 +18,25 @@
  */
 package megamek.common.battlevalue;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.Compute;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
-public class InfantryBVCalculator extends BVCalculator {
+public class InfantryBVCalculator {
 
-    public static int calculateBV(Infantry infantry, boolean ignoreC3, boolean ignoreSkill, StringBuffer bvText) {
-        bvText.delete(0, bvText.length());
-        bvText.append("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-        DecimalFormat df = new DecimalFormat("0.##");
-        bvText.append(infantry.getChassis());
-        bvText.append(" ");
-        bvText.append(infantry.getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
+    public static int calculateBV(Infantry infantry, boolean ignoreSkill, CalculationReport bvReport) {
+        NumberFormat df = NumberFormat.getNumberInstance(Locale.US);
+        df.setMaximumFractionDigits(2);
+        df.setMinimumFractionDigits(0);
 
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
-
+        bvReport.addHeader("Battle Value Calculations For");
+        bvReport.addHeader(infantry.getChassis() + " " + infantry.getModel());
+        bvReport.addSubHeader("Defensive Battle Rating Calculation:");
         double dbr; // defensive battle rating
         int men = Math.max(0, infantry.getInternal(Infantry.LOC_INFANTRY));
         dbr = men * 1.5 * infantry.calcDamageDivisor();
@@ -48,134 +45,45 @@ public class InfantryBVCalculator extends BVCalculator {
                 false, false, infantry.getGame()).getValue();
 
         final int jumpMP = infantry.getJumpMP(false);
-        final int tmmJumped = (jumpMP > 0) ? 
+        final int tmmJumped = (jumpMP > 0) ?
                 Compute.getTargetMovementModifier(jumpMP, true, false, infantry.getGame()).getValue()
                 : 0;
 
         final int umuMP = infantry.getActiveUMUCount();
-        final int tmmUMU = (umuMP > 0) ? 
+        final int tmmUMU = (umuMP > 0) ?
                 Compute.getTargetMovementModifier(umuMP, false, false, infantry.getGame()).getValue()
                 : 0;
 
         double targetMovementModifier = Math.max(tmmRan, Math.max(tmmJumped, tmmUMU));
         double tmmFactor = 1 + (targetMovementModifier / 10);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Base Target Movement Modifier:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Base Target Movement Modifier:", "", tmmFactor);
 
         if (infantry.hasDEST()) {
             tmmFactor += 0.2;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("DEST:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+0.2");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("DEST:", "+0.2");
         }
-        
+
         if (infantry.hasSneakCamo()) {
             tmmFactor += 0.2;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Camo (Sneak):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+0.2");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Camo (Sneak):", "+0.2");
         }
-        
+
         if (infantry.hasSneakIR()) {
             tmmFactor += 0.2;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Camo (IR):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+0.2");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Camo (IR):", "+0.2");
         }
-        
+
         if (infantry.hasSneakECM()) {
             tmmFactor += 0.1;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Camo (ECM):");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+0.1");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Camo (ECM):", "+0.1");
         }
         dbr *= tmmFactor;
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Target Movement Modifier:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(tmmFactor));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Damage Divisor:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(infantry.calcDamageDivisor()));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Number of Troopers x 1.5 x TMM x DD");
-        bvText.append(endColumn + startColumn);
-        bvText.append(men);
-        bvText.append(" x 1.5 x ");
-        bvText.append(tmmFactor);
-        bvText.append(" x ");
-        bvText.append(infantry.calcDamageDivisor());
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("= ");
-        bvText.append(df.format(dbr));
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("Target Movement Modifier:", "", df.format(tmmFactor));
+        bvReport.addLine("Damage Divisor:", "", df.format(infantry.calcDamageDivisor()));
+        bvReport.addLine("Defensive Battle Rating:",
+                men + " x 1.5 x " + tmmFactor + " x " + infantry.calcDamageDivisor(),
+                "= " + df.format(dbr));
 
         double obr; // offensive battle rating
 
@@ -195,7 +103,7 @@ public class InfantryBVCalculator extends BVCalculator {
         if (null != secondW) {
             wbv += secondW.getBV(infantry) * (secondn);
         }
-        wbv = wbv * (men/squadsize);
+        wbv = wbv * (men / squadsize);
         // if anti-mek then double this
         // TODO : need to factor archaic weapons out of this
         double ambv = 0;
@@ -206,138 +114,38 @@ public class InfantryBVCalculator extends BVCalculator {
             if (secondW != null && !secondW.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
                 ambv += secondW.getBV(infantry) * (secondn);
             }
-            ambv *= men/squadsize;
+            ambv *= men / squadsize;
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapon BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        if (null != primaryW) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(primaryW.getName());
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append((squadsize - secondn) * squadn);
-            bvText.append(" x ");
-            bvText.append(df.format(primaryW.getBV(infantry)));
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(df.format(primaryW.getBV(infantry) * (squadsize - secondn) * squadn));
-            bvText.append(endColumn);
-            bvText.append(endRow);
+        bvReport.addEmptyLine();
+        bvReport.addSubHeader("Offensive Battle Rating Calculation:");
+        if (primaryW != null) {
+            bvReport.addLine(primaryW.getName(),
+                    (squadsize - secondn) * squadn + " x " + df.format(primaryW.getBV(infantry)),
+                    "= " + df.format(primaryW.getBV(infantry) * (squadsize - secondn) * squadn));
         }
-        
-        if (null != secondW) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(secondW.getName());
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(secondn * squadn);
-            bvText.append(" x ");
-            bvText.append(df.format(secondW.getBV(infantry)));
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(df.format(secondW.getBV(infantry) * secondn * squadn));
-            bvText.append(endColumn);
-            bvText.append(endRow);
+
+        if (secondW != null) {
+            bvReport.addLine(secondW.getName(),
+                    secondn * squadn + " x " + df.format(secondW.getBV(infantry)),
+                    "= " + df.format(secondW.getBV(infantry) * secondn * squadn));
         }
 
         // add in field gun BV
         for (Mounted mounted : infantry.getEquipment()) {
             if (mounted.getLocation() == Infantry.LOC_FIELD_GUNS) {
                 wbv += mounted.getType().getBV(infantry);
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(mounted.getType().getName());
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(mounted.getType().getBV(infantry));
-                bvText.append(endColumn);
-                bvText.append(endRow);
+                bvReport.addLine(mounted.getType().getName(), "", mounted.getType().getBV(infantry));
             }
         }
         obr = (wbv + ambv) * speedFactor;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapon BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(wbv));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Anti-Mek BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(ambv));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Speed Factor:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(speedFactor));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Weapons BV x Speed Factor:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(wbv + ambv));
-        bvText.append(" x ");
-        bvText.append(df.format(speedFactor));
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(obr));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
+        bvReport.addResultLine("Weapon BV:", "", df.format(wbv));
+        bvReport.addLine("Anti-Mek BV:", "", df.format(ambv));
+        bvReport.addLine("Speed Factor:", "", df.format(speedFactor));
+        bvReport.addLine("Offensive Battle Rating:",
+                df.format(wbv + ambv) + " x " + df.format(speedFactor),
+                "= " + df.format(obr));
+        bvReport.addEmptyLine();
 
         double bv;
         if (infantry.useGeometricMeanBV()) {
@@ -345,24 +153,13 @@ public class InfantryBVCalculator extends BVCalculator {
             if (bv == 0) {
                 bv = dbr + obr;
             }
-            bvText.append("SQRT(Defensive BR * Offensive BR) x 2:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
+            bvReport.addLine("SQRT(Defensive BR * Offensive BR) x 2:", "", "= " + df.format(bv));
         } else {
             bv = obr + dbr;
-            bvText.append("Defensive BR + Offensive BR:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(df.format(dbr));
-            bvText.append(" + ");
-            bvText.append(df.format(obr));
+            bvReport.addLine("Defensive BR + Offensive BR:",
+                    df.format(dbr) + " + " + df.format(obr),
+                    "= " + df.format(bv));
         }
-
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(bv));
-        bvText.append(endColumn);
-        bvText.append(endRow);
 
         double utm; // unit type modifier
         switch (infantry.getMovementMode()) {
@@ -385,142 +182,46 @@ public class InfantryBVCalculator extends BVCalculator {
                 break;
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Base Unit Type Modifier:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(utm));
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Base Unit Type Modifier:", "", df.format(utm));
 
         if (infantry.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
             utm += 0.1;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Combat Engineers:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("0.1");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Combat Engineers:", "0.1");
         }
-        
+
         if (infantry.hasSpecialization(Infantry.MARINES)) {
             utm += 0.3;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Marines:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("0.3");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Marines:", "0.3");
         }
-        
+
         if (infantry.hasSpecialization(Infantry.MOUNTAIN_TROOPS)) {
             utm += 0.2;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Mountain Troops:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("0.2");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Mountain Troops:", "0.2");
         }
-        
+
         if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
             utm += 0.1;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("Paratroops:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("0.1");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("Paratroops:", "0.1");
         }
-        
+
         if (infantry.hasSpecialization(Infantry.SCUBA)) {
             utm += 0.1;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("SCUBA:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("0.1");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("SCUBA:", "0.1");
         }
 
         if (infantry.hasSpecialization(Infantry.XCT)) {
             utm += 0.1;
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append("XCT:");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("0.1");
-            bvText.append(endColumn);
-            bvText.append(endRow);
+            bvReport.addLine("XCT:", "0.1");
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("Total Unit Type Modifier", "", df.format(utm));
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Unit Type Modifier");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(utm));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Final BV:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(df.format(bv));
-        bvText.append(" x ");
-        bvText.append(df.format(utm));
-        bvText.append(endColumn);
-
+        bvReport.addEmptyLine();
+        bvReport.addLine("Final BV:",
+                df.format(bv) + " x " + df.format(utm),
+                "" + (int) Math.round(bv * utm));
         bv *= utm;
-        bvText.append(startColumn);
-        bvText.append((int) Math.round(bv));
-        bvText.append(endColumn);
-        bvText.append(endRow);
 
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
-
-        // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
             pilotFactor = infantry.getCrew().getBVSkillMultiplier(infantry.isAntiMekTrained(), infantry.getGame());

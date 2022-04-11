@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+
 /**
  * @author Jay Lawson
  * @since Jun 17, 2007
@@ -1108,8 +1110,8 @@ public class Jumpship extends Aero {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return JumpShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return JumpShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     public int getArcswGuns() {

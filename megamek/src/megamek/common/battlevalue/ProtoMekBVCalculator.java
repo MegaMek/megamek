@@ -18,6 +18,7 @@
  */
 package megamek.common.battlevalue;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 
 import java.util.ArrayList;
@@ -25,47 +26,20 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProtoMekBVCalculator extends BVCalculator {
+public class ProtoMekBVCalculator {
 
-    public static int calculateBV(Protomech protoMek, boolean ignoreSkill, StringBuffer bvText) {
-        bvText.delete(0, bvText.length());
-        bvText.append("<HTML><BODY><CENTER><b>Battle Value Calculations For ");
-        bvText.append(protoMek.getChassis());
-        bvText.append(" ");
-        bvText.append(protoMek.getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
-        bvText.append(nl);
-        bvText.append(startTable);
+    public static int calculateBV(Protomech protoMek, boolean ignoreSkill, CalculationReport bvReport) {
+        bvReport.addHeader("Battle Value Calculations For");
+        bvReport.addHeader(protoMek.getChassis() + " " + protoMek.getModel());
+        bvReport.addSubHeader("Defensive Battle Rating Calculation:");
 
         double dbv = 0; // defensive battle value
         double obv; // offensive bv
 
-        // total armor points
         dbv += protoMek.getTotalArmor() * 2.5;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Armor (" + protoMek.getTotalArmor() +") x 2.5");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(protoMek.getTotalArmor() * 2.5);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // total internal structure
+        bvReport.addLine("Total Armor (" + protoMek.getTotalArmor() + ") x 2.5", "", protoMek.getTotalArmor() * 2.5);
         dbv += protoMek.getTotalInternal() * 1.5;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total I.S. Points (" + protoMek.getTotalInternal() +") x 1.5");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(protoMek.getTotalInternal() * 1.5);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Total I.S. Points (" + protoMek.getTotalInternal() +") x 1.5", "", protoMek.getTotalInternal() * 1.5);
 
         // add defensive equipment
         double dEquipmentBV = 0;
@@ -104,35 +78,8 @@ public class ProtoMekBVCalculator extends BVCalculator {
             dEquipmentBV += Math.min(amsBV, amsAmmoBV);
         }
         dbv += dEquipmentBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Equipment BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
+        bvReport.addLine("Total Equipment BV", "", dEquipmentBV);
+        bvReport.addResultLine("", dbv);
 
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(protoMek.getRunMP(false, true, true), false, false, protoMek.getGame()).getValue();
@@ -151,93 +98,18 @@ public class ProtoMekBVCalculator extends BVCalculator {
                 Compute.getTargetMovementModifier(umuMP, false, false, protoMek.getGame()).getValue()
                 : 0;
 
-        double tmmFactor = 1 + (Math.max(tmmRan, Math.max(tmmJumped, tmmUMU))
-                / 10.0) + 0.1;
+        double tmmFactor = 1 + (Math.max(tmmRan, Math.max(tmmJumped, tmmUMU)) / 10.0) + 0.1;
         // Round to 4 decimal places, just to cut off some numeric error
         tmmFactor = Math.round(tmmFactor * 1000) / 1000.0;
         dbv *= tmmFactor;
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Target Movement Modifer For Run");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmRan);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Target Movement Modifer For Jumping");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmJumped);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Target Movement Modifer For UMUs");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmUMU);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Defensive Movement Factor of ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" x ");
-        bvText.append(tmmFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-
-        bvText.append("Defensive Battle Value");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Target Movement Modifer For Run", "", tmmRan);
+        bvReport.addLine("Target Movement Modifer For Jumping", "", tmmJumped);
+        bvReport.addLine("Target Movement Modifer For UMUs", "", tmmUMU);
+        bvReport.addLine("Multiply by Defensive Movement Factor of ", "x ", tmmFactor);
+        bvReport.addResultLine("Defensive Battle Value", "= ", dbv);
+        bvReport.addEmptyLine();
+        bvReport.addSubHeader("Offensive Battle Rating Calculation:");
 
         double weaponBV = 0;
 
@@ -296,17 +168,7 @@ public class ProtoMekBVCalculator extends BVCalculator {
                 name = name.concat(" with Targeting Computer");
             }
             weaponBV += dBV;
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(name);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(dBV);
-            bvText.append(endColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endRow);
+            bvReport.addLine(name, "", dBV);
 
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
@@ -324,31 +186,10 @@ public class ProtoMekBVCalculator extends BVCalculator {
             }
         }
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("Total Weapons BV", "", weaponBV);
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Weapons BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add ammo bv
         double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on
-        // our team
+        // extra BV for when we have semiguided LRMs and someone else has TAG on our team
         double tagBV = 0;
         Map<String, Double> ammo = new HashMap<>();
         ArrayList<String> keys = new ArrayList<>();
@@ -399,13 +240,11 @@ public class ProtoMekBVCalculator extends BVCalculator {
             if (!ammo.containsKey(key)) {
                 ammo.put(key, atype.getProtoBV(mounted.getUsableShotsLeft()));
             } else {
-                ammo.put(key, atype.getProtoBV(mounted.getUsableShotsLeft())
-                        + ammo.get(key));
+                ammo.put(key, atype.getProtoBV(mounted.getUsableShotsLeft()) + ammo.get(key));
             }
         }
         // excessive ammo rule:
-        // only count BV for ammo for a weapontype until the BV of all weapons
-        // of that
+        // only count BV for ammo for a weapontype until the BV of all weapons of that
         // type on the mech is reached
         for (String key : keys) {
             if (weaponsForExcessiveAmmo.containsKey(key)
@@ -416,22 +255,10 @@ public class ProtoMekBVCalculator extends BVCalculator {
             }
         }
         weaponBV += ammoBV;
+        bvReport.addLine("Total Ammo BV", String.format("%.1f", ammoBV));
 
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Ammo BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(String.format("%.1f", ammoBV));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
-        // BMR p152)
+        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
         double oEquipmentBV = 0;
-        boolean hasMiscEq = false;
         for (Mounted mounted : protoMek.getMisc()) {
             MiscType mtype = (MiscType) mounted.getType();
 
@@ -446,48 +273,14 @@ public class ProtoMekBVCalculator extends BVCalculator {
                     || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) {
-                // weapons
                 continue;
             }
             oEquipmentBV += mtype.getBV(protoMek);
-
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(mounted.getName());
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(mtype.getBV(protoMek));
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(endRow);
-            hasMiscEq = true;
+            bvReport.addLine(mounted.getName(), "", mtype.getBV(protoMek));
         }
 
         weaponBV += oEquipmentBV;
-
-        if (hasMiscEq) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("-------------");
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Equipment BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(oEquipmentBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("Total Equipment BV", "", oEquipmentBV);
 
         // adjust further for speed factor
         int mp = protoMek.getRunMPwithoutMyomerBooster(false, true, true)
@@ -500,164 +293,23 @@ public class ProtoMekBVCalculator extends BVCalculator {
         double speedFactor = Math.round(Math.pow(1 + ((mp - 5) / 10.0), 1.2) * 100.0) / 100.0;
 
         obv = weaponBV * speedFactor;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(weaponBV);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Speed Factor of ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" x ");
-        bvText.append(speedFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append("Offensive Battle Value");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("<b>Extra Battle Rating Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addResultLine("", weaponBV);
+        bvReport.addLine("Multiply by Speed Factor of ", "" + speedFactor, "x ", speedFactor);
+        bvReport.addResultLine("Offensive Battle Value", "= ", obv);
+        bvReport.addEmptyLine();
+        bvReport.addSubHeader("Extra Battle Rating Calculation:");
 
         // we get extra bv from some stuff
         double xbv = 0.0;
         // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Tag BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(tagBV);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append("Extra Battle Value");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(xbv);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("<b>Final BV Calculation:</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Deffensive BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(dbv);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Offensive BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(obv);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Extra BV");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(xbv);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
+        bvReport.addLine("Tag BV", "", tagBV);
+        bvReport.addResultLine("Extra Battle Value", "= ", xbv);
+        bvReport.addEmptyLine();
+        bvReport.addSubHeader("Final BV Calculation:");
+        bvReport.addLine("Defensive BV", "", dbv);
+        bvReport.addLine("Offensive BV", "", obv);
+        bvReport.addLine("Extra BV", "", xbv);
 
         int finalBV;
         if (protoMek.useGeometricMeanBV()) {
@@ -665,70 +317,20 @@ public class ProtoMekBVCalculator extends BVCalculator {
             if (finalBV == 0) {
                 finalBV = (int) Math.round(dbv + obv);
             }
-
-            bvText.append("Geometric Mean (2Sqrt(O*D) + X");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("= ");
-            bvText.append(finalBV);
+            bvReport.addResultLine("Geometric Mean (2Sqrt(O*D) + X", "= ", finalBV);
         } else {
             finalBV = (int) Math.round(dbv + obv + xbv);
-            bvText.append("Sum");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("= ");
-            bvText.append(finalBV);
+            bvReport.addResultLine("Sum", "= ", finalBV);
         }
-
-        bvText.append(endColumn);
-        bvText.append(endRow);
 
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
             pilotFactor = protoMek.getCrew().getBVSkillMultiplier(protoMek.getGame());
         }
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Multiply by Pilot Factor of ");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(pilotFactor);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(" x ");
-        bvText.append(pilotFactor);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
+        bvReport.addLine("Multiply by Pilot Factor of ", "" + pilotFactor, "x ", pilotFactor);
         int retVal = (int) Math.round((finalBV) * pilotFactor);
-
-        bvText.append("<b>Final Battle Value</b>");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("= ");
-        bvText.append(retVal);
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(endTable);
+        bvReport.addResultLine("Final Battle Value", "= ", retVal);
         return retVal;
     }
 }

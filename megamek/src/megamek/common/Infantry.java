@@ -20,6 +20,8 @@
 package megamek.common;
 
 import megamek.MMConstants;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.InfantryBVCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -886,8 +888,8 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return InfantryBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return InfantryBVCalculator.calculateBV(this, ignoreSkill, calculationReport);
     }
 
     @Override

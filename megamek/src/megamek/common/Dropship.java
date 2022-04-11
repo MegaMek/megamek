@@ -11,6 +11,8 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.DropShipBVCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -534,8 +536,8 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill) {
-        return DropShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, bvText);
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return DropShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**

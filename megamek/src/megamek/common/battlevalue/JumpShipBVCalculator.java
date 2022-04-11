@@ -461,7 +461,7 @@ public class JumpShipBVCalculator {
 
         double obv; // offensive bv
         obv = weaponBV * speedFactor;
-        bvReport.addLine("Weapons BV * Speed Factor ",weaponBV + " * " + speedFactor, "", obv);
+        bvReport.addLine("Weapons BV * Speed Factor ", weaponBV + " * " + speedFactor, "", obv);
 
         double finalBV;
         if (jumpShip.useGeometricMeanBV()) {
@@ -469,10 +469,10 @@ public class JumpShipBVCalculator {
             if (finalBV == 0) {
                 finalBV = dbv + obv;
             }
-            bvReport.addLine("2 * sqrt(Offensive BV * Defensive BV","2 * sqrt(" + obv + " + " + dbv + ")", "");
+            bvReport.addLine("2 * sqrt(Offensive BV * Defensive BV", "2 * sqrt(" + obv + " + " + dbv + ")", "");
         } else {
             finalBV = dbv + obv;
-            bvReport.addLine("Offensive BV + Defensive BV",obv + " + " + dbv, "");
+            bvReport.addLine("Offensive BV + Defensive BV", obv + " + " + dbv, "");
         }
         bvReport.addResultLine("Final BV", "", finalBV);
 
@@ -493,6 +493,6 @@ public class JumpShipBVCalculator {
             pilotFactor = jumpShip.getCrew().getBVSkillMultiplier(jumpShip.getGame());
         }
 
-        return (int) Math.round((finalBV) * pilotFactor);
+        return (int) Math.round(finalBV * pilotFactor);
     }
 }

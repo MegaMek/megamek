@@ -64,9 +64,9 @@ public class BVDisplayDialog extends AbstractDialog {
         entity.calculateBattleValue(bvReport);
 
         JButton exportText = new JButton("Copy as Text");
-        exportText.addActionListener(e -> copyToClipboard(bvReport.getTextReport().toString()));
+        exportText.addActionListener(evt -> copyToClipboard(bvReport.getTextReport().toString()));
         JButton exportHTML = new JButton("Copy as HTML");
-        exportHTML.addActionListener(e -> copyToClipboard(bvReport.getHtmlReport().toString()));
+        exportHTML.addActionListener(evt -> copyToClipboard(bvReport.getHtmlReport().toString()));
 
         var scrollPane = new JScrollPane(bvReport.toJComponent(), ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

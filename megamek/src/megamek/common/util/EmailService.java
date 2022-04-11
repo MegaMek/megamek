@@ -147,7 +147,7 @@ public class EmailService {
     public Vector<Player> getEmailablePlayers(Game game) {
         Vector<Player> emailable = new Vector<>();
         for (var player: game.getPlayersVector()) {
-            if (!StringUtility.isNullOrEmpty(player.getEmail()) && !player.isBot()
+            if (!StringUtility.isNullOrBlank(player.getEmail()) && !player.isBot()
                     && !player.isObserver()) {
                 emailable.add(player);
             }

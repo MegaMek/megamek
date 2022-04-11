@@ -41,7 +41,7 @@ class QuirkEntry {
      * @param unitId The ID (chassis & model) of the unit to which the quirk belongs.
      */
     QuirkEntry(String quirk, String unitId) {
-        if (StringUtility.isNullOrEmpty(quirk)) {
+        if (StringUtility.isNullOrBlank(quirk)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
         }
 
@@ -61,11 +61,11 @@ class QuirkEntry {
      * @param unitId     The ID (chassis & model) of the unit to which the quirk belongs.
      */
     QuirkEntry(String quirk, String location, int slot, String weaponName, String unitId) {
-        if (StringUtility.isNullOrEmpty(quirk)) {
+        if (StringUtility.isNullOrBlank(quirk)) {
             throw new IllegalArgumentException("Quirk definition missing for " + unitId);
-        } else if (StringUtility.isNullOrEmpty(location)) {
+        } else if (StringUtility.isNullOrBlank(location)) {
             throw new IllegalArgumentException("No location for " + quirk + " : " + unitId);
-        } else if (StringUtility.isNullOrEmpty(weaponName)) {
+        } else if (StringUtility.isNullOrBlank(weaponName)) {
             throw new IllegalArgumentException("No weapon for " + quirk + " : " + unitId);
         } else if ((slot < 0) || (slot > 11)) {
             throw new IllegalArgumentException("Invalid slot index (" + slot + ") for " + quirk + " : " + unitId);
@@ -137,7 +137,7 @@ class QuirkEntry {
      */
     public String toLog() {
         String out = getQuirk();
-        if (StringUtility.isNullOrEmpty(getLocation())) {
+        if (StringUtility.isNullOrBlank(getLocation())) {
             return out;
         }
 
@@ -167,7 +167,7 @@ class QuirkEntry {
         copy.setQuirk(String.copyValueOf(getQuirk().toCharArray()));
 
         // If location is empty, then this is not a weapon quirk.
-        if (StringUtility.isNullOrEmpty(getLocation())) {
+        if (StringUtility.isNullOrBlank(getLocation())) {
             return copy;
         }
 

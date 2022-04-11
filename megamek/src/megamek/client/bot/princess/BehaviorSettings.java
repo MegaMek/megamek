@@ -186,7 +186,7 @@ public class BehaviorSettings implements Serializable {
      * @param description The name to be used.
      */
     public void setDescription(final String description) throws PrincessException {
-        if (StringUtility.isNullOrEmpty(description)) {
+        if (StringUtility.isNullOrBlank(description)) {
             throw new PrincessException("Description is required!");
         }
         this.description = description.trim();
@@ -207,7 +207,7 @@ public class BehaviorSettings implements Serializable {
      * @param target The target to be added.
      */
     public void addStrategicTarget(final String target) {
-        if (StringUtility.isNullOrEmpty(target)) {
+        if (StringUtility.isNullOrBlank(target)) {
             return;
         }
         strategicBuildingTargets.add(target);

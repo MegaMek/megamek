@@ -88,7 +88,7 @@ public class VerifiableTextField extends JTextField implements FocusListener {
      * @return TRUE if the field's text value is NULL or an empty {@link String}.
      */
     public boolean isTextNullOrEmpty() {
-        return StringUtility.isNullOrEmpty(getText());
+        return StringUtility.isNullOrBlank(getText());
     }
 
     /**

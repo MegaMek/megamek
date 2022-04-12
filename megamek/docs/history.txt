@@ -44,6 +44,7 @@ VERSION HISTORY:
 + Issue #3257: Fixes the BV and auto CASE placement for PPC Capacitors on Clan units
 + PR #3556: Change the internal representation of BV calcs and offer text and HTML style export of BV calc reports
 + PR #3569: Fixing Freemarker Configuration Version Initialization
++ PR #3570: Remove unofficial BV calculation options
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

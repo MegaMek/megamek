@@ -401,15 +401,6 @@ public class MechSummaryCache {
             ms.setSuitWeight(((BattleArmor) e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue());
-        e.setUseGeometricBV(true);
-        ms.setGMBV(e.calculateBattleValue());
-        e.setUseGeometricBV(false);
-        e.setUseReducedOverheatModifierBV(true);
-        ms.setRHBV(e.calculateBattleValue());
-        e.setUseGeometricBV(true);
-        ms.setRHGMBV(e.calculateBattleValue());
-        e.setUseGeometricBV(false);
-        e.setUseReducedOverheatModifierBV(false);
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));

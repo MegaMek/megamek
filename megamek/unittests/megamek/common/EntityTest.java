@@ -59,20 +59,10 @@ public class EntityTest {
     public void testCalculateBattleValue() {
         // Test a gun emplacement.
         Entity testEntity = setupGunEmplacement();
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(false);
         int expected = 94;
         int actual = testEntity.calculateBattleValue(true, true);
         TestCase.assertEquals(expected, actual);
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(true);
-        expected = 94;
-        actual = testEntity.calculateBattleValue(true, true);
-        TestCase.assertEquals(expected, actual);
         Mockito.when(testEntity.getTotalArmor()).thenReturn(0); // Gun Emplacement with no armor.
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(false);
-        expected = 44;
-        actual = testEntity.calculateBattleValue(true, true);
-        TestCase.assertEquals(expected, actual);
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(true);
         expected = 44;
         actual = testEntity.calculateBattleValue(true, true);
         TestCase.assertEquals(expected, actual);

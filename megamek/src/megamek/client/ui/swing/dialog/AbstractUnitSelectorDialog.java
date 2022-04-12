@@ -835,19 +835,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
                 return ms.getTons();
             } else if (col == COL_BV) {
-                if ((gameOptions != null)
-                        && gameOptions.booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV)) {
-                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
-                        return ms.getRHGMBV();
-                    } else {
-                        return ms.getGMBV();
-                    }
-                } else if ((gameOptions != null)
-                        && gameOptions.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
-                    return ms.getRHBV();
-                } else {
-                    return ms.getBV();
-                }
+                return ms.getBV();
             } else if (col == COL_YEAR) {
                 return ms.getYear();
             } else if (col == COL_COST) {

@@ -6933,16 +6933,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     protected abstract int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport);
 
-    public boolean useGeometricMeanBV() {
-        return useGeometricBV || ((game != null)
-                                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV));
-    }
-
-    public boolean useReducedOverheatModifierBV() {
-        return (useReducedOverheatModifierBV || ((game != null)
-                                                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)));
-    }
-
     /**
      * Generates a vector containing reports on all useful information about
      * this entity.
@@ -15314,22 +15304,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void setHasDamagedRHS(boolean hasDamagedRHS) {
         this.hasDamagedRHS = hasDamagedRHS;
-    }
-
-    public boolean isUseGeometricBV() {
-        return useGeometricBV;
-    }
-
-    public void setUseGeometricBV(boolean useGeometricBV) {
-        this.useGeometricBV = useGeometricBV;
-    }
-
-    public boolean isUseReducedOverheatModifierBV() {
-        return useReducedOverheatModifierBV;
-    }
-
-    public void setUseReducedOverheatModifierBV(boolean useReducedOverheatModifierBV) {
-        this.useReducedOverheatModifierBV = useReducedOverheatModifierBV;
     }
 
     public void addAttackedByThisTurn(int entityId) {

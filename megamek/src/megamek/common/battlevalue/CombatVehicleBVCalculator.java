@@ -480,14 +480,7 @@ public class CombatVehicleBVCalculator {
         bvReport.addLine("+ weapons bv * speed factor", weaponBV + " * " + speedFactor, "= ", obv);
 
         double finalBV;
-        if (combatVee.useGeometricMeanBV()) {
-            finalBV = 2 * Math.sqrt(obv * dbv);
-            if (finalBV == 0) {
-                finalBV = dbv + obv;
-            }
-        } else {
-            finalBV = dbv + obv;
-        }
+        finalBV = dbv + obv;
         double totalBV = finalBV;
 
         if (combatVee.hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {

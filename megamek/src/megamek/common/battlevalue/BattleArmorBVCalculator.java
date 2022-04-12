@@ -177,16 +177,7 @@ public class BattleArmorBVCalculator {
             speedFactor = Math.round(speedFactor * 100) / 100.0;
             oBV *= speedFactor;
 
-            double soldierBV;
-            if (battleArmor.useGeometricMeanBV()) {
-                soldierBV = 2 * Math.sqrt(oBV * dBV);
-                if (soldierBV == 0) {
-                    soldierBV = oBV + dBV;
-                }
-            } else {
-                soldierBV = oBV + dBV;
-            }
-
+            double soldierBV = oBV + dBV;
             squadBV += soldierBV;
         }
         // we have now added all troopers, divide by current strength to then

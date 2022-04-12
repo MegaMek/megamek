@@ -467,20 +467,8 @@ public class DropShipBVCalculator {
         bvReport.addLine("Weapons BV * Speed Factor ",
                 weaponBV + " x " + speedFactor, "= ", obv);
 
-        double finalBV;
-        if (dropShip.useGeometricMeanBV()) {
-            finalBV = 2 * Math.sqrt(obv * dbv);
-            if (finalBV == 0) {
-                finalBV = dbv + obv;
-            }
-            bvReport.addLine("2 * sqrt(Offensive BV * Defensive BV)",
-                    "2 * sqrt(" + obv + " + " + dbv + ")", "= ", finalBV);
-        } else {
-            finalBV = dbv + obv;
-            bvReport.addLine("Offensive BV + Defensive BV",
-                    obv + " + " + dbv, "= ", finalBV);
-        }
-
+        double finalBV = dbv + obv;
+        bvReport.addLine("Offensive BV + Defensive BV", obv + " + " + dbv, "= ", finalBV);
         finalBV = Math.round(finalBV);
         bvReport.addResultLine("Final BV", "", finalBV);
 

@@ -545,30 +545,6 @@ public class MechSummary implements Serializable {
         this.suitWeight = suitWeight;
     }
 
-    public int getGMBV() {
-        return gmBV;
-    }
-
-    public void setGMBV(int gmBV) {
-        this.gmBV = gmBV;
-    }
-
-    public int getRHBV() {
-        return rhBV;
-    }
-
-    public void setRHBV(int rhBV) {
-        this.rhBV = rhBV;
-    }
-
-    public int getRHGMBV() {
-        return rhgmBV;
-    }
-
-    public void setRHGMBV(int rhgmBV) {
-        this.rhgmBV = rhgmBV;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

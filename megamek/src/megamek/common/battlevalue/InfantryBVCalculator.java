@@ -147,19 +147,10 @@ public class InfantryBVCalculator {
                 "= " + df.format(obr));
         bvReport.addEmptyLine();
 
-        double bv;
-        if (infantry.useGeometricMeanBV()) {
-            bv = 2 * Math.sqrt(obr * dbr);
-            if (bv == 0) {
-                bv = dbr + obr;
-            }
-            bvReport.addLine("SQRT(Defensive BR * Offensive BR) x 2:", "", "= " + df.format(bv));
-        } else {
-            bv = obr + dbr;
-            bvReport.addLine("Defensive BR + Offensive BR:",
-                    df.format(dbr) + " + " + df.format(obr),
-                    "= " + df.format(bv));
-        }
+        double bv = obr + dbr;
+        bvReport.addLine("Defensive BR + Offensive BR:",
+                df.format(dbr) + " + " + df.format(obr),
+                "= " + df.format(bv));
 
         double utm; // unit type modifier
         switch (infantry.getMovementMode()) {

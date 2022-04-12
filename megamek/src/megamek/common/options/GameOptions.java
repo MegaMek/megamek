@@ -147,10 +147,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false);
-        addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); 
-        
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); 
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false);

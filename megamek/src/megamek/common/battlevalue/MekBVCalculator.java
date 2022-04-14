@@ -20,6 +20,7 @@ package megamek.common.battlevalue;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
@@ -31,10 +32,7 @@ import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 import megamek.common.weapons.prototypes.*;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MekBVCalculator {
 
@@ -196,8 +194,14 @@ public class MekBVCalculator {
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
+        List<CriticalSlot> slotAlreadyCounted = new ArrayList<>();
         for (Mounted mounted : mek.getEquipment()) {
             int loc = mounted.getLocation();
+            // For superheavies, make sure to subtract at most once for each slot
+            CriticalSlot critSlot = getCriticalSlot(mek, mounted);
+            if (slotAlreadyCounted.contains(critSlot)) {
+                continue;
+            }
             int toSubtract = 15;
             EquipmentType etype = mounted.getType();
 
@@ -274,7 +278,7 @@ public class MekBVCalculator {
                 continue;
             }
 
-            // we subtract per critical slot
+            // For weapons split between locations, subtract per critical slot
             int criticals;
             if (mounted.isSplit()) {
                 criticals = 0;
@@ -297,6 +301,7 @@ public class MekBVCalculator {
             }
             toSubtract *= criticals;
             ammoPenalty += toSubtract;
+            slotAlreadyCounted.add(critSlot);
         }
 
         // special case for blueshield, need to check each non-head location
@@ -1097,7 +1102,7 @@ public class MekBVCalculator {
      * location.
      *
      * @param loc The location index
-     * @return    Whether explosive equipment in the location should decrease BV
+     * @return Whether explosive equipment in the location should decrease BV
      */
     private static boolean hasExplosiveEquipmentPenalty(Mech mek, int loc) {
         if ((loc == Entity.LOC_NONE) || mek.hasCASEII(loc)) {
@@ -1111,4 +1116,30 @@ public class MekBVCalculator {
             return true;
         }
     }
+
+    /**
+     * Returns the (first) CriticalSlot object for a given mounted equipment in its main location. This is
+     * used to find the CriticalSlot for ammo which only uses a single CriticalSlot.
+     *
+     * @param mek     the Mek
+     * @param mounted the equipment to look for
+     * @return a CriticalSlot that holds the mounted or null if none can be found
+     */
+    public static @Nullable CriticalSlot getCriticalSlot(Mech mek, Mounted mounted) {
+        int location = mounted.getLocation();
+        if (location == Entity.LOC_NONE) {
+            return null;
+        }
+        for (int slot = 0; slot < mek.getNumberOfCriticals(location); slot++) {
+            CriticalSlot cs = mek.getCritical(location, slot);
+            if ((cs != null) && (cs.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                if (cs.getMount().equals(mounted) ||
+                        ((cs.getMount2() != null) && (cs.getMount2().equals(mounted)))) {
+                    return cs;
+                }
+            }
+        }
+        return null;
+    }
+    
 }

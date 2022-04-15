@@ -387,7 +387,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write(",");
                         bw.write(Long.toString(unit.getCost()));
                         bw.write(",");
-                        bw.write(Long.toString(unit.getUnloadedCost()));
+                        bw.write(Long.toString(unit.getDryCost()));
                         bw.write(",");
                         bw.write(Integer.toString(unit.getYear()));
                         bw.write(",");

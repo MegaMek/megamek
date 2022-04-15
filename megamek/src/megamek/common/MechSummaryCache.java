@@ -175,6 +175,7 @@ public class MechSummaryCache {
         return failedFiles;
     }
 
+    @SuppressWarnings("unused") // Used in MHQ
     public void loadMechData() {
         loadMechData(false);
     }
@@ -406,7 +407,6 @@ public class MechSummaryCache {
         ms.setStandardYear(e.getCommonDate(e.isClan()));
         ms.setCost((long) e.getCost(false));
         ms.setDryCost((long) e.getCost(true));
-        ms.setUnloadedCost(((long) e.getCost(true)));
         ms.setAlternateCost((int) e.getAlternateCost());
         ms.setCanon(e.isCanon());
         ms.setWalkMp(e.getWalkMP(false, false));
@@ -453,7 +453,6 @@ public class MechSummaryCache {
             ms.setCockpitType(-2);
         }
 
-        // we can only test meks, vehicles, ASF, and Battlearmor right now
         TestEntity testEntity = null;
         if (e instanceof Mech) {
             testEntity = new TestMech((Mech) e, entityVerifier.mechOption, null);

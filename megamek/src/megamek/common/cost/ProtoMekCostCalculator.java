@@ -24,48 +24,48 @@ import megamek.common.*;
 public class ProtoMekCostCalculator {
 
     public static double calculateCost(Protomech protoMek, CalculationReport costReport, boolean ignoreAmmo) {
-        CostCalculator.addNoReportNote(costReport, protoMek);
-        double cost = 0;
+        double[] costs = new double[15];
+        int idx = 0;
 
         // Add the cockpit, a constant cost.
         if (protoMek.getWeight() >= 10) {
-            cost += 800000;
+            costs[idx++] = 800000;
         } else {
-            cost += 500000;
+            costs[idx++] = 500000;
         }
 
         // Add life support, a constant cost.
-        cost += 75000;
+        costs[idx++] = 75000;
 
         // Sensor cost is based on tonnage.
-        cost += 2000 * protoMek.getWeight();
+        costs[idx++] = 2000 * protoMek.getWeight();
 
         // Musculature cost is based on tonnage.
-        cost += 2000 * protoMek.getWeight();
+        costs[idx++] = 2000 * protoMek.getWeight();
 
         // Internal Structure cost is based on tonnage.
         if (protoMek.isGlider()) {
-            cost += 600 * protoMek.getWeight();
+            costs[idx++] = 600 * protoMek.getWeight();
         } else if (protoMek.isQuad()) {
-            cost += 500 * protoMek.getWeight();
+            costs[idx++] = 500 * protoMek.getWeight();
         } else {
-            cost += 400 * protoMek.getWeight();
+            costs[idx++] = 400 * protoMek.getWeight();
         }
 
         // Arm actuators are based on tonnage.
         // Their cost is listed separately?
-        cost += 2 * 180 * protoMek.getWeight();
+        costs[idx++] = 2 * 180 * protoMek.getWeight();
 
         // Leg actuators are based on tonnage.
-        cost += 540 * protoMek.getWeight();
+        costs[idx++] = 540 * protoMek.getWeight();
 
         // Engine cost is based on tonnage and rating.
         if (protoMek.hasEngine()) {
-            cost += (5000 * protoMek.getWeight() * protoMek.getEngine().getRating()) / 75;
+            costs[idx++] = (5000 * protoMek.getWeight() * protoMek.getEngine().getRating()) / 75;
         }
 
         // Jump jet cost is based on tonnage and jump MP.
-        cost += protoMek.getWeight() * protoMek.getJumpMP() * protoMek.getJumpMP() * 200;
+        costs[idx++] = protoMek.getWeight() * protoMek.getJumpMP() * protoMek.getJumpMP() * 200;
 
         // Heat sinks is constant per sink.
         // per the construction rules, we need enough sinks to sink all energy
@@ -77,17 +77,27 @@ public class ProtoMekCostCalculator {
                 sinks += wtype.getHeat();
             }
         }
-        cost += 2000 * sinks;
+        costs[idx++] = 2000 * sinks;
 
         // Armor is linear on the armor value of the Protomech
-        cost += protoMek.getTotalArmor() *
+        costs[idx++] = protoMek.getTotalArmor() *
                 EquipmentType.getProtomechArmorCostPerPoint(protoMek.getArmorType(protoMek.firstArmorIndex()));
 
         // Add in equipment cost.
-        cost += CostCalculator.getWeaponsAndEquipmentCost(protoMek, ignoreAmmo);
+        costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(protoMek, ignoreAmmo);
+
+        double cost = 0; // calculate the total
+        for (int x = 0; x < idx; x++) {
+            cost += costs[x];
+        }
 
         // Finally, apply the Final ProtoMech Cost Multiplier
         cost *= protoMek.getPriceMultiplier();
+        costs[idx] = -protoMek.getPriceMultiplier(); // negative just marks it as multiplier
+
+        String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Musculature", "Structure", "Arm Actuators",
+                "Leg Actuators", "Engine", "Jump Jets", "Heatsinks", "Armor", "Equipment", "Weight Multiplier" };
+        CostCalculator.fillInReport(costReport, protoMek, ignoreAmmo, systemNames, 11, cost, costs);
 
         return cost;
     }

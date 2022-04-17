@@ -23,6 +23,8 @@ import megamek.MMConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.InfantryBVCalculator;
+import megamek.common.cost.InfantryCostCalculator;
+import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -1018,86 +1020,9 @@ public class Infantry extends Entity {
         return canCallSupport;
     }
 
-  /**
-  * This combines the old getCost and getAlternativeCost methods into a revised getCost Method.
-    *this better considers AntiMek training and Weapons and armor costs.
-  */
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        double pweaponCost = 0;  // Primary Weapon Cost
-        double sweaponCost = 0; // Secondary Weapon Cost
-        double armorcost = 0; // Armor Cost
-        double cost = 0; // Total Final Cost of Platoon or Squad.
-        double primarySquad = 0; // Number of Troopers with Primary Weapon Only
-        double secondSquad = 0; // Number oif Troopers with Secondary Weapon Only.
-
-        // Weapon Cost Calculation
-        if (null != primaryW) {
-            pweaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * 2000;
-        }
-        if (null != secondW) {
-            sweaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * 2000;
-        }
-
-        // Determining Break down of who would have primary and secondary weapons.
-        primarySquad = (squadsize - secondn) * squadn;
-        secondSquad = menStarting - primarySquad;
-
-        // Squad Cost with just the weapons.
-        cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
-
-        // Check whether the unit has an armor kit. If not, calculate value for custom armor settings
-        EquipmentType armor = getArmorKit();
-        if (armor != null) {
-            armorcost = armor.getCost(this, false, LOC_INFANTRY);
-        } else {
-            // add in infantry armor cost
-            if (damageDivisor > 1) {
-                if (isArmorEncumbering()) {
-                    armorcost += 1600;
-                } else {
-                    armorcost += 4300;
-                }
-            }
-            int nSneak = 0;
-            if (hasSneakCamo()) {
-                nSneak++;
-            }
-            if (hasSneakECM()) {
-                nSneak++;
-            }
-            if (hasSneakIR()) {
-                nSneak++;
-            }
-
-            if (hasDEST()) {
-                armorcost += 50000;
-            } else if (nSneak == 1) {
-                armorcost += 7000;
-            } else if (nSneak == 2) {
-                armorcost += 21000;
-            } else if (nSneak == 3) {
-                armorcost += 28000;
-            }
-
-            if (hasSpaceSuit()) {
-                armorcost += 5000;
-            }
-        }
-
-        // Cost of armor on a per man basis added
-        cost += (armorcost * menStarting);
-
-        // Price multiplier includes anti-mech training, motive type, and specializations
-        cost = cost * getPriceMultiplier();
-
-        // add in field gun costs
-        for (Mounted mounted : getEquipment()) {
-            if (mounted.getLocation() == LOC_FIELD_GUNS) {
-                cost += Math.floor(mounted.getType().getCost(this, false, mounted.getLocation()));
-            }
-        }
-        return cost;
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return InfantryCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override

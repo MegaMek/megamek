@@ -62,6 +62,11 @@ public class CostCalculator {
             if (mounted.isWeaponGroup()) {
                 continue;
             }
+            // BA Manipulators are considered part of the structure costs and must be excluded here
+            if ((mounted.getType() instanceof MiscType)
+                    && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
+                continue;
+            }
             long itemCost = (long) mounted.getCost();
             if (!ignoreAmmo && entity.isSupportVehicle() && (mounted.getSize() > 1)
                     && (mounted.getType() instanceof InfantryWeapon)) {

@@ -25,42 +25,41 @@ public class BattleArmorCostCalculator {
 
     public static double calculateCost(BattleArmor battleArmor, CalculationReport costReport, boolean ignoreAmmo,
                                        boolean includeTrainingAndClan) {
-        CostCalculator.addNoReportNote(costReport, battleArmor);
-        double cost = 0;
+        double[] costs = new double[15];
+        int idx = 0;
+        
         switch (battleArmor.getWeightClass()) {
             case EntityWeightClass.WEIGHT_MEDIUM:
-                cost += 100000;
+                costs[idx++] = 100000;
                 if (battleArmor.getMovementMode() == EntityMovementMode.VTOL) {
-                    cost += battleArmor.getOriginalJumpMP() * 100000;
+                    costs[idx++] = battleArmor.getOriginalJumpMP() * 100000;
                 } else {
-                    cost += battleArmor.getOriginalJumpMP() * 75000;
+                    costs[idx++] = battleArmor.getOriginalJumpMP() * 75000;
                 }
                 break;
             case EntityWeightClass.WEIGHT_HEAVY:
-                cost += 200000;
+                costs[idx++] = 200000;
                 if (battleArmor.getMovementMode() == EntityMovementMode.INF_UMU) {
-                    cost += battleArmor.getOriginalJumpMP() * 100000;
+                    costs[idx++] = battleArmor.getOriginalJumpMP() * 100000;
                 } else {
-                    cost += battleArmor.getOriginalJumpMP() * 150000;
+                    costs[idx++] = battleArmor.getOriginalJumpMP() * 150000;
                 }
                 break;
             case EntityWeightClass.WEIGHT_ASSAULT:
-                cost += 400000;
+                costs[idx++] = 400000;
                 if (battleArmor.getMovementMode() == EntityMovementMode.INF_UMU) {
-                    cost += battleArmor.getOriginalJumpMP() * 150000;
+                    costs[idx++] = battleArmor.getOriginalJumpMP() * 150000;
                 } else {
-                    cost += battleArmor.getOriginalJumpMP() * 300000;
+                    costs[idx++] = battleArmor.getOriginalJumpMP() * 300000;
                 }
                 break;
             default:
-                cost += 50000;
-                cost += 50000 * battleArmor.getOriginalJumpMP();
+                costs[idx++] = 50000;
+                costs[idx++] = 50000 * battleArmor.getOriginalJumpMP();
                 break;
         }
-        cost += 25000 * (battleArmor.getOriginalWalkMP() - 1);
+        costs[idx++] = 25000 * (battleArmor.getOriginalWalkMP() - 1);
 
-        // damn, manipulators are supposed to be treated as structural costs
-        // and get multiplied by 1.1 if clan
         long manipulatorCost = 0;
         for (Mounted mounted : battleArmor.getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
@@ -70,7 +69,7 @@ public class BattleArmorCostCalculator {
             }
 
         }
-        cost += manipulatorCost;
+        costs[idx++] = manipulatorCost;
 
         double baseArmorCost;
         switch (battleArmor.getArmorType(BattleArmor.LOC_TROOPER_1)) {
@@ -98,21 +97,36 @@ public class BattleArmorCostCalculator {
                 break;
         }
 
-        cost += (baseArmorCost * battleArmor.getOArmor(BattleArmor.LOC_TROOPER_1));
+        costs[idx++] = (baseArmorCost * battleArmor.getOArmor(BattleArmor.LOC_TROOPER_1));
 
         // training cost and clan mod
         if (includeTrainingAndClan) {
             if (battleArmor.isClan()) {
-                cost *= 1.1;
-                cost += 200000;
+                costs[idx++] = -1.1;
+                costs[idx++] = 200000;
             } else {
-                cost += 150000;
+                costs[idx++] = 0;
+                costs[idx++] = 150000;
             }
         }
 
         // TODO : we do not track the modular weapons mount for 1000 C-bills in the unit files
-        cost += CostCalculator.getWeaponsAndEquipmentCost(battleArmor, ignoreAmmo) - manipulatorCost;
+        costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(battleArmor, ignoreAmmo);
+        costs[idx++] = -battleArmor.getSquadSize();
 
-        return battleArmor.getSquadSize() * cost;
+        double cost = 0; // calculate the total
+        for (int x = 0; x < idx; x++) {
+            if (costs[x] < 0) {
+                cost *= -costs[x];
+            } else {
+                cost += costs[x];
+            }
+        }
+
+        String[] systemNames = { "Chassis", "Jumping/VTOL/UMU", "Ground Movement", "Manipulators", "Armor",
+                "Clan Structure Multiplier", "Training", "Equipment", "Troopers" };
+        CostCalculator.fillInReport(costReport, battleArmor, ignoreAmmo, systemNames, 7, cost, costs);
+
+        return cost;
     }
 }

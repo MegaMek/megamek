@@ -172,7 +172,6 @@ public class MekCostCalculator {
         }
         costs[i] = -weightMultiplier; // negative just marks it as multiplier
         cost = Math.round(cost * weightMultiplier);
-//        addCostDetails(costReport, mek, ignoreAmmo, cost, costs);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
                 "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
                 "Armored System Components", "Armor", "Equipment",
@@ -181,27 +180,4 @@ public class MekCostCalculator {
         return cost;
     }
 
-//    private static void addCostDetails(CalculationReport costReport, Mech mek, boolean ignoreAmmo,
-//                                       double cost, double... costs) {
-//        String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Myomer", "Structure", "Actuators",
-//                "Engine", "Gyro", "Jump Jets", "Heatsinks", "Full Head Ejection System",
-//                "Armored System Components", "Armor", "Equipment",
-//                "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
-//        NumberFormat commafy = NumberFormat.getInstance();
-//        costReport.addHeader("Battle Value Calculations For " + mek.getChassis() + " " + mek.getModel());
-//        for (int l = 0; l < systemNames.length; l++) {
-//            if (l == 13) {
-//                EquipmentCostCalculator.getWeaponsAndEquipmentCost(mek, costReport, ignoreAmmo);
-//            } else {
-//                String result = commafy.format(costs[l]);
-//                if (costs[l] == 0) {
-//                    result = "N/A";
-//                } else if (costs[l] < 0) {
-//                    result = "x " + commafy.format(-costs[l]);
-//                }
-//                costReport.addLine(systemNames[l], "", result);
-//            }
-//        }
-//        costReport.addResultLine("Total Cost:", "", commafy.format(cost));
-//    }
 }

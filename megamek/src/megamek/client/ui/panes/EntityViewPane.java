@@ -89,7 +89,7 @@ public class EntityViewPane extends AbstractTabbedPane {
             getEntityPanel().reset();
             getTROPanel().reset();
         } else {
-            getEntityPanel().setMech(entity, true);
+            getEntityPanel().setMech(entity, false);
             getTROPanel().setMech(entity, TROView.createView(entity, true));
         }
     }

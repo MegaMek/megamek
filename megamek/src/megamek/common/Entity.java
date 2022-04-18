@@ -13844,7 +13844,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // Finally use that total to compute and return the actual power
         // amplifier weight.
-        return RoundWeight.nextHalfTon(total);
+        return RoundWeight.nextHalfTon(total / 10.0);
     }
 
     public Vector<Integer> getLoadedKeepers() {

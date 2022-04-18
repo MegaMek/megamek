@@ -28,6 +28,20 @@ import java.text.NumberFormat;
 
 public class CostCalculator {
 
+    static double calculateCost(double[] costs) {
+        double cost = 0;
+        for (int x = 0; x < costs.length; x++) {
+            if (costs[x] < 0) {
+                cost *= -costs[x];
+            } else {
+                cost += costs[x];
+            }
+        }
+        return cost;
+    }
+
+
+
     /**
      * Calculates the total cost of weapons and equipment of the given entity. Ammo costs are added
      * depending on the ignoreAmmo parameter.

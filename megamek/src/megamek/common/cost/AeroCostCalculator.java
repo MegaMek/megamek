@@ -25,43 +25,46 @@ import megamek.common.EquipmentType;
 public class AeroCostCalculator {
 
     public static double calculateCost(Aero aero, CalculationReport costReport, boolean ignoreAmmo) {
-        CostCalculator.addNoReportNote(costReport, aero);
-        double cost = 0;
+        double[] costs = new double[15];
+        int idx = 0;
 
-        // Cockpit
-        cost += 200000 + 50000 + (2000 * aero.getWeight());
-
-        // Structural integrity
-        cost += 50000 * aero.getSI();
-
-        // Additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * aero.getWeight());
+        // Cockpit, Life Support, Sensors, Structure and Additional Flight Systems
+        costs[idx++] = 200000;
+        costs[idx++] = 50000;
+        costs[idx++] = 2000 * aero.getWeight();
+        costs[idx++] = 50000 * aero.getSI();
+        costs[idx++] = 25000 + 10 * aero.getWeight();
 
         // Engine
         if (aero.hasEngine()) {
-            cost += (aero.getEngine().getBaseCost() * aero.getEngine().getRating() * aero.getWeight()) / 75.0;
+            costs[idx++] = (aero.getEngine().getBaseCost() * aero.getEngine().getRating() * aero.getWeight()) / 75.0;
         }
 
         // Fuel tanks
-        cost += (200 * aero.getFuel()) / 80.0;
+        costs[idx++] = (200 * aero.getFuel()) / 80.0;
 
         // Armor
         if (aero.hasPatchworkArmor()) {
+            int armorcost = 0;
             for (int loc = 0; loc < aero.locations(); loc++) {
-                cost += aero.getArmorWeight(loc) * EquipmentType.getArmorCost(aero.getArmorType(loc));
+                armorcost += aero.getArmorWeight(loc) * EquipmentType.getArmorCost(aero.getArmorType(loc));
             }
-
+            costs[idx++] = armorcost;
         } else {
-            cost += aero.getArmorWeight() * EquipmentType.getArmorCost(aero.getArmorType(0));
+            costs[idx++] = aero.getArmorWeight() * EquipmentType.getArmorCost(aero.getArmorType(0));
         }
 
         // Heat sinks
         int sinkCost = 2000 + (4000 * aero.getHeatType());
-        cost += sinkCost * aero.getHeatSinks();
+        costs[idx++] = sinkCost * aero.getHeatSinks();
 
-        double weaponCost = CostCalculator.getWeaponsAndEquipmentCost(aero, ignoreAmmo);
-        cost += weaponCost;
+        costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(aero, ignoreAmmo);
+        costs[idx] = -aero.getPriceMultiplier();
+        double cost = CostCalculator.calculateCost(costs);
+        String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Structure", "Flight Systems", "Engine",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
+        CostCalculator.fillInReport(costReport, aero, ignoreAmmo, systemNames, 9, cost, costs);
 
-        return Math.round(cost * aero.getPriceMultiplier());
+        return Math.round(cost);
     }
 }

@@ -26,52 +26,59 @@ import megamek.common.verifier.TestEntity;
 public class ConvFighterCostCalculator {
 
     public static double calculateCost(ConvFighter fighter, CalculationReport costReport, boolean ignoreAmmo) {
-        CostCalculator.addNoReportNote(costReport, fighter);
-        double cost = 0;
+        double[] costs = new double[15];
+        int idx = 0;
 
-        // add in cockpit
+        // Avionics
         double avionicsWeight = Math.ceil(fighter.getWeight() / 5) / 2;
-        cost += 4000 * avionicsWeight;
+        costs[idx++] = 4000 * avionicsWeight;
 
-        // add VSTOL gear if applicable
+        // VSTOL
         if (fighter.isVSTOL()) {
             double vstolWeight = Math.ceil(fighter.getWeight() / 10) / 2;
-            cost += 5000 * vstolWeight;
-        }
-
-        // Structural integrity
-        cost += 4000 * fighter.getSI();
-
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * fighter.getWeight());
-
-        // engine
-        if (fighter.hasEngine()) {
-            cost += (fighter.getEngine().getBaseCost() * fighter.getEngine().getRating() * fighter.getWeight()) / 75.0;
-        }
-
-        // fuel tanks
-        cost += (200 * fighter.getFuel()) / 160.0;
-
-        // armor
-        if (fighter.hasPatchworkArmor()) {
-            for (int loc = 0; loc < fighter.locations(); loc++) {
-                cost += fighter.getArmorWeight(loc) * EquipmentType.getArmorCost(fighter.getArmorType(loc));
-            }
+            costs[idx++] = 5000 * vstolWeight;
         } else {
-            cost += fighter.getArmorWeight() * EquipmentType.getArmorCost(fighter.getArmorType(0));
+            costs[idx++] = 0;
         }
 
-        // heat sinks
+        // Structure and Additional flight systems
+        costs[idx++] = 4000 * fighter.getSI();
+        costs[idx++] = 25000 + 10 * fighter.getWeight();
+
+        // Engine
+        if (fighter.hasEngine()) {
+            costs[idx++] = (fighter.getEngine().getBaseCost() * fighter.getEngine().getRating() * fighter.getWeight()) / 75.0;
+        }
+
+        // Fuel tanks
+        costs[idx++] = (200 * fighter.getFuel()) / 160.0;
+
+        // Armor
+        if (fighter.hasPatchworkArmor()) {
+            int armorcost = 0;
+            for (int loc = 0; loc < fighter.locations(); loc++) {
+                armorcost += fighter.getArmorWeight(loc) * EquipmentType.getArmorCost(fighter.getArmorType(loc));
+            }
+            costs[idx++] = armorcost;
+        } else {
+            costs[idx++] = fighter.getArmorWeight() * EquipmentType.getArmorCost(fighter.getArmorType(0));
+        }
+
+        // Heat sinks
         int sinkCost = 2000 + (4000 * fighter.getHeatType());
-        cost += sinkCost * TestEntity.calcHeatNeutralHSRequirement(fighter);
+        costs[idx++] = sinkCost * TestEntity.calcHeatNeutralHSRequirement(fighter);
 
-        // weapons
-        cost += CostCalculator.getWeaponsAndEquipmentCost(fighter, ignoreAmmo);
+        costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(fighter, ignoreAmmo);
 
-        // power amplifiers, if any
-        cost += 20000 * fighter.getPowerAmplifierWeight();
+        // Power amplifiers
+        costs[idx++] = 20000 * fighter.getPowerAmplifierWeight();
 
-        return Math.round(cost * fighter.getPriceMultiplier());
+        costs[idx] = -fighter.getPriceMultiplier();
+        double cost = CostCalculator.calculateCost(costs);
+        String[] systemNames = { "Avionics", "VSTOL Gear", "Structure", "Flight Systems", "Engine",
+                "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Power Amplifiers", "Weight Multiplier" };
+        CostCalculator.fillInReport(costReport, fighter, ignoreAmmo, systemNames, 8, cost, costs);
+
+        return Math.round(cost);
     }
 }

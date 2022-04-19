@@ -25,60 +25,14 @@ public class DropShipCostCalculator {
 
     public static double calculateCost(Dropship dropShip, CalculationReport costReport, boolean ignoreAmmo) {
         double[] costs = new double[20];
-        int costIdx = 0;
-        double cost = 0;
+        int idx = SmallCraftCostCalculator.addBaseCosts(costs, dropShip, ignoreAmmo);
 
-        // Control Systems
-        // Bridge
-        costs[costIdx++] += 200000 + (10 * dropShip.getWeight());
-        // Computer
-        costs[costIdx++] += 200000;
-        // Life Support
-        costs[costIdx++] += 5000 * (dropShip.getNCrew() + dropShip.getNPassenger());
-        // Sensors
-        costs[costIdx++] += 80000;
-        // Fire Control Computer
-        costs[costIdx++] += 100000;
-        // Gunnery Control Systems
-        costs[costIdx++] += 10000 * dropShip.getArcswGuns();
-
-        // Structural Integrity
-        costs[costIdx++] += 100000 * dropShip.getSI();
-
-        // Additional Flight Systems
-        // Attitude Thruster
-        costs[costIdx++] += 25000;
-        // Landing Gear
-        costs[costIdx++] += 10 * dropShip.getWeight();
         // Docking Collar
         if (dropShip.getCollarType() == Dropship.COLLAR_STANDARD) {
-            costs[costIdx++] += 10000;
+            costs[idx++] = 10000;
         } else if (dropShip.getCollarType() == Dropship.COLLAR_PROTOTYPE) {
-            costs[costIdx++] += 1010000;
+            costs[idx++] = 1010000;
         }
-
-        // Engine
-        double engineMultiplier = 0.065;
-        if (dropShip.isClan()) {
-            engineMultiplier = 0.061;
-        }
-        double engineWeight = dropShip.getOriginalWalkMP() * dropShip.getWeight() * engineMultiplier;
-        costs[costIdx++] += engineWeight * 1000;
-        // Drive Unit
-        costs[costIdx++] += (500 * dropShip.getOriginalWalkMP() * dropShip.getWeight()) / 100.0;
-
-        // Fuel Tanks
-        costs[costIdx++] += (200 * dropShip.getFuel()) / dropShip.getFuelPointsPerTon() * 1.02;
-
-        // Armor
-        costs[costIdx++] += dropShip.getArmorWeight() * EquipmentType.getArmorCost(dropShip.getArmorType(0));
-
-        // Heat Sinks
-        int sinkCost = 2000 + (4000 * dropShip.getHeatType());
-        costs[costIdx++] += sinkCost * dropShip.getHeatSinks();
-
-        // Weapons and Equipment
-        costs[costIdx++] += CostCalculator.getWeaponsAndEquipmentCost(dropShip, ignoreAmmo);
 
         // Transport Bays
         int baydoors = 0;
@@ -86,39 +40,25 @@ public class DropShipCostCalculator {
         long quartersCost = 0;
         // Passenger and crew quarters and infantry bays are considered part of the structure
         // and don't add to the cost
-        for (Bay next : dropShip.getTransportBays()) {
-            baydoors += next.getDoors();
-            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
-                bayCost += next.getCost();
+        for (Bay bay : dropShip.getTransportBays()) {
+            baydoors += bay.getDoors();
+            if (!bay.isQuarters() && !(bay instanceof InfantryBay) && !(bay instanceof BattleArmorBay)) {
+                bayCost += bay.getCost();
             }
         }
-
-        costs[costIdx++] += bayCost + (baydoors * 1000L);
-        costs[costIdx++] = quartersCost;
+        costs[idx++] = bayCost + (baydoors * 1000L);
+        costs[idx++] = quartersCost;
 
         // Life Boats and Escape Pods
-        costs[costIdx++] += 5000 * (dropShip.getLifeBoats() + dropShip.getEscapePods());
+        costs[idx++] += 5000 * (dropShip.getLifeBoats() + dropShip.getEscapePods());
 
-        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
-        double weightMultiplier = 36.0;
-        if (dropShip.isSpheroid()) {
-            weightMultiplier = 28.0;
-        }
-
-        // Sum Costs
-        for (int i = 0; i < costIdx; i++) {
-            cost += costs[i];
-        }
-
-        costs[costIdx] = -weightMultiplier; // Negative indicates multiplier
-        cost = Math.round(cost * weightMultiplier);
-
-        String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
-                "Structural Integrity", "Attitude Thruster", "Landing Gear", "Docking Collar",
-                "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays",
-                "Quarters", "Life Boats/Escape Pods", "Weight Multiplier" };
+        costs[idx] = -dropShip.getPriceMultiplier();
+        double cost = CostCalculator.calculateCost(costs);
+        String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "Fire Control Computer",
+                "Gunnery Control Systems", "Structural Integrity", "Attitude Thruster", "Landing Gear",
+                "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Docking Collar",
+                "Bays", "Quarters", "Life Boats/Escape Pods", "Final Multiplier" };
         CostCalculator.fillInReport(costReport, dropShip, ignoreAmmo, systemNames, 14, cost, costs);
-
-        return cost;
+        return Math.round(cost);
     }
 }

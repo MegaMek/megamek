@@ -19,57 +19,57 @@
 package megamek.common.cost;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.EquipmentType;
+import megamek.common.SmallCraft;
+import megamek.common.verifier.TestSmallCraft;
 
 public class SmallCraftCostCalculator {
 
     public static double calculateCost(SmallCraft smallCraft, CalculationReport costReport, boolean ignoreAmmo) {
-        CostCalculator.addNoReportNote(costReport, smallCraft);
-        double cost = 0;
+        double[] costs = new double[16];
+        int idx = addBaseCosts(costs, smallCraft, ignoreAmmo);
+        costs[idx] = -smallCraft.getPriceMultiplier();
+        double cost = CostCalculator.calculateCost(costs);
+        String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "Fire Control Computer",
+                "Gunnery Control Systems", "Structure", "Attitude Thruster", "Landing Gear", "Engine",
+                "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Equipment", "Weight Multiplier" };
+        CostCalculator.fillInReport(costReport, smallCraft, ignoreAmmo, systemNames, 14, cost, costs);
+        return Math.round(cost);
+    }
 
-        // add in controls
-        // bridge
-        cost += 200000 + (10 * smallCraft.getWeight());
-        // computer
-        cost += 200000;
-        // life support
-        cost += 5000 * (smallCraft.getNCrew() + smallCraft.getNPassenger());
-        // sensors
-        cost += 80000;
-        // fcs
-        cost += 100000;
-        // gunnery/control systems
-        cost += 10000 * smallCraft.getArcswGuns();
+    /**
+     * Adds those costs to the given costs array that are used in both DropShips and SmallCraft.
+     *
+     * @param costs The costs array used to store individual cost items. Should be empty
+     * @param smallCraft The SmallCraft or DropShip
+     * @param ignoreAmmo When true, ammo will not be added with the weapons and equipment
+     * @return The last index used in the costs array + 1, i.e. the first free index
+     */
+    static int addBaseCosts(double[] costs, SmallCraft smallCraft, boolean ignoreAmmo) {
+        int idx = 0;
+        TestSmallCraft testSmallCraft = new TestSmallCraft(smallCraft, null, null);
 
-        // structural integrity
-        cost += 100000 * smallCraft.getSI();
+        // Bridge, Computer, Life Support, Sensors, Fire Control Computer, Gunnery Control Systems,
+        costs[idx++] = 200000 + (10 * smallCraft.getWeight());
+        costs[idx++] = 200000;
+        costs[idx++] = 5000 * (smallCraft.getNCrew() + smallCraft.getNPassenger());
+        costs[idx++] = 80000;
+        costs[idx++] = 100000;
+        costs[idx++] = 10000 * smallCraft.getArcswGuns();
 
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * smallCraft.getWeight());
+        // Structure, Attitude Thruster, Landing Gear
+        costs[idx++] = 100000 * smallCraft.getSI();
+        costs[idx++] = 25000;
+        costs[idx++] = 10 * smallCraft.getWeight();
 
-        // engine
-        double engineMultiplier = 0.065;
-        if (smallCraft.isClan()) {
-            engineMultiplier = 0.061;
-        }
-        double engineWeight = smallCraft.getOriginalWalkMP() * smallCraft.getWeight() * engineMultiplier;
-        cost += engineWeight * 1000;
-        // drive unit
-        cost += (500 * smallCraft.getOriginalWalkMP() * smallCraft.getWeight()) / 100.0;
-
-        // fuel tanks
-        cost += (200 * smallCraft.getFuel()) / 80.0 * 1.02;
-
-        // armor
-        cost += smallCraft.getArmorWeight() * EquipmentType.getArmorCost(smallCraft.getArmorType(0));
-
-        // heat sinks
+        // Engine, Drive Unit, Fuel Tanks, Armor, Heat sinks, Equipment
+        costs[idx++] = testSmallCraft.getWeightEngine() * 1000;
+        costs[idx++] = (500 * smallCraft.getOriginalWalkMP() * smallCraft.getWeight()) / 100.0;
+        costs[idx++] = 200 * testSmallCraft.getWeightFuel();
+        costs[idx++] = smallCraft.getArmorWeight() * EquipmentType.getArmorCost(smallCraft.getArmorType(0));
         int sinkCost = 2000 + (4000 * smallCraft.getHeatType());
-        cost += sinkCost * smallCraft.getHeatSinks();
-
-        // weapons
-        cost += CostCalculator.getWeaponsAndEquipmentCost(smallCraft, ignoreAmmo);
-
-        return Math.round(cost * smallCraft.getPriceMultiplier());
+        costs[idx++] = sinkCost * smallCraft.getHeatSinks();
+        costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(smallCraft, ignoreAmmo);
+        return idx;
     }
 }

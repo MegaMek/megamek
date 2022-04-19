@@ -12,14 +12,11 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.DropShipBVCalculator;
 import megamek.common.cost.DropShipCostCalculator;
-import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

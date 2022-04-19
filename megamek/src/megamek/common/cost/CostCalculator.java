@@ -27,23 +27,28 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 public class CostCalculator {
 
+    /**
+     * Specialized method to calculate the total cost based on the given costs array. Stepping
+     * through the array, positive values will be added to the previous total while a negative value
+     * will be multiplied with the previous total (and the negative sign removed).
+     *
+     * @param costs An array of cost or multplier values
+     * @return The total C-bill cost as calculated from the costs array
+     */
     static double calculateCost(double[] costs) {
         double cost = 0;
-        for (int x = 0; x < costs.length; x++) {
-            if (costs[x] < 0) {
-                cost *= -costs[x];
+        for (double v : costs) {
+            if (v < 0) {
+                cost *= -v;
             } else {
-                cost += costs[x];
+                cost += v;
             }
         }
         return cost;
     }
-
-
 
     /**
      * Calculates the total cost of weapons and equipment of the given entity. Ammo costs are added

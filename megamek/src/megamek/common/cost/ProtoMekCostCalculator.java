@@ -53,7 +53,6 @@ public class ProtoMekCostCalculator {
         }
 
         // Arm actuators are based on tonnage.
-        // Their cost is listed separately?
         costs[idx++] = 2 * 180 * protoMek.getWeight();
 
         // Leg actuators are based on tonnage.
@@ -67,8 +66,7 @@ public class ProtoMekCostCalculator {
         // Jump jet cost is based on tonnage and jump MP.
         costs[idx++] = protoMek.getWeight() * protoMek.getJumpMP() * protoMek.getJumpMP() * 200;
 
-        // Heat sinks is constant per sink.
-        // per the construction rules, we need enough sinks to sink all energy
+        // Heat sinks is constant per sink. Per the construction rules, we need enough sinks to sink all energy
         // weapon heat, so we just calculate the cost that way.
         int sinks = 0;
         for (Mounted mount : protoMek.getWeaponList()) {
@@ -83,18 +81,9 @@ public class ProtoMekCostCalculator {
         costs[idx++] = protoMek.getTotalArmor() *
                 EquipmentType.getProtomechArmorCostPerPoint(protoMek.getArmorType(protoMek.firstArmorIndex()));
 
-        // Add in equipment cost.
         costs[idx++] = CostCalculator.getWeaponsAndEquipmentCost(protoMek, ignoreAmmo);
-
-        double cost = 0; // calculate the total
-        for (int x = 0; x < idx; x++) {
-            cost += costs[x];
-        }
-
-        // Finally, apply the Final ProtoMech Cost Multiplier
-        cost *= protoMek.getPriceMultiplier();
-        costs[idx] = -protoMek.getPriceMultiplier(); // negative just marks it as multiplier
-
+        costs[idx] = -protoMek.getPriceMultiplier();
+        double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Cockpit", "Life Support", "Sensors", "Musculature", "Structure", "Arm Actuators",
                 "Leg Actuators", "Engine", "Jump Jets", "Heatsinks", "Armor", "Equipment", "Weight Multiplier" };
         CostCalculator.fillInReport(costReport, protoMek, ignoreAmmo, systemNames, 11, cost, costs);

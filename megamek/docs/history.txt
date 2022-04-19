@@ -46,6 +46,7 @@ VERSION HISTORY:
 + PR #3569: Fixing Freemarker Configuration Version Initialization
 + PR #3570: Remove unofficial BV calculation options
 + Issue #3531: Fixes superheavy Mek Ammo Battle Value penalty
++ Issue #3576: Fixing Destroyed Squadron Kill Assignment IllegalArgumentException
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

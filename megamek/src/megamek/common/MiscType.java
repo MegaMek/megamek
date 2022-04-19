@@ -2784,7 +2784,7 @@ public class MiscType extends EquipmentType {
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS   
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setClanAdvancement(DATE_NONE, 3070, 3109, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(3070, 3109, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CSR)
                 .setProductionFactions(F_CSR).setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;

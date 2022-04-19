@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Leonidas Battle Armor
+</Name>
+
+<Model>
+[MH] (Sensor)
+</Model>
+
+<year>
+3096
+</year>
+
+<originalBuildYear>
+3096
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISImprovedSensors:RA
+BAAPMount:RA
+InfantryAssaultRifle:APM:RA
+BAHeavyBattleClaw:LA
+BAISAngelECMSuite:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO 3145 Free Worlds League - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

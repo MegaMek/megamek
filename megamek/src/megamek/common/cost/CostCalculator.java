@@ -25,6 +25,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 public class CostCalculator {
 
@@ -56,7 +59,7 @@ public class CostCalculator {
 
     /**
      * Calculates the total cost of weapons and equipment of the given entity. Ammo costs are added
-     * depending on the ignoreAmmo parameter. For each weapon and equipment a line is added to
+     * depending on the ignoreAmmo parameter. For each weapon and equipment type a line is added to
      * the given CalculationReport. No header or other addition is made to the report.
      *
      * @param costReport The CalculationReport to fill in
@@ -68,6 +71,8 @@ public class CostCalculator {
         long cost = 0;
         NumberFormat commafy = NumberFormat.getInstance();
 
+        Map<String, Integer> weaponsNumberMap = new HashMap<>();
+        Map<String, Long> weaponsCostMap = new HashMap<>();
         for (Mounted mounted : entity.getEquipment()) {
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
                     && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD))) {
@@ -90,9 +95,16 @@ public class CostCalculator {
 
             cost += itemCost;
             if (itemCost > 0) {
-                costReport.addLine(mounted.getName(), "", commafy.format(itemCost));
+                weaponsNumberMap.merge(mounted.getName(), 1, Integer::sum);
+                weaponsCostMap.merge(mounted.getName(), itemCost, Long::sum);
             }
+
         }
+        for (String weapon : weaponsNumberMap.keySet()) {
+            costReport.addLine(weaponsNumberMap.get(weapon) + " " + weapon, "",
+                    commafy.format(weaponsCostMap.get(weapon)));
+        }
+
         int count = entity.implicitClanCASE();
         if (count > 0) {
             long itemCost = 50000;

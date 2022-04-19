@@ -32938,23 +32938,23 @@ public class Server implements Runnable {
      * Credits a Kill for an entity, if the target got killed.
      *
      * @param target   The <code>Entity</code> that got killed.
-     * @param attacker The <code>Entity</code> that did the killing.
+     * @param attacker The <code>Entity</code> that did the killing, which may be null
      */
-    public void creditKill(Entity target, Entity attacker) {
-        // Kills should be credited for each individual fighter, instead of the
-        // squadron
+    public void creditKill(final Entity target, @Nullable Entity attacker) {
+        // Kills should be credited for each individual fighter, instead of the squadron
         if (target instanceof FighterSquadron) {
             return;
         }
-        // If a squadron scores a kill, assign it randomly to one of the member fighters
+
+        // If a squadron scores a kill, assign it randomly to one of the member fighters... provided
+        // one still lives that is.
         if (attacker instanceof FighterSquadron) {
-            Entity killer = attacker.getLoadedUnits().get(Compute.randomInt(attacker.getLoadedUnits().size()));
-            if (killer != null) {
-                attacker = killer;
-            }
+            attacker = attacker.getLoadedUnits().isEmpty() ? null
+                : attacker.getLoadedUnits().get(Compute.randomInt(attacker.getLoadedUnits().size()));
         }
-        if ((target.isDoomed() || target.getCrew().isDoomed())
-            && !target.getGaveKillCredit() && (attacker != null)) {
+
+        if ((attacker != null) && (target.isDoomed() || target.getCrew().isDoomed())
+                && !target.getGaveKillCredit()) {
             attacker.addKill(target);
         }
     }

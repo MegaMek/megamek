@@ -47,7 +47,8 @@ VERSION HISTORY:
 + PR #3570: Remove unofficial BV calculation options
 + Issue #3531: Fixes superheavy Mek Ammo Battle Value penalty
 + Issue #3576: Fixing Destroyed Squadron Kill Assignment IllegalArgumentException
-+ Data: New Sprites, some new BA formations, fixes for #3577, #3575, # 3571, #3544, and #3353  
++ Data: New Sprites, some new BA formations, fixes for #3577, #3575, #3571, #3544, and #3353
++ PR #3583: XML Util Methods: Minor Write Performance Improvements
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

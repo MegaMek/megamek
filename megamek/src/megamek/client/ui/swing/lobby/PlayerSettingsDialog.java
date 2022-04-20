@@ -63,9 +63,14 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             currentPlayerStartPos -= 10;
         }
         initialize();
-        UIUtil.adjustDialog(this);
     }
-    
+
+    @Override
+    protected void finalizeInitialization() {
+        UIUtil.adjustDialog(this);
+        super.finalizeInitialization();
+    }
+
     /** Returns the chosen initiative modifier. */
     public int getInit() {
         return parseField(fldInit);

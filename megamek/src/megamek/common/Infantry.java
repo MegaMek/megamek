@@ -21,10 +21,8 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.InfantryBVCalculator;
 import megamek.common.cost.InfantryCostCalculator;
-import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;

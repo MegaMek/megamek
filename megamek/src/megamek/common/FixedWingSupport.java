@@ -12,13 +12,8 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.DropShipCostCalculator;
 import megamek.common.cost.FixedWingSupportCostCalculator;
-import megamek.common.verifier.SupportVeeStructure;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**

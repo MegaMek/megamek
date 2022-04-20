@@ -94,6 +94,7 @@ public class CostDisplayDialog extends AbstractDialog {
         buttonPanel.add(exportText);
         buttonPanel.add(exportHTML);
         centerPanel.add(buttonPanel);
+        centerPanel.add(new JSeparator());
         centerPanel.add(reportScrollPane);
         return centerPanel;
     }

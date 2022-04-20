@@ -26,40 +26,38 @@ import megamek.common.Mounted;
 public class InfantryCostCalculator {
 
     public static double calculateCost(Infantry infantry, CalculationReport costReport, boolean ignoreAmmo) {
-        CostCalculator.addNoReportNote(costReport, infantry);
-        double pweaponCost = 0;  // Primary Weapon Cost
-        double sweaponCost = 0; // Secondary Weapon Cost
-        double armorcost = 0; // Armor Cost
-        double cost; // Total Final Cost of Platoon or Squad.
-        double primarySquad; // Number of Troopers with Primary Weapon Only
-        double secondSquad; // Number oif Troopers with Secondary Weapon Only.
+        double[] costs = new double[15];
+        int idx = 0;
 
         // Weapon Cost Calculation
+        double pweaponCost = 0;  // Primary Weapon Cost
         if (null != infantry.getPrimaryWeapon()) {
-            pweaponCost += Math.sqrt(infantry.getPrimaryWeapon().getCost(infantry, false, -1)) * 2000;
+            pweaponCost = Math.sqrt(infantry.getPrimaryWeapon().getCost(infantry, false, -1)) * 2000;
         }
+        double sweaponCost = 0; // Secondary Weapon Cost
         if (null != infantry.getSecondaryWeapon()) {
-            sweaponCost += Math.sqrt(infantry.getSecondaryWeapon().getCost(infantry, false, -1)) * 2000;
+            sweaponCost = Math.sqrt(infantry.getSecondaryWeapon().getCost(infantry, false, -1)) * 2000;
         }
 
         // Determining Break down of who would have primary and secondary weapons.
-        primarySquad = (infantry.getSquadSize() - infantry.getSecondaryN()) * infantry.getSquadN();
-        secondSquad = infantry.getOInternal(0) - primarySquad; // OInternal = menStarting
+        double primarySquad = (infantry.getSquadSize() - infantry.getSecondaryN()) * infantry.getSquadN();
+        double secondSquad = infantry.getOInternal(0) - primarySquad; // OInternal = menStarting
 
         // Squad Cost with just the weapons.
-        cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
+        costs[idx++] = primarySquad * pweaponCost + secondSquad * sweaponCost;
 
         // Check whether the unit has an armor kit. If not, calculate value for custom armor settings
+        double armorCost = 0;
         EquipmentType armor = infantry.getArmorKit();
         if (armor != null) {
-            armorcost = armor.getCost(infantry, false, Infantry.LOC_INFANTRY);
+            armorCost = armor.getCost(infantry, false, Infantry.LOC_INFANTRY);
         } else {
             // add in infantry armor cost
             if (infantry.getArmorDamageDivisor() > 1) {
                 if (infantry.isArmorEncumbering()) {
-                    armorcost += 1600;
+                    armorCost += 1600;
                 } else {
-                    armorcost += 4300;
+                    armorCost += 4300;
                 }
             }
             int nSneak = 0;
@@ -74,32 +72,37 @@ public class InfantryCostCalculator {
             }
 
             if (infantry.hasDEST()) {
-                armorcost += 50000;
+                armorCost += 50000;
             } else if (nSneak == 1) {
-                armorcost += 7000;
+                armorCost += 7000;
             } else if (nSneak == 2) {
-                armorcost += 21000;
+                armorCost += 21000;
             } else if (nSneak == 3) {
-                armorcost += 28000;
+                armorCost += 28000;
             }
 
             if (infantry.hasSpaceSuit()) {
-                armorcost += 5000;
+                armorCost += 5000;
             }
         }
 
         // Cost of armor on a per man basis added
-        cost += (armorcost * infantry.getOInternal(0)); // OInternal = menStarting
+        costs[idx++] = armorCost * infantry.getOInternal(0); // OInternal = menStarting
 
         // Price multiplier includes anti-mech training, motive type, and specializations
-        cost = cost * infantry.getPriceMultiplier();
+        costs[idx++] = -infantry.getPriceMultiplier();
 
         // add in field gun costs
+        double fieldGunCost = 0;
         for (Mounted mounted : infantry.getEquipment()) {
             if (mounted.getLocation() == Infantry.LOC_FIELD_GUNS) {
-                cost += Math.floor(mounted.getType().getCost(infantry, false, mounted.getLocation()));
+                fieldGunCost += Math.floor(mounted.getType().getCost(infantry, false, mounted.getLocation()));
             }
         }
+        costs[idx] = fieldGunCost;
+        double cost = CostCalculator.calculateCost(costs);
+        String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun" };
+        CostCalculator.fillInReport(costReport, infantry, ignoreAmmo, systemNames, -1, cost, costs);
         return cost;
     }
 }

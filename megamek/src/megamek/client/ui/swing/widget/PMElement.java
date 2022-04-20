@@ -30,7 +30,7 @@ public interface PMElement {
     void setVisible(boolean v);
 
     /**
-     * Draws element into specifyed Graphics.
+     * Draws element into specified Graphics.
      */
     void drawInto(Graphics g);
 

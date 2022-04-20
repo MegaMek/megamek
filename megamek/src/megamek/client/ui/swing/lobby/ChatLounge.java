@@ -3435,15 +3435,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    private class MekTable extends JTable {
+    private static class MekTable extends JTable {
         private static final long serialVersionUID = -4054214297803021212L;
         
         public MekTable(MekTableModel mekModel) {
             super(mekModel);
         }
-        
+
+        /**
+         * Places the tooltips to the right of the cell so it doesn't get in the way.
+         */
         @Override
-        /** Places the tooltips to the right of the cell so it doesnt get in the way. */
         public Point getToolTipLocation(MouseEvent event) {
             int row = rowAtPoint(event.getPoint());
             int col = columnAtPoint(event.getPoint());

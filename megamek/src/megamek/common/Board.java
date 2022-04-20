@@ -59,8 +59,7 @@ public class Board implements Serializable {
 
     private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
 
-    // Min and Max elevation values for when they are undefined (since you cant
-    // set an int to null).
+    // Min and Max elevation values for when they are undefined (since you can't/ set an int to null).
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
 

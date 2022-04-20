@@ -4218,7 +4218,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createComstarInfArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Comstar Infantry Kit";
+        misc.name = "ComStar Infantry Kit";
         misc.setInternalName(misc.name);
         misc.addLookupName("CSInfKit");
         misc.addLookupName("ComstarKit");

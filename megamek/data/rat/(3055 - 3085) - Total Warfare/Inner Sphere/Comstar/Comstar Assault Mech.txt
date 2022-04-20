@@ -1,4 +1,4 @@
-Comstar Assault 'Mech
+ComStar Assault 'Mech
 King Crab KGC-000,1
 Grand Titan T-IT-N10M,2
 Awesome AWS-8Q,3

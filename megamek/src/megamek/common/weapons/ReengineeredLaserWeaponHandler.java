@@ -1,6 +1,6 @@
 /*
- * MegaMek
- * Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,7 +26,7 @@ public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
     public ReengineeredLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
                                           Server s) {
         super(toHit, waa, g, s);
-        // so that reflective armor doesn't halve the damae
+        // so that reflective armor doesn't halve the damage
         generalDamageType = HitData.DAMAGE_IGNORES_DMG_REDUCTION;
     }
 }

@@ -143,13 +143,13 @@ public final class ASFBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder();
         if (arts) {
             sb.append("ARTS ");
         }
         sb.append("Aerospace Fighter ");
-        if (showrecovery) {
+        if (showRecovery) {
             sb.append(numDoorsString()).append(" - ")
                 .append(String.format("%1$,.0f", getUnused()))
                 .append(" units (").append(getRecoverySlots()).append(" recovery open)");

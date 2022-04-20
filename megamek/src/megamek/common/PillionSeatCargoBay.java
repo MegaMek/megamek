@@ -38,7 +38,7 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Seating (Pillion) - " + currentSpace;
     }
 

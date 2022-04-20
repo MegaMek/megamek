@@ -1,4 +1,4 @@
-3063 Comstar Heavy Aerospace
+3063 ComStar Heavy Aerospace
 Rapier RPR-100b,1
 Hammerhead HMR-HDb,2
 Rapier RPR-100,3

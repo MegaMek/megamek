@@ -1,4 +1,4 @@
-3062 Comstar - Vehicle
+3062 ComStar - Vehicle
 Demolisher Heavy Tank (Standard Mk. I),1
 Rhino Fire Support Tank (Standard),2
 Marksman Artillery Vehicle (Standard),3

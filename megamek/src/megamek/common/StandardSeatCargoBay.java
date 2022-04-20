@@ -54,7 +54,7 @@ public class StandardSeatCargoBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Seating (Standard) - " + currentSpace;
     }
 

@@ -1,4 +1,4 @@
-3063 Comstar Medium Aerospace
+3063 ComStar Medium Aerospace
 Ironsides IRN-SD1b,1
 Hellcat II HCT-214,2
 Hellcat II HCT-213B,3

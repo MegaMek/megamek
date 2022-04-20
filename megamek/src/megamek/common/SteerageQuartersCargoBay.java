@@ -69,7 +69,7 @@ public final class SteerageQuartersCargoBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Steerage Quarters (" + getCurrentDoors() + " doors) - " + (int) currentSpace;
     }
 

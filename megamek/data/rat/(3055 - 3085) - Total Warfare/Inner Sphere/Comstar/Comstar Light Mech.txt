@@ -1,4 +1,4 @@
-Comstar Light 'Mech
+ComStar Light 'Mech
 Spector SPR-5F,1
 Hussar HSR-200-D,2
 Thorn THE-N,3

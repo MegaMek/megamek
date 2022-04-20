@@ -8,7 +8,7 @@ Ingame just change to LargeTextures tileset in the client graphics settings.
 Later it should be an own selectable from the available options.
 
 If you also want to use the updated roof textures you have to separately copy/replace existing ones in their folders,
-i dont know why i cant load them from my own largeTextures tileset file, maybe someone can look into that. 
+O don't know why I can't load them from my own largeTextures tileset file, maybe someone can look into that.
 
  iLarge_Textures_hardened/"files" -> ..data/images/hexes/hardened/
  iLarge_Textures_light/"files" -> ..data/images/hexes/light/

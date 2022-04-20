@@ -5572,11 +5572,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // check for quirks
         int quirkBonus = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)) {
-            if (isClan()) {
-                quirkBonus = 5;
-            } else {
-                quirkBonus = 4;
-            }
+            quirkBonus = isClan() ? 5 : 4;
         }
 
         // check for SPA
@@ -5587,9 +5583,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)
-                && !m.isInoperable()) {
-
+            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
                 // Quirk bonus is only 2 if equipped with BAP
                 if (quirkBonus > 0) {
                     quirkBonus = 2;
@@ -5597,31 +5591,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                 // in space the range of all BAPs is given by the mode
                 if (game.getBoard().inSpace()) {
-                    if (m.curMode().equals("Medium")) {
-                        return 12;
-                    }
-                    return 6;
+                    return m.curMode().equals("Medium") ? 12 : 6;
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)")
-                    || m.getName().equals(Sensor.BAP)) {
+                        || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP)
-                    || (m.getType()).getInternalName().equals(Sensor.WATCHDOG)
-                    || (m.getType()).getInternalName().equals(Sensor.NOVA)) {
+                        || (m.getType()).getInternalName().equals(Sensor.WATCHDOG)
+                        || (m.getType()).getInternalName().equals(Sensor.NOVA)) {
                     return 5 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)
-                    || (m.getType().getInternalName()
-                         .equals(Sensor.CLBALIGHT_AP))
-                    || (m.getType().getInternalName()
-                         .equals(Sensor.ISBALIGHT_AP))) {
+                        || (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP))
+                        || (m.getType().getInternalName().equals(Sensor.ISBALIGHT_AP))) {
                     return 3 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)
-                    || (m.getType().getInternalName()
-                         .equals(Sensor.CLIMPROVED))) {
+                        || (m.getType().getInternalName().equals(Sensor.CLIMPROVED))) {
                     return 2 + cyberBonus + quirkBonus + spaBonus;
                 }
                 return 4 + cyberBonus + quirkBonus + spaBonus;// everthing else should be
@@ -5690,7 +5678,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Only Meks can have CASE II so all other entites return false.
+     * Only Meks can have CASE II so all other entities return false.
      *
      * @return true iff the mech has CASE II.
      */
@@ -5699,7 +5687,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Only Meks have CASE II so all other entites return false.
+     * Only Meks have CASE II so all other entities return false.
      *
      * @param location
      * @return true iff the mech has CASE II at this location.

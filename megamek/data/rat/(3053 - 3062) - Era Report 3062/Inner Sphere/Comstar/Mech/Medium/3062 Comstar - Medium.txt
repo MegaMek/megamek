@@ -1,4 +1,4 @@
-3062 Comstar - Medium
+3062 ComStar - Medium
 Beowulf BEO-12,1
 Sentinel STN-3L,2
 Crab CRB-27,3

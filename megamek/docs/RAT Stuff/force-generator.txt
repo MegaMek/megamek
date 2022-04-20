@@ -92,14 +92,14 @@ B. According to Field Manual: Crusader Clans, Clan Jade Falcon does not deploy c
    rule Clan Jade Falcon does not make active use of combat vehicles in a direct combat role. Thus
    the CJF forces in the post-invasion era include a reduced number of combat vehicles, which are predominantly
    found in support and indirect combat roles such as recon and fire support.
-C. According to Field Manual: Comstar, combined arms units are the rule for Level IIIs and above, but Level IIs
+C. According to Field Manual: ComStar, combined arms units are the rule for Level IIIs and above, but Level IIs
    tend to be uniform. The numbers don't quite work for that, but in distributing the given ratio of
    Mek/armor/infantry forces, there is a strong preference for uniform Level IIs, with any necessary mixing
    being only two distinct unit types, either 4/2 or 3/3. In a few rare cases there will be a Level II
    with two Meks, two vehicles, and two infantry or BA Level Is. With 39 as the standard number of fighters in
    a Level IV, each level III gets six fighters to form one of its six Level IIs, with the remaining three
    fighters being joined by three Meks to form a command Level II.
-D. Several factions (Comstar, Marian Hegemony, and Taurian Concordat) use infantry platoon formations
+D. Several factions (ComStar, Marian Hegemony, and Taurian Concordat) use infantry platoon formations
    that do not have corresponding units in MegaMek at the time of this writing. In these cases, the closest
    Inner Sphere unit is used instead. Also, MegaMek does not have three-suit BA squads as used by the Society,
    so BA uns are generated as standard Clan Points.     
@@ -381,7 +381,7 @@ directory (data/forcegenerator/faction_rules).
        eschelon [required]: A numeric value indicating the tier of organization. While it is possible to
        						use any arbitrary value, it is recommended for purposes of clarity that the
        						values increase at higher levels of organization. Constants are provided for
-       						common values used by Inner Sphere, Clan, and Comstar forces.
+       						common values used by Inner Sphere, Clan, and ComStar forces.
 	   eschName: A String value that is used by the user interface as a display name of the eschelon. It
 	             is also used to create a default name for the force node if no <name> element is present.
 	             If missing, the numeric value is used.

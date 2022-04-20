@@ -38,8 +38,8 @@ public class FighterSquadron extends Aero {
     private Vector<Integer> fighters = new Vector<>();
 
     // fighter squadrons need to keep track of heat capacity apart from their fighters
-    private int heatcap = 0;
-    private int heatcapNoRHS = 0;
+    private int heatCapacity = 0;
+    private int heatCapacityNoRHS = 0;
 
     public FighterSquadron() {
         super();
@@ -263,18 +263,14 @@ public class FighterSquadron extends Aero {
     }
     
     @Override
-    public int getHeatCapacity(boolean includeRadicalHeatSink) {
-        if (includeRadicalHeatSink) {
-            return heatcap;
-        } else {
-            return heatcapNoRHS;
-        }
+    public int getHeatCapacity(final boolean includeRadicalHeatSink) {
+        return includeRadicalHeatSink ? heatCapacity : heatCapacityNoRHS;
     }
 
     public void resetHeatCapacity() {
         List<Entity> activeFighters = getActiveSubEntities();
-        heatcap = activeFighters.stream().mapToInt(ent -> ent.getHeatCapacity(true)).sum();
-        heatcapNoRHS = activeFighters.stream().mapToInt(ent -> ent.getHeatCapacity(false)).sum();
+        heatCapacity = activeFighters.stream().mapToInt(ent -> ent.getHeatCapacity(true)).sum();
+        heatCapacityNoRHS = activeFighters.stream().mapToInt(ent -> ent.getHeatCapacity(false)).sum();
     }
 
     @Override

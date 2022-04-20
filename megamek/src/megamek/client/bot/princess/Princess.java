@@ -195,7 +195,7 @@ public class Princess extends BotClient {
             // we don't care about exact damage value since we're just comparing them relative to one another
             //  note: technically we should, 
             // we don't care about specific firing entity, we just want one on our side
-            //      since we only use it to determine friendlyness 
+            //      since we only use it to determine friendliness
             double currentDamage = getArtilleryTargetingControl().calculateDamageValue(10, targetHex, arbitraryEntity, game, this);
             if (currentDamage > maxDamage) {
                 maxDamage = currentDamage;

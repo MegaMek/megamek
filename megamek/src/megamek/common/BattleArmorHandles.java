@@ -20,7 +20,7 @@ import java.util.Vector;
 
 /**
  * Represents a set of handles on an OmniMech used by Battle Armor units
- * equiped with Boarding Claws to attach themselves for transport. This is
+ * equipped with Boarding Claws to attach themselves for transport. This is
  * standard equipment on OmniMechs.
  *
  * @see MechFileParser#postLoadInit

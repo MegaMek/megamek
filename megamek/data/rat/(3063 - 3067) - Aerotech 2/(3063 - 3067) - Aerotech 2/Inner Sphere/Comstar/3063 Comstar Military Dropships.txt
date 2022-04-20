@@ -1,4 +1,4 @@
-3063 Comstar Military Dropships
+3063 ComStar Military Dropships
 Vengeance (3056),1
 Condor (3054),2
 Union (3055),3

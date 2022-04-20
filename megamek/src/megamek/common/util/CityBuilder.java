@@ -125,14 +125,13 @@ public class CityBuilder {
                     if (cityPlan.contains(next) || buildingUsed.contains(next)
                             || !board.contains(next)
                             || !isHexBuildable(board.getHex(next))) {
-                        break; // oh well, cant expand here
+                        break; // oh well, can't expand here
                     }
                     coordList.add(next);
                     buildingUsed.add(next);
                 }
 
-                int floors = mapSettings.getCityMaxFloors()
-                        - mapSettings.getCityMinFloors();
+                int floors = mapSettings.getCityMaxFloors() - mapSettings.getCityMinFloors();
 
                 if (floors <= 0) {
                     floors = mapSettings.getCityMinFloors();

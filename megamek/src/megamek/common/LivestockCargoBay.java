@@ -61,7 +61,7 @@ public final class LivestockCargoBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuffer returnString = new StringBuffer("Livestock Cargo Space "
                 + numDoorsString() + " - ");
 

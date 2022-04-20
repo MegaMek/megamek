@@ -1562,7 +1562,7 @@ public class Server implements Runnable {
     }
 
     /**
-         * Deploys elligible offboard entities.
+     * Deploys eligible offboard entities.
      */
     private void deployOffBoardEntities() {
         // place off board entities actually off-board
@@ -27653,7 +27653,7 @@ public class Server implements Runnable {
                 final Entity swarmer = game.getEntity(swarmerId);
 
                 swarmer.setSwarmTargetId(Entity.NONE);
-                // a unit that stopped swarming due to the swarmed unit dieing
+                // a unit that stopped swarming due to the swarmed unit dying
                 // should be able to move: setSwarmTargetId to Entity.None
                 // changes done to true and unloaded to true, need to undo this
                 swarmer.setUnloaded(false);

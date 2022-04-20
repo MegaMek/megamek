@@ -199,7 +199,7 @@ public class ScenarioLoader {
                             LogManager.getLogger().debug(String.format("\tSet armor value for (internal %s) to %d",
                                     damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
                             if (specDamage.setArmorTo == 0) {
-                                LogManager.getLogger().debug(String.format("\tSection destoyed %s",
+                                LogManager.getLogger().debug(String.format("\tSection destroyed %s",
                                         damagePlan.entity.getLocationName(specDamage.loc)));
                                 damagePlan.entity.destroyLocation(specDamage.loc);
                             }

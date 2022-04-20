@@ -1,4 +1,4 @@
-3062 Comstar - Light
+3062 ComStar - Light
 Venom SDR-9K,1
 Raptor RTX1-O,2
 Hermes HER-1S,3

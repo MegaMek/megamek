@@ -1,8 +1,7 @@
 /*
-* MegaMek -
-* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
+* Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
+* Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -14,42 +13,22 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.client.ui.swing.widget;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Configuration;
-import megamek.common.Crew;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.GunEmplacement;
-import megamek.common.IAero;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.QuadVee;
-import megamek.common.Sensor;
-import megamek.common.Tank;
-import megamek.common.Warship;
+import megamek.common.*;
 import megamek.common.options.*;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Set of elements to represent general unit information in MechDisplay
  */
-
 public class GeneralInfoMapSet implements DisplayMapSet {
 
     private static String STAR3 = "***";
@@ -71,7 +50,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private int yCoord = 1;
 
     /**
-     * This constructor have to be called anly from addNotify() method
+     * This constructor can only be called from the addNotify method
      */
     public GeneralInfoMapSet(JComponent c) {
         comp = c;
@@ -79,8 +58,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         setBackGround();
     }
 
-    // These two methods are used to vertically position new labels on the
-    // display.
+    // These two methods are used to vertically position new labels on the display.
     private int getYCoord() {
         return (yCoord * 15) - 5;
     }

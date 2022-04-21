@@ -89,6 +89,7 @@ class LobbyMekPopup {
     static final String LMP_CONFIGURE_ALL = "CONFIGURE_ALL";
     static final String LMP_CONFIGURE = "CONFIGURE";
     static final String LMP_BV = "BV";
+    static final String LMP_COST = "COST";
     static final String LMP_VIEW = "VIEW";
     static final String LMP_MOVE_UP = "MOVE_UP";
     static final String LMP_PRIO_TARGET = "PRIO_TARGET";
@@ -146,6 +147,7 @@ class LobbyMekPopup {
 
         popup.add(menuItem("View...", LMP_VIEW + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_V));
         popup.add(menuItem("View BV Calculation...", LMP_BV + NOINFO + seIds, hasjoinedEntities, listener, KeyEvent.VK_B));
+        popup.add(menuItem("View Cost Calculation...", LMP_COST + NOINFO + seIds, hasjoinedEntities, listener));
         popup.add(ScalingPopup.spacer());
 
         if (joinedOneEntitySelected) {

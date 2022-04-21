@@ -16,8 +16,8 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.MekBVCalculator;
+import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
@@ -31,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -3305,175 +3304,9 @@ public abstract class Mech extends Entity {
         return MekBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
     }
 
-    /**
-     * Calculate the C-bill cost of the mech. Passing null as the argument will
-     * skip the detailed report processing.
-     *
-     * @return The cost in C-Bills of the 'Mech in question.
-     */
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[17 + locations()];
-        int i = 0;
-
-        double cockpitCost;
-        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            cockpitCost = 750000;
-        } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
-            // Solaris VII - The Game World (German) This is not actually
-            // canonical as it
-            // has never been repeated in any English language source including
-            // Tech Manual
-            cockpitCost = 40000;
-        } else if (getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
-            // Command Consoles are listed as a cost of 500,000.
-            // That appears to be in addition to the primary cockpit.
-            cockpitCost = 700000;
-        } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
-            cockpitCost = 175000;
-        } else if (getCockpitType() == Mech.COCKPIT_VRRP) {
-            cockpitCost = 1250000;
-        } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
-            cockpitCost = 100000;
-        } else if (getCockpitType() == Mech.COCKPIT_TRIPOD) {
-            cockpitCost = 400000;
-        } else if (getCockpitType() == Mech.COCKPIT_QUADVEE) {
-            cockpitCost = 375000;
-        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY) {
-            cockpitCost = 300000;
-        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_COMMAND_CONSOLE) {
-            // The cost is the sum of both superheavy cockpit and command console
-            cockpitCost = 800000;
-        } else if (getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
-            cockpitCost = 500000;
-        } else if (getCockpitType() == Mech.COCKPIT_SMALL_COMMAND_CONSOLE) {
-            // The cost is the sum of both small and command console
-            cockpitCost = 675000;            
-        } else {
-            cockpitCost = 200000;
-        }
-        if (hasEiCockpit()
-                && ((null != getCrew()) && hasAbility(OptionsConstants.UNOFF_EI_IMPLANT))) {
-            cockpitCost = 400000;
-        }
-        costs[i++] = cockpitCost;
-        costs[i++] = 50000;// life support
-        costs[i++] = weight * 2000;// sensors
-        int muscCost = hasSCM() ? 10000 : hasTSM(false) ? 16000 :
-                        hasTSM(true) ? 32000 : hasIndustrialTSM() ? 12000 : 2000;
-        costs[i++] = muscCost * weight;// musculature
-        double structureCost = EquipmentType.getStructureCost(structureType) * weight;// IS
-        costs[i++] = structureCost;
-        costs[i++] = getActuatorCost();// arm and/or leg actuators
-        if (hasEngine()) {
-            costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-        }
-        if (getGyroType() == Mech.GYRO_XL) {
-            costs[i++] = 750000 * (int) Math
-                    .ceil((getOriginalWalkMP() * weight) / 100f) * 0.5;
-        } else if (getGyroType() == Mech.GYRO_COMPACT) {
-            costs[i++] = 400000 * (int) Math
-                    .ceil((getOriginalWalkMP() * weight) / 100f) * 1.5;
-        } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-            costs[i++] = 500000 * (int) Math
-                    .ceil((getOriginalWalkMP() * weight) / 100f) * 2;
-        } else if (getGyroType() == Mech.GYRO_STANDARD) {
-            costs[i++] = 300000 * (int) Math
-                    .ceil((getOriginalWalkMP() * weight) / 100f);
-        }
-        double jumpBaseCost = 200;
-        // You cannot have JJ's and UMU's on the same unit.
-        if (hasUMU()) {
-            costs[i++] = Math.pow(getAllUMUCount(), 2.0) * weight
-                    * jumpBaseCost;
-            // We could have Jump boosters
-            if (getJumpType() == Mech.JUMP_BOOSTER) {
-                jumpBaseCost = 150;
-                costs[i++] = Math.pow(getOriginalJumpMP(), 2.0) * weight
-                        * jumpBaseCost;
-            }
-        } else {
-            if (getJumpType() == Mech.JUMP_BOOSTER) {
-                jumpBaseCost = 150;
-            } else if (getJumpType() == Mech.JUMP_IMPROVED) {
-                jumpBaseCost = 500;
-            }
-            costs[i++] = Math.pow(getOriginalJumpMP(), 2.0) * weight
-                    * jumpBaseCost;
-        }
-        // num of sinks we don't pay for
-        int freeSinks = hasDoubleHeatSinks() ? 0 : 10;
-        int sinkCost = hasDoubleHeatSinks() ? 6000 : 2000;
-        // cost of sinks
-        costs[i++] = sinkCost * (heatSinks() - freeSinks);
-        costs[i++] = hasFullHeadEject() ? 1725000 : 0;
-        // armored components
-        int armoredCrits = 0;
-        for (int j = 0; j < locations(); j++) {
-            int numCrits = getNumberOfCriticals(j);
-            for (int k = 0; k < numCrits; k++) {
-                CriticalSlot ccs = getCritical(j, k);
-                if ((ccs != null) && ccs.isArmored()
-                        && (ccs.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                    armoredCrits++;
-                }
-            }
-        }
-        costs[i++] = armoredCrits * 150000;
-
-        // armor
-        if (hasPatchworkArmor()) {
-            for (int loc = 0; loc < locations(); loc++) {
-                costs[i++] += getArmorWeight(loc)
-                        * EquipmentType.getArmorCost(armorType[loc]);
-            }
-        } else {
-            costs[i++] += getArmorWeight()
-                    * EquipmentType.getArmorCost(armorType[0]);
-        }
-
-        double weaponCost = getWeaponsAndEquipmentCost(ignoreAmmo);
-        costs[i++] = weaponCost;
-
-        if (this instanceof LandAirMech) {
-            costs[i++] = (structureCost + weaponCost)
-                    * (((LandAirMech) this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
-        } else if (this instanceof QuadVee) {
-            costs[i++] = (structureCost + weaponCost) * 0.5;
-        } else {
-            costs[i++] = 0;
-        }
-
-        double cost = 0; // calculate the total
-        for (int x = 0; x < i; x++) {
-            cost += costs[x];
-        }
-        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
-        double quirkMultiplier = 0;
-        if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
-            quirkMultiplier = 1.1f;
-            cost *= quirkMultiplier;
-        } else if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_2)) {
-            quirkMultiplier = 1.25f;
-            cost *= quirkMultiplier;
-        }
-        costs[i++] = -quirkMultiplier; // negative just marks it as multiplier
-
-        double omniMultiplier = 0;
-        if (isOmni()) {
-            omniMultiplier = 1.25f;
-            cost *= omniMultiplier;
-        }
-        costs[i++] = -omniMultiplier; // negative just marks it as multiplier
-
-        double weightMultiplier = 1 + (weight / 100f);
-        if (isIndustrial()) {
-            weightMultiplier = 1 + (weight / 400f);
-        }
-        costs[i++] = -weightMultiplier; // negative just marks it as multiplier
-        cost = Math.round(cost * weightMultiplier);
-        addCostDetails(cost, costs);
-        return cost;
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return MekCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override
@@ -3499,7 +3332,7 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    protected int implicitClanCASE() {
+    public int implicitClanCASE() {
         if (!isClan()) {
             return 0;
         }
@@ -3518,71 +3351,7 @@ public abstract class Mech extends Entity {
         return Math.max(0, caseLocations.size() - explicit);
     }
 
-    private void addCostDetails(double cost, double... costs) {
-        bvText = new StringBuffer();
-        String[] left = { "Cockpit", "Life Support", "Sensors", "Myomer",
-                "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
-                "Heatsinks", "Full Head Ejection System",
-                "Armored System Components", "Armor", "Equipment",
-                "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
-
-        NumberFormat commafy = NumberFormat.getInstance();
-
-        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
-        bvText.append(getChassis());
-        bvText.append(" ");
-        bvText.append(getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append(startTable);
-        // find the maximum length of the columns.
-        for (int l = 0; l < left.length; l++) {
-
-            if (l == 13) {
-                getWeaponsAndEquipmentCost(true);
-            } else {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(left[l]);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                if (costs[l] == 0) {
-                    bvText.append("N/A");
-                } else if (costs[l] < 0) {
-                    bvText.append("x ");
-                    bvText.append(commafy.format(-costs[l]));
-                } else {
-                    bvText.append(commafy.format(costs[l]));
-
-                }
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Cost:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(commafy.format(cost));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
-    }
-
-    protected double getActuatorCost() {
+    public double getActuatorCost() {
         return getArmActuatorCost() + getLegActuatorCost();
     }
 

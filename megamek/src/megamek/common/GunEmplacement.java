@@ -17,6 +17,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.GunEmplacementBVCalculator;
+import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
 import org.apache.logging.log4j.LogManager;
 
@@ -309,8 +310,8 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        // XXX no idea
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        CostCalculator.addNoReportNote(calcReport, this);
         return 0;
     }
 

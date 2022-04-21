@@ -16,6 +16,7 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.BattleArmorBVCalculator;
+import megamek.common.cost.BattleArmorCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
@@ -1166,104 +1167,14 @@ public class BattleArmor extends Infantry {
     } // End public TargetRoll getStealthModifier( char )
 
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        return getCost(ignoreAmmo, true);
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return BattleArmorCostCalculator.calculateCost(this, calcReport, ignoreAmmo, true);
     }
 
     @Override
     public double getAlternateCost() {
-        return getCost(false, false);
-    }
-
-    public double getCost(boolean ignoreAmmo, boolean includeTrainingAndClan) {
-        double cost = 0;
-        switch (weightClass) {
-            case EntityWeightClass.WEIGHT_MEDIUM:
-                cost += 100000;
-                if (getMovementMode() == EntityMovementMode.VTOL) {
-                    cost += getOriginalJumpMP() * 100000;
-                } else {
-                    cost += getOriginalJumpMP() * 75000;
-                }
-                break;
-            case EntityWeightClass.WEIGHT_HEAVY:
-                cost += 200000;
-                if (getMovementMode() == EntityMovementMode.INF_UMU) {
-                    cost += getOriginalJumpMP() * 100000;
-                } else {
-                    cost += getOriginalJumpMP() * 150000;
-                }
-                break;
-            case EntityWeightClass.WEIGHT_ASSAULT:
-                cost += 400000;
-                if (getMovementMode() == EntityMovementMode.INF_UMU) {
-                    cost += getOriginalJumpMP() * 150000;
-                } else {
-                    cost += getOriginalJumpMP() * 300000;
-                }
-                break;
-            default:
-                cost += 50000;
-                cost += 50000 * getOriginalJumpMP();
-                break;
-        }
-        cost += 25000 * (getOriginalWalkMP() - 1);
-
-        // damn, manipulators are supposed to be treated as structural costs
-        // and get multiplied by 1.1 if clan
-        long manipulatorCost = 0;
-        for (Mounted mounted : getEquipment()) {
-            if ((mounted.getType() instanceof MiscType)
-                    && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
-                long itemCost = (long) mounted.getCost();
-                manipulatorCost += itemCost;
-            }
-
-        }
-        cost += manipulatorCost;
-
-        double baseArmorCost;
-        switch (getArmorType(LOC_TROOPER_1)) {
-            case EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED:
-                baseArmorCost = 12500;
-                break;
-            case EquipmentType.T_ARMOR_BA_MIMETIC:
-            case EquipmentType.T_ARMOR_BA_STEALTH:
-                baseArmorCost = 15000;
-                break;
-            case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
-                baseArmorCost = 12000;
-                break;
-            case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
-                baseArmorCost = 20000;
-                break;
-            case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
-                baseArmorCost = 50000;
-                break;
-            case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
-            case EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE:
-            case EquipmentType.T_ARMOR_BA_STANDARD:
-            default:
-                baseArmorCost = 10000;
-                break;
-        }
-
-        cost += (baseArmorCost * getOArmor(LOC_TROOPER_1));
-
-        // training cost and clan mod
-        if (includeTrainingAndClan) {
-            if (isClan()) {
-                cost *= 1.1;
-                cost += 200000;
-            } else {
-                cost += 150000;
-            }
-        }
-
-        // TODO : we do not track the modular weapons mount for 1000 C-bills in the unit files
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo) - manipulatorCost;
-
-        return getSquadSize() * cost;
+        return BattleArmorCostCalculator.calculateCost(this, new DummyCalculationReport(), false,
+                false);
     }
 
     @Override

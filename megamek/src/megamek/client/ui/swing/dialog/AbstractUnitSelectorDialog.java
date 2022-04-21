@@ -715,7 +715,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         } else if (ev.getSource().equals(buttonShowBV)) {
             final Entity entity = getSelectedEntity();
             if (entity != null) {
-                entity.calculateBattleValue();
                 new BVDisplayDialog(frame, true, entity).setVisible(true);
             }
         } else if (ev.getSource().equals(buttonAdvancedSearch)) {

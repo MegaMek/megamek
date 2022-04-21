@@ -5045,7 +5045,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-
     }
     
     /**
@@ -5055,7 +5054,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @param endMode The mode to convert to
      */
     private void adjustConvertSteps(EntityMovementMode endMode) {
-        //Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
+        // Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
         if (ce().getMovementMode() == endMode
                 // Account for grounded LAMs in fighter mode with movement type wheeled 
                 || (ce().isAero() && endMode == EntityMovementMode.AERODYNE)) {

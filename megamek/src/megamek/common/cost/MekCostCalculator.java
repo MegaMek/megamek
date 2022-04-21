@@ -137,7 +137,7 @@ public class MekCostCalculator {
 
         if (mek instanceof LandAirMech) {
             costs[i++] = (structureCost + weaponCost)
-                    * (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75);
+                    * (((LandAirMech) mek).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.65 : 0.75);
         } else if (mek instanceof QuadVee) {
             costs[i++] = (structureCost + weaponCost) * 0.5;
         } else {

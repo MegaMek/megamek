@@ -42,12 +42,10 @@ public class FixElevationCommand extends ServerCommand {
                     server.checkForCollapse(bldg, server.getGame().getPositionMap(), entity.getPosition(), true, server.getvPhaseReport());
                 }
                 server.sendServerChat(entity.getDisplayName()
-                        + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");
+                        + " elevation fixed, see megamek.log for details & report a bug if you know how this happened");
                 countbad++;
             }
         }
-        server.sendServerChat(connId, "" + countbad
-                + " unit(s) had elevation problems");
+        server.sendServerChat(connId, "" + countbad + " unit(s) had elevation problems");
     }
-
 }

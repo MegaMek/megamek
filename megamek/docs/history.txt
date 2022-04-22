@@ -50,6 +50,7 @@ VERSION HISTORY:
 + Data: New Sprites, some new BA formations, fixes for #3577, #3575, #3571, #3544, and #3353
 + PR #3583: XML Util Methods: Minor Write Performance Improvements
 + PR #3584: Make a cost calculation report available for all unit types
++ PR #3591: Fixing MegaMek log paths
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.1 from 2.0.1
 + Updating to JAXB 3.0.1 from 2.3.2

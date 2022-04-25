@@ -20,6 +20,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
 import megamek.server.SmokeCloud;
 import org.apache.logging.log4j.LogManager;
@@ -109,154 +110,151 @@ public class Precognition implements Runnable {
         GAME_LOCK.lock();
         try {
             switch (c.getCommand()) {
-                case Packet.COMMAND_PLAYER_UPDATE:
+                case PLAYER_UPDATE:
                     receivePlayerInfo(c);
                     break;
-                case Packet.COMMAND_PLAYER_READY:
+                case PLAYER_READY:
                     final Player player = getPlayer(c.getIntValue(0));
                     if (player != null) {
                         player.setDone(c.getBooleanValue(1));
                     }
                     break;
-                case Packet.COMMAND_PLAYER_ADD:
+                case PLAYER_ADD:
                     receivePlayerInfo(c);
                     break;
-                case Packet.COMMAND_PLAYER_REMOVE:
+                case PLAYER_REMOVE:
                     getGame().removePlayer(c.getIntValue(0));
                     break;
-                case Packet.COMMAND_CHAT:
+                case CHAT:
                     getGame().processGameEvent(new GamePlayerChatEvent(this, null,
                             (String) c.getObject(0)));
                     break;
-                case Packet.COMMAND_ENTITY_ADD:
+                case ENTITY_ADD:
                     receiveEntityAdd(c);
                     break;
-                case Packet.COMMAND_ENTITY_UPDATE:
+                case ENTITY_UPDATE:
                     receiveEntityUpdate(c);
                     break;
-                case Packet.COMMAND_ENTITY_REMOVE:
+                case ENTITY_REMOVE:
                     receiveEntityRemove(c);
                     break;
-                case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
+                case ENTITY_VISIBILITY_INDICATOR:
                     receiveEntityVisibilityIndicator(c);
                     break;
-                case Packet.COMMAND_SENDING_MINEFIELDS:
+                case SENDING_MINEFIELDS:
                     receiveSendingMinefields(c);
                     break;
-                case Packet.COMMAND_SENDING_ILLUM_HEXES:
+                case SENDING_ILLUM_HEXES:
                     receiveIlluminatedHexes(c);
                     break;
-                case Packet.COMMAND_CLEAR_ILLUM_HEXES:
+                case CLEAR_ILLUM_HEXES:
                     getGame().clearIlluminatedPositions();
                     break;
-                case Packet.COMMAND_UPDATE_MINEFIELDS:
+                case UPDATE_MINEFIELDS:
                     receiveUpdateMinefields(c);
                     break;
-                case Packet.COMMAND_DEPLOY_MINEFIELDS:
+                case DEPLOY_MINEFIELDS:
                     receiveDeployMinefields(c);
                     break;
-                case Packet.COMMAND_REVEAL_MINEFIELD:
+                case REVEAL_MINEFIELD:
                     receiveRevealMinefield(c);
                     break;
-                case Packet.COMMAND_REMOVE_MINEFIELD:
+                case REMOVE_MINEFIELD:
                     receiveRemoveMinefield(c);
                     break;
-                case Packet.COMMAND_ADD_SMOKE_CLOUD:
+                case ADD_SMOKE_CLOUD:
                     SmokeCloud cloud = (SmokeCloud) c.getObject(0);
                     getGame().addSmokeCloud(cloud);
                     break;
-                case Packet.COMMAND_CHANGE_HEX:
+                case CHANGE_HEX:
                     getGame().getBoard().setHex((Coords) c.getObject(0), (Hex) c.getObject(1));
                     break;
-                case Packet.COMMAND_CHANGE_HEXES:
+                case CHANGE_HEXES:
                     List<Coords> coords = new ArrayList<>((Set<Coords>) c.getObject(0));
                     List<Hex> hexes = new ArrayList<>((Set<Hex>) c.getObject(1));
                     getGame().getBoard().setHexes(coords, hexes);
                     break;
-                case Packet.COMMAND_BLDG_UPDATE:
+                case BLDG_UPDATE:
                     receiveBuildingUpdate(c);
                     break;
-                case Packet.COMMAND_BLDG_COLLAPSE:
+                case BLDG_COLLAPSE:
                     receiveBuildingCollapse(c);
                     break;
-                case Packet.COMMAND_PHASE_CHANGE:
+                case PHASE_CHANGE:
                     getGame().setPhase((GamePhase) c.getObject(0));
                     break;
-                case Packet.COMMAND_TURN:
+                case TURN:
                     getGame().setTurnIndex(c.getIntValue(0), c.getIntValue(1));
                     break;
-                case Packet.COMMAND_ROUND_UPDATE:
+                case ROUND_UPDATE:
                     getGame().setRoundCount(c.getIntValue(0));
                     break;
-                case Packet.COMMAND_SENDING_TURNS:
+                case SENDING_TURNS:
                     receiveTurns(c);
                     break;
-                case Packet.COMMAND_SENDING_BOARD:
+                case SENDING_BOARD:
                     receiveBoard(c);
                     break;
-                case Packet.COMMAND_SENDING_ENTITIES:
+                case SENDING_ENTITIES:
                     receiveEntities(c);
                     break;
-                case Packet.COMMAND_SENDING_REPORTS:
-                case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
+                case SENDING_REPORTS:
+                case SENDING_REPORTS_TACTICAL_GENIUS:
                     getGame().addReports((Vector<Report>) c.getObject(0));
                     break;
-                case Packet.COMMAND_SENDING_REPORTS_ALL:
-                    Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
-                            .getObject(0);
+                case SENDING_REPORTS_ALL:
+                    Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
                     getGame().setAllReports(allReports);
                     break;
-                case Packet.COMMAND_ENTITY_ATTACK:
+                case ENTITY_ATTACK:
                     receiveAttack(c);
                     break;
-                case Packet.COMMAND_SENDING_GAME_SETTINGS:
+                case SENDING_GAME_SETTINGS:
                     getGame().setOptions((GameOptions) c.getObject(0));
                     break;
-                case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
-                    getGame().setPlanetaryConditions((PlanetaryConditions) c
-                            .getObject(0));
+                case SENDING_PLANETARY_CONDITIONS:
+                    getGame().setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
                     getGame().processGameEvent(new GameSettingsChangeEvent(this));
                     break;
-                case Packet.COMMAND_SENDING_TAGINFO:
+                case SENDING_TAG_INFO:
                     Vector<TagInfo> vti = (Vector<TagInfo>) c.getObject(0);
                     for (TagInfo ti : vti) {
                         getGame().addTagInfo(ti);
                     }
                     break;
-                case Packet.COMMAND_RESET_TAGINFO:
+                case RESET_TAG_INFO:
                     getGame().resetTagInfo();
                     break;
-                case Packet.COMMAND_SENDING_ARTILLERYATTACKS:
-                    Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c
-                            .getObject(0);
+                case SENDING_ARTILLERY_ATTACKS:
+                    Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c.getObject(0);
                     getGame().setArtilleryVector(v);
                     break;
-                case Packet.COMMAND_SENDING_FLARES:
+                case SENDING_FLARES:
                     Vector<Flare> v2 = (Vector<Flare>) c.getObject(0);
                     getGame().setFlares(v2);
                     break;
-                case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
+                case SENDING_SPECIAL_HEX_DISPLAY:
                     getGame().getBoard().setSpecialHexDisplayTable(
                             (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
                                     .getObject(0));
                     getGame().processGameEvent(new GameBoardChangeEvent(this));
                     break;
-                case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
+                case ENTITY_NOVA_NETWORK_CHANGE:
                     receiveEntityNovaNetworkModeChange(c);
                     break;
-                case Packet.COMMAND_CLIENT_FEEDBACK_REQUEST:
-                    int cfrType = (int) c.getData()[0];
+                case CLIENT_FEEDBACK_REQUEST:
+                    final PacketCommand cfrType = (PacketCommand) c.getData()[0];
                     GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                     switch (cfrType) {
-                        case Packet.COMMAND_CFR_DOMINO_EFFECT:
+                        case CFR_DOMINO_EFFECT:
                             cfrEvt.setEntityId((int) c.getData()[1]);
                             break;
-                        case Packet.COMMAND_CFR_AMS_ASSIGN:
+                        case CFR_AMS_ASSIGN:
                             cfrEvt.setEntityId((int) c.getData()[1]);
                             cfrEvt.setAmsEquipNum((int) c.getData()[2]);
                             cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
                             break;
-                        case Packet.COMMAND_CFR_APDS_ASSIGN:
+                        case CFR_APDS_ASSIGN:
                             cfrEvt.setEntityId((int) c.getData()[1]);
                             cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
                             cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
@@ -264,7 +262,7 @@ public class Precognition implements Runnable {
                     }
                     getGame().processGameEvent(cfrEvt);
                     break;
-                case Packet.COMMAND_GAME_VICTORY_EVENT:
+                case GAME_VICTORY_EVENT:
                     GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                     getGame().processGameEvent(gve);
                     break;

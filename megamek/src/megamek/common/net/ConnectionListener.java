@@ -13,6 +13,10 @@
  */
 package megamek.common.net;
 
+import megamek.common.net.events.ConnectedEvent;
+import megamek.common.net.events.DisconnectedEvent;
+import megamek.common.net.events.PacketReceivedEvent;
+
 import java.util.EventListener;
 
 /**

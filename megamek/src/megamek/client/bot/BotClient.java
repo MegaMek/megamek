@@ -24,6 +24,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
@@ -127,20 +128,20 @@ public abstract class BotClient extends Client {
             @Override
             public void gameClientFeedbackRequest(GameCFREvent evt) {
                 switch (evt.getCFRType()) {
-                    case Packet.COMMAND_CFR_DOMINO_EFFECT:
+                    case CFR_DOMINO_EFFECT:
                         // This will always send a "no action" response.
                         // In effect, it works the way it did before.  However..
                         // TODO: Bots should figure out how to step out of a
                         //   domino effect
                         sendDominoCFRResponse(null);
                         break;
-                    case Packet.COMMAND_CFR_AMS_ASSIGN:
+                    case CFR_AMS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         //  essentially same as if the auto_ams option was on
                         WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
-                    case Packet.COMMAND_CFR_APDS_ASSIGN:
+                    case CFR_APDS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         //  essentially same as if the auto_ams option was on
                         waa =
@@ -148,7 +149,7 @@ public abstract class BotClient extends Client {
                                     evt.getWAAs(), true);
                         sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
-                    case Packet.COMMAND_CFR_HIDDEN_PBS:
+                    case CFR_HIDDEN_PBS:
                         try {
                             Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(), evt.getTargetId());
                             
@@ -166,12 +167,11 @@ public abstract class BotClient extends Client {
                         }
 
                         break;
-                    case Packet.COMMAND_CFR_TAG_TARGET:
+                    case CFR_TAG_TARGET:
                         sendTAGTargetCFRResponse(pickTagTarget(evt));
                         break;
                 }
             }
-
         });
     }
 

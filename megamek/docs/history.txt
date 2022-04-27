@@ -52,7 +52,7 @@ VERSION HISTORY:
 + PR #3584: Make a cost calculation report available for all unit types
 + PR #3591: Fixing MegaMek log paths
 + Updating to Jackson XML 2.13.2 from 2.13.1
-+ Updating to FlatLaf 2.1 from 2.0.1
++ Updating to FlatLaf 2.2 from 2.0.1
 + Updating to JAXB 4.0.0 from 2.3.2
 + Updating to Launch4j 2.5.3 from 2.5.1
 + Updating to Log4j2 2.17.2 from 2.17.1

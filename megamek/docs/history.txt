@@ -59,7 +59,7 @@ VERSION HISTORY:
 + Updating to JAXB Runtime 3.0.2 from 2.3.2
 + Adding JUnit Jupiter 5.8.2
 + Updating to JUnit Vintage 5.8.2 from JUnit 4.13.2
-+ Updating to Mockito 4.4.0 from 4.2.0
++ Updating to Mockito 4.5.1 from 4.2.0
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

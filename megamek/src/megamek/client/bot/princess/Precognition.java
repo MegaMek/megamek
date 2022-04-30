@@ -259,12 +259,16 @@ public class Precognition implements Runnable {
                             cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
                             cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
                             break;
+                        default:
+                            break;
                     }
                     getGame().processGameEvent(cfrEvt);
                     break;
                 case GAME_VICTORY_EVENT:
                     GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                     getGame().processGameEvent(gve);
+                    break;
+                default:
                     break;
             }
         } finally {

@@ -1644,12 +1644,16 @@ public class Client implements IClientCommandHandler {
                         cfrEvt.setTAGTargets((List<Integer>) c.getObject(1));
                         cfrEvt.setTAGTargetTypes((List<Integer>) c.getObject(2));
                         break;
+                    default:
+                        break;
                 }
                 game.processGameEvent(cfrEvt);
                 break;
             case GAME_VICTORY_EVENT:
                 GameVictoryEvent gve = new GameVictoryEvent(this, game);
                 game.processGameEvent(gve);
+                break;
+            default:
                 break;
         }
     }

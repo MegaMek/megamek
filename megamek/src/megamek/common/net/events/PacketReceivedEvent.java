@@ -19,8 +19,8 @@
  */
 package megamek.common.net.events;
 
-import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.ConnectionEventType;
+import megamek.common.net.packets.Packet;
 
 /**
  * Instances of this class are sent when packet received
@@ -33,8 +33,7 @@ public class PacketReceivedEvent extends AbstractConnectionEvent {
 
     //region Constructors
     /**
-     * Constructs connection event
-     *
+     * Constructs a packed received connection event
      * @param source The object on which the Event initially occurred.
      * @param packet The received packet
      */

@@ -15,15 +15,15 @@
 */
 package megamek.common.net.connections;
 
-import megamek.common.net.listeners.ConnectionListener;
-import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.AbstractConnectionEvent;
 import megamek.common.net.events.ConnectedEvent;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
+import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.marshalling.PacketMarshaller;
 import megamek.common.net.marshalling.PacketMarshallerFactory;
+import megamek.common.net.packets.Packet;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -276,14 +276,14 @@ public abstract class AbstractConnection {
     /**
      * @return a very approximate count of how many bytes were sent
      */
-    public synchronized long bytesSent() {
+    public synchronized long getBytesSent() {
         return bytesSent;
     }
 
     /**
      * @return a very approximate count of how many bytes were received
      */
-    public synchronized long bytesReceived() {
+    public synchronized long getBytesReceived() {
         return bytesReceived;
     }
 

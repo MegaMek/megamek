@@ -20,8 +20,8 @@
 package megamek.common.net.events;
 
 import megamek.common.net.connections.AbstractConnection;
-import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.enums.ConnectionEventType;
+import megamek.common.net.listeners.ConnectionListener;
 
 import java.util.EventObject;
 
@@ -39,7 +39,7 @@ public abstract class AbstractConnectionEvent extends EventObject {
 
     //region Constructors
     /**
-     * Constructs connection event
+     * Constructs a connection event
      *
      * @param type the connection event type
      * @param source The object on which the Event initially occurred.

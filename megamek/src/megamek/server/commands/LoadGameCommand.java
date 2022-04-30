@@ -82,5 +82,4 @@ public class LoadGameCommand extends ServerCommand {
             }
         }
     }
-
 }

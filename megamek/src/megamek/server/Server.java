@@ -38,7 +38,10 @@ import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
-import megamek.common.net.*;
+import megamek.common.net.AbstractConnection;
+import megamek.common.net.ConnectionFactory;
+import megamek.common.net.ConnectionListener;
+import megamek.common.net.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
@@ -68,7 +71,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -478,8 +480,8 @@ public class Server implements Runnable {
             }
 
             LogManager.getLogger().info(sb.toString());
-        } catch (UnknownHostException ignored) {
-            // oh well.
+        } catch (Exception ignored) {
+
         }
 
         LogManager.getLogger().info("s: password = " + this.password);
@@ -706,7 +708,7 @@ public class Server implements Runnable {
             serverBrowserUpdateTimer.cancel();
         }
 
-        if ( (metaServerUrl != null) && (!metaServerUrl.isBlank())) {
+        if ((metaServerUrl != null) && (!metaServerUrl.isBlank())) {
             registerWithServerBrowser(false, metaServerUrl);
         }
 
@@ -928,8 +930,8 @@ public class Server implements Runnable {
                     sendServerChat(connId, "Machine IP is " + address.getHostAddress());
                 }
             }
-        } catch (UnknownHostException ignored) {
-            // oh well.
+        } catch (Exception ignored) {
+
         }
 
         LogManager.getLogger().info("s: listening on port " + serverSocket.getLocalPort());
@@ -3005,23 +3007,11 @@ public class Server implements Runnable {
     }
 
     private void sendTagInfoUpdates() {
-        if (connections == null) {
-            return;
-        }
-
-        connections.stream()
-                .filter(Objects::nonNull)
-                .forEach(connection -> connection.send(createTagInfoUpdatesPacket()));
+        send(new Packet(PacketCommand.SENDING_TAG_INFO, getGame().getTagInfo()));
     }
 
     public void sendTagInfoReset() {
-        if (connections == null) {
-            return;
-        }
-
-        connections.stream()
-                .filter(Objects::nonNull)
-                .forEach(connection -> connection.send(new Packet(PacketCommand.RESET_TAG_INFO)));
+        send(new Packet(PacketCommand.RESET_TAG_INFO));
     }
 
     /**
@@ -30433,13 +30423,7 @@ public class Server implements Runnable {
      * Sends out the game victory event to all connections
      */
     private void transmitGameVictoryEventToAll() {
-        if (connections == null) {
-            return;
-        }
-
-        connections.stream()
-                .filter(Objects::nonNull)
-                .forEach(connection -> connection.send(new Packet(PacketCommand.GAME_VICTORY_EVENT)));
+        send(new Packet(PacketCommand.GAME_VICTORY_EVENT));
     }
 
     /**
@@ -30849,10 +30833,6 @@ public class Server implements Runnable {
         return new Packet(PacketCommand.SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
     }
 
-    private Packet createTagInfoUpdatesPacket() {
-        return new Packet(PacketCommand.SENDING_TAG_INFO, getGame().getTagInfo());
-    }
-
     /**
      * Creates a packet containing off board artillery attacks
      */
@@ -30893,10 +30873,10 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            conn.send(packet);
-        }
+
+        connections.stream()
+                .filter(Objects::nonNull)
+                .forEach(connection -> connection.send(packet));
     }
 
     public void send_Nova_Change(int id, String net) {

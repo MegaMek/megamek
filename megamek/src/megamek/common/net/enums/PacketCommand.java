@@ -130,12 +130,8 @@ public enum PacketCommand {
         return this == SENDING_REPORTS_TACTICAL_GENIUS;
     }
 
-    public boolean isCFRHiddenPBS() {
-        return this == CFR_HIDDEN_PBS;
-    }
-
-    public boolean isCFRTeleguidedTarget() {
-        return this == CFR_TELEGUIDED_TARGET;
+    public boolean isCFRDominoEffect() {
+        return this == CFR_DOMINO_EFFECT;
     }
 
     public boolean isCFRAMSAssign() {
@@ -146,17 +142,25 @@ public enum PacketCommand {
         return this == CFR_APDS_ASSIGN;
     }
 
-    public boolean isCFRDominoEffect() {
-        return this == CFR_DOMINO_EFFECT;
+    public boolean isCFRHiddenPBS() {
+        return this == CFR_HIDDEN_PBS;
+    }
+
+    public boolean isCFRTeleguidedTarget() {
+        return this == CFR_TELEGUIDED_TARGET;
     }
 
     public boolean isCFRTagTarget() {
         return this == CFR_TAG_TARGET;
     }
 
+    public boolean isGameVictoryEvent() {
+        return this == GAME_VICTORY_EVENT;
+    }
+
     public boolean isCFR() {
-        return isSendingBoard() || isCFRHiddenPBS() || isCFRTeleguidedTarget() || isCFRAMSAssign()
-                || isCFRAPDSAssign() || isCFRDominoEffect() || isCFRTagTarget();
+        return isCFRDominoEffect() || isCFRAMSAssign() || isCFRAPDSAssign() || isCFRHiddenPBS()
+                || isCFRTeleguidedTarget() || isCFRTagTarget();
     }
     //endregion Boolean Comparison Methods
 }

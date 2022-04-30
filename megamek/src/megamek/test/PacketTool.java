@@ -118,21 +118,21 @@ public class PacketTool extends JFrame implements Runnable {
         hostPort = new TextField( String.valueOf(MMConstants.DEFAULT_PORT), 10);
         panConnect.add(hostPort);
         Button button = new Button("Listen");
-        button.addActionListener(e -> (new Thread(this, "Packet Reader")).start());
+        button.addActionListener(evt -> (new Thread(this, "Packet Reader")).start());
         panConnect.add(button);
         button = new Button("Connect");
-        button.addActionListener(e -> connect());
+        button.addActionListener(evt -> connect());
         panConnect.add(button);
 
         // Populate the transmission panel.
         button = new Button("Load Board");
-        button.addActionListener(e -> boardLoad());
+        button.addActionListener(evt -> boardLoad());
         panXmit.add(button);
         boardName = new Label();
         boardName.setAlignment(Label.CENTER);
         panXmit.add(boardName);
         butSend = new Button("Send");
-        butSend.addActionListener(e -> send());
+        butSend.addActionListener(evt -> send());
         butSend.setEnabled(false);
         panXmit.add(butSend);
     }
@@ -169,9 +169,8 @@ public class PacketTool extends JFrame implements Runnable {
                 public void run() {
                     try {
                         SwingUtilities.invokeAndWait(packetUpdate);
-                    } catch (Exception ex) {
-                        System.err.println("Failed to invoke the packet update, which shouldn't be possible");
-                        ex.printStackTrace();
+                    } catch (Exception ignored) {
+                        // this should never fail
                     }
                 }
             };
@@ -224,10 +223,6 @@ public class PacketTool extends JFrame implements Runnable {
      */
     public void send() {
         long start = conn.getBytesSent();
-        /*
-         * 2003-12-21 : prove connectivity first, then add refinements * like
-         * data compression. packet.zipData();
-         */
         conn.send(new Packet(PacketCommand.SENDING_BOARD, board));
         System.out.print("Bytes sent: ");
         System.out.print(conn.getBytesSent() - start);
@@ -253,7 +248,6 @@ public class PacketTool extends JFrame implements Runnable {
             board = new Board();
             panConnect.setEnabled(false);
             panXmit.setEnabled(true);
-
         } catch (Throwable t) {
             t.printStackTrace();
         }

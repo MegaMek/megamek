@@ -180,7 +180,7 @@ public class BoardClusterTracker {
         }
         
         // try with bridges
-        if (retVal.size() == 0) {
+        if (retVal.isEmpty()) {
             if (terrainReduction) {
                 entityCluster = movableAreasBridgesWithTerrainReduction.get(movementType).get(entity.getPosition());
             } else {

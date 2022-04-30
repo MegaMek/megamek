@@ -259,9 +259,8 @@ public class MapPreviewButton extends JButton {
                     } else {
                         return false;
                     }
-                } catch (Exception exp) {
-                    LogManager.getLogger().error("A problem has occurred with map drag-and-drop.");
-                    exp.printStackTrace();
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("A problem has occurred with map drag-and-drop.", ex);
                 }
             }
             return false;

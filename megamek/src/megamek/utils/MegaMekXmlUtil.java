@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,14 +18,10 @@
  */
 package megamek.utils;
 
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Collection;
-import java.util.StringJoiner;
-import java.util.UUID;
+import megamek.common.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.xml.sax.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,15 +29,15 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
-
-import megamek.common.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLReader;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.StringJoiner;
+import java.util.UUID;
 
 public class MegaMekXmlUtil {
     //region Variable Declarations
@@ -104,7 +100,6 @@ public class MegaMekXmlUtil {
      *
      * @see "https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#JAXB_Unmarshaller"
      */
-    @SuppressWarnings(value = "nls")
     public static XMLReader createSafeXMLReader() {
         if (SAX_PARSER_FACTORY == null) {
             SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -112,22 +107,20 @@ public class MegaMekXmlUtil {
                 spf.setFeature("http://xml.org/sax/features/external-general-entities", false);
                 spf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
                 spf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            } catch (SAXNotRecognizedException | SAXNotSupportedException e) {
-                throw new AssertionError("SAX implementation does not recognize or support the features we want to disable", e);
-            } catch (ParserConfigurationException e) {
-                throw new AssertionError(e); // Only if we messed up the CFG above
+            } catch (SAXNotRecognizedException | SAXNotSupportedException ex) {
+                throw new AssertionError("SAX implementation does not recognize or support the features we want to disable", ex);
+            } catch (ParserConfigurationException ex) {
+                throw new AssertionError(ex); // Only if we messed up the CFG above
             }
             SAX_PARSER_FACTORY = spf;
         }
+
         try {
             return SAX_PARSER_FACTORY.newSAXParser().getXMLReader();
-        } catch (ParserConfigurationException e) {
-            throw new AssertionError(e); // Only if we messed up the CFG above
-        } catch (SAXException e) {
-            throw new AssertionError(e); // Whatever - just blow up. :-)
-            // As of 2018-11, Xerces does not throw generic SAXExceptions.
-            // Yes, SAX was designed when checked exception were all the rage.
+        } catch (ParserConfigurationException | SAXException ex) {
+            throw new AssertionError(ex);
         }
+
     }
 
     /**
@@ -139,6 +132,7 @@ public class MegaMekXmlUtil {
     public static Source createSafeXmlSource(InputStream inputStream) {
         return new SAXSource(createSafeXMLReader(), new InputSource(inputStream));
     }
+
     //region XML Writing
     //region Open Tag
     /**
@@ -199,13 +193,13 @@ public class MegaMekXmlUtil {
                                                  final @Nullable Class<?> c) {
         final boolean hasValue = attributeValue != null;
         final boolean hasClass = c != null;
-        pw.print(indentStr(indent) + "<" + name);
+        pw.print(indentStr(indent) + '<' + name);
         if (hasValue) {
-            pw.print(" " + attributeName + "=\"" + escape(attributeValue.toString()) + "\"");
+            pw.print(' ' + attributeName + "=\"" + escape(attributeValue.toString()) + '"');
         }
 
         if (hasClass) {
-            pw.print(" " + classAttribute + "=\"" + c.getName() + "\"");
+            pw.print(' ' + classAttribute + "=\"" + c.getName() + '"');
         }
         pw.print(">\n");
     }
@@ -230,7 +224,7 @@ public class MegaMekXmlUtil {
             }
 
             if (!stringJoiner.toString().isBlank()) {
-                pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+                pw.println(indentStr(indent) + '<' + name + '>' + stringJoiner + "</" + name + '>');
             }
         }
     }
@@ -253,7 +247,7 @@ public class MegaMekXmlUtil {
             }
 
             if (!stringJoiner.toString().isBlank()) {
-                pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+                pw.println(indentStr(indent) + '<' + name + '>' + stringJoiner + "</" + name + '>');
             }
         }
     }
@@ -271,7 +265,7 @@ public class MegaMekXmlUtil {
         if (!values.isEmpty()) {
             final StringJoiner stringJoiner = new StringJoiner(",");
             values.forEach(v -> stringJoiner.add(v.toString()));
-            pw.println(indentStr(indent) + "<" + name + ">" + escape(stringJoiner.toString()) + "</" + name + ">");
+            pw.println(indentStr(indent) + '<' + name + '>' + escape(stringJoiner.toString()) + "</" + name + '>');
         }
     }
 
@@ -304,11 +298,11 @@ public class MegaMekXmlUtil {
                                                        final String... values) {
         if (values.length > 0) {
             final boolean hasAttribute = attributeValue != null;
-            pw.print(indentStr(indent) + "<" + name);
+            pw.print(indentStr(indent) + '<' + name);
             if (hasAttribute) {
-                pw.print(" " + attributeName + "=\"" + escape(attributeValue.toString()) + "\"");
+                pw.print(' ' + attributeName + "=\"" + escape(attributeValue.toString()) + '"');
             }
-            pw.print(">" + escape(StringUtils.join(values, ',')) + "</" + name + ">\n");
+            pw.print('>' + escape(StringUtils.join(values, ',')) + "</" + name + ">\n");
         }
     }
 
@@ -322,7 +316,7 @@ public class MegaMekXmlUtil {
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final int... values) {
         if (values.length > 0) {
-            pw.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+            pw.println(indentStr(indent) + '<' + name + '>' + StringUtils.join(values, ',') + "</" + name + '>');
         }
     }
 
@@ -340,7 +334,7 @@ public class MegaMekXmlUtil {
             for (final boolean value : values) {
                 stringJoiner.add(Boolean.toString(value));
             }
-            pw.println(indentStr(indent) + "<" + name + ">" + stringJoiner + "</" + name + ">");
+            pw.println(indentStr(indent) + '<' + name + '>' + stringJoiner + "</" + name + '>');
         }
     }
 
@@ -354,7 +348,7 @@ public class MegaMekXmlUtil {
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final long... values) {
         if (values.length > 0) {
-            pw.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+            pw.println(indentStr(indent) + '<' + name + '>' + StringUtils.join(values, ',') + "</" + name + '>');
         }
     }
 
@@ -368,7 +362,7 @@ public class MegaMekXmlUtil {
     public static void writeSimpleXMLTag(final PrintWriter pw, final int indent, final String name,
                                          final double... values) {
         if (values.length > 0) {
-            pw.println(indentStr(indent) + "<" + name + ">" + StringUtils.join(values, ',') + "</" + name + ">");
+            pw.println(indentStr(indent) + '<' + name + '>' + StringUtils.join(values, ',') + "</" + name + '>');
         }
     }
     //endregion Simple XML Tag
@@ -382,7 +376,7 @@ public class MegaMekXmlUtil {
      */
     public static void writeSimpleXMLCloseTag(final PrintWriter pw, final int indent,
                                               final String name) {
-        pw.println(indentStr(indent) + "</" + name + ">");
+        pw.println(indentStr(indent) + "</" + name + '>');
     }
     //endregion Close Tag
 
@@ -402,22 +396,22 @@ public class MegaMekXmlUtil {
 
     @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + escape(val) + "</" + name + ">");
+        pw1.println(indentStr(indent) + '<' + name + '>' + escape(val) + "</" + name + '>');
     }
 
     @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+        pw1.println(indentStr(indent) + '<' + name + '>' + val + "</" + name + '>');
     }
 
     @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+        pw1.println(indentStr(indent) + '<' + name + '>' + val + "</" + name + '>');
     }
 
     @Deprecated
     public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
-        pw1.println(indentStr(indent) + "<" + name + ">" + val + "</" + name + ">");
+        pw1.println(indentStr(indent) + '<' + name + '>' + val + "</" + name + '>');
     }
 
     @Deprecated
@@ -487,6 +481,8 @@ public class MegaMekXmlUtil {
             case 6:
             case 7:
                 return LocalDate.parse(value + "-01");
+            default:
+                break;
         }
 
         final int firstSpace = value.indexOf(' ');
@@ -531,12 +527,7 @@ public class MegaMekXmlUtil {
      * @return the parsed int Array
      */
     public static int[] parseIntArray(final String value) {
-        final String[] values = value.split(",");
-        final int[] ints = new int[values.length];
-        for (int i = 0; i < values.length; i++) {
-            ints[i] = Integer.parseInt(values[i]);
-        }
-        return ints;
+        return Arrays.stream(value.split(",")).mapToInt(Integer::parseInt).toArray();
     }
 
     /**
@@ -557,12 +548,7 @@ public class MegaMekXmlUtil {
      * @return the parsed long Array
      */
     public static long[] parseLongArray(final String value) {
-        final String[] values = value.split(",");
-        final long[] longs = new long[values.length];
-        for (int i = 0; i < values.length; i++) {
-            longs[i] = Long.parseLong(values[i]);
-        }
-        return longs;
+        return Arrays.stream(value.split(",")).mapToLong(Long::parseLong).toArray();
     }
 
     /**
@@ -570,12 +556,7 @@ public class MegaMekXmlUtil {
      * @return the parsed double Array
      */
     public static double[] parseDoubleArray(final String value) {
-        final String[] values = value.split(",");
-        final double[] doubles = new double[values.length];
-        for (int i = 0; i < values.length; i++) {
-            doubles[i] = Double.parseDouble(values[i]);
-        }
-        return doubles;
+        return Arrays.stream(value.split(",")).mapToDouble(Double::parseDouble).toArray();
     }
 
     /**

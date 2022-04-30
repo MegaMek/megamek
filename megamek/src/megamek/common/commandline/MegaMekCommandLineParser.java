@@ -16,15 +16,12 @@ package megamek.common.commandline;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.common.*;
-import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
-import java.util.Locale;
 import java.util.Vector;
 
 /**
@@ -390,7 +387,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write(",");
                         bw.write(Long.toString(unit.getCost()));
                         bw.write(",");
-                        bw.write(Long.toString(unit.getUnloadedCost()));
+                        bw.write(Long.toString(unit.getDryCost()));
                         bw.write(",");
                         bw.write(Integer.toString(unit.getYear()));
                         bw.write(",");

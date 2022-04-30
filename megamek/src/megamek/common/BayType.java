@@ -190,8 +190,9 @@ public enum BayType implements ITechnologyDelegator {
                 return INFANTRY_MOTORIZED;
             } else if (ptype == InfantryBay.PlatoonType.MECHANIZED) {
                 return INFANTRY_MECHANIZED;
-            } else 
+            } else {
                 return INFANTRY_FOOT;
+            }
         } else if (bay instanceof BattleArmorBay) {
             if (bay.isClan()) {
                 return BATTLEARMOR_CLAN;

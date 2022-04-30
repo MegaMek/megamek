@@ -514,17 +514,13 @@ public class HmpFile implements IMechLoader {
 
             setupCriticals(mech);
 
-            if (mech.isClan()) {
-                mech.addClanCase();
-            }
-
             mech.setArmorTonnage(mech.getArmorWeight());
 
             // add any heat sinks not allocated
             BigInteger heatSinkFlag;
-            if (heatSinkType ==  HeatSinkType.DOUBLE) {
+            if (heatSinkType == HeatSinkType.DOUBLE) {
                 heatSinkFlag = MiscType.F_DOUBLE_HEAT_SINK;
-            } else if (heatSinkType ==  HeatSinkType.LASER) {
+            } else if (heatSinkType == HeatSinkType.LASER) {
                 heatSinkFlag = MiscType.F_LASER_HEAT_SINK;
             } else if (heatSinkType == HeatSinkType.COMPACT) {
                 heatSinkFlag = MiscType.F_COMPACT_HEAT_SINK;

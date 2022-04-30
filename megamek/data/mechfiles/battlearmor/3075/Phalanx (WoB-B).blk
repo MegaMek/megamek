@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,33 +24,43 @@ Phalanx Battle Armor
 4814
 </mul id:>
 
-<chassis>
-biped
-</chassis>
+<year>
+3065
+</year>
 
-<weightclass>
-3
-</weightclass>
+<originalBuildYear>
+3065
+</originalBuildYear>
 
-<Trooper Count>
-6
-</Trooper Count>
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 2
 </cruiseMP>
 
-<Armor>
-7
-</Armor>
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
 
 <Squad Equipment>
 ISBASRM4:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
+BA-SRM4 Ammo:Body:Shots2#
 BABattleClaw:LA
 BAArmoredGlove:RA
-InfantryAssaultRifle:RA:APM
+InfantryAssaultRifle:APM:RA
 IS BA Stealth (Improved):Body
 IS BA Stealth (Improved):Body
 IS BA Stealth (Improved):LA
@@ -81,30 +92,27 @@ ISBATaser:RA
 ISBATaser:RA
 </Trooper 6 Equipment>
 
-<type>
-IS Level 3
-</type>
-
-<year>
-3065
-</year>
-
 <source>
 TRO 3075 - Civil War
 </source>
 
-<motion_type>
-Leg
-</motion_type>
+<chassis>
+biped
+</chassis>
 
-<source>
-TRO 3075
-</source>
+<jumpingMP>
+0
+</jumpingMP>
 
-<armor_type>
-33
-</armor_type>
+<armor>
+7
+</armor>
 
-<armor_tech>
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
 3
-</armor_tech>
+</weightclass>
+

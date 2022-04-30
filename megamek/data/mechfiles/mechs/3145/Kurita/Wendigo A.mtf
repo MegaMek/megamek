@@ -4,35 +4,35 @@ A
 mul id:6404
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3135
-Source:TRO 3145 Draconis Combine - Dark Ages
-Rules Level:4
+techbase:Clan
+era:3150
+source:TRO 3145 Draconis Combine - Dark Ages
+rules level:4
 
-Mass:50
-Engine:300 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
-Cockpit:Torso-Mounted Cockpit
-Gyro:Standard Gyro
+mass:50
+engine:300 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:14 Double
-Base Chassis Heat Sinks:12
-Walk MP:6
-Jump MP:0
+heat sinks:14 Clan Double
+base chassis heat sinks:12
+walk mp:6
+jump mp:0
 
-Armor:Reflective(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:22
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:8
+armor:Reflective(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:22
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:8
 
 Weapons:3
 Large Pulse Laser, Left Arm
@@ -42,11 +42,11 @@ LRM 15, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser (omnipod)
-CLLargePulseLaser (omnipod)
-Clan Reflective
-Clan Reflective
-Clan Reflective
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +56,11 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser (omnipod)
-CLLargePulseLaser (omnipod)
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
+CLLargePulseLaser (OMNIPOD)
+CLLargePulseLaser (OMNIPOD)
+Clan Reflective
+Clan Reflective
+Clan Reflective
 -Empty-
 -Empty-
 -Empty-
@@ -71,8 +71,8 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -85,8 +85,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -112,10 +112,10 @@ Sensors
 Head:
 Sensors
 Sensors
-CLLRM15 (omnipod)
-CLLRM15 (omnipod)
-Clan Ammo LRM-15 (omnipod)
-Clan Ammo LRM-15 (omnipod)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

@@ -29,15 +29,15 @@ public enum RoundWeight {
     NONE ((w, e) -> w),
     /** Round up to next half ton */
     NEAREST_HALF_TON ((w, e) -> Math.round(truncate(w) * 2.0) / 2.0),
-    /** Round to nearest kg */
+    /** Round to the nearest kg */
     NEAREST_KG ((w, e) -> Math.round(w * 1000.0) / 1000.0),
-    /** Round to nearest ton */
-    NEAREST_TON ((w, e) -> Double.valueOf(Math.round(w))),
+    /** Round to the nearest ton */
+    NEAREST_TON ((w, e) -> (double) Math.round(w)),
     /** Round up to next half ton */
     NEXT_HALF_TON ((w, e) -> Math.ceil(truncate(w) * 2.0) / 2.0),
-    /** Round up to nearest kg (used for small SV engine and structure) */
+    /** Round up to the nearest kg (used for small SV engine and structure) */
     NEXT_KG ((w, e) -> Math.ceil(truncate(w) * 1000.0) / 1000.0),
-    /** Round up to nearest ton */
+    /** Round up to the nearest ton */
     NEXT_TON ((w, e) -> Math.ceil(truncate(w))),
     /** Round kg standard to next kg, ton-standard to next half ton */
     STANDARD ((w, e) -> {

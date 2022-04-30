@@ -223,10 +223,6 @@ public class TdbFile implements IMechLoader {
                 parseCrits(mech, i);
             }
 
-            if (mech.isClan()) {
-                mech.addClanCase();
-            }
-
             mech.setArmorTonnage(mech.getArmorWeight());
 
             // add any heat sinks not allocated

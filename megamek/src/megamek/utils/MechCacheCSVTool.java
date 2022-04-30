@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  */
 public class MechCacheCSVTool {
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         try (BufferedWriter fout = new BufferedWriter(new PrintWriter("Units.csv"))) {
             MechSummaryCache cache = MechSummaryCache.getInstance(true);
             MechSummary[] units = cache.getAllMechs();
@@ -103,8 +103,9 @@ public class MechCacheCSVTool {
                 if ((unit.getCockpitType() >= 0) && (unit.getCockpitType() < Mech.COCKPIT_STRING.length)) {
                     if (unit.getUnitType().equals("Mek")) {
                         csvLine.append(Mech.COCKPIT_STRING[unit.getCockpitType()]).append(",");
-                    } else
+                    } else {
                         csvLine.append(Aero.COCKPIT_STRING[unit.getCockpitType()]).append(",");
+                    }
                 } else {
                     csvLine.append("Not Applicable,");
                 }

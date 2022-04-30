@@ -195,13 +195,10 @@ public class NewtonianAerospacePathFinder {
         
         // terminator conditions:
         // we've visited this hex already and the path we are considering is longer than the previous path that visited this hex
-        if (visitedCoords.containsKey(pathDestination) && (visitedCoords.get(pathDestination).intValue() < path.getMpUsed())) {
-            return true;
-        }
-        
-        return false;
+        return visitedCoords.containsKey(pathDestination)
+                && (visitedCoords.get(pathDestination) < path.getMpUsed());
     }
-    
+
     /**
      * Worker function to calculate whether, if the given move step is added to the given move path, there will be
      * "too much turning", where a turn of 180 degrees or more is considered too much (we can yaw instead)
@@ -213,14 +210,14 @@ public class NewtonianAerospacePathFinder {
         if (path.getLastStep() == null || path.getSecondLastStep() == null) {
             return false;
         }
-        
+
         // more than two turns in a row is no good
         if ((stepType == MoveStepType.TURN_LEFT || stepType == MoveStepType.TURN_RIGHT)
                 && (path.getSecondLastStep().getType() == path.getLastStep().getType()) 
                 && (path.getLastStep().getType() == stepType)) {
             return true;
         }
-        
+
         // turning back and forth in place is no good
         if ((stepType == MoveStepType.TURN_LEFT && path.getLastStep().getType() == MoveStepType.TURN_RIGHT) ||
                 (stepType == MoveStepType.TURN_RIGHT && path.getLastStep().getType() == MoveStepType.TURN_LEFT)) {

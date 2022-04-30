@@ -198,10 +198,10 @@
 		<weightDistribution era='3028' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3028' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
+	<faction key='EF'/>
 	<faction key='DA'>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='EF'/>
 	<faction key='FC'>
 		<salvage pct='6'>CC:5,FWL:8,DC:10</salvage>
 	</faction>
@@ -5180,6 +5180,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>FS:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
 		<availability>CC:3,CS:3,HL:1,LA:6,FRR:3,FWL:4,IS:4,SIC:3,FS:4,CIR:3,DC:4,Periphery:3</availability>
 		<model name='(2815)'>
@@ -6324,6 +6330,12 @@
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>
 		<availability>MOC:1,Periphery.DD:2,FRR:3,CLAN:1-,IS:2,FS:5,MERC:3,Periphery.OS:2,Periphery:1,TC:1,CS:3-,OA:1,FS.CMM:5,NIOPS:3-,DC:6</availability>
 		<model name='WTH-1'>
@@ -6337,6 +6349,9 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:7,HL:3,FRR:7,IS:7,Periphery.Deep:5,SIC:6,FS:8,Periphery:5,TC:5,CS:5-,LA:7,FWL:10,NIOPS:5-,MH:4,DC:7</availability>
+		<model name='WVR-6D'>
+			<availability>FS:2</availability>
+		</model>
 		<model name='WVR-6K'>
 			<roles>recon</roles>
 			<availability>FRR:6,DC:6</availability>
@@ -6347,7 +6362,7 @@
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>HL:6,General:8,Periphery.Deep:7,Periphery:8</availability>
+			<availability>HL:3,General:8,Periphery:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Woodsman' unitType='Mek' omni='Clan'>

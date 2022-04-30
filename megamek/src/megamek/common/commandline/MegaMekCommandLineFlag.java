@@ -15,7 +15,6 @@ package megamek.common.commandline;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Configuration;
 import org.apache.logging.log4j.LogManager;
 

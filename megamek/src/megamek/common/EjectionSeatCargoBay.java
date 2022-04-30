@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2019 - The MegaMek Team
+ * Copyright (c) 2019-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -17,18 +17,15 @@ package megamek.common;
  * Support vehicle ejection seats.
  */
 public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
-
     private static final long serialVersionUID = 8916801835963112628L;
 
     /**
      * The default constructor is only for serialization.
      */
-    protected EjectionSeatCargoBay() {
+    private EjectionSeatCargoBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Creates pillion crew seating for support vehicles.
@@ -67,7 +64,8 @@ public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
 
     public static TechAdvancement techAdvancement() {
         return new TechAdvancement(TECH_BASE_ALL)
-                .setTechRating(RATING_B).setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+                .setTechRating(RATING_B)
+                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE);
     }
 }

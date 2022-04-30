@@ -362,13 +362,13 @@ public class WeaponFireInfo {
         // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && !weapon.getBayWeapons().isEmpty()) {
             int bayDamage = 0;
             for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
                 WeaponType weaponType = (WeaponType) bayWeapon.getType();
-                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ?
-                        weaponType.getExtremeRange() : weaponType.getLongRange(); 
+                int maxRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+                        ? weaponType.getExtremeRange() : weaponType.getLongRange();
                 int targetDistance = getShooter().getPosition().distance(getTarget().getPosition());
                 
                 // if the particular weapon is within range or we're an aircraft strafing a ground unit
@@ -378,10 +378,10 @@ public class WeaponFireInfo {
                     bayDamage += weaponType.getDamage();
                 }
             }
-            
+
             return bayDamage;
         }
-        
+
         // For clan plasma cannon, assume 7 "damage".
         final WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
@@ -395,7 +395,7 @@ public class WeaponFireInfo {
            (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)) {
             return weaponType.getRackSize();
         }
-        
+
         // infantry weapons use number of troopers multiplied by weapon damage, 
         // with # troopers counting as 1 for support vehicles
         if ((weaponType.getDamage() == WeaponType.DAMAGE_VARIABLE) &&
@@ -431,10 +431,10 @@ public class WeaponFireInfo {
      * @return Generated heat.
      */
     int computeHeat(Mounted weapon) {
-     // bay weapons require special consideration, by looping through all weapons and adding up the damage
+        // bay weapons require special consideration, by looping through all weapons and adding up the damage
         // A bay's weapons may have different ranges, most noticeable in laser bays, where the damage potential
         // varies with distance to target.
-        if ((null != weapon.getBayWeapons()) && (weapon.getBayWeapons().size() > 0)) {
+        if ((null != weapon.getBayWeapons()) && !weapon.getBayWeapons().isEmpty()) {
             int bayHeat = 0;
             for (int weaponID : weapon.getBayWeapons()) {
                 Mounted bayWeapon = weapon.getEntity().getEquipment(weaponID);
@@ -444,7 +444,7 @@ public class WeaponFireInfo {
             
             return bayHeat;
         } else {
-            return ((WeaponType) weapon.getType()).getHeat();
+            return weapon.getType().getHeat();
         }
     }
     
@@ -455,8 +455,7 @@ public class WeaponFireInfo {
      * @param bombedHex The target hex.
      * @return The expected damage of the attack.
      */
-    private double computeExpectedBombDamage(final Entity shooter,
-                                             final Mounted weapon,
+    private double computeExpectedBombDamage(final Entity shooter, final Mounted weapon,
                                              final Coords bombedHex) {
         double damage = 0D; //lol double damage I wish
         
@@ -516,8 +515,7 @@ public class WeaponFireInfo {
         // Set up the attack action and calculate the chance to hit.
         if ((null == bombPayload) || (0 == bombPayload.length)) {
             setAction(buildWeaponAttackAction());
-        }
-        else {
+        } else {
             setAction(buildBombAttackAction(bombPayload));
         }
         

@@ -23,6 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.ECMInfo.ECCMComparator;
+import megamek.common.ECMInfo.ECMComparator;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
 
@@ -159,14 +162,13 @@ public class ComputeECM {
         }
     
         // none? get out of here
-        if (vEnemyECMCoords.size() == 0) {
+        if (vEnemyECMCoords.isEmpty()) {
             return 0;
         }
     
         // get intervening Coords.
         ArrayList<Coords> coords = Coords.intervening(a, b);
-        // loop through all intervening coords, check each if they are ECM
-        // affected
+        // loop through all intervening coords, check each if they are ECM affected
         int totalECM = 0;
         // check for split hexes
         boolean bDivided = ((a.degree(b) % 60) == 30);
@@ -179,7 +181,7 @@ public class ComputeECM {
             // first, subtract 1 for each enemy ECM that affects us
             Enumeration<Integer> ranges = vEnemyECMRanges.elements();
             for (Coords enemyECMCoords : vEnemyECMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(enemyECMCoords);
                 if (nDist <= range) {
                     ecmStatus++;
@@ -188,7 +190,7 @@ public class ComputeECM {
             // now check for friendly eccm
             ranges = vFriendlyECCMRanges.elements();
             for (Coords friendlyECCMCoords : vFriendlyECCMCoords) {
-                int range = ranges.nextElement().intValue();
+                int range = ranges.nextElement();
                 int nDist = c.distance(friendlyECCMCoords);
                 if (nDist <= range) {
                     eccmPresent = true;
@@ -200,15 +202,13 @@ public class ComputeECM {
                 ranges = vFriendlyBAPRanges.elements();
                 Enumeration<Integer> facings = vFriendlyBAPFacings.elements();
                 for (Coords friendlyBAPCoords : vFriendlyBAPCoords) {
-                    int range = ranges.nextElement().intValue();
+                    int range = ranges.nextElement();
                     int nDist = c.distance(friendlyBAPCoords);
-                    int facing = facings.nextElement().intValue();
+                    int facing = facings.nextElement();
                     if (nDist <= range) {
-                        // still might need to check for right arc if using
-                        // medium range
+                        // still might need to check for right arc if using medium range
                         if ((range < 7)
-                            || Compute.isInArc(friendlyBAPCoords, facing,
-                                               c, Compute.ARC_NOSE)) {
+                                || Compute.isInArc(friendlyBAPCoords, facing, c, Compute.ARC_NOSE)) {
                             eccmPresent = true;
                             break;
                         }
@@ -278,11 +278,11 @@ public class ComputeECM {
                 vFriendlyBAPFacings.addElement(ent.getFacing());
     
             }
-            // TODO: do docked dropships give ECM benefit?
+            // TODO: do docked DropShips give ECM benefit?
         }
     
         // none? get out of here
-        if (vEnemyECMCoords.size() == 0) {
+        if (vEnemyECMCoords.isEmpty()) {
             return 0;
         }
     
@@ -405,11 +405,10 @@ public class ComputeECM {
         //  ECM counters it first...
         allEcmInfo.sort(ecmComparator);
         Collections.reverse(allEcmInfo);
-        
-        
+
         // If ECCM is on, we may have to remove some ECM that is negated
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) 
-                && allEccmInfo.size() > 0) {
+                && !allEccmInfo.isEmpty()) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;
             while (ecmIterator.hasNext()) {
@@ -436,8 +435,7 @@ public class ComputeECM {
                             ecmIterator.remove();
                             ecmNegated = true;
                         // Angel vs Angel
-                        } else if (eccmInfo.getAngelECCMStrength() 
-                                        >= ecmInfo.getAngelECMStrength()) {
+                        } else if (eccmInfo.getAngelECCMStrength() >= ecmInfo.getAngelECMStrength()) {
                             // Remove the ECM and ECCM
                             ecmIterator.remove();
                             eccmIterator.remove();
@@ -445,8 +443,7 @@ public class ComputeECM {
                             // Keep track of this eccm to remove it again later
                             eccmToRemove.add(eccmInfo);
                         } else if (!ecmInfo.isAngelECM() 
-                                && (eccmInfo.getECCMStrength() 
-                                        >= ecmInfo.getECMStrength())) {
+                                && (eccmInfo.getECCMStrength() >= ecmInfo.getECMStrength())) {
                             // Remove the ECM and ECCM
                             ecmIterator.remove();
                             eccmIterator.remove();
@@ -462,7 +459,7 @@ public class ComputeECM {
         
         return allEcmInfo;
     }
-    
+
     /**
      * Returns the total ECM effects on the supplied unit.
      *
@@ -471,15 +468,16 @@ public class ComputeECM {
      * @param b
      * @return
      */
-    public static ECMInfo getECMEffects(Entity ae, Coords a, Coords b,
-            boolean compareECM, List<ECMInfo> allEcmInfo) {
+    public static @Nullable ECMInfo getECMEffects(Entity ae, @Nullable Coords a, @Nullable Coords b,
+                                                  boolean compareECM,
+                                                  @Nullable List<ECMInfo> allEcmInfo) {
         Comparator<ECMInfo> ecmComparator;
         if (compareECM) {
-            ecmComparator = new ECMInfo.ECMComparator();
+            ecmComparator = new ECMComparator();
         } else {
-            ecmComparator = new ECMInfo.ECCMComparator();
+            ecmComparator = new ECCMComparator();
         }
-        
+
         if (ae.isSpaceborne()) {
             // normal ECM effects don't apply in space
             return null;
@@ -489,8 +487,7 @@ public class ComputeECM {
         }
 
         if (allEcmInfo == null) {
-            allEcmInfo = computeAllEntitiesECMInfo(ae.getGame()
-                    .getEntitiesVector());
+            allEcmInfo = computeAllEntitiesECMInfo(ae.getGame().getEntitiesVector());
         }
         
         // Get intervening Coords
@@ -520,6 +517,4 @@ public class ComputeECM {
         }       
         return worstECMEffects;
     }
-    
-
 }

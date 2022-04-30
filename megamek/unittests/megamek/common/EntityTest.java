@@ -16,6 +16,8 @@ package megamek.common;
 
 import junit.framework.TestCase;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -35,6 +37,8 @@ public class EntityTest {
         Entity testEntity = Mockito.mock(GunEmplacement.class);
         Mockito.when(testEntity.calculateBattleValue()).thenCallRealMethod();
         Mockito.when(testEntity.calculateBattleValue(Mockito.anyBoolean(), Mockito.anyBoolean())).thenCallRealMethod();
+        Mockito.when(testEntity.doBattleValueCalculation(Mockito.anyBoolean(), Mockito.anyBoolean(),
+                Mockito.any(CalculationReport.class))).thenCallRealMethod();
         Mockito.when(testEntity.getTotalArmor()).thenReturn(100);
         ArrayList<Mounted> equipment = new ArrayList<>(2);
         WeaponType ppcType = Mockito.mock(WeaponType.class);
@@ -54,20 +58,10 @@ public class EntityTest {
     public void testCalculateBattleValue() {
         // Test a gun emplacement.
         Entity testEntity = setupGunEmplacement();
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(false);
         int expected = 94;
         int actual = testEntity.calculateBattleValue(true, true);
         TestCase.assertEquals(expected, actual);
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(true);
-        expected = 94;
-        actual = testEntity.calculateBattleValue(true, true);
-        TestCase.assertEquals(expected, actual);
         Mockito.when(testEntity.getTotalArmor()).thenReturn(0); // Gun Emplacement with no armor.
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(false);
-        expected = 44;
-        actual = testEntity.calculateBattleValue(true, true);
-        TestCase.assertEquals(expected, actual);
-        Mockito.when(testEntity.useGeometricMeanBV()).thenReturn(true);
         expected = 44;
         actual = testEntity.calculateBattleValue(true, true);
         TestCase.assertEquals(expected, actual);

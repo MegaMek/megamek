@@ -81,18 +81,15 @@ public class KillCountVictory implements IVictoryConditions, Serializable {
             r.add(killCount);
             vr.addReport(r);
         }
-        
-        if (victory)
-            return vr;
-        return VictoryResult.noResult();
+
+        return victory ? vr : VictoryResult.noResult();
     }
     
     private void updateKillTables(Game game,
             Hashtable<Integer, Integer> teamKills,
             Hashtable<Integer, Integer> playerKills,
             Enumeration<Entity> victims) {
-        while (victims.hasMoreElements())
-        {
+        while (victims.hasMoreElements()) {
             Entity wreck = victims.nextElement();
             Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
             

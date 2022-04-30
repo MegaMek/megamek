@@ -112,10 +112,13 @@ public class ClientDialog extends JDialog {
         // their OS setup.
         int screenBorder = Math.max((int) (screenSize.width * TASKBAR_SIZE),
                 (int) (screenSize.height * TASKBAR_SIZE));
-        if (height == screenSize.height)
+        if (height == screenSize.height) {
             height = screenSize.height - 2 * screenBorder;
-        if (width == screenSize.width)
+        }
+
+        if (width == screenSize.width) {
             width = screenSize.width - 2 * screenBorder;
+        }
 
         setSize(width, height);
         setLocationRelativeTo(owner);

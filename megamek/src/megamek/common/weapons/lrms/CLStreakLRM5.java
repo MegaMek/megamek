@@ -19,21 +19,12 @@
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.SimpleTechLevel;
-
 /**
  * @author Sebastian Brocks
  */
 public class CLStreakLRM5 extends StreakLRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 5240577239366457930L;
 
-    /**
-     *
-     */
     public CLStreakLRM5() {
         super();
         name = "Streak LRM 5";
@@ -55,6 +46,6 @@ public class CLStreakLRM5 extends StreakLRMWeapon {
         longAV = 5;
         maxRange = RANGE_LONG;
         rulesRefs = "327, TO";
-        //Tech Advancement moved to StreakLRMWeapon.java
+        // Tech Advancement moved to StreakLRMWeapon.java
     }
 }

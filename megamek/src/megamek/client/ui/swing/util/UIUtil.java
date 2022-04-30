@@ -360,18 +360,15 @@ public final class UIUtil {
         Component[] allComps = contentPane.getComponents();
         for (Component comp: allComps) {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
-                    || (comp instanceof JComboBox<?>) || (comp instanceof JCheckBox)
-                    || (comp instanceof JTextField) || (comp instanceof JSlider)
-                    || (comp instanceof JSpinner) || (comp instanceof JRadioButton)
-                    || (comp instanceof JTextArea) || (comp instanceof JTextPane)
+                    || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
+                    || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JTextPane)
                     || (comp instanceof JToggleButton)) {
                 comp.setFont(scaledFont);
             }
             if (comp instanceof JScrollPane 
                     && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
                 adjustDialog(((JScrollPane) comp).getViewport());
-            }
-            if (comp instanceof JPanel) {
+            } else if (comp instanceof JPanel) {
                 JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
                 if ((border instanceof TitledBorder)) {
@@ -386,9 +383,8 @@ public final class UIUtil {
                     int right = scaleForGUI(i.right);
                     panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
                 }
-                adjustDialog((JPanel) comp);
-            }
-            if (comp instanceof JTabbedPane) {
+                adjustDialog(panel);
+            } else if (comp instanceof JTabbedPane) {
                 comp.setFont(scaledFont);
                 JTabbedPane tpane = (JTabbedPane) comp;
                 for (int i=0; i<tpane.getTabCount();i++) {
@@ -398,6 +394,8 @@ public final class UIUtil {
                     }
                 }
                 adjustDialog((JTabbedPane) comp);
+            } else if (comp instanceof Container) {
+                adjustDialog((Container) comp);
             }
         }
     }

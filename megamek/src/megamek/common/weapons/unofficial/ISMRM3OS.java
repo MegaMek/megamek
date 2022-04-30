@@ -19,22 +19,14 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.missiles.MRMWeapon;
 
 /**
  * @author Sebastian Brocks
  */
 public class ISMRM3OS extends MRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -2684723412113127349L;
 
-    /**
-     *
-     */
     public ISMRM3OS() {
         super();
         name = "MRM 3 (OS)";
@@ -49,11 +41,11 @@ public class ISMRM3OS extends MRMWeapon {
         flags = flags.or(F_ONESHOT);
         rulesRefs = "Unofficial";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        .setIntroLevel(false)
-        .setUnofficial(true)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
-        .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false, false, false);
+                .setIntroLevel(false)
+                .setUnofficial(true)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+                .setISAdvancement(DATE_NONE, DATE_NONE, 3057, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false);
     }
 }

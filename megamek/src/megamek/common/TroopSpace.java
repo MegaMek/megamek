@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
 
 import java.util.ArrayList;
@@ -21,17 +20,10 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying troops and their
- * equipment under battle conditions. Typically, a component of an APC.
+ * Represtents a volume of space set aside for carrying troops and their equipment under battle
+ * conditions. Typically, a component of an APC.
  */
-
 public final class TroopSpace implements Transporter {
-
-    // Private attributes and helper functions.
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 7837499891552862932L;
 
     /**
@@ -42,34 +34,29 @@ public final class TroopSpace implements Transporter {
     /**
      * The total amount of space available for troops.
      */
-    /* package */double totalSpace;
+    double totalSpace;
 
     /**
      * The current amount of space available for troops.
      */
-    /* package */double currentSpace;
+    double currentSpace;
 
     transient Game game;
 
-
-    // Protected constructors and methods.
     /**
      * The default constructor is only for serialization.
      */
-    protected TroopSpace() {
+    private TroopSpace() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      */
     public TroopSpace(double space) {
         totalSpace = space;
@@ -80,10 +67,8 @@ public final class TroopSpace implements Transporter {
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
@@ -238,9 +223,8 @@ public final class TroopSpace implements Transporter {
     }
 
     @Override
-    public final List<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<>(1);
-        return rv;
+    public List<Entity> getExternalUnits() {
+        return new ArrayList<>(1);
     }
 
     @Override
@@ -263,9 +247,4 @@ public final class TroopSpace implements Transporter {
         troops = new HashMap<>();
         currentSpace = totalSpace;
     }
-    
-    @Override
-    public int hardpointCost() {
-        return 0;
-    }
-} // End package class TroopSpace implements Transporter
+}

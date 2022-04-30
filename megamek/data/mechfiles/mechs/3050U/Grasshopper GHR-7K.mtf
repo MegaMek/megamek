@@ -4,96 +4,95 @@ GHR-7K
 mul id:1270
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3068
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Inner Sphere
+era:3068
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:70
-Engine:280 Fusion Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:70
+engine:280 Fusion Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:4
+heat sinks:16 IS Double
+walk mp:4
+jump mp:4
 
-Armor:Standard
-LA Armor:22
-RA Armor:22
-LT Armor:20
-RT Armor:20
-CT Armor:30
-HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:10
-RTR Armor:10
-RTC Armor:13
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:20
+RT armor:20
+CT armor:30
+HD armor:9
+LL armor:26
+RL armor:26
+RTL armor:10
+RTR armor:10
+RTC armor:13
 
-Weapons:6
-2 ISLightPPC, Left Arm
-1 ISSNPPC, Right Torso
-1 ISC3SlaveUnit, Right Torso
-1 ISSNPPC, Left Torso
-1 ISGuardianECM, Center Torso
-1 ISERMediumLaser, Head
+Weapons:5
+Light PPC, Left Arm
+Light PPC, Right Arm
+Snub-Nose PPC, Left Torso
+Snub-Nose PPC, Right Torso
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISLightPPC
-ISLightPPC
-ISLightPPC
-ISLightPPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light PPC
+Light PPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
--Empty-
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISSNPPC
 ISSNPPC
-Endo Steel
-Endo Steel
-Endo Steel
--Empty-
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISSNPPC
 ISSNPPC
 ISC3SlaveUnit
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -106,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGuardianECM
-ISGuardianECM
+ISGuardianECMSuite
+ISGuardianECMSuite
 
 Head:
 Life Support

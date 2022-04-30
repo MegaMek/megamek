@@ -399,20 +399,24 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
             sb.append(" ");
             sb.append(cs.getMount2().getDesc());
         }
+
         if (m.isHotLoaded()) {
             sb.append(hotLoaded);
         }
+
         if (m.getType().hasModes()) {
-            if (m.curMode().getDisplayableName().length() > 0) {
+            if (!m.curMode().getDisplayableName().isEmpty()) {
                 sb.append(" (");
                 sb.append(m.curMode().getDisplayableName());
                 sb.append(')');
             }
+
             if (!m.pendingMode().equals("None")) {
                 sb.append(" (next turn, ");
                 sb.append(m.pendingMode().getDisplayableName());
                 sb.append(')');
             }
+
             if ((m.getType() instanceof MiscType) && ((MiscType) m.getType()).isShield()) {
                 sb.append(" ").append(m.getDamageAbsorption(en, m.getLocation())).append('/')
                         .append(m.getCurrentDamageCapacity(en, m.getLocation())).append(')');
@@ -461,8 +465,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                             return;
                         }
 
-                        // Can only charge a capacitor if the weapon has not
-                        // been fired.
+                        // Can only charge a capacitor if the weapon has not been fired.
                         if ((m.getType() instanceof MiscType)
                                 && (m.getLinked() != null)
                                 && m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
@@ -482,7 +485,6 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                             int weap = this.unitDisplay.wPan.getSelectedWeaponNum();
                             this.unitDisplay.wPan.displayMech(en);
                             this.unitDisplay.wPan.selectWeapon(weap);
-                            // displaySlots();
                         } else {
                             if (GamePhase.DEPLOYMENT == clientgui.getClient().getGame().getPhase()) {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart",

@@ -21,20 +21,12 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.weapons.srms.SRMWeapon;
 
-
 /**
  * @author Sebastian Brocks
  */
 public class CLBASRM3 extends SRMWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1661723137877595056L;
 
-    /**
-     *
-     */
     public CLBASRM3() {
         super();
         name = "SRM 3";
@@ -53,15 +45,15 @@ public class CLBASRM3 extends SRMWeapon {
         cost = 15000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-		rulesRefs = "261, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN)
-		.setIntroLevel(false)
-		.setUnofficial(false)
-	    .setTechRating(RATING_F)
-	    .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
-	    .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)
-	    .setClanApproximate(true, false, false, false, false)
-	    .setPrototypeFactions(F_CWF)
-	    .setProductionFactions(F_CWF);
+        rulesRefs = "261, TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
+                .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_CWF)
+                .setProductionFactions(F_CWF);
     }
 }

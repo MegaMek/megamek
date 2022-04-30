@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
@@ -17,15 +17,8 @@ package megamek.common.weapons.lrms;
  * @author Sebastian Brocks
  */
 public class ISLRT5IOS extends LRTWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -7475019239065402296L;
 
-    /**
-     *
-     */
     public ISLRT5IOS() {
         super();
 
@@ -48,13 +41,13 @@ public class ISLRT5IOS extends LRTWeapon {
         cost = 24000;
         rulesRefs = "327, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_B)
-            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, true, false,false, false)
-            .setPrototypeFactions(F_DC)
-            .setProductionFactions(F_DC);
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_B)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, true, false, false, false)
+                .setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC);
     }
 }

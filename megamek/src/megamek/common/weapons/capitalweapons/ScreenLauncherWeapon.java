@@ -45,7 +45,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.cost = 250000;
         this.shortAV = 15;
         this.maxRange = RANGE_SHORT;
-        this.capital = false;
+        this.capital = true;
         this.atClass = CLASS_SCREEN;
         rulesRefs = "237, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)

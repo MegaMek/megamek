@@ -312,6 +312,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Alfar' unitType='Mek'>
+		<availability>LA:1</availability>
+		<model name='AL-A1'>
+			<availability>LA:2</availability>
+		</model>
+		<model name='AL-D1 &apos;Dokkalfar&apos;'>
+			<availability>LA:1</availability>
+		</model>
+	</chassis>
 	<chassis name='Alliance Space Station' unitType='Space Station'>
 		<availability>IS:1</availability>
 		<model name='(2713)'>
@@ -2877,6 +2886,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>CC:2-,TH:2-,LA:2-,FWL:2-,FS:2-,DC:2-</availability>
+		<model name='(Standard)'>
+			<availability>CC:2,TH:2,LA:2,FWL:2,FS:2,DC:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
 		<availability>CC:2,LA:7,SL:5,FWL:2,RWR:3,FS:2,DC:2</availability>
 		<model name='STN-1S'>
@@ -3469,6 +3484,12 @@
 			<availability>SL:8,IS:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>TH:3-,IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>TH:3-,IS:2-,Periphery:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>
 		<availability>MOC:1,OA:1,FS.CMM:4,SL:5,SL.R:2,RWR:1,MERC:3,DC:6</availability>
 		<model name='WTH-0'>
@@ -3485,13 +3506,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:6,LA:6,SL:7,FWL:7,IS:6,Periphery.Deep:5,RWR:5,FS:6,DC:6,TC:4</availability>
+		<model name='WVR-1R'>
+			<availability>FS:2</availability>
+		</model>
+		<model name='WVR-3R'>
+			<availability>FS:3</availability>
+		</model>
 		<model name='WVR-6K'>
 			<roles>recon</roles>
 			<availability>DC:6</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>General:5,Periphery:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Wyvern' unitType='Mek'>

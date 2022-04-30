@@ -11,29 +11,21 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.common;
+
+import megamek.common.annotations.Nullable;
 
 import java.util.List;
 import java.util.Vector;
-
-import megamek.common.annotations.Nullable;
 
 /**
  * Represents a set of handles on an OmniMech used by Battle Armor units
  * equiped with Boarding Claws to attach themselves for transport. This is
  * standard equipment on OmniMechs.
  *
- * @see megamek.common.MechFileParser#postLoadInit
+ * @see MechFileParser#postLoadInit
  */
-
-/* package */class BattleArmorHandles implements Transporter {
-
-    // Private attributes, constants and helper functions.
-
-    /**
-     *
-     */
+class BattleArmorHandles implements Transporter {
     private static final long serialVersionUID = -7149931565043762975L;
 
     /**
@@ -45,14 +37,12 @@ import megamek.common.annotations.Nullable;
     /**
      * The set of front locations that load troopers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_FRONT =
-        { Mech.LOC_RT, Mech.LOC_LT };
+    private static final int[] EXTERIOR_LOCATIONS_FRONT = { Mech.LOC_RT, Mech.LOC_LT };
 
     /**
      * The set of rear locations that load troopers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS_REAR =
-        { Mech.LOC_CT, Mech.LOC_RT, Mech.LOC_LT };
+    private static final int[] EXTERIOR_LOCATIONS_REAR = { Mech.LOC_CT, Mech.LOC_RT, Mech.LOC_LT };
 
     /**
      * The <code>String</code> reported when the handles are in use.
@@ -63,8 +53,6 @@ import megamek.common.annotations.Nullable;
      * The <code>String</code> reported when the handles are available.
      */
     private static final String HAVE_VACANCY_STRING = "One battle armor squad";
-
-    // Protected constructors and methods.
 
     /**
      * Get the exterior locations that a loaded squad covers.
@@ -104,12 +92,11 @@ import megamek.common.annotations.Nullable;
         return BattleArmorHandles.HAVE_VACANCY_STRING;
     }
 
-    // Public constructors and methods.
-
     /**
      * Create a set of handles.
      */
     public BattleArmorHandles() {
+
     }
 
     /**
@@ -272,7 +259,7 @@ import megamek.common.annotations.Nullable;
             if ((trooper.locations() > tloc) && (trooper.getInternal(tloc) > 0)) {
                 result = true;
             }
-        } // End carrying-troopers
+        }
 
         // Return our result.
         return result;
@@ -312,11 +299,6 @@ import megamek.common.annotations.Nullable;
         return 0;
     }
     
-    @Override
-    public int hardpointCost() {
-        return 0;
-    }
-
     @Override
     public String toString() {
         return "BattleArmorHandles - troopers:" + troopers;

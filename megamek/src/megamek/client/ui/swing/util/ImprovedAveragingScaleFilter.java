@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.util;
 
 import java.awt.image.AreaAveragingScaleFilter;
@@ -71,13 +70,13 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
         int destinationOffset = y * savedWidth + x;
         boolean bytearray = (pixels instanceof byte[]);
         for (int yy = 0; yy < height; yy++) {
-            for (int xx = 0; xx < width; xx++)
-                if (bytearray)
-                    savedPixels[destinationOffset++] = cm
-                            .getRGB(((byte[]) pixels)[sourceOffset++] & 0xff);
-                else
-                    savedPixels[destinationOffset++] = cm
-                            .getRGB(((int[]) pixels)[sourceOffset++]);
+            for (int xx = 0; xx < width; xx++) {
+                if (bytearray) {
+                    savedPixels[destinationOffset++] = cm.getRGB(((byte[]) pixels)[sourceOffset++] & 0xff);
+                } else {
+                    savedPixels[destinationOffset++] = cm.getRGB(((int[]) pixels)[sourceOffset++]);
+                }
+            }
             sourceOffset += (scansize - width);
             destinationOffset += (savedWidth - width);
         }

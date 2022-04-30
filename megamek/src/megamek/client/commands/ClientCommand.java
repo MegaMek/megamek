@@ -57,7 +57,7 @@ public abstract class ClientCommand {
 
     // Utility functions
     public static int getDirection(String arg) {
-        int face = 0;
+        int face;
 
         if (arg.equalsIgnoreCase("N")) {
             face = 0;
@@ -74,7 +74,8 @@ public abstract class ClientCommand {
         } else {
             try {
                 face = Integer.parseInt(arg);
-            } catch (NumberFormatException nfe) {
+            } catch (NumberFormatException ignored) {
+                face = 0;
             }
         }
 

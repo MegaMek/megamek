@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -108,7 +110,7 @@ public interface Transporter extends Serializable {
      *         that location. This value will be <code>null</code> if no unit
      *         is transported on the outside at that location.
      */
-    Entity getExteriorUnitAt(int loc, boolean isRear);
+    @Nullable Entity getExteriorUnitAt(int loc, boolean isRear);
 
     /**
      * @return list of all units carried externally by this transporter
@@ -128,7 +130,12 @@ public interface Transporter extends Serializable {
     void resetTransporter();
     
     /**
+     * Returns the number of Docking Collars (hardpoints) this transporter counts as toward
+     * the maximum that a JumpShip (or WS, SS) may carry. TO:AUE p.146
+     *
      * @return The number of docking hardpoints this transporter counts as toward the limit.
      */
-    int hardpointCost();
+    default int hardpointCost() {
+        return 0;
+    }
 }

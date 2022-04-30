@@ -42,15 +42,11 @@ public class MechSummary implements Serializable {
     private double tons;
     private int bv;
 
-    /** The BV of the unit computed using the geometric mean method. */
-    private int gmBV;
-    private int rhBV;
-    private int rhgmBV;
     /** The full cost of the unit (including ammo). */
     private long cost;
+
     /** The dry cost of the unit (excluding ammo). */
     private long dryCost;
-    private long unloadedCost;
     private long altCost;
     private long modified; // for comparison when loading
     private String level;
@@ -227,10 +223,6 @@ public class MechSummary implements Serializable {
         return dryCost;
     }
 
-    public long getUnloadedCost() {
-        return unloadedCost;
-    }
-
     public long getAlternateCost() {
         return altCost;
     }
@@ -330,10 +322,6 @@ public class MechSummary implements Serializable {
 
     public void setDryCost(long nCost) {
         this.dryCost = nCost;
-    }
-
-    public void setUnloadedCost(long nCost) {
-        unloadedCost = nCost;
     }
 
     public void setAlternateCost(long aCost) {
@@ -543,30 +531,6 @@ public class MechSummary implements Serializable {
 
     public void setSuitWeight(double suitWeight) {
         this.suitWeight = suitWeight;
-    }
-
-    public int getGMBV() {
-        return gmBV;
-    }
-
-    public void setGMBV(int gmBV) {
-        this.gmBV = gmBV;
-    }
-
-    public int getRHBV() {
-        return rhBV;
-    }
-
-    public void setRHBV(int rhBV) {
-        this.rhBV = rhBV;
-    }
-
-    public int getRHGMBV() {
-        return rhgmBV;
-    }
-
-    public void setRHGMBV(int rhgmBV) {
-        this.rhgmBV = rhgmBV;
     }
 
     @Override

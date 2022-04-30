@@ -426,7 +426,7 @@ public class Report implements Serializable {
                     + ") for a report with ID " + messageId
                     + ".  Maybe Report#add wasn't called enough "
                     + "times for the amount of tags in the message?");
-            return "[Reporting Error: see megameklog.txt for details]";
+            return "[Reporting Error: see megamek.log for details]";
         }
     }
 

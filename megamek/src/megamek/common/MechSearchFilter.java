@@ -243,7 +243,7 @@ public class MechSearchFilter {
             }
         }
 
-        //Check jump criteria
+        // Check jump criteria
         int jump = -1;
         try {
             jump = Integer.parseInt(f.sJump);
@@ -268,21 +268,24 @@ public class MechSearchFilter {
         }
 
         if (f.checkInternalsType) {
-            if (f.internalsType != mech.getInternalsType())
+            if (f.internalsType != mech.getInternalsType()) {
                 return false;
+            }
         }
 
         if (f.checkArmorType) {
-            if (!mech.getArmorType().contains(f.armorType))
+            if (!mech.getArmorType().contains(f.armorType)) {
                 return false;
+            }
         }
 
         if (f.checkCockpitType) {
-            if (f.cockpitType != mech.getCockpitType())
+            if (f.cockpitType != mech.getCockpitType()) {
                 return false;
+            }
         }
 
-        //Check armor criteria
+        // Check armor criteria
         int sel = f.iArmor;
         if (sel > 0) {
             int armor = mech.getTotalArmor();
@@ -376,8 +379,9 @@ public class MechSearchFilter {
                     LogManager.getLogger().debug("ExpNode n is null");
                 }
 
-                if (currEq.equals(n.name) && currQty >= n.qty)
+                if (currEq.equals(n.name) && currQty >= n.qty) {
                     return true;
+                }
             }
             return false;
         }
@@ -461,8 +465,9 @@ public class MechSearchFilter {
             }
             Iterator<ExpNode> nodeIter = e.children.iterator();
             this.children = new LinkedList<>();
-            while (nodeIter.hasNext())
+            while (nodeIter.hasNext()) {
                 children.add(new ExpNode(nodeIter.next()));
+            }
         }
 
         public ExpNode(String n, int q) {

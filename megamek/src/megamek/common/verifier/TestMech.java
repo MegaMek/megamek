@@ -602,17 +602,7 @@ public class TestMech extends TestEntity {
         Vector<Mounted> unallocated = new Vector<>();
         Vector<Serializable> allocation = new Vector<>();
         Vector<Integer> heatSinks = new Vector<>();
-        boolean correct = checkCriticalSlotsForEquipment(mech, unallocated, allocation,
-                heatSinks, buff);
-        /*
-         * StringBuffer critAlloc = new StringBuffer(); need to redo this, in
-         * MML, spread equipment gets one mounted per block that needs to be
-         * allocated for (Mounted m : mech.getEquipment()) { if
-         * ((m.getLocation() != Entity.LOC_NONE) && (m.getType() instanceof
-         * MiscType)) { if (!checkMiscSpreadAllocation(mech, m, critAlloc)) {
-         * correct = false; buff.append(critAlloc.toString()); } } }
-         */
-
+        boolean correct = checkCriticalSlotsForEquipment(mech, unallocated, allocation, heatSinks, buff);
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
             for (Mounted mount : unallocated) {
@@ -622,13 +612,11 @@ public class TestMech extends TestEntity {
         }
         if (!allocation.isEmpty()) {
             buff.append("Allocated Equipment:\n");
-            for (Enumeration<Serializable> serializableEnum = allocation
-                    .elements(); serializableEnum.hasMoreElements();) {
+            for (Enumeration<Serializable> serializableEnum = allocation.elements();
+                 serializableEnum.hasMoreElements();) {
                 Mounted mount = (Mounted) serializableEnum.nextElement();
-                int needCrits = ((Integer) serializableEnum.nextElement())
-                        .intValue();
-                int aktCrits = ((Integer) serializableEnum.nextElement())
-                        .intValue();
+                int needCrits = (Integer) serializableEnum.nextElement();
+                int aktCrits = (Integer) serializableEnum.nextElement();
                 buff.append(mount.getType().getInternalName()).append(" has ")
                         .append(needCrits).append(" Slots, but ")
                         .append(aktCrits).append(" Slots are allocated!")

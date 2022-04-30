@@ -4,35 +4,35 @@ A
 mul id:6409
 
 Config:Biped Omnimech
-TechBase:Clan
-Era:3134
-Source:TRO 3145 Draconis Combine - Dark Ages
-Rules Level:4
+techbase:Clan
+era:3150
+source:TRO 3145 Draconis Combine - Dark Ages
+rules level:4
 
-Mass:50
-Engine:250 XL (Clan) Engine(IS)
-Structure:Clan Endo Steel
-Myomer:Standard
-Cockpit:Torso-Mounted Cockpit
-Gyro:Standard Gyro
+mass:50
+engine:250 XL (Clan) Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+cockpit:Torso-Mounted Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:14 Double
-Base Chassis Heat Sinks:10
-Walk MP:5
-Jump MP:8
+heat sinks:14 Clan Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:8
 
-Armor:Reflective(Clan)
-LA Armor:16
-RA Armor:16
-LT Armor:16
-RT Armor:16
-CT Armor:22
-HD Armor:8
-LL Armor:20
-RL Armor:20
-RTL Armor:5
-RTR Armor:5
-RTC Armor:8
+armor:Reflective(Clan)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:22
+HD armor:8
+LL armor:20
+RL armor:20
+RTL armor:5
+RTR armor:5
+RTC armor:8
 
 Weapons:5
 ER Large Laser, Left Arm
@@ -44,41 +44,41 @@ AP Gauss Rifle, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERLargeLaser (omnipod)
-CLAPGaussRifle (omnipod)
-Clan Reflective
-Clan Reflective
-Clan Reflective
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLERLargeLaser (omnipod)
-CLAPGaussRifle (omnipod)
-Clan Endo Steel
-Clan Endo Steel
-Clan Endo Steel
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLAPGaussRifle (OMNIPOD)
+Clan Reflective
+Clan Reflective
+Clan Reflective
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -87,12 +87,12 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -114,10 +114,10 @@ Sensors
 Head:
 Sensors
 Sensors
-CLAPGaussRifle (omnipod)
-CLAPGaussRifle Ammo (omnipod)
-CLTargeting Computer (omnipod)
-CLTargeting Computer (omnipod)
+CLAPGaussRifle (OMNIPOD)
+CLAPGaussRifle Ammo (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
+CLTargeting Computer (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet (omnipod)
-Clan Improved Jump Jet (omnipod)
+Improved Jump Jet (OMNIPOD)
+Improved Jump Jet (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-

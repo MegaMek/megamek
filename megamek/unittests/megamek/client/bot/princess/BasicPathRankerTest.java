@@ -104,7 +104,7 @@ public class BasicPathRankerTest {
             failure.append("\nExpected :").append(expected.getRank());
             failure.append("\nActual   :").append(actual.getRank());
         }
-        if (!StringUtility.isNullOrEmpty(failure.toString())) {
+        if (!StringUtility.isNullOrBlank(failure.toString())) {
             Assert.fail(failure.toString());
         }
     }   

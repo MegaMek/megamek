@@ -59,7 +59,7 @@ public class ScenarioLoaderTest {
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
 
             }
         }
@@ -86,11 +86,11 @@ public class ScenarioLoaderTest {
                 server.setGame(game);
                 loader.applyDamage(server);
                 server.die();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
             
-            if (errCache.size() > 0) {
+            if (!errCache.isEmpty()) {
                 errorAccumulator.add("ERROR in " + file.getPath());
                 originalErr.println("ERROR in " + file.getPath());
                 for (String line : errCache) {

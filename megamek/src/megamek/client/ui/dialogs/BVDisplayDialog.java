@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,19 +19,21 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.Objects;
 
 public class BVDisplayDialog extends AbstractDialog {
-    //region Variable Declarations
-    private final Entity entity;
-    //endregion Variable Declarations
 
-    //region Constructors
+    private final Entity entity;
+
     public BVDisplayDialog(final JFrame frame, final Entity entity) {
         this(frame, false, entity);
     }
@@ -41,25 +43,49 @@ public class BVDisplayDialog extends AbstractDialog {
         this.entity = Objects.requireNonNull(entity);
         initialize();
     }
-    //endregion Constructors
 
-    //region Getters
+    @Override
+    protected void finalizeInitialization() {
+        super.finalizeInitialization();
+        setTitle(getTitle() + " (" + entity.getShortName() + ")");
+        UIUtil.adjustDialog(getContentPane());
+        pack();
+        Dimension screenSize = UIUtil.getScaledScreenSize(this);
+        setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));
+    }
+
     public Entity getEntity() {
         return entity;
     }
-    //endregion Getters
 
-    //region Initialization
     @Override
     protected Container createCenterPane() {
-        final JEditorPane editorPane = new JEditorPane("text/html", getEntity().getBVText());
-        editorPane.setEditable(false);
-        editorPane.setCaretPosition(0);
-        editorPane.setFont(UIUtil.getScaledFont());
+        FlexibleCalculationReport bvReport = new FlexibleCalculationReport();
+        entity.calculateBattleValue(bvReport);
 
-        final JScrollPane scrollPane = new JScrollPane(editorPane);
-        scrollPane.setPreferredSize(new Dimension(550, 300));
-        return scrollPane;
+        JButton exportText = new JButton("Copy as Text");
+        exportText.addActionListener(evt -> copyToClipboard(bvReport.getTextReport().toString()));
+        JButton exportHTML = new JButton("Copy as HTML");
+        exportHTML.addActionListener(evt -> copyToClipboard(bvReport.getHtmlReport().toString()));
+
+        var scrollPane = new JScrollPane(bvReport.toJComponent(), ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+        Box centerPanel = Box.createVerticalBox();
+        centerPanel.setBorder(new EmptyBorder(25, 15, 25, 15));
+        JPanel buttonPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+
+        buttonPanel.add(exportText);
+        buttonPanel.add(exportHTML);
+        centerPanel.add(buttonPanel);
+        centerPanel.add(scrollPane);
+        return centerPanel;
     }
-    //endregion Initialization
+
+    private void copyToClipboard(String reportString) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(reportString), null);
+    }
 }

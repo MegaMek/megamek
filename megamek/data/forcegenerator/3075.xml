@@ -235,6 +235,14 @@
 		<techMargin>1</techMargin>
 		<salvage pct='6'>LA:5,CIR:1</salvage>
 	</faction>
+	<faction key='RCM'>
+		<pctOmni>0,3,10,14,20</pctOmni>
+		<pctClan>0,0,3,6,12</pctClan>
+		<pctSL>18,45,51,54,74</pctSL>
+		<omniMargin>1</omniMargin>
+		<techMargin>1</techMargin>
+		<salvage pct='6'>FWL:10</salvage>
+	</faction>
 	<faction key='FS'>
 		<pctOmni>7,12,16,22,26</pctOmni>
 		<pctClan>0,0,4,8,10</pctClan>
@@ -380,14 +388,6 @@
 		<omniMargin>1</omniMargin>
 		<techMargin>1</techMargin>
 		<salvage pct='5'>LA:10</salvage>
-	</faction>
-	<faction key='RCM'>
-		<pctOmni>0,3,10,14,20</pctOmni>
-		<pctClan>0,0,3,6,12</pctClan>
-		<pctSL>18,45,51,54,74</pctSL>
-		<omniMargin>1</omniMargin>
-		<techMargin>1</techMargin>
-		<salvage pct='6'>FWL:10</salvage>
 	</faction>
 	<faction key='Stone'>
 		<omniMargin>1</omniMargin>
@@ -6423,6 +6423,15 @@
 			<availability>MERC.KH:2,MERC.WD:2,CLAN:4,IS:1,MERC:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Gladiator Exoskeleton' unitType='BattleArmor'>
+		<availability>MH:2</availability>
+		<model name='(Standard) [AG]' mechanized='false'>
+			<availability>MH:4</availability>
+		</model>
+		<model name='(Standard) [BC/ID]' mechanized='false'>
+			<availability>MH:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Gladiator' unitType='Mek'>
 		<availability>CS:3,LA:2-,FWL:2-,MH:2-,MERC:2,DC:3-</availability>
 		<model name='GLD-1R'>
@@ -6593,6 +6602,16 @@
 			<availability>CSA:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Gorilla Exoskeleton' unitType='BattleArmor'>
+		<availability>MERC.KH:7,MERC.WD:7,IS:6,FWL:1,MERC:5,Periphery:4</availability>
+		<model name='&apos;Falcata&apos;' mechanized='false'>
+			<availability>FWL:5</availability>
+		</model>
+		<model name='PEX-2B' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:7,MERC.WD:7,IS:6-,MERC:5-,Periphery:4-</availability>
+		</model>
+	</chassis>
 	<chassis name='Goshawk (Vapor Eagle)' unitType='Mek'>
 		<availability>CSV:4,CLAN:1,CJF:2</availability>
 		<model name='(Standard)'>
@@ -6732,6 +6751,13 @@
 		</model>
 		<model name='[SRM]' mechanized='true'>
 			<availability>General:7</availability>
+		</model>
+	</chassis>
+	<chassis name='Gray Death Strike Armor' unitType='BattleArmor'>
+		<availability>LA:2</availability>
+		<model name='(Prototype)' mechanized='false'>
+			<roles>spotter</roles>
+			<availability>LA:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Great Wyrm' unitType='Mek'>
@@ -6917,6 +6943,32 @@
 		<model name='2'>
 			<roles>urban</roles>
 			<availability>CGB:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Groundhog Exoskeleton' unitType='BattleArmor'>
+		<availability>MERC.KH:2-,MERC.WD:2,IS:4-,MERC:3-,Periphery:2-</availability>
+		<model name='CEX-205 [Armored Glove]' mechanized='false'>
+			<availability>MERC.KH:2-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
+		</model>
+		<model name='CEX-205 [Basic Manipulator]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:2-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
+		</model>
+		<model name='CEX-205 [Cargo Lifter]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:2-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
+		</model>
+		<model name='CEX-205 [Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:2-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
+		</model>
+		<model name='CEX-205 [Mine Clearance]' mechanized='false'>
+			<roles>support,minesweeper</roles>
+			<availability>MERC.KH:2,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
+		</model>
+		<model name='CEX-205 [Salvage Arm]' mechanized='false'>
+			<roles>support</roles>
+			<availability>MERC.KH:2-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Guardian Fighter' unitType='Conventional Fighter'>
@@ -8267,6 +8319,24 @@
 		</model>
 		<model name='(2850)'>
 			<availability>CLAN:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Iron Cheetah' unitType='Mek'>
+		<availability>DC:2+</availability>
+		<model name='A'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='B'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='C'>
+			<availability>DC:6</availability>
+		</model>
+		<model name='D'>
+			<availability>DC:4</availability>
+		</model>
+		<model name='Prime'>
+			<availability>DC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ironhold Assault Battle Armor' unitType='BattleArmor'>
@@ -13648,7 +13718,7 @@
 		</model>
 	</chassis>
 	<chassis name='Scorpion' unitType='Mek'>
-		<availability>CC:2-,CS:2-,HL:2-,LA:3,FRR:2-,Periphery.Deep:4-,FWL:2-,NIOPS:2-,WOB:2-,MERC:2-,Periphery:3-,DC:2-</availability>
+		<availability>CC:2-,HL:2-,FRR:2-,Periphery.Deep:4-,WOB:2-,MERC:2-,Periphery:3-,CS:2-,LA:3,FWL:2-,NIOPS:2-,RCM:2-,DC:2-</availability>
 		<model name='SCP-12C'>
 			<availability>WOB:4</availability>
 		</model>
@@ -13663,7 +13733,7 @@
 			<availability>HL:2-,FRR:4-,Periphery.Deep:8,MERC:4-,Periphery:4-</availability>
 		</model>
 		<model name='SCP-1O'>
-			<availability>IS:6,Periphery:2</availability>
+			<availability>CC:2-,CS:2-,FRR:2-,FWL:2-,WOB:2-,RCM:2-,MERC:2-,Periphery:2,DC:2-</availability>
 		</model>
 		<model name='SCP-1TB'>
 			<availability>MERC:4</availability>
@@ -13734,6 +13804,12 @@
 		</model>
 		<model name='(Standard)'>
 			<availability>General:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>FS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Seeker' unitType='Dropship'>
@@ -15750,6 +15826,54 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Tunnel Rat I Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat II Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-,Periphery:4</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-,Periphery:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat III Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+		<model name='[Armored Glove]' mechanized='false'>
+			<availability>IS:4-</availability>
+		</model>
+		<model name='[Industrial Drill]' mechanized='false'>
+			<roles>support</roles>
+			<availability>IS:4-</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat IV Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:3</availability>
+		<model name='[Armored Glove/GL]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+		<model name='[Armored Glove/LMG]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+		<model name='[Battle Claw/GL]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+		<model name='[Battle Claw/LMG]' mechanized='false'>
+			<availability>IS:3</availability>
+		</model>
+	</chassis>
+	<chassis name='Tunnel Rat Mining Exoskeleton' unitType='BattleArmor'>
+		<availability>IS:4-</availability>
+	</chassis>
 	<chassis name='Turhan Urban Combat Vehicle' unitType='Tank'>
 		<availability>CS:4,WOB:4,DC:3</availability>
 		<model name='(C3)'>
@@ -16777,6 +16901,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>IS:2-,Periphery:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>
 		<availability>MOC:1,Periphery.DD:2,MERC:2,Periphery.OS:2,TC:2,Periphery:2,CS:1-,OA:2,FVC:3,FS.CMM:3,NIOPS:1-,MH:2,DC:3</availability>
 		<model name='WTH-1'>
@@ -16876,13 +17006,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:5,HL:4,FRR:5,IS:5,Periphery.Deep:5,WOB:3-,FS:6,Periphery:5,TC:5,CS:3-,LA:5,CNC:2,FWL:8,NIOPS:3-,MH:4,DC:5</availability>
+		<model name='WVR-1R'>
+			<availability>CC:2-,FWL:2-,FS:2-,MERC:2,RCM:2,DC:2-</availability>
+		</model>
+		<model name='WVR-6D'>
+			<availability>FS:1-</availability>
+		</model>
 		<model name='WVR-6M'>
 			<roles>recon</roles>
 			<availability>Periphery.MW:5,PIR:4,Periphery.ME:5,FWL:3-,MH:4</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>HL:2-,General:4-,Periphery.Deep:8,Periphery:4-</availability>
+			<availability>HL:2-,General:3-,Periphery:3-</availability>
 		</model>
 		<model name='WVR-7D'>
 			<roles>recon</roles>
@@ -16895,6 +17031,9 @@
 		<model name='WVR-7M'>
 			<roles>recon</roles>
 			<availability>CC:4,FWL:6,WOB:5,MERC:6,DC:4</availability>
+		</model>
+		<model name='WVR-7M2'>
+			<availability>CC:5,DTA:4,MERC.KH:5,MERC.WD:3,FWL:5,WOB:5,MERC:5,RCM:2,DC:3</availability>
 		</model>
 		<model name='WVR-8C'>
 			<availability>DC:5</availability>

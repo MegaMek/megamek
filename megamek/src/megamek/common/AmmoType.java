@@ -308,16 +308,6 @@ public class AmmoType extends EquipmentType {
     // If you want to add another munition type, tough luck: longs can only be
     // bit-shifted 63 times.
 
-    /*
-     * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
-     * "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
-     * "Extended Range", "High Explosive", "Flare", "Fragmentation", "Inferno",
-     * "Semiguided", "Swarm", "Swarm-I", "Thunder", "Thunder/Augmented",
-     * "Thunder/Inferno", "Thunder/Vibrabomb", "Thunder/Active", "Explosive", "ECM",
-     * "Haywire", "Nemesis", "Homing", "FASCAM", "Inferno-IV", "Vibrabomb-IV",
-     * "Smoke", "Narc-Capable", "Artemis-Capable", "Listen-Kill", "Anti-TSM",
-     * "Acid-Head" };
-     */
     private static Vector<AmmoType>[] m_vaMunitions = new Vector[NUM_TYPES];
 
     public static Vector<AmmoType> getMunitionsFor(int nAmmoType) {
@@ -429,22 +419,6 @@ public class AmmoType extends EquipmentType {
                 return true;
             }
         }
-
-        // AR-10 Launchers, ugh.
-        /*
-         * if (getAmmoType() == T_AR10 || a2.getAmmoType() == T_AR10) { // Barracuda if
-         * (getAmmoType() == T_AR10 && hasFlag(F_AR10_BARRACUDA) && a2.getAmmoType() ==
-         * T_BARRACUDA) { result = true; } else if (a2.getAmmoType() == T_AR10 &&
-         * a2.hasFlag(F_AR10_BARRACUDA) && getAmmoType() == T_BARRACUDA) { result =
-         * true; } // Killer Whale if (getAmmoType() == T_AR10 &&
-         * hasFlag(F_AR10_KILLER_WHALE) && a2.getAmmoType() == T_KILLER_WHALE) { result
-         * = true; } else if (a2.getAmmoType() == T_AR10 &&
-         * a2.hasFlag(F_AR10_KILLER_WHALE) && getAmmoType() == T_KILLER_WHALE) { result
-         * = true; } // White Shark if (getAmmoType() == T_AR10 &&
-         * hasFlag(F_AR10_WHITE_SHARK) && a2.getAmmoType() == T_WHITE_SHARK) { result =
-         * true; } else if (a2.getAmmoType() == T_AR10 && a2.hasFlag(F_AR10_WHITE_SHARK)
-         * && getAmmoType() == T_WHITE_SHARK) { result = true; } }
-         */
 
         // General Launchers
         if (is(other.getAmmoType()) && (getMunitionType() == other.getMunitionType())) {
@@ -7845,11 +7819,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7868,11 +7843,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 4;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7893,11 +7869,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7916,11 +7893,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7941,11 +7919,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7964,11 +7943,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 8;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -7989,11 +7969,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[] { "", "HotLoad" });
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -8012,11 +7993,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
+        //March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_MERC)
-                .setProductionFactions(F_WB);
+                .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, true, false, false)
+                .setProductionFactions(F_MERC,F_WB);
         return ammo;
     }
 
@@ -13653,11 +13635,7 @@ public class AmmoType extends EquipmentType {
 
     @Override
     public String getShortName() {
-        if (shortName.trim().length() < 1) {
-            return getName();
-        }
-
-        return shortName;
+        return shortName.isBlank() ? getName() : shortName;
     }
 
     public String getSubMunitionName() {
@@ -13742,6 +13720,10 @@ public class AmmoType extends EquipmentType {
                 && (otherAmmo.getAmmoType() == AmmoType.T_MML)
                 && (currentAmmoType.getRackSize() == otherAmmo.getRackSize());
 
+        // AR10 ammo is explicitly excluded in equalsAmmoTypeOnly(), therefore check here
+        boolean ar10Match = (currentAmmoType.getAmmoType() == AmmoType.T_AR10)
+                && (otherAmmo.getAmmoType() == AmmoType.T_AR10);
+
         // LBXs can swap between cluster and slug ammo types
         boolean lbxAmmoMatch = (currentAmmoType.getAmmoType() == AmmoType.T_AC_LBX)
                 && (otherAmmo.getAmmoType() == AmmoType.T_AC_LBX)
@@ -13755,6 +13737,6 @@ public class AmmoType extends EquipmentType {
         boolean staticFeedMismatch = hasStaticFeed
                 && (currentAmmoType.getMunitionType() != otherAmmo.getMunitionType());
 
-        return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch) && !caselessMismatch && !staticFeedMismatch;
+        return (ammoOfSameType || mmlAmmoMatch || lbxAmmoMatch || ar10Match) && !caselessMismatch && !staticFeedMismatch;
     }
 }

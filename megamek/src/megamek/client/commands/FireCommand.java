@@ -244,8 +244,9 @@ public class FireCommand extends ClientCommand {
             throw new IllegalArgumentException("current searchlight parameters are invalid");
         }
 
-        if (!SearchlightAttackAction.isPossible(getClient().getGame(), cen, target, null))
+        if (!SearchlightAttackAction.isPossible(getClient().getGame(), cen, target, null)) {
             return;
+        }
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(),
@@ -263,10 +264,8 @@ public class FireCommand extends ClientCommand {
             str = "";
             toHit = WeaponAttackAction.toHit(getClient().getGame(), cen, target, weaponId,
                     Entity.LOC_NONE, AimingMode.NONE, false);
-            // str += "Target: " + target.toString();
 
-            str += " Range: "
-                   + ce().getPosition().distance(target.getPosition());
+            str += " Range: " + ce().getPosition().distance(target.getPosition());
 
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {

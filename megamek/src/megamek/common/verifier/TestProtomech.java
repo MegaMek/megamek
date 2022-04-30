@@ -13,10 +13,12 @@
  */
 package megamek.common.verifier;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 
+import javax.swing.text.Utilities;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -617,7 +619,15 @@ public class TestProtomech extends TestEntity {
         if (quadOrGlider) {
             moveFactor -= 2;
         }
-        return Math.max(1, (int) (moveFactor * tonnage));
+        int rating = MathUtility.clamp((int) (moveFactor * tonnage), 1, 400);
+        if (rating > 40) {
+            int modFive = rating % 5;
+            if (modFive > 0) {
+                // Round up to the nearest valid engine rating, i.e. to the next xx5 or xx0
+                rating += 5 - modFive;
+            }
+        }
+        return rating;
     }
     
     /**

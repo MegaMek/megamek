@@ -30,7 +30,7 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * Created on Sep 29, 2004
+ * @since Sept 29, 2004
  */
 public class UltraWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 7551194199079004134L;
@@ -45,12 +45,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB));
+                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                        || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
     }
 
     /*
@@ -68,27 +67,22 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         } else {
             howManyShots = 1;
         }
-        if (total == 0) {
-            // can't happen?
 
-        }
         if (ammo.getUsableShotsLeft() == 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
-            // there will be some ammo somewhere, otherwise shot will not have
-            // been fired.
+            // there will be some ammo somewhere, otherwise shot will not have been fired.
         }
+
         if (ammo.getUsableShotsLeft() == 1) {
             ammo.setShotsLeft(0);
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
             // that fired one, do we need to fire another?
-            ammo.setShotsLeft(ammo.getBaseShotsLeft()
-                    - ((howManyShots == 2) ? 1 : 0));
+            ammo.setShotsLeft(ammo.getBaseShotsLeft() - ((howManyShots == 2) ? 1 : 0));
         } else {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - howManyShots);
         }
-
     }
 
     /*
@@ -98,8 +92,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump
-        // BAs can't mount UACS/RACs
+        // conventional infantry gets hit in one lump BAs can't mount UACS/RACs
         if (target.isConventionalInfantry()) {
             return 1;
         }
@@ -110,11 +103,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return 1;
         }
 
-        int shotsHit;
         int nMod = getClusterModifiers(true);
 
-        shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(
-                howManyShots, nMod);
+        int shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(howManyShots, nMod);
 
         // report number of shots that hit only when weapon doesn't jam
         if (!weapon.isJammed()) {
@@ -153,7 +144,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         if (super.doChecks(vPhaseReport)) {
             return true;
         }
-        
+
         if ((roll == 2) && (howManyShots == 2) && !(ae instanceof Infantry)) {
             Report r = new Report();
             r.subject = subjectId;
@@ -211,8 +202,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(
-                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
@@ -226,12 +216,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcnClusterAero(Entity entityTarget) {
-        if (usesClusterTable() && !ae.isCapitalFighter()
-                && (entityTarget != null) && !entityTarget.isCapitalScale()) {
+        if (usesClusterTable() && !ae.isCapitalFighter() && (entityTarget != null)
+                && !entityTarget.isCapitalScale()) {
             return (int) Math.ceil(attackValue / 2.0);
         } else {
             return 1;
         }
     }
-
 }

@@ -4,33 +4,32 @@ STO-4A
 mul id:5131
 
 Config:Biped
-TechBase:Inner Sphere
-Era:3061
-Source:RS 3067U
-Rules Level:2
+techbase:Inner Sphere
+era:3061
 source:TRO 3067
+rules level:2
 
-Mass:35
-Engine:280 Light Engine(IS)
-Structure:Endo Steel
-Myomer:Standard
+mass:35
+engine:280 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:8
-Jump MP:0
+heat sinks:10 IS Double
+walk mp:8
+jump mp:0
 
-Armor:Ferro-Fibrous(Inner Sphere)
-LA Armor:10
-RA Armor:10
-LT Armor:11
-RT Armor:11
-CT Armor:16
-HD Armor:9
-LL Armor:14
-RL Armor:14
-RTL Armor:4
-RTR Armor:4
-RTC Armor:4
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:10
+RA armor:10
+LT armor:11
+RT armor:11
+CT armor:16
+HD armor:8
+LL armor:14
+RL armor:14
+RTL armor:4
+RTR armor:4
+RTC armor:5
 
 Weapons:3
 Streak SRM 2, Left Arm
@@ -41,10 +40,10 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 ISStreakSRM2
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +54,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 ISStreakSRM2
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -70,14 +69,14 @@ Fusion Engine
 Fusion Engine
 ISGuardianECMSuite
 ISGuardianECMSuite
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -85,13 +84,13 @@ Fusion Engine
 IS Streak SRM 2 Ammo
 IS Ammo LRM-5
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -105,7 +104,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 LRM 5
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -126,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

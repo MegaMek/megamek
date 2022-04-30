@@ -4,33 +4,33 @@ P1D
 mul id:4812
 
 Config:Biped Omnimech
-TechBase:Inner Sphere
-Era:3058
-Source:TRO 3067
-Rules Level:2
+techbase:Inner Sphere
+era:3058
+source:TRO 3067
+rules level:2
 
-Mass:75
-Engine:300 XL Engine(IS)
-Structure:IS Endo Steel
-Myomer:Standard
+mass:75
+engine:300 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:12 Double
-Base Chassis Heat Sinks:12
-Walk MP:4
-Jump MP:0
+heat sinks:12 IS Double
+base chassis heat sinks:12
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:21
-RA Armor:21
-LT Armor:24
-RT Armor:24
-CT Armor:36
-HD Armor:9
-LL Armor:32
-RL Armor:32
-RTL Armor:8
-RTR Armor:8
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:21
+RA armor:21
+LT armor:24
+RT armor:24
+CT armor:36
+HD armor:9
+LL armor:32
+RL armor:32
+RTL armor:8
+RTR armor:8
+RTC armor:9
 
 Weapons:7
 LRM 20, Left Arm
@@ -44,27 +44,27 @@ ER Small Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-LRM 20 (omnipod)
-LRM 20 (omnipod)
-LRM 20 (omnipod)
-LRM 20 (omnipod)
-LRM 20 (omnipod)
-ISArtemisIV (omnipod)
-IS Ammo LRM-20 Artemis-capable (omnipod)
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+ISArtemisIV (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
+-Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLBXAC10 (omnipod)
-ISLBXAC10 (omnipod)
-ISLBXAC10 (omnipod)
-ISLBXAC10 (omnipod)
-ISLBXAC10 (omnipod)
-ISLBXAC10 (omnipod)
-ISERMediumLaser (omnipod)
+ISLBXAC10 (OMNIPOD)
+ISLBXAC10 (OMNIPOD)
+ISLBXAC10 (OMNIPOD)
+ISLBXAC10 (OMNIPOD)
+ISLBXAC10 (OMNIPOD)
+ISLBXAC10 (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -73,25 +73,25 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser (omnipod)
-ISERMediumLaser (omnipod)
-IS Ammo LRM-20 Artemis-capable (omnipod)
-IS Ammo LRM-20 Artemis-capable (omnipod)
+ISERMediumLaser (OMNIPOD)
+ISERMediumLaser (OMNIPOD)
+IS Ammo LRM-20 Artemis-capable (OMNIPOD)
+IS Ammo LRM-20 Artemis-capable (OMNIPOD)
+IS Ammo LRM-20 Artemis-capable (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
--Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-SRM 6 (omnipod)
-SRM 6 (omnipod)
-ISArtemisIV (omnipod)
-IS LB 10-X AC Ammo (omnipod)
-IS LB 10-X Cluster Ammo (omnipod)
+SRM 6 (OMNIPOD)
+SRM 6 (OMNIPOD)
+ISArtemisIV (OMNIPOD)
+IS LB 10-X AC Ammo (OMNIPOD)
+IS LB 10-X Cluster Ammo (OMNIPOD)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Ammo SRM-6 Artemis-capable (omnipod)
-IS Ammo SRM-6 Artemis-capable (omnipod)
+IS Ammo SRM-6 Artemis-capable (OMNIPOD)
+IS Ammo SRM-6 Artemis-capable (OMNIPOD)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISERSmallLaser (omnipod)
+ISERSmallLaser (OMNIPOD)
 Sensors
 Life Support
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISGuardianECMSuite (omnipod)
-ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (OMNIPOD)
+ISGuardianECMSuite (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-BeagleActiveProbe (omnipod)
-BeagleActiveProbe (omnipod)
+BeagleActiveProbe (OMNIPOD)
+BeagleActiveProbe (OMNIPOD)
 -Empty-
 -Empty-
 -Empty-
@@ -154,13 +154,9 @@ BeagleActiveProbe (omnipod)
 -Empty-
 
 overview:The Perseus is the product of a program begun by the League Central Coordination and Command to create an OmniMech completely indigenous to the Free Worlds League from concept to production.
-
 capabilities:While on paper the Perseus is a capable 'Mech with forty-tons of available pod space, the design has earned something of a lackluster reputation when compared to other modern OmniMechs such as the Templar or Hauptmann. This is largely due to the small size of it's weapon bays which limit the type of weaponry of the Perseus can mount, only the arms can carry larger autocannons and the hand and lower-arm actuators must be removed to be able do so, with a number of configurations also forced to mount weaponry in the 'Mech's legs. More critically the small size of the bays hampers the volume of extra double heat sinks that can be carried, consequently most of the Perseus's configurations utilize ballistic and missile weaponry over more heat-intensive energy loadouts. Built on a lightweight Endo Steel chassis, the Perseus is powered by a Hermes 300 XL engine helping save even more weight and giving the 'Mech a top speed of 64.8 km/h. The advanced structure and engine save a great deal of weight for weapons and equipment. The Perseus is protected by fourteen tons of Valiant Lamellor armor, giving it around average armor protection for a 'Mech of its size. It also has twelve double heat sinks that are fixed on the chassis.[
-
 deployment:Configured specifically for close combat, the D configuration has an LRM-20 launcher with an Artemis IV FCS for increased accuracy as well as an LB-X Autocannon/10 for long range combat. For close ranges, the 'Mech has an SRM-6 launcher linked to an Artemis IV FCS, three ER Medium Lasers, and a ER Small Laser. The D also has an ECM suite to protect itself from enemy electronic warfare systems and a Beagle Active Probe that allows it to find hidden units in close combat situation.
-
 history:The Perseus shares much with the venerable Orion, a staple of Free Worlds League Military, both broadly resembling the older design visually and using a number of the same components. This similarity prompted more than a few FWLM technicians to nickname the new design the "Omni-Orion" and the deployment of Perseus has largely been to front-line units that fielded large concentrations of its progenitor, replacing older Orions on a one-for-one basis.
-
 manufacturer:Kali Yama Weapons Industries
 primaryfactory:Kalidasa
 systemmanufacturer:CHASSIS:Kali Yama Endo Steel
@@ -168,3 +164,4 @@ systemmanufacturer:ENGINE:Hermes 300 XL
 systemmanufacturer:ARMOR:Valiant Lamellor
 systemmanufacturer:COMMUNICATIONS:Irian Orator-5K
 systemmanufacturer:TARGETING:Wasat Aggressor Type 5 with OmniLink
+

@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,7 +26,7 @@ import megamek.server.Server;
  */
 public class KickCommand extends ServerCommand {
 
-    /** Creates new KickCommand */
+    /** Creates a new KickCommand */
     public KickCommand(Server server) {
         super(server, "kick",
                 "Disconnects a player. Usage: /kick <password> [player id number]. For a list of player id #s, use the /who command.");
@@ -39,13 +40,11 @@ public class KickCommand extends ServerCommand {
         int kickArg = server.isPassworded() ? 2 : 1;
 
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId,
-                    "Observers are restricted from kicking others.");
+            server.sendServerChat(connId, "Observers are restricted from kicking others.");
             return;
         }
 
-        if (server.isPassworded()
-                && (args.length < 3 || !server.isPassword(args[1]))) {
+        if (server.isPassworded() && ((args.length < 3) || !server.isPassword(args[1]))) {
             server.sendServerChat(connId, "The password is incorrect. Usage: /kick <password> [id#]");
         } else {
             try {
@@ -59,7 +58,6 @@ public class KickCommand extends ServerCommand {
                 server.sendServerChat(server.getPlayer(connId).getName()
                         + " attempts to kick player #" + kickedId + " ("
                         + server.getPlayer(kickedId).getName() + ")...");
-
                 server.send(kickedId, new Packet(PacketCommand.CLOSE_CONNECTION));
                 server.getConnection(kickedId).close();
             } catch (Exception ex) {

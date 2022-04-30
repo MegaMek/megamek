@@ -9983,8 +9983,9 @@ public class Server implements Runnable {
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LogManager.getLogger().error("Expected a CFR_TAG_TARGET CFR packet from player  " + playerId
-                                    + " but instead it came from player " + rp.getConnectionId());
+                    LogManager.getLogger().error(String.format(
+                            "Expected a CFR_TAG_TARGET CFR packet from player %d but instead it came from player %d",
+                            playerId, rp.getConnectionId()));
                     continue;
                 }
                 return (int) rp.getPacket().getData()[1];
@@ -13829,7 +13830,7 @@ public class Server implements Runnable {
                     ReceivedPacket rp = cfrPacketQueue.poll();
                     final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
-                    if (!cfrType.isCFRHiddenPBS()) {
+                    if (!cfrType.isCFRAPDSAssign()) {
                         LogManager.getLogger().error("Expected a CFR_APDS_ASSIGN CFR packet, received: " + cfrType);
                         throw new IllegalStateException();
                     }
@@ -30855,8 +30856,7 @@ public class Server implements Runnable {
     }
 
     private Packet createIlluminatedHexesPacket() {
-        HashSet<Coords> illuminateHexes = game.getIlluminatedPositions();
-        return new Packet(PacketCommand.SENDING_ILLUM_HEXES, illuminateHexes);
+        return new Packet(PacketCommand.SENDING_ILLUM_HEXES, getGame().getIlluminatedPositions());
     }
 
     /**
@@ -30879,7 +30879,7 @@ public class Server implements Runnable {
                 .forEach(connection -> connection.send(packet));
     }
 
-    public void send_Nova_Change(int id, String net) {
+    public void sendNovaChange(int id, String net) {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
@@ -30897,8 +30897,8 @@ public class Server implements Runnable {
                     var reports = filterReportVector(vPhaseReport, player);
                     var message = mailer.newReportMessage(game, reports, player);
                     mailer.send(message);
-                } catch (Exception e) {
-                    LogManager.getLogger().error("Error sending round report", e);
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Error sending round report", ex);
                 }
             }
         }

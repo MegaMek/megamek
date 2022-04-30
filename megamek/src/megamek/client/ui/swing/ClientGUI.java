@@ -2082,6 +2082,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         // Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTelemissileTargetCFRResponse(0);
                     }
+                    break;
                 case CFR_TAG_TARGET:
                     List<Integer> TAGTargets = evt.getTAGTargets();
                     List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();

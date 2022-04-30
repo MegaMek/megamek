@@ -73,9 +73,9 @@ public class GameCFREvent extends GameEvent {
     /**
      * Construct game event
      */
-    public GameCFREvent(Object source, PacketCommand t) {
+    public GameCFREvent(Object source, PacketCommand cfrType) {
         super(source);
-        cfrType = t;
+        this.cfrType = cfrType;
     }
     
     /**

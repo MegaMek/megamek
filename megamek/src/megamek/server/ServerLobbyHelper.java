@@ -447,7 +447,15 @@ class ServerLobbyHelper {
         }
         server.send(server.createFullEntitiesPacket());
     }
-    
+
+    /**
+     * Creates a packet detailing a force update. Force updates must contain all
+     * affected forces and all affected entities.
+     */
+    static Packet createForceUpdatePacket(Collection<Force> changedForces) {
+        return createForceUpdatePacket(changedForces, new ArrayList<>());
+    }
+
     /**
      * Creates a packet detailing a force update. Force updates must contain all
      * affected forces and all affected entities. Entities are only affected if their
@@ -456,15 +464,7 @@ class ServerLobbyHelper {
     static Packet createForceUpdatePacket(Collection<Force> changedForces, Collection<Entity> entities) {
         return new Packet(PacketCommand.FORCE_UPDATE, changedForces, entities);
     }
-    
-    /**
-     * Creates a packet detailing a force update. Force updates must contain all
-     * affected forces and all affected entities.
-     */
-    static Packet createForceUpdatePacket(Collection<Force> changedForces) {
-        return new Packet(PacketCommand.FORCE_UPDATE, changedForces, new ArrayList<Entity>());
-    }
-    
+
     /**
      * A force is editable to the sender of a command if any forces in its force chain
      * (this includes the force itself) is owned by the sender. This allows editing 

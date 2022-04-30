@@ -1,15 +1,16 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
@@ -42,10 +43,10 @@ public class Precognition implements Runnable {
     private final Princess owner;
     
     /**
-     *  Precognition's version of the game, which should mirror the game in
-     *  Princess, but should not be the same reference.  If Precognition and
-     *  Princess share the same game reference, than this will cause concurrency
-     *  issues. 
+     * Precognition's version of the game, which should mirror the game in
+     * Princess, but should not be the same reference. If Precognition and
+     * Princess share the same game reference, then this will cause concurrency
+     * issues.
      */
     private Game game;
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
@@ -235,8 +236,7 @@ public class Precognition implements Runnable {
                     break;
                 case SENDING_SPECIAL_HEX_DISPLAY:
                     getGame().getBoard().setSpecialHexDisplayTable(
-                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
-                                    .getObject(0));
+                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
                     getGame().processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
@@ -277,7 +277,8 @@ public class Precognition implements Runnable {
         while (!getWaiting().get() && !getDone().get()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException ignored) {
+            } catch (Exception ignored) {
+
             }
         }
     }

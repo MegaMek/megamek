@@ -38,7 +38,13 @@ import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
-import megamek.common.net.*;
+import megamek.common.net.AbstractConnection;
+import megamek.common.net.ConnectionFactory;
+import megamek.common.net.ConnectionListener;
+import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.events.DisconnectedEvent;
+import megamek.common.net.events.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -61,7 +67,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
@@ -122,12 +128,28 @@ public class Server implements Runnable {
     private EmailService mailer;
 
     private static class ReceivedPacket {
-        public int connId;
-        public Packet packet;
+        private int connectionId;
+        private Packet packet;
 
         ReceivedPacket(int cid, Packet p) {
-            packet = p;
-            connId = cid;
+            setPacket(p);
+            setConnectionId(cid);
+        }
+
+        public int getConnectionId() {
+            return connectionId;
+        }
+
+        public void setConnectionId(int connectionId) {
+            this.connectionId = connectionId;
+        }
+
+        public Packet getPacket() {
+            return packet;
+        }
+
+        public void setPacket(Packet packet) {
+            this.packet = packet;
         }
     }
 
@@ -148,7 +170,7 @@ public class Server implements Runnable {
                 while (!packetQueue.isEmpty()) {
                     ReceivedPacket rp = packetQueue.poll();
                     synchronized (serverLock) {
-                        handle(rp.connId, rp.packet);
+                        handle(rp.getConnectionId(), rp.getPacket());
                     }
                 }
 
@@ -279,27 +301,49 @@ public class Server implements Runnable {
         @Override
         public void packetReceived(PacketReceivedEvent e) {
             ReceivedPacket rp = new ReceivedPacket(e.getConnection().getId(), e.getPacket());
-            int cmd = e.getPacket().getCommand();
-            // Handled CFR packets specially
-            if (cmd == Packet.COMMAND_CLIENT_FEEDBACK_REQUEST) {
-                synchronized (cfrPacketQueue) {
-                    cfrPacketQueue.add(rp);
-                    cfrPacketQueue.notifyAll();
-                }
-            // Some packets should be handled immediately
-            } else if ((cmd == Packet.COMMAND_CLOSE_CONNECTION)
-                    || (cmd == Packet.COMMAND_CLIENT_NAME)
-                    || (cmd == Packet.COMMAND_CLIENT_VERSIONS)
-                    || (cmd == Packet.COMMAND_CHAT)) {
-                handle(rp.connId, rp.packet);
-            } else {
-                synchronized (packetQueue) {
-                    packetQueue.add(rp);
-                    packetQueue.notifyAll();
-                }
+            switch (e.getPacket().getCommand()) {
+                case CLIENT_FEEDBACK_REQUEST:
+                    // Handled CFR packets specially
+                    synchronized (cfrPacketQueue) {
+                        cfrPacketQueue.add(rp);
+                        cfrPacketQueue.notifyAll();
+                    }
+                    break;
+                case CLOSE_CONNECTION:
+                case CLIENT_NAME:
+                case CLIENT_VERSIONS:
+                case CHAT:
+                    // Some packets should be handled immediately
+                    handle(rp.getConnectionId(), rp.getPacket());
+                    break;
+                default:
+                    synchronized (packetQueue) {
+                        packetQueue.add(rp);
+                        packetQueue.notifyAll();
+                    }
+                    break;
             }
         }
     };
+
+    public static final String ORIGIN = "***Server";
+
+    // Easter eggs. Happy April Fool's Day!!
+    private static final String DUNE_CALL = "They tried and failed?";
+
+    private static final String DUNE_RESPONSE = "They tried and died!";
+
+    private static final String STAR_WARS_CALL = "I'd just as soon kiss a Wookiee.";
+
+    private static final String STAR_WARS_RESPONSE = "I can arrange that!";
+
+    private static final String INVADER_ZIM_CALL = "What does the G stand for?";
+
+    private static final String INVADER_ZIM_RESPONSE = "I don't know.";
+
+    private static final String WARGAMES_CALL = "Shall we play a game?";
+
+    private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
 
     /**
      *
@@ -436,8 +480,8 @@ public class Server implements Runnable {
             }
 
             LogManager.getLogger().info(sb.toString());
-        } catch (UnknownHostException ignored) {
-            // oh well.
+        } catch (Exception ignored) {
+
         }
 
         LogManager.getLogger().info("s: password = " + this.password);
@@ -645,7 +689,7 @@ public class Server implements Runnable {
         // N.B. I may be starting a race here.
         for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
             AbstractConnection conn = connEnum.nextElement();
-            send(conn.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
+            send(conn.getId(), new Packet(PacketCommand.CLOSE_CONNECTION));
         }
 
         // kill active connections
@@ -664,7 +708,7 @@ public class Server implements Runnable {
             serverBrowserUpdateTimer.cancel();
         }
 
-        if ( (metaServerUrl != null) && (!metaServerUrl.isBlank())) {
+        if ((metaServerUrl != null) && (!metaServerUrl.isBlank())) {
             registerWithServerBrowser(false, metaServerUrl);
         }
 
@@ -683,7 +727,7 @@ public class Server implements Runnable {
      * Sent when a client attempts to connect.
      */
     void clientVersionCheck(int cn) {
-        sendToPending(cn, new Packet(Packet.COMMAND_SERVER_VERSION_CHECK));
+        sendToPending(cn, new Packet(PacketCommand.SERVER_VERSION_CHECK));
     }
 
     /**
@@ -843,8 +887,7 @@ public class Server implements Runnable {
 
         if (!returning) {
             // Check to avoid duplicate names...
-            name = correctDupeName(name);
-            sendToPending(connId, new Packet(Packet.COMMAND_SERVER_CORRECT_NAME, name));
+            sendToPending(connId, new Packet(PacketCommand.SERVER_CORRECT_NAME, correctDupeName(name)));
         }
 
         // right, switch the connection into the "active" bin
@@ -860,7 +903,7 @@ public class Server implements Runnable {
         // if it is not the lounge phase, this player becomes an observer
         Player player = getPlayer(connId);
         if ((game.getPhase() != GamePhase.LOUNGE) && (null != player)
-            && (game.getEntitiesOwnedBy(player) < 1)) {
+                && (game.getEntitiesOwnedBy(player) < 1)) {
             player.setObserver(true);
         }
 
@@ -871,7 +914,7 @@ public class Server implements Runnable {
         transmitPlayerConnect(player);
 
         // tell them their local playerId
-        send(connId, new Packet(Packet.COMMAND_LOCAL_PN, connId));
+        send(connId, new Packet(PacketCommand.LOCAL_PN, connId));
 
         // send current game info
         sendCurrentInfo(connId);
@@ -884,20 +927,18 @@ public class Server implements Runnable {
             for (InetAddress address : addresses) {
                 LogManager.getLogger().info("s: machine IP " + address.getHostAddress());
                 if (showIPAddressesInChat) {
-                    sendServerChat(connId,
-                            "Machine IP is " + address.getHostAddress());
+                    sendServerChat(connId, "Machine IP is " + address.getHostAddress());
                 }
             }
-        } catch (UnknownHostException e) {
-            // oh well.
+        } catch (Exception ignored) {
+
         }
 
         LogManager.getLogger().info("s: listening on port " + serverSocket.getLocalPort());
         if (showIPAddressesInChat) {
             // Send the port we're listening on. Only useful for the player
             // on the server machine to check.
-            sendServerChat(connId,
-                        "Listening on port " + serverSocket.getLocalPort());
+            sendServerChat(connId, "Listening on port " + serverSocket.getLocalPort());
         }
 
         // Get the player *again*, because they may have disconnected.
@@ -908,9 +949,7 @@ public class Server implements Runnable {
             if (showIPAddressesInChat) {
                 sendServerChat(who);
             }
-
         } // Found the player
-
     }
 
     /**
@@ -923,22 +962,22 @@ public class Server implements Runnable {
         send(connId, createGameSettingsPacket());
         send(connId, createPlanetaryConditionsPacket());
 
-        Player player = game.getPlayer(connId);
+        Player player = getGame().getPlayer(connId);
         if (null != player) {
-            send(connId, new Packet(Packet.COMMAND_SENDING_MINEFIELDS, player.getMinefields()));
+            send(connId, new Packet(PacketCommand.SENDING_MINEFIELDS, player.getMinefields()));
 
-            if (game.getPhase() == GamePhase.LOUNGE) {
+            if (getGame().getPhase().isLounge()) {
                 send(connId, createMapSettingsPacket());
                 send(createMapSizesPacket());
                 // Send Entities *after* the Lounge Phase Change
-                send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, game.getPhase()));
+                send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
                 if (doBlind()) {
                     send(connId, createFilteredFullEntitiesPacket(player));
                 } else {
                     send(connId, createFullEntitiesPacket());
                 }
             } else {
-                send(connId, new Packet(Packet.COMMAND_ROUND_UPDATE, game.getRoundCount()));
+                send(connId, new Packet(PacketCommand.ROUND_UPDATE, getGame().getRoundCount()));
                 send(connId, createBoardPacket());
                 send(connId, createAllReportsPacket(player));
 
@@ -948,18 +987,18 @@ public class Server implements Runnable {
                 } else {
                     send(connId, createFullEntitiesPacket());
                 }
-                player.setDone(game.getEntitiesOwnedBy(player) <= 0);
-                send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE, game.getPhase()));
+                player.setDone(getGame().getEntitiesOwnedBy(player) <= 0);
+                send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
             }
             if ((game.getPhase() == GamePhase.FIRING)
                     || (game.getPhase() == GamePhase.TARGETING)
                     || (game.getPhase() == GamePhase.OFFBOARD)
                     || (game.getPhase() == GamePhase.PHYSICAL)) {
                 // can't go above, need board to have been sent
-                send(connId, createAttackPacket(game.getActionsVector(), 0));
-                send(connId, createAttackPacket(game.getChargesVector(), 1));
-                send(connId, createAttackPacket(game.getRamsVector(), 1));
-                send(connId, createAttackPacket(game.getTeleMissileAttacksVector(), 1));
+                send(connId, createAttackPacket(getGame().getActionsVector(), 0));
+                send(connId, createAttackPacket(getGame().getChargesVector(), 1));
+                send(connId, createAttackPacket(getGame().getRamsVector(), 1));
+                send(connId, createAttackPacket(getGame().getTeleMissileAttacksVector(), 1));
             }
             
             if (game.getPhase().hasTurns() && game.hasMoreTurns()) {
@@ -973,10 +1012,8 @@ public class Server implements Runnable {
             send(connId, createArtilleryPacket(player));
             send(connId, createFlarePacket());
             send(connId, createSpecialHexDisplayPacket(connId));
-            send(connId, new Packet(Packet.COMMAND_PRINCESS_SETTINGS, game.getBotSettings()));
-
-        } // Found the player.
-
+            send(connId, new Packet(PacketCommand.PRINCESS_SETTINGS, getGame().getBotSettings()));
+        }
     }
 
     /**
@@ -1080,10 +1117,9 @@ public class Server implements Runnable {
         // Ghost players (Bots mostly) are now removed during the
         // resetGame(), so we don't need to do it here.
         // This fixes Bug 3399000 without reintroducing 1225949
-        if ((phase == GamePhase.VICTORY)
-            || (phase == GamePhase.LOUNGE) || player.isObserver()) {
-            game.removePlayer(player.getId());
-            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, player.getId()));
+        if (phase.isVictory() || phase.isLounge() || player.isObserver()) {
+            getGame().removePlayer(player.getId());
+            send(new Packet(PacketCommand.PLAYER_REMOVE, player.getId()));
             // Prevent situation where all players but the disconnected one
             // are done, and the disconnecting player causes the game to start
             if (phase == GamePhase.LOUNGE) {
@@ -1136,7 +1172,7 @@ public class Server implements Runnable {
         // remove all entities
         game.reset();
         send(createEntitiesPacket());
-        send(new Packet(Packet.COMMAND_SENDING_MINEFIELDS, new Vector<>()));
+        send(new Packet(PacketCommand.SENDING_MINEFIELDS, new Vector<>()));
 
         // remove ghosts
         List<Player> ghosts = new ArrayList<>();
@@ -1153,7 +1189,7 @@ public class Server implements Runnable {
 
         for (Player p : ghosts) {
             game.removePlayer(p.getId());
-            send(new Packet(Packet.COMMAND_PLAYER_REMOVE, p.getId()));
+            send(new Packet(PacketCommand.PLAYER_REMOVE, p.getId()));
         }
 
         // reset all players
@@ -1161,8 +1197,7 @@ public class Server implements Runnable {
         transmitAllPlayerDones();
 
         // Write end of game to stdout so controlling scripts can rotate logs.
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-        LogManager.getLogger().info(format.format(new Date()) + " END OF GAME");
+        LogManager.getLogger().info(LocalDateTime.now() + " END OF GAME");
 
         if (mailer != null) {
             mailer.reset();
@@ -1208,11 +1243,10 @@ public class Server implements Runnable {
             while ((input = bin.read()) != -1) {
                 data.add(input);
             }
-            send(connId, new Packet(Packet.COMMAND_SEND_SAVEGAME, new Object[]{
-                    sFinalFile, data, sLocalPath}));
+            send(connId, new Packet(PacketCommand.SEND_SAVEGAME, sFinalFile, data, sLocalPath));
             sendChat(connId, "***Server", "Save game has been sent to you.");
-        } catch (Exception e) {
-            LogManager.getLogger().error("Unable to load file: " + localFile, e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Unable to load file: " + localFile, ex);
         }
     }
 
@@ -1284,7 +1318,7 @@ public class Server implements Runnable {
         if (!sFinalFile.endsWith(".gz")) {
             sFinalFile = sFinalFile + ".gz";
         }
-        send(connId, new Packet(Packet.COMMAND_LOAD_SAVEGAME, new Object[]{sFinalFile}));
+        send(connId, new Packet(PacketCommand.LOAD_SAVEGAME, sFinalFile));
     }
 
     /**
@@ -1397,7 +1431,7 @@ public class Server implements Runnable {
             connectionIds.put(newId, conn);
 
             game.getPlayer(newId).setGhost(false);
-            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, newId));
+            send(newId, new Packet(PacketCommand.LOCAL_PN, newId));
         }
 
         // It's possible we have players not in the saved game, add 'em
@@ -1411,7 +1445,7 @@ public class Server implements Runnable {
             Player newPlayer = addNewPlayer(newId, name, false);
             newPlayer.setObserver(true);
             connectionIds.put(newId,  conn);
-            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, newId));
+            send(newId, new Packet(PacketCommand.LOCAL_PN, newId));
         }
 
         // Ensure all clients are up-to-date on player info
@@ -1562,7 +1596,7 @@ public class Server implements Runnable {
     }
 
     /**
-         * Deploys elligible offboard entities.
+     * Deploys elligible offboard entities.
      */
     private void deployOffBoardEntities() {
         // place off board entities actually off-board
@@ -1661,7 +1695,7 @@ public class Server implements Runnable {
             }
         }
         game.clearIlluminatedPositions();
-        send(new Packet(Packet.COMMAND_CLEAR_ILLUM_HEXES));
+        send(new Packet(PacketCommand.CLEAR_ILLUM_HEXES));
     }
 
     /**
@@ -1724,7 +1758,6 @@ public class Server implements Runnable {
      * Writes the victory report
      */
     private void prepareVictoryReport() {
-
         // remove carcasses to the graveyard
         Vector<Entity> toRemove = new Vector<>();
         for (Entity e : game.getEntitiesVector()) {
@@ -2204,7 +2237,7 @@ public class Server implements Runnable {
 
         if (phase.isPlayable(getGame())) {
             // tell the players about the new phase
-            send(new Packet(Packet.COMMAND_PHASE_CHANGE, phase));
+            send(new Packet(PacketCommand.PHASE_CHANGE, phase));
 
             // post phase change stuff
             executePhase(phase);
@@ -2974,25 +3007,11 @@ public class Server implements Runnable {
     }
 
     private void sendTagInfoUpdates() {
-        if (connections == null) {
-            return;
-        }
-        for (AbstractConnection connection : connections) {
-            if (connection != null) {
-                connection.send(createTagInfoUpdatesPacket());
-            }
-        }
+        send(new Packet(PacketCommand.SENDING_TAG_INFO, getGame().getTagInfo()));
     }
 
     public void sendTagInfoReset() {
-        if (connections == null) {
-            return;
-        }
-        for (AbstractConnection connection : connections) {
-            if (connection != null) {
-                connection.send(new Packet(Packet.COMMAND_RESET_TAGINFO));
-            }
-        }
+        send(new Packet(PacketCommand.RESET_TAG_INFO));
     }
 
     /**
@@ -3000,7 +3019,7 @@ public class Server implements Runnable {
      */
     private void incrementAndSendGameRound() {
         game.incrementRoundCount();
-        send(new Packet(Packet.COMMAND_ROUND_UPDATE, game.getRoundCount()));
+        send(new Packet(PacketCommand.ROUND_UPDATE, getGame().getRoundCount()));
     }
 
     /**
@@ -9819,17 +9838,17 @@ public class Server implements Runnable {
                 ReceivedPacket rp;
                 if (!cfrPacketQueue.isEmpty()) {
                     rp = cfrPacketQueue.poll();
-                    int cfrType = rp.packet.getIntValue(0);
+                    final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
-                    if (cfrType != Packet.COMMAND_CFR_HIDDEN_PBS) {
-                        LogManager.getLogger().error("Expected a COMMAND_CFR_HIDDEN_PBS CFR packet, received: " + cfrType);
+                    if (!cfrType.isCFRHiddenPBS()) {
+                        LogManager.getLogger().error("Expected a CFR_HIDDEN_PBS CFR packet, received: " + cfrType);
                         continue;
                     }
                     // Check packet came from right ID
-                    if (rp.connId != hidden.getOwnerId()) {
+                    if (rp.getConnectionId() != hidden.getOwnerId()) {
                         LogManager.getLogger().error(String.format(
-                                "Expected a COMMAND_CFR_HIDDEN_PBS CFR packet from player %d, but instead it came from player %d",
-                                hidden.getOwnerId(), rp.connId));
+                                "Expected a CFR_HIDDEN_PBS CFR packet from player %d, but instead it came from player %d",
+                                hidden.getOwnerId(), rp.getConnectionId()));
                         continue;
                     }
                 } else {
@@ -9839,7 +9858,7 @@ public class Server implements Runnable {
                 // First packet indicates whether the PBS is taken or declined
                 if (firstPacket) {
                     // Check to see if the client declined the PBS
-                    if (rp.packet.getObject(1) == null) {
+                    if (rp.getPacket().getObject(1) == null) {
                         return false;
                     } else {
                         firstPacket = false;
@@ -9848,11 +9867,8 @@ public class Server implements Runnable {
                             if (p.getId() == hidden.getOwnerId()) {
                                 continue;
                             }
-                            send(p.getId(), new Packet(
-                                    Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                                    new Object[] {
-                                            Packet.COMMAND_CFR_HIDDEN_PBS,
-                                            Entity.NONE, Entity.NONE }));
+                            send(p.getId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                                    PacketCommand.CFR_HIDDEN_PBS, Entity.NONE, Entity.NONE));
                         }
                         // Update all clients with the position of the PBS
                         entityUpdate(target.getId());
@@ -9861,7 +9877,7 @@ public class Server implements Runnable {
                 }
 
                 // The second packet contains the attacks to process
-                Vector<EntityAction> attacks = (Vector<EntityAction>) rp.packet.getObject(1);
+                Vector<EntityAction> attacks = (Vector<EntityAction>) rp.getPacket().getObject(1);
                 // Mark the hidden unit as having taken a PBS
                 hidden.setMadePointblankShot(true);
                 // Process the Actions
@@ -9928,20 +9944,20 @@ public class Server implements Runnable {
 
                 // Get the packet, if there's something to get
                 ReceivedPacket rp = cfrPacketQueue.poll();
-                int cfrType = rp.packet.getIntValue(0);
+                final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                 // Make sure we got the right type of response
-                if (cfrType != Packet.COMMAND_CFR_TELEGUIDED_TARGET) {
-                    LogManager.getLogger().error("Expected a COMMAND_CFR_TELEGUIDED_TARGET CFR packet, received: " + cfrType);
+                if (!cfrType.isCFRTeleguidedTarget()) {
+                    LogManager.getLogger().error("Expected a CFR_TELEGUIDED_TARGET CFR packet, received: " + cfrType);
                     continue;
                 }
                 // Check packet came from right ID
-                if (rp.connId != playerId) {
+                if (rp.getConnectionId() != playerId) {
                     LogManager.getLogger().error(String.format(
-                            "Expected a COMMAND_CFR_TELEGUIDED_TARGET CFR packet from player %d, but instead it came from player %d",
-                            playerId, rp.connId));
+                            "Expected a CFR_TELEGUIDED_TARGET CFR packet from player %d, but instead it came from player %d",
+                            playerId, rp.getConnectionId()));
                     continue;
                 }
-                return (int) rp.packet.getData()[1];
+                return (int) rp.getPacket().getData()[1];
             }
         }
     }
@@ -9959,21 +9975,19 @@ public class Server implements Runnable {
                 }
                 // Get the packet, if there's something to get
                 ReceivedPacket rp = cfrPacketQueue.poll();
-                int cfrType = rp.packet.getIntValue(0);
+                final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                 // Make sure we got the right type of response
-                if (cfrType != Packet.COMMAND_CFR_TAG_TARGET) {
-                    LogManager.getLogger().error("Expected a COMMAND_CFR_TAG_TARGET CFR packet, "
-                                    + "received: " + cfrType);
+                if (!cfrType.isCFRTagTarget()) {
+                    LogManager.getLogger().error("Expected a COMMAND_CFR_TAG_TARGET CFR packet, received: " + cfrType);
                     continue;
                 }
                 // Check packet came from right ID
-                if (rp.connId != playerId) {
-                    LogManager.getLogger().error("Expected a COMMAND_CFR_TAG_TARGET CFR packet "
-                                    + "from player  " + playerId
-                                    + " but instead it came from player " + rp.connId);
+                if (rp.getConnectionId() != playerId) {
+                    LogManager.getLogger().error("Expected a CFR_TAG_TARGET CFR packet from player  " + playerId
+                                    + " but instead it came from player " + rp.getConnectionId());
                     continue;
                 }
-                return (int) rp.packet.getData()[1];
+                return (int) rp.getPacket().getData()[1];
             }
         }
     }
@@ -11571,7 +11585,7 @@ public class Server implements Runnable {
     private void removeMinefield(Player player, Minefield mf) {
         if (player.containsMinefield(mf)) {
             player.removeMinefield(mf);
-            send(player.getId(), new Packet(Packet.COMMAND_REMOVE_MINEFIELD, mf));
+            send(player.getId(), new Packet(PacketCommand.REMOVE_MINEFIELD, mf));
         }
     }
 
@@ -11600,7 +11614,7 @@ public class Server implements Runnable {
             Player player = players.nextElement();
             if (!player.containsMinefield(mf)) {
                 player.addMinefield(mf);
-                send(player.getId(), new Packet(Packet.COMMAND_REVEAL_MINEFIELD, mf));
+                send(player.getId(), new Packet(PacketCommand.REVEAL_MINEFIELD, mf));
             }
         }
     }
@@ -11617,7 +11631,7 @@ public class Server implements Runnable {
         } else {
             if (!player.containsMinefield(mf)) {
                 player.addMinefield(mf);
-                send(player.getId(), new Packet(Packet.COMMAND_REVEAL_MINEFIELD, mf));
+                send(player.getId(), new Packet(PacketCommand.REVEAL_MINEFIELD, mf));
             }
         }
     }
@@ -12343,8 +12357,7 @@ public class Server implements Runnable {
      */
     private Vector<Report> doEntityFallsInto(Entity entity, Coords src,
                                              PilotingRollData roll, boolean causeAffa) {
-        return doEntityFallsInto(entity, entity.getElevation(), src, src, roll,
-                                 causeAffa);
+        return doEntityFallsInto(entity, entity.getElevation(), src, src, roll, causeAffa);
     }
 
     /**
@@ -12367,11 +12380,9 @@ public class Server implements Runnable {
      * @param causeAffa          The <code>boolean</code> value whether this fall should be able
      *                           to cause an accidental fall from above
      */
-    private Vector<Report> doEntityFallsInto(Entity entity,
-                                             int entitySrcElevation, Coords src, Coords dest,
-                                             PilotingRollData roll, boolean causeAffa) {
-        return doEntityFallsInto(entity, entitySrcElevation, src, dest, roll,
-                                 causeAffa, 0);
+    private Vector<Report> doEntityFallsInto(Entity entity, int entitySrcElevation, Coords src,
+                                             Coords dest, PilotingRollData roll, boolean causeAffa) {
+        return doEntityFallsInto(entity, entitySrcElevation, src, dest, roll, causeAffa, 0);
     }
 
     /**
@@ -12393,9 +12404,9 @@ public class Server implements Runnable {
      *                           to cause an accidental fall from above
      * @param fallReduction      An integer value to reduce the fall distance by
      */
-    private Vector<Report> doEntityFallsInto(Entity entity,
-                                             int entitySrcElevation, Coords origSrc, Coords origDest,
-                                             PilotingRollData roll, boolean causeAffa, int fallReduction) {
+    private Vector<Report> doEntityFallsInto(Entity entity, int entitySrcElevation, Coords origSrc,
+                                             Coords origDest, PilotingRollData roll,
+                                             boolean causeAffa, int fallReduction) {
         Vector<Report> vPhaseReport = new Vector<>();
         Hex srcHex = game.getBoard().getHex(origSrc);
         Hex destHex = game.getBoard().getHex(origDest);
@@ -12448,7 +12459,7 @@ public class Server implements Runnable {
             // If we rolled for the direction, we want to use that for the fall
             if (src.equals(dest)) {
                 vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation,
-                                                 direction, roll, false, srcHex.hasCliffTopTowards(destHex)));
+                        direction, roll, false, srcHex.hasCliffTopTowards(destHex)));
             } else {
                 // Otherwise, we'll roll for the direction after the fall
                 vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, roll));
@@ -12804,14 +12815,13 @@ public class Server implements Runnable {
                         }
                         if (!cfrPacketQueue.isEmpty()) {
                             ReceivedPacket rp = cfrPacketQueue.poll();
-                            int cfrType = (int) rp.packet.getData()[0];
+                            final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                             // Make sure we got the right type of response
-                            if (cfrType != Packet.COMMAND_CFR_DOMINO_EFFECT) {
-                                LogManager.getLogger().error("Excepted a COMMAND_CFR_DOMINO_EFFECT CFR packet, "
-                                                + "received: " + cfrType);
+                            if (!cfrType.isCFRDominoEffect()) {
+                                LogManager.getLogger().error("Excepted a CFR_DOMINO_EFFECT CFR packet, received: " + cfrType);
                                 throw new IllegalStateException();
                             }
-                            MovePath mp = (MovePath) rp.packet.getData()[1];
+                            MovePath mp = (MovePath) rp.getPacket().getData()[1];
                             // Move based on the feedback
                             if (mp != null) {
                                 mp.setGame(getGame());
@@ -12821,11 +12831,7 @@ public class Server implements Runnable {
                                 r.indent(3);
                                 r.subject = violation.getId();
                                 r.addDesc(violation);
-                                if (mp.getLastStep().getType() == MoveStepType.FORWARDS) {
-                                    r.choose(false);
-                                } else {
-                                    r.choose(true);
-                                }
+                                r.choose(mp.getLastStep().getType() != MoveStepType.FORWARDS);
                                 r.add(mp.getLastStep().getPosition().getBoardNum());
                                 vPhaseReport.add(r);
                                 // Move unit
@@ -12869,42 +12875,36 @@ public class Server implements Runnable {
     }
 
     private void sendDominoEffectCFR(Entity e) {
-        send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_DOMINO_EFFECT, e.getId() }));
+        send(e.getOwnerId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_DOMINO_EFFECT, e.getId()));
     }
 
     private void sendAMSAssignCFR(Entity e, Mounted ams, List<WeaponAttackAction> waas) {
-        send(e.getOwnerId(),
-                new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                        new Object[] { Packet.COMMAND_CFR_AMS_ASSIGN,
-                                e.getId(), e.getEquipmentNum(ams), waas }));
+        send(e.getOwnerId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_AMS_ASSIGN, e.getId(), e.getEquipmentNum(ams), waas));
     }
 
-    private void sendAPDSAssignCFR(Entity e, List<Integer> apdsDists,
-            List<WeaponAttackAction> waas) {
-        send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_APDS_ASSIGN, e.getId(),
-                apdsDists, waas }));
+    private void sendAPDSAssignCFR(Entity e, List<Integer> apdsDists, List<WeaponAttackAction> waas) {
+        send(e.getOwnerId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_APDS_ASSIGN, e.getId(), apdsDists, waas));
     }
 
     private void sendPointBlankShotCFR(Entity hidden, Entity target) {
         // Send attacker/target IDs to PBS Client
-        send(hidden.getOwnerId(),
-                new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                        new Object[] { Packet.COMMAND_CFR_HIDDEN_PBS,
-                                hidden.getId(), target.getId() }));
+        send(hidden.getOwnerId(), new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_HIDDEN_PBS, hidden.getId(), target.getId()));
     }
 
     private void sendTeleguidedMissileCFR(int playerId, List<Integer> targetIds, List<Integer> toHitValues) {
         // Send target id numbers and to-hit values to Client
-        send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_TELEGUIDED_TARGET, targetIds, toHitValues}));
+        send(playerId, new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_TELEGUIDED_TARGET, targetIds, toHitValues));
     }
     
     private void sendTAGTargetCFR(int playerId, List<Integer> targetIds, List<Integer> targetTypes) {
         // Send target id numbers and type identifiers to Client
-        send(playerId, new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                new Object[] { Packet.COMMAND_CFR_TAG_TARGET, targetIds, targetTypes}));
+        send(playerId, new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST,
+                PacketCommand.CFR_TAG_TARGET, targetIds, targetTypes));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest, int elev) {
@@ -12913,6 +12913,7 @@ public class Server implements Runnable {
         if (game.containsMinefield(dest)) {
             boom = enterMinefield(entity, dest, elev, true, vPhaseReport) || boom;
         }
+
         if (boom) {
             resetMines();
         }
@@ -12927,8 +12928,7 @@ public class Server implements Runnable {
         int bgMod = destHex.getBogDownModifier(entity.getMovementMode(),
                 entity instanceof LargeSupportTank);
         if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS)
-                && (entity.getMovementMode() != EntityMovementMode.HOVER)
-                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && !entity.getMovementMode().isHoverOrWiGE()
                 && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod, "avoid bogging down"));
@@ -12944,14 +12944,12 @@ public class Server implements Runnable {
                 // check for quicksand
                 vReport.addAll(checkQuickSand(c));
             }
-
         }
         return vReport;
     }
 
     /**
-     * Receive a deployment packet. If valid, execute it and end the current
-     * turn.
+     * Receive a deployment packet. If valid, execute it and end the current turn.
      */
     private void receiveDeployment(Packet packet, int connId) {
         Entity entity = game.getEntity(packet.getIntValue(0));
@@ -12968,7 +12966,7 @@ public class Server implements Runnable {
         }
 
         // is this the right phase?
-        if (game.getPhase() != GamePhase.DEPLOYMENT) {
+        if (!game.getPhase().isDeployment()) {
             LogManager.getLogger().error("Server got deployment packet in wrong phase");
             return;
         }
@@ -13024,7 +13022,7 @@ public class Server implements Runnable {
         Entity loader = game.getEntity(packet.getIntValue(0));
         Entity loaded = game.getEntity(packet.getIntValue(1));
 
-        if (game.getPhase() != GamePhase.DEPLOYMENT) {
+        if (!game.getPhase().isDeployment()) {
             String msg = "server received deployment unload packet "
                     + "outside of deployment phase from connection " + connId;
             if (loader != null) {
@@ -13233,7 +13231,7 @@ public class Server implements Runnable {
         int playerId = artyAutoHitHexes.getPlayerID();
 
         // is this the right phase?
-        if (game.getPhase() != GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
+        if (!game.getPhase().isSetArtilleryAutohitHexes()) {
             LogManager.getLogger().error("Server got set artyautohithexespacket in wrong phase");
             return;
         }
@@ -13302,7 +13300,7 @@ public class Server implements Runnable {
                         while (players.hasMoreElements()) {
                             Player teamPlayer = players.nextElement();
                             if (teamPlayer.getId() != player.getId()) {
-                                send(teamPlayer.getId(), new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS,
+                                send(teamPlayer.getId(), new Packet(PacketCommand.DEPLOY_MINEFIELDS,
                                         minefields));
                             }
                             teamPlayer.addMinefields(minefields);
@@ -13829,13 +13827,13 @@ public class Server implements Runnable {
 
                 if (!cfrPacketQueue.isEmpty()) {
                     ReceivedPacket rp = cfrPacketQueue.poll();
-                    int cfrType = (int) rp.packet.getData()[0];
+                    final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
-                    if (cfrType != Packet.COMMAND_CFR_APDS_ASSIGN) {
-                        LogManager.getLogger().error("Expected a COMMAND_CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
+                    if (!cfrType.isCFRHiddenPBS()) {
+                        LogManager.getLogger().error("Expected a CFR_APDS_ASSIGN CFR packet, received: " + cfrType);
                         throw new IllegalStateException();
                     }
-                    Integer waaIndex = (Integer) rp.packet.getData()[1];
+                    Integer waaIndex = (Integer) rp.getPacket().getData()[1];
                     if (waaIndex != null) {
                         targetedWAA = vAttacksInArc.get(waaIndex);
                     }
@@ -13907,13 +13905,13 @@ public class Server implements Runnable {
 
                     if (!cfrPacketQueue.isEmpty()) {
                         ReceivedPacket rp = cfrPacketQueue.poll();
-                        int cfrType = (int) rp.packet.getData()[0];
+                        final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                         // Make sure we got the right type of response
-                        if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
-                            LogManager.getLogger().error("Expected a COMMAND_CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
+                        if (!cfrType.isCFRAMSAssign()) {
+                            LogManager.getLogger().error("Expected a CFR_AMS_ASSIGN CFR packet, received: " + cfrType);
                             throw new IllegalStateException();
                         }
-                        Integer waaIndex = (Integer) rp.packet.getData()[1];
+                        Integer waaIndex = (Integer) rp.getPacket().getData()[1];
                         if (waaIndex != null) {
                             targetedWAA = vAttacksInArc.get(waaIndex);
                         }
@@ -13939,7 +13937,7 @@ public class Server implements Runnable {
         // Get all of the coords that would be protected by APDS
         Hashtable<Coords, List<Mounted>> apdsCoords = new Hashtable<>();
         for (Entity e : game.getEntitiesVector()) {
-            // Ignore Entitys without positions
+            // Ignore Entities without positions
             if (e.getPosition() == null) {
                 continue;
             }
@@ -28968,8 +28966,7 @@ public class Server implements Runnable {
                 send(p.getId(), pack);
             }
             // send an entity delete to everyone else
-            pack = createRemoveEntityPacket(nEntityID,
-                                            eTarget.getRemovalCondition());
+            pack = createRemoveEntityPacket(nEntityID, eTarget.getRemovalCondition());
             for (int x = 0; x < playersVector.size(); x++) {
                 if (!vCanSee.contains(playersVector.elementAt(x))) {
                     Player p = playersVector.elementAt(x);
@@ -28995,13 +28992,11 @@ public class Server implements Runnable {
      */
     private void entityUpdateLoadedUnits(Entity loader, Vector<Player> vCanSee,
                                          Vector<Player> playersVector) {
-        Packet pack;
-
         // In double-blind, the client may not know about the loaded units,
         // so we need to send them.
         for (Entity eLoaded : loader.getLoadedUnits()) {
             // send an entity update to everyone who can see
-            pack = createEntityPacket(eLoaded.getId(), null);
+            Packet pack = createEntityPacket(eLoaded.getId(), null);
             for (int x = 0; x < vCanSee.size(); x++) {
                 Player p = vCanSee.elementAt(x);
                 send(p.getId(), pack);
@@ -29836,7 +29831,7 @@ public class Server implements Runnable {
             }
         }
         if (!formerCarriers.isEmpty()) {
-            send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, formerCarriers));
+            send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, formerCarriers));
         }
         send(createAddEntityPacket(fs.getId()));
     }
@@ -29882,7 +29877,7 @@ public class Server implements Runnable {
                 newEntities.add(game.getEntity(entity.getId()));
             }
         }
-        send(new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, newEntities));
+        send(new Packet(PacketCommand.ENTITY_MULTIUPDATE, newEntities));
     }
 
     /**
@@ -30428,9 +30423,7 @@ public class Server implements Runnable {
      * Sends out the game victory event to all connections
      */
     private void transmitGameVictoryEventToAll() {
-        for (AbstractConnection conn : connections) {
-            send(conn.getId(), new Packet(Packet.COMMAND_GAME_VICTORY_EVENT));
-        }
+        send(new Packet(PacketCommand.GAME_VICTORY_EVENT));
     }
 
     /**
@@ -30471,10 +30464,7 @@ public class Server implements Runnable {
             destPlayer = player.copy();
             destPlayer.redactPrivateData();
         }
-        return new Packet(
-            Packet.COMMAND_PLAYER_ADD,
-            new Object[] { playerId, destPlayer }
-        );
+        return new Packet(PacketCommand.PLAYER_ADD, playerId, destPlayer);
     }
 
     /**
@@ -30492,12 +30482,7 @@ public class Server implements Runnable {
                     destPlayer = player.copy();
                     destPlayer.redactPrivateData();
                 }
-                connection.send(
-                    new Packet(
-                        Packet.COMMAND_PLAYER_UPDATE,
-                        new Object[] { playerId, destPlayer }
-                    )
-                );
+                connection.send(new Packet(PacketCommand.PLAYER_UPDATE, playerId, destPlayer));
             }
         }
     }
@@ -30517,7 +30502,6 @@ public class Server implements Runnable {
     private void transmitAllPlayerDones() {
         for (Enumeration<Player> i = game.getPlayers(); i.hasMoreElements(); ) {
             final Player player = i.nextElement();
-
             send(createPlayerDonePacket(player.getId()));
         }
     }
@@ -30526,86 +30510,70 @@ public class Server implements Runnable {
      * Creates a packet containing the player ready status
      */
     private Packet createPlayerDonePacket(int playerId) {
-        Object[] data = new Object[2];
-        data[0] = playerId;
-        data[1] = getPlayer(playerId).isDone();
-        return new Packet(Packet.COMMAND_PLAYER_READY, data);
+        return new Packet(PacketCommand.PLAYER_READY, playerId, getPlayer(playerId).isDone());
     }
 
     /**
      * Creates a packet containing the current turn vector
      */
     private Packet createTurnVectorPacket() {
-        return new Packet(Packet.COMMAND_SENDING_TURNS, game.getTurnVector());
+        return new Packet(PacketCommand.SENDING_TURNS, getGame().getTurnVector());
     }
 
     /**
      * Creates a packet containing the current turn index
      */
     private Packet createTurnIndexPacket(int playerId) {
-        final Object[] data = new Object[3];
-        data[0] = game.getTurnIndex();
-        data[1] = playerId;
-        return new Packet(Packet.COMMAND_TURN, data);
+        return new Packet(PacketCommand.TURN, getGame().getTurnIndex(), playerId);
     }
 
     /**
      * Creates a packet containing the map settings
      */
     private Packet createMapSettingsPacket() {
-        return new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, mapSettings);
+        return new Packet(PacketCommand.SENDING_MAP_SETTINGS, mapSettings);
     }
 
     private Packet createMapSizesPacket() {
-        Set<BoardDimensions> sizes = getBoardSizes();
-        return new Packet(Packet.COMMAND_SENDING_AVAILABLE_MAP_SIZES, sizes);
+        return new Packet(PacketCommand.SENDING_AVAILABLE_MAP_SIZES, getBoardSizes());
     }
 
     /**
      * Creates a packet containing the planetary conditions
      */
     private Packet createPlanetaryConditionsPacket() {
-        return new Packet(Packet.COMMAND_SENDING_PLANETARY_CONDITIONS,
-                          game.getPlanetaryConditions());
+        return new Packet(PacketCommand.SENDING_PLANETARY_CONDITIONS, getGame().getPlanetaryConditions());
     }
 
     /**
      * Creates a packet containing the game settings
      */
     private Packet createGameSettingsPacket() {
-        return new Packet(Packet.COMMAND_SENDING_GAME_SETTINGS, game.getOptions());
+        return new Packet(PacketCommand.SENDING_GAME_SETTINGS, getGame().getOptions());
     }
 
     /**
      * Creates a packet containing the game board
      */
     private Packet createBoardPacket() {
-        return new Packet(Packet.COMMAND_SENDING_BOARD, game.getBoard());
+        return new Packet(PacketCommand.SENDING_BOARD, getGame().getBoard());
     }
 
     /**
      * Creates a packet containing a single entity, for update
      */
     private Packet createEntityPacket(int entityId, Vector<UnitLocation> movePath) {
-        final Entity entity = game.getEntity(entityId);
-        final Object[] data = new Object[3];
-        data[0] = entityId;
-        data[1] = entity;
-        data[2] = movePath;
-        return new Packet(Packet.COMMAND_ENTITY_UPDATE, data);
+        return new Packet(PacketCommand.ENTITY_UPDATE, entityId, getGame().getEntity(entityId), movePath);
     }
 
     /**
      * Creates a packet containing a Vector of Reports
      */
     private Packet createReportPacket(Player p) {
-        // When the final report is created, MM sends a null player to create
-        // the
-        // report. This will handle that issue.
-        if ((p == null) || !doBlind()) {
-            return new Packet(Packet.COMMAND_SENDING_REPORTS, vPhaseReport);
-        }
-        return new Packet(Packet.COMMAND_SENDING_REPORTS, filterReportVector(vPhaseReport, p));
+        // When the final report is created, MM sends a null player to create the report. This will
+        // handle that issue.
+        return new Packet(PacketCommand.SENDING_REPORTS,
+                (p == null) || !doBlind() ? vPhaseReport : filterReportVector(vPhaseReport, p));
     }
 
     /**
@@ -30613,7 +30581,7 @@ public class Server implements Runnable {
      * sent during a phase that is not a report phase.
      */
     public Packet createSpecialReportPacket() {
-        return new Packet(Packet.COMMAND_SENDING_REPORTS_SPECIAL, vPhaseReport.clone());
+        return new Packet(PacketCommand.SENDING_REPORTS_SPECIAL, vPhaseReport.clone());
     }
 
     /**
@@ -30621,42 +30589,39 @@ public class Server implements Runnable {
      * Genius re-roll request which needs to update a current phase's report.
      */
     private Packet createTacticalGeniusReportPacket() {
-        return new Packet(Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS, vPhaseReport.clone());
+        return new Packet(PacketCommand.SENDING_REPORTS_TACTICAL_GENIUS, vPhaseReport.clone());
     }
 
     /**
      * Creates a packet containing all the round reports
      */
     private Packet createAllReportsPacket(Player p) {
-        return new Packet(Packet.COMMAND_SENDING_REPORTS_ALL, filterPastReports(game.getAllReports(), p));
+        return new Packet(PacketCommand.SENDING_REPORTS_ALL, filterPastReports(getGame().getAllReports(), p));
     }
 
     /**
      * Creates a packet containing all current entities
      */
     private Packet createEntitiesPacket() {
-        return new Packet(Packet.COMMAND_SENDING_ENTITIES, game.getEntitiesVector());
+        return new Packet(PacketCommand.SENDING_ENTITIES, getGame().getEntitiesVector());
     }
 
     /**
      * Creates a packet containing all current and out-of-game entities
      */
     Packet createFullEntitiesPacket() {
-        final Object[] data = new Object[3];
-        data[0] = game.getEntitiesVector();
-        data[1] = game.getOutOfGameEntitiesVector();
-        data[2] = game.getForces();
-        return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
+        return new Packet(PacketCommand.SENDING_ENTITIES, getGame().getEntitiesVector(),
+                getGame().getOutOfGameEntitiesVector(), getGame().getForces());
     }
 
     /**
      * Creates a packet containing all entities visible to the player in a blind
      * game
      */
-    private Packet createFilteredEntitiesPacket(Player p, Map<EntityTargetPair,
-            LosEffects> losCache) {
-        return new Packet(Packet.COMMAND_SENDING_ENTITIES,
-                filterEntities(p, game.getEntitiesVector(), losCache));
+    private Packet createFilteredEntitiesPacket(Player p,
+                                                Map<EntityTargetPair, LosEffects> losCache) {
+        return new Packet(PacketCommand.SENDING_ENTITIES,
+                filterEntities(p, getGame().getEntitiesVector(), losCache));
     }
 
     /**
@@ -30664,11 +30629,9 @@ public class Server implements Runnable {
      * the player in a blind game
      */
     private Packet createFilteredFullEntitiesPacket(Player p) {
-        final Object[] data = new Object[3];
-        data[0] = filterEntities(p, game.getEntitiesVector(), null);
-        data[1] = game.getOutOfGameEntitiesVector();
-        data[2] = game.getForces();
-        return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
+        return new Packet(PacketCommand.SENDING_ENTITIES,
+                filterEntities(p, getGame().getEntitiesVector(), null),
+                getGame().getOutOfGameEntitiesVector(), getGame().getForces());
     }
 
     private Packet createAddEntityPacket(int entityId) {
@@ -30681,19 +30644,13 @@ public class Server implements Runnable {
      * Creates a packet detailing the addition of an entity
      */
     Packet createAddEntityPacket(List<Integer> entityIds, List<Integer> forceIds) {
-        ArrayList<Entity> entities = new ArrayList<>(entityIds.size());
-        for (Integer id : entityIds) {
-            entities.add(game.getEntity(id));
-        }
-        ArrayList<Force> forceList = new ArrayList<>(forceIds.size());
-        for (Integer id : forceIds) {
-            forceList.add(game.getForces().getForce(id));
-        }
-        final Object[] data = new Object[3];
-        data[0] = entityIds;
-        data[1] = entities;
-        data[2] = forceList;
-        return new Packet(Packet.COMMAND_ENTITY_ADD, data);
+        final List<Entity> entities = entityIds.stream()
+                .map(id -> getGame().getEntity(id))
+                .collect(Collectors.toList());
+        final List<Force> forceList = forceIds.stream()
+                .map(id -> getGame().getForces().getForce(id))
+                .collect(Collectors.toList());
+        return new Packet(PacketCommand.ENTITY_ADD, entityIds, entities, forceList);
     }
 
     /**
@@ -30721,7 +30678,7 @@ public class Server implements Runnable {
     private Packet createRemoveEntityPacket(int entityId, int condition) {
         List<Integer> ids = new ArrayList<>(1);
         ids.add(entityId);
-        return createRemoveEntityPacket(ids, game.getForces().removeEntityFromForces(entityId), condition);
+        return createRemoveEntityPacket(ids, getGame().getForces().removeEntityFromForces(entityId), condition);
     }
 
     /**
@@ -30747,25 +30704,17 @@ public class Server implements Runnable {
                 && (condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED)) {
             throw new IllegalArgumentException("Unknown unit condition: " + condition);
         }
-        Object[] array = new Object[3];
-        array[0] = entityIds;
-        array[1] = condition;
-        array[2] = affectedForces;
-        return new Packet(Packet.COMMAND_ENTITY_REMOVE, array);
+
+        return new Packet(PacketCommand.ENTITY_REMOVE, entityIds, condition, affectedForces);
     }
 
     /**
      * Creates a packet indicating end of game, including detailed unit status
      */
     private Packet createEndOfGamePacket() {
-        Object[] array = new Object[3];
-        array[0] = getDetailedVictoryReport();
-        array[1] = game.getVictoryPlayerId();
-        array[2] = game.getVictoryTeam();
-        return new Packet(Packet.COMMAND_END_OF_GAME, array);
+        return new Packet(PacketCommand.END_OF_GAME, getDetailedVictoryReport(),
+                getGame().getVictoryPlayerId(), getGame().getVictoryTeam());
     }
-
-    public static String ORIGIN = "***Server";
 
     public static String formatChatMessage(String origin, String message) {
         return origin + ": " + message;
@@ -30775,15 +30724,14 @@ public class Server implements Runnable {
      * Transmits a chat message to all players
      */
     public void sendChat(int connId, String origin, String message) {
-        send(connId, new Packet(Packet.COMMAND_CHAT, formatChatMessage(origin, message)));
+        send(connId, new Packet(PacketCommand.CHAT, formatChatMessage(origin, message)));
     }
 
     /**
      * Transmits a chat message to all players
      */
     private void sendChat(String origin, String message) {
-        String chat = formatChatMessage(origin, message);
-        send(new Packet(Packet.COMMAND_CHAT, chat));
+        send(new Packet(PacketCommand.CHAT, formatChatMessage(origin, message)));
     }
 
     public void sendServerChat(int connId, String message) {
@@ -30798,16 +30746,11 @@ public class Server implements Runnable {
      * Creates a packet containing a hex, and the coordinates it goes at.
      */
     private Packet createHexChangePacket(Coords coords, Hex hex) {
-        final Object[] data = new Object[2];
-        data[0] = coords;
-        data[1] = hex;
-        return new Packet(Packet.COMMAND_CHANGE_HEX, data);
+        return new Packet(PacketCommand.CHANGE_HEX, coords, hex);
     }
 
     public void sendSmokeCloudAdded(SmokeCloud cloud) {
-        final Object[] data = new Object[1];
-        data[0] = cloud;
-        send(new Packet(Packet.COMMAND_ADD_SMOKE_CLOUD, data));
+        send(new Packet(PacketCommand.ADD_SMOKE_CLOUD, cloud));
     }
 
     /**
@@ -30821,28 +30764,23 @@ public class Server implements Runnable {
      * Creates a packet containing a hex, and the coordinates it goes at.
      */
     private Packet createHexesChangePacket(Set<Coords> coords, Set<Hex> hex) {
-        final Object[] data = new Object[2];
-        data[0] = coords;
-        data[1] = hex;
-        return new Packet(Packet.COMMAND_CHANGE_HEXES, data);
+        return new Packet(PacketCommand.CHANGE_HEXES, coords, hex);
     }
 
     /**
      * Sends notification to clients that the specified hex has changed.
      */
     public void sendChangedHexes(Set<Coords> coords) {
-        Set<Hex> hexes = new LinkedHashSet<>();
-        for (Coords coord : coords) {
-            hexes.add(game.getBoard().getHex(coord));
-        }
-        send(createHexesChangePacket(coords, hexes));
+        send(createHexesChangePacket(coords, coords.stream()
+                .map(coord -> game.getBoard().getHex(coord))
+                .collect(Collectors.toCollection(LinkedHashSet::new))));
     }
 
     /**
      * Creates a packet containing a vector of mines.
      */
     private Packet createMineChangePacket(Coords coords) {
-        return new Packet(Packet.COMMAND_UPDATE_MINEFIELDS, game.getMinefields(coords));
+        return new Packet(PacketCommand.UPDATE_MINEFIELDS, getGame().getMinefields(coords));
     }
 
     /**
@@ -30853,24 +30791,15 @@ public class Server implements Runnable {
     }
 
     public void sendVisibilityIndicator(Entity e) {
-        final Object[] data = new Object[6];
-        data[0] = e.getId();
-        data[1] = e.isEverSeenByEnemy();
-        data[2] = e.isVisibleToEnemy();
-        data[3] = e.isDetectedByEnemy();
-        data[4] = e.getWhoCanSee();
-        data[5] = e.getWhoCanDetect();
-        send(new Packet(Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR, data));
+        send(new Packet(PacketCommand.ENTITY_VISIBILITY_INDICATOR, e.getId(), e.isEverSeenByEnemy(),
+                e.isVisibleToEnemy(), e.isDetectedByEnemy(), e.getWhoCanSee(), e.getWhoCanDetect()));
     }
 
     /**
      * Creates a packet for an attack
      */
     private Packet createAttackPacket(List<?> vector, int charges) {
-        final Object[] data = new Object[2];
-        data[0] = vector;
-        data[1] = charges;
-        return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
+        return new Packet(PacketCommand.ENTITY_ATTACK, vector, charges);
     }
 
     /**
@@ -30879,10 +30808,7 @@ public class Server implements Runnable {
     private Packet createAttackPacket(EntityAction ea, int charge) {
         Vector<EntityAction> vector = new Vector<>(1);
         vector.addElement(ea);
-        Object[] data = new Object[2];
-        data[0] = vector;
-        data[1] = charge;
-        return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
+        return new Packet(PacketCommand.ENTITY_ATTACK, vector, charge);
     }
 
     private Packet createSpecialHexDisplayPacket(int toPlayer) {
@@ -30904,11 +30830,7 @@ public class Server implements Runnable {
                 }
             }
         }
-        return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
-    }
-
-    private Packet createTagInfoUpdatesPacket() {
-        return new Packet(Packet.COMMAND_SENDING_TAGINFO, game.getTagInfo());
+        return new Packet(PacketCommand.SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
     }
 
     /**
@@ -30929,20 +30851,19 @@ public class Server implements Runnable {
                 }
             }
         }
-        return new Packet(Packet.COMMAND_SENDING_ARTILLERYATTACKS, v);
+        return new Packet(PacketCommand.SENDING_ARTILLERY_ATTACKS, v);
     }
 
     private Packet createIlluminatedHexesPacket() {
         HashSet<Coords> illuminateHexes = game.getIlluminatedPositions();
-        return new Packet(Packet.COMMAND_SENDING_ILLUM_HEXES, illuminateHexes);
+        return new Packet(PacketCommand.SENDING_ILLUM_HEXES, illuminateHexes);
     }
 
     /**
      * Creates a packet containing flares
      */
     private Packet createFlarePacket() {
-
-        return new Packet(Packet.COMMAND_SENDING_FLARES, game.getFlares());
+        return new Packet(PacketCommand.SENDING_FLARES, getGame().getFlares());
     }
 
     /**
@@ -30952,17 +30873,14 @@ public class Server implements Runnable {
         if (connections == null) {
             return;
         }
-        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            conn.send(packet);
-        }
+
+        connections.stream()
+                .filter(Objects::nonNull)
+                .forEach(connection -> connection.send(packet));
     }
 
-    // WOR
-    public void send_Nova_Change(int Id, String net) {
-        Object[] data = {Id, net};
-        Packet packet = new Packet(Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE, data);
-        send(packet);
+    public void send_Nova_Change(int id, String net) {
+        send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
     private void sendReport() {
@@ -30977,9 +30895,7 @@ public class Server implements Runnable {
             for (var player: mailer.getEmailablePlayers(game)) {
                 try {
                     var reports = filterReportVector(vPhaseReport, player);
-                    var message = mailer.newReportMessage(
-                        game, reports, player
-                    );
+                    var message = mailer.newReportMessage(game, reports, player);
                     mailer.send(message);
                 } catch (Exception e) {
                     LogManager.getLogger().error("Error sending round report", e);
@@ -30993,14 +30909,8 @@ public class Server implements Runnable {
 
         for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
             AbstractConnection conn = connEnum.nextElement();
-            Player p = game.getPlayer(conn.getId());
-            Packet packet;
-            if (tacticalGeniusReport) {
-                packet = createTacticalGeniusReportPacket();
-            } else {
-                packet = createReportPacket(p);
-            }
-            conn.send(packet);
+            Player p = getGame().getPlayer(conn.getId());
+            conn.send(tacticalGeniusReport ? createTacticalGeniusReportPacket() : createReportPacket(p));
         }
     }
 
@@ -31031,41 +30941,21 @@ public class Server implements Runnable {
      * Process an in-game command
      */
     private void processCommand(int connId, String commandString) {
-        String[] args;
-        String commandName;
         // all tokens are read as strings; if they're numbers, string-ize 'em.
         // replaced the tokenizer with the split function.
-        args = commandString.split("\\s+");
+        String[] args = commandString.split("\\s+");
 
         // figure out which command this is
-        commandName = args[0].substring(1);
+        String commandName = args[0].substring(1);
 
         // process it
         ServerCommand command = getCommand(commandName);
         if (command != null) {
             command.run(connId, args);
         } else {
-            sendServerChat(connId,
-                    "Command not recognized.  Type /help for a list of commands.");
+            sendServerChat(connId, "Command not recognized. Type /help for a list of commands.");
         }
     }
-
-    // Easter eggs. Happy April Fool's Day!!
-    private static final String DUNE_CALL = "They tried and failed?";
-
-    private static final String DUNE_RESPONSE = "They tried and died!";
-
-    private static final String STAR_WARS_CALL = "I'd just as soon kiss a Wookiee.";
-
-    private static final String STAR_WARS_RESPONSE = "I can arrange that!";
-
-    private static final String INVADER_ZIM_CALL = "What does the G stand for?";
-
-    private static final String INVADER_ZIM_RESPONSE = "I don't know.";
-
-    private static final String WARGAMES_CALL = "Shall we play a game?";
-
-    private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
 
     /**
      * Process a packet from a connection.
@@ -31090,39 +30980,39 @@ public class Server implements Runnable {
         }
         // act on it
         switch (packet.getCommand()) {
-            case Packet.COMMAND_CLIENT_VERSIONS:
+            case CLIENT_VERSIONS:
                 final boolean valid = receivePlayerVersion(packet, connId);
                 if (valid) {
-                    sendToPending(connId, new Packet(Packet.COMMAND_SERVER_GREETING));
+                    sendToPending(connId, new Packet(PacketCommand.SERVER_GREETING));
                 } else {
-                    sendToPending(connId, new Packet(Packet.COMMAND_ILLEGAL_CLIENT_VERSION, MMConstants.VERSION));
+                    sendToPending(connId, new Packet(PacketCommand.ILLEGAL_CLIENT_VERSION, MMConstants.VERSION));
                     getPendingConnection(connId).close();
                 }
                 break;
-            case Packet.COMMAND_CLOSE_CONNECTION:
+            case CLOSE_CONNECTION:
                 // We have a client going down!
                 AbstractConnection c = getConnection(connId);
                 if (c != null) {
                     c.close();
                 }
                 break;
-            case Packet.COMMAND_CLIENT_NAME:
+            case CLIENT_NAME:
                 receivePlayerName(packet, connId);
                 break;
-            case Packet.COMMAND_PLAYER_UPDATE:
+            case PLAYER_UPDATE:
                 receivePlayerInfo(packet, connId);
                 validatePlayerInfo(connId);
                 transmitPlayerUpdate(getPlayer(connId));
                 break;
-            case Packet.COMMAND_PLAYER_TEAMCHANGE:
-                ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, game, this);
+            case PLAYER_TEAM_CHANGE:
+                ServerLobbyHelper.receiveLobbyTeamChange(packet, connId, getGame(), this);
                 break;
-            case Packet.COMMAND_PLAYER_READY:
+            case PLAYER_READY:
                 receivePlayerDone(packet, connId);
                 send(createPlayerDonePacket(connId));
                 checkReady();
                 break;
-            case Packet.COMMAND_PRINCESS_SETTINGS:
+            case PRINCESS_SETTINGS:
                 if (player != null) {
                     if (game.getBotSettings() == null) {
                         game.setBotSettings(new HashMap<>());
@@ -31131,13 +31021,13 @@ public class Server implements Runnable {
                     game.getBotSettings().put(player.getName(), (BehaviorSettings) packet.getObject(0));
                 }
                 break;
-            case Packet.COMMAND_REROLL_INITIATIVE:
+            case REROLL_INITIATIVE:
                 receiveInitiativeRerollRequest(packet, connId);
                 break;
-            case Packet.COMMAND_FORWARD_INITIATIVE:
+            case FORWARD_INITIATIVE:
                 receiveForwardIni(connId);
                 break;
-            case Packet.COMMAND_CHAT:
+            case CHAT:
                 String chat = (String) packet.getObject(0);
                 if (chat.startsWith("/")) {
                     processCommand(connId, chat);
@@ -31162,7 +31052,7 @@ public class Server implements Runnable {
                     sendServerChat(WARGAMES_RESPONSE);
                 }
                 break;
-            case Packet.COMMAND_BLDG_EXPLODE:
+            case BLDG_EXPLODE:
                 DemolitionCharge charge = (DemolitionCharge) packet.getData()[0];
                 if (charge.playerId == connId) {
                     if (!explodingCharges.contains(charge)) {
@@ -31173,104 +31063,104 @@ public class Server implements Runnable {
                     }
                 }
                 break;
-            case Packet.COMMAND_ENTITY_MOVE:
+            case ENTITY_MOVE:
                 receiveMovement(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_DEPLOY:
+            case ENTITY_DEPLOY:
                 receiveDeployment(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_DEPLOY_UNLOAD:
+            case ENTITY_DEPLOY_UNLOAD:
                 receiveDeploymentUnload(packet, connId);
                 break;
-            case Packet.COMMAND_DEPLOY_MINEFIELDS:
+            case DEPLOY_MINEFIELDS:
                 receiveDeployMinefields(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_ATTACK:
+            case ENTITY_ATTACK:
                 receiveAttack(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_PREPHASE:
+            case ENTITY_PREPHASE:
                 receivePrephase(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_GTA_HEX_SELECT:
+            case ENTITY_GTA_HEX_SELECT:
                 receiveGroundToAirHexSelectPacket(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_ADD:
+            case ENTITY_ADD:
                 receiveEntityAdd(packet, connId);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_ENTITY_UPDATE:
+            case ENTITY_UPDATE:
                 receiveEntityUpdate(packet, connId);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_ENTITY_MULTIUPDATE:
+            case ENTITY_MULTIUPDATE:
                 receiveEntitiesUpdate(packet, connId);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_ENTITY_ASSIGN:
-                ServerLobbyHelper.receiveEntitiesAssign(packet, connId, game, this);
+            case ENTITY_ASSIGN:
+                ServerLobbyHelper.receiveEntitiesAssign(packet, connId, getGame(), this);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_FORCE_UPDATE:
-                ServerLobbyHelper.receiveForceUpdate(packet, connId, game, this);
+            case FORCE_UPDATE:
+                ServerLobbyHelper.receiveForceUpdate(packet, connId, getGame(), this);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_FORCE_ADD:
-                ServerLobbyHelper.receiveForceAdd(packet, connId, game, this);
+            case FORCE_ADD:
+                ServerLobbyHelper.receiveForceAdd(packet, connId, getGame(), this);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_FORCE_DELETE:
+            case FORCE_DELETE:
                 receiveForcesDelete(packet, connId);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_FORCE_PARENT:
-                ServerLobbyHelper.receiveForceParent(packet, connId, game, this);
+            case FORCE_PARENT:
+                ServerLobbyHelper.receiveForceParent(packet, connId, getGame(), this);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_FORCE_ADD_ENTITY:
-                ServerLobbyHelper.receiveAddEntititesToForce(packet, connId, game, this);
+            case FORCE_ADD_ENTITY:
+                ServerLobbyHelper.receiveAddEntititesToForce(packet, connId, getGame(), this);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_FORCE_ASSIGN_FULL:
-                ServerLobbyHelper.receiveForceAssignFull(packet, connId, game, this);
+            case FORCE_ASSIGN_FULL:
+                ServerLobbyHelper.receiveForceAssignFull(packet, connId, getGame(), this);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_ENTITY_LOAD:
+            case ENTITY_LOAD:
                 receiveEntityLoad(packet, connId);
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 break;
-            case Packet.COMMAND_ENTITY_MODECHANGE:
+            case ENTITY_MODECHANGE:
                 receiveEntityModeChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_SENSORCHANGE:
+            case ENTITY_SENSORCHANGE:
                 receiveEntitySensorChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_SINKSCHANGE:
+            case ENTITY_SINKSCHANGE:
                 receiveEntitySinksChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN:
+            case ENTITY_ACTIVATE_HIDDEN:
                 receiveEntityActivateHidden(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
+            case ENTITY_NOVA_NETWORK_CHANGE:
                 receiveEntityNovaNetworkModeChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE:
+            case ENTITY_MOUNTED_FACING_CHANGE:
                 receiveEntityMountedFacingChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_CALLEDSHOTCHANGE:
+            case ENTITY_CALLEDSHOTCHANGE:
                 receiveEntityCalledShotChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_SYSTEMMODECHANGE:
+            case ENTITY_SYSTEMMODECHANGE:
                 receiveEntitySystemModeChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_AMMOCHANGE:
+            case ENTITY_AMMOCHANGE:
                 receiveEntityAmmoChange(packet, connId);
                 break;
-            case Packet.COMMAND_ENTITY_REMOVE:
+            case ENTITY_REMOVE:
                 receiveEntityDelete(packet, connId);
                 resetPlayersDone();
                 break;
-            case Packet.COMMAND_ENTITY_WORDER_UPDATE:
+            case ENTITY_WORDER_UPDATE:
                 Object[] data = packet.getData();
                 Entity ent = game.getEntity((Integer) data[0]);
                 if (ent != null) {
@@ -31287,7 +31177,7 @@ public class Server implements Runnable {
                     }
                 }
                 break;
-            case Packet.COMMAND_SENDING_GAME_SETTINGS:
+            case SENDING_GAME_SETTINGS:
                 if (receiveGameOptions(packet, connId)) {
                     resetPlayersDone();
                     transmitAllPlayerDones();
@@ -31295,7 +31185,7 @@ public class Server implements Runnable {
                     receiveGameOptionsAux(packet, connId);
                 }
                 break;
-            case Packet.COMMAND_SENDING_MAP_SETTINGS:
+            case SENDING_MAP_SETTINGS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
                     if (!mapSettings.equalMapGenParameters(newSettings)) {
@@ -31310,7 +31200,7 @@ public class Server implements Runnable {
                     send(createMapSettingsPacket());
                 }
                 break;
-            case Packet.COMMAND_SENDING_MAP_DIMENSIONS:
+            case SENDING_MAP_DIMENSIONS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
                     if (!mapSettings.equalMapGenParameters(newSettings)) {
@@ -31325,7 +31215,7 @@ public class Server implements Runnable {
                     send(createMapSettingsPacket());
                 }
                 break;
-            case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
+            case SENDING_PLANETARY_CONDITIONS:
                 // MapSettings newSettings = (MapSettings) packet.getObject(0);
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
@@ -31336,18 +31226,18 @@ public class Server implements Runnable {
                     send(createPlanetaryConditionsPacket());
                 }
                 break;
-            case Packet.COMMAND_UNLOAD_STRANDED:
+            case UNLOAD_STRANDED:
                 receiveUnloadStranded(packet, connId);
                 break;
-            case Packet.COMMAND_SET_ARTILLERY_AUTOHIT_HEXES:
+            case SET_ARTILLERY_AUTOHIT_HEXES:
                 receiveArtyAutoHitHexes(packet, connId);
                 break;
-            case Packet.COMMAND_CUSTOM_INITIATIVE:
+            case CUSTOM_INITIATIVE:
                 receiveCustomInit(packet, connId);
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 break;
-            case Packet.COMMAND_LOAD_GAME:
+            case LOAD_GAME:
                 try {
                     sendServerChat(getPlayer(connId).getName() + " loaded a new game.");
                     setGame((Game) packet.getObject(0));
@@ -31358,20 +31248,20 @@ public class Server implements Runnable {
                     LogManager.getLogger().error("Error loading save game sent from client", e);
                 }
                 break;
-            case Packet.COMMAND_SQUADRON_ADD:
+            case SQUADRON_ADD:
                 receiveSquadronAdd(packet, connId);
                 resetPlayersDone();
                 transmitAllPlayerDones();
                 break;
-            case Packet.COMMAND_RESET_ROUND_DEPLOYMENT:
+            case RESET_ROUND_DEPLOYMENT:
                 game.setupRoundDeployment();
                 break;
-            case Packet.COMMAND_SPECIAL_HEX_DISPLAY_DELETE:
+            case SPECIAL_HEX_DISPLAY_DELETE:
                 game.getBoard().removeSpecialHexDisplay((Coords) packet.getObject(0),
                         (SpecialHexDisplay) packet.getObject(1));
                 sendSpecialHexDisplayPackets();
                 break;
-            case Packet.COMMAND_SPECIAL_HEX_DISPLAY_APPEND:
+            case SPECIAL_HEX_DISPLAY_APPEND:
                 game.getBoard().addSpecialHexDisplay((Coords) packet.getObject(0),
                         (SpecialHexDisplay) packet.getObject(1));
                 sendSpecialHexDisplayPackets();
@@ -32158,9 +32048,9 @@ public class Server implements Runnable {
      *              (from a WiGE flying over the top).
      *
      */
-    public void collapseBuilding(Building bldg,
-            Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-            boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
+    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap,
+                                 Coords coords, boolean collapseAll, boolean topFloor,
+                                 Vector<Report> vPhaseReport) {
         // sometimes, buildings that reach CF 0 decide against collapsing
         // but we want them to go away anyway, as a building with CF 0 cannot stand
         final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
@@ -32174,7 +32064,6 @@ public class Server implements Runnable {
 
         // Are there any Entities at these coords?
         if (vector != null) {
-
             // How many levels does this building have in this hex?
             final Hex curHex = game.getBoard().getHex(coords);
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
@@ -32298,12 +32187,8 @@ public class Server implements Runnable {
                 // Update this entity.
                 // ASSUMPTION: this is the correct thing to do.
                 entityUpdate(entity.getId());
-
-            } // Handle the next entity.
-
-        } // End have-entities-here.
-
-        else {
+            }
+        } else {
             // Update the building.
             bldg.setCurrentCF(0, coords);
             bldg.setPhaseCF(0, coords);
@@ -32312,15 +32197,12 @@ public class Server implements Runnable {
         }
         // if more than half of the hexes are gone, collapse all
         if (bldg.getCollapsedHexCount() > (bldg.getOriginalHexCount() / 2)) {
-            for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum
-                    .hasMoreElements();) {
+            for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements();) {
                 coords = coordsEnum.nextElement();
-                collapseBuilding(bldg, game.getPositionMap(), coords, false,
-                        vPhaseReport);
+                collapseBuilding(bldg, game.getPositionMap(), coords, false, vPhaseReport);
             }
         }
-
-    } // End private void collapseBuilding( Building )
+    }
 
     /**
      * Tell the clients to replace the given building with rubble hexes.
@@ -32342,7 +32224,7 @@ public class Server implements Runnable {
      * @return a <code>Packet</code> for the command.
      */
     private Packet createCollapseBuildingPacket(Vector<Coords> coords) {
-        return new Packet(Packet.COMMAND_BLDG_COLLAPSE, coords);
+        return new Packet(PacketCommand.BLDG_COLLAPSE, coords);
     }
 
     /**
@@ -32353,7 +32235,7 @@ public class Server implements Runnable {
      * @return a <code>Packet</code> for the command.
      */
     private Packet createUpdateBuildingPacket(Vector<Building> buildings) {
-        return new Packet(Packet.COMMAND_BLDG_UPDATE, buildings);
+        return new Packet(PacketCommand.BLDG_UPDATE, buildings);
     }
 
     /**

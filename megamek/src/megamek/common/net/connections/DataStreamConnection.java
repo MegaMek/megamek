@@ -13,6 +13,8 @@
  */
 package megamek.common.net.connections;
 
+import megamek.common.net.enums.PacketReadState;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -61,43 +63,40 @@ public class DataStreamConnection extends AbstractConnection {
     protected boolean zipped = false;
     protected int encoding = -1;
     protected int len = 0;
-    protected PacketReadState state = PacketReadState.Header;
+    protected PacketReadState state = PacketReadState.HEADER;
 
     @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
-        
-            NetworkPacket packet = null;
-            if (in == null) {
-                in = new DataInputStream(new BufferedInputStream(
-                        getInputStream(), getReceiveBufferSize()));
-                state = PacketReadState.Header;
+        NetworkPacket packet = null;
+        if (in == null) {
+            in = new DataInputStream(new BufferedInputStream(
+                    getInputStream(), getReceiveBufferSize()));
+            state = PacketReadState.HEADER;
+        }
+        synchronized (in) {
+            switch (state) {
+                case HEADER:
+                    zipped = in.readBoolean();
+                    encoding = in.readInt();
+                    len = in.readInt();
+                    state = PacketReadState.DATA;
+                    // Purposeful drop through
+                case DATA:
+                    byte[] data = new byte[len];
+                    in.readFully(data);
+                    packet = new NetworkPacket(zipped, encoding, data);
+                    state = PacketReadState.HEADER;
+                    return packet;
+                default:
+                    throw new Exception("Cannot Read Network Packet with unknown state " + state.name());
             }
-            synchronized (in) {
-                switch (state) {
-                    case Header:
-                        zipped = in.readBoolean();
-                        encoding = in.readInt();
-                        len = in.readInt();
-                        state = PacketReadState.Data;
-                        // drop through on purpose
-                    case Data:
-                        byte[] data = new byte[len];
-                        in.readFully(data);
-                        packet = new NetworkPacket(zipped, encoding, data);
-                        state = PacketReadState.Header;
-                        return packet;
-                    default:
-                        assert (false);
-                }
-            }
-        assert (false);
-        return null;
+        }
     }
 
     @Override
     protected void sendNetworkPacket(byte[] data, boolean iszipped)
             throws Exception {
-        
+
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream(), getSendBufferSize()));
@@ -188,9 +187,4 @@ public class DataStreamConnection extends AbstractConnection {
             return compressed;
         }
     }
-}
-
-enum PacketReadState {
-    Header, // next will be header data
-    Data
 }

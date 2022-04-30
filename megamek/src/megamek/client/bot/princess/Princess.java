@@ -34,7 +34,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;

@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.common.net;
+package megamek.common.net.connections;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -27,7 +27,7 @@ import java.net.SocketException;
  * <code>DataInputStream</code> and <code>DataOutputStream</code> to
  * send/receive data.
  */
-class DataStreamConnection extends AbstractConnection {
+public class DataStreamConnection extends AbstractConnection {
 
     /**
      * Input stream

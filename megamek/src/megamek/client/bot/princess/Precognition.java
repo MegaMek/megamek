@@ -20,7 +20,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
 import megamek.server.SmokeCloud;

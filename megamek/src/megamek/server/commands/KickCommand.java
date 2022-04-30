@@ -14,7 +14,7 @@
  */
 package megamek.server.commands;
 
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.server.Server;
 

@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.common.net;
+package megamek.common.net.listeners;
 
 import megamek.common.net.events.ConnectedEvent;
 import megamek.common.net.events.DisconnectedEvent;

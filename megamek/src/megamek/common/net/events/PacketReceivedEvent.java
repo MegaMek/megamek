@@ -19,7 +19,7 @@
  */
 package megamek.common.net.events;
 
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.ConnectionEventType;
 
 /**

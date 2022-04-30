@@ -14,7 +14,7 @@
  */
 package megamek.server.commands;
 
-import megamek.common.net.AbstractConnection;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.common.preference.PreferenceManager;
 import megamek.server.Server;
 

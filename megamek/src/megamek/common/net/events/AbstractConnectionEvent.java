@@ -19,8 +19,8 @@
  */
 package megamek.common.net.events;
 
-import megamek.common.net.AbstractConnection;
-import megamek.common.net.ConnectionListener;
+import megamek.common.net.connections.AbstractConnection;
+import megamek.common.net.listeners.ConnectionListener;
 import megamek.common.net.enums.ConnectionEventType;
 
 import java.util.EventObject;

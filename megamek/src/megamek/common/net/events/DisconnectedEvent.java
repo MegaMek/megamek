@@ -31,8 +31,7 @@ public class DisconnectedEvent extends AbstractConnectionEvent {
 
     //region Constructors
     /**
-     * Constructs connection event
-     * 
+     * Constructs a disconnected connection event
      * @param source The object on which the Event initially occurred.
      */
     public DisconnectedEvent(final Object source) {

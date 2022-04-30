@@ -28,7 +28,6 @@ import java.util.EventObject;
 /**
  * Instances of descendant classes are sent as a result of changes of the Connection state or packet
  * arrival.
- * 
  * @see ConnectionListener
  */
 public abstract class AbstractConnectionEvent extends EventObject {

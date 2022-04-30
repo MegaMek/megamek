@@ -31,8 +31,7 @@ public class ConnectedEvent extends AbstractConnectionEvent {
 
     //region Constructors
     /**
-     * Constructs connection event
-     * 
+     * Constructs a connected connection event
      * @param source The object on which the Event initially occurred.
      */
     public ConnectedEvent(final Object source) {

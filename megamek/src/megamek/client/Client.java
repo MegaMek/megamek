@@ -15,7 +15,6 @@
  */
 package megamek.client;
 
-import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.Version;
@@ -30,6 +29,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
+import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.actions.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
@@ -412,14 +412,14 @@ public class Client implements IClientCommandHandler {
      * give the initiative to the next player on the team.
      */
     public void sendNextPlayer() {
-        connection.send(new Packet(PacketCommand.FORWARD_INITIATIVE));
+        send(new Packet(PacketCommand.FORWARD_INITIATIVE));
     }
 
     /**
      * Changes the game phase, and the displays that go along with it.
      */
     public void changePhase(GamePhase phase) {
-        game.setPhase(phase);
+        getGame().setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
             case STARTING_SCENARIO:
@@ -663,11 +663,7 @@ public class Client implements IClientCommandHandler {
      * Send s done with prephase turn
      */
     public void sendPrephaseData(int aen) {
-        Object[] data = new Object[1];
-
-        data[0] = aen;
-
-        send(new Packet(PacketCommand.ENTITY_PREPHASE, data));
+        send(new Packet(PacketCommand.ENTITY_PREPHASE, aen));
         flushConn();
     }
 
@@ -746,7 +742,7 @@ public class Client implements IClientCommandHandler {
 
     public void sendEntityWeaponOrderUpdate(Entity entity) {
         Object[] data;
-        if (entity.getWeaponSortOrder() == Entity.WeaponSortOrder.CUSTOM) {
+        if (entity.getWeaponSortOrder() == WeaponSortOrder.CUSTOM) {
             data = new Object[3];
             data[2] = entity.getCustomWeaponOrder();
         } else {
@@ -882,8 +878,10 @@ public class Client implements IClientCommandHandler {
         
     /** Sends a packet to the Server requesting to delete the given forces. */
     public void sendDeleteForces(List<Force> toDelete) {
-        send(new Packet(PacketCommand.FORCE_DELETE,
-                toDelete.stream().mapToInt(Force::getId).boxed().collect(Collectors.toList())));
+        send(new Packet(PacketCommand.FORCE_DELETE, toDelete.stream()
+                .mapToInt(Force::getId)
+                .boxed()
+                .collect(Collectors.toList())));
     }
     
     /**
@@ -928,13 +926,9 @@ public class Client implements IClientCommandHandler {
     public void sendLoadGame(File f) {
         try (InputStream fis = new FileInputStream(f); InputStream is = new GZIPInputStream(fis)) {
             game.reset();
-            
-            XStream xstream = SerializationHelper.getXStream();            
-            Game newGame = (Game) xstream.fromXML(is);
-
-            send(new Packet(PacketCommand.LOAD_GAME, newGame));
-        } catch (Exception e) {
-            LogManager.getLogger().error("Can't find the local savegame " + f, e);
+            send(new Packet(PacketCommand.LOAD_GAME, SerializationHelper.getXStream().fromXML(is)));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Can't find the local savegame " + f, ex);
         }
     }
 
@@ -1357,7 +1351,8 @@ public class Client implements IClientCommandHandler {
                 disconnected();
                 break;
             case SERVER_VERSION_CHECK:
-                send(new Packet(PacketCommand.CLIENT_VERSIONS, MMConstants.VERSION, MegaMek.getMegaMekSHA256()));
+                send(new Packet(PacketCommand.CLIENT_VERSIONS, MMConstants.VERSION,
+                        MegaMek.getMegaMekSHA256()));
                 break;
             case SERVER_GREETING:
                 connected = true;
@@ -1507,7 +1502,7 @@ public class Client implements IClientCommandHandler {
                 }
                 game.addReports((Vector<Report>) c.getObject(0));
                 roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                if (c.getCommand() == PacketCommand.SENDING_REPORTS_TACTICAL_GENIUS) {
+                if (c.getCommand().isSendingReportsTacticalGenius()) {
                     game.processGameEvent(new GameReportEvent(this, roundReport));
                 }
                 break;

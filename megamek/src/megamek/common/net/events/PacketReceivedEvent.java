@@ -33,8 +33,7 @@ public class PacketReceivedEvent extends AbstractConnectionEvent {
 
     //region Constructors
     /**
-     * Constructs connection event
-     * 
+     * Constructs a packed received connection event
      * @param source The object on which the Event initially occurred.
      * @param packet The received packet
      */

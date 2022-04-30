@@ -14,12 +14,12 @@
  */
 package megamek.common.event;
 
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.net.enums.PacketCommand;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.net.enums.PacketCommand;
 
 /**
  * A Client Feedback Request Event.  This event is created when the server 

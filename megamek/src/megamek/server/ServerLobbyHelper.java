@@ -453,8 +453,7 @@ class ServerLobbyHelper {
      * affected forces and all affected entities. Entities are only affected if their
      * forceId changed.
      */
-    static Packet createForceUpdatePacket(Collection<Force> changedForces,
-                                          Collection<Entity> entities) {
+    static Packet createForceUpdatePacket(Collection<Force> changedForces, Collection<Entity> entities) {
         return new Packet(PacketCommand.FORCE_UPDATE, changedForces, entities);
     }
     
@@ -476,5 +475,4 @@ class ServerLobbyHelper {
         List<Force> chain = game.getForces().forceChain(force);
         return chain.stream().map(f -> game.getForces().getOwner(f)).anyMatch(p -> p.equals(sender));
     }
-
 }

@@ -172,7 +172,6 @@ public abstract class BotClient extends Client {
                         break;
                 }
             }
-
         });
     }
 

@@ -203,8 +203,7 @@ public class Precognition implements Runnable {
                     getGame().addReports((Vector<Report>) c.getObject(0));
                     break;
                 case SENDING_REPORTS_ALL:
-                    Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
-                            .getObject(0);
+                    Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
                     getGame().setAllReports(allReports);
                     break;
                 case ENTITY_ATTACK:
@@ -214,8 +213,7 @@ public class Precognition implements Runnable {
                     getGame().setOptions((GameOptions) c.getObject(0));
                     break;
                 case SENDING_PLANETARY_CONDITIONS:
-                    getGame().setPlanetaryConditions((PlanetaryConditions) c
-                            .getObject(0));
+                    getGame().setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
                     getGame().processGameEvent(new GameSettingsChangeEvent(this));
                     break;
                 case SENDING_TAG_INFO:
@@ -228,8 +226,7 @@ public class Precognition implements Runnable {
                     getGame().resetTagInfo();
                     break;
                 case SENDING_ARTILLERY_ATTACKS:
-                    Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c
-                            .getObject(0);
+                    Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c.getObject(0);
                     getGame().setArtilleryVector(v);
                     break;
                 case SENDING_FLARES:
@@ -238,8 +235,7 @@ public class Precognition implements Runnable {
                     break;
                 case SENDING_SPECIAL_HEX_DISPLAY:
                     getGame().getBoard().setSpecialHexDisplayTable(
-                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
-                                    .getObject(0));
+                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
                     getGame().processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
@@ -282,7 +278,8 @@ public class Precognition implements Runnable {
         while (!getWaiting().get() && !getDone().get()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException ignored) {
+            } catch (Exception ignored) {
+
             }
         }
     }

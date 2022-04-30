@@ -28,7 +28,7 @@ sourceSets {
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.formdev:flatlaf:2.1'
+    implementation 'com.formdev:flatlaf:2.2'
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.14'
@@ -41,7 +41,7 @@ dependencies {
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.2'
-    testImplementation 'org.mockito:mockito-core:4.4.0'
+    testImplementation 'org.mockito:mockito-core:4.5.1'
 }
 
 mainClassName = 'megamek.MegaMek'

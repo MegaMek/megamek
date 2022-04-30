@@ -776,19 +776,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int taserInterferenceRounds = 0;
     protected boolean taserInterferenceHeat = false;
 
-    // contains a HTML string describing BV calculation
-    protected StringBuffer bvText = new StringBuffer();
-    protected String startTable = "<TABLE>";
-    protected String endTable = "</TABLE>";
-
-    protected String startRow = "<TR>";
-    protected String endRow = "</TR>";
-
-    protected String startColumn = "<TD>";
-    protected String endColumn = "</TD>";
-
-    protected String nl = "<BR>";
-
     // for how many rounds has blueshield been active?
     private int blueShieldRounds = 0;
 
@@ -847,14 +834,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * been used.
      */
     protected int consecutiveRHSUses = 0;
-
-    /**
-     * Flag that can be used to indicate whether this Entity should use a
-     * geometric mean when computing BV.
-     */
-    protected boolean useGeometricBV = false;
-
-    protected boolean useReducedOverheatModifierBV = false;
 
     private final Set<Integer> attackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -12827,19 +12806,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             return false;
         }
         return game.getEntity(conveyance) instanceof FighterSquadron;
-    }
-
-    /**
-     * Return a HTML string that describes the BV calculations
-     *
-     * @return a <code>String</code> explaining the BV calculation
-     */
-    public String getBVText() {
-        if (bvText == null) {
-            return "";
-        }
-
-        return bvText.toString();
     }
 
     /**

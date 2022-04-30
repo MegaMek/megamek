@@ -5667,7 +5667,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Maximum number of entities to show in the tooltip
         int maxShown = 4;
 
-        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords));
+        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords, true));
         for (Entity entity: coordEnts) {
             entityCount++;
 

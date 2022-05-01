@@ -88,7 +88,7 @@ public class TestBot extends BotClient {
         int initiative = 0;
         MoveOption min = null;
 
-        System.out.println("beginning movement calculations...");
+        LogManager.getLogger().info("beginning movement calculations...");
 
         // first check and that someone else has moved so we don't replan
         Object[] enemy_array = getEnemyEntities().toArray();
@@ -100,13 +100,10 @@ public class TestBot extends BotClient {
         // if nobody's moved and we have a valid move waiting, use that
         if ((initiative == enemies_moved) && (old_moves != null)) {
             min = old_moves.getResult();
-            if ((min == null)
-                || !min.isMoveLegal()
-                || (min.isPhysical && centities.get(min
-                                                            .getPhysicalTargetId()).isPhysicalTarget)) {
+            if ((min == null) || !min.isMoveLegal()
+                    || (min.isPhysical && centities.get(min.getPhysicalTargetId()).isPhysicalTarget)) {
                 old_moves = null;
-                System.out
-                        .println("recalculating moves since the old move was invalid");
+                LogManager.getLogger().info("recalculating moves since the old move was invalid");
                 return calculateMoveTurn();
             }
         } else {
@@ -234,13 +231,13 @@ public class TestBot extends BotClient {
         if (min.isPhysical) {
             centities.get(min.getPhysicalTargetId()).isPhysicalTarget = true;
         }
-        System.out.println(min);
+        LogManager.getLogger().info(min);
         min.getCEntity().current = min;
         min.getCEntity().last = min;
         min.getCEntity().moved = true;
 
         long exit = System.currentTimeMillis();
-        System.out.println("move turn took " + (exit - enter) + " ms");
+        LogManager.getLogger().info("move turn took " + (exit - enter) + " ms");
 
         // If this unit has a jammed RAC, and it has only walked,
         // add an unjam action
@@ -402,8 +399,7 @@ public class TestBot extends BotClient {
         } else {
             move_array = new MoveOption[]{self.current};
         }
-        System.out.println(self.getEntity().getShortName() + " has "
-                           + move_array.length + " moves");
+        LogManager.getLogger().info(self.getEntity().getShortName() + " has " + move_array.length + " moves");
         for (MoveOption option : move_array) {
             option.setState();
             boolean aptPiloting = option.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
@@ -1602,7 +1598,7 @@ public class TestBot extends BotClient {
                 }
             }
         }
-        System.out.println("Us " + friend_sum + " Them " + foe_sum);
+        LogManager.getLogger().info("Us " + friend_sum + " Them " + foe_sum);
         // do some more reasoning...
         double unit_values = friend_sum;
         double enemy_values = foe_sum;
@@ -1610,17 +1606,14 @@ public class TestBot extends BotClient {
 
         if (friends.size() > 1) {
             if ((Strategy.MainTarget == null)
-                || (null == game.getEntity(Strategy.MainTarget.getEntity()
-                                                              .getId()))) {
+                    || (null == game.getEntity(Strategy.MainTarget.getEntity().getId()))) {
                 Strategy.MainTarget = max_foe;
             }
             // TODO : Handle this better.
             if (null == Strategy.MainTarget) {
-                System.err
-                        .println("TestBot#initMovement() - no main target for bot");
+                LogManager.getLogger().error("TestBot#initMovement() - no main target for bot");
             } else if (null == Strategy.MainTarget.strategy) {
-                System.err
-                        .println("TestBot#initMovement() - no strategy for main target");
+                LogManager.getLogger().error("TestBot#initMovement() - no strategy for main target");
             } else {
                 Strategy.MainTarget.strategy.target += .2;
                 while (i.hasNext()) {
@@ -1640,8 +1633,7 @@ public class TestBot extends BotClient {
                         // gusto
                         centity.strategy.target += .3;
                     }
-                    System.out.println(centity.getEntity().getShortName() + " "
-                                       + centity.strategy.target);
+                    LogManager.getLogger().info(centity.getEntity().getShortName() + " " + centity.strategy.target);
                 }
             }
         }
@@ -1688,15 +1680,13 @@ public class TestBot extends BotClient {
         Coords cDeploy = getFirstValidCoords(getEntity(entNum), cStart);
 
         if (cDeploy == null) {
-            // bad event handeling, this unit is not deployable, remove it
-            // instead.
+            // bad event handling, this unit is not deployable, remove it instead.
             // This should not happen but does (eg ships on a deployment zone
-            // without water.
-            System.out
-                    .println("The bot does not know how or is unable to deploy "
-                             + getEntity(entNum) + ". Removing it instead.");
+            // without water)
+            LogManager.getLogger().info("The bot does not know how or is unable to deploy "
+                    + getEntity(entNum) + ". Removing it instead.");
             sendChat("Oh dear I don't know how to deploy this "
-                     + getEntity(entNum) + ". Skipping to the next one.");
+                    + getEntity(entNum) + ". Skipping to the next one.");
             sendDeleteEntity(entNum);
             return;
         }
@@ -1789,13 +1779,11 @@ public class TestBot extends BotClient {
 
     @Override
     protected MovePath continueMovementFor(Entity entity) {
-
         if (entity == null) {
             throw new NullPointerException("Entity is null.");
         }
 
-        System.out.println("Contemplating movement of " + entity.getShortName()
-                           + " " + entity.getId());
+        LogManager.getLogger().info("Contemplating movement of " + entity.getShortName() + " " + entity.getId());
         CEntity cen = centities.get(entity);
         cen.refresh();
         firstPass(cen);
@@ -1852,7 +1840,7 @@ public class TestBot extends BotClient {
         if (min.isPhysical) {
             centities.get(min.getPhysicalTargetId()).isPhysicalTarget = true;
         }
-        System.out.println(min);
+        LogManager.getLogger().info(min);
         min.getCEntity().current = min;
         min.getCEntity().last = min;
         min.getCEntity().moved = true;

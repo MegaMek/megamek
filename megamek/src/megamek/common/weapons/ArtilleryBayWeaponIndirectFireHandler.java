@@ -154,7 +154,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
         Entity bestSpotter = null;
         if (ae == null) {
-            System.err.println("Artillery Entity is null!");
+            LogManager.getLogger().error("Artillery Entity is null!");
             return true;
         }
         

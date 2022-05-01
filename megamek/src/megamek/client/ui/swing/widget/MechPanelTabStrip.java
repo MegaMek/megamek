@@ -90,20 +90,20 @@ public class MechPanelTabStrip extends PicMap {
 
         for (int i = 0; i < 6; i++) {
             if (idleImage[i].getWidth(null) != activeImage[i].getWidth(null)) {
-                System.out.println("TabStrip Warning: idleImage and "
+                LogManager.getLogger().warn("TabStrip Warning: idleImage and "
                         + "activeImage do not match widths for image " + i);
             }
             if (idleImage[i].getHeight(null) != activeImage[i].getHeight(null)) {
-                System.out.println("TabStrip Warning: idleImage and "
+                LogManager.getLogger().warn("TabStrip Warning: idleImage and "
                         + "activeImage do not match heights for image " + i);
             }
         }
         if (idleCorner.getWidth(null) != selectedCorner.getWidth(null)) {
-            System.out.println("TabStrip Warning: idleCorner and "
+            LogManager.getLogger().warn("TabStrip Warning: idleCorner and "
                     + "selectedCorner do not match widths!");
         }
         if (idleCorner.getHeight(null) != selectedCorner.getHeight(null)) {
-            System.out.println("TabStrip Warning: idleCorner and "
+            LogManager.getLogger().warn("TabStrip Warning: idleCorner and "
                     + "selectedCorner do not match heights!");
         }
     }

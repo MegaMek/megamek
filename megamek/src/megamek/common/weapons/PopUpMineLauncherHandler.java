@@ -29,6 +29,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
+import org.apache.logging.log4j.LogManager;
 
 public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -6179453250580148965L;
@@ -125,9 +126,8 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
             // add newline _before_ last report
             try {
                 (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
-            } catch (ArrayIndexOutOfBoundsException aiobe) {
-                System.err
-                        .println("ERROR: no previous report when trying to add newline");
+            } catch (Exception ignored) {
+                LogManager.getLogger().error("No previous report when trying to add newline");
             }
         }
         // Report the result

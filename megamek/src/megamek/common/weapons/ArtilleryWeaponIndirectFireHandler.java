@@ -129,7 +129,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         boolean asfFlak = target.isAirborne();
         Entity bestSpotter = null;
         if (ae == null) {
-            System.err.println("Artillery Entity is null!");
+            LogManager.getLogger().error("Artillery Entity is null!");
             return true;
         }
         

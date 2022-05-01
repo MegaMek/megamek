@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.CheckpointComboBox;
 import megamek.common.MapSettings;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -700,12 +701,12 @@ public class RandomMapPanelBasic extends JPanel {
         SpringLayout layout;
         try {
             layout = (SpringLayout) parent.getLayout();
-        } catch (ClassCastException exc) {
-            System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+        } catch (Exception ex) {
+            LogManager.getLogger().error("The first argument to makeCompactGrid must use SpringLayout.", ex);
             return;
         }
 
-        //Align all cells in each column and make them the same width.
+        // Align all cells in each column and make them the same width.
         Spring x = Spring.constant(initialX);
         for (int c = 0; c < cols; c++) {
             Spring width = Spring.constant(0);

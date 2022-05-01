@@ -2039,9 +2039,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (wtype == null) {
-            System.err
-                    .println("WeaponHandler.restore: could not restore equipment type \""
-                            + typeName + "\"");
+            LogManager.getLogger().error("WeaponHandler.restore: could not restore equipment type \""
+                    + typeName + "\"");
         }
     }
 

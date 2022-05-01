@@ -30,6 +30,7 @@ import megamek.common.VTOL;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Numien, based work by Sebastian Brocks
@@ -70,7 +71,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         boolean isFlak = (target instanceof VTOL) || target.isAero();
         boolean asfFlak = target.isAero();
         if (ae == null) {
-            System.err.println("Artillery Entity is null!");
+            LogManager.getLogger().error("Artillery Entity is null!");
             return true;
         }
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());

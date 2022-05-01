@@ -18,6 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,13 +55,9 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
-        
-        if ((atype == null)
-                || (atype.getMunitionType() != AmmoType.M_MINE_CLEARANCE)) {
-            System.err.println("MissileMineClearance: "
-                    + "not using mine clearance ammo!");
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
+        if ((atype == null) || (atype.getMunitionType() != AmmoType.M_MINE_CLEARANCE)) {
+            LogManager.getLogger().error("Not using mine clearance ammo!");
             return true;
         }
 

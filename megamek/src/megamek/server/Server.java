@@ -711,9 +711,6 @@ public class Server implements Runnable {
         if ((metaServerUrl != null) && (!metaServerUrl.isBlank())) {
             registerWithServerBrowser(false, metaServerUrl);
         }
-
-        // TODO : Not sure that this still needs to be here after updating to the new logging methods.
-        System.out.flush();
     }
 
     /**

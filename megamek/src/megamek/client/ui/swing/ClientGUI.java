@@ -1757,12 +1757,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-            System.err.println("gamePlayerConnected");
-            System.err.flush();
             if (curPanel instanceof ReportDisplay) {
                 ((ReportDisplay) curPanel).resetReadyButton();
-                System.err.println("resetReadyButton");
-                System.err.flush();
             }
         }
 

@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
 
@@ -52,10 +53,8 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
         final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
         
-        if ((atype == null) 
-                || (atype.getMunitionType() != AmmoType.M_AIRBURST)) {
-            System.err
-                    .println("MekMortarFlareHandler: not using airburst ammo!");
+        if ((atype == null) || (atype.getMunitionType() != AmmoType.M_AIRBURST)) {
+            LogManager.getLogger().error("Not using airburst ammo!");
             return true;
         }
 

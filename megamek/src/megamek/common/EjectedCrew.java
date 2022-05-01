@@ -40,7 +40,7 @@ public class EjectedCrew extends Infantry {
     public EjectedCrew(Entity originalRide) {
         super();
         setCrew(originalRide.getCrew());
-        System.out.println("Ejecting crew size: " + originalRide.getCrew().getSize());
+        LogManager.getLogger().info("Ejecting crew size: " + originalRide.getCrew().getSize());
         setChassis(VEE_EJECT_NAME);
         setModel(originalRide.getCrew().getName());
         //setWeight(1); // Copied from original MechWarrior code, but does this really do anything?
@@ -115,7 +115,6 @@ public class EjectedCrew extends Infantry {
         setCrew(crew);
         setChassis(VEE_EJECT_NAME);
         setModel(crew.getName());
-        //setWeight(1);
 
         // Finish initializing this unit.
         setOwner(owner);

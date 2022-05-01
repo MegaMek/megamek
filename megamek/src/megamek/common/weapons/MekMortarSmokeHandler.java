@@ -26,6 +26,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author arlith
@@ -67,12 +68,10 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
         
-        if ((atype == null) 
-                || (atype.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
-            System.err.println("MekMortarFlareHandler: not using smoke ammo!");
+        if ((atype == null) || (atype.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
+            LogManager.getLogger().error("Not using smoke ammo!");
             return true;
         }
 

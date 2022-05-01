@@ -1531,7 +1531,7 @@ public abstract class Mech extends Entity {
         EquipmentType sinkType = EquipmentType.get(sinkName);
 
         if (sinkType == null) {
-            System.out.println("Mech: can't find heat sink to add to engine");
+            LogManager.getLogger().info("Mech: can't find heat sink to add to engine");
         }
 
         int toAllocate = Math.min(
@@ -1555,14 +1555,13 @@ public abstract class Mech extends Entity {
         EquipmentType sinkType = EquipmentType.get(sinkName);
 
         if (sinkType == null) {
-            System.out.println("Mech: can't find heat sink to add to engine");
+            LogManager.getLogger().info("Mech: can't find heat sink to add to engine");
         }
 
         for (int i = 0; i < toAllocate; i++) {
             try {
-                addEquipment(new Mounted(this, sinkType), Entity.LOC_NONE,
-                        false);
-            } catch (LocationFullException ex) {
+                addEquipment(new Mounted(this, sinkType), Entity.LOC_NONE, false);
+            } catch (LocationFullException ignored) {
                 // um, that's impossible.
             }
         }

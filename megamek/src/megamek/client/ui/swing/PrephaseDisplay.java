@@ -45,6 +45,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
@@ -259,13 +260,10 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
                 // We were *supposed* to have found an on-board entity.
                 if (null == ce().getPosition()) {
-                    System.err.println("PrephaseDisplay: could not find "
-                            + "an on-board entity: " +
-                            en);
+                    LogManager.getLogger().error("Could not find an on-board entity: " + en);
                     return;
                 }
-
-            } // End ce()-not-on-board
+            }
 
             clientgui.getBoardView().highlight(ce().getPosition());
             clientgui.getBoardView().select(null);
@@ -276,11 +274,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             if (!clientgui.getBoardView().isMovingUnits() && !ce().isOffBoard()) {
                 clientgui.getBoardView().centerOnHex(ce().getPosition());
             }
-
-
         } else {
-            System.err.println("PrephaseDisplay: "
-                    + "tried to select non-existent entity: " + en);
+            LogManager.getLogger().error("Tried to select non-existent entity: " + en);
         }
     }
 

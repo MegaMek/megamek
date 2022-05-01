@@ -421,11 +421,9 @@ public class Report implements Serializable {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Error: Report#getText --> Array Index out of "
-                    + "Bounds Exception (index: " + index
-                    + ") for a report with ID " + messageId
-                    + ".  Maybe Report#add wasn't called enough "
-                    + "times for the amount of tags in the message?");
+            LogManager.getLogger().error("Error: Report#getText --> Array Index out of Bounds Exception (index: "
+                    + index + ") for a report with ID " + messageId
+                    + ". Maybe Report#add wasn't called enough times for the amount of tags in the message?");
             return "[Reporting Error: see megamek.log for details]";
         }
     }
@@ -445,10 +443,8 @@ public class Report implements Serializable {
 
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
-            System.out.println("Error: No message found for ID "
-                    + messageId);
-            text.append("[Reporting Error for message ID ").append(
-                    messageId).append("]");
+            LogManager.getLogger().error("No message found for ID " + messageId);
+            text.append("[Reporting Error for message ID ").append(messageId).append("]");
         } else {
             int i = 0;
             int mark = 0;

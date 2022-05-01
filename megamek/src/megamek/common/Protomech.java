@@ -1428,10 +1428,8 @@ public class Protomech extends Entity {
     @Override
     public boolean isCrippled() {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn())
-            {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Pilot has taken 4+ damage.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             }
             return true;
         }
@@ -1441,10 +1439,9 @@ public class Protomech extends Entity {
                 return false;
             }
         }
-        if (PreferenceManager.getClientPreferences().debugOutputOn())
-        {
-            System.out.println(getDisplayName()
-                    + " CRIPPLED: has no more viable weapons.");
+
+        if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
         }
         return true;
     }
@@ -1544,8 +1541,7 @@ public class Protomech extends Entity {
     public PilotingRollData checkLandingInHeavyWoods(
             EntityMovementType overallMoveType, Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,
-                         "Protomechs cannot fall");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "Protomechs cannot fall");
         return roll;
     }
     

@@ -23,6 +23,7 @@ import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -1544,9 +1545,7 @@ public class CEntity {
                     raw_damage_array[i] = damage_value;
                 }
                 raw_damage_array[0] = damage_value / 2.0;
-
             }
-
         }
 
         // Zero damage is acceptable, but negative damage means
@@ -1556,10 +1555,8 @@ public class CEntity {
 
         if ((raw_damage_array[0] < 0) || (raw_damage_array[1] < 0)
                 || (raw_damage_array[2] < 0) || (raw_damage_array[3] < 0)) {
-
-            System.out
-                    .println("Weapons characterization: negative damage for weapon "
-                            + weapon.getName() + ".");
+            LogManager.getLogger().info("Weapons characterization: negative damage for weapon "
+                    + weapon.getName() + ".");
 
             raw_damage_array[0] = 1.0;
             raw_damage_array[1] = 1.0;
@@ -1584,7 +1581,6 @@ public class CEntity {
      *            ArrayList of Mounted returned by Entity.getAmmo()
      * @return 3-element array indicating short/medium/long ranges available
      */
-
     private static boolean[] getAmmoRanges(WeaponType weapon,
             ArrayList<Mounted> ammo_list) {
 

@@ -16,6 +16,7 @@
 package megamek.common.util;
 
 import megamek.client.bot.princess.CardinalEdge;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.*;
 import megamek.common.util.generator.ElevationGenerator;
 import megamek.common.util.generator.SimplexGenerator;
@@ -1136,8 +1137,8 @@ public class BoardUtilities {
         int[] elevationCount = new int[range + 1];
         for (int w = 0; w < width; w++) {
             for (int h = 0; h < height; h++) {
-                elevationMap[w][h] = (int) Math.ceil(elevationMap[w][h] * scale) + inc;
-                elevationCount[elevationMap[w][h]]++;
+                elevationMap[w][h] = (int) Math.round(elevationMap[w][h] * scale) + inc;
+                elevationCount[MathUtility.clamp(elevationMap[w][h], 0, range)]++;
             }
         }
 

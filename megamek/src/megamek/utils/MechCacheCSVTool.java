@@ -154,9 +154,9 @@ public class MechCacheCSVTool {
                         continue;
                     }
 
-                    if (name.contains("Bay") || name.contains("Ammo") || name.contains("Infantry Auto Rifle")
-                            || name.contains("SwarmMek") || name.contains("SwarmWeaponMek")
-                            || name.contains("StopSwarm") || name.contains("LegAttack")) {
+                    if (Stream.of("Bay", "Ammo", "Infantry Auto Rifle", Infantry.LEG_ATTACK,
+                                    Infantry.SWARM_MEK, Infantry.SWARM_WEAPON_MEK, Infantry.STOP_SWARM)
+                            .anyMatch(name::contains)) {
                         continue;
                     }
 

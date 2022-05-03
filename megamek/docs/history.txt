@@ -52,6 +52,7 @@ VERSION HISTORY:
 + PR #3584: Make a cost calculation report available for all unit types
 + PR #3591: Fixing MegaMek log paths
 + PR #3600: Enable Gun Emplacement ToolTips
++ PR #3614: Fixing Athmosphere typos
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.2 from 2.0.1
 + Updating to JAXB 4.0.0 from 2.3.2

@@ -248,14 +248,14 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * greater than current top of the stack.
      */
     public static class AeroMultiPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
-        boolean inAthmosphere;
+        boolean inAtmosphere;
 
-        private AeroMultiPathRelaxer(boolean inAthmosphere) {
-            this.inAthmosphere = inAthmosphere;
+        private AeroMultiPathRelaxer(boolean inAtmosphere) {
+            this.inAtmosphere = inAtmosphere;
         }
 
         @Override
-        public Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
+        public @Nullable Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
             Objects.requireNonNull(mpCandidate);
             if (v == null) {
                 return new ArrayDeque<>(Collections.singleton(mpCandidate));
@@ -292,11 +292,12 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             }
 
             // assert( topMP thrust used is less or equal than candidates and hexesMoved are equal)
-            if (!inAthmosphere) {
-                return null; //there is no point considering hexes flown straight if we are not in athmo
+            if (!inAtmosphere) {
+                // there is no point considering hexes flown straight if we are not in atmosphere
+                return null;
             }
 
-            //while in athmosphere we should consider paths that have higher thrust used but flew more hexes straight
+            // while in atmosphere we should consider paths that have higher thrust used but flew more hexes straight
             MoveStep topLastStep = topMP.getLastStep();
             MoveStep candidateLastStep = mpCandidate.getLastStep();
             int hs1 = topLastStep == null ? 0 : topLastStep.getNStraight();

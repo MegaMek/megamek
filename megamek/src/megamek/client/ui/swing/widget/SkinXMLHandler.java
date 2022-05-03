@@ -190,7 +190,7 @@ public class SkinXMLHandler {
         // Build the XML document.
         try {
             DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
-            LogManager.getLogger().info("Parsing " + file.getName());
+            LogManager.getLogger().debug("Parsing " + file.getName());
             Document doc = builder.parse(file);
 
             // Get the list of units.

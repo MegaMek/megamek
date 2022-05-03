@@ -31,26 +31,16 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
     boolean handledAmmoAndReport = false;
 
     /**
-     * This constructor may only be used for deserialization.
+     * This constructor can only be used for deserialization.
      */
     protected ArtilleryBayWeaponIndirectFireHandler() {
         super();
     }
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
     public ArtilleryBayWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#cares(int)
-     */
     @Override
     public boolean cares(final GamePhase phase) {
         return phase.isOffboard() || phase.isTargeting();

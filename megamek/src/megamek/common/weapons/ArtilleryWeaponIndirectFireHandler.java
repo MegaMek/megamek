@@ -36,19 +36,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     private int shootingBA = -1;
 
     /**
-     * This constructor may only be used for deserialization.
+     * This constructor can only be used for deserialization.
      */
     protected ArtilleryWeaponIndirectFireHandler() {
         super();
     }
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
-    public ArtilleryWeaponIndirectFireHandler(ToHitData t,
-            WeaponAttackAction w, Game g, Server s) {
+    public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
         if (w.getEntity(g) instanceof BattleArmor) {
             shootingBA = ((BattleArmor) w.getEntity(g)).getNumberActiverTroopers();

@@ -88,7 +88,7 @@ public class TestBot extends BotClient {
         int initiative = 0;
         MoveOption min = null;
 
-        LogManager.getLogger().debug("beginning movement calculations...");
+        LogManager.getLogger().debug("Beginning movement calculations...");
 
         // first check and that someone else has moved so we don't replan
         Object[] enemy_array = getEnemyEntities().toArray();
@@ -103,7 +103,7 @@ public class TestBot extends BotClient {
             if ((min == null) || !min.isMoveLegal()
                     || (min.isPhysical && centities.get(min.getPhysicalTargetId()).isPhysicalTarget)) {
                 old_moves = null;
-                LogManager.getLogger().debug("recalculating moves since the old move was invalid");
+                LogManager.getLogger().debug("Recalculating moves since the old move was invalid");
                 return calculateMoveTurn();
             }
         } else {

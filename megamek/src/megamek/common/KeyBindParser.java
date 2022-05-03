@@ -68,14 +68,14 @@ public class KeyBindParser {
         // Build the XML document.
         try {
             DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
-            LogManager.getLogger().info("Parsing " + file.getName());
+            LogManager.getLogger().debug("Parsing " + file.getName());
             Document doc = builder.parse(file);
-            LogManager.getLogger().info("Parsing finished.");
+            LogManager.getLogger().debug("Parsing finished.");
 
             // Get the list of units.
             NodeList listOfUnits = doc.getElementsByTagName(KEY_BIND);
             int totalBinds = listOfUnits.getLength();
-            LogManager.getLogger().info("Total number of key binds parsed: " + totalBinds);
+            LogManager.getLogger().debug("Total number of key binds parsed: " + totalBinds);
 
             for (int bindCount = 0; bindCount < totalBinds; bindCount++) {
 

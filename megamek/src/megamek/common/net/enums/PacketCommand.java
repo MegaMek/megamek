@@ -19,6 +19,7 @@
 package megamek.common.net.enums;
 
 public enum PacketCommand {
+    //region Enum Declarations
     CLOSE_CONNECTION,
     SERVER_VERSION_CHECK,
     SERVER_GREETING,
@@ -120,6 +121,7 @@ public enum PacketCommand {
     CFR_TELEGUIDED_TARGET,
     CFR_TAG_TARGET,
     GAME_VICTORY_EVENT;
+    //endregion Enum Declarations
 
     //region Boolean Comparison Methods
     public boolean isSendingBoard() {

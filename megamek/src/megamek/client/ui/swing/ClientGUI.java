@@ -2062,7 +2062,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.target"), tgt.getDisplayName(), th));
                         }
                     }
-                    //Set up the selection pane
+                    // Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message";
                     msg = Messages.getString(i18nString);
                     i18nString = "TeleMissileTargetDialog.title";
@@ -2078,10 +2078,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             }
                         }
                     } else {
-                        // If input IS null, as in the case of pressing the close or cancel buttons...
+                        // If input is null, as in the case of pressing the close or cancel buttons...
                         // Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTelemissileTargetCFRResponse(0);
                     }
+                    break;
                 case CFR_TAG_TARGET:
                     List<Integer> TAGTargets = evt.getTAGTargets();
                     List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
@@ -2114,6 +2115,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         //Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTAGTargetCFRResponse(0);
                     }
+                    break;
+                default:
+                    break;
             }
         }
     };

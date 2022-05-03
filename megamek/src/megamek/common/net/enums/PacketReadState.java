@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -17,25 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.net.events;
+package megamek.common.net.enums;
 
-import megamek.common.net.enums.ConnectionEventType;
-
-/**
- * Instances of this class are sent when Connection established
- */
-public class ConnectedEvent extends AbstractConnectionEvent {
-    //region Variable Declarations
-    private static final long serialVersionUID = -5880245401940306338L;
-    //endregion Variable Declarations
-
-    //region Constructors
-    /**
-     * Constructs a connected connection event
-     * @param source The object on which the Event initially occurred.
-     */
-    public ConnectedEvent(final Object source) {
-        super(ConnectionEventType.CONNECTED, source);
-    }
-    //endregion Constructors
+public enum PacketReadState {
+    //region Enum Declarations
+    HEADER,
+    DATA
+    //endregion Enum Declarations
 }

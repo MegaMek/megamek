@@ -73,9 +73,9 @@ public class GameCFREvent extends GameEvent {
     /**
      * Construct game event
      */
-    public GameCFREvent(Object source, PacketCommand t) {
+    public GameCFREvent(Object source, PacketCommand cfrType) {
         super(source);
-        cfrType = t;
+        this.cfrType = cfrType;
     }
     
     /**
@@ -109,16 +109,16 @@ public class GameCFREvent extends GameEvent {
                 break;
             case CFR_TAG_TARGET:
                 evtName += " assigning homing artillery targets: " + tagTargets;
+                break;
+            default:
+                break;
         }
         return evtName;
     }
 
     @Override
     public String toString() {
-        StringBuffer buff = new StringBuffer();
-        buff.append(getEventName());
-        buff.append(" game event ");
-        return buff.toString();
+        return getEventName() + " game event ";
     }
 
     public PacketCommand getCFRType() {

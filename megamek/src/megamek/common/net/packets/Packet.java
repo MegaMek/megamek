@@ -11,7 +11,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.common.net;
+package megamek.common.net.packets;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.net.enums.PacketCommand;

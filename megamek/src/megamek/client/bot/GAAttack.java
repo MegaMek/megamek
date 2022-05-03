@@ -158,8 +158,8 @@ public class GAAttack extends GA {
         try {
             target = target_array.get(chromArrayList.genes[chromosomeDim - 1]);
         } catch (Exception ex) {
-            LogManager.getLogger().info(chromosomeDim + " " + chromArrayList.genes.length);
-            LogManager.getLogger().info(target_array.size());
+            LogManager.getLogger().error(chromosomeDim + " with gene length "
+                    + chromArrayList.genes.length + " with target size of " + target_array.size(), ex);
             target = target_array.get(valid_target_indexes.get(0));
         }
         for (int iGene = 0; iGene < (chromosomeDim - 1); iGene++) {

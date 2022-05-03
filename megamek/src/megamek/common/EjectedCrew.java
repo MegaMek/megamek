@@ -1,20 +1,33 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2014-2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package megamek.common;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
 
-/** This class describes a vehicle crew that has abandoned its vehicle and now
- * functions as a rifle foot platoon of equal size.
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * This class describes a vehicle crew that has abandoned its vehicle and now functions as a rifle
+ * foot platoon of equal size.
  *
  * @author Klaus Mittag
  */
@@ -35,15 +48,14 @@ public class EjectedCrew extends Infantry {
     public static final String PILOT_EJECT_NAME = "Pilot";
     public static final String MW_EJECT_NAME = "MechWarrior";
     public static final String SPACE_EJECT_NAME = "Spacecraft Crew from ";
-    public static final int EJ_CREW_MAX_MEN = 50; //See SO p27
+    public static final int EJ_CREW_MAX_MEN = 50; // See SO p27
 
     public EjectedCrew(Entity originalRide) {
         super();
         setCrew(originalRide.getCrew());
-        LogManager.getLogger().info("Ejecting crew size: " + originalRide.getCrew().getSize());
+        LogManager.getLogger().debug("Ejecting crew size: " + originalRide.getCrew().getSize());
         setChassis(VEE_EJECT_NAME);
         setModel(originalRide.getCrew().getName());
-        //setWeight(1); // Copied from original MechWarrior code, but does this really do anything?
 
         // Generate the display name, then add the original ride's name.
         setDisplayName(getDisplayName() + " of " + originalRide.getDisplayName());

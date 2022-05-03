@@ -80,8 +80,8 @@ public class MechPanelTabStrip extends PicMap {
         mt.addImage(selectedCorner, 0);
         try {
             mt.waitForAll();
-        } catch (InterruptedException e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
 
         if (mt.isErrorID(0)) {
@@ -90,21 +90,17 @@ public class MechPanelTabStrip extends PicMap {
 
         for (int i = 0; i < 6; i++) {
             if (idleImage[i].getWidth(null) != activeImage[i].getWidth(null)) {
-                LogManager.getLogger().warn("TabStrip Warning: idleImage and "
-                        + "activeImage do not match widths for image " + i);
+                LogManager.getLogger().warn("idleImage and activeImage do not match widths for image " + i);
             }
             if (idleImage[i].getHeight(null) != activeImage[i].getHeight(null)) {
-                LogManager.getLogger().warn("TabStrip Warning: idleImage and "
-                        + "activeImage do not match heights for image " + i);
+                LogManager.getLogger().warn("idleImage and activeImage do not match heights for image " + i);
             }
         }
         if (idleCorner.getWidth(null) != selectedCorner.getWidth(null)) {
-            LogManager.getLogger().warn("TabStrip Warning: idleCorner and "
-                    + "selectedCorner do not match widths!");
+            LogManager.getLogger().warn("idleCorner and selectedCorner do not match widths!");
         }
         if (idleCorner.getHeight(null) != selectedCorner.getHeight(null)) {
-            LogManager.getLogger().warn("TabStrip Warning: idleCorner and "
-                    + "selectedCorner do not match heights!");
+            LogManager.getLogger().warn("idleCorner and selectedCorner do not match heights!");
         }
     }
 
@@ -190,7 +186,6 @@ public class MechPanelTabStrip extends PicMap {
 
     @Override
     public void onResize() {
-        //ignore
+        // ignore
     }
-
 }

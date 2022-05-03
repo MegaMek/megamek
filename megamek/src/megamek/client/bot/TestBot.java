@@ -88,7 +88,7 @@ public class TestBot extends BotClient {
         int initiative = 0;
         MoveOption min = null;
 
-        LogManager.getLogger().info("beginning movement calculations...");
+        LogManager.getLogger().debug("beginning movement calculations...");
 
         // first check and that someone else has moved so we don't replan
         Object[] enemy_array = getEnemyEntities().toArray();
@@ -103,7 +103,7 @@ public class TestBot extends BotClient {
             if ((min == null) || !min.isMoveLegal()
                     || (min.isPhysical && centities.get(min.getPhysicalTargetId()).isPhysicalTarget)) {
                 old_moves = null;
-                LogManager.getLogger().info("recalculating moves since the old move was invalid");
+                LogManager.getLogger().debug("recalculating moves since the old move was invalid");
                 return calculateMoveTurn();
             }
         } else {
@@ -111,7 +111,6 @@ public class TestBot extends BotClient {
             ArrayList<MoveOption[]> possible = new ArrayList<>();
 
             for (Entity entity : game.getEntitiesVector()) {
-
                 // ignore loaded and off-board units
                 if ((entity.getPosition() == null) || entity.isOffBoard()) {
                     continue;
@@ -200,7 +199,7 @@ public class TestBot extends BotClient {
                     min = lance.getResult();
                     old_moves = lance;
                 } else if (possible.size() > 0 && (possible.get(0) != null)
-                           && (possible.get(0).length > 0)) {
+                        && (possible.get(0).length > 0)) {
                     min = possible.get(0)[0];
                 }
             }
@@ -231,13 +230,13 @@ public class TestBot extends BotClient {
         if (min.isPhysical) {
             centities.get(min.getPhysicalTargetId()).isPhysicalTarget = true;
         }
-        LogManager.getLogger().info(min);
+        LogManager.getLogger().debug(min);
         min.getCEntity().current = min;
         min.getCEntity().last = min;
         min.getCEntity().moved = true;
 
         long exit = System.currentTimeMillis();
-        LogManager.getLogger().info("move turn took " + (exit - enter) + " ms");
+        LogManager.getLogger().debug("move turn took " + (exit - enter) + " ms");
 
         // If this unit has a jammed RAC, and it has only walked,
         // add an unjam action
@@ -394,12 +393,11 @@ public class TestBot extends BotClient {
         List<Entity> enemies = getEnemyEntities();
         MoveOption[] move_array;
         if (self.getEntity().isSelectableThisTurn() && !self.moved) {
-            move_array = self.getAllMoves(this).values()
-                             .toArray(new MoveOption[0]);
+            move_array = self.getAllMoves(this).values().toArray(new MoveOption[0]);
         } else {
             move_array = new MoveOption[]{self.current};
         }
-        LogManager.getLogger().info(self.getEntity().getShortName() + " has " + move_array.length + " moves");
+        LogManager.getLogger().debug(self.getEntity().getShortName() + " has " + move_array.length + " moves");
         for (MoveOption option : move_array) {
             option.setState();
             boolean aptPiloting = option.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
@@ -1598,7 +1596,7 @@ public class TestBot extends BotClient {
                 }
             }
         }
-        LogManager.getLogger().info("Us " + friend_sum + " Them " + foe_sum);
+        LogManager.getLogger().debug("Us " + friend_sum + " Them " + foe_sum);
         // do some more reasoning...
         double unit_values = friend_sum;
         double enemy_values = foe_sum;
@@ -1633,7 +1631,7 @@ public class TestBot extends BotClient {
                         // gusto
                         centity.strategy.target += .3;
                     }
-                    LogManager.getLogger().info(centity.getEntity().getShortName() + " " + centity.strategy.target);
+                    LogManager.getLogger().debug(centity.getEntity().getShortName() + " " + centity.strategy.target);
                 }
             }
         }
@@ -1840,7 +1838,7 @@ public class TestBot extends BotClient {
         if (min.isPhysical) {
             centities.get(min.getPhysicalTargetId()).isPhysicalTarget = true;
         }
-        LogManager.getLogger().info(min);
+        LogManager.getLogger().debug(min);
         min.getCEntity().current = min;
         min.getCEntity().last = min;
         min.getCEntity().moved = true;
@@ -1858,8 +1856,7 @@ public class TestBot extends BotClient {
                     int rac_damage = 0;
                     int other_damage = 0;
                     int clearance_range = 0;
-                    for (Mounted equip : min.getCEntity().entity
-                            .getWeaponList()) {
+                    for (Mounted equip : min.getCEntity().entity.getWeaponList()) {
                         WeaponType test_weapon = new WeaponType();
 
                         test_weapon = (WeaponType) equip.getType();

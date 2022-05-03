@@ -1555,7 +1555,7 @@ public class CEntity {
 
         if ((raw_damage_array[0] < 0) || (raw_damage_array[1] < 0)
                 || (raw_damage_array[2] < 0) || (raw_damage_array[3] < 0)) {
-            LogManager.getLogger().info("Weapons characterization: negative damage for weapon "
+            LogManager.getLogger().debug("Weapons characterization: negative damage for weapon "
                     + weapon.getName() + ".");
 
             raw_damage_array[0] = 1.0;

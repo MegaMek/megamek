@@ -122,7 +122,7 @@ public interface Transporter extends Serializable {
      */
     int getCargoMpReduction(Entity carrier);
 
-    void setGame(Game game);
+    void setGame(Game game) throws Exception;
     
     /**
      * clear out all troops listed in the transporter. Used by MHQ to reset units after game

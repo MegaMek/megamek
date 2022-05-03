@@ -1333,11 +1333,12 @@ public class Game implements Serializable {
         }
     }
 
-    public void setEntity(int id, Entity entity) {
+    public void setEntity(int id, Entity entity) throws Exception {
         setEntity(id, entity, null);
     }
 
-    public synchronized void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) throws Exception {
+    public synchronized void setEntity(int id, Entity entity, Vector<UnitLocation> movePath)
+            throws Exception {
         final Entity oldEntity = getEntity(id);
         if (oldEntity == null) {
             addEntity(entity);
@@ -1358,7 +1359,7 @@ public class Game implements Serializable {
             processGameEvent(new GameEntityChangeEvent(this, entity, movePath, oldEntity));
         }
 
-        if (entities.size() == entityIds.size()) {
+        if (entities.size() != entityIds.size()) {
             throw new Exception("Set Entity failed");
         }
     }

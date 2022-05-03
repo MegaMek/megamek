@@ -744,7 +744,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      * Sets the buttons to their proper states
      */
-    private void updateButtons() {
+    private void updateButtons() throws Exception {
         final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
         final Entity ce = ce();
         if (ce == null) {
@@ -896,8 +896,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(true);
         }
 
-
-        // if small craft/dropship that has unloaded units, then only allowed
+        // if small craft/DropShip that has unloaded units, then only allowed
         // to unload more
         if (ce.hasUnloadedUnitsFromBays()) {
             disableButtons();

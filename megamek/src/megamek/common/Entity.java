@@ -46,6 +46,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collector;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -972,7 +973,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Restores the entity after serialization
      */
-    public void restore() {
+    public void restore() throws Exception {
         // restore all mounted equipments
         for (Mounted mounted : equipmentList) {
             mounted.restore();
@@ -1059,7 +1060,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param game The current {@link Game}
      */
     @Override
-    public void setGame(Game game) {
+    public void setGame(Game game) throws Exception {
         this.game = game;
         restore();
         // Make sure the owner is set.
@@ -8101,7 +8102,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param component - One of this new entity's <code>Transporter</code>s.
      */
-    public void addTransporter(Transporter component) {
+    public void addTransporter(Transporter component) throws Exception {
         addTransporter(component, false);
     }
 
@@ -8112,7 +8113,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param component - One of this new entity's <code>Transporter</code>s.
      * @param isOmniPod - Whether this is part of an omni unit's pod space.
      */
-    public void addTransporter(Transporter component, boolean isOmniPod) {
+    public void addTransporter(Transporter component, boolean isOmniPod) throws Exception {
         component.setGame(game);
         transports.add(component);
         if (isOmniPod) {
@@ -12059,7 +12060,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Do nothing here, set in base classes
     }
 
-    public void setGameOptions() {
+    public void setGameOptions() throws Exception {
         if (game == null) {
             return;
         }
@@ -12081,7 +12082,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             }
         }
-        
+
         for (Mounted mounted : getWeaponList()) {
             if (mounted.getType() instanceof Weapon) {
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
@@ -12100,6 +12101,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 misc.getType().setModes(modes.toArray(stringArray));
                 misc.getType().setInstantModeSwitch(false);
             }
+
             if (misc.getType().hasFlag(MiscType.F_ECM)) {
                 ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
@@ -12116,6 +12118,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         modes.add("ECM & ECCM");
                     }
                 }
+
                 if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
@@ -12126,10 +12129,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         modes.add("Ghost Targets");
                     }
                 }
+
                 misc.getType().setModes(modes.toArray(stringArray));
             }
         }
-
     }
 
     public void setGrappleSide(int side) {

@@ -161,7 +161,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
                     TitledBorder.LEFT, TitledBorder.TOP));
 
             displayTiled = true;
-            if (imgPath.size() == isTiled.size()) {
+            if (imgPath.size() != isTiled.size()) {
                 throw new Exception();
             }
 

@@ -589,13 +589,7 @@ public class EquipmentType implements ITechnology {
      * @param modes
      *            non null, non empty list of available mode names.
      */
-    protected void setModes(String... modes) throws Exception {
-        if (modes == null) {
-            throw new Exception("Cannot parse a null mode array");
-        } else if (modes.length == 0) {
-            throw new Exception("Cannot parse an empty mode array");
-        }
-
+    protected void setModes(String... modes) {
         Vector<EquipmentMode> newModes = new Vector<>(modes.length);
         for (String mode : modes) {
             newModes.addElement(EquipmentMode.getMode(mode));
@@ -685,7 +679,6 @@ public class EquipmentType implements ITechnology {
      * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
-        assert ((modes != null) && (modeNum >= 0) && (modeNum < modes.size())) : "Invalid Mode";
         return modes.elementAt(modeNum);
     }
 

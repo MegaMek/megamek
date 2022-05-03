@@ -41,7 +41,7 @@ public class MovePath implements Cloneable, Serializable {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(Game game) throws Exception {
         this.game = game;
     }
 
@@ -118,7 +118,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Generates a new, empty, movement path object.
      */
-    public MovePath(final Game game, final Entity entity) {
+    public MovePath(final Game game, final Entity entity) throws Exception {
         this.setEntity(entity);
         this.setGame(game);
     }
@@ -542,11 +542,11 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
 
-    public void compile(final Game g, final Entity en) {
+    public void compile(final Game g, final Entity en) throws Exception {
         compile(g, en, true);
     }
 
-    public void compile(final Game g, final Entity en, boolean clip) {
+    public void compile(final Game g, final Entity en, boolean clip) throws Exception {
         setGame(g);
         setEntity(en);
         final Vector<MoveStep> temp = new Vector<>(steps);
@@ -1227,7 +1227,7 @@ public class MovePath implements Cloneable, Serializable {
      * @param dest the destination <code>Coords</code> of the move.
      * @param type the type of movement step required.
      */
-    public void findPathTo(final Coords dest, final MoveStepType type) {
+    public void findPathTo(final Coords dest, final MoveStepType type) throws Exception {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
 
         ShortestPathFinder pf = ShortestPathFinder.newInstanceOfAStar(dest, type, game);
@@ -1255,6 +1255,7 @@ public class MovePath implements Cloneable, Serializable {
                 finPath = bestMp;
             }
         }
+
         if (finPath != null) {
             finPath.compile(game, entity, false);
             this.steps = finPath.steps;
@@ -1536,8 +1537,14 @@ public class MovePath implements Cloneable, Serializable {
      * @return the cloned MovePath
      */
     @Override
-    public MovePath clone() {
-        final MovePath copy = new MovePath(getGame(), getEntity());
+    public @Nullable MovePath clone() {
+        final MovePath copy;
+        try {
+            copy = new MovePath(getGame(), getEntity());
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            return null;
+        }
         copyFields(copy);
         return copy;
     }

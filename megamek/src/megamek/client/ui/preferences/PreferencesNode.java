@@ -20,6 +20,7 @@ package megamek.client.ui.preferences;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents a group of {@link PreferenceElement}s that are part of the same Class.
@@ -37,8 +38,7 @@ public class PreferencesNode {
 
     //region Constructors
     public PreferencesNode(final Class<?> node) {
-        assert node != null;
-        this.node = node;
+        this.node = Objects.requireNonNull(node);
         this.elements = new HashMap<>();
         setInitialValues(new HashMap<>());
         setInitialized(false);
@@ -107,26 +107,28 @@ public class PreferencesNode {
      * This method should only be called once.
      * @param initialValues the initial values for the elements.
      */
-    public void initialize(final Map<String, String> initialValues) {
-        assert initialValues != null;
-        assert !isInitialized();
+    public void initialize(final Map<String, String> initialValues) throws Exception {
+        if (!isInitialized()) {
+            throw new Exception();
+        }
         setInitialized(true);
-        setInitialValues(initialValues);
+        setInitialValues(Objects.requireNonNull(initialValues));
     }
 
     /**
      * This method should only be called once.
      * @return the final values of all the elements managed by this node.
      */
-    public Map<String, String> getFinalValues() {
-        assert !isFinalized();
+    public Map<String, String> getFinalValues() throws Exception {
+        if (isFinalized()) {
+            throw new Exception();
+        }
+
         setFinalized(true);
         final Map<String, String> finalValues = new HashMap<>(getElements().size());
 
         // Use the values we had stored from initialization
-        for (final Map.Entry<String, String> initialValue : getInitialValues().entrySet()) {
-            finalValues.put(initialValue.getKey(), initialValue.getValue());
-        }
+        finalValues.putAll(getInitialValues());
 
         // Overwrite the initial values with values generated during this session
         for (final PreferenceElement wrapper : getElements().values()) {

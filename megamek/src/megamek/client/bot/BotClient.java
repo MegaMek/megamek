@@ -24,7 +24,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.net.Packet;
-import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
@@ -203,7 +202,7 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateFiringTurn();
 
-    protected abstract void calculateDeployment();
+    protected abstract void calculateDeployment() throws Exception;
 
     protected void initTargeting() { }
     
@@ -1149,14 +1148,16 @@ public abstract class BotClient extends Client {
     }
 
     @Override
-    protected void correctName(Packet inP) {
+    protected void correctName(Packet inP) throws Exception {
         // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
             Map<String, Client> bots = getClientGUI().getBots();
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
-            assert (equals(bots.get(oldName)));
+            if (!this.equals(bots.get(oldName))) {
+                throw new Exception();
+            }
             bots.remove(oldName);
             bots.put(newName, this);
         }

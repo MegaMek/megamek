@@ -279,7 +279,6 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                 return v;
             }
 
-            // assert( topMP.getHexesMoved() == mpCandidate.getHexesMoved() );
             int dMP = topMP.getMpUsed() - mpCandidate.getMpUsed();
             if (dMP > 0) {
                 /*
@@ -291,7 +290,6 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                         + "while traveling the same distance"));
             }
 
-            // assert( topMP thrust used is less or equal than candidates and hexesMoved are equal)
             if (!inAthmosphere) {
                 return null; //there is no point considering hexes flown straight if we are not in athmo
             }

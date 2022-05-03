@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import java.io.*;
+import java.rmi.server.ExportException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -224,7 +225,12 @@ public class WeaponOrderHandler {
                 if (weapOrder.orderType == WeaponSortOrder.CUSTOM) {
                     String[] weaponList = weaponListElement.getTextContent().split(",");
                     String[] orderList = orderListElement.getTextContent().split(",");
-                    assert (weaponList.length == orderList.length);
+                    if (weaponList.length != orderList.length) {
+                        throw new Exception(String.format(
+                                "weaponList's length of %s and orderList's length of %s do not match",
+                                weaponList.length, orderList.length));
+                    }
+
                     for (int i = 0; i < weaponList.length; i++) {
                         weapOrder.customWeaponOrderMap.put(
                                 Integer.parseInt(weaponList[i]),

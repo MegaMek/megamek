@@ -35,9 +35,12 @@ public abstract class PreferenceElement {
     //endregion Variable Declarations
 
     //region Constructors
-    protected PreferenceElement(final String name) {
-        assert (name != null) && !name.isBlank();
-        this.name = name;
+    protected PreferenceElement(final String name) throws Exception {
+        if ((name == null) || name.isBlank()) {
+            throw new Exception("Cannot create PreferenceElement with null or empty name");
+        } else {
+            this.name = name;
+        }
     }
     //endregion Constructors
 

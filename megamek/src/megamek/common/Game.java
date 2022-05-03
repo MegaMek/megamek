@@ -1274,7 +1274,7 @@ public class Game implements Serializable {
      * @param entity The Entity to add.
      * @param genEvent A flag that determines whether a GameEntityNewEvent is generated.
      */
-    public synchronized void addEntity(Entity entity, boolean genEvent) {
+    public synchronized void addEntity(Entity entity, boolean genEvent) throws Exception {
         entity.setGame(this);
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
@@ -1323,7 +1323,10 @@ public class Game implements Serializable {
             ((Mech) entity).setCondEjectHeadshot(true);
         }
 
-        assert (entities.size() == entityIds.size()) : "Add Entity failed";
+        if (entities.size() == entityIds.size()) {
+            throw new Exception("Add Entity failed");
+        }
+
         if (genEvent) {
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
@@ -1334,7 +1337,7 @@ public class Game implements Serializable {
         setEntity(id, entity, null);
     }
 
-    public synchronized void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) {
+    public synchronized void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) throws Exception {
         final Entity oldEntity = getEntity(id);
         if (oldEntity == null) {
             addEntity(entity);
@@ -1352,10 +1355,12 @@ public class Game implements Serializable {
                 lastEntityId = id;
             }
 
-            processGameEvent(
-                    new GameEntityChangeEvent(this, entity, movePath, oldEntity));
+            processGameEvent(new GameEntityChangeEvent(this, entity, movePath, oldEntity));
         }
-        assert (entities.size() == entityIds.size()) : "Set Entity Failed";
+
+        if (entities.size() == entityIds.size()) {
+            throw new Exception("Set Entity failed");
+        }
     }
 
     /**

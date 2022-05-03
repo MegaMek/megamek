@@ -444,8 +444,6 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             return;
         }
 
-        assert (newTarget != null);
-        
         // Add only targets in arc
         Vector<Aero> inArc = new Vector<>();
         for (Aero a : targets) {
@@ -454,6 +452,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 inArc.add(a);
             }
         }
+
         if (inArc.isEmpty()) {
             newTarget = aaa.getTarget(game);
             toHit = new ToHitData(TargetRoll.IMPOSSIBLE,

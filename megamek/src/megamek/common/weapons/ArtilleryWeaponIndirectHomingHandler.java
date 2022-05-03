@@ -29,6 +29,7 @@ import megamek.server.Server.DamageType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirectFireHandler {
@@ -354,7 +355,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 v.add(ti);
             }
         }
-        assert (newTarget != null);
+
+        Objects.requireNonNull(newTarget);
         if (v.isEmpty()) {
             aaa.setTargetId(newTarget.getTargetId());
             aaa.setTargetType(newTarget.getTargetType());

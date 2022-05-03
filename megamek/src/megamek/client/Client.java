@@ -35,7 +35,10 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.net.*;
+import megamek.common.net.AbstractConnection;
+import megamek.common.net.ConnectionFactory;
+import megamek.common.net.ConnectionListener;
+import megamek.common.net.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
@@ -1048,7 +1051,7 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-    protected void receiveEntityAdd(Packet packet) {
+    protected void receiveEntityAdd(Packet packet) throws Exception {
         @SuppressWarnings("unchecked")
         List<Integer> entityIds = (List<Integer>) packet.getObject(0);
         @SuppressWarnings("unchecked")
@@ -1059,9 +1062,15 @@ public class Client implements IClientCommandHandler {
         for (Force force: forces) {
             game.getForces().replace(force.getId(), force);
         }
-        assert(entityIds.size() == entities.size());
+
+        if (entityIds.size() != entities.size()) {
+            throw new Exception();
+        }
+
         for (int i = 0; i < entityIds.size(); i++) {
-            assert(entityIds.get(i) == entities.get(i).getId());
+            if (entityIds.get(i) != entities.get(i).getId()) {
+                throw new Exception();
+            }
         }
         game.addEntities(entities);
         
@@ -1737,7 +1746,7 @@ public class Client implements IClientCommandHandler {
         return host;
     }
 
-    protected void correctName(Packet inP) {
+    protected void correctName(Packet inP) throws Exception {
         setName((String) (inP.getObject(0)));
     }
 

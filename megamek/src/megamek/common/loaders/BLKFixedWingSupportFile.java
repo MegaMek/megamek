@@ -19,6 +19,8 @@ import megamek.common.*;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
+import java.util.Objects;
+
 /**
  * BLkFile.java
  *
@@ -279,7 +281,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                             // been set yet, so if the unit carries multiple clips the number of
                             // shots needs to be adjusted.
                             mount.setSize(size);
-                            assert(mount.getLinked() != null);
+                            Objects.requireNonNull(mount.getLinked());
                             mount.getLinked().setOriginalShots((int) size
                                     * ((InfantryWeapon) mount.getType()).getShots());
                             mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());
@@ -292,6 +294,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 }
             }
         }
+
         if (mashOperatingTheaters > 0) {
             for (Mounted m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_MASH)) {
@@ -301,6 +304,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 }
             }
         }
+
         if (legacyDCCSCapacity > 0) {
             for (Mounted m : t.getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_DRONE_CARRIER_CONTROL)) {

@@ -235,7 +235,7 @@ public class BLKFile {
                             // been set yet, so if the unit carries multiple clips the number of
                             // shots needs to be adjusted.
                             mount.setSize(size);
-                            assert(mount.getLinked() != null);
+                            Objects.requireNonNull(mount.getLinked());
                             mount.getLinked().setOriginalShots((int) size
                                 * ((InfantryWeapon) mount.getType()).getShots());
                             mount.getLinked().setShotsLeft(mount.getLinked().getOriginalShots());

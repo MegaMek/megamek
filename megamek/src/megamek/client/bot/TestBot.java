@@ -1794,8 +1794,7 @@ public class TestBot extends BotClient {
     protected MovePath continueMovementFor(Entity entity) {
         Objects.requireNonNull(entity);
 
-        System.out.println("Contemplating movement of " + entity.getShortName()
-                           + " " + entity.getId());
+        System.out.println("Contemplating movement of " + entity.getShortName() + " " + entity.getId());
         CEntity cen = centities.get(entity);
         cen.refresh();
         firstPass(cen);

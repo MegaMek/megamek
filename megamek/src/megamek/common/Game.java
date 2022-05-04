@@ -1274,7 +1274,7 @@ public class Game implements Serializable {
      * @param entity The Entity to add.
      * @param genEvent A flag that determines whether a GameEntityNewEvent is generated.
      */
-    public synchronized void addEntity(Entity entity, boolean genEvent) throws Exception {
+    public synchronized void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
@@ -1321,10 +1321,6 @@ public class Game implements Serializable {
             ((Mech) entity).setCondEjectEngine(true);
             ((Mech) entity).setCondEjectCTDest(true);
             ((Mech) entity).setCondEjectHeadshot(true);
-        }
-
-        if (entities.size() == entityIds.size()) {
-            throw new Exception("Add Entity failed");
         }
 
         if (genEvent) {

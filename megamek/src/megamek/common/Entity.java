@@ -973,7 +973,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * Restores the entity after serialization
      */
-    public void restore() throws Exception {
+    public void restore() {
         // restore all mounted equipments
         for (Mounted mounted : equipmentList) {
             mounted.restore();
@@ -1060,7 +1060,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param game The current {@link Game}
      */
     @Override
-    public void setGame(Game game) throws Exception {
+    public void setGame(Game game) {
         this.game = game;
         restore();
         // Make sure the owner is set.
@@ -8102,7 +8102,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      *
      * @param component - One of this new entity's <code>Transporter</code>s.
      */
-    public void addTransporter(Transporter component) throws Exception {
+    public void addTransporter(Transporter component) {
         addTransporter(component, false);
     }
 
@@ -8113,7 +8113,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param component - One of this new entity's <code>Transporter</code>s.
      * @param isOmniPod - Whether this is part of an omni unit's pod space.
      */
-    public void addTransporter(Transporter component, boolean isOmniPod) throws Exception {
+    public void addTransporter(Transporter component, boolean isOmniPod) {
         component.setGame(game);
         transports.add(component);
         if (isOmniPod) {
@@ -12060,7 +12060,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Do nothing here, set in base classes
     }
 
-    public void setGameOptions() throws Exception {
+    public void setGameOptions() {
         if (game == null) {
             return;
         }

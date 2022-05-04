@@ -744,7 +744,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
      * Sets the buttons to their proper states
      */
-    private void updateButtons() throws Exception {
+    private void updateButtons() {
         final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
         final Entity ce = ce();
         if (ce == null) {
@@ -870,7 +870,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // If they cannot, they can't abandon as per TO pg 197.
             Coords pos = ce().getPosition();
             Infantry inf = new Infantry();
-            inf.setGame(clientgui.getClient().getGame());
+            try {
+                inf.setGame(clientgui.getClient().getGame());
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+            }
             boolean hasLegalHex = !inf.isLocationProhibited(pos);
             for (int i = 0; i < 6; i++) {
                 hasLegalHex |= !inf.isLocationProhibited(pos.translated(i));
@@ -905,7 +909,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setupButtonPanel();
     }
-    
+
     private void updateAeroButtons() {
         if (ce() != null && ce().isAero()) {
             getBtn(MoveCommand.MOVE_THRUST).setEnabled(true);
@@ -952,7 +956,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private synchronized void endMyTurn() {
         final Entity ce = ce();
 
-        //get rid of still running timer, if turn is concluded before time is up
+        // get rid of still running timer, if turn is concluded before time is up
         if (tt != null) {
             tt.stopTimer();
             tt = null;
@@ -962,8 +966,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         disableButtons();
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((GamePhase.MOVEMENT == clientgui.getClient().getGame()
-                .getPhase())
+        if (clientgui.getClient().getGame().getPhase().isMovement()
                 && (null != next)
                 && (null != ce)
                 && (next.getOwnerId() != ce.getOwnerId())) {
@@ -1158,7 +1161,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-        
     }
 
     private void removeLastStep() {
@@ -1203,12 +1205,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         cmd.clipToPossible();
         if ((cmd.length() == 0) && !ce().isAirborne()
-            && GUIPreferences.getInstance().getNagForNoAction()) {
-            // Hmm....no movement steps, comfirm this action
-            String title = Messages
-                    .getString("MovementDisplay.ConfirmNoMoveDlg.title");
-            String body = Messages
-                    .getString("MovementDisplay.ConfirmNoMoveDlg.message");
+                && GUIPreferences.getInstance().getNagForNoAction()) {
+            // Hmm....no movement steps, confirm this action
+            String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
+            String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);

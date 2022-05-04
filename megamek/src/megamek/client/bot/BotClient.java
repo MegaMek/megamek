@@ -506,13 +506,12 @@ public abstract class BotClient extends Client {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
-        
+
         try {
             if (game.getPhase() == GamePhase.MOVEMENT) {
                 MovePath mp;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
-                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
-                            .getTurn();
+                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
                     Entity mustMove = game.getEntity(turn.getEntityNum());
                     mp = continueMovementFor(mustMove);
                 } else {
@@ -551,7 +550,7 @@ public abstract class BotClient extends Client {
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if ((game.getPhase() == GamePhase.TARGETING)
                        || (game.getPhase() == GamePhase.OFFBOARD)) {
-                // Princess implements arty targeting; no plans to do so for testbod
+                // Princess implements arty targeting
                 calculateTargetingOffBoardTurn();
             } else if ((game.getPhase() == GamePhase.PREMOVEMENT)
                     || (game.getPhase() == GamePhase.PREFIRING)) {
@@ -559,8 +558,8 @@ public abstract class BotClient extends Client {
             }
             
             return true;
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return false;
         }
     }

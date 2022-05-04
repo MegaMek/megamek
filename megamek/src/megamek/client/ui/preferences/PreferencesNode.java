@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.preferences;
 
+import org.apache.logging.log4j.LogManager;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -97,7 +99,11 @@ public class PreferencesNode {
             getElements().put(element.getName(), element);
 
             if (getInitialValues().containsKey(element.getName())) {
-                element.initialize(getInitialValues().get(element.getName()));
+                try {
+                    element.initialize(getInitialValues().get(element.getName()));
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
+                }
             }
         }
     }
@@ -106,9 +112,10 @@ public class PreferencesNode {
      * Sets the initial values for elements managed for this node.
      * This method should only be called once.
      * @param initialValues the initial values for the elements.
+     * @throws Exception if initialization has already occurred
      */
     public void initialize(final Map<String, String> initialValues) throws Exception {
-        if (!isInitialized()) {
+        if (isInitialized()) {
             throw new Exception();
         }
         setInitialized(true);
@@ -118,6 +125,7 @@ public class PreferencesNode {
     /**
      * This method should only be called once.
      * @return the final values of all the elements managed by this node.
+     * @throws Exception if this method is called a second time
      */
     public Map<String, String> getFinalValues() throws Exception {
         if (isFinalized()) {

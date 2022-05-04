@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+
 /**
  * Represents the set of information needed to be part of the user preferences system for MegaMek.
  *
@@ -36,11 +38,11 @@ public abstract class PreferenceElement {
 
     //region Constructors
     protected PreferenceElement(final String name) throws Exception {
-        if ((name == null) || name.isBlank()) {
+        if (StringUtility.isNullOrBlank(name)) {
             throw new Exception("Cannot create PreferenceElement with null or empty name");
-        } else {
-            this.name = name;
         }
+
+        this.name = name;
     }
     //endregion Constructors
 
@@ -65,8 +67,9 @@ public abstract class PreferenceElement {
     /**
      * Sets the initial value for the preference.
      * @param value initial value.
+     * @throws Exception if there's an error during initialization
      */
-    protected abstract void initialize(final String value);
+    protected abstract void initialize(final String value) throws Exception;
 
     /**
      * Cleans the preference resources.

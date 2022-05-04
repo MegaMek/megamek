@@ -266,7 +266,12 @@ public class Precognition implements Runnable {
                     GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                     getGame().processGameEvent(gve);
                     break;
+                default:
+                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand of " + c.getCommand().name());
+                    break;
             }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         } finally {
             GAME_LOCK.unlock();
         }
@@ -673,7 +678,7 @@ public class Precognition implements Runnable {
      * Loads entity update data from the data in the net command.
      */
     @SuppressWarnings("unchecked")
-    private void receiveEntityUpdate(Packet c) {
+    private void receiveEntityUpdate(Packet c) throws Exception {
         int eindex = c.getIntValue(0);
         Entity entity = (Entity) c.getObject(1);
         Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
@@ -682,15 +687,8 @@ public class Precognition implements Runnable {
     }
 
     private void receiveEntityAdd(Packet packet) {
-        @SuppressWarnings("unchecked")
-        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
-        @SuppressWarnings("unchecked")
-        List<Entity> entities = (List<Entity>) packet.getObject(1);
-
-        assert (entityIds.size() == entities.size());
-        for (int i = 0; i < entityIds.size(); i++) {
-            assert (entityIds.get(i) == entities.get(i).getId());
-        }
+        @SuppressWarnings(value = "unchecked")
+        List<Entity> entities = (List<Entity>) packet.getObject(0);
         getGame().addEntities(entities);
     }
 

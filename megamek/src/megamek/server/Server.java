@@ -71,6 +71,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -187,7 +188,7 @@ public class Server implements Runnable {
     }
 
     // game info
-    private Vector<AbstractConnection> connections = new Vector<>(4);
+    private final Vector<AbstractConnection> connections = new Vector<>(4);
 
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
@@ -2996,9 +2997,6 @@ public class Server implements Runnable {
     }
 
     private void sendSpecialHexDisplayPackets() {
-        if (connections == null) {
-            return;
-        }
         for (int i = 0; i < connections.size(); i++) {
             if (connections.get(i) != null) {
                 connections.get(i).send(createSpecialHexDisplayPacket(i));
@@ -30059,7 +30057,6 @@ public class Server implements Runnable {
         entityUpdate(entityId);
     }
 
-
     /**
      * receive and process an entity nova network mode change packet
      *
@@ -30870,13 +30867,13 @@ public class Server implements Runnable {
      * Send a packet to all connected clients.
      */
     void send(Packet packet) {
-        if (connections == null) {
-            return;
+        synchronized (connections) {
+            //final Iterator<AbstractConnection> iterator = connections.iterator();
+            //Stream.generate(() -> null).takeWhile(x -> iterator.hasNext()).map(o -> iterator.next())
+            connections.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(connection -> connection.send(packet));
         }
-
-        connections.stream()
-                .filter(Objects::nonNull)
-                .forEach(connection -> connection.send(packet));
     }
 
     public void sendNovaChange(int id, String net) {
@@ -30901,10 +30898,6 @@ public class Server implements Runnable {
                     LogManager.getLogger().error("Error sending round report", ex);
                 }
             }
-        }
-
-        if (connections == null) {
-            return;
         }
 
         for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {

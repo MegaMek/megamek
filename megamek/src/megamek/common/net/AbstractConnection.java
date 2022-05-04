@@ -13,15 +13,18 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common.net;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.events.AbstractConnectionEvent;
+import megamek.common.net.events.ConnectedEvent;
+import megamek.common.net.events.DisconnectedEvent;
+import megamek.common.net.events.PacketReceivedEvent;
+import megamek.common.net.marshall.PacketMarshaller;
+import megamek.common.net.marshall.PacketMarshallerFactory;
+import org.apache.logging.log4j.LogManager;
+
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
@@ -29,11 +32,6 @@ import java.util.LinkedList;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import megamek.common.net.marshall.PacketMarshaller;
-import megamek.common.net.marshall.PacketMarshallerFactory;
-import megamek.common.util.CircularIntegerBuffer;
-import org.apache.logging.log4j.LogManager;
 
 /**
  * Generic bidirectional connection between client and server
@@ -88,18 +86,6 @@ public abstract class AbstractConnection {
      * Connection listeners list
      */
     private Vector<ConnectionListener> connectionListeners = new Vector<>();
-
-    /**
-     * Buffer of the last commands sent; Used for debugging purposes.
-     */
-    private CircularIntegerBuffer debugLastFewCommandsSent = new CircularIntegerBuffer(
-            50);
-
-    /**
-     * Buffer of the last commands received; Used for debugging purposes.
-     */
-    private CircularIntegerBuffer debugLastFewCommandsReceived = new CircularIntegerBuffer(
-            50);
 
     /**
      * Type of marshalling used to represent sent packets
@@ -273,7 +259,6 @@ public abstract class AbstractConnection {
     public void sendNow(SendPacket packet) {
         try {
             sendNetworkPacket(packet.getData(), packet.isCompressed());
-            debugLastFewCommandsSent.push(packet.getCommand());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -330,7 +315,6 @@ public abstract class AbstractConnection {
         System.err.print(packet.getCommand());
         System.err.print(": ");
         System.err.println(ex.getMessage());
-        reportLastCommands();
     }
 
     /**
@@ -354,7 +338,6 @@ public abstract class AbstractConnection {
         System.err.print(getConnectionTypeAbbrevation());
         System.err.print(" error reading command: ");
         System.err.println(ex.getMessage());
-        reportLastCommands();
     }
 
     /**
@@ -362,28 +345,9 @@ public abstract class AbstractConnection {
      * <code>StringBuffer</code>
      */
     protected synchronized void reportLastCommands() {
-        reportLastCommands(true);
         System.err.println();
-        reportLastCommands(false);
         System.err.println();
         sendQueue.reportContents();
-    }
-
-    /**
-     * Appends the last commands sent or received to the given
-     * <code>StringBuffer</code> dependig on the <code>sent</code> parameter
-     *
-     * @param sent indicates which commands (sent/received) should be reported
-     */
-    protected void reportLastCommands(boolean sent) {
-        CircularIntegerBuffer buf = sent ? debugLastFewCommandsSent
-                : debugLastFewCommandsReceived;
-        System.err.print("    Last ");
-        System.err.print(buf.length());
-        System.err.print(" commands that were ");
-        System.err.print(sent ? "sent" : "received");
-        System.err.print(" (oldest first): ");
-        System.err.println(buf);
     }
 
     /**
@@ -478,7 +442,6 @@ public abstract class AbstractConnection {
         PacketMarshaller pm = marshallerFactory.getMarshaller(np
                 .getMarshallingType());
         assert (pm != null) : "Unknown marshalling type";
-        Packet packet = null;
         byte[] data = np.getData();
         bytesReceived += data.length;
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
@@ -488,11 +451,9 @@ public abstract class AbstractConnection {
         } else {
             in = bis;
         }
-        packet = pm.unmarshall(in);
+        Packet packet = pm.unmarshall(in);
         if (packet != null) {
-            debugLastFewCommandsReceived.push(packet.getCommand());
-            processConnectionEvent(new PacketReceivedEvent(
-                    AbstractConnection.this, packet));
+            processConnectionEvent(new PacketReceivedEvent(this, packet));
         }
     }
 
@@ -572,18 +533,18 @@ public abstract class AbstractConnection {
      *
      * @param event the game event.
      */
-    protected void processConnectionEvent(ConnectionEvent event) {
+    protected void processConnectionEvent(AbstractConnectionEvent event) {
         for (Enumeration<ConnectionListener> e = connectionListeners.elements(); e
                 .hasMoreElements();) {
             ConnectionListener l = e.nextElement();
             switch (event.getType()) {
-                case ConnectionEvent.CONNECTED:
+                case CONNECTED:
                     l.connected((ConnectedEvent) event);
                     break;
-                case ConnectionEvent.DISCONNECTED:
+                case DISCONNECTED:
                     l.disconnected((DisconnectedEvent) event);
                     break;
-                case ConnectionEvent.PACKET_RECEIVED:
+                case PACKET_RECEIVED:
                     l.packetReceived((PacketReceivedEvent) event);
                     break;
             }
@@ -593,7 +554,7 @@ public abstract class AbstractConnection {
     private class SendPacket implements INetworkPacket {
         byte[] data;
         boolean zipped = false;
-        int command;
+        PacketCommand command;
 
         public SendPacket(Packet packet) {
             command = packet.getCommand();
@@ -630,7 +591,7 @@ public abstract class AbstractConnection {
             return zipped;
         }
 
-        public int getCommand() {
+        public PacketCommand getCommand() {
             return command;
         }
     }

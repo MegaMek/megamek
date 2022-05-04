@@ -35,6 +35,7 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
@@ -1796,8 +1797,7 @@ public class Princess extends BotClient {
     }
     
     public void sendPrincessSettings() {
-        Packet packet = new Packet(Packet.COMMAND_PRINCESS_SETTINGS, behaviorSettings);
-        send(packet);
+        send(new Packet(PacketCommand.PRINCESS_SETTINGS, behaviorSettings));
     }
     
     @Override

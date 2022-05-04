@@ -47,15 +47,21 @@ VERSION HISTORY:
 + PR #3570: Remove unofficial BV calculation options
 + Issue #3531: Fixes superheavy Mek Ammo Battle Value penalty
 + Issue #3576: Fixing Destroyed Squadron Kill Assignment IllegalArgumentException
-+ Data: New Sprites, some new BA formations, fixes for #3577, #3575, # 3571, #3544, and #3353  
++ Data: New Sprites, some new BA formations, fixes for #3577, #3575, #3571, #3544, and #3353
++ PR #3583: XML Util Methods: Minor Write Performance Improvements
++ PR #3584: Make a cost calculation report available for all unit types
++ PR #3591: Fixing MegaMek log paths
++ PR #3600: Enable Gun Emplacement ToolTips
++ PR #3614: Fixing Athmosphere typos
 + Updating to Jackson XML 2.13.2 from 2.13.1
-+ Updating to FlatLaf 2.1 from 2.0.1
-+ Updating to JAXB 3.0.1 from 2.3.2
++ Updating to FlatLaf 2.2 from 2.0.1
++ Updating to JAXB 4.0.0 from 2.3.2
++ Updating to Launch4j 2.5.3 from 2.5.1
 + Updating to Log4j2 2.17.2 from 2.17.1
 + Updating to JAXB Runtime 3.0.2 from 2.3.2
 + Adding JUnit Jupiter 5.8.2
 + Updating to JUnit Vintage 5.8.2 from JUnit 4.13.2
-+ Updating to Mockito 4.4.0 from 4.2.0
++ Updating to Mockito 4.5.1 from 4.2.0
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit

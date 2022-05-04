@@ -15,14 +15,22 @@ package megamek.test;
 
 import megamek.MMConstants;
 import megamek.common.Board;
-import megamek.common.net.*;
-import org.apache.logging.log4j.LogManager;
+import megamek.common.net.AbstractConnection;
+import megamek.common.net.ConnectionFactory;
+import megamek.common.net.ConnectionListener;
+import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.events.DisconnectedEvent;
+import megamek.common.net.events.PacketReceivedEvent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
@@ -241,7 +249,7 @@ public class PacketTool extends Frame implements Runnable {
      */
     public void send() {
         long start = conn.bytesSent();
-        Packet packet = new Packet(Packet.COMMAND_SENDING_BOARD, board);
+        Packet packet = new Packet(PacketCommand.SENDING_BOARD, board);
         conn.send(packet);
         System.out.print("Bytes sent: ");
         System.out.print(conn.bytesSent() - start);
@@ -289,149 +297,7 @@ public class PacketTool extends Frame implements Runnable {
         if (null == packet) {
             System.out.print("null");
         } else {
-            switch (packet.getCommand()) {
-                case Packet.COMMAND_SERVER_VERSION_CHECK:
-                    System.out.println("COMMAND_SERVER_VERSION_CHECK");
-                    break;
-                case Packet.COMMAND_SERVER_GREETING:
-                    System.out.print("COMMAND_SERVER_GREETING");
-                    break;
-                case Packet.COMMAND_ILLEGAL_CLIENT_VERSION:
-                    System.out.println("COMMAND_ILLEGAL_CLIENT_VERSION");
-                    break;
-                case Packet.COMMAND_CLIENT_NAME:
-                    System.out.print("COMMAND_CLIENT_NAME");
-                    break;
-                case Packet.COMMAND_LOCAL_PN:
-                    System.out.print("COMMAND_LOCAL_PN");
-                    break;
-                case Packet.COMMAND_PLAYER_ADD:
-                    System.out.print("COMMAND_PLAYER_ADD");
-                    break;
-                case Packet.COMMAND_PLAYER_REMOVE:
-                    System.out.print("COMMAND_PLAYER_REMOVE");
-                    break;
-                case Packet.COMMAND_PLAYER_UPDATE:
-                    System.out.print("COMMAND_PLAYER_UPDATE");
-                    break;
-                case Packet.COMMAND_PLAYER_READY:
-                    System.out.print("COMMAND_PLAYER_READY");
-                    break;
-                case Packet.COMMAND_CHAT:
-                    System.out.print("COMMAND_CHAT");
-                    break;
-                case Packet.COMMAND_ENTITY_ADD:
-                    System.out.print("COMMAND_ENTITY_ADD");
-                    break;
-                case Packet.COMMAND_ENTITY_REMOVE:
-                    System.out.print("COMMAND_ENTITY_REMOVE");
-                    break;
-                case Packet.COMMAND_ENTITY_MOVE:
-                    System.out.print("COMMAND_ENTITY_MOVE");
-                    break;
-                case Packet.COMMAND_ENTITY_DEPLOY:
-                    System.out.print("COMMAND_ENTITY_DEPLOY");
-                    break;
-                case Packet.COMMAND_ENTITY_ATTACK:
-                    System.out.print("COMMAND_ENTITY_ATTACK");
-                    break;
-                case Packet.COMMAND_ENTITY_UPDATE:
-                    System.out.print("COMMAND_ENTITY_UPDATE");
-                    break;
-                case Packet.COMMAND_ENTITY_MODECHANGE:
-                    System.out.print("COMMAND_ENTITY_MODECHANGE");
-                    break;
-                case Packet.COMMAND_ENTITY_MOUNTED_FACINGCHANGE:
-                    System.out.print("COMMAND_ENTITY_MOUNTED_FACINGCHANGE");
-                    break;
-                case Packet.COMMAND_ENTITY_AMMOCHANGE:
-                    System.out.print("COMMAND_ENTITY_AMMOCHANGE");
-                    break;
-                case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
-                    System.out.print("COMMAND_ENTITY_VISIBILITY_INDICATOR");
-                    break;
-                case Packet.COMMAND_CHANGE_HEX:
-                    System.out.print("COMMAND_CHANGE_HEX");
-                    break;
-                case Packet.COMMAND_BLDG_ADD:
-                    System.out.print("COMMAND_BLDG_ADD");
-                    break;
-                case Packet.COMMAND_BLDG_REMOVE:
-                    System.out.print("COMMAND_BLDG_REMOVE");
-                    break;
-                case Packet.COMMAND_BLDG_UPDATE:
-                    System.out.print("COMMAND_BLDG_UPDATE_CF");
-                    break;
-                case Packet.COMMAND_BLDG_COLLAPSE:
-                    System.out.print("COMMAND_BLDG_COLLAPSE");
-                    break;
-                case Packet.COMMAND_PHASE_CHANGE:
-                    System.out.print("COMMAND_PHASE_CHANGE");
-                    break;
-                case Packet.COMMAND_TURN:
-                    System.out.print("COMMAND_TURN");
-                    break;
-                case Packet.COMMAND_ROUND_UPDATE:
-                    System.out.print("COMMAND_ROUND_UPDATE");
-                    break;
-                case Packet.COMMAND_SENDING_BOARD:
-                    System.out.print("COMMAND_SENDING_BOARD");
-                    /*
-                     * * Save the board here.
-                     */
-                    Board recvBoard = (Board) packet.getObject(0);
-                    try (OutputStream os = new FileOutputStream("xmit.board")) {
-                        recvBoard.save(os);
-                    } catch (Exception ex) {
-                        LogManager.getLogger().error("", ex);
-                    }
-                    break;
-                case Packet.COMMAND_SENDING_ENTITIES:
-                    System.out.print("COMMAND_SENDING_ENTITIES");
-                    break;
-                case Packet.COMMAND_SENDING_PLAYERS:
-                    System.out.print("COMMAND_SENDING_PLAYERS");
-                    break;
-                case Packet.COMMAND_SENDING_TURNS:
-                    System.out.print("COMMAND_SENDING_TURNS");
-                    break;
-                case Packet.COMMAND_SENDING_REPORTS:
-                    System.out.print("COMMAND_SENDING_REPORTS");
-                    break;
-                case Packet.COMMAND_SENDING_GAME_SETTINGS:
-                    System.out.print("COMMAND_SENDING_GAME_SETTINGS");
-                    break;
-                case Packet.COMMAND_SENDING_MAP_SETTINGS:
-                    System.out.print("COMMAND_SENDING_MAP_SETTINGS");
-                    break;
-                case Packet.COMMAND_SENDING_MAP_DIMENSIONS:
-                    System.out.print("COMMAND_SENDING_MAP_SETTINGS");
-                    break;
-                case Packet.COMMAND_END_OF_GAME:
-                    System.out.print("COMMAND_END_OF_GAME");
-                    break;
-                case Packet.COMMAND_DEPLOY_MINEFIELDS:
-                    System.out.print("COMMAND_DEPLOY_MINEFIELDS");
-                    break;
-                case Packet.COMMAND_REVEAL_MINEFIELD:
-                    System.out.print("COMMAND_REVEAL_MINEFIELD");
-                    break;
-                case Packet.COMMAND_REMOVE_MINEFIELD:
-                    System.out.print("COMMAND_REMOVE_MINEFIELD");
-                    break;
-                case Packet.COMMAND_SENDING_MINEFIELDS:
-                    System.out.print("COMMAND_SENDING_MINEFIELDS");
-                    break;
-                case Packet.COMMAND_REROLL_INITIATIVE:
-                    System.out.print("COMMAND_REROLL_INITIATIVE");
-                    break;
-                case Packet.COMMAND_SET_ARTILLERY_AUTOHIT_HEXES:
-                    System.out.print("COMMAND_SET_ARTILLERY_AUTOHIT_HEXES");
-                    break;
-                default:
-                    System.out.print("unknown");
-                    break;
-            }
+            System.out.print(packet.getCommand().name());
         }
         System.out.println(" packet.");
     }

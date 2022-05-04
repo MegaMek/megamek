@@ -776,19 +776,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int taserInterferenceRounds = 0;
     protected boolean taserInterferenceHeat = false;
 
-    // contains a HTML string describing BV calculation
-    protected StringBuffer bvText = new StringBuffer();
-    protected String startTable = "<TABLE>";
-    protected String endTable = "</TABLE>";
-
-    protected String startRow = "<TR>";
-    protected String endRow = "</TR>";
-
-    protected String startColumn = "<TD>";
-    protected String endColumn = "</TD>";
-
-    protected String nl = "<BR>";
-
     // for how many rounds has blueshield been active?
     private int blueShieldRounds = 0;
 
@@ -847,14 +834,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * been used.
      */
     protected int consecutiveRHSUses = 0;
-
-    /**
-     * Flag that can be used to indicate whether this Entity should use a
-     * geometric mean when computing BV.
-     */
-    protected boolean useGeometricBV = false;
-
-    protected boolean useReducedOverheatModifierBV = false;
 
     private final Set<Integer> attackedByThisTurn = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
@@ -10786,7 +10765,27 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return taggedBy;
     }
 
-    public abstract double getCost(boolean ignoreAmmo);
+    /**
+     * Calculates and returns the C-bill cost of the unit. The parameter can be used to include or
+     * exclude ("dry cost") the cost of ammunition on the unit.
+     *
+     * @param ignoreAmmo When true, the cost of ammo on the unit will be excluded from the cost
+     * @return The cost in C-Bills of the 'Mech in question.
+     */
+    public final double getCost(boolean ignoreAmmo) {
+        return getCost(new DummyCalculationReport(), ignoreAmmo);
+    }
+
+    /**
+     * Calculates and returns the C-bill cost of the unit. The parameter ignoreAmmo can be used to include or
+     * exclude ("dry cost") the cost of ammunition on the unit. A report for the cost calculation will
+     * be written to the given calcReport.
+     *
+     * @param calcReport A CalculationReport to write the report for the cost calculation to
+     * @param ignoreAmmo When true, the cost of ammo on the unit will be excluded from the cost
+     * @return The cost in C-Bills of the 'Mech in question.
+     */
+    public abstract double getCost(CalculationReport calcReport, boolean ignoreAmmo);
 
     /**
      * Returns a multiplier that combines multiplicative construction cost modifiers for this Entity.
@@ -10803,111 +10802,13 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return 1.0;
     }
 
-    public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
-        long cost = 0;
-
-        NumberFormat commafy = NumberFormat.getInstance();
-
-        for (Mounted mounted : getEquipment()) {
-            if (ignoreAmmo
-                && (mounted.getType() instanceof AmmoType)
-                && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD))) {
-                continue;
-            }
-            if (mounted.isWeaponGroup()) {
-                continue;
-            }
-            long itemCost = (long) mounted.getCost();
-            if (!ignoreAmmo && isSupportVehicle() && (mounted.getSize() > 1)
-                    && (mounted.getType() instanceof InfantryWeapon)) {
-                itemCost += Double.valueOf((mounted.getSize() - 1d)
-                                * ((InfantryWeapon) mounted.getType()).getAmmoCost()).longValue();
-            }
-
-            cost += itemCost;
-            if ((bvText != null) && (itemCost > 0)) {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(mounted.getName());
-                bvText.append(endColumn);
-
-                bvText.append(startColumn);
-                bvText.append(commafy.format(itemCost));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        }
-        int count = implicitClanCASE();
-        if (count > 0) {
-            long itemCost = 50000;
-            cost += count * itemCost;
-            if (null != bvText) {
-                for (int i = 0; i < count; i++) {
-                    bvText.append(startColumn);
-                    bvText.append("CASE");
-                    bvText.append(endColumn);
-                    bvText.append(startColumn);
-                    bvText.append(commafy.format(itemCost));
-                    bvText.append(endColumn);
-                    bvText.append(endRow);
-                }
-            }
-        }
-        // Large craft have a separate section for bays
-        if (!isLargeCraft()) {
-            long seatCost = 0;
-            long quartersCost = 0;
-            long bayCost = 0;
-            for (Bay bay : getTransportBays()) {
-                if (bay instanceof StandardSeatCargoBay) {
-                    seatCost += bay.getCost();
-                } else if (bay.isQuarters()) {
-                    quartersCost += bay.getCost();
-                } else {
-                    bayCost += bay.getCost() + 1000L * bay.getDoors();
-                }
-            }
-            if (null != bvText && seatCost > 0) {
-                bvText.append(startColumn);
-                bvText.append("Seating");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(commafy.format(seatCost));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                cost += seatCost;
-            }
-            if (null != bvText && quartersCost > 0) {
-                bvText.append(startColumn);
-                bvText.append("Quarters");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(commafy.format(quartersCost));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                cost += quartersCost;
-            }
-            if (null != bvText && bayCost > 0) {
-                bvText.append(startColumn);
-                bvText.append("Bays");
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-                bvText.append(commafy.format(bayCost));
-                bvText.append(endColumn);
-                bvText.append(endRow);
-                cost += bayCost;
-            }
-        }
-        return cost;
-    }
-
     /**
      * Used to for cost calculations. Though the TM rules allow a Clan unit to be designed without CASE,
      * MM assumes that CASE is present in any location that has explosive equipment.
      *
      * @return The number of locations protected by Clan CASE beyond what is explicitly mounted.
      */
-    protected int implicitClanCASE() {
+    public int implicitClanCASE() {
         return 0;
     }
 
@@ -12896,19 +12797,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Return a HTML string that describes the BV calculations
-     *
-     * @return a <code>String</code> explaining the BV calculation
-     */
-    public String getBVText() {
-        if (bvText == null) {
-            return "";
-        }
-
-        return bvText.toString();
-    }
-
-    /**
      * Return the BAR-rating of this Entity's armor
      *
      * @return the BAR rating
@@ -13910,7 +13798,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // Finally use that total to compute and return the actual power
         // amplifier weight.
-        return RoundWeight.nextHalfTon(total);
+        return RoundWeight.nextHalfTon(total / 10.0);
     }
 
     public Vector<Integer> getLoadedKeepers() {

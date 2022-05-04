@@ -14,8 +14,8 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.AeroBVCalculator;
+import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -1618,52 +1618,9 @@ public class Aero extends Entity implements IAero, IBomber {
         return 0;
     }
 
-    /**
-     * There is a mistake in some of the AT2r costs for some reason they added
-     * ammo twice for a lot of the level 2 designs, leading to costs that are
-     * too high
-     */
     @Override
-    public double getCost(boolean ignoreAmmo) {
-
-        double cost = 0;
-
-        // add in cockpit
-        cost += 200000 + 50000 + (2000 * weight);
-
-        // Structural integrity
-        cost += 50000 * getSI();
-
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * getWeight());
-
-        // engine
-        if (hasEngine()) {
-            cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-        }
-
-        // fuel tanks
-        cost += (200 * getFuel()) / 80.0;
-
-        // armor
-        if (hasPatchworkArmor()) {
-            for (int loc = 0; loc < locations(); loc++) {
-                cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
-            }
-
-        } else {
-            cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
-        }
-
-        // heat sinks
-        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
-        // 2000;
-        cost += sinkCost * getHeatSinks();
-
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        return Math.round(cost * getPriceMultiplier());
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return AeroCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override
@@ -1677,7 +1634,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    protected int implicitClanCASE() {
+    public int implicitClanCASE() {
         if (!isClan() || !isFighter()) {
             return 0;
         }

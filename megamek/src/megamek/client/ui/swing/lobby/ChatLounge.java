@@ -28,10 +28,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
-import megamek.client.ui.dialogs.BVDisplayDialog;
-import megamek.client.ui.dialogs.BotConfigDialog;
-import megamek.client.ui.dialogs.CamoChooserDialog;
-import megamek.client.ui.dialogs.EntityReadoutDialog;
+import megamek.client.ui.dialogs.*;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
@@ -1546,7 +1543,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /** 
      * Shows the unit summary for the given unit. Moves the dialog a bit depending on index
-     * so that multiple dialogs dont appear exactly on top of each other. 
+     * so that multiple dialogs dont appear exactly on top of each other.
      */
     private void mechReadout(Entity entity, int index) {
         final EntityReadoutDialog dialog = new EntityReadoutDialog(clientgui.frame, entity);
@@ -1555,8 +1552,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     /** 
-     * Shows the unit summaries for the given units, but not for hidden units (blind drop)
+     * Shows the battle value calculation for the given units, but not for hidden units (blind drop)
      * and not for more than 10 units at a time (because that's likely a misclick).
+     *
+     * @param entities The units to the bv report for
      */
     void mechBVAction(final Set<Entity> entities) {
         if (entities.size() > 10) {
@@ -1566,6 +1565,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         } else {
             for (final Entity entity : entities) {
                 new BVDisplayDialog(getClientgui().getFrame(), entity).setVisible(true);
+            }
+        }
+    }
+
+    /**
+     * Shows the cost calculation for the given units, but not for hidden units (blind drop)
+     * and not for more than 10 units at a time (because that's likely a misclick).
+     *
+     * @param entities The units to the cost report for
+     */
+    void mechCostAction(final Set<Entity> entities) {
+        if (entities.size() > 10) {
+            LobbyErrors.showTenUnits(clientgui.frame);
+        } else if (!canSeeAll(entities)) {
+            LobbyErrors.showCannotViewHidden(clientgui.frame);
+        } else {
+            for (final Entity entity : entities) {
+                new CostDisplayDialog(getClientgui().getFrame(), entity).setVisible(true);
             }
         }
     }

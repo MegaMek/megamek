@@ -12,12 +12,11 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.DropShipBVCalculator;
+import megamek.common.cost.DropShipCostCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -373,166 +372,13 @@ public class Dropship extends SmallCraft {
     }
     
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[20];
-        int costIdx = 0;
-        double cost = 0;
-
-        // Control Systems
-        // Bridge
-        costs[costIdx++] += 200000 + (10 * weight);
-        // Computer
-        costs[costIdx++] += 200000;
-        // Life Support
-        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
-        // Sensors
-        costs[costIdx++] += 80000;
-        // Fire Control Computer
-        costs[costIdx++] += 100000;
-        // Gunnery Control Systems
-        costs[costIdx++] += 10000 * getArcswGuns();
-
-        // Structural Integrity
-        costs[costIdx++] += 100000 * getSI();
-
-        // Additional Flight Systems
-        // Attitude Thruster
-        costs[costIdx++] += 25000;
-        // Landing Gear
-        costs[costIdx++] += 10 * getWeight();
-        // Docking Collar
-        if (collarType == COLLAR_STANDARD) {
-            costs[costIdx++] += 10000;
-        } else if (collarType == COLLAR_PROTOTYPE) {
-            costs[costIdx++] += 1010000;
-        }
-
-        // Engine
-        double engineMultiplier = 0.065;
-        if (isClan()) {
-            engineMultiplier = 0.061;
-        }
-        double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
-        costs[costIdx++] += engineWeight * 1000;
-        // Drive Unit
-        costs[costIdx++] += (500 * getOriginalWalkMP() * weight) / 100.0;
-
-        // Fuel Tanks
-        costs[costIdx++] += (200 * getFuel()) / getFuelPointsPerTon() * 1.02;
-
-        // Armor
-        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
-
-        // Heat Sinks
-        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
-        // 2000;
-        costs[costIdx++] += sinkCost * getHeatSinks();
-
-        // Weapons and Equipment
-        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // Transport Bays
-        int baydoors = 0;
-        long bayCost = 0;
-        long quartersCost = 0;
-        // Passenger and crew quarters and infantry bays are considered part of the structure
-        // and don't add to the cost
-        for (Bay next : getTransportBays()) {
-            baydoors += next.getDoors();
-            if (!next.isQuarters() && !(next instanceof InfantryBay) && !(next instanceof BattleArmorBay)) {
-                bayCost += next.getCost();
-            }
-        }
-
-        costs[costIdx++] += bayCost + (baydoors * 1000L);
-        costs[costIdx++] = quartersCost;
-
-        // Life Boats and Escape Pods
-        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
-
-        // TODO Decouple cost calculation from addCostDetails and eliminate duplicate code in getPriceMultiplier
-        double weightMultiplier = 36.0;
-        if (isSpheroid()) {
-            weightMultiplier = 28.0;
-        }
-
-        // Sum Costs
-        for (int i = 0; i < costIdx; i++) {
-            cost += costs[i];
-        }
-
-        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
-        cost = Math.round(cost * weightMultiplier);
-        addCostDetails(cost, costs);
-        return cost;
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return DropShipCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override
     public double getPriceMultiplier() {
         return isSpheroid() ? 28.0 : 36.0;
-    }
-
-    private void addCostDetails(double cost, double[] costs) {
-        bvText = new StringBuffer();
-        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
-                "Structural Integrity", "Attitude Thruster", "Landing Gear", "Docking Collar",
-                "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays",
-                "Quarters", "Life Boats/Escape Pods", "Weight Multiplier" };
-
-        NumberFormat commafy = NumberFormat.getInstance();
-
-        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
-        bvText.append(getChassis());
-        bvText.append(" ");
-        bvText.append(getModel());
-        bvText.append("</b></CENTER>");
-        bvText.append(nl);
-
-        bvText.append(startTable);
-        // find the maximum length of the columns.
-        for (int l = 0; l < left.length; l++) {
-
-            if (l == 14) {
-                getWeaponsAndEquipmentCost(true);
-            } else {
-                bvText.append(startRow);
-                bvText.append(startColumn);
-                bvText.append(left[l]);
-                bvText.append(endColumn);
-                bvText.append(startColumn);
-
-                if (costs[l] == 0) {
-                    bvText.append("N/A");
-                } else if (costs[l] < 0) {
-                    bvText.append("x ");
-                    bvText.append(commafy.format(-costs[l]));
-                } else {
-                    bvText.append(commafy.format(costs[l]));
-
-                }
-                bvText.append(endColumn);
-                bvText.append(endRow);
-            }
-        }
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append("-------------");
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(startRow);
-        bvText.append(startColumn);
-        bvText.append("Total Cost:");
-        bvText.append(endColumn);
-        bvText.append(startColumn);
-        bvText.append(commafy.format(cost));
-        bvText.append(endColumn);
-        bvText.append(endRow);
-
-        bvText.append(endTable);
-        bvText.append("</BODY></HTML>");
     }
 
     @Override

@@ -13,44 +13,33 @@
  */
 package megamek.common.net.marshall;
 
+import megamek.MMConstants;
+import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
+import org.nibblesec.tools.SerialKiller;
+
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import megamek.common.net.Packet;
-import org.nibblesec.tools.SerialKiller;
-
 /**
- * Marshaller that Java native serialization for <code>Packet</code>
- * representation.
+ * Marshaller that Java native serialization for <code>Packet</code> representation.
  */
 class NativeSerializationMarshaller extends PacketMarshaller {
+    protected static final PacketCommand[] PACKET_COMMANDS = PacketCommand.values();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.net.marshall.PacketMarshaller#marshall(megamek.common.net.Packet,
-     *      java.io.OutputStream)
-     */
     @Override
-    public void marshall(Packet packet, OutputStream stream) throws Exception {
+    public void marshall(final Packet packet, final OutputStream stream) throws Exception {
         ObjectOutputStream out = new ObjectOutputStream(stream);
-        out.writeInt(packet.getCommand());
+        out.writeInt(packet.getCommand().ordinal());
         out.writeObject(packet.getData());
         out.flush();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.net.marshall.PacketMarshaller#unmarshall(java.io.InputStream)
-     */
     @Override
-    public Packet unmarshall(InputStream stream) throws Exception {
-        ObjectInputStream in = new SerialKiller(stream, "mmconf/serialkiller.xml");
-        int command = in.readInt();
-        Object[] data = (Object[]) in.readObject();
-        return new Packet(command, data);
+    public Packet unmarshall(final InputStream stream) throws Exception {
+        final ObjectInputStream in = new SerialKiller(stream, MMConstants.SERIALKILLER_CONFIG_FILE);
+        return new Packet(PACKET_COMMANDS[in.readInt()], (Object[]) in.readObject());
     }
 }

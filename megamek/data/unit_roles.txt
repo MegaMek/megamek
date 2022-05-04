@@ -4763,7 +4763,7 @@ Sea Skimmer Hydrofoil (SRM6):SCOUT
 Sea Skimmer Hydrofoil (Standard):SCOUT
 Sea Skimmer Hydrofoil 'Sniper':SCOUT
 SeaBuster Early Strike Fighter:ATTACK_FIGHTER
-SeaBuster Early Strike Fighter (Standard):ATTACK FIGHTER
+SeaBuster Early Strike Fighter (Standard):ATTACK_FIGHTER
 SeaBuster Strike Fighter (Standard):ATTACK_FIGHTER
 Se'irim Medium Battle Armor (Anti-Infantry):AMBUSHER
 Se'irim Medium Battle Armor (Capture Team):AMBUSHER

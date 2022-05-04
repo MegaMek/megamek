@@ -12,6 +12,8 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.CostCalculator;
+import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -57,7 +59,8 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public double getCost(boolean ignoreAmmo) {
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        CostCalculator.addNoReportNote(calcReport, this);
         return getSubEntities().stream()
                 .mapToDouble(entity -> entity.getCost(ignoreAmmo))
                 .sum();

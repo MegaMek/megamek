@@ -3,7 +3,7 @@ import java.time.LocalDateTime
 plugins {
     id 'application'
     id 'maven-publish'
-    id 'edu.sc.seis.launch4j' version '2.5.1'
+    id 'edu.sc.seis.launch4j' version '2.5.3'
     id 'jacoco'
 }
 
@@ -28,20 +28,20 @@ sourceSets {
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.formdev:flatlaf:2.1'
+    implementation 'com.formdev:flatlaf:2.2'
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.14'
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
     implementation 'org.apache.commons:commons-text:1.9'
     implementation 'org.apache.logging.log4j:log4j-core:2.17.2'
     implementation 'org.freemarker:freemarker:2.3.31'
 
-    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+    runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.0-M4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.2'
-    testImplementation 'org.mockito:mockito-core:4.4.0'
+    testImplementation 'org.mockito:mockito-core:4.5.1'
 }
 
 mainClassName = 'megamek.MegaMek'

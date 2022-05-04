@@ -111,7 +111,7 @@ public class Client implements IClientCommandHandler {
     /** The bots controlled by the local player; maps a bot's name String to a bot's client. */
     public Map<String, Client> bots = new TreeMap<>(String::compareTo);
 
-    //Hashtable for storing image tags containing base64Text src
+    // Hashtable for storing image tags containing base64Text src
     private Hashtable<Integer, String> imgCache;
 
     // board view for getting entity art assets
@@ -1365,8 +1365,11 @@ public class Client implements IClientCommandHandler {
                     break;
                 case ILLEGAL_CLIENT_VERSION:
                     final Version serverVersion = (Version) c.getObject(0);
-                    final String message = String.format("Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.", getHost(), serverVersion, MMConstants.VERSION);
-                    JOptionPane.showMessageDialog(null, message, "Connection Failure: Version Difference", JOptionPane.ERROR_MESSAGE);
+                    final String message = String.format(
+                            "Failed to connect to the server at %s because of version differences. Cannot connect to a server running %s with a %s install.",
+                            getHost(), serverVersion, MMConstants.VERSION);
+                    JOptionPane.showMessageDialog(null, message,
+                            "Connection Failure: Version Difference", JOptionPane.ERROR_MESSAGE);
                     LogManager.getLogger().error(message);
                     disconnected();
                     break;
@@ -1582,7 +1585,8 @@ public class Client implements IClientCommandHandler {
                         }
                     }
 
-                    try (OutputStream os = new FileOutputStream(localFile); BufferedOutputStream bos = new BufferedOutputStream(os)) {
+                    try (OutputStream os = new FileOutputStream(localFile);
+                         BufferedOutputStream bos = new BufferedOutputStream(os)) {
                         List<Integer> data = (List<Integer>) c.getObject(1);
                         for (Integer d : data) {
                             bos.write(d);

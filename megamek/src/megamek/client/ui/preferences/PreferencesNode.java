@@ -102,7 +102,7 @@ public class PreferencesNode {
                 try {
                     element.initialize(getInitialValues().get(element.getName()));
                 } catch (Exception ex) {
-                    LogManager.getLogger().error("", ex);
+                    LogManager.getLogger().error("Failed initializing element " + element.getName(), ex);
                 }
             }
         }

@@ -870,11 +870,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // If they cannot, they can't abandon as per TO pg 197.
             Coords pos = ce().getPosition();
             Infantry inf = new Infantry();
-            try {
-                inf.setGame(clientgui.getClient().getGame());
-            } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
-            }
+            inf.setGame(clientgui.getClient().getGame());
             boolean hasLegalHex = !inf.isLocationProhibited(pos);
             for (int i = 0; i < 6; i++) {
                 hasLegalHex |= !inf.isLocationProhibited(pos.translated(i));
@@ -891,8 +887,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             disableButtons();
             if (ce instanceof LandAirMech) {
                 updateConvertModeButton();
-                if (ce.getMovementMode() == EntityMovementMode.WIGE
-                        && ce.getAltitude() <= 3) {
+                if (ce.getMovementMode().isWiGE() && (ce.getAltitude() <= 3)) {
                     updateHoverButton();
                 }
                 getBtn(MoveCommand.MOVE_MORE).setEnabled(numButtonGroups > 1);

@@ -41,7 +41,7 @@ public class MovePath implements Cloneable, Serializable {
         return game;
     }
 
-    public void setGame(Game game) throws Exception {
+    public void setGame(Game game) {
         this.game = game;
     }
 
@@ -118,7 +118,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Generates a new, empty, movement path object.
      */
-    public MovePath(final Game game, final Entity entity) throws Exception {
+    public MovePath(final Game game, final Entity entity) {
         this.setEntity(entity);
         this.setGame(game);
     }
@@ -542,11 +542,11 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
 
-    public void compile(final Game g, final Entity en) throws Exception {
+    public void compile(final Game g, final Entity en) {
         compile(g, en, true);
     }
 
-    public void compile(final Game g, final Entity en, boolean clip) throws Exception {
+    public void compile(final Game g, final Entity en, boolean clip) {
         setGame(g);
         setEntity(en);
         final Vector<MoveStep> temp = new Vector<>(steps);
@@ -735,7 +735,7 @@ public class MovePath implements Cloneable, Serializable {
         return steps.elements();
     }
 
-    public MoveStep getStep(final int index) {
+    public @Nullable MoveStep getStep(final int index) {
         if ((index < 0) || (index >= steps.size())) {
             return null;
         }
@@ -816,8 +816,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns the starting {@link Coords} of this path.
      */
-    @Nullable
-    public Coords getStartCoords() {
+    public @Nullable Coords getStartCoords() {
         for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements(); ) {
             final MoveStep step = e.nextElement();
             final Coords coords = step.getPosition();
@@ -1227,7 +1226,7 @@ public class MovePath implements Cloneable, Serializable {
      * @param dest the destination <code>Coords</code> of the move.
      * @param type the type of movement step required.
      */
-    public void findPathTo(final Coords dest, final MoveStepType type) throws Exception {
+    public void findPathTo(final Coords dest, final MoveStepType type) {
         final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
 
         ShortestPathFinder pf = ShortestPathFinder.newInstanceOfAStar(dest, type, game);
@@ -1537,14 +1536,8 @@ public class MovePath implements Cloneable, Serializable {
      * @return the cloned MovePath
      */
     @Override
-    public @Nullable MovePath clone() {
-        final MovePath copy;
-        try {
-            copy = new MovePath(getGame(), getEntity());
-        } catch (Exception ex) {
-            LogManager.getLogger().error("", ex);
-            return null;
-        }
+    public MovePath clone() {
+        final MovePath copy = new MovePath(getGame(), getEntity());
         copyFields(copy);
         return copy;
     }

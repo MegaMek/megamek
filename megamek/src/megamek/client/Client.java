@@ -998,7 +998,7 @@ public class Client implements IClientCommandHandler {
      * Receives a force-related update containing affected forces and affected entities
      */
     @SuppressWarnings("unchecked")
-    protected void receiveForceUpdate(Packet c) throws Exception {
+    protected void receiveForceUpdate(Packet c) {
         Collection<Force> forces = (Collection<Force>) c.getObject(0);
         Collection<Entity> entities = (Collection<Entity>) c.getObject(1);
         for (Force force : forces) {
@@ -1033,7 +1033,7 @@ public class Client implements IClientCommandHandler {
      * Loads entity update data from the data in the net command.
      */
     @SuppressWarnings("unchecked")
-    protected void receiveEntityUpdate(Packet c) throws Exception {
+    protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
         Entity entity = (Entity) c.getObject(1);
         Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
@@ -1045,7 +1045,7 @@ public class Client implements IClientCommandHandler {
      * Update multiple entities from the server. Used only in the lobby phase. 
      */
     @SuppressWarnings("unchecked")
-    protected void receiveEntitiesUpdate(Packet c) throws Exception {
+    protected void receiveEntitiesUpdate(Packet c) {
         Collection<Entity> entities = (Collection<Entity>) c.getObject(0);
         for (Entity entity: entities) {
             getGame().setEntity(entity.getId(), entity);

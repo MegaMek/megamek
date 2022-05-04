@@ -1,15 +1,15 @@
 /*
  * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.princess;
 
@@ -40,12 +40,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Precognition implements Runnable {
 
     private final Princess owner;
-    
+
     /**
-     *  Precognition's version of the game, which should mirror the game in
-     *  Princess, but should not be the same reference.  If Precognition and
-     *  Princess share the same game reference, than this will cause concurrency
-     *  issues. 
+     * Precognition's version of the game, which should mirror the game in
+     * Princess, but should not be the same reference. If Precognition and
+     * Princess share the same game reference, then this will cause concurrency
+     * issues.
      */
     private Game game;
     private final ReentrantLock GAME_LOCK = new ReentrantLock();
@@ -56,12 +56,11 @@ public class Precognition implements Runnable {
      * re-use the cache.
      */
     private List<ECMInfo> ecmInfo;
-        
+
     private PathEnumerator pathEnumerator;
     private final ReentrantReadWriteLock PATH_ENUMERATOR_LOCK = new ReentrantReadWriteLock();
 
-
-    // units who's path I need to update
+    // units whose path I need to update
     private final ConcurrentSkipListSet<Integer> dirtyUnits = new ConcurrentSkipListSet<>();
 
     // events that may affect which units are dirty
@@ -92,7 +91,7 @@ public class Precognition implements Runnable {
         ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
                 getGame().getEntitiesVector());
     }
-    
+
     /**
      * Pared down version of Client.handlePacket; essentially it's only looking
      * for packets that update Game.  This ensures that Precognition's Game
@@ -678,7 +677,7 @@ public class Precognition implements Runnable {
      * Loads entity update data from the data in the net command.
      */
     @SuppressWarnings("unchecked")
-    private void receiveEntityUpdate(Packet c) throws Exception {
+    private void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
         Entity entity = (Entity) c.getObject(1);
         Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
@@ -805,7 +804,7 @@ public class Precognition implements Runnable {
             }
         }
     }
-    
+
     /**
      * receive and process an entity nova network mode change packet
      *
@@ -824,5 +823,4 @@ public class Precognition implements Runnable {
         }
 
     }
-
 }

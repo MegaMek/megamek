@@ -71,7 +71,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -30868,8 +30867,6 @@ public class Server implements Runnable {
      */
     void send(Packet packet) {
         synchronized (connections) {
-            //final Iterator<AbstractConnection> iterator = connections.iterator();
-            //Stream.generate(() -> null).takeWhile(x -> iterator.hasNext()).map(o -> iterator.next())
             connections.stream()
                     .filter(Objects::nonNull)
                     .forEach(connection -> connection.send(packet));

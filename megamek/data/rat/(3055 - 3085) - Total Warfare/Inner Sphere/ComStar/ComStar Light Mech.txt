@@ -1,0 +1,14 @@
+ComStar Light 'Mech
+Spector SPR-5F,1
+Hussar HSR-200-D,2
+Thorn THE-N,3
+Mercury MCY-99,4
+Hermes HER-1S,5
+Raptor RTX1-O,6
+Owens OW-1,5
+Hitman HM-1,4
+Raptor RTX1-O,3
+Cossack C-SK1,2
+Ostscout OTT-9CS,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

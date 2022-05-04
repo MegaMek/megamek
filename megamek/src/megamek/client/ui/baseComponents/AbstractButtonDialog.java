@@ -21,6 +21,7 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.enums.DialogResult;
 import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -100,7 +101,11 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
         setLayout(new BorderLayout());
         add(createCenterPane(), BorderLayout.CENTER);
         add(createButtonPanel(), BorderLayout.PAGE_END);
-        finalizeInitialization();
+        try {
+            finalizeInitialization();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error finalizing the dialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+        }
     }
 
     /**

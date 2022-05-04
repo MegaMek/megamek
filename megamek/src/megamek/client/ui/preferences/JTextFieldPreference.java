@@ -18,6 +18,9 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -37,7 +40,7 @@ public class JTextFieldPreference extends PreferenceElement implements DocumentL
     //endregion Variable Declarations
 
     //region Constructors
-    public JTextFieldPreference(final JTextField textField) {
+    public JTextFieldPreference(final JTextField textField) throws Exception {
         super(textField.getName());
         setText(textField.getText());
         weakReference = new WeakReference<>(textField);
@@ -66,7 +69,12 @@ public class JTextFieldPreference extends PreferenceElement implements DocumentL
     }
 
     @Override
-    protected void initialize(final String value) {
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JTextFieldPreference because of a null or blank input value");
+            throw new Exception();
+        }
+
         final JTextField element = getWeakReference().get();
         if (element != null) {
             element.setText(value);

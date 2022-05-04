@@ -66,7 +66,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     }
 
     @Override
-    protected void finalizeInitialization() {
+    protected void finalizeInitialization() throws Exception {
         UIUtil.adjustDialog(this);
         super.finalizeInitialization();
     }

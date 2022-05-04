@@ -18,12 +18,15 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 /**
  * JListPreference monitors the selected indices of a {@link JList}. It sets the saved indices when a
@@ -39,7 +42,7 @@ public class JListPreference extends PreferenceElement implements PropertyChange
     //endregion Variable Declarations
 
     //region Constructors
-    public JListPreference(final JList<?> jList) {
+    public JListPreference(final JList<?> jList) throws Exception {
         super(jList.getName());
         setSelectedIndices(jList.getSelectedIndices());
         weakReference = new WeakReference<>(jList);
@@ -68,17 +71,16 @@ public class JListPreference extends PreferenceElement implements PropertyChange
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JListPreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final JList<?> element = getWeakReference().get();
         if (element != null) {
             final String[] strings = value.split("\\|");
-            final int[] indices = new int[strings.length];
-            for (int i = 0; i < strings.length; i++) {
-                indices[i] = Integer.parseInt(strings[i]);
-            }
-            setSelectedIndices(indices);
+            setSelectedIndices(Arrays.stream(strings).mapToInt(Integer::parseInt).toArray());
             element.setSelectedIndices(getSelectedIndices());
         }
     }

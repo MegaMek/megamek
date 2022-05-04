@@ -104,7 +104,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         JScrollPane editPanelScroll = new JScrollPane(editPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        
+
         JPanel tmpHolding;
 
         enableBorders.setToolTipText(Messages.getString("SkinEditor.EnableBordersToolTip"));
@@ -116,7 +116,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridx = 0; c.gridy = 0;
-        
+
         tmpHolding = new JPanel();
         tmpHolding.add(currSkinCombo);
         tmpHolding.add(addButton);

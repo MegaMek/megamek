@@ -65,7 +65,7 @@ VERSION HISTORY:
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit
-+ PR #3347: TacOps: AR bracing rule (mechs and protomechs can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
++ PR #3347: TacOps: AR bracing rule (mechs and ProtoMeks can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
 + PR #3346: Logging: Default Global Exception Handler and Standardized Legacy Logging
 + Data: New Sprites, Fluff, Issue #3355, and some general mechset fixes.
 + PR #3358: Per latest errata, transports now load infantry at the end of their movement; the infantry unit has to not have moved yet
@@ -1690,7 +1690,6 @@ v0.41.18 (2016-05-26 19:30 UTC)
 + SPA: Golden Goose #227
 + New Sprites
 
-
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.
 + Issue #162: "The armor panel is null." warning during deployment phase
@@ -1701,7 +1700,7 @@ v0.41.16 (2016-04-10 21:53 UTC)
 + PR #49: Adding runway overlay fluff images
 + PR #45: SPA organization
 + Issue #51: Missing i18n entry: BoardView1. (for crew stunned)
-+ Data: New Sprites and Unit Fixes (Thanks Greekfire)
++ Data: New Sprites and Unit Fixes (Thanks GreekFire)
 + Remove classpath entries for TinyXML (Also fixes #67)
 + PR #46: TacOps Alternate BattleArmor weights
 + PR #57: Remove dependency on TinyXML
@@ -1710,7 +1709,7 @@ v0.41.16 (2016-04-10 21:53 UTC)
 + PR #65: Tilesets can use an 'include' keyword
 + PR #68: Ultra Rubble terrain level missing +2 movement cost
 + Issue #63: ASF free facing changes incorrect on ground maps
-+ Data: New Sprites and Unit Fixes (Thanks Greekfire)
++ Data: New Sprites and Unit Fixes (Thanks GreekFire)
 + PR #87: Adding Simplex-based random landscape generator
 + PR #50: Shadows (optimizations, new effects for low-light levels)
 + Fixing MML Issue #6 - Wrong damage for Enhanced ER PPC  (#6)
@@ -1718,8 +1717,8 @@ v0.41.16 (2016-04-10 21:53 UTC)
 + Issue #81: Grappling a 'mech involved in a Grapple may cause hang
 + Issue #80: Flare Rounds not Illuminating Targets for Visual Detection
 + Bug: Floor deploy dialog for Infantry in buildings could select wrong floor
-+ Bug: Landed dropships were allowed to hang off the edge of the board
-+ Issue #82: Dropship Deployment Overlapping
++ Bug: Landed DropShips were allowed to hang off the edge of the board
++ Issue #82: DropShip Deployment Overlapping
 + PR #96/Issue #98: Fixed Industrial TSM calculation
 + PR #100: Minimap unit icons made more visible
 + Bug/PR #89: Keyboard scrolling made smoother by reducing calls to the minimap
@@ -1739,10 +1738,10 @@ v0.41.16 (2016-04-10 21:53 UTC)
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error
-+ Issue #20: Cluster Master should be labeled Unofficial not atow
++ Issue #20: Cluster Master should be labeled Unofficial not AToW
 + Issue #18: Small Patch: changes lounge tooltip to act similar to board view tt
 + Issue #11: RFE: Open MiniMap during Artillery Designate Targets automatically
-+ Added BattleValue field to MechcacheCSVTool
++ Added BattleValue field to MechCacheCSVTool
 + Data: New Sprites and Unit Fixes.
 + Issue #22: Mech UMUs attacker movement modifier and heat generation
 + Bug [#4683]: EntityWeightClass.getWeightClass doesn't consider SupportVTOL
@@ -1791,7 +1790,7 @@ v0.41.13 (2016-01-01 03:35 UTC)
 + Bug: Potential NPE in MapSettings.setMapSize
 + Bug: Fixes to dates with Engines/Cockpits/equipment.
 + Data: New Sprites, Unit Fixes and Reorganized Small Craft again.
-+ Data: New and RATs (ATOW, MW3rd, missing TRO 3085)(Thanks Magnus Kerensky)
++ Data: New and RATs (AToW, MW3rd, missing TRO 3085)(Thanks Magnus Kerensky)
 + Bug: Couple of Ammo Date Fixes.
 + Feature: Added unofficial option to not generate smoke from burning woods
 + UnitSelectorDialog: Escape/Enter keys now work in a broader set of situations
@@ -1863,7 +1862,7 @@ v0.41.11 (2015-11-15 16:50 UTC)
 + Bug [#4644]: Player names not visible if player color is selected as "white"
 + Bug: FiringSprites from previous Firing phase still drawn in Targeting phase
 + Bug: Added missing i18n entries for Cancel key
-+ Added tooltip to Type list in UntiSelectorDialog
++ Added tooltip to Type list in UnitSelectorDialog
 + Added KeyBind for "Done" action
 + New Sprites
 
@@ -1885,7 +1884,7 @@ v0.41.10 (2015-10-12 00:11 UTC)
 + Bug [#4507]: Units can now set deployment zone if deploying after round 1
 + Bug [#4448]: Moved Game Year option to Allowed Units and Equipment tab
 + Bug [#4448]: Added Tech Level option in Allowed Units and Equipment tab
-+ Bug [#4448]: Removed several redudant options from Alowed Units and Equipment
++ Bug [#4448]: Removed several redundant options from Allowed Units and Equipment
 + Bug [#4057]: track turret weight for omnitanks correctly
 + Construction data for Remote Drone Command Console
 + verifier for RISC super-cooled myomer
@@ -1896,7 +1895,7 @@ v0.41.10 (2015-10-12 00:11 UTC)
 
 
 v0.41.9 (2015-09-14 01:25 UTC)
-+ Bug: Infantry BLK files with true/false for antimek fail to load
++ Bug: Infantry BLK files with true/false for Anti-Mek fail to load
 + Bug: Wind direction was actually wind strength
 + Data: New Sprites
 + Bug [#4619] Mech Icon not displayed in MM and new sprites
@@ -1926,13 +1925,13 @@ v0.41.8 (2015-09-01 12:10 UTC)
 + Data: New Sprites
 + Data: Source file changes (Mechs TRO 3039)
 + Bug: Fixing broken unit test from change in Mech Data directory
-+ Bug: Infantry BLK files with true/false for antimek fail to load
++ Bug: Infantry BLK files with true/false for Anti-Mek fail to load
 
 v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings
 + Bug [#4595]: Bad translation for PlanetaryConditions internationalization
 + Bug [#4593]: Mech in climb mode ends up on top of building post DFA
-+ Bug [#4531]: Issues with Protomechs and individual initiative
++ Bug [#4531]: Issues with ProtoMeks and individual initiative
 + Bug [#4598]: BestFiringPlanUnderHeat Error
 + Bug [#4597]: Vehicular Grenade Launcher Error
 + Bug [#4588]: Field Guns jamming in Rapid mode
@@ -1948,7 +1947,7 @@ v0.41.7 (2015-08-26 21:30 UTC)
 + setOriginalShots for Protos
 + Bug [#4603]: Weapon Order always revert to default
 + Data: New Sprites
-+ MechView constructor that allows for display of alterate costs
++ MechView constructor that allows for display of alternate costs
 + Bug: Direct/Glancing Blow applies both cluster and damage modifier to rapid-
     fire autocannons (should be cluster only in rapid-fire modes).
 + Bug [#4606]: Careful Stand doesn't end movement on failure
@@ -1956,10 +1955,10 @@ v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4608]: Added more hotkeys for targeting phase (similar to firing phase)
 + Bug [#4607]: Check for "crippled" condition doesn't work for GunEmplacement
     instances
-+ Bug [#4605]: Escape doesn't seem to work occassionally
++ Bug [#4605]: Escape doesn't seem to work occasionally
 + detailed weapon bay description in MechView
 + Bug: weapon criticals on vehicles and aeros do not damage the critical slot
-+ Bug: thruster and dropship collar crits not showing in MechView
++ Bug: thruster and DropShip collar crits not showing in MechView
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement
@@ -2896,9 +2895,9 @@ v0.39.1 (2014-08-26 14:56 UTC)
 + Feature [#1158]: Map Editor: Re-size maps
 + Refactored Compute.get*ECMFieldSize() methods to be cleaner and a bit more
     efficient
-+ Updated Game to cache which Coords have Entitys in them, and what those
-    Entitys are.  Now Game.getEntities(Coords) uses the cache to return much
-    quicker.  This is important for games with a large number of Entitys, as
++ Updated Game to cache which Coords have Entities in them, and what those
+    Entities are. Now Game.getEntities(Coords) uses the cache to return much
+    quicker. This is important for games with a large number of Entities, as
     Game.getEntities(Coords) can be called frequently (like when computing LoS)
 + Bug: View -> Round Report was displaying the phase report for the current
     round instead of the round report
@@ -3388,7 +3387,7 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
     is any unit that has an init bonus (but not the highest), a C3 slave system,
     ECM, Active Probe, TAG, EI Cockpit or is currently using a spotlight.
 + Bug [#2244]: ECM in Double Blind games -> wrong hit roll reporting
-+ Bug [#3996]: Cleaned up a few more areas where not all of an Entitys loaded
++ Bug [#3996]: Cleaned up a few more areas where not all of an Entities loaded
     units were being sent to Clients during updates
 + Bug: Firing solutions was always drawing data for teammate units, even if
     friendly fire was off, also wouldn't draw friendly units that weren't
@@ -4985,7 +4984,7 @@ v0.35.34 (2013-01-27, 22:55 UTC+1)
     some equipment (thanks Hammer and Neil!)
 + Bug 1136:  Princess Bot Ignores Infantry.
 + Bug 3620: Princess Bot Does Not Move Heavy Infantry
-+ change to MekViewPanel dimensions to accomodate MML
++ change to MekViewPanel dimensions to accommodate MML
 + Bug 3626: falling while standing on building - mech not prone
 + Bug 3615: VTOL Jet Booster too heavy
 + Patch 441: Orthographics for Bridges and Submersables
@@ -8389,7 +8388,7 @@ v0.33.17 (2008-02-01)
 + Bug 1882694: Map rotation error
 + Bug: movement along road not checking destination hex for road, too
 + Physical Attacks against Infantry should do only 1/10 damage
-+ Bug: Draw occuring on Team Game Victories
++ Bug: Draw occurring on Team Game Victories
 
 v0.33.16 (2008-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change

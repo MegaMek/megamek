@@ -8071,7 +8071,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns the maximum number of downard elevation changes a unit can make.
+     * Returns the maximum number of downward elevation changes a unit can make.
      * For some units (namely, WiGEs), this can depend upon their current
      * elevation (since elevation determines if the WiGEs is using WiGE movement
      * or not).
@@ -8298,11 +8298,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Damages a randomly determined bay door on the entity, if one exists
      */
     public String damageBayDoor() {
-
         String bayType = "none";
 
-        Vector<Bay> potential;
-        potential = new Vector<>();
+        Vector<Bay> potential = new Vector<>();
 
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
@@ -8379,7 +8377,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         for (Transporter next : transports) {
-            //Don't look at trailer hitches here, that's separate
+            // Don't look at trailer hitches here, that's separate
             if (next instanceof TankTrailerHitch) {
                 continue;
             }

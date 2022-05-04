@@ -662,7 +662,7 @@ public class MovePath implements Cloneable, Serializable {
             }
             }
 
-            // if this step is part of a manuever, undo the whole manuever, all the way to the beginning.
+            // if this step is part of a maneuver, undo the whole maneuver, all the way to the beginning.
             if (step1.isManeuver()) {
                 int stepIndex = steps.size() - 1;
 

@@ -689,7 +689,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     @Override
     public void ready() {
         if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
-            // comfirm this action
+            // confirm this action
             String title = Messages.getString("TargetingPhaseDisplay.DontFireDialog.title");
             String body = Messages.getString("TargetingPhaseDisplay.DontFireDialog.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
@@ -929,7 +929,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }    
 
     /**
-     * Refeshes all displays.
+     * Refreshes all displays.
      */
     private void refreshAll() {
         if (ce() == null) {

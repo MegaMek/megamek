@@ -656,7 +656,7 @@ public class CLIATMHandler extends ATMHandler {
                     Mounted m = ae.getEquipment(waa.getWeaponId());
                     Weapon w = (Weapon) m.getType();
                     AttackHandler ah = w.fire(newWaa, game, server);
-                    // increase ammo by one, becaues we just incorrectly used
+                    // increase ammo by one, because we just incorrectly used
                     // one up
                     weapon.getLinked().setShotsLeft(
                             weapon.getLinked().getBaseShotsLeft() + 1);

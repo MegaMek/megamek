@@ -3971,7 +3971,7 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * Should we treat this movement as if it is occuring for an aerodyne unit
+     * Should we treat this movement as if it is occurring for an aerodyne unit
      * flying in atmosphere?
      */
     boolean useAeroAtmosphere(Game game, Entity en) {

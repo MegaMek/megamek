@@ -2156,7 +2156,7 @@ public class Server implements Runnable {
                 remaining += game.getInfantryLeft(playerId);
             }
             if (protosMoveMulti && protosMoved) {
-                remaining += game.getProtomechsLeft(playerId);
+                remaining += game.getProtoMeksLeft(playerId);
             }
             if (usedEntityNotDone) {
                 remaining--;

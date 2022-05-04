@@ -262,7 +262,7 @@ public class Sensor implements Serializable {
                 break;
             case TYPE_WATCHDOG:
             case TYPE_NOVA:
-                // WOR : same as above. No data available, assuming Watchdog performancae
+                // WOR : same as above. No data available, assuming Watchdog performance
                 if (te.isVoidSigActive()) {
                     mod += 6;
                 }
@@ -476,7 +476,7 @@ public class Sensor implements Serializable {
     }
 
     public int entityAdjustments(int range, Entity target, Game game) {
-        // You need to have moved to be detected by sesmic and be on the ground
+        // You need to have moved to be detected by seismic and be on the ground
         if (((type == TYPE_MEK_SEISMIC) || (type == TYPE_VEE_SEISMIC))
                 && ((target.mpUsed == 0) || (target.getElevation() > 0))) {
             return 0;

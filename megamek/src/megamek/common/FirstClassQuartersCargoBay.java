@@ -47,7 +47,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
     /**
      * Create space for certain number of crew/passengers
      *
-     * @param space The number of crew or passengers to accomodate
+     * @param space The number of crew or passengers to accommodate
      */
     public FirstClassQuartersCargoBay(int space) {
         this(space * 10, 0);

@@ -3452,7 +3452,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
     }
 
-    private static class MekTable extends JTable {
+    private class MekTable extends JTable {
         private static final long serialVersionUID = -4054214297803021212L;
         
         public MekTable(MekTableModel mekModel) {

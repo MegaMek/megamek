@@ -151,7 +151,11 @@ public final class TroopSpace implements Transporter {
 
         // Remove the unit if we are carrying it.
         boolean retval = false;
-        double unloadWeight = troops.get(unit.getId());
+        double unloadWeight = 0;
+
+        if (unit != null) {
+            unloadWeight = troops.get(unit.getId());
+        }
 
         // If we removed it, restore our space.
         if (troops.remove(unit.getId()) != null) {

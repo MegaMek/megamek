@@ -238,7 +238,7 @@ public class ScenarioLoader {
             }
         }
 
-        // Loop throught Crit Hits
+        // Loop through Crit Hits
         for (CritHitPlan chp : critHitPlans) {
             LogManager.getLogger().debug("Applying critical hits to " + chp.entity.getShortName());
             for (CritHit critHit : chp.critHits) {

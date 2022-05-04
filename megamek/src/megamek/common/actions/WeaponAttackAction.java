@@ -4459,8 +4459,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             losMods = los.losModifiers(game, eistatus, underWater);
         }
         
-        // Change hit table for partial cover, accomodate for partial
-        // underwater(legs)
+        // Change hit table for partial cover, accommodate for partial underwater (legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
             if (underWater && (targetHexContainsWater && (targEl == 0) 
                     && (te != null && te.height() > 0))) {

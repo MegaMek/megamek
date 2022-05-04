@@ -17,7 +17,7 @@ package megamek.client.bot.ga;
 import java.util.Arrays;
 
 public abstract class GA {
-    final double mutationProb; // probability of a mutation occuring during
+    final double mutationProb; // probability of a mutation occurring during
                                // genetic mating. For example, 0.03 means 3% chance
     final int maxGenerations; // maximum generations to evolve
     final double randomSelectionChance;

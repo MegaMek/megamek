@@ -980,26 +980,25 @@ public class Game implements Serializable {
      */
     public Vector<Entity> getC3NetworkMembers(Entity entity) {
         Vector<Entity> members = new Vector<>();
-        //WOR
+        // WOR
         // Does the unit have a C3 computer?
         if ((entity != null) && entity.hasAnyC3System()) {
 
-            // Walk throught the entities in the game, and add all
+            // Walk through the entities in the game, and add all
             // members of the C3 network to the output Vector.
             for (Entity unit : entities) {
                 if (entity.equals(unit) || entity.onSameC3NetworkAs(unit)) {
                     members.addElement(unit);
                 }
             }
-
-        } // End entity-has-C3
+        }
 
         return members;
     }
 
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s that
-     * are in the C3 sub-network under the passed-in unit. The output will
+     * are in the C3 subnetwork under the passed-in unit. The output will
      * contain the passed-in unit, if the unit has a C3 computer. If the unit
      * has no C3 computer, the output will be empty (but it will never be
      * <code>null</code>). If the passed-in unit is a company commander or a
@@ -1015,7 +1014,7 @@ public class Game implements Serializable {
      * @see #getC3NetworkMembers(Entity)
      */
     public Vector<Entity> getC3SubNetworkMembers(Entity entity) {
-        //WOR
+        // WOR
         // Handle null, C3i, NC3, and company commander units.
         if ((entity == null) || entity.hasC3i() || entity.hasNavalC3() || entity.hasActiveNovaCEWS() || entity.C3MasterIs(entity)) {
             return getC3NetworkMembers(entity);
@@ -1025,16 +1024,14 @@ public class Game implements Serializable {
 
         // Does the unit have a C3 computer?
         if (entity.hasC3()) {
-
-            // Walk throught the entities in the game, and add all
+            // Walk through the entities in the game, and add all
             // sub-members of the C3 network to the output Vector.
             for (Entity unit : entities) {
                 if (entity.equals(unit) || unit.C3MasterIs(entity)) {
                     members.addElement(unit);
                 }
             }
-
-        } // End entity-has-C3
+        }
 
         return members;
     }
@@ -1078,7 +1075,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns an enumeration of salvagable entities.
+     * Returns an enumeration of salvageable entities.
      */
     public Enumeration<Entity> getGraveyardEntities() {
         Vector<Entity> graveyard = new Vector<>();
@@ -1991,9 +1988,9 @@ public class Game implements Serializable {
 
     /**
      * @param playerId the player's Id
-     * @return number of ProtoMechs <code>playerId</code> has not selected yet this turn
+     * @return number of ProtoMeks <code>playerId</code> has not selected yet this turn
      */
-    public int getProtomechsLeft(int playerId) {
+    public int getProtoMeksLeft(int playerId) {
         Player player = getPlayer(playerId);
         int remaining = 0;
 
@@ -2094,13 +2091,13 @@ public class Game implements Serializable {
                 return;
             }
         }
-        // Same thing but for protos
+        // Same thing but for ProtoMeks
         if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)
                 && (entity instanceof Protomech) && getPhase().isMovement()) {
-            if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
+            if ((getProtoMeksLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
-                // exception, if the _next_ turn is an protomek turn, remove that
-                // contrived, but may come up e.g. one inf accidently kills another
+                // exception, if the _next_ turn is an ProtoMek turn, remove that
+                // contrived, but may come up e.g. one inf accidentally kills another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
@@ -2162,7 +2159,7 @@ public class Game implements Serializable {
 
 
         boolean useInfantryMoveLaterCheck = true;
-        // If we have the "infantry move later" or "protos move later" optional
+        // If we have the "infantry move later" or "ProtoMeks move later" optional
         //  rules, then we may be removing an infantry unit that would be
         //  considered invalid unless we don't consider the extra validity
         //  checks.
@@ -3259,35 +3256,8 @@ public class Game implements Serializable {
         return false;
     }
 
-    public boolean checkForValidJumpships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof Jumpship) && !(entity instanceof Warship)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkForValidWarships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof Warship)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkForValidDropships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
+    public boolean checkForValidDropShips(int playerId) {
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof Dropship)

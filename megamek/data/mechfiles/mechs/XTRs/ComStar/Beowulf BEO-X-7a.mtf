@@ -1,0 +1,156 @@
+Version:1.2
+Beowulf
+BEO-X-7a
+mul id:5548
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3068
+Source:XTRO ComStar - Jihad
+Rules Level:4
+
+Mass:45
+Engine:270 XL Engine(IS)
+Structure:Composite
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+Ejection:Full Head Ejection System
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:7
+
+Armor:Stealth(Inner Sphere)
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:20
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:5
+TAG, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+BloodhoundActiveProbe (armored)
+BloodhoundActiveProbe (armored)
+BloodhoundActiveProbe (armored)
+Stealth
+Stealth
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+ISTAG
+ISMASC
+ISMASC
+Stealth
+Stealth
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+Stealth
+Stealth
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+IS Improved Jump Jet
+Stealth
+Stealth
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Improved Jump Jet
+IS Improved Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISAngelECMSuite (armored)
+ISAngelECMSuite (armored)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

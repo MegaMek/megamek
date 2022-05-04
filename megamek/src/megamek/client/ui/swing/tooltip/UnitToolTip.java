@@ -655,7 +655,7 @@ public final class UnitToolTip {
         }
 
         // Unit Immobile
-        if (!isGunEmplacement && (entity.isImmobile())) {
+        if (!isGunEmplacement && entity.isImmobile()) {
             result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
             result.append(addToTT("Immobile", BR));
             result.append("</FONT>");
@@ -729,9 +729,7 @@ public final class UnitToolTip {
         StringBuilder result = new StringBuilder();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         // Unit movement ability
-        if (isGunEmplacement) {
-            result.append(addToTT("Immobile", NOBR));
-        } else {
+        if (!isGunEmplacement) {
             result.append(addToTT("Movement", NOBR, entity.getWalkMP(), entity.getRunMPasString()));
             if (entity.getJumpMP() > 0) {
                 result.append("/" + entity.getJumpMP());
@@ -751,13 +749,15 @@ public final class UnitToolTip {
         }
 
         // Armor and Internals
-        String armorType = TROView.formatArmorType(entity, true).replace("UNKNOWN", "");
-        if (!armorType.isBlank()) {
-            armorType = (entity.isCapitalScale() ? getString("BoardView1.Tooltip.ArmorCapital") + " " : "") + armorType;
-            armorType = " (" + armorType + ")";
+        if (!isGunEmplacement) {
+            String armorType = TROView.formatArmorType(entity, true).replace("UNKNOWN", "");
+            if (!armorType.isBlank()) {
+                armorType = (entity.isCapitalScale() ? getString("BoardView1.Tooltip.ArmorCapital") + " " : "") + armorType;
+                armorType = " (" + armorType + ")";
+            }
+            String armorStr = " " + entity.getTotalArmor() + armorType;
+            result.append(addToTT("ArmorInternals", BR, armorStr, entity.getTotalInternal()));
         }
-        String armorStr = " " + entity.getTotalArmor() + armorType;
-        result.append(addToTT("ArmorInternals", BR, armorStr, entity.getTotalInternal()));
         return result;
     }
     

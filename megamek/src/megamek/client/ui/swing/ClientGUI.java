@@ -410,7 +410,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.addBoardViewListener(this);
             client.setBoardView(bv);
         } catch (Exception ex) {
-            LogManager.getLogger().fatal(ex);
+            LogManager.getLogger().fatal("", ex);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
                     Messages.getString("ClientGUI.FatalError.message") + ex);
             die();

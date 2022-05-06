@@ -225,7 +225,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
-    public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
+    public static final String DEFAULT_WEAPON_SORT_ORDER = "DefaultWeaponSortOrder";
     public static final String UI_THEME = "UITheme";
     public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
@@ -442,7 +442,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPSHEETS, false);
 
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
-        store.setDefault(DEFAULT_WEAP_SORT_ORDER, WeaponSortOrder.DEFAULT.ordinal());
+        store.setDefault(DEFAULT_WEAPON_SORT_ORDER, WeaponSortOrder.DEFAULT.name());
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
@@ -951,10 +951,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getString(UI_THEME);
     }
 
-    public int getDefaultWeaponSortOrder() {
-        return store.getInt(DEFAULT_WEAP_SORT_ORDER);
+    public WeaponSortOrder getDefaultWeaponSortOrder() {
+        return WeaponSortOrder.valueOf(store.getString(DEFAULT_WEAPON_SORT_ORDER));
     }
-    
+
+    public void setDefaultWeaponSortOrder(final WeaponSortOrder weaponSortOrder) {
+        store.setValue(DEFAULT_WEAPON_SORT_ORDER, weaponSortOrder.name());
+    }
+
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
     }
@@ -1413,10 +1417,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUITheme(String s) {
         store.setValue(UI_THEME, s);
-    }
-    
-    public void setDefaultWeaponSortOrder(int i) {
-        store.setValue(DEFAULT_WEAP_SORT_ORDER, i);
     }
 
     public int getRATTechLevel() {

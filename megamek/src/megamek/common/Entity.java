@@ -126,66 +126,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public static final int USE_STRUCTURAL_RATING = -1;
 
-    public enum MPBoosters {
-        NONE(),
-        MASC_ONLY(),
-        SUPERCHARGER_ONLY(),
-        MASC_AND_SUPERCHARGER();
-
-        // common methods so we can change implementation if needed
-        public boolean hasMASCOnly()
-        {
-            return (this == MASC_ONLY);
-        }
-
-        public boolean hasSuperchargerOnly() {
-            return (this == SUPERCHARGER_ONLY);
-        }
-
-        public boolean hasMASCXorSupercharger() {
-            return (this == MASC_ONLY || this == SUPERCHARGER_ONLY);
-        }
-
-        // common methods so we can change implementation if needed
-        public boolean hasMASCAndOrSupercharger()
-        {
-            return (this != NONE);
-        }
-
-        public boolean hasMASCAndSupercharger() {
-            return (this == MASC_AND_SUPERCHARGER);
-        }
-
-        public boolean hasMASC() {
-            return (this == MASC_ONLY || this == MASC_AND_SUPERCHARGER);
-        }
-
-        public boolean hasSupercharger() {
-            return (this == SUPERCHARGER_ONLY || this == MASC_AND_SUPERCHARGER);
-        }
-
-        public int calcRunMP(int walkMP) {
-            if (hasMASCXorSupercharger()) {
-                return (int) Math.ceil(walkMP * 2);
-            }
-            if (hasMASCAndSupercharger()) {
-                return (int) Math.ceil(walkMP * 2.5);
-            }
-            return (int) Math.ceil(walkMP * 1.5);
-        }
-
-        public int calcSprintMP(int walkMP) {
-            if (hasMASCXorSupercharger()) {
-                return (int) Math.ceil(walkMP * 2.5);
-            }
-            if (hasMASCAndSupercharger()) {
-                return (int) Math.ceil(walkMP * 3);
-            }
-            return (int) Math.ceil(walkMP * 2);
-        }
-
-    }
-
     protected transient Game game;
 
     protected int id = Entity.NONE;
@@ -828,7 +768,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Maps a weapon id to a user-specified index, used to get a custom ordering
      * for weapons.
      */
-    private Map<Integer, Integer> customWeapOrder = null;
+    private Map<Integer, Integer> customWeaponOrder = null;
 
     /**
      * Flag that indicates weapon sort order has changed (included ordering for
@@ -899,9 +839,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         impThisTurn = 0;
         impLastTurn = 0;
 
-        weaponSortOrder = WeaponSortOrder.values()[GUIPreferences.getInstance().getDefaultWeaponSortOrder()];
+        weaponSortOrder = GUIPreferences.getInstance().getDefaultWeaponSortOrder();
 
-        //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
+        // set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         // and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
@@ -5597,7 +5537,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns whether or not this entity has a Targeting Computer.
+     * Returns wether or not this entity has a Targeting Computer.
      */
     public boolean hasTargComp() {
         for (Mounted m : getMisc()) {
@@ -5610,7 +5550,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns whether or not this entity has a Targeting Computer that is in
+     * Returns wether or not this entity has a Targeting Computer that is in
      * aimed shot mode.
      */
     public boolean hasAimModeTargComp() {
@@ -15179,10 +15119,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public WeaponSortOrder getWeaponSortOrder() {
-        if (weaponSortOrder == null) {
-            return WeaponSortOrder.DEFAULT;
-        }
-        return weaponSortOrder;
+        return (weaponSortOrder == null) ? WeaponSortOrder.DEFAULT : weaponSortOrder;
     }
 
     public void setWeaponSortOrder(WeaponSortOrder weaponSortOrder) {
@@ -15191,30 +15128,30 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If sort mode is custom, and the custom order is null, create it
         // and make the order the same as default (based on eqId)
-        if ((weaponSortOrder == WeaponSortOrder.CUSTOM) && (customWeapOrder == null)) {
-            customWeapOrder = new HashMap<>();
-            for (Mounted weap : weaponList) {
-                int eqId = getEquipmentNum(weap);
-                customWeapOrder.put(eqId, eqId);
+        if (weaponSortOrder.isCustom() && (customWeaponOrder == null)) {
+            customWeaponOrder = new HashMap<>();
+            for (Mounted weapon : weaponList) {
+                int eqId = getEquipmentNum(weapon);
+                customWeaponOrder.put(eqId, eqId);
             }
         }
         this.weaponSortOrder = weaponSortOrder;
     }
 
     public Map<Integer, Integer> getCustomWeaponOrder() {
-        return customWeapOrder;
+        return customWeaponOrder;
     }
 
     public void setCustomWeaponOrder(Map<Integer, Integer> customWeapOrder) {
-        this.customWeapOrder = customWeapOrder;
+        this.customWeaponOrder = customWeapOrder;
     }
 
     public int getCustomWeaponOrder(Mounted weapon) {
         int eqId = getEquipmentNum(weapon);
-        if (customWeapOrder == null) {
+        if (customWeaponOrder == null) {
             return eqId;
         }
-        Integer order = customWeapOrder.get(eqId);
+        Integer order = customWeaponOrder.get(eqId);
         return Objects.requireNonNullElse(order, -1);
     }
 
@@ -15224,7 +15161,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (eqId == -1) {
             return;
         }
-        customWeapOrder.put(eqId, order);
+        customWeaponOrder.put(eqId, order);
     }
 
     public boolean isWeapOrderChanged() {

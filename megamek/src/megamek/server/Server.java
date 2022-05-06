@@ -33,6 +33,7 @@ import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
@@ -31161,14 +31162,13 @@ public class Server implements Runnable {
                 Object[] data = packet.getData();
                 Entity ent = game.getEntity((Integer) data[0]);
                 if (ent != null) {
-                    Entity.WeaponSortOrder order = (Entity.WeaponSortOrder) data[1];
+                    WeaponSortOrder order = (WeaponSortOrder) data[1];
                     ent.setWeaponSortOrder(order);
                     // Used by the client but is set in setWeaponSortOrder
                     ent.setWeapOrderChanged(false);
-                    if (order == Entity.WeaponSortOrder.CUSTOM) {
-                        @SuppressWarnings("unchecked")
-                        // Unchecked cause of limitations in Java when casting
-                        // to a collection
+                    if (order.isCustom()) {
+                        // Unchecked cause of limitations in Java when casting to a collection
+                        @SuppressWarnings(value = "unchecked")
                         Map<Integer, Integer> customWeaponOrder = (Map<Integer, Integer>) data[2];
                         ent.setCustomWeaponOrder(customWeaponOrder);
                     }

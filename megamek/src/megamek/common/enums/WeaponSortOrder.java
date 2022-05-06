@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,65 +19,59 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
+import megamek.common.*;
 import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.Comparator;
 import java.util.ResourceBundle;
 
 public enum WeaponSortOrder {
     //region Enum Declarations
-    DEFAULT("WeaponSortOrder.DEFAULT.text", "WeaponSortOrder.DEFAULT.toolTipText"),
-    RANGE_LH("WeaponSortOrder.RANGE_LH.text", "WeaponSortOrder.RANGE_LH.toolTipText"),
-    RANGE_HL("WeaponSortOrder.RANGE_HL.text", "WeaponSortOrder.RANGE_HL.toolTipText"),
-    DAMAGE_LH("WeaponSortOrder.DAMAGE_LH.text", "WeaponSortOrder.DAMAGE_LH.toolTipText"),
-    DAMAGE_HL("WeaponSortOrder.DAMAGE_HL.text", "WeaponSortOrder.DAMAGE_HL.toolTipText"),
-    ARC("WeaponSortOrder.ARC.text", "WeaponSortOrder.ARC.toolTipText"),
-    CUSTOM("WeaponSortOrder.CUSTOM.text", "WeaponSortOrder.CUSTOM.toolTipText");
+    DEFAULT("WeaponSortOrder.DEFAULT.text"),
+    RANGE_LOW_HIGH("WeaponSortOrder.RANGE_LOW_HIGH.text"),
+    RANGE_HIGH_LOW("WeaponSortOrder.RANGE_HIGH_LOW.text"),
+    DAMAGE_LOW_HIGH("WeaponSortOrder.DAMAGE_LOW_HIGH.text"),
+    DAMAGE_HIGH_LOW("WeaponSortOrder.DAMAGE_HIGH_LOW.text"),
+    WEAPON_ARC("WeaponSortOrder.WEAPON_ARC.text"),
+    CUSTOM("WeaponSortOrder.CUSTOM.text");
     //endregion Enum Declarations
 
     //region Variable Declarations
     private final String name;
-    private final String toolTipText;
     //endregion Variable Declarations
 
     //region Constructors
-    WeaponSortOrder(final String name, final String toolTipText) {
+    WeaponSortOrder(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
                 MegaMek.getMMOptions().getLocale(), new EncodeControl());
         this.name = resources.getString(name);
-        this.toolTipText = resources.getString(toolTipText);
     }
     //endregion Constructors
-
-    //region Getters
-    public String getToolTipText() {
-        return toolTipText;
-    }
-    //endregion Getters
 
     //region Boolean Comparisons
     public boolean isDefault() {
         return this == DEFAULT;
     }
 
-    public boolean isDamageLH() {
-        return this == RANGE_LH;
+    public boolean isRangeLowHigh() {
+        return this == RANGE_LOW_HIGH;
     }
 
-    public boolean isDamageHL() {
-        return this == RANGE_HL;
+    public boolean isRangeHighLow() {
+        return this == RANGE_HIGH_LOW;
     }
 
-    public boolean isDamageLH() {
-        return this == DAMAGE_LH;
+    public boolean isDamageLowHigh() {
+        return this == DAMAGE_LOW_HIGH;
     }
 
-    public boolean isDamageHL() {
-        return this == DAMAGE_HL;
+    public boolean isDamageHighLow() {
+        return this == DAMAGE_HIGH_LOW;
     }
 
-    public boolean isArc() {
-        return this == ARC;
+    public boolean isWeaponArc() {
+        return this == WEAPON_ARC;
     }
 
     public boolean isCustom() {
@@ -85,36 +79,34 @@ public enum WeaponSortOrder {
     }
     //endregion Boolean Comparisons
 
-    //region File I/O
-    public static WeaponSortOrder parseFromString(final String text) {
-        try {
-            return valueOf(text);
-        } catch (Exception ignored) {
-
+    /**
+     * @param entity the entity to compare weapons for
+     * @return the comparator for weapon sorting, or the default weapon sort comparator if the sort
+     * order isn't handled yet.
+     */
+    public Comparator<Mounted> getWeaponSortComparator(final Entity entity) {
+        switch (this) {
+            case DEFAULT:
+                return new WeaponComparatorNum(entity);
+            case RANGE_LOW_HIGH:
+                return new WeaponComparatorRange(true);
+            case RANGE_HIGH_LOW:
+                return new WeaponComparatorRange(false);
+            case DAMAGE_LOW_HIGH:
+                return new WeaponComparatorDamage(true);
+            case DAMAGE_HIGH_LOW:
+                return new WeaponComparatorDamage(false);
+            case WEAPON_ARC:
+                return new WeaponComparatorArc(entity);
+            case CUSTOM:
+                return new WeaponComparatorCustom(entity);
+            default:
+                LogManager.getLogger().error(String.format(
+                        "Attempted to get weapon sort comparator for unknown WeaponSortOrder %s, returning the DEFAULT weapon sort comparator.",
+                        name()));
+                return DEFAULT.getWeaponSortComparator(entity);
         }
-
-        try {
-            switch (Integer.parseInt(text)) {
-                case 0:
-                    return GREEN;
-                case 1:
-                    return REGULAR;
-                case 2:
-                    return VETERAN;
-                case 3:
-                    return ELITE;
-                default:
-                    break;
-            }
-        } catch (Exception ignored) {
-
-        }
-
-        LogManager.getLogger().error("Unable to parse " + text + " into a WeaponSortOrder. Returning REGULAR.");
-
-        return REGULAR;
     }
-    //endregion File I/O
 
     @Override
     public String toString() {

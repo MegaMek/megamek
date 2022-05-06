@@ -750,7 +750,7 @@ public class Client implements IClientCommandHandler {
                     entity.getWeaponSortOrder(), entity.getCustomWeaponOrder()));
         } else {
             send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
-                    entity.getWeaponSortOrder());
+                    entity.getWeaponSortOrder()));
         }
         entity.setWeapOrderChanged(false);
     }

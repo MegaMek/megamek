@@ -219,10 +219,9 @@ public class WeaponOrderHandler {
 
                 WeaponOrder weapOrder = new WeaponOrder();
                 weapOrder.orderType = WeaponSortOrder.valueOf(orderTypeElement.getTextContent());
-                if (weapOrder.orderType == WeaponSortOrder.CUSTOM) {
+                if (weapOrder.orderType.isCustom()) {
                     String[] weaponList = weaponListElement.getTextContent().split(",");
                     String[] orderList = orderListElement.getTextContent().split(",");
-                    assert (weaponList.length == orderList.length);
                     for (int i = 0; i < weaponList.length; i++) {
                         weapOrder.customWeaponOrderMap.put(
                                 Integer.parseInt(weaponList[i]),

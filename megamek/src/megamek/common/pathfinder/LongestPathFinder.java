@@ -17,6 +17,7 @@ import megamek.client.bot.princess.MinefieldUtil;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -166,16 +167,17 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                      * Current implementation of doRelax() assumes that v is
                      * sorted in such way that this situation is impossible.
                      */
-                    System.err.println(new IllegalStateException(
-                            "Top Move Path uses more MPs than Move Path Candidate."));
+                    LogManager.getLogger().error(
+                            "Top Move Path uses more MPs than Move Path Candidate.",
+                            new IllegalStateException());
                     return null;
                 } else {
                     if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
-                        return null; //topMP path is longer and uses less or same mp.
+                        return null; // topMP path is longer and uses less or same mp.
                     }
                     if (topMP.getHexesMoved() == mpCandidate.getHexesMoved()) {
-                        //we want to preserve both forward and backward movements
-                        //that end in the same spot with the same cost.
+                        // we want to preserve both forward and backward movements
+                        // that end in the same spot with the same cost.
                         MoveStep topStep = topMP.getLastStep();
                         boolean topBackwards = topStep != null && topStep.isThisStepBackwards();
                         MoveStep mpCandStep = mpCandidate.getLastStep();
@@ -187,10 +189,10 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                     }
 
                     if (topMpUsed == mpCMpUsed) {
-                        //mpCandidate is not strictly better than topMp so we won't use it.
+                        // mpCandidate is not strictly better than topMp so we won't use it.
                         return null;
                     } else if (topMpUsed < mpCMpUsed) {
-                        //topMP travels less but also uses less movement points so we should keep it
+                        // topMP travels less but also uses less movement points so we should keep it
                         // and add mpCandidate to the list of optimal longest paths.
                         break;
                     }
@@ -199,7 +201,6 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
             v.addLast(mpCandidate);
             return v;
         }
-
     }
 
     /**
@@ -248,14 +249,14 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
      * greater than current top of the stack.
      */
     public static class AeroMultiPathRelaxer implements EdgeRelaxer<Deque<MovePath>, MovePath> {
-        boolean inAthmosphere;
+        boolean inAtmosphere;
 
-        private AeroMultiPathRelaxer(boolean inAthmosphere) {
-            this.inAthmosphere = inAthmosphere;
+        private AeroMultiPathRelaxer(boolean inAtmosphere) {
+            this.inAtmosphere = inAtmosphere;
         }
 
         @Override
-        public Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
+        public @Nullable Deque<MovePath> doRelax(Deque<MovePath> v, MovePath mpCandidate, Comparator<MovePath> comparator) {
             Objects.requireNonNull(mpCandidate);
             if (v == null) {
                 return new ArrayDeque<>(Collections.singleton(mpCandidate));
@@ -272,31 +273,33 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                System.err.println(new IllegalStateException("Top Move Path moved more than Move Path Candidate."));
+                LogManager.getLogger().error(
+                        "Top Move Path moved more than Move Path Candidate.",
+                        new IllegalStateException());
             }
+
             if (dHT < 0) {
                 v.addLast(mpCandidate);
                 return v;
             }
 
-            // assert( topMP.getHexesMoved() == mpCandidate.getHexesMoved() );
             int dMP = topMP.getMpUsed() - mpCandidate.getMpUsed();
             if (dMP > 0) {
                 /*
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                System.err.println(new IllegalStateException(
-                        "Top Move Path uses more MPs than Move Path Candidate. "
-                        + "while traveling the same distance"));
+                LogManager.getLogger().error(
+                        "Top Move Path uses more MPs than Move Path Candidate while traveling the same distance",
+                        new IllegalStateException());
             }
 
-            // assert( topMP thrust used is less or equal than candidates and hexesMoved are equal)
-            if (!inAthmosphere) {
-                return null; //there is no point considering hexes flown straight if we are not in athmo
+            if (!inAtmosphere) {
+                // there is no point considering hexes flown straight if we are not in atmosphere
+                return null;
             }
 
-            //while in athmosphere we should consider paths that have higher thrust used but flew more hexes straight
+            // while in atmosphere we should consider paths that have higher thrust used but flew more hexes straight
             MoveStep topLastStep = topMP.getLastStep();
             MoveStep candidateLastStep = mpCandidate.getLastStep();
             int hs1 = topLastStep == null ? 0 : topLastStep.getNStraight();
@@ -305,9 +308,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
             if (-dHS > 0) {
                 if (dMP >= 0) {
-                    System.err.println(new IllegalStateException(
-                            "Top Move Path uses more MPs than Move Path Candidate and " +
-                            "Top Move Path moves a shorter straight line distance."));
+                    LogManager.getLogger().error(
+                            "Top Move Path uses more MPs than Move Path Candidate and Top Move Path moves a shorter straight line distance.",
+                            new IllegalStateException());
                 }
                 if (topLastStep != null && !topLastStep.dueFreeTurn()) {
                     v.add(mpCandidate);

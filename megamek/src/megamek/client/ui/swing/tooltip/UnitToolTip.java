@@ -34,6 +34,7 @@ import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.SwarmAttack;
 import megamek.common.weapons.SwarmWeaponAttack;
+import org.apache.logging.log4j.LogManager;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
@@ -655,7 +656,7 @@ public final class UnitToolTip {
         }
 
         // Unit Immobile
-        if (!isGunEmplacement && (entity.isImmobile())) {
+        if (!isGunEmplacement && entity.isImmobile()) {
             result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
             result.append(addToTT("Immobile", BR));
             result.append("</FONT>");
@@ -674,7 +675,14 @@ public final class UnitToolTip {
 
         // Swarmed
         if (entity.getSwarmAttackerId() != Entity.NONE) {
-            result.append(addToTT("Swarmed", BR, game.getEntity(entity.getSwarmAttackerId()).getDisplayName()));
+            final Entity swarmAttacker = game.getEntity(entity.getSwarmAttackerId());
+            if (swarmAttacker == null) {
+                LogManager.getLogger().error(String.format(
+                        "Entity %s is currently swarmed by an unknown attacker with id %s",
+                        entity.getId(), entity.getSwarmAttackerId()));
+            }
+            result.append(addToTT("Swarmed", BR,
+                    (swarmAttacker == null) ? "ERROR" : swarmAttacker.getDisplayName()));
         }
 
         // Spotting
@@ -729,9 +737,7 @@ public final class UnitToolTip {
         StringBuilder result = new StringBuilder();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         // Unit movement ability
-        if (isGunEmplacement) {
-            result.append(addToTT("Immobile", NOBR));
-        } else {
+        if (!isGunEmplacement) {
             result.append(addToTT("Movement", NOBR, entity.getWalkMP(), entity.getRunMPasString()));
             if (entity.getJumpMP() > 0) {
                 result.append("/" + entity.getJumpMP());
@@ -751,13 +757,15 @@ public final class UnitToolTip {
         }
 
         // Armor and Internals
-        String armorType = TROView.formatArmorType(entity, true).replace("UNKNOWN", "");
-        if (!armorType.isBlank()) {
-            armorType = (entity.isCapitalScale() ? getString("BoardView1.Tooltip.ArmorCapital") + " " : "") + armorType;
-            armorType = " (" + armorType + ")";
+        if (!isGunEmplacement) {
+            String armorType = TROView.formatArmorType(entity, true).replace("UNKNOWN", "");
+            if (!armorType.isBlank()) {
+                armorType = (entity.isCapitalScale() ? getString("BoardView1.Tooltip.ArmorCapital") + " " : "") + armorType;
+                armorType = " (" + armorType + ")";
+            }
+            String armorStr = " " + entity.getTotalArmor() + armorType;
+            result.append(addToTT("ArmorInternals", BR, armorStr, entity.getTotalInternal()));
         }
-        String armorStr = " " + entity.getTotalArmor() + armorType;
-        result.append(addToTT("ArmorInternals", BR, armorStr, entity.getTotalInternal()));
         return result;
     }
     

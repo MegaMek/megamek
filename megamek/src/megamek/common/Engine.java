@@ -70,7 +70,7 @@ public class Engine implements Serializable, ITechnology {
             "MagLev", "Steam", "Battery", "Solar", "External"
     };
 
-    // These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
+    // These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127 (MagLev from TO:AU&E pg 62)
     // The other engine types are assumed to have a value of 0 in the array
     // if not listed.
     private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
@@ -110,7 +110,12 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_E] = 0.0;
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_F] = 0.0;
 
-        // FIXME : MagLev
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_C] = 0.8;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_D] = 0.7;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_E] = 0.6;
+        SV_ENGINE_RATINGS[MAGLEV][EquipmentType.RATING_F] = 0.5;
 
         SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
         SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;

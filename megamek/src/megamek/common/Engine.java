@@ -74,48 +74,13 @@ public class Engine implements Serializable, ITechnology {
     // The other engine types are assumed to have a value of 0 in the array
     // if not listed.
     private static final double[][] SV_ENGINE_RATINGS = new double[NUM_ENGINE_TYPES][6];
-    static { 
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6;
-        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5;
-        
+    static {
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_B] = 3.0;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_C] = 2.0;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_D] = 1.5;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_E] = 1.3;
         SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_F] = 1.0;
-        
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0;
-        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8;
-        
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9;
-        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7;
-        
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0;
-        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5;
-        
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4;
-        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3;
 
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_B] = 0.0;
@@ -123,6 +88,20 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75;
         SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5;
+        
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7;
+
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3;
 
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_B] = 0.0;
@@ -130,6 +109,29 @@ public class Engine implements Serializable, ITechnology {
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_D] = 0.0;
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_E] = 0.0;
         SV_ENGINE_RATINGS[NONE][EquipmentType.RATING_F] = 0.0;
+
+        // FIXME : MagLev
+
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5;
+
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8;
+        
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5;
 
         SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_A] = 0.0;
         SV_ENGINE_RATINGS[EXTERNAL][EquipmentType.RATING_B] = 1.4;

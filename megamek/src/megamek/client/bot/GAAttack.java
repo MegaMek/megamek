@@ -24,6 +24,7 @@ import megamek.common.Game;
 import megamek.common.Mech;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Need to test the function that moves all firing to a single target
@@ -156,10 +157,9 @@ public class GAAttack extends GA {
         Entity target = null;
         try {
             target = target_array.get(chromArrayList.genes[chromosomeDim - 1]);
-        } catch (Exception e) {
-            System.out.println(chromosomeDim
-                    + " " + chromArrayList.genes.length);
-            System.out.println(target_array.size());
+        } catch (Exception ex) {
+            LogManager.getLogger().error(chromosomeDim + " with gene length "
+                    + chromArrayList.genes.length + " with target size of " + target_array.size(), ex);
             target = target_array.get(valid_target_indexes.get(0));
         }
         for (int iGene = 0; iGene < (chromosomeDim - 1); iGene++) {

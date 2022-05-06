@@ -18,6 +18,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +30,10 @@ import java.util.Vector;
 public class MissileMineClearanceHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 2753652169368638804L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
-     */
-    public MissileMineClearanceHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
+    public MissileMineClearanceHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
-     */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
@@ -54,13 +43,9 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
-        
-        if ((atype == null)
-                || (atype.getMunitionType() != AmmoType.M_MINE_CLEARANCE)) {
-            System.err.println("MissileMineClearance: "
-                    + "not using mine clearance ammo!");
+        final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
+        if ((ammoType == null) || (ammoType.getMunitionType() != AmmoType.M_MINE_CLEARANCE)) {
+            LogManager.getLogger().error("Not using mine clearance ammo!");
             return true;
         }
 
@@ -70,7 +55,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         if (wtype != null) {
-            r.add(wtype.getName() + " " + atype.getSubMunitionName());
+            r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhwere");
         }
@@ -169,7 +154,7 @@ public class MissileMineClearanceHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.indent(2);
         r.newlines++;
-        r.add(wtype.getName() + " " + atype.getSubMunitionName());
+        r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
         r.add(damage);
         vPhaseReport.addElement(r);
 

@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
 
@@ -26,21 +27,10 @@ import java.util.Vector;
 public class MekMortarAirburstHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -2073773899108954657L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
-     */
     public MekMortarAirburstHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
-     */
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
@@ -50,15 +40,11 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed.getType();
-        
-        if ((atype == null) 
-                || (atype.getMunitionType() != AmmoType.M_AIRBURST)) {
-            System.err
-                    .println("MekMortarFlareHandler: not using airburst ammo!");
+        final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
+        if ((ammoType == null) || (ammoType.getMunitionType() != AmmoType.M_AIRBURST)) {
+            LogManager.getLogger().error("Not using airburst ammo!");
             return true;
         }
-
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -66,7 +52,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         if (wtype != null) {
-            r.add(wtype.getName() + " " + atype.getSubMunitionName());
+            r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhwere");
         }
@@ -132,7 +118,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.indent(2);
         r.newlines++;
-        r.add(wtype.getName() + " " + atype.getSubMunitionName());
+        r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
         r.add(wtype.getRackSize());
         vPhaseReport.addElement(r);
         
@@ -252,5 +238,4 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             reports.get(reports.size() - 1).newlines++;
         }
     }
-
 }

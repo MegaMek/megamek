@@ -68,15 +68,14 @@ public class KeyBindParser {
         // Build the XML document.
         try {
             DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
-            System.out.println("Parsing " + file.getName());
+            LogManager.getLogger().debug("Parsing " + file.getName());
             Document doc = builder.parse(file);
-            System.out.println("Parsing finished.");
+            LogManager.getLogger().debug("Parsing finished.");
 
             // Get the list of units.
             NodeList listOfUnits = doc.getElementsByTagName(KEY_BIND);
             int totalBinds = listOfUnits.getLength();
-            System.out.println("Total number of key binds parsed: "
-                    + totalBinds);
+            LogManager.getLogger().debug("Total number of key binds parsed: " + totalBinds);
 
             for (int bindCount = 0; bindCount < totalBinds; bindCount++) {
 
@@ -84,32 +83,26 @@ public class KeyBindParser {
                 Element bindingList = (Element) listOfUnits.item(bindCount);
 
                 // Get the key code
-                Element elem = (Element) bindingList
-                        .getElementsByTagName(KEY_CODE).item(0);
+                Element elem = (Element) bindingList.getElementsByTagName(KEY_CODE).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + KEY_CODE + " element #"
-                            + bindCount);
+                    LogManager.getLogger().error("Missing " + KEY_CODE + " element #" + bindCount);
                     continue;
                 }
                 int keyCode = Integer.parseInt(elem.getTextContent());
 
                 // Get the modifier.
-                elem = (Element) bindingList
-                        .getElementsByTagName(KEY_MODIFIER).item(0);
+                elem = (Element) bindingList.getElementsByTagName(KEY_MODIFIER).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + KEY_MODIFIER + " element #"
-                            + bindCount);
+                    LogManager.getLogger().error("Missing " + KEY_MODIFIER + " element #" + bindCount);
                     continue;
                 }
                 int modifiers = Integer.parseInt(elem.getTextContent());
 
 
                 // Get the command
-                elem = (Element) bindingList
-                        .getElementsByTagName(COMMAND).item(0);
+                elem = (Element) bindingList.getElementsByTagName(COMMAND).item(0);
                 if (elem == null) {
-                    System.err.println("Missing " + COMMAND + " element #"
-                            + bindCount);
+                    LogManager.getLogger().error("Missing " + COMMAND + " element #" + bindCount);
                     continue;
                 }
                 String command = elem.getTextContent();
@@ -134,9 +127,8 @@ public class KeyBindParser {
                     controller.registerKeyCommandBind(keyBind);
                 }
             }
-        } catch (Exception e) {
-            System.err.println("Error parsing key bindings!");
-            e.printStackTrace(System.err);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error parsing key bindings!", ex);
             controller.removeAllKeyCommandBinds();
             registerDefaultKeyBinds(controller);
         }
@@ -188,12 +180,9 @@ public class KeyBindParser {
             output.write("</KeyBindings>");
             output.close();
             fireKeyBindsChangeEvent();
-        } catch (IOException e) {
-            System.err.println("Error writing keybindings file!");
-            e.printStackTrace(System.err);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error writing keybindings file!", ex);
         }
-
-
     }
     
     /**

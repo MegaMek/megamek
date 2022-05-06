@@ -45,7 +45,7 @@ public class BuildingBlock {
      * array.
      *
      * @param data
-     *            This is most usefull for storing one block file inside
+     *            This is most useful for storing one block file inside
      *            another...but <I>data</I> can be an array of anything...such
      *            as comments.
      */
@@ -126,15 +126,10 @@ public class BuildingBlock {
                     startIndex = ++lineNum;
                     break;
                 }
-            } catch (StringIndexOutOfBoundsException ex) {
-                System.err.print("Was looking for ");
-                System.err.print(key);
-                System.err.println(" and caught a");
-                System.err.print("string index out of bounds exception on line: \"");
-                System.err.print(line);
-                System.err.println("\"");
-                System.err.print("rawData index number: ");
-                System.err.println(lineNum);
+            } catch (Exception ex) {
+                LogManager.getLogger().error(String.format(
+                        "Was looking for %s and caught an Exception parsing line \n\"%s\" \nat rawData index number %s",
+                        key, line, lineNum), ex);
             }
         }
         return startIndex;
@@ -168,15 +163,10 @@ public class BuildingBlock {
                     endIndex = lineNum;
                     break;
                 }
-            } catch (StringIndexOutOfBoundsException ex) {
-                System.err.print("Was looking for ");
-                System.err.print(key);
-                System.err.println(" and caught a");
-                System.err.print("string index out of bounds exception on line: \"");
-                System.err.print(line);
-                System.err.println("\"");
-                System.err.print("rawData index number: ");
-                System.err.println(lineNum);
+            } catch (Exception ex) {
+                LogManager.getLogger().error(String.format(
+                        "Was looking for %s and caught an Exception parsing line \n\"%s\" \nwith rawData index number %s",
+                        key, line, lineNum));
             }
         }
         return endIndex;
@@ -639,19 +629,13 @@ public class BuildingBlock {
      * @return Returns the number in the [0] position.
      */
     public int getReturnedArraySize(String[] array) {
-
         try {
-
             return Integer.parseInt(array[0]);
-
-        } catch (NumberFormatException e) {
-
+        } catch (Exception ignored) {
             // couldn't parse it...
-            System.err.println("Couldn't find array size at [0]...is this an array I returned...?");
-            System.err.println("Trying to find size anyway...");
+            LogManager.getLogger().error("Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
             return this.countArray(array);
         }
-
     }
 
     // for those of us who like doing things indirectly ; -?
@@ -674,16 +658,12 @@ public class BuildingBlock {
      * @see getReturnedArraySize (String[])
      */
     public int getReturnedArraySize(float[] array) {
-
         try {
             return Integer.parseInt("" + array[0]);
-        } catch (NumberFormatException e) {
-
-            System.err.println("Couldn't find array size at [0]...is this an array I returned...?");
-            System.err.println("Trying to find size anyway...");
+        } catch (Exception ignored) {
+            LogManager.getLogger().error("Couldn't find array size at [0]...is this an array I returned...? Trying to find the size anyway...");
             return this.countArray(array);
         }
-
     }
 
     /**
@@ -694,9 +674,7 @@ public class BuildingBlock {
      * @return Returns the array's size.
      */
     public int countArray(String[] array) {
-
         return array.length;
-
     }
 
     /**

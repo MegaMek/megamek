@@ -9,7 +9,7 @@ import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
-import megamek.common.Entity.WeaponSortOrder;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -96,7 +96,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             addListeners();
         }
     }
-    
+
     /**
      * ListModel implementation that supports keeping track of a list of Mounted
      * instantiations, how to display them in the JList, and an ability to sort

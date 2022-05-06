@@ -26,6 +26,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
@@ -126,23 +127,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final int DMG_CRIPPLED = 4;
 
     public static final int USE_STRUCTURAL_RATING = -1;
-
-    // Weapon sort order defines
-    public enum WeaponSortOrder {
-        DEFAULT("DEFAULT"),
-        RANGE_LH("RANGE_LH"),
-        RANGE_HL("RANGE_HL"),
-        DAMAGE_LH("DAMAGE_LH"),
-        DAMAGE_HL("DAMAGE_HL"),
-        ARC("ARC"),
-        CUSTOM("CUSTOM");
-
-        public final String i18nEntry;
-
-        WeaponSortOrder(String s) {
-            i18nEntry = s;
-        }
-    }
 
     public enum MPBoosters {
         NONE(),
@@ -5615,7 +5599,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns wether or not this entity has a Targeting Computer.
+     * Returns whether or not this entity has a Targeting Computer.
      */
     public boolean hasTargComp() {
         for (Mounted m : getMisc()) {
@@ -5628,7 +5612,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns wether or not this entity has a Targeting Computer that is in
+     * Returns whether or not this entity has a Targeting Computer that is in
      * aimed shot mode.
      */
     public boolean hasAimModeTargComp() {

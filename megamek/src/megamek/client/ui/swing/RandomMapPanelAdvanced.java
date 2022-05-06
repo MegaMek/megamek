@@ -19,7 +19,9 @@ import megamek.client.ui.swing.util.VerifyIsInteger;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.common.MapSettings;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.BoardUtilities;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -1012,7 +1014,7 @@ public class RandomMapPanelAdvanced extends JPanel {
             return description;
         }
 
-        private static MountainStyle getMountainStyle(String description) {
+        private static @Nullable MountainStyle getMountainStyle(String description) {
             for (MountainStyle ms : values()) {
                 if (ms.getDescription().equals(description)) {
                     return ms;
@@ -1021,7 +1023,7 @@ public class RandomMapPanelAdvanced extends JPanel {
             return null;
         }
 
-        private static MountainStyle getMountainStyle(int code) {
+        private static @Nullable MountainStyle getMountainStyle(int code) {
             for (MountainStyle ms : values()) {
                 if (ms.getCode() == code) {
                     return ms;
@@ -1048,14 +1050,14 @@ public class RandomMapPanelAdvanced extends JPanel {
         String result = field.verifyTextS();
         if (result != null) {
             result = field.getName() + ": " + result;
-            new RuntimeException(result).printStackTrace();
+            LogManager.getLogger().error(result, new RuntimeException());
             field.requestFocus();
             showDataValidationError(result);
         }
         return (result == null);
     }
 
-    // Takes in a min and max field, makes shure the data is generally valid in each then compares them to make sure
+    // Takes in a min and max field, makes sure the data is generally valid in each then compares them to make sure
     // the minimum value does not exceed the maximum.
     private boolean isMinMaxVerified(VerifiableTextField min, VerifiableTextField max) {
         if (!isFieldVerified(min) || !isFieldVerified(max)) {
@@ -1064,7 +1066,7 @@ public class RandomMapPanelAdvanced extends JPanel {
 
         final String INVALID = "Minimum cannot exceed maximum.";
         if (min.getAsInt() > max.getAsInt()) {
-            new RuntimeException(INVALID).printStackTrace();
+            LogManager.getLogger().error("", new RuntimeException(INVALID));
             min.setOldToolTip(min.getToolTipText());
             max.setOldToolTip(max.getToolTipText());
             min.setBackground(VerifiableTextField.getInvalidColor());

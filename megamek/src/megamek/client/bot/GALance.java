@@ -32,7 +32,7 @@ public class GALance extends GA {
             int generations) {
         super(moves.size(), population, .7, .05, generations, .5);
         System.gc();
-        System.out.println("Generated move lance with population=" + population
+        LogManager.getLogger().debug("Generated move lance with population=" + population
                 + " and generations=" + generations);
         this.tb = tb;
         this.moves = moves;

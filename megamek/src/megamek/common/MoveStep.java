@@ -2154,7 +2154,7 @@ public class MoveStep implements Serializable {
                             && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
-            }                
+            }
             // evading means running
             movementType = EntityMovementType.MOVE_RUN;
         }

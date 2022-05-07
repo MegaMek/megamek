@@ -23,10 +23,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.GamePhase;
-import megamek.common.enums.WeaponSortOrder;
+import megamek.common.enums.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
@@ -15827,7 +15824,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     
-    //Getters and setters for sensor contacts and firing solutions. Currently, only used in space combat
+    // Getters and setters for sensor contacts and firing solutions. Currently, only used in space combat
     /**
      * Retrieves the IDs of all entities that this entity has detected with sensors
      * @return the contents of this entity's sensorContacts set
@@ -15986,6 +15983,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * @return does this mech have MASC, Supercharger or both?
+     */
+    public MPBoosters getMPBoosters() {
+        return getMPBoosters(false);
+    }
+
+    /**
+     * @return does this mech have Armed MASC, Supercharger or both?
+     */
+    public MPBoosters getArmedMPBoosters() {
+        return getMPBoosters(true);
+    }
+
+    /**
      * @return if this mech has MASC, Supercharger or both?
      */
     public MPBoosters getMPBoosters(boolean onlyArmed) {
@@ -16001,33 +16012,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     hasMASC = !onlyArmed || m.curMode().equals("Armed");
                 }
             }
+
             if (hasMASC && hasSupercharger) {
                 break;
             }
         }
 
         if (hasMASC && hasSupercharger) {
-            return  MPBoosters.MASC_AND_SUPERCHARGER;
+            return MPBoosters.MASC_AND_SUPERCHARGER;
         } else if (hasMASC) {
             return MPBoosters.MASC_ONLY;
         } else if (hasSupercharger) {
             return MPBoosters.SUPERCHARGER_ONLY;
+        } else {
+            return MPBoosters.NONE;
         }
-        return MPBoosters.NONE;
-    }
-
-    /**
-     * @return does this mech have MASC, Supercharger or both?
-     */
-    public MPBoosters getMPBoosters() {
-        return getMPBoosters(false);
-    }
-
-    /**
-     * @return does this mech have Armed MASC, Supercharger or both?
-     */
-    public MPBoosters getArmedMPBoosters() {
-        return getMPBoosters(true);
     }
 
     /**

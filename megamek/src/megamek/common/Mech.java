@@ -19,6 +19,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.MekBVCalculator;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.MPBoosters;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -972,29 +973,11 @@ public abstract class Mech extends Entity {
         return extra + (hasEngine() ? getEngine().getWalkHeat(this) : 0);
     }
 
-    /**
-     * Returns whether this mech should use conditional ejection
-     *
-     * @return
-     */
-    /*
-     * public boolean shouldUseConditionalEject() { if (game !=null &&
-     * game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) { return true; }
-     *
-     * return false; }
-     */
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.Entity#getRunMP(boolean, boolean, boolean)
-     */
     @Override
-    public int getRunMP(boolean gravity, boolean ignoreHeat,
-            boolean ignoreModularArmor) {
+    public int getRunMP(boolean gravity, boolean ignoreHeat, boolean ignoreModularArmor) {
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (mpBoosters.hasMASCAndOrSupercharger()) {
-            return mpBoosters.calcRunMP(
+        if (!mpBoosters.isNone()) {
+            return mpBoosters.calculateRunMP(
                     getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
                             - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
@@ -1006,8 +989,8 @@ public abstract class Mech extends Entity {
     public int getRunMPwithOneMASC(boolean gravity, boolean ignoreHeat,
                                    boolean ignoreModularArmor) {
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (mpBoosters.hasMASCAndOrSupercharger()) {
-            return mpBoosters.MASC_ONLY.calcRunMP(
+        if (!mpBoosters.isNone()) {
+            return MPBoosters.MASC_ONLY.calculateRunMP(
                     getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
                     - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
@@ -1045,7 +1028,7 @@ public abstract class Mech extends Entity {
     @Override
     public String getRunMPasString() {
         MPBoosters mpBoosters = getMPBoosters();
-        if (mpBoosters.hasMASCAndOrSupercharger()) {
+        if (!mpBoosters.isNone()) {
             String str = getRunMPwithoutMASC() + "(" + getRunMP()+")";
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();
@@ -1095,8 +1078,8 @@ public abstract class Mech extends Entity {
         }
 
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (mpBoosters.hasMASCAndOrSupercharger()) {
-            return mpBoosters.calcSprintMP(
+        if (!mpBoosters.isNone()) {
+            return mpBoosters.calculateSprintMP(
                     getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
             - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
@@ -1112,14 +1095,13 @@ public abstract class Mech extends Entity {
     @Override
     public int getSprintMPwithOneMASC(boolean gravity, boolean ignoreHeat,
                                       boolean ignoreModularArmor) {
-
         if (hasHipCrit()) {
             return getRunMPwithoutMASC(gravity, ignoreHeat, ignoreModularArmor);
         }
 
         MPBoosters mpBoosters = getArmedMPBoosters();
-        if (mpBoosters.hasMASCAndOrSupercharger()) {
-            return mpBoosters.MASC_ONLY.calcSprintMP(
+        if (!mpBoosters.isNone()) {
+            return MPBoosters.MASC_ONLY.calculateSprintMP(
                     getWalkMP(gravity, ignoreHeat, ignoreModularArmor))
                     - (hasMPReducingHardenedArmor() ? 1 : 0);
         }
@@ -1164,10 +1146,9 @@ public abstract class Mech extends Entity {
     @Override
     public String getSprintMPasString() {
         MPBoosters armedBoosters = getArmedMPBoosters();
-        if (armedBoosters.hasMASCAndOrSupercharger()) {
-            return getRunMPwithoutMASC() + "(" + getSprintMP() + ")";
-        }
-        return Integer.toString(getSprintMP());
+        return !armedBoosters.isNone()
+                ? getRunMPwithoutMASC() + "(" + getSprintMP() + ")"
+                : Integer.toString(getSprintMP());
     }
 
     /*
@@ -5888,9 +5869,9 @@ public abstract class Mech extends Entity {
         double move = getOriginalWalkMP();
 
         MPBoosters mpBooster = getMPBoosters();
-        if (mpBooster.hasMASCAndSupercharger()) {
+        if (mpBooster.isMASCAndSupercharger()) {
             move *= 1.5;
-        } else if (mpBooster.hasMASCXorSupercharger()) {
+        } else if (mpBooster.isMASCXorSupercharger()) {
             move *= 1.25;
         }
 

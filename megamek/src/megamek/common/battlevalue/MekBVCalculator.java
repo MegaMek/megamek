@@ -21,6 +21,7 @@ package megamek.common.battlevalue;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.MPBoosters;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
@@ -366,10 +367,10 @@ public class MekBVCalculator {
         if (mek.hasTSM(false)) {
             bvWalk++;
         }
-        Entity.MPBoosters mpBooster = mek.getMPBoosters();
-        if (mpBooster.hasMASCAndSupercharger()) {
+        MPBoosters mpBooster = mek.getMPBoosters();
+        if (mpBooster.isMASCAndSupercharger()) {
             runMP = (int) Math.ceil(bvWalk * 2.5);
-        } else if (mpBooster.hasMASCXorSupercharger()) {
+        } else if (mpBooster.isMASCXorSupercharger()) {
             runMP = bvWalk * 2;
         } else {
             runMP = (int) Math.ceil(bvWalk * 1.5);

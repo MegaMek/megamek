@@ -15,8 +15,8 @@
 package megamek.common.verifier;
 
 import megamek.common.*;
-import megamek.common.Entity.MPBoosters;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.MPBoosters;
 import megamek.common.util.StringUtil;
 
 import java.text.DecimalFormat;
@@ -412,18 +412,15 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public MPBoosters getMPBoosters() {
-        if (getEntity() instanceof Mech) {
-            return ((Mech) getEntity()).getMPBoosters();
-        }
-        return MPBoosters.NONE;
+        return (getEntity() instanceof Mech) ? getEntity().getMPBoosters() : MPBoosters.NONE;
     }
     
     public String printShortMovement() {
-        Entity.MPBoosters mpBoosters = getMPBoosters();
+        MPBoosters mpBoosters = getMPBoosters();
         return "Movement: " + getEntity().getOriginalWalkMP() + "/"
                 + (int) Math.ceil(getEntity().getOriginalWalkMP() * 1.5)
-                + (mpBoosters.hasMASCAndOrSupercharger() ? "(" + getEntity().getOriginalWalkMP() * 2 + ")" : "")
-                + (mpBoosters.hasMASCAndSupercharger() ? "(" + getEntity().getOriginalWalkMP() * 2.5 + ")" : "")
+                + (mpBoosters.isNone() ? "" : "(" + getEntity().getOriginalWalkMP() * 2 + ")")
+                + (mpBoosters.isMASCAndSupercharger() ? "(" + getEntity().getOriginalWalkMP() * 2.5 + ")" : "")
                 + (getEntity().getOriginalJumpMP() != 0 ? "/" + getEntity().getOriginalJumpMP() : "")
                 + "\n";
     }

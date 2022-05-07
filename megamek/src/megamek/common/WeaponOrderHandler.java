@@ -109,7 +109,7 @@ public class WeaponOrderHandler {
                 continue;
             }
 
-            if (weapOrder.getOrderType().isCustom()) {
+            if (weapOrder.orderType.isCustom()) {
                 // Build weapon and order lists
                 for (Integer weapId : weapOrder.customWeaponOrderMap.keySet()) {
                     Integer order = weapOrder.customWeaponOrderMap.get(weapId);

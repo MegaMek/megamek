@@ -1008,9 +1008,10 @@ public class MovePath implements Cloneable, Serializable {
 
     /* Debug method */
     public void printAllSteps() {
-        System.out.println("*Steps*");
+        LogManager.getLogger().debug("*Steps*");
         for (int i = 0; i < steps.size(); i++) {
-            System.out.println("  " + i + ": " + getStep(i) + ", " + getStep(i).getMovementType(i == (steps.size() - 1)));
+            LogManager.getLogger().debug("  " + i + ": " + getStep(i) + ", "
+                    + getStep(i).getMovementType(i == (steps.size() - 1)));
         }
     }
 
@@ -1259,10 +1260,8 @@ public class MovePath implements Cloneable, Serializable {
             finPath.compile(game, entity, false);
             this.steps = finPath.steps;
         } else {
-            System.out.println("Error: " +
-                    "Unable to find a path to the destination hex!");
-            System.out.println("\tMoving " + getEntity() + "from "
-                    + getFinalCoords() + " to " + dest);
+            LogManager.getLogger().error("Unable to find a path to the destination hex! \tMoving "
+                    + getEntity() + "from " + getFinalCoords() + " to " + dest);
         }
     }
 

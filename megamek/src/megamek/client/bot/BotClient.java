@@ -588,7 +588,8 @@ public abstract class BotClient extends Client {
      * method iterates through the list of Coords and returns the first Coords
      * that does not have a stacking violation.
      */
-    protected Coords getFirstValidCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+    protected @Nullable Coords getFirstValidCoords(Entity deployedUnit,
+                                                   List<Coords> possibleDeployCoords) {
         // Check all of the hexes in order.
         for (Coords dest : possibleDeployCoords) {
             Entity violation = Compute.stackingViolation(game, deployedUnit,
@@ -610,7 +611,7 @@ public abstract class BotClient extends Client {
             return dest;
         }
 
-        System.out.println("Returning no deployment position; THIS IS BAD!");
+        LogManager.getLogger().error("Returning no deployment position; THIS IS BAD!");
         // If NONE of them are acceptable, then just return null.
         return null;
     }
@@ -793,7 +794,7 @@ public abstract class BotClient extends Client {
                         coord.fitness -= board.getHex(x, y).depth();
                     }
                 }
-                //If building, make sure not too heavy to safely move out of
+                // If building, make sure not too heavy to safely move out of
                 coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
                                                          deployed_ent);
             }

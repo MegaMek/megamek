@@ -42,10 +42,8 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
 
 import java.math.BigInteger;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collector;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -1070,7 +1068,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             }
             Player player = game.getPlayer(ownerId);
             if (null == player) {
-                System.err.println("Entity can't find player #" + ownerId);
+                LogManager.getLogger().error("Entity can't find player #" + ownerId);
             } else {
                 setOwner(player);
             }
@@ -9581,13 +9579,14 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean canFlee() {
         Coords pos = getPosition();
         return ((getWalkMP() > 0) || (this instanceof Infantry))
-               && !isProne()
-               && !isStuck()
-               && !isShutDown()
-               && !getCrew().isUnconscious()
-               && (isOffBoard() || ((pos != null)
-                   && ((pos.getX() == 0) || (pos.getX() == (game.getBoard().getWidth() - 1))
-                   || (pos.getY() == 0) || (pos.getY() == (game.getBoard().getHeight() - 1)))));
+                && !isProne()
+                && !isStuck()
+                && !isShutDown()
+                && !getCrew().isUnconscious()
+                && (getSwarmTargetId() == NONE)
+                && (isOffBoard() || ((pos != null)
+                        && ((pos.getX() == 0) || (pos.getX() == (getGame().getBoard().getWidth() - 1))
+                        || (pos.getY() == 0) || (pos.getY() == (getGame().getBoard().getHeight() - 1)))));
     }
 
     public void setEverSeenByEnemy(boolean b) {
@@ -11230,14 +11229,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             || !game.getBoard().contains(getPosition())) {
             return false;
         }
-        if (!isElevationValid(getElevation(),
-                              game.getBoard().getHex(getPosition()))) {
-            System.err.println(getDisplayName() + " in hex "
-                               + HexTarget.coordsToId(getPosition())
-                               + " is at invalid elevation: " + getElevation());
-            setElevation(0 - game.getBoard()
-                                 .getHex(getPosition()).depth());
-            System.err.println("   moved to elevation " + getElevation());
+
+        if (!isElevationValid(getElevation(), game.getBoard().getHex(getPosition()))) {
+            LogManager.getLogger().error(String.format("%s in hex %s is at invalid elevation %s",
+                    getDisplayName(), HexTarget.coordsToId(getPosition()), getElevation()));
+            setElevation(0 - game.getBoard().getHex(getPosition()).depth());
+            LogManager.getLogger().error(" moved to elevation " + getElevation());
             return true;
         }
         return false;
@@ -14786,44 +14783,35 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         // Load all the unit's quirks.
         for (QuirkEntry q : quirks) {
-            // If the quirk doesn't have a location, then it is a unit quirk,
-            // not a weapon quirk.
+            // If the quirk doesn't have a location, then it is a unit quirk, not a weapon quirk.
             if (StringUtility.isNullOrBlank(q.getLocation())) {
-
                 // Activate the unit quirk.
                 if (getQuirks().getOption(q.getQuirk()) == null) {
-                    System.out.println(q.toLog() + " failed for "
-                                       + getChassis() + " " + getModel()
-                                       + " - Invalid quirk!");
+                    LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+                            q.toLog(), getChassis(), getModel()));
                     continue;
                 }
                 getQuirks().getOption(q.getQuirk()).setValue(true);continue;
             }
 
             // Get the weapon in the indicated location and slot.
-            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()),
-                                          q.getSlot());
+            CriticalSlot cs = getCritical(getLocationFromAbbr(q.getLocation()), q.getSlot());
             if (cs == null) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - Critical slot ("
-                                   + q.getLocation() + "-" + q.getSlot()
-                                   + ") did not load!");
+                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) did not load!",
+                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
             Mounted m = cs.getMount();
             if (m == null) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - Critical slot ("
-                                   + q.getLocation() + "-" + q.getSlot() + ") is empty!");
+                LogManager.getLogger().warn(String.format("%s failed for %s %s - Critical slot (%s-%s) is empty!",
+                        q.toLog(), getChassis(), getModel(), q.getLocation(), q.getSlot()));
                 continue;
             }
 
             // Make sure this is a weapon.
-            if (!(m.getType() instanceof WeaponType)
-                    && !(m.getType().hasFlag(MiscType.F_CLUB))) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - " + m.getName()
-                                   + " is not a weapon!");
+            if (!(m.getType() instanceof WeaponType) && !(m.getType().hasFlag(MiscType.F_CLUB))) {
+                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s is not a weapon!",
+                        q.toLog(), getChassis(), getModel(), m.getName()));
                 continue;
             }
 
@@ -14837,17 +14825,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     break;
                 }
             }
+
             if (!matchFound) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - " + m.getType().getName()
-                                   + " != " + q.getWeaponName());
+                LogManager.getLogger().warn(String.format("%s failed for %s %s - %s != %s",
+                        q.toLog(), getChassis(), getModel(), m.getType().getName(), q.getWeaponName()));
                 continue;
             }
 
             // Activate the weapon quirk.
             if (m.getQuirks().getOption(q.getQuirk()) == null) {
-                System.out.println(q.toLog() + " failed for " + getChassis()
-                                   + " " + getModel() + " - Invalid quirk!");
+                LogManager.getLogger().warn(String.format("%s failed for %s %s - Invalid quirk!",
+                        q.toLog(), getChassis(), getModel()));
                 continue;
             }
             m.getQuirks().getOption(q.getQuirk()).setValue(true);

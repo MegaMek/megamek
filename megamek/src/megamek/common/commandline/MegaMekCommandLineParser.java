@@ -197,7 +197,8 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             }
 
             if (ms == null) {
-                LogManager.getLogger().error(new IOException(filename + " not found. Try using \"chassis model\" for input."));
+                LogManager.getLogger().error(filename + " not found. Try using \"chassis model\" for input.",
+                        new IOException());
             } else {
                 try {
                     Entity entity = new MechFileParser(ms.getSourceFile(),

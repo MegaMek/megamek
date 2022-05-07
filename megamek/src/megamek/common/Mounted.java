@@ -225,7 +225,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void changeAmmoType(AmmoType at) {
         if (!(type instanceof AmmoType)) {
-            System.out.println("Attempted to change ammo type of non-ammo");
+            LogManager.getLogger().warn("Attempted to change ammo type of non-ammo");
             return;
         }
         type = at;
@@ -250,9 +250,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
 
         if (type == null) {
-            System.err
-                    .println("Mounted.restore: could not restore equipment type \""
-                            + typeName + "\"");
+            LogManager.getLogger().error("Could not restore equipment type \"" + typeName + "\"");
         }
     }
 

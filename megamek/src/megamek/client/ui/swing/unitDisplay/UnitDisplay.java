@@ -23,6 +23,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -307,7 +308,6 @@ public class UnitDisplay extends JPanel {
     /**
      * Returns the entity we'return currently displaying
      */
-
     public Entity getCurrentEntity() {
         return currentlyDisplaying;
     }
@@ -332,7 +332,7 @@ public class UnitDisplay extends JPanel {
             tabStrip.setTab(5);
         }
     }
-    
+
     /**
      * Used to force the display to the Systems tab, on a specific location
      * @param loc
@@ -366,8 +366,7 @@ public class UnitDisplay extends JPanel {
                     lis.weaponSelected(event);
                     break;
                 default:
-                    System.err.println("unknown event " + event.getType()
-                            + " in processMechDisplayEvent");
+                    LogManager.getLogger().error("Received unknown event " + event.getType() + " in processMechDisplayEvent");
                     break;
             }
         }

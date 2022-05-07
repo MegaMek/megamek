@@ -53,6 +53,9 @@ VERSION HISTORY:
 + PR #3591: Fixing MegaMek log paths
 + PR #3600: Enable Gun Emplacement ToolTips
 + PR #3614: Fixing Athmosphere typos
++ Issue #3607: Fixing Null Swarming Entity Unit ToolTip NPE
++ Issue #3607: Prevent Entities from Fleeing While Swarming a Unit
++ PR #3606: Logging Modernization: Updating a Bunch More System.out, System.err, and printStackTraces
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.2 from 2.0.1
 + Updating to JAXB 4.0.0 from 2.3.2

@@ -50,7 +50,7 @@ public enum MegaMekCommandLineFlag {
         try {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text '%s'", text);
+            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text " + text);
             throw(ex);
         }
     }

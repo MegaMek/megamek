@@ -363,9 +363,9 @@ public class HmvFile implements IMechLoader {
             }
 
             dis.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw new EntityLoadingException("I/O Error reading file");
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            throw new EntityLoadingException("Error reading file");
         }
     }
 

@@ -152,13 +152,13 @@ public class MtfFile implements IMechLoader {
 
             readCrits(r);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("I/O Error reading file");
         } catch (StringIndexOutOfBoundsException ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("StringIndexOutOfBoundsException reading file (format error)");
         } catch (NumberFormatException ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
             throw new EntityLoadingException("NumberFormatException reading file (format error)");
         }
     }

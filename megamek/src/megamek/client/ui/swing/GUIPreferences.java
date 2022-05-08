@@ -14,17 +14,15 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.*;
-
-import javax.swing.*;
-
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.client.ui.swing.widget.DetachablePane;
 import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -111,11 +109,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
-    public static final String UNIT_DETAIL_POS_X = "UnitDetailPosX";
-    public static final String UNIT_DETAIL_POS_Y = "UnitDetailPosY";
-    public static final String UNIT_DETAIL_SIZE_HEIGHT = "UnitDetailSizeHeight";
-    public static final String UNIT_DETAIL_SIZE_WIDTH = "UnitDetailSizeWidth";
-    public static final String UNIT_DETAIL_STATE = "UnitDetailState";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
@@ -337,9 +330,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
-        store.setDefault(UNIT_DETAIL_SIZE_HEIGHT, 500);
-        store.setDefault(UNIT_DETAIL_SIZE_WIDTH, 300);
-        store.setDefault(UNIT_DETAIL_STATE, DetachablePane.Mode.EXPANDED.name());
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -526,26 +516,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getCustomUnitWidth() {
         return store.getInt(CUSTOM_UNIT_WIDTH);
-    }
-
-    public int getUnitDetailPosX() {
-        return store.getInt(UNIT_DETAIL_POS_X);
-    }
-
-    public int getUnitDetailPosY() {
-        return store.getInt(UNIT_DETAIL_POS_Y);
-    }
-
-    public int getUnitDetailSizeHeight() {
-        return store.getInt(UNIT_DETAIL_SIZE_HEIGHT);
-    }
-
-    public int getUnitDetailSizeWidth() {
-        return store.getInt(UNIT_DETAIL_SIZE_WIDTH);
-    }
-
-    public DetachablePane.Mode getUnitDetailState() {
-        return DetachablePane.Mode.valueOf(store.getString(UNIT_DETAIL_STATE));
     }
 
     public boolean getGameSummaryBoardView() {
@@ -1011,26 +981,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setCustomUnitWidth(int state) {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
-    }
-
-    public void setUnitDetailPosX(int i) {
-        store.setValue(UNIT_DETAIL_POS_X, i);
-    }
-
-    public void setUnitDetailPosY(int i) {
-        store.setValue(UNIT_DETAIL_POS_Y, i);
-    }
-
-    public void setUnitDetailSizeHeight(int i) {
-        store.setValue(UNIT_DETAIL_SIZE_HEIGHT, i);
-    }
-
-    public void setUnitDetailSizeWidth(int i) {
-        store.setValue(UNIT_DETAIL_SIZE_WIDTH, i);
-    }
-
-    public void setUnitDetailState(DetachablePane.Mode state) {
-        store.setValue(UNIT_DETAIL_STATE, state.name());
     }
 
     public void setGameSummaryBoardView(boolean state) {

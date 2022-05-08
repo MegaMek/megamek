@@ -396,8 +396,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * is created.
      */
     public void initialize() {
-        var prefs = GUIPreferences.getInstance();
-
         menuBar = new CommonMenuBar(getClient());
         initializeFrame();
         try {
@@ -474,12 +472,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
         ruler = new Ruler(frame, client, bv);
         ruler.setLocation(
-            prefs.getRulerPosX(),
-            prefs.getRulerPosY()
+                GUIPreferences.getInstance().getRulerPosX(),
+                GUIPreferences.getInstance().getRulerPosY()
         );
         ruler.setSize(
-            prefs.getRulerSizeHeight(),
-            prefs.getRulerSizeWidth()
+                GUIPreferences.getInstance().getRulerSizeHeight(),
+                GUIPreferences.getInstance().getRulerSizeWidth()
         );
         UIUtil.updateWindowBounds(ruler);
 
@@ -866,15 +864,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
-        }
-
-        // Mek display
-        var unitDetailWindow = this.unitDetailPane.getWindow();
-        if ((unitDetailWindow.getSize().width * unitDetailWindow.getSize().height) > 0) {
-            GUIPreferences.getInstance().setUnitDetailPosX(unitDetailWindow.getLocation().x);
-            GUIPreferences.getInstance().setUnitDetailPosY(unitDetailWindow.getLocation().y);
-            GUIPreferences.getInstance().setUnitDetailSizeWidth(unitDetailWindow.getSize().width);
-            GUIPreferences.getInstance().setUnitDetailSizeHeight(unitDetailWindow.getSize().height);
         }
 
         // Ruler display

@@ -1135,7 +1135,6 @@ public final class UIUtil {
     }
 
     /**
-     * TODO : Windchild ensure this is necessary
      * Ensures an on-screen window fits within the bounds of a display.
      */
     public static void updateWindowBounds(Window window) {

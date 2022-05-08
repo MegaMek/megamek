@@ -52,10 +52,5 @@ public class UnitDisplayDialog extends AbstractDialog {
     protected Container createCenterPane() {
         return getUnitDisplay();
     }
-
-    @Override
-    protected void finalizeInitialization() {
-        super.finalizeInitialization();
-    }
     //endregion Initialization
 }

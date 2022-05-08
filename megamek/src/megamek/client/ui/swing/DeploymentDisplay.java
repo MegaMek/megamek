@@ -204,8 +204,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             setNextEnabled(true);
             setRemoveEnabled(true);
 
-            clientgui.mechD.displayEntity(ce());
-            clientgui.mechD.showPanel("movement"); 
+            clientgui.getUnitDisplay().displayEntity(ce());
+            clientgui.getUnitDisplay().showPanel("movement");
         } else {
             disableButtons();
             setNextEnabled(true);
@@ -713,7 +713,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 // Please note, the Server may never get this load order.
                 ce().load(other, false, other.getTargetBay());
                 other.setTransportId(cen);
-                clientgui.mechD.displayEntity(ce());
+                clientgui.getUnitDisplay().displayEntity(ce());
                 setUnloadEnabled(true);
             } else {
                 JOptionPane.showMessageDialog(clientgui.frame, 
@@ -735,7 +735,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     if (loader.unload(loaded)) {
                         loaded.setTransportId(Entity.NONE);
                         loaded.newRound(clientgui.getClient().getGame().getRoundCount());
-                        clientgui.mechD.displayEntity(ce());
+                        clientgui.getUnitDisplay().displayEntity(ce());
                         // Unit loaded in the lobby?  Server needs updating
                         if (loader.getLoadedKeepers().contains(loaded.getId())) {
                             Vector<Integer> lobbyLoaded = loader.getLoadedKeepers();
@@ -828,7 +828,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.mechD.displayEntity(e);
+            clientgui.getUnitDisplay().displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.getBoardView().centerOnHex(e.getPosition());
             }

@@ -31,13 +31,10 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 /**
- * Displays the info for a mech. This is also a sort of interface for special
+ * Displays the info for a unit. This is also a sort of interface for special
  * movement and firing actions.
  */
 public class UnitDisplay extends JPanel {
-    // buttons & gizmos for top level
-    private static final long serialVersionUID = -2060993542227677984L;
-
     private MechPanelTabStrip tabStrip;
 
     private JPanel displayP;
@@ -270,11 +267,7 @@ public class UnitDisplay extends JPanel {
      * Displays the specified entity in the panel.
      */
     public void displayEntity(Entity en) {
-
         String enName = en.getShortName();
-        if (clientgui != null) {
-            clientgui.getUnitDetailPane().setTitle(enName);
-        }
         switch (en.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
                 enName += " [CRIPPLED]";
@@ -291,8 +284,9 @@ public class UnitDisplay extends JPanel {
             default:
                 enName += " [UNDAMAGED]";
         }
+
         if (clientgui != null) {
-            clientgui.getUnitDetailPane().getWindow().setTitle(enName);
+            clientgui.getUnitDisplayDialog().setTitle(enName);
         }
 
         currentlyDisplaying = en;
@@ -320,6 +314,7 @@ public class UnitDisplay extends JPanel {
         if ("movement".equals(s)) {
             tabStrip.setTab(0);
         }
+
         if ("pilot".equals(s)) {
             tabStrip.setTab(1);
         } else if ("armor".equals(s)) {

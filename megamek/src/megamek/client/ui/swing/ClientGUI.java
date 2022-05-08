@@ -25,6 +25,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -191,8 +192,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     private BoardView bv;
     private Component bvc;
-    private UnitDetailPane unitDetailPane;
-    public UnitDisplay mechD;
+    private UnitDisplay unitDisplay;
+    private UnitDisplayDialog unitDisplayDialog;
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -297,12 +298,28 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         add(panDisplay, BorderLayout.CENTER);
     }
 
+    public MegaMekController getController() {
+        return controller;
+    }
+
     public BoardView getBoardView() {
         return bv;
     }
 
-    public UnitDetailPane getUnitDetailPane() {
-        return this.unitDetailPane;
+    public UnitDisplay getUnitDisplay() {
+        return unitDisplay;
+    }
+
+    public void setUnitDisplay(final UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
+    }
+
+    public UnitDisplayDialog getUnitDisplayDialog() {
+        return unitDisplayDialog;
+    }
+
+    public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
+        this.unitDisplayDialog = unitDisplayDialog;
     }
 
     /**
@@ -419,7 +436,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent evt) {
                 if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
                     ignoreHotKeys = true;
                     int savePrompt = JOptionPane.showConfirmDialog(null,
@@ -434,10 +451,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             return;
                         }
                     }
-                    if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
-                    {
+
+                    if ((savePrompt == JOptionPane.NO_OPTION)
+                            || (savePrompt == JOptionPane.YES_OPTION)) {
                         frame.setVisible(false);
-                        unitDetailPane.setVisible(false);
                         saveSettings();
                         die();
                     }
@@ -461,12 +478,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
 
-        mechD = new UnitDisplay(this, controller);
-        mechD.addMechDisplayListener(bv);
+        setUnitDisplay(new UnitDisplay(this, getController()));
+        getUnitDisplay().addMechDisplayListener(getBoardView());
 
-        this.unitDetailPane = new UnitDetailPane(this.mechD);
-        this.unitDetailPane.setVisible(false);
-        add(this.unitDetailPane, BorderLayout.EAST);
+        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay()));
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
@@ -611,8 +626,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
-                this.unitDetailPane.getWindow().setLocation(0, 0);
-                this.unitDetailPane.getWindow().pack();
                 break;
             case FILE_GAME_SAVE:
                 saveGame();
@@ -777,7 +790,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (curPanel instanceof MovementDisplay) {
                     GUIPreferences.getInstance().setMoveEnvelope(
                             !GUIPreferences.getInstance().getMoveEnvelope());
-                    ((MovementDisplay) curPanel).computeMovementEnvelope(mechD.getCurrentEntity());
+                    ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:
@@ -789,7 +802,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 bv.changeTheme();
                 break;
             case FIRE_SAVE_WEAPON_ORDER:
-                Entity ent = mechD.getCurrentEntity();
+                Entity ent = getUnitDisplay().getCurrentEntity();
                 if (ent != null) {
                     WeaponOrderHandler.setWeaponOrder(ent.getChassis(), ent.getModel(),
                             ent.getWeaponSortOrder(), ent.getCustomWeaponOrder());
@@ -974,7 +987,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
-                this.unitDetailPane.setVisible(false);
+                getUnitDisplayDialog().setVisible(false);
                 setMapVisible(false);
                 break;
             case POINTBLANK_SHOT:
@@ -1300,15 +1313,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void setUnitDisplayVisible(boolean visible) {
         // If no unit displayed, select a unit so display can be safely shown
         // This can happen when using mouse button 4
-        if (visible && (mechD.getCurrentEntity() == null)
+        if (visible && (getUnitDisplay().getCurrentEntity() == null)
                 && (getClient() != null) && (getClient().getGame() != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if ((es != null) && !es.isEmpty()) {
-                mechD.displayEntity(es.get(0));
+                getUnitDisplay().displayEntity(es.get(0));
             }
         }
 
-        this.unitDetailPane.setVisible(visible);
+        getUnitDisplayDialog().setVisible(visible);
     }
 
     private boolean fillPopup(Coords coords) {

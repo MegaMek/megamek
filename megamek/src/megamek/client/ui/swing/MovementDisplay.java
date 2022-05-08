@@ -711,8 +711,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.mechD.displayEntity(ce);
-        clientgui.mechD.showPanel("movement");
+        clientgui.getUnitDisplay().displayEntity(ce);
+        clientgui.getUnitDisplay().showPanel("movement");
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -4164,33 +4164,31 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * GEAR_LAND (standard "walk forward").
      * 
      * @param suggestion The suggested Entity to use to compute the movement envelope. If used, the
-     *                   gear will be set to GEAR_LAND. This takes precendence over the currently
+     *                   gear will be set to GEAR_LAND. This takes precedence over the currently
      *                   selected unit.
      * @param suggestion
      */
-    public void computeMovementEnvelope(Entity suggestion) {
+    public void computeMovementEnvelope(final @Nullable Entity suggestion) {
         // do nothing if deactivated in the settings
-        if (!GUIPreferences.getInstance()
-                .getBoolean(GUIPreferences.MOVE_ENVELOPE)) {
+        if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.MOVE_ENVELOPE)) {
             clientgui.getBoardView().clearMovementEnvelope();
             return;
         }
-        
+
         Entity en = ce();
         int mvMode = gear;
-        if ((en == null) && (suggestion == null)) {
-            return;
-        } else if (en == null) {
+
+        if (en == null) {
             en = suggestion;
             mvMode = GEAR_LAND;
         } else {
             en = suggestion;
         }
-        if (en.isDone()) {
+
+        if ((en == null) || en.isDone()) {
             return;
         }
-        
-        Map<Coords, MovePath> mvEnvData = new HashMap<>();
+
         MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
         int maxMP;
@@ -4198,8 +4196,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             maxMP = en.getJumpMP();
         } else if (mvMode == GEAR_BACKUP) {
             maxMP = en.getWalkMP();
-        } else if ((ce() instanceof Mech) && !(ce() instanceof QuadVee)
-                && (ce().getMovementMode() == EntityMovementMode.TRACKED)) {
+        } else if ((en instanceof Mech) && !(en instanceof QuadVee)
+                && en.getMovementMode().isTracked()) {
             // A non-QuadVee 'Mech that is using tracked movement is limited to walking
             maxMP = en.getWalkMP();
         } else {
@@ -4218,7 +4216,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP, stepType, en.getGame());
         pf.run(mp);
-        mvEnvData = pf.getAllComputedPaths();
+        Map<Coords, MovePath> mvEnvData = pf.getAllComputedPaths();
         Map<Coords, Integer> mvEnvMP = new HashMap<>((int) ((mvEnvData.size() * 1.25) + 1));
         for (Coords c : mvEnvData.keySet()) {
             mvEnvMP.put(c, mvEnvData.get(c).countMp(mvMode == GEAR_JUMP));
@@ -4957,7 +4955,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_ENVELOPE.getCmd())) {
-            computeMovementEnvelope(clientgui.mechD.getCurrentEntity());
+            computeMovementEnvelope(clientgui.getUnitDisplay().getCurrentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_TRAITOR.getCmd())) {
             var players = clientgui.getClient().getGame().getPlayersVector();
             Integer[] playerIds = new Integer[players.size() - 1];
@@ -5176,7 +5174,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.mechD.displayEntity(e);
+            clientgui.getUnitDisplay().displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.getBoardView().centerOnHex(e.getPosition());
             }

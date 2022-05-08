@@ -313,7 +313,7 @@ public class MapMenu extends JPopupMenu {
             try {
                 selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
                 GUIPreferences.getInstance().showUnitDisplay();
-                gui.mechD.displayEntity(selectedEntity);
+                gui.getUnitDisplay().displayEntity(selectedEntity);
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
             }
@@ -706,7 +706,7 @@ public class MapMenu extends JPopupMenu {
                     // Only fire weapons that have a chance to hit
                     int toHitVal = waa.toHit(game).getValue();
                     if (toHitVal <= 12) {
-                        gui.mechD.wPan.selectWeapon(weaponNum);
+                        gui.getUnitDisplay().wPan.selectWeapon(weaponNum);
                         panel.fire();
                     }
                 }
@@ -1336,7 +1336,7 @@ public class MapMenu extends JPopupMenu {
     private JMenu createModeMenu() {
         JMenu menu = new JMenu("Modes");
 
-        int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
+        int weaponNum = gui.getUnitDisplay().wPan.getSelectedWeaponNum();
         Mounted mounted = myEntity.getEquipment(weaponNum);
 
         if ((mounted != null) && mounted.getType().hasModes()) {
@@ -1362,7 +1362,7 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 int modePosition = Integer.parseInt(evt.getActionCommand());
-                int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
+                int weaponNum = gui.getUnitDisplay().wPan.getSelectedWeaponNum();
                 Mounted equip = myEntity.getEquipment(weaponNum);
                 equip.setMode(modePosition);
                 client.sendModeChange(myEntity.getId(), weaponNum, modePosition);

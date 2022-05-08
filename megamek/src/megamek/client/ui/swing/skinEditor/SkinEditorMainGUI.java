@@ -18,6 +18,7 @@ import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.lobby.ChatLounge;
@@ -59,7 +60,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     private SkinSpecEditor skinSpecEditor;
 
     private UnitDisplay unitDisplay;
-    private UnitDetailPane unitDetailPane;
+    private UnitDisplayDialog unitDisplayDialog;
 
     protected JComponent curPanel;
 
@@ -175,12 +176,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                         .toString()));
         frame.setIconImages(iconList);
 
-        this.unitDisplay = new UnitDisplay(null);
+        unitDisplay = new UnitDisplay(null);
 
-        this.unitDetailPane = new UnitDetailPane(this.unitDisplay);
-        add(this.unitDetailPane, BorderLayout.EAST);
+        unitDisplayDialog = new UnitDisplayDialog(getFrame(), unitDisplay);
+        add(unitDisplayDialog, BorderLayout.EAST);
 
-        this.unitDisplay.displayEntity(testEntity);
+        unitDisplay.displayEntity(testEntity);
     }
 
     /**
@@ -272,16 +273,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         skinSpecEditorD = new JDialog(frame,
                 Messages.getString("SkinEditor.SkinEditorDialog.Title"), false);
-
-        var prefs = GUIPreferences.getInstance();
-        skinSpecEditorD.setLocation(
-            prefs.getUnitDetailPosX(),
-            prefs.getUnitDetailPosY()
-        );
-        skinSpecEditorD.setSize(640, 480);
-        skinSpecEditorD.setResizable(true);
-        UIUtil.updateWindowBounds(skinSpecEditorD);
-
         skinSpecEditorD.addWindowListener(this);
         skinSpecEditorD.add(skinSpecEditor);
         skinSpecEditorD.setVisible(true);

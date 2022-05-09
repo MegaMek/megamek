@@ -36,7 +36,7 @@ public class UnitDisplayDialog extends JDialog {
     /**
      * In addition to the default Dialog processKeyEvent, this method
      * dispatches a KeyEvent to the client gui.
-     * This enables all of the gui hotkeys.
+     * This enables all the gui hotkeys.
      */
     @Override
     protected void processKeyEvent(KeyEvent evt) {

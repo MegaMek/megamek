@@ -190,20 +190,6 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         unitDisplay = new UnitDisplay(null);
 
         mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if ((x + w) > virtualBounds.getWidth()) {
-            x = 0;
-            w = Math.min(w, (int)virtualBounds.getWidth());
-        }
-        if ((y + h) > virtualBounds.getHeight()) {
-            y = 0;
-            h = Math.min(h, (int)virtualBounds.getHeight());
-        }
-        mechW.setLocation(x, y);
-        mechW.setSize(w, h);
         mechW.setResizable(true);
         mechW.add(unitDisplay);
         mechW.setVisible(true);
@@ -298,10 +284,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
-                    Messages.getString("ClientGUI.FatalError.message") + e);
+                    Messages.getString("ClientGUI.FatalError.message") + ex);
             die();
         }
 
@@ -309,7 +295,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         menuBar.addActionListener(this);
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent evt) {
                 frame.setVisible(false);
                 saveSettings();
                 die();
@@ -318,28 +304,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         skinSpecEditor = new SkinSpecEditor(this);
 
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getDefaultScreenDevice();
-        int x;
-        int y;
-        int h;
-        int w;
         skinSpecEditorD = new JDialog(frame,
                 Messages.getString("SkinEditor.SkinEditorDialog.Title"), false);
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = 480;
-        w = 640;
-        if ((x + w) > gd.getDisplayMode().getWidth()) {
-            x = 0;
-            w = Math.min(w, gd.getDisplayMode().getWidth());
-        }
-        if ((y + h) > gd.getDisplayMode().getHeight()) {
-            y = 0;
-            h = Math.min(h, gd.getDisplayMode().getHeight());
-        }
-        skinSpecEditorD.setLocation(x, y);
-        skinSpecEditorD.setSize(w, h);
         skinSpecEditorD.setSize(640, 480);
         skinSpecEditorD.setResizable(true);
 

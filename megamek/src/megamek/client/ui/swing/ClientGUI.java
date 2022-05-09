@@ -479,23 +479,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
 
-        Rectangle virtualBounds = UIUtil.getVirtualBounds();
-        int x = GUIPreferences.getInstance().getDisplayPosX();
-        int y = GUIPreferences.getInstance().getDisplayPosY();
-        int h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        int w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if ((x + w) > virtualBounds.getWidth()) {
-            x = 0;
-            w = Math.min(w, (int) virtualBounds.getWidth());
-        }
-
-        if ((y + h) > virtualBounds.getHeight()) {
-            y = 0;
-            h = Math.min(h, (int) virtualBounds.getHeight());
-        }
-
-        getUnitDisplayDialog().setLocation(x, y);
-        getUnitDisplayDialog().setSize(w, h);
         getUnitDisplayDialog().setResizable(true);
         getUnitDisplayDialog().setFocusable(false);
         getUnitDisplayDialog().setFocusableWindowState(false);
@@ -902,15 +885,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
-        }
-
-        // Mek display
-        if ((getUnitDisplayDialog() != null)
-                && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
-            GUIPreferences.getInstance().setDisplayPosX(getUnitDisplayDialog().getLocation().x);
-            GUIPreferences.getInstance().setDisplayPosY(getUnitDisplayDialog().getLocation().y);
-            GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
-            GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
         }
 
         // Ruler display

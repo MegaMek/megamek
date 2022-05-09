@@ -409,7 +409,6 @@ public final class UIUtil {
         }
     }
 
-
     /**
      *
      * @param currentMonitor

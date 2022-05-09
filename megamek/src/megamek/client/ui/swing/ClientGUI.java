@@ -25,6 +25,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -313,25 +314,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return unitDisplayDialog;
     }
 
-    public void setUnitDisplayDialog() {
-        unitDisplayDialog = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) {
-            /**
-             * In addition to the default Dialog processKeyEvent, this method
-             * dispatches a KeyEvent to the client gui.
-             * This enables all of the gui hotkeys.
-             */
-            @Override
-            protected void processKeyEvent(KeyEvent evt) {
-                evt.setSource(ClientGUI.this);
-                menuBar.dispatchEvent(evt);
-                // Make the source be the ClientGUI and not the dialog
-                // This prevents a ClassCastException in ToolTipManager
-                curPanel.dispatchEvent(evt);
-                if (!evt.isConsumed()) {
-                    super.processKeyEvent(evt);
-                }
-            }
-        };
+    public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
+        this.unitDisplayDialog = unitDisplayDialog;
     }
 
     /**
@@ -503,7 +487,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         setUnitDisplay(new UnitDisplay(this, controller));
         getUnitDisplay().addMechDisplayListener(bv);
 
-        setUnitDisplayDialog();
+        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
 
         Rectangle virtualBounds = UIUtil.getVirtualBounds();
         int x = GUIPreferences.getInstance().getDisplayPosX();

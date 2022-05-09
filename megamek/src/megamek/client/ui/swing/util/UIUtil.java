@@ -1150,7 +1150,6 @@ public final class UIUtil {
     }
 
     /**
-     * TODO : Windchild ensure I'm still needed
      * Ensures an on-screen window fits within the bounds of a display.
      */
     public static void updateWindowBounds(Window window) {
@@ -1172,8 +1171,7 @@ public final class UIUtil {
             location.y = 0;
         }
 
-        size.width = Math.min(size.width, bounds.width);
-        size.height = Math.min(size.height, bounds.height);
+        size.setSize(Math.min(size.width, bounds.width), Math.min(size.height, bounds.height));
 
         window.setLocation(location);
         window.setSize(size);

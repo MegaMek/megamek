@@ -355,30 +355,20 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame = new JFrame(Messages.getString("ClientGUI.title"));
         frame.setJMenuBar(menuBar);
 
-        Rectangle virtualBounds = UIUtil.getVirtualBounds();
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
-            int x = GUIPreferences.getInstance().getWindowPosX();
-            int y = GUIPreferences.getInstance().getWindowPosY();
-            int w = GUIPreferences.getInstance().getWindowSizeWidth();
-            int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if ((x < virtualBounds.getMinX()) || ((x + w) > virtualBounds.getMaxX())) {
-                x = 0;
-            }
-            if ((y < virtualBounds.getMinY()) || ((y + h) > virtualBounds.getMaxY())) {
-                y = 0;
-            }
-            if (w > virtualBounds.getWidth()) {
-                w = (int) virtualBounds.getWidth();
-            }
-            if (h > virtualBounds.getHeight()) {
-                h = (int) virtualBounds.getHeight();
-            }
-            frame.setLocation(x, y);
-            frame.setSize(w, h);
+            frame.setLocation(
+                    GUIPreferences.getInstance().getWindowPosX(),
+                    GUIPreferences.getInstance().getWindowPosY()
+            );
+            frame.setSize(
+                    GUIPreferences.getInstance().getWindowSizeWidth(),
+                    GUIPreferences.getInstance().getWindowSizeHeight()
+            );
         } else {
             frame.setSize(800, 600);
         }
         frame.setMinimumSize(new Dimension(640, 480));
+        UIUtil.updateWindowBounds(frame);
 
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
@@ -513,27 +503,22 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                GUIP.hideUnitDisplay();
+                GUIPreferences.getInstance().hideUnitDisplay();
             }
         });
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
         ruler = new Ruler(frame, client, bv);
-        x = GUIPreferences.getInstance().getRulerPosX();
-        y = GUIPreferences.getInstance().getRulerPosY();
-        h = GUIPreferences.getInstance().getRulerSizeHeight();
-        w = GUIPreferences.getInstance().getRulerSizeWidth();
-        if ((x + w) > virtualBounds.getWidth()) {
-            x = 0;
-            w = Math.min(w, (int) virtualBounds.getWidth());
-        }
-        if ((y + h) > virtualBounds.getHeight()) {
-            y = 0;
-            h = Math.min(h, (int) virtualBounds.getHeight());
-        }
-        ruler.setLocation(x, y);
-        ruler.setSize(w, h);
+        ruler.setLocation(
+                GUIPreferences.getInstance().getRulerPosX(),
+                GUIPreferences.getInstance().getRulerPosY()
+        );
+        ruler.setSize(
+                GUIPreferences.getInstance().getRulerSizeHeight(),
+                GUIPreferences.getInstance().getRulerSizeWidth()
+        );
+        UIUtil.updateWindowBounds(ruler);
 
         minimapW = MiniMap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
         cb = new ChatterBox(this);

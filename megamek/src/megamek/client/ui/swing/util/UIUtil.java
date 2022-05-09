@@ -34,13 +34,14 @@ import java.awt.event.MouseEvent;
 import java.awt.image.ImageObserver;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Stream;
 
 public final class UIUtil {
 
     // The standard pixels-per-inch to compare against for display scaling
     private static final int DEFAULT_DISPLAY_PPI = 96;
 
-    /** The width for a tooltip displayed to the side of a dialog uising one of TipXX classes. */
+    /** The width for a tooltip displayed to the side of a dialog using one of TipXX classes. */
     private static final int TOOLTIP_WIDTH = 300;
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
@@ -1140,16 +1141,13 @@ public final class UIUtil {
      */
     @Deprecated
     public static Rectangle getVirtualBounds() {
-        Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
-        for (GraphicsDevice gd : gs) {
-            GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (GraphicsConfiguration element : gc) {
-                virtualBounds = virtualBounds.union(element.getBounds());
-            }
-        }
-        return virtualBounds;
+        final Rectangle bounds = new Rectangle();
+        Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+                .map(GraphicsDevice::getConfigurations)
+                .flatMap(Stream::of)
+                .map(GraphicsConfiguration::getBounds)
+                .forEach(bounds::add);
+        return bounds;
     }
 
     /**
@@ -1157,34 +1155,28 @@ public final class UIUtil {
      * Ensures an on-screen window fits within the bounds of a display.
      */
     public static void updateWindowBounds(Window window) {
-        var bounds = new Rectangle();
-        var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        var gs = ge.getScreenDevices();
-        for (var gd : gs) {
-            var gc = gd.getConfigurations();
-            for (var element : gc) {
-                bounds = bounds.union(element.getBounds());
-            }
-        }
+        final Rectangle bounds = new Rectangle();
+        Stream.of(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+                .map(GraphicsDevice::getConfigurations)
+                .flatMap(Stream::of)
+                .map(GraphicsConfiguration::getBounds)
+                .forEach(bounds::add);
 
-        var size = window.getSize();
-        var location = window.getLocation();
+        final Dimension size = window.getSize();
+        final Point location = window.getLocation();
 
         if ((location.x < bounds.getMinX()) || ((location.x + size.width) > bounds.getMaxX())) {
             location.x = 0;
         }
+
         if ((location.y < bounds.getMinY()) || ((location.y + size.height) > bounds.getMaxY())) {
             location.y = 0;
         }
-        if (size.width > bounds.width) {
-            size.width = bounds.width;
-        }
-        if (size.height > bounds.height) {
-            size.height = bounds.height;
-        }
+
+        size.width = Math.min(size.width, bounds.width);
+        size.height = Math.min(size.height, bounds.height);
 
         window.setLocation(location);
         window.setSize(size);
     }
-
 }

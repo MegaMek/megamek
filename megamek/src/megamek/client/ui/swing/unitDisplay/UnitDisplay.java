@@ -287,8 +287,9 @@ public class UnitDisplay extends JPanel {
             default:
                 enName += " [UNDAMAGED]";
         }
+
         if (clientgui != null) {
-            clientgui.mechW.setTitle(enName);
+            clientgui.getUnitDisplayDialog().setTitle(enName);
         }
 
         currentlyDisplaying = en;

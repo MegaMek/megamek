@@ -209,8 +209,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
 
-        clientgui.mechD.displayEntity(entity);
-        clientgui.mechD.showPanel("movement");
+        clientgui.getUnitDisplay().displayEntity(entity);
+        clientgui.getUnitDisplay().showPanel("movement");
 
         clientgui.getBoardView().centerOnHex(entity.getPosition());
 
@@ -344,8 +344,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (!attacks.isEmpty()) {
             attacks.removeAllElements();
         }
+
         if (ce() != null) {
-            clientgui.mechD.wPan.displayMech(ce());
+            clientgui.getUnitDisplay().wPan.displayMech(ce());
         }
         updateTarget();
 
@@ -1533,7 +1534,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.mechD.displayEntity(e);
+            clientgui.getUnitDisplay().displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.getBoardView().centerOnHex(e.getPosition());
             }

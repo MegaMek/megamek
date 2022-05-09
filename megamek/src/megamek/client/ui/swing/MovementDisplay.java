@@ -711,8 +711,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().highlight(ce.getPosition());
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.mechD.displayEntity(ce);
-        clientgui.mechD.showPanel("movement");
+        clientgui.getUnitDisplay().displayEntity(ce);
+        clientgui.getUnitDisplay().showPanel("movement");
         if (!clientgui.getBoardView().isMovingUnits()) {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
@@ -4957,7 +4957,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_ENVELOPE.getCmd())) {
-            computeMovementEnvelope(clientgui.mechD.getCurrentEntity());
+            computeMovementEnvelope(clientgui.getUnitDisplay().getCurrentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_TRAITOR.getCmd())) {
             var players = clientgui.getClient().getGame().getPlayersVector();
             Integer[] playerIds = new Integer[players.size() - 1];
@@ -5176,7 +5176,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.mechD.displayEntity(e);
+            clientgui.getUnitDisplay().displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.getBoardView().centerOnHex(e.getPosition());
             }

@@ -191,8 +191,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     private BoardView bv;
     private Component bvc;
-    public UnitDisplay mechD;
-    public JDialog mechW;
+    public UnitDisplay unitDisplay;
+    private JDialog unitDisplayDialog;
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -301,8 +301,37 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return bv;
     }
 
+    public UnitDisplay getUnitDisplay() {
+        return unitDisplay;
+    }
+
+    public void setUnitDisplay(final UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
+    }
+
     public JDialog getUnitDisplayDialog() {
-        return mechW;
+        return unitDisplayDialog;
+    }
+
+    public void setUnitDisplayDialog() {
+        unitDisplayDialog = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) {
+            /**
+             * In addition to the default Dialog processKeyEvent, this method
+             * dispatches a KeyEvent to the client gui.
+             * This enables all of the gui hotkeys.
+             */
+            @Override
+            protected void processKeyEvent(KeyEvent evt) {
+                evt.setSource(ClientGUI.this);
+                menuBar.dispatchEvent(evt);
+                // Make the source be the ClientGUI and not the dialog
+                // This prevents a ClassCastException in ToolTipManager
+                curPanel.dispatchEvent(evt);
+                if (!evt.isConsumed()) {
+                    super.processKeyEvent(evt);
+                }
+            }
+        };
     }
 
     /**
@@ -312,6 +341,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (GUIPreferences.getInstance().getSoundBingFilename() == null) {
             return;
         }
+
         try {
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
@@ -470,54 +500,35 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
 
-        int x;
-        int y;
-        int h;
-        int w;
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) {
-            /**
-             * In addition to the default Dialog processKeyEvent, this method
-             * dispatches a KeyEvent to the client gui.
-             * This enables all of the gui hotkeys.
-             */
-            @Override
-            protected void processKeyEvent(KeyEvent e) {
-                e.setSource(ClientGUI.this);
-                menuBar.dispatchEvent(e);
-                // Make the source be the ClientGUI and not the dialog
-                // This prevents a ClassCastException in ToolTipManager
-                curPanel.dispatchEvent(e);
-                if (!e.isConsumed()) {
-                    super.processKeyEvent(e);
-                }
-            }
-        };
+        setUnitDisplay(new UnitDisplay(this, controller));
+        getUnitDisplay().addMechDisplayListener(bv);
+
+        setUnitDisplayDialog();
 
         Rectangle virtualBounds = UIUtil.getVirtualBounds();
-        x = GUIPreferences.getInstance().getDisplayPosX();
-        y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        int x = GUIPreferences.getInstance().getDisplayPosX();
+        int y = GUIPreferences.getInstance().getDisplayPosY();
+        int h = GUIPreferences.getInstance().getDisplaySizeHeight();
+        int w = GUIPreferences.getInstance().getDisplaySizeWidth();
         if ((x + w) > virtualBounds.getWidth()) {
             x = 0;
-            w = Math.min(w, (int)virtualBounds.getWidth());
-        }
-        if ((y + h) > virtualBounds.getHeight()) {
-            y = 0;
-            h = Math.min(h, (int)virtualBounds.getHeight());
+            w = Math.min(w, (int) virtualBounds.getWidth());
         }
 
-        mechW.setLocation(x, y);
-        mechW.setSize(w, h);
-        mechW.setResizable(true);
-        mechW.setFocusable(false);
-        mechW.setFocusableWindowState(false);
-        mechD = new UnitDisplay(this, controller);
-        mechD.addMechDisplayListener(bv);
-        mechW.add(mechD);
-        mechW.addWindowListener(new WindowAdapter() {
+        if ((y + h) > virtualBounds.getHeight()) {
+            y = 0;
+            h = Math.min(h, (int) virtualBounds.getHeight());
+        }
+
+        getUnitDisplayDialog().setLocation(x, y);
+        getUnitDisplayDialog().setSize(w, h);
+        getUnitDisplayDialog().setResizable(true);
+        getUnitDisplayDialog().setFocusable(false);
+        getUnitDisplayDialog().setFocusableWindowState(false);
+        getUnitDisplayDialog().add(getUnitDisplay());
+        getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent evt) {
                 GUIP.hideUnitDisplay();
             }
         });
@@ -531,11 +542,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         w = GUIPreferences.getInstance().getRulerSizeWidth();
         if ((x + w) > virtualBounds.getWidth()) {
             x = 0;
-            w = Math.min(w, (int)virtualBounds.getWidth());
+            w = Math.min(w, (int) virtualBounds.getWidth());
         }
         if ((y + h) > virtualBounds.getHeight()) {
             y = 0;
-            h = Math.min(h, (int)virtualBounds.getHeight());
+            h = Math.min(h, (int) virtualBounds.getHeight());
         }
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
@@ -670,7 +681,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
-                mechW.setBounds(0, 0, mechD.getWidth(), mechD.getHeight());
+                getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
                 break;
             case FILE_GAME_SAVE:
                 saveGame();
@@ -835,7 +846,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (curPanel instanceof MovementDisplay) {
                     GUIPreferences.getInstance().setMoveEnvelope(
                             !GUIPreferences.getInstance().getMoveEnvelope());
-                    ((MovementDisplay) curPanel).computeMovementEnvelope(mechD.getCurrentEntity());
+                    ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:
@@ -847,7 +858,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 bv.changeTheme();
                 break;
             case FIRE_SAVE_WEAPON_ORDER:
-                Entity ent = mechD.getCurrentEntity();
+                Entity ent = getUnitDisplay().getCurrentEntity();
                 if (ent != null) {
                     WeaponOrderHandler.setWeaponOrder(ent.getChassis(), ent.getModel(),
                             ent.getWeaponSortOrder(), ent.getCustomWeaponOrder());
@@ -925,11 +936,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         // Mek display
-        if ((mechW != null) && ((mechW.getSize().width * mechW.getSize().height) > 0)) {
-            GUIPreferences.getInstance().setDisplayPosX(mechW.getLocation().x);
-            GUIPreferences.getInstance().setDisplayPosY(mechW.getLocation().y);
-            GUIPreferences.getInstance().setDisplaySizeWidth(mechW.getSize().width);
-            GUIPreferences.getInstance().setDisplaySizeHeight(mechW.getSize().height);
+        if ((getUnitDisplayDialog() != null)
+                && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
+            GUIPreferences.getInstance().setDisplayPosX(getUnitDisplayDialog().getLocation().x);
+            GUIPreferences.getInstance().setDisplayPosY(getUnitDisplayDialog().getLocation().y);
+            GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
+            GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
         }
 
         // Ruler display
@@ -1040,7 +1052,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
-                mechW.setVisible(false);
+                getUnitDisplayDialog().setVisible(false);
                 setMapVisible(false);
                 break;
             case POINTBLANK_SHOT:
@@ -1310,9 +1322,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     /** 
-     * Switches the Minimap and the MechDisplay an and off together.
-     * If the MechDisplay is active, both will be hidden, else
-     * both will be shown.
+     * Switches the Minimap and the UnitDisplay an and off together.
+     * If the UnitDisplay is active, both will be hidden, else both will be shown.
      */
     public void toggleMMUDDisplays() {
         GUIP.toggleUnitDisplay();
@@ -1366,15 +1377,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void setUnitDisplayVisible(boolean visible) {
         // If no unit displayed, select a unit so display can be safely shown
         // This can happen when using mouse button 4
-        if (visible && (mechD.getCurrentEntity() == null)
+        if (visible && (getUnitDisplay().getCurrentEntity() == null)
                 && (getClient() != null) && (getClient().getGame() != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if ((es != null) && !es.isEmpty()) {
-                mechD.displayEntity(es.get(0));
+                getUnitDisplay().displayEntity(es.get(0));
             }
         }
 
-        mechW.setVisible(visible);
+        getUnitDisplayDialog().setVisible(visible);
     }
 
     private boolean fillPopup(Coords coords) {

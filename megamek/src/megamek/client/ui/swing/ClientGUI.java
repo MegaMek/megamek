@@ -478,7 +478,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         getUnitDisplay().addMechDisplayListener(bv);
 
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
-
+        getUnitDisplayDialog().setLocation(
+                GUIPreferences.getInstance().getDisplayPosX(),
+                GUIPreferences.getInstance().getDisplayPosY()
+        );
+        getUnitDisplayDialog().setSize(
+                GUIPreferences.getInstance().getDisplaySizeHeight(),
+                GUIPreferences.getInstance().getDisplaySizeWidth()
+        );
+        UIUtil.updateWindowBounds(getUnitDisplayDialog());
         getUnitDisplayDialog().setResizable(true);
         getUnitDisplayDialog().setFocusable(false);
         getUnitDisplayDialog().setFocusableWindowState(false);
@@ -885,6 +893,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
+        }
+
+        // Mek display
+        if ((getUnitDisplayDialog() != null)
+                && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
+            GUIPreferences.getInstance().setDisplayPosX(getUnitDisplayDialog().getLocation().x);
+            GUIPreferences.getInstance().setDisplayPosY(getUnitDisplayDialog().getLocation().y);
+            GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
+            GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
         }
 
         // Ruler display

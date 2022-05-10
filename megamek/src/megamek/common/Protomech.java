@@ -45,7 +45,7 @@ public class Protomech extends Entity {
     private int[] pilotDamageTaken = { 0, 0, 0, 0, 0, 0, 0 };
 
     /**
-     * Not every Protomech has a main gun. N.B. Regardless of the value set
+     * Not every ProtoMek has a main gun. N.B. Regardless of the value set
      * here, the variable is initialized to <code>false</code> until after the
      * <code>Entity</code> is initialized, which is too late to allow main gun
      * armor, hence the convoluted reverse logic.
@@ -1428,10 +1428,8 @@ public class Protomech extends Entity {
     @Override
     public boolean isCrippled() {
         if ((getCrew() != null) && (getCrew().getHits() >= 4)) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn())
-            {
-                System.out.println(getDisplayName()
-                        + " CRIPPLED: Pilot has taken 4+ damage.");
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: Pilot has taken 4+ damage.");
             }
             return true;
         }
@@ -1441,10 +1439,9 @@ public class Protomech extends Entity {
                 return false;
             }
         }
-        if (PreferenceManager.getClientPreferences().debugOutputOn())
-        {
-            System.out.println(getDisplayName()
-                    + " CRIPPLED: has no more viable weapons.");
+
+        if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+            LogManager.getLogger().debug(getDisplayName() + " CRIPPLED: has no more viable weapons.");
         }
         return true;
     }
@@ -1541,11 +1538,10 @@ public class Protomech extends Entity {
     }
     
     @Override
-    public PilotingRollData checkLandingInHeavyWoods(
-            EntityMovementType overallMoveType, Hex curHex) {
+    public PilotingRollData checkLandingInHeavyWoods(EntityMovementType overallMoveType,
+                                                     Hex curHex) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,
-                         "Protomechs cannot fall");
+        roll.addModifier(TargetRoll.CHECK_FALSE, "ProtoMeks cannot fall");
         return roll;
     }
     

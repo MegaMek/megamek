@@ -480,7 +480,7 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_LIFEBOAT)) {
                 if (eq.hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)) {
                     // Allowed for all naval units and support vehicles with an amphibious chassis mod
-                    return supporVehicle ? !mode.equals(EntityMovementMode.HOVER) : !isNaval;
+                    return supporVehicle ? !mode.equals(EntityMovementMode.HOVER) : isNaval;
                 } else {
                     return isAero;
                 }

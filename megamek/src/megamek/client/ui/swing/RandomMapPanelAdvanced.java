@@ -19,6 +19,7 @@ import megamek.client.ui.swing.util.VerifyIsInteger;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.common.MapSettings;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.BoardUtilities;
 import org.apache.logging.log4j.LogManager;
 
@@ -1013,7 +1014,7 @@ public class RandomMapPanelAdvanced extends JPanel {
             return description;
         }
 
-        private static MountainStyle getMountainStyle(String description) {
+        private static @Nullable MountainStyle getMountainStyle(String description) {
             for (MountainStyle ms : values()) {
                 if (ms.getDescription().equals(description)) {
                     return ms;
@@ -1022,7 +1023,7 @@ public class RandomMapPanelAdvanced extends JPanel {
             return null;
         }
 
-        private static MountainStyle getMountainStyle(int code) {
+        private static @Nullable MountainStyle getMountainStyle(int code) {
             for (MountainStyle ms : values()) {
                 if (ms.getCode() == code) {
                     return ms;
@@ -1049,7 +1050,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         String result = field.verifyTextS();
         if (result != null) {
             result = field.getName() + ": " + result;
-            LogManager.getLogger().error("", new RuntimeException(result));
+            LogManager.getLogger().error(result, new RuntimeException());
             field.requestFocus();
             showDataValidationError(result);
         }

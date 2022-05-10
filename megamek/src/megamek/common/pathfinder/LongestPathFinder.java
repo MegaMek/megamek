@@ -167,8 +167,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                      * Current implementation of doRelax() assumes that v is
                      * sorted in such way that this situation is impossible.
                      */
-                    LogManager.getLogger().error("",
-                            new IllegalStateException("Top Move Path uses more MPs than Move Path Candidate."));
+                    LogManager.getLogger().error(
+                            "Top Move Path uses more MPs than Move Path Candidate.",
+                            new IllegalStateException());
                     return null;
                 } else {
                     if (topMP.getHexesMoved() > mpCandidate.getHexesMoved()) {
@@ -272,8 +273,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                LogManager.getLogger().error("",
-                        new IllegalStateException("Top Move Path moved more than Move Path Candidate."));
+                LogManager.getLogger().error(
+                        "Top Move Path moved more than Move Path Candidate.",
+                        new IllegalStateException());
             }
 
             if (dHT < 0) {
@@ -287,8 +289,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
                  * Current implementation of doRelax() assumes that v is sorted
                  * in such way that this situation is impossible.
                  */
-                LogManager.getLogger().error("",
-                        new IllegalStateException("Top Move Path uses more MPs than Move Path Candidate while traveling the same distance"));
+                LogManager.getLogger().error(
+                        "Top Move Path uses more MPs than Move Path Candidate while traveling the same distance",
+                        new IllegalStateException());
             }
 
             if (!inAtmosphere) {
@@ -305,9 +308,9 @@ public class LongestPathFinder extends MovePathFinder<Deque<MovePath>> {
 
             if (-dHS > 0) {
                 if (dMP >= 0) {
-                    LogManager.getLogger().error("",
-                            new IllegalStateException("Top Move Path uses more MPs than Move Path Candidate and "
-                                    + "Top Move Path moves a shorter straight line distance."));
+                    LogManager.getLogger().error(
+                            "Top Move Path uses more MPs than Move Path Candidate and Top Move Path moves a shorter straight line distance.",
+                            new IllegalStateException());
                 }
                 if (topLastStep != null && !topLastStep.dueFreeTurn()) {
                     v.add(mpCandidate);

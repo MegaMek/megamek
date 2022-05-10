@@ -25,6 +25,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -191,8 +192,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     private BoardView bv;
     private Component bvc;
-    private UnitDetailPane unitDetailPane;
-    public UnitDisplay mechD;
+    public UnitDisplay unitDisplay;
+    private JDialog unitDisplayDialog;
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -301,8 +302,20 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return bv;
     }
 
-    public UnitDetailPane getUnitDetailPane() {
-        return this.unitDetailPane;
+    public UnitDisplay getUnitDisplay() {
+        return unitDisplay;
+    }
+
+    public void setUnitDisplay(final UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
+    }
+
+    public JDialog getUnitDisplayDialog() {
+        return unitDisplayDialog;
+    }
+
+    public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
+        this.unitDisplayDialog = unitDisplayDialog;
     }
 
     /**
@@ -312,6 +325,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (GUIPreferences.getInstance().getSoundBingFilename() == null) {
             return;
         }
+
         try {
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
@@ -341,15 +355,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame = new JFrame(Messages.getString("ClientGUI.title"));
         frame.setJMenuBar(menuBar);
 
-        var prefs = GUIPreferences.getInstance();
-        if (prefs.getWindowSizeHeight() != 0) {
+        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
             frame.setLocation(
-                prefs.getWindowPosX(),
-                prefs.getWindowPosY()
+                    GUIPreferences.getInstance().getWindowPosX(),
+                    GUIPreferences.getInstance().getWindowPosY()
             );
             frame.setSize(
-                prefs.getWindowSizeWidth(),
-                prefs.getWindowSizeHeight()
+                    GUIPreferences.getInstance().getWindowSizeWidth(),
+                    GUIPreferences.getInstance().getWindowSizeHeight()
             );
         } else {
             frame.setSize(800, 600);
@@ -396,8 +409,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * is created.
      */
     public void initialize() {
-        var prefs = GUIPreferences.getInstance();
-
         menuBar = new CommonMenuBar(getClient());
         initializeFrame();
         try {
@@ -436,10 +447,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             return;
                         }
                     }
-                    if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
-                    {
+
+                    if ((savePrompt == JOptionPane.NO_OPTION)
+                            || (savePrompt == JOptionPane.YES_OPTION)) {
                         frame.setVisible(false);
-                        unitDetailPane.setVisible(false);
                         saveSettings();
                         die();
                     }
@@ -463,23 +474,40 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
 
-        mechD = new UnitDisplay(this, controller);
-        mechD.addMechDisplayListener(bv);
+        setUnitDisplay(new UnitDisplay(this, controller));
+        getUnitDisplay().addMechDisplayListener(bv);
 
-        this.unitDetailPane = new UnitDetailPane(this.mechD);
-        this.unitDetailPane.setVisible(false);
-        add(this.unitDetailPane, BorderLayout.EAST);
+        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
+        getUnitDisplayDialog().setLocation(
+                GUIPreferences.getInstance().getDisplayPosX(),
+                GUIPreferences.getInstance().getDisplayPosY()
+        );
+        getUnitDisplayDialog().setSize(
+                GUIPreferences.getInstance().getDisplaySizeHeight(),
+                GUIPreferences.getInstance().getDisplaySizeWidth()
+        );
+        UIUtil.updateWindowBounds(getUnitDisplayDialog());
+        getUnitDisplayDialog().setResizable(true);
+        getUnitDisplayDialog().setFocusable(false);
+        getUnitDisplayDialog().setFocusableWindowState(false);
+        getUnitDisplayDialog().add(getUnitDisplay());
+        getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                GUIPreferences.getInstance().hideUnitDisplay();
+            }
+        });
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
         ruler = new Ruler(frame, client, bv);
         ruler.setLocation(
-            prefs.getRulerPosX(),
-            prefs.getRulerPosY()
+                GUIPreferences.getInstance().getRulerPosX(),
+                GUIPreferences.getInstance().getRulerPosY()
         );
         ruler.setSize(
-            prefs.getRulerSizeHeight(),
-            prefs.getRulerSizeWidth()
+                GUIPreferences.getInstance().getRulerSizeHeight(),
+                GUIPreferences.getInstance().getRulerSizeWidth()
         );
         UIUtil.updateWindowBounds(ruler);
 
@@ -613,8 +641,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
-                this.unitDetailPane.getWindow().setLocation(0, 0);
-                this.unitDetailPane.getWindow().pack();
+                getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
                 break;
             case FILE_GAME_SAVE:
                 saveGame();
@@ -779,7 +806,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (curPanel instanceof MovementDisplay) {
                     GUIPreferences.getInstance().setMoveEnvelope(
                             !GUIPreferences.getInstance().getMoveEnvelope());
-                    ((MovementDisplay) curPanel).computeMovementEnvelope(mechD.getCurrentEntity());
+                    ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:
@@ -791,7 +818,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 bv.changeTheme();
                 break;
             case FIRE_SAVE_WEAPON_ORDER:
-                Entity ent = mechD.getCurrentEntity();
+                Entity ent = getUnitDisplay().getCurrentEntity();
                 if (ent != null) {
                     WeaponOrderHandler.setWeaponOrder(ent.getChassis(), ent.getModel(),
                             ent.getWeaponSortOrder(), ent.getCustomWeaponOrder());
@@ -869,12 +896,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         // Mek display
-        var unitDetailWindow = this.unitDetailPane.getWindow();
-        if ((unitDetailWindow.getSize().width * unitDetailWindow.getSize().height) > 0) {
-            GUIPreferences.getInstance().setUnitDetailPosX(unitDetailWindow.getLocation().x);
-            GUIPreferences.getInstance().setUnitDetailPosY(unitDetailWindow.getLocation().y);
-            GUIPreferences.getInstance().setUnitDetailSizeWidth(unitDetailWindow.getSize().width);
-            GUIPreferences.getInstance().setUnitDetailSizeHeight(unitDetailWindow.getSize().height);
+        if ((getUnitDisplayDialog() != null)
+                && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
+            GUIPreferences.getInstance().setDisplayPosX(getUnitDisplayDialog().getLocation().x);
+            GUIPreferences.getInstance().setDisplayPosY(getUnitDisplayDialog().getLocation().y);
+            GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
+            GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
         }
 
         // Ruler display
@@ -985,7 +1012,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
-                this.unitDetailPane.setVisible(false);
+                getUnitDisplayDialog().setVisible(false);
                 setMapVisible(false);
                 break;
             case POINTBLANK_SHOT:
@@ -1255,9 +1282,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     /** 
-     * Switches the Minimap and the MechDisplay an and off together.
-     * If the MechDisplay is active, both will be hidden, else
-     * both will be shown.
+     * Switches the Minimap and the UnitDisplay an and off together.
+     * If the UnitDisplay is active, both will be hidden, else both will be shown.
      */
     public void toggleMMUDDisplays() {
         GUIP.toggleUnitDisplay();
@@ -1311,15 +1337,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void setUnitDisplayVisible(boolean visible) {
         // If no unit displayed, select a unit so display can be safely shown
         // This can happen when using mouse button 4
-        if (visible && (mechD.getCurrentEntity() == null)
+        if (visible && (getUnitDisplay().getCurrentEntity() == null)
                 && (getClient() != null) && (getClient().getGame() != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if ((es != null) && !es.isEmpty()) {
-                mechD.displayEntity(es.get(0));
+                getUnitDisplay().displayEntity(es.get(0));
             }
         }
 
-        this.unitDetailPane.setVisible(visible);
+        getUnitDisplayDialog().setVisible(visible);
     }
 
     private boolean fillPopup(Coords coords) {

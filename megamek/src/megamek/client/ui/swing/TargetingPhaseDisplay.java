@@ -422,8 +422,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().addKeyListener(this);
 
         // mech display.
-        clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
-        clientgui.mechD.wPan.weaponList.addKeyListener(this);
+        clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
+        clientgui.getUnitDisplay().wPan.weaponList.addKeyListener(this);
     }
 
     @Override
@@ -640,7 +640,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
     private void changeMode(boolean forward) {
-        int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
+        int wn = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
 
         // Do nothing we have no unit selected.
         if (null == ce()) {
@@ -653,7 +653,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        // Dropship Artillery cannot be switched to "Direct" Fire
+        // DropShip Artillery cannot be switched to "Direct" Fire
         final WeaponType wtype = (WeaponType) m.getType();
         if ((ce() instanceof Dropship) && (wtype instanceof ArtilleryWeapon)) {
             return;
@@ -675,8 +675,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         updateTarget();
-        clientgui.mechD.wPan.displayMech(ce());
-        clientgui.mechD.wPan.selectWeapon(wn);
+        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.selectWeapon(wn);
     }
 
     /**
@@ -745,7 +745,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     private void fire() {
         // get the selected weaponnum
-        int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
+        int weaponNum = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
 
         // validate
@@ -810,7 +810,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        int nextWeapon = clientgui.mechD.wPan.selectNextWeapon();
+        int nextWeapon = clientgui.getUnitDisplay().wPan.selectNextWeapon();
 
         // check; if there are no ready weapons, you're done.
         if ((nextWeapon == -1) && GUIPreferences.getInstance().getAutoEndFiring()) {
@@ -819,8 +819,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // otherwise, display firing info for the next weapon
-        clientgui.mechD.wPan.displayMech(ce());
-        clientgui.mechD.wPan.selectWeapon(nextWeapon);
+        clientgui.getUnitDisplay().wPan.displayMech(ce());
+        clientgui.getUnitDisplay().wPan.selectWeapon(nextWeapon);
         updateTarget();
         setDisengageEnabled(false);
     }
@@ -832,10 +832,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectNextWeapon();
-
-        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
-            clientgui.mechD.wPan.displayMech(ce());
+        int weaponId = clientgui.getUnitDisplay().wPan.selectNextWeapon();
+        if (ce().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
+            clientgui.getUnitDisplay().wPan.displayMech(ce());
         }
         
         if (weaponId == -1) {
@@ -854,10 +853,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-        int weaponId = clientgui.mechD.wPan.selectPrevWeapon();
-
-        if (ce().getId() != clientgui.mechD.wPan.getSelectedEntityId()) {
-            clientgui.mechD.wPan.displayMech(ce());
+        int weaponId = clientgui.getUnitDisplay().wPan.selectPrevWeapon();
+        if (ce().getId() != clientgui.getUnitDisplay().wPan.getSelectedEntityId()) {
+            clientgui.getUnitDisplay().wPan.displayMech(ce());
         }
 
         if (weaponId == -1) {
@@ -918,7 +916,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
                 attacks.removeElement(o);
                 setDisengageEnabled(attacks.isEmpty() && ce().isOffBoard() && ce().canFlee());
-                clientgui.mechD.wPan.displayMech(ce());
+                clientgui.getUnitDisplay().wPan.displayMech(ce());
                 clientgui.getClient().getGame().removeAction(o);
                 clientgui.getBoardView().refreshAttacks();
             }
@@ -933,9 +931,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         clientgui.getBoardView().redrawEntity(ce());
-        clientgui.mechD.displayEntity(ce());
-        clientgui.mechD.showPanel("weapons");
-        clientgui.mechD.wPan.selectFirstWeapon();
+        clientgui.getUnitDisplay().displayEntity(ce());
+        clientgui.getUnitDisplay().showPanel("weapons");
+        clientgui.getUnitDisplay().wPan.selectFirstWeapon();
         updateTarget();
     }
 
@@ -954,7 +952,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setFireEnabled(false);
 
         // update target panel
-        final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
+        final int weaponId = clientgui.getUnitDisplay().wPan.getSelectedWeaponNum();
         if ((target != null) && (weaponId != -1)) {
             ToHitData toHit;
             Mounted m = ce().getEquipment(weaponId);
@@ -974,45 +972,43 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
             }
             
-            clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
-            clientgui.mechD.wPan.wRangeR.setText(String.format("%d %s", targetDistance, flightTimeText));
+            clientgui.getUnitDisplay().wPan.wTargetR.setText(target.getDisplayName());
+            clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%d %s", targetDistance, flightTimeText));
             
             Game game = clientgui.getClient().getGame();
             int distance = Compute.effectiveDistance(game, ce(), target);
             if (m.isUsedThisRound()) {
-                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.alreadyFired"));
-
+                clientgui.getUnitDisplay().wPan.wToHitR.setText(
+                        Messages.getString("TargetingPhaseDisplay.alreadyFired"));
                 setFireEnabled(false);
             } else if (m.isInBearingsOnlyMode() && distance < RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
+                clientgui.getUnitDisplay().wPan.wToHitR.setText(
+                        Messages.getString("TargetingPhaseDisplay.bearingsOnlyMinRange"));
                 setFireEnabled(false);
-            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
-                clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
-
+            } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+                    && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
+                clientgui.getUnitDisplay().wPan.wToHitR.setText(
+                        Messages.getString("TargetingPhaseDisplay.autoFiringWeapon"));
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(false);
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-                clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
+                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
-                clientgui.mechD.wPan.wToHitR
-                        .setText(toHit.getValueAsString()
-                                + " ("
-                                + Compute.oddsAbove(
-                                        toHit.getValue(),
-                                        ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))
-                                + "%)");
+                clientgui.getUnitDisplay().wPan.wToHitR.setText(toHit.getValueAsString() + " ("
+                        + Compute.oddsAbove(toHit.getValue(), ce().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY))
+                        + "%)");
                 setFireEnabled(true);
             }
-            clientgui.mechD.wPan.toHitText.setText(toHit.getDesc());
+            clientgui.getUnitDisplay().wPan.toHitText.setText(toHit.getDesc());
             setSkipEnabled(true);
         } else {
-            clientgui.mechD.wPan.wTargetR.setText("---");
-            clientgui.mechD.wPan.wRangeR.setText("---");
-            clientgui.mechD.wPan.wToHitR.setText("---");
-            clientgui.mechD.wPan.toHitText.setText("");
+            clientgui.getUnitDisplay().wPan.wTargetR.setText("---");
+            clientgui.getUnitDisplay().wPan.wRangeR.setText("---");
+            clientgui.getUnitDisplay().wPan.wToHitR.setText("---");
+            clientgui.getUnitDisplay().wPan.toHitText.setText("");
         }
         updateSearchlight();
     }
@@ -1458,7 +1454,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.mechD.displayEntity(e);
+            clientgui.getUnitDisplay().displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.getBoardView().centerOnHex(e.getPosition());
             }
@@ -1472,7 +1468,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-        clientgui.mechD.wPan.weaponList.removeListSelectionListener(this);
+        clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
     }
 
     @Override
@@ -1481,7 +1477,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (event.getSource().equals(clientgui.mechD.wPan.weaponList)) {
+        if (event.getSource().equals(clientgui.getUnitDisplay().wPan.weaponList)) {
             // update target data in weapon display
             updateTarget();
         }

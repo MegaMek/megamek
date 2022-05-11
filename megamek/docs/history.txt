@@ -754,7 +754,7 @@ VERSION HISTORY:
 + Issue #1689: Communication gear missing costs.
 + PR #1694: Supercharger and VTOL jet booster cost for support vehicles
 + Issue #1701: SRT ammo has extinction and reintroduction dates for One-Shot launchers
-+ Data: Updating Maps and couple of variant Dropships.
++ Data: Updating Maps and couple of variant DropShips.
 + Issue #1446: Units with trailer hitches properly distinguish between loading infantry and towing other units
 + PR #1711: Add Entity.getPriceMultiplier() method
 + PR #1717: Fixing name issues
@@ -766,7 +766,7 @@ VERSION HISTORY:
 + Issue #1639: in map editor, set building CF to default values when ctrl-scrolling through building types
 + Issue #1638: MapEditor Sidebar Vertical real estate improvements
 + Issue #1635: Errors in classic.tileset
-+ Issue #1755: Battlemech Turrets should all be Tech Base ALL.
++ Issue #1755: BattleMek Turrets should all be Tech Base ALL.
 + Issue #1302: Improved visibility on unit list scroll buttons; gray them out to indicate no further scrolling possibility
 + PR #1758: Fixing display with negative heat (e.g. while snowing)
 + PR #1754: 'next player' button now properly functions for situations with more than two players on a team
@@ -779,7 +779,7 @@ VERSION HISTORY:
 + Issue #1767: When randomly generating a map, picking a theme is reflected in the map editor.
 + PR #1790: various improvements and fixes around random map dialog;
     ability to directly open map definition file from map editor
-+ Issue #1787: user can now manually reset mini-map and mech info card positions
++ Issue #1787: user can now manually reset minimap and mech info card positions
 + PR #1795: Corrections to invalid data in some unofficial boards
 + PR #1779: Counter-battery fire
 + PR #1805: Adding BV Calculation to ChatLounge Entity Right Click 
@@ -790,12 +790,12 @@ VERSION HISTORY:
 
 v0.47.4 (2020-2-09 2200 UTC)
 + PR #1626: Add LargeCraft Roles to RatGen
-+ Issue #1630: Fixed an issue introduced in 47.3 which prevented spheroid dropships from firing nose/aft weapons on space maps
++ Issue #1630: Fixed an issue introduced in 47.3 which prevented spheroid DropShips from firing nose/aft weapons on space maps
 + PR #1650: When a bay door gets blown out, only blow out one bay door instead of two
 + PR #1648: Don't auto-eject crew from large space craft due to ammo explosions and such
 + Issue #1641, #1643: Fixes for undesired map editor behavior involving buildings
 + Issue #1655: Printing wrong weapon
-+ Data: Various Fixes (#1652,#1615,#1545,#1534) and some errata.
++ Data: Various Fixes (#1652, #1615, #1545, #1534) and some errata.
 + Issue #1647: WiGEs can't sideslip across water
 + Issue #1479: Add theme selection and dark themes
 + Issue #1679: Small aerospace units no longer incorrectly get crater penalty when attempting vertical liftoff
@@ -1639,7 +1639,7 @@ v0.41.19 (2016-06-05 22:40 UTC)
 + New Maps - Thanks Razorback (via Facebook)
 + New Sprites.
 + Issue #156: Graphical To-Hit Modifiers ('firing solutions') in Indirect Phase
-+ Bug: MiniMap selected unit highlighting persists after turn ends
++ Bug: Minimap selected unit highlighting persists after turn ends
 + Issue #149: IS Small Laser firing at LOS Range
 + Issue #152: MGs, Flamers, AMS firing at LOS Range
 + Issue #151: Flamers can't Strafe
@@ -1746,7 +1746,7 @@ v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error
 + Issue #20: Cluster Master should be labeled Unofficial not atow
 + Issue #18: Small Patch: changes lounge tooltip to act similar to board view tt
-+ Issue #11: RFE: Open MiniMap during Artillery Designate Targets automatically
++ Issue #11: RFE: Open Minimap during Artillery Designate Targets automatically
 + Added BattleValue field to MechcacheCSVTool
 + Data: New Sprites and Unit Fixes.
 + Issue #22: Mech UMUs attacker movement modifier and heat generation
@@ -8540,7 +8540,7 @@ v0.33.11 (2007-11-09, 15:26 GMT+2)
 + Bug 1748167: Spot-and-fire penalty being applied to TAG/Semi-Guided
 + Updated equipment.txt
 + Automatically generate equipment.txt whenever ant is used to compile MM.
-+ Fixed NPE in MiniMap when using the board editor
++ Fixed NPE in Minimap when using the board editor
 + Bug 1817499: Falling on bridges not working right
 + Bug: Deploying on bridges now gives correct elevation
 + Bug: 1746114: 'Free' standard flamers on vehicles?

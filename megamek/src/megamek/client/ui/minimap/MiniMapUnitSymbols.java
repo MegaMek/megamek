@@ -25,7 +25,7 @@ import megamek.common.*;
 import static java.lang.Math.*;
 
 /** Contains geometric paths for drawing the minimap unit symbols. */
-public class MiniMapUnitSymbols {
+public class MinimapUnitSymbols {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     public static final Path2D STRAT_BASERECT;

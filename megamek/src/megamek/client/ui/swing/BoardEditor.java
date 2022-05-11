@@ -1019,7 +1019,7 @@ public class BoardEditor extends JPanel
         scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
-        minimapW = MiniMap.createMinimap(frame, bv, game, null);
+        minimapW = Minimap.createMinimap(frame, bv, game, null);
         minimapW.setVisible(guip.getMinimapEnabled());
     }
     

@@ -114,7 +114,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
-    public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
+    public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
@@ -544,8 +544,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(GAME_SUMMARY_BOARD_VIEW);
     }
 
-    public boolean getGameSummaryMiniMap() {
-        return store.getBoolean(GAME_SUMMARY_MINI_MAP);
+    public boolean getGameSummaryMinimap() {
+        return store.getBoolean(GAME_SUMMARY_MINIMAP);
     }
 
     public boolean getEntityOwnerLabelColor() {
@@ -1025,8 +1025,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(GAME_SUMMARY_BOARD_VIEW, state);
     }
 
-    public void setGameSummaryMiniMap(boolean state) {
-        store.setValue(GAME_SUMMARY_MINI_MAP, state);
+    public void setGameSummaryMinimap(boolean state) {
+        store.setValue(GAME_SUMMARY_MINIMAP, state);
     }
 
     public void setEntityOwnerLabelColor(boolean i) {

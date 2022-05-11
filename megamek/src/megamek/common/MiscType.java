@@ -794,9 +794,9 @@ public class MiscType extends EquipmentType {
                 } else if (getSubType() == S_ELITE) { // only shielded
                     pct += 0.03;
                 }
-                //Jumpship is based on non-drive weight and rounded to ton
+                // JumpShip is based on non-drive weight and rounded to ton
                 if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-                    RoundWeight.nextTon((entity.getWeight() - ((Jumpship) entity).getJumpDriveWeight()) * pct);
+                    return RoundWeight.nextTon((entity.getWeight() - ((Jumpship) entity).getJumpDriveWeight()) * pct);
                 }
                 return defaultRounding.round(entity.getWeight() * pct, entity);
             } else if (subType == S_IMPROVED) {

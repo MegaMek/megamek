@@ -1219,7 +1219,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
 
-        if (cmd.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) {
+        if (GUIPreferences.getInstance().getNagForMASC() && cmd.hasActiveMASC()) {
             // pop up are you sure dialog
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"),
@@ -1234,21 +1234,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
 
-        if (cmd.hasActiveSupercharger() && GUIPreferences.getInstance().getNagForMASC()) {
-            if (!(ce() instanceof VTOL)) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                        Messages.getString("MovementDisplay.areYouSure"),
-                        Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
-                        true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance().setNagForMASC(false);
-                    }
-                } else {
-                    return;
+        if (GUIPreferences.getInstance().getNagForMASC() && !(ce() instanceof VTOL)
+                && cmd.hasActiveSupercharger()) {
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                    Messages.getString("MovementDisplay.areYouSure"),
+                    Messages.getString("MovementDisplay.ConfirmSuperchargerRoll", ce().getSuperchargerTarget()),
+                    true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForMASC(false);
                 }
+            } else {
+                return;
             }
         }
 

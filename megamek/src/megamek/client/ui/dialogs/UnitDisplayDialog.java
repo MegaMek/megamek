@@ -18,30 +18,35 @@
  */
 package megamek.client.ui.dialogs;
 
-import megamek.client.ui.Messages;
+import megamek.MegaMek;
+import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 
-public class UnitDisplayDialog extends JDialog {
+public class UnitDisplayDialog extends AbstractDialog {
     //region Variable Declarations
-    private UnitDisplay unitDisplay;
-
     private final ClientGUI clientGUI;
+    private UnitDisplay unitDisplay;
     //endregion Variable Declarations
 
     //region Constructors
-    public UnitDisplayDialog(final JFrame frame, final UnitDisplay unitDisplay,
-                             final ClientGUI clientGUI) {
-        super(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        setUnitDisplay(unitDisplay);
+    public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
+        super(frame, "UnitDisplayDialog", "UnitDisplayDialog.title");
         this.clientGUI = clientGUI;
+        initialize();
     }
     //endregion Constructors
 
     //region Getters/Setters
+    public ClientGUI getClientGUI() {
+        return clientGUI;
+    }
+
     public UnitDisplay getUnitDisplay() {
         return unitDisplay;
     }
@@ -51,6 +56,20 @@ public class UnitDisplayDialog extends JDialog {
     }
     //endregion Getters/Setters
 
+    //region Initialization
+    @Override
+    protected Container createCenterPane() {
+        setUnitDisplay(new UnitDisplay(getClientGUI(), getClientGUI().getController()));
+        getUnitDisplay().addMechDisplayListener(getClientGUI().getBoardView());
+        return getUnitDisplay();
+    }
+    //endregion Initialization
+
+    @Override
+    protected void cancelAction() {
+        MegaMek.getMMOptions().setShowUnitDisplay(false);
+    }
+
     /**
      * In addition to the default Dialog processKeyEvent, this method
      * dispatches a KeyEvent to the client gui.
@@ -58,11 +77,11 @@ public class UnitDisplayDialog extends JDialog {
      */
     @Override
     protected void processKeyEvent(KeyEvent evt) {
-        evt.setSource(clientGUI);
-        clientGUI.getMenuBar().dispatchEvent(evt);
+        evt.setSource(getClientGUI());
+        getClientGUI().getMenuBar().dispatchEvent(evt);
         // Make the source be the ClientGUI and not the dialog
         // This prevents a ClassCastException in ToolTipManager
-        clientGUI.getCurrentPanel().dispatchEvent(evt);
+        getClientGUI().getCurrentPanel().dispatchEvent(evt);
         if (!evt.isConsumed()) {
             super.processKeyEvent(evt);
         }

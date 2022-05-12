@@ -15,6 +15,7 @@
 package megamek.client.ui.swing.boardview;
 
 import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.PathEnumerator;
@@ -4513,10 +4514,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         Point point = me.getPoint();
 
         // Button 4: Hide/Show the minimap and unitDisplay
-        if (me.getButton() == 4) {
-            if (clientgui != null) {
-                clientgui.toggleMMUDDisplays();
-            }
+        if ((me.getButton() == 4) && (clientgui != null)) {
+            MegaMek.getMMOptions().setShowUnitDisplay(!MegaMek.getMMOptions().getShowUnitDisplay());
+            clientgui.maybeShowUnitDisplay();
+            // We want to set this to the new Show Unit Display value, ignoring the previous minimap option
+            MegaMek.getMMOptions().setShowMinimap(MegaMek.getMMOptions().getShowUnitDisplay());
+            clientgui.maybeShowMinimap();
+            return;
         }
 
         // we clicked the right mouse button,

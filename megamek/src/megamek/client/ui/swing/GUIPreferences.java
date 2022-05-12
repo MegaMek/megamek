@@ -109,10 +109,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
-    public static final String DISPLAY_POS_X = "DisplayPosX";
-    public static final String DISPLAY_POS_Y = "DisplayPosY";
-    public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
-    public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
@@ -161,13 +157,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
     public static final String MINI_REPORT_SIZE_WIDTH = "MiniReportSizeWidth";
     public static final String MINIMAP_COLOURS = "MinimapColours";
-    public static final String MINIMAP_ENABLED = "MinimapEnabled";
     public static final String MINIMAP_POS_X = "MinimapPosX";
     public static final String MINIMAP_POS_Y = "MinimapPosY";
     public static final String MINIMAP_ZOOM = "MinimapZoom";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
     public static final String MINIMUM_SIZE_WIDTH = "MinimumSizeWidth";
-    public static final String SHOW_UNIT_DISPLAY = "ShowUnitDisplay";
     public static final String MOUSE_WHEEL_ZOOM = "MouseWheelZoom";
     public static final String MOUSE_WHEEL_ZOOM_FLIP = "MouseWheelZoomFlip";
     public static final String NAG_FOR_BOT_README = "NagForBotReadme";
@@ -334,8 +328,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
-        store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
-        store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -343,7 +335,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
         store.setDefault(FIRING_SOLUTIONS, true);
         store.setDefault(GUI_SCALE, 1);
-        store.setDefault(SHOW_UNIT_DISPLAY, true);
         store.setDefault(LOBBY_MEKTABLE_UNIT_WIDTH, 170);
         store.setDefault(LOBBY_MEKTABLE_PILOT_WIDTH, 80);
         store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
@@ -375,7 +366,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RND_ARMY_SPLIT_POS, 300);
         
         store.setDefault(MINIMAP_COLOURS, "defaultminimap.txt");
-        store.setDefault(MINIMAP_ENABLED, true);
         store.setDefault(MMSYMBOL, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
         store.setDefault(MINIMUM_SIZE_WIDTH, 120);
@@ -522,22 +512,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getCustomUnitWidth() {
         return store.getInt(CUSTOM_UNIT_WIDTH);
-    }
-
-    public int getDisplayPosX() {
-        return store.getInt(DISPLAY_POS_X);
-    }
-
-    public int getDisplayPosY() {
-        return store.getInt(DISPLAY_POS_Y);
-    }
-
-    public int getDisplaySizeHeight() {
-        return store.getInt(DISPLAY_SIZE_HEIGHT);
-    }
-
-    public int getDisplaySizeWidth() {
-        return store.getInt(DISPLAY_SIZE_WIDTH);
     }
 
     public boolean getGameSummaryBoardView() {
@@ -710,10 +684,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public String getMinimapColours() {
         return store.getString(MINIMAP_COLOURS);
-    }
-
-    public boolean getMinimapEnabled() {
-        return store.getBoolean(MINIMAP_ENABLED);
     }
 
     public boolean getIsometricEnabled() {
@@ -1005,22 +975,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
     }
 
-    public void setDisplayPosX(int i) {
-        store.setValue(DISPLAY_POS_X, i);
-    }
-
-    public void setDisplayPosY(int i) {
-        store.setValue(DISPLAY_POS_Y, i);
-    }
-
-    public void setDisplaySizeHeight(int i) {
-        store.setValue(DISPLAY_SIZE_HEIGHT, i);
-    }
-
-    public void setDisplaySizeWidth(int i) {
-        store.setValue(DISPLAY_SIZE_WIDTH, i);
-    }
-
     public void setGameSummaryBoardView(boolean state) {
         store.setValue(GAME_SUMMARY_BOARD_VIEW, state);
     }
@@ -1175,10 +1129,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setRndArmyPosY(int i) {
         store.setValue(RND_ARMY_POS_Y, i);
-    }
-
-    public void setMinimapEnabled(boolean b) {
-        store.setValue(MINIMAP_ENABLED, b);
     }
 
     public void setMinimapPosX(int i) {
@@ -1533,22 +1483,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setWarningColor(Color color) {
         store.setValue(ADVANCED_WARNING_COLOR, getColorString(color));
     }
-    
-    /** Sets the user preference for the Unit Display window to active. */
-    public void showUnitDisplay() {
-        store.setValue(SHOW_UNIT_DISPLAY, true);
-    }
-    
-    /** Sets the user preference for the Unit Display window to inactive. */
-    public void hideUnitDisplay() {
-        store.setValue(SHOW_UNIT_DISPLAY, false);
-    }
-    
-    /** Toggles the state of the user preference for the Unit Display. */
-    public void toggleUnitDisplay() {
-        store.setValue(SHOW_UNIT_DISPLAY, !getBoolean(SHOW_UNIT_DISPLAY));
-    }
-    
+
     /** Toggles the state of the user preference for the Keybinds overlay. */
     public void toggleKeybindsOverlay() {
         store.setValue(SHOW_KEYBINDS_OVERLAY, !getBoolean(SHOW_KEYBINDS_OVERLAY));

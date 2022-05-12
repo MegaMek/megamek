@@ -19,6 +19,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -312,7 +313,7 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                GUIPreferences.getInstance().showUnitDisplay();
+                MegaMek.getMMOptions().setShowUnitDisplay(true);
                 gui.getUnitDisplay().displayEntity(selectedEntity);
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);

@@ -24,6 +24,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
@@ -257,9 +258,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         
         initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
-        viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+        viewMekDisplay.setSelected(MegaMek.getMMOptions().getShowUnitDisplay());
         initMenuItem(viewMiniMap, menu, VIEW_MINI_MAP, VK_M);
-        viewMiniMap.setSelected(GUIP.getMinimapEnabled());
+        viewMiniMap.setSelected(MegaMek.getMMOptions().getShowMinimap());
         menu.addSeparator();
         
         initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN);
@@ -327,7 +328,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        
         // Changes that are independent of the current state of MM
         // Boardview and others may listen to PreferenceChanges to detect these
         if (event.getActionCommand().equals(ClientGUI.VIEW_INCGUISCALE)) {
@@ -341,22 +341,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 GUIP.setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
             }
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            GUIP.setMinimapEnabled(!GUIP.getMinimapEnabled());
-            
+            MegaMek.getMMOptions().setShowMinimap(!MegaMek.getMMOptions().getShowMinimap());
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_UNIT_DISPLAY)) {
-            GUIP.toggleUnitDisplay();
-            
+            MegaMek.getMMOptions().setShowUnitDisplay(!MegaMek.getMMOptions().getShowUnitDisplay());
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
             GUIP.toggleKeybindsOverlay();
-            
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_HEXCOORDS)) {
             boolean coordsShown = GUIP.getBoolean(GUIPreferences.SHOW_COORDS);
             GUIP.setValue(GUIPreferences.SHOW_COORDS, !coordsShown);
-            
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_LABELS)) {
             GUIP.setUnitLabelStyle(GUIP.getUnitLabelStyle().next());
         }
-        
+
         // Pass the action on to each of our listeners.
         actionListeners.forEach(l -> l.actionPerformed(event));
     }
@@ -487,14 +483,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
-            viewMiniMap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
             toggleHexCoords.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_COORDS));
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setKeyBinds();
-        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
-            viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
         }
     }
     

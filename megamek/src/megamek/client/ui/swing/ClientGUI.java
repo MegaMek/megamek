@@ -15,6 +15,7 @@
 package megamek.client.ui.swing;
 
 import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
@@ -45,8 +46,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
-import megamek.common.preference.IPreferenceChangeListener;
-import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
@@ -72,13 +71,9 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ClientGUI extends JPanel implements BoardViewListener,
-                    ActionListener, ComponentListener, IPreferenceChangeListener {
+public class ClientGUI extends JPanel implements BoardViewListener, ActionListener,
+        ComponentListener {
     //region Variable Declarations
-    private static final long serialVersionUID = 3913466735610109147L;
-    
-    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
@@ -192,8 +187,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     private BoardView bv;
     private Component bvc;
-    public UnitDisplay unitDisplay;
-    private JDialog unitDisplayDialog;
+    private UnitDisplayDialog unitDisplayDialog;
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -302,20 +296,20 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return bv;
     }
 
-    public UnitDisplay getUnitDisplay() {
-        return unitDisplay;
+    public MegaMekController getController() {
+        return controller;
     }
 
-    public void setUnitDisplay(final UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
-    }
-
-    public JDialog getUnitDisplayDialog() {
+    public UnitDisplayDialog getUnitDisplayDialog() {
         return unitDisplayDialog;
     }
 
     public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
         this.unitDisplayDialog = unitDisplayDialog;
+    }
+
+    public UnitDisplay getUnitDisplay() {
+        return getUnitDisplayDialog().getUnitDisplay();
     }
 
     /**
@@ -474,29 +468,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
 
-        setUnitDisplay(new UnitDisplay(this, controller));
-        getUnitDisplay().addMechDisplayListener(bv);
-
-        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
-        getUnitDisplayDialog().setLocation(
-                GUIPreferences.getInstance().getDisplayPosX(),
-                GUIPreferences.getInstance().getDisplayPosY()
-        );
-        getUnitDisplayDialog().setSize(
-                GUIPreferences.getInstance().getDisplaySizeHeight(),
-                GUIPreferences.getInstance().getDisplaySizeWidth()
-        );
-        UIUtil.updateWindowBounds(getUnitDisplayDialog());
-        getUnitDisplayDialog().setResizable(true);
-        getUnitDisplayDialog().setFocusable(false);
-        getUnitDisplayDialog().setFocusableWindowState(false);
-        getUnitDisplayDialog().add(getUnitDisplay());
-        getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                GUIPreferences.getInstance().hideUnitDisplay();
-            }
-        });
+        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
@@ -524,7 +496,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         randomArmyDialog = new RandomArmyDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start();
         frame.setVisible(true);
-        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -641,7 +612,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
-                getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
                 break;
             case FILE_GAME_SAVE:
                 saveGame();
@@ -895,15 +865,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
         }
 
-        // Mek display
-        if ((getUnitDisplayDialog() != null)
-                && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
-            GUIPreferences.getInstance().setDisplayPosX(getUnitDisplayDialog().getLocation().x);
-            GUIPreferences.getInstance().setDisplayPosY(getUnitDisplayDialog().getLocation().y);
-            GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
-            GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
-        }
-
         // Ruler display
         if ((ruler != null) && (ruler.getSize().width != 0) && (ruler.getSize().height != 0)) {
             GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
@@ -958,7 +919,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             menuBar.die();
             menuBar = null;
         }
-        GUIP.removePreferenceChangeListener(this);
     }
 
     public GameOptionsDialog getGameOptionsDialog() {
@@ -1281,15 +1241,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /** 
-     * Switches the Minimap and the UnitDisplay an and off together.
-     * If the UnitDisplay is active, both will be hidden, else both will be shown.
-     */
-    public void toggleMMUDDisplays() {
-        GUIP.toggleUnitDisplay();
-        GUIP.setMinimapEnabled(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
-    }
-
     /**
      * Toggles the accessibility window
      */
@@ -1307,8 +1258,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     /** Shows or hides the minimap based on the current menu setting. */
-    private void maybeShowMinimap() {
-        setMapVisible(GUIP.getMinimapEnabled());
+    public void maybeShowMinimap() {
+        setMapVisible(MegaMek.getMMOptions().getShowMinimap());
     }
 
     /** 
@@ -1324,7 +1275,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     
     /** Shows or hides the Unit Display based on the current menu setting. */
     public void maybeShowUnitDisplay() {
-        setUnitDisplayVisible(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+        setUnitDisplayVisible(MegaMek.getMMOptions().getShowUnitDisplay());
     }
 
     /** 
@@ -2411,15 +2362,4 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public int getPointblankEID() {
         return pointblankEID;
     }
-
-    @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
-            maybeShowMinimap();
-        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
-            maybeShowUnitDisplay();
-        }
-        
-    }
-
 }

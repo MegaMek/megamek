@@ -19,6 +19,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
@@ -1020,7 +1021,7 @@ public class BoardEditor extends JPanel
         add(scrCenterPanel, BorderLayout.CENTER);
         add(panButtons, BorderLayout.PAGE_END);
         minimapW = MiniMap.createMinimap(frame, bv, game, null);
-        minimapW.setVisible(guip.getMinimapEnabled());
+        minimapW.setVisible(MegaMek.getMMOptions().getShowMinimap());
     }
     
     /**
@@ -1850,7 +1851,7 @@ public class BoardEditor extends JPanel
             setExitsState(texTerrExits.getNumber() != 0);
             updateWhenSelected();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            minimapW.setVisible(guip.getMinimapEnabled());
+            minimapW.setVisible(MegaMek.getMMOptions().getShowMinimap());
         } else if (ae.getActionCommand().equals(ClientGUI.HELP_ABOUT)) {
             showAbout();
         } else if (ae.getActionCommand().equals(ClientGUI.HELP_CONTENTS)) {

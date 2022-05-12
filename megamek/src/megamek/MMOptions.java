@@ -29,6 +29,24 @@ public class MMOptions extends SuiteOptions {
     }
     //endregion Constructors
 
+    //region Display
+    public boolean getShowUnitDisplay() {
+        return userPreferences.node(MMConstants.DISPLAY_NODE).getBoolean(MMConstants.SHOW_UNIT_DISPLAY, true);
+    }
+
+    public void setShowUnitDisplay(final boolean showUnitDisplay) {
+        userPreferences.node(MMConstants.DISPLAY_NODE).putBoolean(MMConstants.SHOW_UNIT_DISPLAY, showUnitDisplay);
+    }
+
+    public boolean getShowMinimap() {
+        return userPreferences.node(MMConstants.DISPLAY_NODE).getBoolean(MMConstants.SHOW_MINIMAP, true);
+    }
+
+    public void setShowMinimap(final boolean showMinimap) {
+        userPreferences.node(MMConstants.DISPLAY_NODE).putBoolean(MMConstants.SHOW_MINIMAP, showMinimap);
+    }
+    //endregion Display
+
     //region Temporary
     /**
      * This is a temporary Locale getter, which sets the stage for suite-wide localization.

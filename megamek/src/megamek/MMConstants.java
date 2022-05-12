@@ -31,6 +31,11 @@ public final class MMConstants extends SuiteConstants {
     //endregion GUI Constants
 
     //region MMOptions
+    //region Display
+    public static final String DISPLAY_NODE = "megamek/prefs/display";
+    public static final String SHOW_UNIT_DISPLAY = "showUnitDisplay";
+    public static final String SHOW_MINIMAP = "showMinimap";
+    //endregion Display
     //endregion MMOptions
 
     //region File Paths

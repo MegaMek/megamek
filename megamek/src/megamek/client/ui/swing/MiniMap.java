@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -154,8 +155,8 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         result.setResizable(false);
         result.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
-                GUIP.setMinimapEnabled(false);
+            public void windowClosing(WindowEvent evt) {
+                MegaMek.getMMOptions().setShowMinimap(false);
             }
         });
         

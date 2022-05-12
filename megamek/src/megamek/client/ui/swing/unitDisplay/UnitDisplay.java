@@ -36,8 +36,6 @@ import java.util.ArrayList;
  */
 public class UnitDisplay extends JPanel {
     // buttons & gizmos for top level
-    private static final long serialVersionUID = -2060993542227677984L;
-
     private MechPanelTabStrip tabStrip;
 
     private JPanel displayP;
@@ -64,8 +62,7 @@ public class UnitDisplay extends JPanel {
         this(clientgui, null);
     }
         
-    public UnitDisplay(@Nullable ClientGUI clientgui,
-            @Nullable MegaMekController controller) {
+    public UnitDisplay(@Nullable ClientGUI clientgui, @Nullable MegaMekController controller) {
         super(new GridBagLayout());
         this.clientgui = clientgui;
 

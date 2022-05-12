@@ -211,8 +211,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().addKeyListener(this);
 
         // mech display.
-        clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
-        clientgui.mechD.wPan.weaponList.addKeyListener(this);
+        clientgui.getUnitDisplay().wPan.weaponList.addListSelectionListener(this);
+        clientgui.getUnitDisplay().wPan.weaponList.addKeyListener(this);
     }
 
     @Override
@@ -396,9 +396,9 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         clientgui.getBoardView().redrawEntity(ce());
-        clientgui.mechD.displayEntity(ce());
-        clientgui.mechD.showPanel("weapons");
-        clientgui.mechD.wPan.selectFirstWeapon();
+        clientgui.getUnitDisplay().displayEntity(ce());
+        clientgui.getUnitDisplay().showPanel("weapons");
+        clientgui.getUnitDisplay().wPan.selectFirstWeapon();
     }
 
     /**
@@ -593,7 +593,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             }
         } else {
             clientgui.maybeShowUnitDisplay();
-            clientgui.mechD.displayEntity(e);
+            clientgui.getUnitDisplay().displayEntity(e);
             if (e.isDeployed()) {
                 clientgui.getBoardView().centerOnHex(e.getPosition());
             }
@@ -607,7 +607,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
-        clientgui.mechD.wPan.weaponList.removeListSelectionListener(this);
+        clientgui.getUnitDisplay().wPan.weaponList.removeListSelectionListener(this);
     }
 
     @Override

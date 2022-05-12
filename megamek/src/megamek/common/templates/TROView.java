@@ -89,7 +89,7 @@ public class TROView {
         return view;
     }
 
-    protected String getTemplateFileName(boolean html) {
+    protected @Nullable String getTemplateFileName(boolean html) {
         return null;
     }
 
@@ -102,6 +102,7 @@ public class TROView {
     }
 
     protected void initModel(EntityVerifier verifier) {
+
     }
 
     /**

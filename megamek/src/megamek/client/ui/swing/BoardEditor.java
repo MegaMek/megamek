@@ -28,6 +28,7 @@ import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.dialog.FloodDialog;
 import megamek.client.ui.swing.dialog.LevelChangeDialog;
 import megamek.client.ui.swing.dialog.MMConfirmDialog;
+import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.tileset.TilesetManager;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;

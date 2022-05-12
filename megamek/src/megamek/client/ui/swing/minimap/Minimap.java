@@ -18,13 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.minimap;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
 import megamek.common.actions.AttackAction;
@@ -941,7 +943,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         multiUnits.put(p, eStack);
         g2.translate(20 * (eStack - 1), -20 * (eStack - 1));
         
-        Path2D form = MinimapUnitSymbols.getForm(entity);
+        Path2D form = megamek.client.ui.minimap.MinimapUnitSymbols.getForm(entity);
         
         if (stratOpsSymbols) {
             // White border to set off the icon from the background

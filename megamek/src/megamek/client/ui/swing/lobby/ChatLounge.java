@@ -37,6 +37,7 @@ import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
+import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;

@@ -337,7 +337,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
-        store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());

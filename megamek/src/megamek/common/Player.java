@@ -451,17 +451,11 @@ public final class Player extends TurnOrdered {
         // per TacOps:AR page 162-163, only the highest bonus should available should be used.
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
-                int HQInitBonus = entity.getHQIniBonus();
-                int quirkBonus = entity.getQuirkIniBonus();
-                
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)
-                    && (HQInitBonus > bonus)) {
-                    bonus = HQInitBonus;
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)) {
+                    bonus = Math.max(entity.getHQIniBonus(), bonus);
                 }
                 
-                if (quirkBonus > bonus) {
-                    bonus = quirkBonus;
-                }
+                bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }
         return bonus;

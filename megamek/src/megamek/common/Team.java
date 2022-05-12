@@ -296,21 +296,27 @@ public final class Team extends TurnOrdered {
      * take negatives only if the current bonus is zero
      */
     public int getTotalInitBonus(boolean bInitiativeCompensationBonus) {
-        int turnb = 0;
+        int dynamicBonus = Integer.MIN_VALUE;
         int constantb = Integer.MIN_VALUE;
-        int commandb = Integer.MIN_VALUE;
-        constantb = Integer.MIN_VALUE;
+        
         for (Player player : getPlayersVector()) {
-            turnb += player.getTurnInitBonus();
-            if (player.getCommandBonus() > commandb) {
-                commandb = player.getCommandBonus();
+            int turnInitBonus = player.getTurnInitBonus();
+            int commandBonus = player.getCommandBonus();
+            
+            if (turnInitBonus > dynamicBonus) {
+                dynamicBonus = turnInitBonus;
+            }
+            
+            if (commandBonus > dynamicBonus) {
+                dynamicBonus = commandBonus;
             }
 
+            // this is a special case: it's an arbitrary bonus associated with a player
             if (player.getConstantInitBonus() > constantb) {
                 constantb = player.getConstantInitBonus();
             }
         }
-        return constantb + turnb + commandb
+        return constantb + dynamicBonus +
                 + getInitCompensationBonus(bInitiativeCompensationBonus);
     }
     

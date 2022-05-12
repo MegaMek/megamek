@@ -13,19 +13,13 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * @author arlith
@@ -33,31 +27,15 @@ import megamek.server.Server;
 public class MekMortarSmokeHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -2073773899108954657L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
-     */
     public MekMortarSmokeHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
         super(t, w, g, s);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         return 0;
     }
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
-     */
+
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
@@ -67,15 +45,12 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         
-        if ((atype == null) 
-                || (atype.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
-            System.err.println("MekMortarFlareHandler: not using smoke ammo!");
+        if ((ammoType == null) || (ammoType.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
+            LogManager.getLogger().error("Not using smoke ammo!");
             return true;
         }
-
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -83,7 +58,7 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         if (wtype != null) {
-            r.add(wtype.getName() + " " + atype.getSubMunitionName());
+            r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhwere");
         }

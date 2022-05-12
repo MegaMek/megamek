@@ -34,6 +34,7 @@ public class TestProtomechTest {
         when(mockProto.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
         when(mockProto.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
         when(mockProto.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
+        when(mockProto.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
         return mockProto;
     }
     

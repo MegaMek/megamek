@@ -951,7 +951,7 @@ public class Game implements Serializable {
      * @return the out-of-game <code>Entity</code> with that ID. If no
      * out-of-game entity has that ID, returns a <code>null</code>.
      */
-    public Entity getOutOfGameEntity(int id) {
+    public @Nullable Entity getOutOfGameEntity(int id) {
         Entity match = null;
         Enumeration<Entity> iter = vOutOfGame.elements();
         while ((null == match) && iter.hasMoreElements()) {

@@ -34,6 +34,7 @@ import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
+import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -143,7 +144,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String VIEW_UNIT_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
-    public static final String VIEW_MINI_MAP = "viewMiniMap";
+    public static final String VIEW_MINI_MAP = "viewMinimap";
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
@@ -511,7 +512,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         );
         UIUtil.updateWindowBounds(ruler);
 
-        minimapW = MiniMap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
+        minimapW = Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);

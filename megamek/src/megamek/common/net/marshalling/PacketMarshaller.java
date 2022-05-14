@@ -12,14 +12,14 @@
  *  for more details.
  */
 
-package megamek.common.net.marshall;
+package megamek.common.net.marshalling;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 
 /**
  * Generic marshaller that [un]marshalls the <code>Packet</code>

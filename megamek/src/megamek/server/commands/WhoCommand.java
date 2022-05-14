@@ -14,7 +14,7 @@
  */
 package megamek.server.commands;
 
-import megamek.common.net.AbstractConnection;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.common.preference.PreferenceManager;
 import megamek.server.Server;
 
@@ -52,8 +52,8 @@ public class WhoCommand extends ServerCommand {
         cb.append(server.getPlayer(conn.getId()).getName()).append(", ");
         cb.append(includeIPAddress ? conn.getInetAddress() : "<hidden>");
         cb.append(", ").append(conn.hasPending()).append(", ");
-        cb.append(conn.bytesSent());
-        cb.append(", ").append(conn.bytesReceived());
+        cb.append(conn.getBytesSent());
+        cb.append(", ").append(conn.getBytesReceived());
         return cb.toString();
     }
 }

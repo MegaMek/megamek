@@ -18,11 +18,11 @@
  */
 package megamek.common.net.enums;
 
-import megamek.common.net.ConnectionListener;
-import megamek.common.net.events.ConnectedEvent;
 import megamek.common.net.events.AbstractConnectionEvent;
+import megamek.common.net.events.ConnectedEvent;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
+import megamek.common.net.listeners.ConnectionListener;
 import org.apache.logging.log4j.LogManager;
 
 public enum ConnectionEventType {

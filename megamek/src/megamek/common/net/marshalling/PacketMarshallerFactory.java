@@ -12,7 +12,7 @@
  *  for more details.
  */
 
-package megamek.common.net.marshall;
+package megamek.common.net.marshalling;
 
 public class PacketMarshallerFactory {
 

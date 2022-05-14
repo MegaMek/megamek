@@ -15,7 +15,7 @@ package megamek.server.commands;
 
 import megamek.MMConstants;
 import megamek.common.Player;
-import megamek.common.net.AbstractConnection;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.server.Server;
 
 import java.io.File;
@@ -82,5 +82,4 @@ public class LoadGameCommand extends ServerCommand {
             }
         }
     }
-
 }

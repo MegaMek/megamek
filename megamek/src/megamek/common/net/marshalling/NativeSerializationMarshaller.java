@@ -11,10 +11,10 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.common.net.marshall;
+package megamek.common.net.marshalling;
 
 import megamek.MMConstants;
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import org.nibblesec.tools.SerialKiller;
 

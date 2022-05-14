@@ -57,6 +57,12 @@ VERSION HISTORY:
 + Issue #3607: Prevent Entities from Fleeing While Swarming a Unit
 + PR #3606: Logging Modernization: Updating a Bunch More System.out, System.err, and printStackTraces
 + PR #3629: Detachable Unit Display Removal
++ Issue #2738: Initiative bonuses no longer stack for players or teams, picking the highest bonus instead
++ PR #3640: Fixing Attack Action NPE from Missing Nullable Handling
++ PR #3602: Connection Rework Phase Two
++ Issue #3641: Fixing Server Game End ConMod
++ PR #3636: Standardizing Minimap Spelling
++ PR #3643: Trimming Trailing Whitespace from Service IP Address
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.2 from 2.0.1
 + Updating to JAXB 4.0.0 from 2.3.2
@@ -779,7 +785,7 @@ VERSION HISTORY:
 + Issue #1767: When randomly generating a map, picking a theme is reflected in the map editor.
 + PR #1790: various improvements and fixes around random map dialog;
     ability to directly open map definition file from map editor
-+ Issue #1787: user can now manually reset mini-map and mech info card positions
++ Issue #1787: user can now manually reset minimap and mech info card positions
 + PR #1795: Corrections to invalid data in some unofficial boards
 + PR #1779: Counter-battery fire
 + PR #1805: Adding BV Calculation to ChatLounge Entity Right Click 
@@ -795,7 +801,7 @@ v0.47.4 (2020-2-09 2200 UTC)
 + PR #1648: Don't auto-eject crew from large space craft due to ammo explosions and such
 + Issue #1641, #1643: Fixes for undesired map editor behavior involving buildings
 + Issue #1655: Printing wrong weapon
-+ Data: Various Fixes (#1652,#1615,#1545,#1534) and some errata.
++ Data: Various Fixes (#1652, #1615, #1545, #1534) and some errata.
 + Issue #1647: WiGEs can't sideslip across water
 + Issue #1479: Add theme selection and dark themes
 + Issue #1679: Small aerospace units no longer incorrectly get crater penalty when attempting vertical liftoff
@@ -1638,7 +1644,7 @@ v0.41.19 (2016-06-05 22:40 UTC)
 + New Maps - Thanks Razorback (via Facebook)
 + New Sprites.
 + Issue #156: Graphical To-Hit Modifiers ('firing solutions') in Indirect Phase
-+ Bug: MiniMap selected unit highlighting persists after turn ends
++ Bug: Minimap selected unit highlighting persists after turn ends
 + Issue #149: IS Small Laser firing at LOS Range
 + Issue #152: MGs, Flamers, AMS firing at LOS Range
 + Issue #151: Flamers can't Strafe
@@ -1744,7 +1750,7 @@ v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error
 + Issue #20: Cluster Master should be labeled Unofficial not AToW
 + Issue #18: Small Patch: changes lounge tooltip to act similar to board view tt
-+ Issue #11: RFE: Open MiniMap during Artillery Designate Targets automatically
++ Issue #11: RFE: Open Minimap during Artillery Designate Targets automatically
 + Added BattleValue field to MechCacheCSVTool
 + Data: New Sprites and Unit Fixes.
 + Issue #22: Mech UMUs attacker movement modifier and heat generation
@@ -8538,7 +8544,7 @@ v0.33.11 (2007-11-09, 15:26 GMT+2)
 + Bug 1748167: Spot-and-fire penalty being applied to TAG/Semi-Guided
 + Updated equipment.txt
 + Automatically generate equipment.txt whenever ant is used to compile MM.
-+ Fixed NPE in MiniMap when using the board editor
++ Fixed NPE in Minimap when using the board editor
 + Bug 1817499: Falling on bridges not working right
 + Bug: Deploying on bridges now gives correct elevation
 + Bug: 1746114: 'Free' standard flamers on vehicles?

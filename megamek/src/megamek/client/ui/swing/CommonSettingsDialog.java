@@ -583,7 +583,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             }
 
             gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
-            gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
+            gameSummaryMM.setSelected(gs.getGameSummaryMinimap());
 
             skinFiles.removeAllItems();
             List<String> xmlFiles = new ArrayList<>(Arrays
@@ -759,7 +759,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         gs.setHexInclines(hexInclines.isSelected());
         gs.setValue("SOFTCENTER", useSoftCenter.isSelected());
         gs.setGameSummaryBoardView(gameSummaryBV.isSelected());
-        gs.setGameSummaryMiniMap(gameSummaryMM.isSelected());
+        gs.setGameSummaryMinimap(gameSummaryMM.isSelected());
 
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = gs.getUITheme();

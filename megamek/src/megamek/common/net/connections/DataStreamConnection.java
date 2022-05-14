@@ -1,24 +1,21 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
+package megamek.common.net.connections;
 
-package megamek.common.net;
+import megamek.common.net.enums.PacketReadState;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -27,7 +24,7 @@ import java.net.SocketException;
  * <code>DataInputStream</code> and <code>DataOutputStream</code> to
  * send/receive data.
  */
-class DataStreamConnection extends AbstractConnection {
+public class DataStreamConnection extends AbstractConnection {
 
     /**
      * Input stream
@@ -66,43 +63,40 @@ class DataStreamConnection extends AbstractConnection {
     protected boolean zipped = false;
     protected int encoding = -1;
     protected int len = 0;
-    protected PacketReadState state = PacketReadState.Header;
+    protected PacketReadState state = PacketReadState.HEADER;
 
     @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
-        
-            NetworkPacket packet = null;
-            if (in == null) {
-                in = new DataInputStream(new BufferedInputStream(
-                        getInputStream(), getReceiveBufferSize()));
-                state = PacketReadState.Header;
+        NetworkPacket packet = null;
+        if (in == null) {
+            in = new DataInputStream(new BufferedInputStream(
+                    getInputStream(), getReceiveBufferSize()));
+            state = PacketReadState.HEADER;
+        }
+        synchronized (in) {
+            switch (state) {
+                case HEADER:
+                    zipped = in.readBoolean();
+                    encoding = in.readInt();
+                    len = in.readInt();
+                    state = PacketReadState.DATA;
+                    // Purposeful drop through
+                case DATA:
+                    byte[] data = new byte[len];
+                    in.readFully(data);
+                    packet = new NetworkPacket(zipped, encoding, data);
+                    state = PacketReadState.HEADER;
+                    return packet;
+                default:
+                    throw new Exception("Cannot Read Network Packet with unknown state " + state.name());
             }
-            synchronized (in) {
-                switch (state) {
-                    case Header:
-                        zipped = in.readBoolean();
-                        encoding = in.readInt();
-                        len = in.readInt();
-                        state = PacketReadState.Data;
-                        // drop through on purpose
-                    case Data:
-                        byte[] data = new byte[len];
-                        in.readFully(data);
-                        packet = new NetworkPacket(zipped, encoding, data);
-                        state = PacketReadState.Header;
-                        return packet;
-                    default:
-                        assert (false);
-                }
-            }
-        assert (false);
-        return null;
+        }
     }
 
     @Override
     protected void sendNetworkPacket(byte[] data, boolean iszipped)
             throws Exception {
-        
+
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream(), getSendBufferSize()));
@@ -193,9 +187,4 @@ class DataStreamConnection extends AbstractConnection {
             return compressed;
         }
     }
-}
-
-enum PacketReadState {
-    Header, // next will be header data
-    Data
 }

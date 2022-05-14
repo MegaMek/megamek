@@ -23,8 +23,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
-import megamek.common.net.Packet;
-import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
@@ -130,9 +129,8 @@ public abstract class BotClient extends Client {
                 switch (evt.getCFRType()) {
                     case CFR_DOMINO_EFFECT:
                         // This will always send a "no action" response.
-                        // In effect, it works the way it did before.  However..
-                        // TODO: Bots should figure out how to step out of a
-                        //   domino effect
+                        // In effect, it works the way it did before. However..
+                        // TODO: Bots should figure out how to step out of a domino effect
                         sendDominoCFRResponse(null);
                         break;
                     case CFR_AMS_ASSIGN:
@@ -144,15 +142,13 @@ public abstract class BotClient extends Client {
                     case CFR_APDS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         //  essentially same as if the auto_ams option was on
-                        waa =
-                            Compute.getHighestExpectedDamage(game,
-                                    evt.getWAAs(), true);
+                        waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
                     case CFR_HIDDEN_PBS:
                         try {
                             Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(), evt.getTargetId());
-                            
+
                             if (pointBlankShots.isEmpty()) {
                                 sendHiddenPBSCFRResponse(null);
                             } else {
@@ -160,15 +156,16 @@ public abstract class BotClient extends Client {
                                 sendHiddenPBSCFRResponse(new Vector<>());
                                 sendHiddenPBSCFRResponse(pointBlankShots);
                             }
-                        } catch (Exception e) {
+                        } catch (Exception ex) {
                             // if we screw up, don't keep everyone else waiting
                             sendHiddenPBSCFRResponse(null);
-                            throw e;
+                            throw ex;
                         }
-
                         break;
                     case CFR_TAG_TARGET:
                         sendTAGTargetCFRResponse(pickTagTarget(evt));
+                        break;
+                    default:
                         break;
                 }
             }
@@ -193,8 +190,8 @@ public abstract class BotClient extends Client {
     protected abstract void initFiring();
 
     /**
-     * Determines which entity should be moved next and then calls to {@link #continueMovementFor(Entity)} with
-     * that entity.
+     * Determines which entity should be moved next and then calls to {@link #continueMovementFor(Entity)}
+     * with that entity.
      *
      * @return The calculated move path.
      * @throws NullPointerException if no entity can be found to move.

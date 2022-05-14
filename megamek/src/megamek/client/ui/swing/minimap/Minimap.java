@@ -18,14 +18,15 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.swing;
+package megamek.client.ui.swing.minimap;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
-import megamek.client.ui.minimap.MiniMapUnitSymbols;
+import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
 import megamek.common.actions.AttackAction;
@@ -49,13 +50,16 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
 import java.util.List;
 import java.util.*;
 
-import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_BASERECT;
-import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_CX;
-import static megamek.client.ui.minimap.MiniMapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.client.ui.minimap.MinimapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.minimap.MinimapUnitSymbols.STRAT_CX;
+import static megamek.client.ui.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
 import static megamek.common.Terrains.*;
 
 /**
@@ -64,7 +68,7 @@ import static megamek.common.Terrains.*;
  * buttons -clean up listenercode.. -initializecolors is fugly 
  *  -uses break-to-label -uses while-true
  */
-public final class MiniMap extends JPanel implements IPreferenceChangeListener {
+public final class Minimap extends JPanel implements IPreferenceChangeListener {
     
     private static final Color[] terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
@@ -146,7 +150,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * @param cg Optional: A ClientGUI object housing this minimap
      */
     public static JDialog createMinimap(JFrame parent, @Nullable BoardView bv, Game game, @Nullable ClientGUI cg) {
-        var result = new JDialog(parent, Messages.getString("ClientGUI.MiniMap"), false);
+        var result = new JDialog(parent, Messages.getString("ClientGUI.Minimap"), false);
         result.setAutoRequestFocus(false);
         result.setFocusable(false);
         result.setFocusableWindowState(false);
@@ -159,7 +163,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             }
         });
         
-        result.add(new MiniMap(result, game, bv, cg));
+        result.add(new Minimap(result, game, bv, cg));
         result.pack();
         return result;
     }
@@ -187,7 +191,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             if ((zoom < 0) || (zoom > MAX_ZOOM)) {
                 throw new Exception("The given zoom index is out of bounds.");
             }
-            MiniMap tempMM = new MiniMap(null, game, bv, null);
+            Minimap tempMM = new Minimap(null, game, bv, null);
             tempMM.zoom = zoom;
             tempMM.initializeMap();
             tempMM.drawMap(true);
@@ -205,7 +209,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
      * as a listener to changes. When the dialog is null, it is assumed that the minimap is only
      * used to create a snapshot image. When a boardview is given, the visible area is shown.
      */
-    private MiniMap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable ClientGUI cg) {
+    private Minimap(@Nullable JDialog dlg, Game g, @Nullable BoardView bview, @Nullable ClientGUI cg) {
         game = Objects.requireNonNull(g);
         board = Objects.requireNonNull(game.getBoard());
         bv = bview;
@@ -631,7 +635,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         g.drawLine(baseX, baseY + unitSize + 1, baseX, (baseY + unitSize) - 3);
     }
 
-    /** Draws the green control buttons at the bottom of the MiniMap. */
+    /** Draws the green control buttons at the bottom of the Minimap. */
     private void drawButtons(Graphics g) {
         int w = getSize().width;
         int h = getSize().height;
@@ -698,16 +702,16 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
                 String label;
                 switch (heightDisplayMode) {
                     case SHOW_NO_HEIGHT:
-                        label = Messages.getString("MiniMap.NoHeightLabel"); 
+                        label = Messages.getString("Minimap.NoHeightLabel");
                         break;
                     case SHOW_GROUND_HEIGHT:
-                        label = Messages.getString("MiniMap.GroundHeightLabel");
+                        label = Messages.getString("Minimap.GroundHeightLabel");
                         break;
                     case SHOW_BUILDING_HEIGHT:
-                        label = Messages.getString("MiniMap.BuildingHeightLabel"); 
+                        label = Messages.getString("Minimap.BuildingHeightLabel");
                         break;
                     case SHOW_TOTAL_HEIGHT:
-                        label = Messages.getString("MiniMap.TotalHeightLabel"); 
+                        label = Messages.getString("Minimap.TotalHeightLabel");
                         break;
                     default:
                         label = "";
@@ -939,7 +943,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         multiUnits.put(p, eStack);
         g2.translate(20 * (eStack - 1), -20 * (eStack - 1));
         
-        Path2D form = MiniMapUnitSymbols.getForm(entity);
+        Path2D form = megamek.client.ui.minimap.MinimapUnitSymbols.getForm(entity);
         
         if (stratOpsSymbols) {
             // White border to set off the icon from the background
@@ -947,7 +951,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
             g2.setColor(new Color(255, 255, 255, 150));
             g2.draw(STRAT_BASERECT);
 
-            // Black background to fill forms like the Dropship
+            // Black background to fill forms like the DropShip
             g2.setColor(Color.BLACK);
             g2.fill(STRAT_BASERECT);
 
@@ -1303,7 +1307,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
         }
     }
 
-    /** Centers the boardview connected to the MiniMap on x, y in the MiniMap's pixel coordinates. */
+    /** Centers the BoardView connected to the Minimap on x, y in the Minimap's pixel coordinates. */
     private void centerOnPos(double x, double y) {
         bv.centerOnPointRel(
                 ((x - leftMargin)) / ((HEX_SIDE_BY_SIN30[zoom] + HEX_SIDE[zoom]) * board.getWidth()),
@@ -1334,7 +1338,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            if (GUIPreferences.getInstance().getGameSummaryMiniMap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
+            if (GUIPreferences.getInstance().getGameSummaryMinimap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
                     || (e.getOldPhase() == GamePhase.MOVEMENT) || (e.getOldPhase() == GamePhase.TARGETING)
                     || (e.getOldPhase() == GamePhase.PREMOVEMENT) || (e.getOldPhase() == GamePhase.PREFIRING)
                     || (e.getOldPhase() == GamePhase.FIRING) || (e.getOldPhase() == GamePhase.PHYSICAL))) {
@@ -1430,7 +1434,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void mouseReleased(MouseEvent me) {
-            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MiniMap.this);
+            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), Minimap.this);
             processMouseRelease(mapPoint.x, mapPoint.y, me.getModifiersEx());
             dragging = false;
             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -1441,7 +1445,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
 
         @Override
         public void mouseDragged(MouseEvent me) {
-            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), MiniMap.this);
+            Point mapPoint = SwingUtilities.convertPoint(dialog, me.getX(), me.getY(), Minimap.this);
             if (new Rectangle(getSize()).contains(mapPoint.x, mapPoint.y)) {
                 if (!dragging) {
                     dragging = true;
@@ -1455,7 +1459,7 @@ public final class MiniMap extends JPanel implements IPreferenceChangeListener {
     MouseWheelListener mouseWheelListener = new MouseWheelListener() {
         @Override
         public void mouseWheelMoved(MouseWheelEvent we) {
-            Point mapPoint = SwingUtilities.convertPoint(dialog, we.getX(), we.getY(), MiniMap.this);
+            Point mapPoint = SwingUtilities.convertPoint(dialog, we.getX(), we.getY(), Minimap.this);
             if (new Rectangle(getSize()).contains(mapPoint.x, mapPoint.y)) {
                 if (we.getWheelRotation() > 0 ^ GUIP.getMouseWheelZoomFlip()) {
                     zoomIn();

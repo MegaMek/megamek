@@ -34,13 +34,13 @@ import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.net.AbstractConnection;
-import megamek.common.net.ConnectionFactory;
-import megamek.common.net.ConnectionListener;
-import megamek.common.net.Packet;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
+import megamek.common.net.factories.ConnectionFactory;
+import megamek.common.net.listeners.ConnectionListener;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
@@ -647,12 +647,7 @@ public class Client implements IClientCommandHandler {
      * @param pos
      */
     public void sendPlayerPickedPassThrough(Integer targetId, Integer attackerId, Coords pos) {
-        Object[] data = new Object[3];
-        data[0] = targetId;
-        data[1] = attackerId;
-        data[2] = pos;
-
-        send(new Packet(PacketCommand.ENTITY_GTA_HEX_SELECT, data));
+        send(new Packet(PacketCommand.ENTITY_GTA_HEX_SELECT, targetId, attackerId, pos));
     }
 
     /**
@@ -844,8 +839,7 @@ public class Client implements IClientCommandHandler {
      * Sends an "update entity" packet
      */
     public void sendDeploymentUnload(Entity loader, Entity loaded) {
-        Object[] data = { loader.getId(), loaded.getId() };
-        send(new Packet(PacketCommand.ENTITY_DEPLOY_UNLOAD, data));
+        send(new Packet(PacketCommand.ENTITY_DEPLOY_UNLOAD, loader.getId(), loaded.getId()));
     }
     
     /**
@@ -878,10 +872,14 @@ public class Client implements IClientCommandHandler {
         send(new Packet(PacketCommand.FORCE_ASSIGN_FULL, forceList, newOwnerId));
     }
         
-    /** Sends a packet to the Server requesting to delete the given forces. */
+    /**
+     * Sends a packet to the Server requesting to delete the given forces.
+     */
     public void sendDeleteForces(List<Force> toDelete) {
-        List<Integer> forceIds = toDelete.stream().mapToInt(Force::getId).boxed().collect(Collectors.toList());
-        send(new Packet(PacketCommand.FORCE_DELETE, forceIds));
+        send(new Packet(PacketCommand.FORCE_DELETE, toDelete.stream()
+                .mapToInt(Force::getId)
+                .boxed()
+                .collect(Collectors.toList())));
     }
     
     /**
@@ -902,7 +900,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "delete entity" packet
      */
     public void sendDeleteEntity(int id) {
-        ArrayList<Integer> ids = new ArrayList<>(1);
+        List<Integer> ids = new ArrayList<>(1);
         ids.add(id);
         sendDeleteEntities(ids);
     }
@@ -1298,8 +1296,8 @@ public class Client implements IClientCommandHandler {
             fw.write(sStatus);
             fw.flush();
             fw.close();
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 
@@ -1314,12 +1312,9 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Send a Nova CEWS update packet
-     *
-     * @param ID
-     * @param net
      */
-    public void sendNovaChange(int ID, String net) {
-        send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, ID, net));
+    public void sendNovaChange(int id, String net) {
+        send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
     public void sendSpecialHexDisplayAppend(Coords c, SpecialHexDisplay shd) {
@@ -1600,8 +1595,7 @@ public class Client implements IClientCommandHandler {
             case LOAD_SAVEGAME:
                 String loadFile = (String) c.getObject(0);
                 try {
-                    File f = new File(MMConstants.SAVEGAME_DIR, loadFile);
-                    sendLoadGame(f);
+                    sendLoadGame(new File(MMConstants.SAVEGAME_DIR, loadFile));
                 } catch (Exception ex) {
                     LogManager.getLogger().error("Unable to load savegame file: " + loadFile, ex);
                 }
@@ -1646,12 +1640,16 @@ public class Client implements IClientCommandHandler {
                         cfrEvt.setTAGTargets((List<Integer>) c.getObject(1));
                         cfrEvt.setTAGTargetTypes((List<Integer>) c.getObject(2));
                         break;
+                    default:
+                        break;
                 }
                 game.processGameEvent(cfrEvt);
                 break;
             case GAME_VICTORY_EVENT:
                 GameVictoryEvent gve = new GameVictoryEvent(this, game);
                 game.processGameEvent(gve);
+                break;
+            default:
                 break;
         }
     }

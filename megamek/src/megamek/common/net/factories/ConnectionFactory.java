@@ -11,7 +11,10 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.common.net;
+package megamek.common.net.factories;
+
+import megamek.common.net.connections.AbstractConnection;
+import megamek.common.net.connections.DataStreamConnection;
 
 import java.net.Socket;
 

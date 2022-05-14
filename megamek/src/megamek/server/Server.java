@@ -693,9 +693,9 @@ public class Server implements Runnable {
         // kill active connections
         synchronized (connections) {
             connections.forEach(AbstractConnection::close);
+            connections.clear();
         }
 
-        connections.removeAllElements();
         connectionIds.clear();
 
         // Shutdown Email

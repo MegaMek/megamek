@@ -675,7 +675,8 @@ public class Server implements Runnable {
         // close socket
         try {
             serverSocket.close();
-        } catch (IOException ignored) {
+        } catch (Exception ignored) {
+
         }
 
         // kill pending connections
@@ -687,23 +688,22 @@ public class Server implements Runnable {
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
-        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            send(conn.getId(), new Packet(PacketCommand.CLOSE_CONNECTION));
-        }
+        send(new Packet(PacketCommand.CLOSE_CONNECTION));
 
         // kill active connections
-        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            conn.close();
-        }
-
-        if (mailer != null) {
-            mailer.shutdown();
+        synchronized (connections) {
+            connections.forEach(AbstractConnection::close);
         }
 
         connections.removeAllElements();
         connectionIds.clear();
+
+        // Shutdown Email
+        if (mailer != null) {
+            mailer.shutdown();
+        }
+
+        // Unregister Server Browser Setup
         if (serverBrowserUpdateTimer != null) {
             serverBrowserUpdateTimer.cancel();
         }

@@ -59,6 +59,7 @@ VERSION HISTORY:
 + PR #3629: Detachable Unit Display Removal
 + Issue #2738: Initiative bonuses no longer stack for players or teams, picking the highest bonus instead
 + PR #3640: Fixing Attack Action NPE from Missing Nullable Handling
++ PR #3602: Connection Rework Phase Two
 + Updating to Jackson XML 2.13.2 from 2.13.1
 + Updating to FlatLaf 2.2 from 2.0.1
 + Updating to JAXB 4.0.0 from 2.3.2

@@ -1,48 +1,29 @@
-/**
- * Tests for the class {@link BoardDimensions}
- * 
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * 
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License,
- * version 2, as published by the Free Software Foundation.
+/*
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is distributed in the hope that it will be useful,
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, it is available online at:
- *   http://www.gnu.org/licenses/gpl-2.0.html 
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardDimensionsTests {
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public final void testInstantiation() {
@@ -76,45 +57,33 @@ public class BoardDimensionsTests {
         assertEquals(10, c.height());
     }
 
-    @SuppressWarnings("unused")
-    @Test(expected = IllegalArgumentException.class)
-    public final void testIllegalWidth() {
-        BoardDimensions b = new BoardDimensions(0, 1);
-    }
-
-    @SuppressWarnings("unused")
-    @Test(expected = IllegalArgumentException.class)
-    public final void testIllegalHeight() {
-        BoardDimensions b = new BoardDimensions(1, 0);
-    }
-
     @Test
     public final void testEqualsObject() {
         BoardDimensions b = new BoardDimensions(10, 10);
-        assertTrue(b.equals(b));
+        assertEquals(b, b);
 
         Object x = new BoardDimensions(10, 10);
-        assertTrue(b.equals(x));
-        assertTrue(x.equals(b));
+        assertEquals(b, x);
+        assertEquals(x, b);
 
         BoardDimensions d = new BoardDimensions(10, 10);
-        assertTrue(b.equals(d));
-        assertTrue(d.equals(b));
+        assertEquals(b, d);
+        assertEquals(d, b);
     }
 
     @Test
     public final void testNotEqualsObject() {
         BoardDimensions b = new BoardDimensions(10, 10);
-        assertFalse(b.equals("10x10"));
-        assertFalse(b.equals(new BoardDimensions(10, 5)));
-        assertFalse(b.equals(new BoardDimensions(5, 10)));
+        assertNotEquals("10x10", b.toString());
+        assertNotEquals(b, new BoardDimensions(10, 5));
+        assertNotEquals(b, new BoardDimensions(5, 10));
     }
 
     @Test
     public final void testClone() {
         BoardDimensions b = new BoardDimensions(10, 10);
-        assertFalse(b.clone() == b);
-        assertTrue(b.clone().equals(b));
+        assertNotSame(b.clone(), b);
+        assertEquals(b.clone(), b);
     }
 
     @Test
@@ -126,8 +95,7 @@ public class BoardDimensionsTests {
     @Test
     public final void testCompareTo() {
         assertEquals(0,
-                new BoardDimensions(10, 10).compareTo(new BoardDimensions(10,
-                        10)));
+                new BoardDimensions(10, 10).compareTo(new BoardDimensions(10, 10)));
         assertEquals(0, new BoardDimensions(Integer.MAX_VALUE,
                 Integer.MAX_VALUE).compareTo(new BoardDimensions(
                 Integer.MAX_VALUE, Integer.MAX_VALUE)));
@@ -137,10 +105,8 @@ public class BoardDimensionsTests {
         assertEquals(1, new BoardDimensions(Integer.MAX_VALUE,
                 Integer.MAX_VALUE).compareTo(new BoardDimensions(10, 10)));
         assertEquals(-1,
-                new BoardDimensions(10, 20).compareTo(new BoardDimensions(20,
-                        10)));
+                new BoardDimensions(10, 20).compareTo(new BoardDimensions(20, 10)));
         assertEquals(1,
-                new BoardDimensions(20, 10).compareTo(new BoardDimensions(10,
-                        20)));
+                new BoardDimensions(20, 10).compareTo(new BoardDimensions(10, 20)));
     }
 }

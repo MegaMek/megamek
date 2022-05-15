@@ -44,18 +44,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean jammedThisPhase = false;
     private boolean useless = false;
     private boolean fired = false; // Only true for used OS stuff and TSEMP.
-    private boolean tsempDowntime = false; // Needed for "every other turn"
-                                           // TSEMP.
+    private boolean tsempDowntime = false; // Needed for "every other turn" TSEMP.
     private boolean rapidfire = false; // MGs in rapid-fire mode
     private boolean hotloaded = false; // Hotloading for ammoType
     private boolean repairable = true; // can the equipment mounted here be
     // repaired
-    private boolean mechTurretMounted = false; // is this mounted in a
-                                               // mechturret
-    private boolean sponsonTurretMounted = false; // is this mounted in a
-                                                  // sponsonturret
-    private boolean pintleTurretMounted = false; // is this mounted in a
-                                                 // pintleturret
+    private boolean mechTurretMounted = false; // is this mounted in a mechturret
+    private boolean sponsonTurretMounted = false; // is this mounted in a sponsonturret
+    private boolean pintleTurretMounted = false; // is this mounted in a pintleturret
     private int facing = -1; // facing for turrets
 
     private int mode; // Equipment's current state. On or Off. Sixshot or
@@ -118,9 +114,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // vibrabomb mine setting
     private int vibraSetting = 20;
 
-    //These arrays are used to track individual missing modular components on BA for MHQ
-    //in MM they probably shouldn't need to be touched. They are used to keep track of
-    //whether a modular mount is in use or not for a particular trooper.
+    // These arrays are used to track individual missing modular components on BA for MHQ
+    // in MM they probably shouldn't need to be touched. They are used to keep track of
+    // whether a modular mount is in use or not for a particular trooper.
     private boolean[] missingForTrooper = {false, false, false, false, false, false};
 
     /**
@@ -343,11 +339,6 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (newMode >= type.getModesCount()) {
                 return false;
             }
-            /*
-             * megamek.debug.Assert.assertTrue(newMode >= 0 && newMode <
-             * type.getModesCount(), "Invalid mode, mode=" + newMode +
-             * ", modesCount=" + type.getModesCount());
-             */
 
             if (canInstantSwitch(newMode)) {
                 mode = newMode;
@@ -360,8 +351,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 }
             }
         }
-        // all communications equipment mounteds need to have the same mode at
-        // all times
+        // all communications equipment mounteds need to have the same mode at all times
         if ((getType() instanceof MiscType)
                 && getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
             for (Mounted m : entity.getMisc()) {

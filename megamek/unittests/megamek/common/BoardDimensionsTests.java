@@ -74,7 +74,6 @@ public class BoardDimensionsTests {
     @Test
     public final void testNotEqualsObject() {
         BoardDimensions b = new BoardDimensions(10, 10);
-        assertNotEquals("10x10", b.toString());
         assertNotEquals(b, new BoardDimensions(10, 5));
         assertNotEquals(b, new BoardDimensions(5, 10));
     }

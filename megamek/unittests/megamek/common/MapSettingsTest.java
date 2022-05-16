@@ -42,17 +42,19 @@ public class MapSettingsTest {
         assertTrue(Files.isDirectory(tempDirectory));
         final Path createdFilePath = Files.createFile(tempDirectory.resolve("test-map-settings.xml"));
         final File file = createdFilePath.toFile();
-        OutputStream os = new FileOutputStream(file);
-        
+
         MapSettings testMe = MapSettings.getInstance();
-        testMe.setBoardSize(32, 34);
-        testMe.save(os);
+        try (OutputStream os = new FileOutputStream(file)) {
+            testMe.setBoardSize(32, 34);
+            testMe.save(os);
+        }
 
         assertTrue(file.exists());
         assertTrue(file.length() > 0);
 
-        InputStream is = new FileInputStream(file);
-        testMe = MapSettings.getInstance(is);
+        try (InputStream is = new FileInputStream(file)) {
+            testMe = MapSettings.getInstance(is);
+        }
 
         assertEquals(32, testMe.getBoardWidth());
         assertEquals(34, testMe.getBoardHeight());

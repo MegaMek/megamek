@@ -64,39 +64,22 @@ public class PrincessTest {
         when(mockPrincess.calculateAdjustment(anyString())).thenCallRealMethod();
 
         // Test a +3 adjustment.
-        String ticks = "+++";
-        int expected = 3;
-        int actual = mockPrincess.calculateAdjustment(ticks);
-        assertEquals(expected, actual);
+        assertEquals(3, mockPrincess.calculateAdjustment("+++"));
 
         // Test a -2 adjustment.
-        ticks = "--";
-        expected = -2;
-        actual = mockPrincess.calculateAdjustment(ticks);
-        assertEquals(expected, actual);
+        assertEquals(-2, mockPrincess.calculateAdjustment("--"));
 
         // Test an adjustment with some bad characters.
-        ticks = "+4";
-        expected = 1;
-        actual = mockPrincess.calculateAdjustment(ticks);
-        assertEquals(expected, actual);
+        assertEquals(1, mockPrincess.calculateAdjustment("+4"));
 
         // Test an adjustment with nothing but bad characters.
-        ticks = "5";
-        expected = 0;
-        actual = mockPrincess.calculateAdjustment(ticks);
-        assertEquals(expected, actual);
+        assertEquals(0, mockPrincess.calculateAdjustment("5"));
 
         // Test an empty ticks argument.
-        ticks = "";
-        expected = 0;
-        actual = mockPrincess.calculateAdjustment(ticks);
-        assertEquals(expected, actual);
+        assertEquals(0, mockPrincess.calculateAdjustment(""));
 
         // Test a null ticks argument.
-        expected = 0;
-        actual = mockPrincess.calculateAdjustment(null);
-        assertEquals(expected, actual);
+        assertEquals(0, mockPrincess.calculateAdjustment(null));
     }
 
     @Test
@@ -120,60 +103,53 @@ public class PrincessTest {
         when(mockMech.isStealthOn()).thenReturn(false);
         when(mockMech.isVoidSigActive()).thenReturn(false);
         when(mockMech.isVoidSigOn()).thenReturn(false);
-        double expected = 1.111;
         double actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(1.111, actual, TOLERANCE);
 
         // Make the mech prone.
         when(mockMech.isProne()).thenReturn(true);
-        expected = 1.222;
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(1.222, actual, TOLERANCE);
 
         // Make the mech flee.
         when(mockMech.isProne()).thenReturn(false);
         when(mockPrincess.isFallingBack(eq(mockMech))).thenReturn(true);
-        expected = 2.222;
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(2.222, actual, TOLERANCE);
 
         // Make the mech a commander.
         when(mockPrincess.isFallingBack(eq(mockMech))).thenReturn(false);
         when(mockMech.isCommander()).thenReturn(true);
-        expected = 0.555;
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(0.555, actual, TOLERANCE);
 
         // Make it a civilian mech.
         when(mockMech.isCommander()).thenReturn(false);
         when(mockMech.isMilitary()).thenReturn(false);
-        expected = 5.555;
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(5.555, actual, TOLERANCE);
 
         // Make it stealthy;
         when(mockMech.isMilitary()).thenReturn(true);
         when(mockMech.isStealthActive()).thenReturn(true);
-        expected = 0.370;
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(0.37, actual, TOLERANCE);
         when(mockMech.isStealthActive()).thenReturn(false);
         when(mockMech.isStealthOn()).thenReturn(true);
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(0.37, actual, TOLERANCE);
         when(mockMech.isStealthOn()).thenReturn(false);
         when(mockMech.isVoidSigActive()).thenReturn(true);
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(0.37, actual, TOLERANCE);
         when(mockMech.isVoidSigActive()).thenReturn(false);
         when(mockMech.isVoidSigOn()).thenReturn(true);
         actual = mockPrincess.calculateMoveIndex(mockMech, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(0.37, actual, TOLERANCE);
 
         // Test a BA unit.
         Entity mockBA = mock(BattleArmor.class);
-        when(mockBA.getRunMP(anyBoolean(), anyBoolean(), anyBoolean()))
-               .thenReturn(1);
+        when(mockBA.getRunMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(1);
         when(mockBA.getJumpMP(anyBoolean())).thenReturn(3);
         when(mockBA.isProne()).thenReturn(false);
         when(mockBA.isCommander()).thenReturn(false);
@@ -182,14 +158,12 @@ public class PrincessTest {
         when(mockBA.isStealthOn()).thenReturn(false);
         when(mockBA.isVoidSigActive()).thenReturn(false);
         when(mockBA.isVoidSigOn()).thenReturn(false);
-        expected = 6.666;
         actual = mockPrincess.calculateMoveIndex(mockBA, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(6.666, actual, TOLERANCE);
 
         // Test an Inf unit.
         Entity mockInf = mock(Infantry.class);
-        when(mockInf.getRunMP(anyBoolean(), anyBoolean(), anyBoolean()))
-               .thenReturn(1);
+        when(mockInf.getRunMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(1);
         when(mockInf.getJumpMP(anyBoolean())).thenReturn(0);
         when(mockInf.isProne()).thenReturn(false);
         when(mockInf.isCommander()).thenReturn(false);
@@ -198,14 +172,12 @@ public class PrincessTest {
         when(mockInf.isStealthOn()).thenReturn(false);
         when(mockInf.isVoidSigActive()).thenReturn(false);
         when(mockInf.isVoidSigOn()).thenReturn(false);
-        expected = 30.0;
         actual = mockPrincess.calculateMoveIndex(mockInf, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(30, actual, TOLERANCE);
 
         // Test a Tank.
         Entity mockTank = mock(Tank.class);
-        when(mockTank.getRunMP(anyBoolean(), anyBoolean(), anyBoolean()))
-               .thenReturn(6);
+        when(mockTank.getRunMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(6);
         when(mockTank.getJumpMP(anyBoolean())).thenReturn(0);
         when(mockTank.isProne()).thenReturn(false);
         when(mockTank.isCommander()).thenReturn(false);
@@ -214,9 +186,8 @@ public class PrincessTest {
         when(mockTank.isStealthOn()).thenReturn(false);
         when(mockTank.isVoidSigActive()).thenReturn(false);
         when(mockTank.isVoidSigOn()).thenReturn(false);
-        expected = 2.5;
         actual = mockPrincess.calculateMoveIndex(mockTank, new StringBuilder());
-        assertEquals(expected, actual, TOLERANCE);
+        assertEquals(2.5, actual, TOLERANCE);
     }
 
     @Test
@@ -231,24 +202,21 @@ public class PrincessTest {
         when(mockMech.isOffBoard()).thenReturn(false);
         when(mockMech.getPosition()).thenReturn(mockCoords);
         when(mockMech.isSelectableThisTurn()).thenReturn(true);
-        when(mockPrincess.calculateMoveIndex(eq(mockMech), any(StringBuilder.class)))
-               .thenReturn(1.111);
+        when(mockPrincess.calculateMoveIndex(eq(mockMech), any(StringBuilder.class))).thenReturn(1.111);
 
         Entity mockBA = mock(BattleArmor.class);
         when(mockBA.getRunMP()).thenReturn(3);
         when(mockBA.isOffBoard()).thenReturn(false);
         when(mockBA.getPosition()).thenReturn(mockCoords);
         when(mockBA.isSelectableThisTurn()).thenReturn(true);
-        when(mockPrincess.calculateMoveIndex(eq(mockBA), any(StringBuilder.class)))
-               .thenReturn(6.666);
+        when(mockPrincess.calculateMoveIndex(eq(mockBA), any(StringBuilder.class))).thenReturn(6.666);
 
         Entity mockTank = mock(Tank.class);
         when(mockTank.getRunMP()).thenReturn(6);
         when(mockTank.isOffBoard()).thenReturn(false);
         when(mockTank.getPosition()).thenReturn(mockCoords);
         when(mockTank.isSelectableThisTurn()).thenReturn(true);
-        when(mockPrincess.calculateMoveIndex(eq(mockTank), any(StringBuilder.class)))
-               .thenReturn(2.5);
+        when(mockPrincess.calculateMoveIndex(eq(mockTank), any(StringBuilder.class))).thenReturn(2.5);
 
         Entity mockEjectedMechwarrior = mock(MechWarrior.class);
         when(mockEjectedMechwarrior.getRunMP()).thenReturn(1);
@@ -268,8 +236,7 @@ public class PrincessTest {
         when(mockOffBoardArty.getPosition()).thenReturn(mockCoords);
         when(mockOffBoardArty.isSelectableThisTurn()).thenReturn(true);
         when(mockOffBoardArty.isOffBoard()).thenReturn(true);
-        when(mockPrincess.calculateMoveIndex(eq(mockOffBoardArty), any(StringBuilder.class)))
-               .thenReturn(10.0);
+        when(mockPrincess.calculateMoveIndex(eq(mockOffBoardArty), any(StringBuilder.class))).thenReturn(10.0);
 
         // Test a list of normal units.
         Game mockGame = mock(Game.class);

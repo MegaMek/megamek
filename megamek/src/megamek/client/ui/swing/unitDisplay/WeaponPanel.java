@@ -3,13 +3,15 @@ package megamek.client.ui.swing.unitDisplay;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.FiringDisplay;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
-import megamek.common.Entity.WeaponSortOrder;
+import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
@@ -25,10 +27,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
@@ -79,14 +79,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
                 dragSourceIndex = currentIndex;
                 Entity ent = weap1.getEntity();
-                // Is the sort order custom?
-                int customId = WeaponSortOrder.CUSTOM.ordinal();
-                // Update weap sort order drop down
-                if (weapSortOrder.getSelectedIndex() != customId) {
+
+                // If this is a Custom Sort Order, update the weapon sort order drop down
+                if (!Objects.requireNonNull(comboWeaponSortOrder.getSelectedItem()).isCustom()) {
                     // Set the order to custom
                     ent.setWeaponSortOrder(WeaponSortOrder.CUSTOM);
-                    weapSortOrder.setSelectedIndex(customId);
+                    comboWeaponSortOrder.setSelectedItem(WeaponSortOrder.CUSTOM);
                 }
+
                 // Update custom order
                 for (int i = 0; i < srcModel.getSize(); i++) {
                     Mounted m = srcModel.getWeaponAt(i);
@@ -96,7 +96,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             addListeners();
         }
     }
-    
+
     /**
      * ListModel implementation that supports keeping track of a list of Mounted
      * instantiations, how to display them in the JList, and an ability to sort
@@ -284,7 +284,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     private final UnitDisplay unitDisplay;
 
-    private JComboBox<String> weapSortOrder;
+    private MMComboBox<WeaponSortOrder> comboWeaponSortOrder;
     public JList<String> weaponList;
     /**
      * Keep track of the previous target, used for certain weapons (like VGLs)
@@ -369,12 +369,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wSortOrder.setForeground(Color.WHITE);
         add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
-        weapSortOrder = new JComboBox<>();
-        for (WeaponSortOrder s : WeaponSortOrder.values()) {
-            String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
-            weapSortOrder.addItem(Messages.getString(entry));
-        }
-        add(weapSortOrder,
+        comboWeaponSortOrder = new MMComboBox<>("comboWeaponSortOrder", WeaponSortOrder.values());
+        add(comboWeaponSortOrder,
                 GBC.eol().insets(15, 9, 15, 1)
                    .fill(GridBagConstraints.HORIZONTAL)
                    .anchor(GridBagConstraints.CENTER).gridy(gridy)
@@ -997,8 +993,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-        weapSortOrder.setSelectedIndex(entity.getWeaponSortOrder().ordinal());
-        setWeaponComparator(weapSortOrder.getSelectedIndex());
+        comboWeaponSortOrder.setSelectedItem(entity.getWeaponSortOrder());
+        setWeaponComparator(comboWeaponSortOrder.getSelectedItem());
 
         if (en.hasDamagedRHS() && hasFiredWeapons) {
             currentHeatBuildup++;
@@ -2615,52 +2611,32 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 return;
             }
             displaySelected();
-        } else if (ev.getSource().equals(weapSortOrder)) {
-            setWeaponComparator(weapSortOrder.getSelectedIndex());
+        } else if (ev.getSource().equals(comboWeaponSortOrder)) {
+            setWeaponComparator(comboWeaponSortOrder.getSelectedItem());
         }
         onResize();
     }
 
-    void setWeaponComparator(int sortIdx) {
-        Comparator<Mounted> weapComparator;
-        if (sortIdx == Entity.WeaponSortOrder.RANGE_LH.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.RANGE_LH);
-            weapComparator = new WeaponComparatorRange(true);
-        } else if (sortIdx == Entity.WeaponSortOrder.RANGE_HL.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.RANGE_HL);
-            weapComparator = new WeaponComparatorRange(false);
-        } else if (sortIdx == Entity.WeaponSortOrder.DAMAGE_LH.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.DAMAGE_LH);
-            weapComparator = new WeaponComparatorDamage(true);
-        } else if (sortIdx == Entity.WeaponSortOrder.DAMAGE_HL.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.DAMAGE_HL);
-            weapComparator = new WeaponComparatorDamage(false);
-        } else if (sortIdx == Entity.WeaponSortOrder.CUSTOM.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
-            weapComparator = new WeaponComparatorCustom(entity);
-        } else if (sortIdx == Entity.WeaponSortOrder.ARC.ordinal()) {
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.ARC);
-            weapComparator = new WeaponComparatorArc(entity);
-        } else { // Default
-            entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
-            weapComparator = new WeaponComparatorNum(entity);
+    void setWeaponComparator(final @Nullable WeaponSortOrder weaponSortOrder) {
+        if (weaponSortOrder == null) {
+            return;
         }
-        ((WeaponListModel) weaponList.getModel()).sort(weapComparator);
+
+        entity.setWeaponSortOrder(weaponSortOrder);
+        ((WeaponListModel) weaponList.getModel()).sort(weaponSortOrder.getWeaponSortComparator(entity));
     }
-    
+
     private void addListeners() {
-        weapSortOrder.addActionListener(this);
+        comboWeaponSortOrder.addActionListener(this);
         m_chAmmo.addActionListener(this);
         m_chBayWeapon.addActionListener(this);
-        
         weaponList.addListSelectionListener(this);
     }
-    
+
     private void removeListeners() {
-        weapSortOrder.removeActionListener(this);
+        comboWeaponSortOrder.removeActionListener(this);
         m_chAmmo.removeActionListener(this);
         m_chBayWeapon.removeActionListener(this);
-        
         weaponList.removeListSelectionListener(this);
     }
 

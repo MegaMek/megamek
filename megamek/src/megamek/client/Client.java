@@ -29,7 +29,6 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
-import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.actions.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
@@ -741,16 +740,13 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendEntityWeaponOrderUpdate(Entity entity) {
-        Object[] data;
-        if (entity.getWeaponSortOrder() == WeaponSortOrder.CUSTOM) {
-            data = new Object[3];
-            data[2] = entity.getCustomWeaponOrder();
+        if (entity.getWeaponSortOrder().isCustom()) {
+            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
+                    entity.getWeaponSortOrder(), entity.getCustomWeaponOrder()));
         } else {
-            data = new Object[2];
+            send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, entity.getId(),
+                    entity.getWeaponSortOrder()));
         }
-        data[0] = entity.getId();
-        data[1] = entity.getWeaponSortOrder();
-        send(new Packet(PacketCommand.ENTITY_WORDER_UPDATE, data));
         entity.setWeapOrderChanged(false);
     }
     

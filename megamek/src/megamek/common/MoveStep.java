@@ -19,6 +19,7 @@
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +38,7 @@ import java.util.Vector;
  */
 public class MoveStep implements Serializable {
     private static final long serialVersionUID = -6075640793056182285L;
-    private MoveStepType type = MoveStepType.NONE;
+    private MoveStepType type;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;
     private Coords targetPos;
@@ -2153,7 +2154,7 @@ public class MoveStep implements Serializable {
                             && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
-            }                
+            }
             // evading means running
             movementType = EntityMovementType.MOVE_RUN;
         }
@@ -2233,18 +2234,18 @@ public class MoveStep implements Serializable {
                     tmpWalkMP = ((LandAirMech) entity).getAirMechWalkMP();
                     runMPNoMASC = ((LandAirMech) entity).getAirMechRunMP();
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
-                    Entity.MPBoosters mpBoosters = ((LandAirMech)entity).getArmedMPBoosters();
-                    if (mpBoosters.hasMASCAndOrSupercharger()) {
-                        runMP = mpBoosters.calcRunMP(tmpWalkMP);
+                    MPBoosters mpBoosters = ((LandAirMech) entity).getArmedMPBoosters();
+                    if (!mpBoosters.isNone()) {
+                        runMP = mpBoosters.calculateRunMP(tmpWalkMP);
                     } else {
                         runMP = runMPNoMASC;
                     }
                 } else {
-                    // Only 1 ground MP for ground effect vehicles and glider protomechs
+                    // Only 1 ground MP for ground effect vehicles and glider ProtoMeks
                     tmpWalkMP = runMP = runMPNoMASC = sprintMP = sprintMPNoMASC = 1;
                 }
             } else if (entity instanceof LandAirMech) {
-                // LAMs cannot use overdrive and MASC does not effect airborne MP.
+                // LAMs cannot use overdrive and MASC does not affect airborne MP.
                 tmpWalkMP = ((LandAirMech) entity).getAirMechCruiseMP();
                 runMP = runMPNoMASC = sprintMP = sprintMPNoMASC = ((LandAirMech) entity).getAirMechFlankMP();
             }
@@ -2260,12 +2261,12 @@ public class MoveStep implements Serializable {
         }
         
         if (stepType == MoveStepType.CONVERT_MODE) {
-            //QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
+            // QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
             if (currHex.containsTerrain(Terrains.WATER)
                     && getClearance() < 0) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
+            // QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
             // and can switch to track mode while prone then stand.
             if (getEntity().isProne()
                     && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
@@ -2376,7 +2377,7 @@ public class MoveStep implements Serializable {
             } else if ((getMpUsed() <= runMPOneMASC) && !isRunProhibited()
                     && !isEvading()) {
                 // decide which to use if both are active
-                Entity.MPBoosters mpBoosters = entity.getArmedMPBoosters();
+                MPBoosters mpBoosters = entity.getArmedMPBoosters();
                 int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
                 int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
                 if (mascTarget < scTarget) {
@@ -2417,7 +2418,7 @@ public class MoveStep implements Serializable {
                     && !isEvading()) {
                 // decide if using MASC or Supercharger if need only one
                 // choose Super if even
-                Entity.MPBoosters mpBoosters = entity.getArmedMPBoosters();
+                MPBoosters mpBoosters = entity.getArmedMPBoosters();
                 int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
                 int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
                 if (mascTarget < scTarget) {

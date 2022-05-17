@@ -13,6 +13,7 @@
  */
 package megamek.common;
 
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -298,7 +299,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
-            return getArmedMPBoosters().calcSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
+            return getArmedMPBoosters().calculateSprintMP(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor));
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
     }
@@ -423,20 +424,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      */
     @Override
     public MPBoosters getMPBoosters() {
-        if (getConversionMode() == CONV_MODE_MECH) {
-            return super.getMPBoosters();
-        } else {
-            return MPBoosters.NONE;
-        }
+        return (getConversionMode() == CONV_MODE_MECH) ? super.getMPBoosters() : MPBoosters.NONE;
     }
 
     @Override
     public MPBoosters getArmedMPBoosters() {
-        if (getConversionMode() == CONV_MODE_MECH) {
-            return super.getArmedMPBoosters();
-        } else {
-            return MPBoosters.NONE;
-        }
+        return (getConversionMode() == CONV_MODE_MECH) ? super.getArmedMPBoosters() : MPBoosters.NONE;
     }
 
     @Override

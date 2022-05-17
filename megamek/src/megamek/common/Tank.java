@@ -14,19 +14,15 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.CombatVehicleBVCalculator;
 import megamek.common.cost.CombatVehicleCostCalculator;
-import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
-import megamek.common.verifier.SupportVeeStructure;
-import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.flamers.VehicleFlamerWeapon;
 import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 import org.apache.logging.log4j.LogManager;
 
-import java.text.NumberFormat;
 import java.util.*;
 
 /**
@@ -2544,7 +2540,7 @@ public class Tank extends Entity {
     @Override
     public String getRunMPasString() {
         MPBoosters mpBoosters = getMPBoosters();
-        if (mpBoosters.hasMASCAndOrSupercharger()) {
+        if (!mpBoosters.isNone()) {
             String str = getRunMPwithoutMASC() + "(" + getRunMP() + ")";
             if (game != null) {
                 MPBoosters armed = getArmedMPBoosters();

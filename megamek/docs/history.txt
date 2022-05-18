@@ -63,6 +63,7 @@ VERSION HISTORY:
 + Issue #3641: Fixing Server Game End ConMod
 + PR #3636: Standardizing Minimap Spelling
 + PR #3643: Trimming Trailing Whitespace from Service IP Address
++ Moving Outdated Board Editor docs to docs/Archive Stuff
 + Updating to FlatLaf 2.2 from 2.0.1
 + Updating to Jackson XML 2.13.3 from 2.13.1
 + Updating to JAXB 4.0.0 from 2.3.2

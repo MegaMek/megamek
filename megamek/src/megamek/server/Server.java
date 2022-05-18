@@ -4771,17 +4771,13 @@ public class Server implements Runnable {
         md.setEntity(entity);
 
         // is this the right phase?
-        if (game.getPhase() != GamePhase.MOVEMENT) {
+        if (!getGame().getPhase().isMovement()) {
             LogManager.getLogger().error("Server got movement packet in wrong phase");
             return;
         }
 
-        // can this player/entity act right now?
-        GameTurn turn = game.getTurn();
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            turn = game.getTurnForPlayer(connId);
-        }
-        if ((turn == null) || !turn.isValid(connId, entity, game)) {
+        final GameTurn turn = getGame().getTurn();
+        if ((turn == null) || !turn.isValid(connId, entity, getGame())) {
             String msg = "error: server got invalid movement packet from " + "connection " + connId;
             if (entity != null) {
                 msg += ", Entity: " + entity.getShortName();
@@ -4796,10 +4792,8 @@ public class Server implements Runnable {
         processMovement(entity, md, losCache);
 
         // The attacker may choose to break a chain whip grapple by expending MP
-        if ((entity.getGrappled() != Entity.NONE)
-                && entity.isChainWhipGrappled() && entity.isGrappleAttacker()
-                && (md.getMpUsed() > 0)) {
-
+        if ((entity.getGrappled() != Entity.NONE) && entity.isChainWhipGrappled()
+                && entity.isGrappleAttacker() && (md.getMpUsed() > 0)) {
             Entity te = game.getEntity(entity.getGrappled());
             Report r = new Report(4316);
             r.subject = entity.getId();
@@ -4817,13 +4811,8 @@ public class Server implements Runnable {
         // check the LOS of any telemissiles owned by this entity
         for (int missileId : entity.getTMTracker().getMissiles()) {
             Entity tm = game.getEntity(missileId);
-            if ((null != tm) && !tm.isDestroyed()
-                && (tm instanceof TeleMissile)) {
-                if (LosEffects.calculateLOS(game, entity, tm).canSee()) {
-                    ((TeleMissile) tm).setOutContact(false);
-                } else {
-                    ((TeleMissile) tm).setOutContact(true);
-                }
+            if ((tm != null) && !tm.isDestroyed() && (tm instanceof TeleMissile)) {
+                ((TeleMissile) tm).setOutContact(!LosEffects.calculateLOS(game, entity, tm).canSee());
                 entityUpdate(tm.getId());
             }
         }
@@ -12950,6 +12939,12 @@ public class Server implements Runnable {
      * Receive a deployment packet. If valid, execute it and end the current turn.
      */
     private void receiveDeployment(Packet packet, int connId) {
+        // is this the right phase?
+        if (!getGame().getPhase().isDeployment()) {
+            LogManager.getLogger().error("Server got deployment packet in wrong phase");
+            return;
+        }
+
         Entity entity = game.getEntity(packet.getIntValue(0));
         Coords coords = (Coords) packet.getObject(1);
         int nFacing = packet.getIntValue(2);
@@ -12963,25 +12958,16 @@ public class Server implements Runnable {
             loadVector.addElement(game.getEntity(loadedId));
         }
 
-        // is this the right phase?
-        if (!game.getPhase().isDeployment()) {
-            LogManager.getLogger().error("Server got deployment packet in wrong phase");
-            return;
-        }
-
         // can this player/entity act right now?
         final boolean assaultDrop = packet.getBooleanValue(5);
         // can this player/entity act right now?
-        GameTurn turn = game.getTurn();
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            turn = game.getTurnForPlayer(connId);
-        }
-        if ((turn == null) || !turn.isValid(connId, entity, game)
-                || !(game.getBoard().isLegalDeployment(coords, entity.getStartingPos())
-                || (assaultDrop && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
-                    && entity.canAssaultDrop()))) {
-            String msg = "server got invalid deployment packet from "
-                         + "connection " + connId;
+        GameTurn turn = getGame().getTurnForPlayer(connId);
+        if ((turn == null) || !turn.isValid(connId, entity, getGame())
+                || !(getGame().getBoard().isLegalDeployment(coords, entity.getStartingPos())
+                        || (assaultDrop
+                                && getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
+                                && entity.canAssaultDrop()))) {
+            String msg = "server got invalid deployment packet from connection " + connId;
             if (entity != null) {
                 msg += ", Entity: " + entity.getShortName();
             } else {
@@ -12996,13 +12982,13 @@ public class Server implements Runnable {
         // looks like mostly everything's okay
         processDeployment(entity, coords, nFacing, elevation, loadVector, assaultDrop);
 
-        //Update Aero sensors for a space or atmospheric game
+        // Update Aero sensors for a space or atmospheric game
         if (entity.isAero()) {
             IAero a = (IAero) entity;
             a.updateSensorOptions();
         }
 
-        // Update visibility indications if using double blind.
+        // Update visibility indications if using double-blind.
         if (doBlind()) {
             updateVisibilityIndicator(null);
         }
@@ -13021,8 +13007,8 @@ public class Server implements Runnable {
         Entity loaded = game.getEntity(packet.getIntValue(1));
 
         if (!game.getPhase().isDeployment()) {
-            String msg = "server received deployment unload packet "
-                    + "outside of deployment phase from connection " + connId;
+            String msg = "server received deployment unload packet outside of deployment phase from connection "
+                    + connId;
             if (loader != null) {
                 msg += ", Entity: " + loader.getShortName();
             } else {
@@ -13033,10 +13019,8 @@ public class Server implements Runnable {
         }
 
         // can this player/entity act right now?
-        GameTurn turn = game.getTurn();
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            turn = game.getTurnForPlayer(connId);
-        }
+        GameTurn turn = getGame().getPhase().isSimultaneous(getGame())
+                ? getGame().getTurnForPlayer(connId) : getGame().getTurn();
 
         if ((turn == null) || !turn.isValid(connId, loader, game)) {
             String msg = "server got invalid deployment unload packet from connection " + connId;
@@ -13060,10 +13044,8 @@ public class Server implements Runnable {
         // Now need to add a turn for the unloaded unit, to be taken immediately
         // Turn forced to be immediate to avoid messy turn ordering issues
         // (aka, how do we add the turn with individual initiative?)
-        game.insertTurnAfter(new GameTurn.SpecificEntityTurn(
-                loaded.getOwnerId(), loaded.getId()), game.getTurnIndex() - 1);
-        //game.insertNextTurn(new GameTurn.SpecificEntityTurn(
-        //        loaded.getOwnerId(), loaded.getId()));
+        game.insertTurnAfter(new GameTurn.SpecificEntityTurn(loaded.getOwnerId(), loaded.getId()),
+                game.getTurnIndex() - 1);
         send(createTurnVectorPacket());
     }
 
@@ -13334,17 +13316,15 @@ public class Server implements Runnable {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         // is this the right phase?
-        if ((game.getPhase() != GamePhase.PREFIRING)
-                && (game.getPhase() != GamePhase.PREMOVEMENT)) {
-            LogManager.getLogger().error("Server got Prephase packet in wrong phase "+game.getPhase());
+        if (!getGame().getPhase().isPrefiring() && !getGame().getPhase().isPremovement()) {
+            LogManager.getLogger().error("Server got Prephase packet in wrong phase " + game.getPhase());
             return;
         }
 
         // can this player/entity act right now?
-        GameTurn turn = game.getTurn();
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            turn = game.getTurnForPlayer(connId);
-        }
+        GameTurn turn = getGame().getPhase().isSimultaneous(getGame())
+                ? getGame().getTurnForPlayer(connId) : getGame().getTurn();
+
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
             LogManager.getLogger().error(String.format(
                     "Server got invalid packet from Connection %s, Entity %s, %s Turn",
@@ -13355,7 +13335,7 @@ public class Server implements Runnable {
             return;
         }
 
-        // Update visibility indications if using double blind.
+        // Update visibility indications if using double-blind.
         if (doBlind()) {
             updateVisibilityIndicator(null);
         }
@@ -13383,10 +13363,9 @@ public class Server implements Runnable {
         }
 
         // can this player/entity act right now?
-        GameTurn turn = game.getTurn();
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            turn = game.getTurnForPlayer(connId);
-        }
+        GameTurn turn = getGame().getPhase().isSimultaneous(getGame())
+                ? getGame().getTurnForPlayer(connId) : getGame().getTurn();
+
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
             LogManager.getLogger().error(String.format(
                     "Server got invalid attack packet from Connection %s, Entity %s, %s Turn",
@@ -13662,7 +13641,7 @@ public class Server implements Runnable {
 
             // for artillery attacks, the attacking entity
             // might no longer be in the game.
-            //TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
+            // TODO : Yeah, I know there's an exploit here, but better able to shoot some ArrowIVs than none, right?
             if (game.getEntity(waa.getEntityId()) == null) {
                 LogManager.getLogger().info("Can't Assign AMS: Artillery firer is null!");
                 continue;
@@ -13707,8 +13686,8 @@ public class Server implements Runnable {
             // For Arrow IV homing artillery
             Entity target;
             if (waa instanceof ArtilleryAttackAction) {
-                target = (waa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) waa
-                    .getTarget(game) : null;
+                target = (waa.getTargetType() == Targetable.TYPE_ENTITY)
+                        ? (Entity) waa.getTarget(game) : null;
 
                 // In case our target really is null.
                 if (target == null) {
@@ -13766,7 +13745,6 @@ public class Server implements Runnable {
                 targetedAttacks.add(targetedWAA);
             }
         }
-
     }
 
     /**

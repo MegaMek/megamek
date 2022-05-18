@@ -356,25 +356,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
+        // Return immediately if:
+        // 1) We are ignoring events
+        // 2) We are in a different phase
+        if (isIgnoringEvents()
+                || !getClientgui().getClient().getGame().getPhase().isDeployment()) {
             return;
         }
-        
-        final Game game = clientgui.getClient().getGame();
-        // On simultaneous phases, each player ending their turn will generalte a turn change
-        // We want to ignore turns from other players and only listen to events we generated
-        // Except on the first turn
-        if (game.getPhase().isSimultaneous(game)
-                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (game.getTurnIndex() != 0)) {
-            return;
-        }
-        if (game.getPhase() != GamePhase.DEPLOYMENT) {
-            // ignore
-            return;
-        }
-        
+
         if (clientgui.getClient().isMyTurn()) {
             if (cen == Entity.NONE) {
                 beginMyTurn();
@@ -390,7 +379,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", playerName));
         }
-        
     }
 
     @Override
@@ -398,7 +386,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().markDeploymentHexesFor(null);
         
        // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
         // Are we ignoring events?

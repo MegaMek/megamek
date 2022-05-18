@@ -4087,27 +4087,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-        // On simultaneous phases, each player ending their turn will generalte a turn change
-        // We want to ignore turns from other players and only listen to events we generated
-        // Except on the first turn
-        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
-                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
-            return;
-        }
-        
-        // if all our entities are actually done, don't start up the turn.
-        if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
-                .stream().allMatch(Entity::isDone)) {
-            return;
-        }
-
-        if (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT) {
-            // ignore
+        // Return immediately if:
+        // 1) We are ignoring events
+        // 2) We are in a different phase
+        // 3) All our entities are done
+        if (isIgnoringEvents()
+                || !getClientgui().getClient().getGame().getPhase().isMovement()
+                || getClientgui().getClient().getGame()
+                        .getPlayerEntities(getClientgui().getClient().getLocalPlayer(), false)
+                        .stream()
+                        .allMatch(Entity::isDone)) {
             return;
         }
 
@@ -4141,7 +4130,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
-        
+
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -4165,7 +4154,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * GEAR_LAND (standard "walk forward").
      * 
      * @param suggestion The suggested Entity to use to compute the movement envelope. If used, the
-     *                   gear will be set to GEAR_LAND. This takes precendence over the currently
+     *                   gear will be set to GEAR_LAND. This takes precedence over the currently
      *                   selected unit.
      * @param suggestion
      */

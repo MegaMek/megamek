@@ -438,46 +438,41 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     // GameListener
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (getClientgui().getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
-        // On simultaneous phases, each player ending their turn will generate a turn change
-        // We want to ignore turns from other players and only listen to events we generated
-        // Except on the first turn
-        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
-                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+
+        // Return immediately if:
+        // 1) We are ignoring events
+        // 2) We are in a different phase
+        // 3) This is a simultaneous physical phase, where each player ending their turn will
+        //    generate a turn change. We want to ignore turns from other players and only listen to
+        //    events we generated, except on the first turn
+        if (isIgnoringEvents()
+                || (getClientgui().getClient().getGame().getPhase() != phase)
+                || getClientgui().getClient().getGame().getPhase().isSimultaneous(getClientgui().getClient().getGame())
+                        && (e.getPreviousPlayerId() != getClientgui().getClient().getLocalPlayerNumber())
+                        && (getClientgui().getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
 
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-
-        if (clientgui.getClient().getGame().getPhase() == phase) {
-            if (clientgui.getClient().isMyTurn()) {
-                if (cen == Entity.NONE) {
-                    beginMyTurn();
-                }
-            } else {
-                endMyTurn();
-                if (e.getPlayer() != null) {
-                    setStatusBarText(Messages.getFormattedString(
-                            "PrephaseDisplay.its_others_turn",
-                            phase.toString(), e.getPlayer().getName()));
-                }
-
+        if (clientgui.getClient().isMyTurn()) {
+            if (cen == Entity.NONE) {
+                beginMyTurn();
+            }
+        } else {
+            endMyTurn();
+            if (e.getPlayer() != null) {
+                setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_others_turn",
+                        phase.toString(), e.getPlayer().getName()));
             }
         }
     }
 
-    //GameListener
+    // GameListener
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

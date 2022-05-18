@@ -947,11 +947,11 @@ public class Princess extends BotClient {
                 msg.append("has already moved this phase");
                 continue;
             }
-            
-            if (!getGame().getPhase().isSimultaneous(getGame()) && (entity.isOffBoard()
+
+            if (entity.isOffBoard()
                     || (null == entity.getPosition())
                     || entity.isUnloadedThisTurn()
-                    || !getGame().getTurn().isValidEntity(entity, getGame()))) {
+                    || !getGame().getTurn().isValidEntity(entity, getGame())) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -962,13 +962,13 @@ public class Princess extends BotClient {
                 movingEntity = entity;
                 break;
             }
-            
+
             if (entity instanceof MechWarrior) {
                 msg.append("is ejected crew.");
                 movingEntity = entity;
                 break;
             }
-            
+
             // can't do anything with out-of-control aeros, so use them as init sinks
             if (entity.isAero() && ((IAero) entity).isOutControlTotal()) {
                 msg.append("is out-of-control aero.");
@@ -985,8 +985,7 @@ public class Princess extends BotClient {
 
             // We will move the entity with the highest index.
             final double moveIndex = calculateMoveIndex(entity, msg);
-            msg.append("\n\thas index ").append(moveIndex).append(" vs ")
-               .append(highestIndex);
+            msg.append("\n\thas index ").append(moveIndex).append(" vs ").append(highestIndex);
             if (moveIndex >= highestIndex) {
                 highestIndex = moveIndex;
                 movingEntity = entity;

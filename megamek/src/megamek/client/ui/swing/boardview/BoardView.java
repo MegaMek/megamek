@@ -4926,7 +4926,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         public void gameEntityChange(GameEntityChangeEvent e) {
             final Vector<UnitLocation> mp = e.getMovePath();
             final Entity en = e.getEntity();
-            final GameOptions gopts = game.getOptions();
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();

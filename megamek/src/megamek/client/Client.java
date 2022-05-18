@@ -478,8 +478,7 @@ public class Client implements IClientCommandHandler {
      * Adds the specified close client listener to receive close client events.
      * This is used by external programs running megamek
      *
-     * @param l
-     *            the game listener.
+     * @param l the game listener.
      */
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
@@ -489,17 +488,14 @@ public class Client implements IClientCommandHandler {
      * is it my turn?
      */
     public boolean isMyTurn() {
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            return game.getTurnForPlayer(localPlayerNumber) != null;
-        }
-        return (game.getTurn() != null) && game.getTurn().isValid(localPlayerNumber, game);
+        return getGame().getPhase().isSimultaneous(getGame())
+                ? getGame().getTurnForPlayer(getLocalPlayerNumber()) != null
+                : (getGame().getTurn() != null) && getGame().getTurn().isValid(getLocalPlayerNumber(), getGame());
     }
 
     public GameTurn getMyTurn() {
-        if (getGame().getPhase().isSimultaneous(getGame())) {
-            return game.getTurnForPlayer(localPlayerNumber);
-        }
-        return game.getTurn();
+        return getGame().getPhase().isSimultaneous(getGame())
+                ? getGame().getTurnForPlayer(getLocalPlayerNumber()) : getGame().getTurn();
     }
 
     /**

@@ -2115,35 +2115,34 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     //
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-        // Are we ignoring events?
-        if (isIgnoringEvents()) {
-            return;
-        }
-        // On simultaneous phases, each player ending their turn will generate a turn change
-        // We want to ignore turns from other players and only listen to events we generated
-        // Except on the first turn
-        if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
-                && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
-                && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
+        // Return immediately if:
+        // 1) We are ignoring events
+        // 2) We are in a different phase
+        // 3) This is a simultaneous firing phase, where each player ending their turn will generate
+        //    a turn change. We want to ignore turns from other players and only listen to events we
+        //    generated, except on the first turn
+        if (isIgnoringEvents()
+                || !getClientgui().getClient().getGame().getPhase().isMovement()
+                || getClientgui().getClient().getGame().getPhase().isSimultaneous(getClientgui().getClient().getGame())
+                        && (e.getPreviousPlayerId() != getClientgui().getClient().getLocalPlayerNumber())
+                        && (getClientgui().getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase().isFiring()) {
-            if (clientgui.getClient().isMyTurn()) {
-                if (cen == Entity.NONE) {
-                    beginMyTurn();
-                }
-                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
-            } else {
-                endMyTurn();
-                String playerName;
-                if (e.getPlayer() != null) {
-                    playerName = e.getPlayer().getName();
-                } else {
-                    playerName = "Unknown";
-                }
-                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
+        if (clientgui.getClient().isMyTurn()) {
+            if (cen == Entity.NONE) {
+                beginMyTurn();
             }
+            setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
+        } else {
+            endMyTurn();
+            String playerName;
+            if (e.getPlayer() != null) {
+                playerName = e.getPlayer().getName();
+            } else {
+                playerName = "Unknown";
+            }
+            setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
         }
     }
 

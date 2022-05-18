@@ -13018,10 +13018,7 @@ public class Server implements Runnable {
             return;
         }
 
-        // can this player/entity act right now?
-        GameTurn turn = getGame().getPhase().isSimultaneous(getGame())
-                ? getGame().getTurnForPlayer(connId) : getGame().getTurn();
-
+        GameTurn turn = getGame().getTurn();
         if ((turn == null) || !turn.isValid(connId, loader, game)) {
             String msg = "server got invalid deployment unload packet from connection " + connId;
             if (loader != null) {

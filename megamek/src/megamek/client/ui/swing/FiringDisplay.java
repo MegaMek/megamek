@@ -2122,7 +2122,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         //    a turn change. We want to ignore turns from other players and only listen to events we
         //    generated, except on the first turn
         if (isIgnoringEvents()
-                || !getClientgui().getClient().getGame().getPhase().isMovement()
+                || !getClientgui().getClient().getGame().getPhase().isFiring()
                 || getClientgui().getClient().getGame().getPhase().isSimultaneous(getClientgui().getClient().getGame())
                         && (e.getPreviousPlayerId() != getClientgui().getClient().getLocalPlayerNumber())
                         && (getClientgui().getClient().getGame().getTurnIndex() != 0)) {

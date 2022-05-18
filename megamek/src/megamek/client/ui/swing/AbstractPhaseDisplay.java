@@ -99,31 +99,24 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
             final AbstractPhaseDisplay display = this;
             // Register the action for DONE
-            clientgui.controller.registerCommandAction(KeyCommandBind.DONE.cmd,
-                    new CommandAction() {
+            clientgui.controller.registerCommandAction(KeyCommandBind.DONE.cmd, new CommandAction() {
+                @Override
+                public boolean shouldPerformAction() {
+                    return (clientgui.getClient().isMyTurn()
+                            || (clientgui.getClient().getGame().getTurn() == null))
+                            && !clientgui.getBoardView().getChatterBoxActive()
+                            && !display.isIgnoringEvents() && display.isVisible()
+                            && butDone.isEnabled();
+                }
 
-                        @Override
-                        public boolean shouldPerformAction() {
-                            if ((!clientgui.getClient().isMyTurn() && (clientgui
-                                    .getClient().getGame().getTurn() != null))
-                                    || clientgui.getBoardView().getChatterBoxActive()
-                                    || display.isIgnoringEvents()
-                                    || !display.isVisible()
-                                    || !butDone.isEnabled()) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        }
-
-                        @Override
-                        public void performAction() {
-                            ready();
-                        }
-                    });
+                @Override
+                public void performAction() {
+                    ready();
+                }
+            });
         }
     }
-    
+
     @Override
     protected void paintComponent(Graphics g) {
         if (backgroundIcon == null) {
@@ -138,10 +131,10 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         if ((iW < 1) || (iH < 1)) {
             return;
         }
+
         for (int x = 0; x < w; x += iW) {
             for (int y = 0; y < h; y += iH) {
-                g.drawImage(backgroundIcon.getImage(), x, y, 
-                        backgroundIcon.getImageObserver());
+                g.drawImage(backgroundIcon.getImage(), x, y, backgroundIcon.getImageObserver());
             }
         }
     }

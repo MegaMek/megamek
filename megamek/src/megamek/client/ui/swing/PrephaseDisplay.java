@@ -446,7 +446,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         // Return immediately if:
         // 1) We are ignoring events
         // 2) We are in a different phase
-        // 3) This is a simultaneous physical phase, where each player ending their turn will
+        // 3) This is a simultaneous prephase phase, where each player ending their turn will
         //    generate a turn change. We want to ignore turns from other players and only listen to
         //    events we generated, except on the first turn
         if (isIgnoringEvents()

@@ -49,7 +49,6 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.*;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
@@ -4930,9 +4929,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             updateEcmList();
             
-            //For Entities that have converted to another mode, check for a different sprite
-            if (game.getPhase() == GamePhase.MOVEMENT
-                    && en.isConvertingNow()) {
+            // For Entities that have converted to another mode, check for a different sprite
+            if (game.getPhase().isMovement() && en.isConvertingNow()) {
                 tileManager.reloadImage(en);
             }
             
@@ -4945,9 +4943,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             
             redrawAllEntities();
-            if (game.getPhase() == GamePhase.MOVEMENT) {
+            if (game.getPhase().isMovement()) {
                 refreshMoveVectors();
             }
+
             if ((mp != null) && !mp.isEmpty() && guip.getShowMoveStep()
                     && ((localPlayer == null)
                         || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)

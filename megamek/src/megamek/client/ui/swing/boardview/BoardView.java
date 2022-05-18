@@ -4950,13 +4950,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 refreshMoveVectors();
             }
             if ((mp != null) && !mp.isEmpty() && guip.getShowMoveStep()
-                    && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
-                if ((localPlayer == null)
+                    && ((localPlayer == null)
                         || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || !en.getOwner().isEnemyOf(localPlayer)
-                        || en.hasSeenEntity(localPlayer)) {
-                    addMovingUnit(en, mp);
-                }
+                        || en.hasSeenEntity(localPlayer))) {
+                addMovingUnit(en, mp);
             }
         }
 

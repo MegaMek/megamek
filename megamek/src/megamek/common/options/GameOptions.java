@@ -247,68 +247,66 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false); 
 
-        IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false); 
-        addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false); 
+        IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules");
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AMMO_EXPLOSIONS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_LAUNCH, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BEARINGS_ONLY_VELOCITY, 50);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_WAYPOINT_LAUNCH, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_ARTILLERY_MUNITIONS, false);
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_EXPANDED_KF_DRIVE_DAMAGE, false);
 
-        IBasicOptionGroup initiative = addGroup("initiative"); 
-        addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false); 
-        addOption(initiative, OptionsConstants.INIT_INF_DEPLOY_EVEN, false); 
-        addOption(initiative, OptionsConstants.INIT_INF_MOVE_LATER, false); 
-        addOption(initiative, OptionsConstants.INIT_INF_MOVE_MULTI, false); 
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); 
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); 
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_LATER, false); 
-        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false); 
-        addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3); 
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false); 
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false); 
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false); 
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false); 
-        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false); 
-        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false); 
-        addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false); 
+        IBasicOptionGroup initiative = addGroup("initiative");
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false);
+        addOption(initiative, OptionsConstants.INIT_INF_DEPLOY_EVEN, false);
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_LATER, false);
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_MULTI, false);
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false);
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false);
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_LATER, false);
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false);
+        addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3);
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false);
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false);
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false);
+        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false);
+        addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false);
         
         IBasicOptionGroup rpg = addGroup("rpg");
-        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); 
-        addOption(rpg, OptionsConstants.EDGE, false); 
-        addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false); 
-        addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false); 
-        addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false); 
-        addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false); 
-        addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false); 
-        addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false); 
-        addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false); 
-        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false); 
+        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false);
+        addOption(rpg, OptionsConstants.EDGE, false);
+        addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false);
+        addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false);
+        addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false);
+        addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false);
+        addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false);
+        addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false);
+        addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false);
+        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false);
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false);
     }
 
@@ -349,8 +347,7 @@ public class GameOptions extends AbstractOptions {
             IOption tempOption = getOption(name);
 
             if (null != tempOption) {
-                if (!tempOption.getValue().toString()
-                        .equals(value.toString())) {
+                if (!tempOption.getValue().toString().equals(value.toString())) {
                     try {
                         switch (tempOption.getType()) {
                             case IOption.STRING:

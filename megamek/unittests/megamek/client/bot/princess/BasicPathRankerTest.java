@@ -26,6 +26,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.MovePath.Key;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -71,20 +72,20 @@ public class BasicPathRankerTest {
 
         final IHonorUtil mockHonorUtil = mock(IHonorUtil.class);
         when(mockHonorUtil.isEnemyBroken(anyInt(), anyInt(), anyBoolean())).thenReturn(false);
-        
+
         final List<Targetable> testAdditionalTargets = new ArrayList<>();
         FireControlState mockFireControlState = mock(FireControlState.class);
         when(mockFireControlState.getAdditionalTargets()).thenReturn(testAdditionalTargets);
 
-        
+
         final Map<Key, Double> testSuccessProbabilities = new HashMap<>();
         PathRankerState mockPathRankerState = mock(PathRankerState.class);
         when(mockPathRankerState.getPathSuccessProbabilities()).thenReturn(testSuccessProbabilities);
-        
+
         final UnitBehavior mockBehaviorTracker = mock(UnitBehavior.class);
         when(mockBehaviorTracker.getBehaviorType(any(Entity.class), any(Princess.class)))
             .thenReturn(BehaviorType.Engaged);
-        
+
         mockPrincess = mock(Princess.class);
         when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);
         when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
@@ -119,7 +120,7 @@ public class BasicPathRankerTest {
         if (!StringUtility.isNullOrBlank(failure.toString())) {
             fail(failure.toString());
         }
-    }   
+    }
 
     @Test
     public void testGetMovePathSuccessProbability() {
@@ -216,7 +217,6 @@ public class BasicPathRankerTest {
 
         // Test an enemy mech 5 hexes away but not in my LoS.
         enemyCoords = new Coords(10, 15);
-        enemyMechId = 1;
         mockEnemyMech = mock(BipedMech.class);
         when(mockEnemyMech.getWeight()).thenReturn(50.0);
         when(mockEnemyMech.getId()).thenReturn(enemyMechId);
@@ -241,7 +241,6 @@ public class BasicPathRankerTest {
 
         // Test an enemy mech 5 hexes away, not in my LoS and able to kick me.
         enemyCoords = new Coords(10, 15);
-        enemyMechId = 1;
         mockEnemyMech = mock(BipedMech.class);
         when(mockEnemyMech.getWeight()).thenReturn(50.0);
         when(mockEnemyMech.getId()).thenReturn(enemyMechId);
@@ -289,7 +288,7 @@ public class BasicPathRankerTest {
         when(mockEnemyMech.getId()).thenReturn(mockEnemyMechId);
         when(mockEnemyMech.getPosition()).thenReturn(new Coords(1, 0));
         when(mockEnemyMech.getCrew()).thenReturn(mockCrew);
-        
+
         doReturn(15.0)
                .when(testRanker)
                .calculateDamagePotential(eq(mockEnemyMech), any(EntityState.class),
@@ -376,7 +375,7 @@ public class BasicPathRankerTest {
                .direction(nullable(Coords.class));
 
         final GameOptions mockGameOptions = mock(GameOptions.class);
-        when(mockGameOptions.booleanOption(eq("no_clan_physical"))).thenReturn(false);
+        when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
 
         final Game mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
@@ -430,16 +429,16 @@ public class BasicPathRankerTest {
 
         final double baseRank = -51.25; // The rank I expect to get with the above settings.
 
-        RankedPath expected = new RankedPath(baseRank, mockPath, "Calculation: {"
-                + "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0)
-                + " * " + LOG_DECIMAL.format(100) + "] + " + "braveryMod ["
+        RankedPath expected = new RankedPath(baseRank, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0)
+                + " * " + LOG_DECIMAL.format(100) + "] + braveryMod ["
                 + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT.format(1) + " * (("
                 + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                + LOG_DECIMAL.format(40) + "] - " + "aggressionMod ["
+                + LOG_DECIMAL.format(40) + "] - aggressionMod ["
                 + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
-                + LOG_DECIMAL.format(2.5) + "] - " + "herdingMod ["
+                + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
                 + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
-                + LOG_DECIMAL.format(1) + "] - " + "facingMod ["
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
                 + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
                 + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
                 + LOG_INT.format(1) + "})]");
@@ -450,24 +449,19 @@ public class BasicPathRankerTest {
         doReturn(0.5)
                .when(testRanker)
                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
-        expected = new RankedPath(-98.125, mockPath, "Calculation: {" +
-                                                     "fall mod [" + LOG_DECIMAL.format(50) + " = " + LOG_DECIMAL
-                .format(0.5) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                     "braveryMod [" + LOG_DECIMAL.format(-3.12) + " = " + LOG_PERCENT
-                .format(0.5) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                     + LOG_DECIMAL.format(40) + "] - " +
-                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                     "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                     "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                     "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                     LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-98.125, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(50) + " = " + LOG_DECIMAL.format(0.5) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod ["
+                + LOG_DECIMAL.format(-3.12) + " = " + LOG_PERCENT.format(0.5)
+                + " * ((" + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5)
+                + ") - " + LOG_DECIMAL.format(40) + "] - aggressionMod ["
+                + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
+                + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
+                + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
+                + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
+                + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
+                + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.getRank()) {
@@ -476,23 +470,19 @@ public class BasicPathRankerTest {
         doReturn(0.75)
                .when(testRanker)
                .getMovePathSuccessProbability(any(MovePath.class), any(StringBuilder.class));
-        expected = new RankedPath(-74.6875, mockPath, "Calculation: {" +
-                                                      "fall mod [" + LOG_DECIMAL.format(25) + " = " + LOG_DECIMAL
-                .format(0.25) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                      "braveryMod [" + LOG_DECIMAL.format(-4.69) + " = " +
-                                                      LOG_PERCENT.format(0.75) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
-                                                      "aggressionMod [" + LOG_DECIMAL.format(30) + " = " +
-                                                      LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                      "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                      "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                      "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                      LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-74.6875, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(25) + " = " + LOG_DECIMAL.format(0.25) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod ["
+                + LOG_DECIMAL.format(-4.69) + " = " + LOG_PERCENT.format(0.75)
+                + " * ((" + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5)
+                + ") - " + LOG_DECIMAL.format(40) + "] - aggressionMod ["
+                + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
+                + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
+                + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
+                + LOG_DECIMAL.format(1) + "] - facingMod ["
+                + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
+                + LOG_INT.format(50) + " * {" + LOG_INT.format(0)
+                + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.getRank()) {
@@ -509,26 +499,19 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
         doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class),
-                                   any(Game.class));
-        expected = new RankedPath(-51.25, mockPath, "Calculation: {" +
-                                                    "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
-                (0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(40) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+               .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+        expected = new RankedPath(-51.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod ["
+                + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT.format(1) + " * (("
+                + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                + LOG_DECIMAL.format(40) + "] - aggressionMod ["
+                + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12) + " * "
+                + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
+                + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
+                + LOG_DECIMAL.format(1) + "] - facingMod [" + LOG_DECIMAL.format(0)
+                + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50)
+                + " * {" + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank > actual.getRank()) {
@@ -540,26 +523,19 @@ public class BasicPathRankerTest {
         evalForMockEnemyMech.setEstimatedEnemyDamage(25.0);
         doReturn(evalForMockEnemyMech)
                .when(testRanker)
-               .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class),
-                                   any(Game.class));
-        expected = new RankedPath(-61.0, mockPath, "Calculation: {" +
-                                                   "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
-                (0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                   "braveryMod [" + LOG_DECIMAL.format(-16) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(16) + " * " + LOG_DECIMAL.format(1.5) + ") - " +
-                                                   LOG_DECIMAL.format(40) + "] - " +
-                                                   "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                   "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                   "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format
-                (0) + ", " +
-                                                   "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                   LOG_INT.format(1) + "})]");
+               .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
+        expected = new RankedPath(-61.0, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-16)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(16)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1) + "] - facingMod ["
+                + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
+                + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
+                + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.getRank()) {
@@ -581,24 +557,18 @@ public class BasicPathRankerTest {
         doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
-        expected = new RankedPath(-61.25, mockPath, "Calculation: {" +
-                                                    "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
-                (0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-16.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(50) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-61.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-16.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(50)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         if (baseRank < actual.getRank()) {
             fail("The more damage they do, the lower the path rank should be.");
@@ -611,24 +581,18 @@ public class BasicPathRankerTest {
         doReturn(evalForMockEnemyMech)
                .when(testRanker)
                .evaluateMovedEnemy(eq(mockEnemyMech1), any(MovePath.class), any(Game.class));
-        expected = new RankedPath(-41.25, mockPath, "Calculation: {" +
-                                                    "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
-                (0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(3.75) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(30) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-41.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(3.75)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(30)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank > actual.getRank()) {
@@ -646,24 +610,18 @@ public class BasicPathRankerTest {
         doReturn(2.0)
                .when(testRanker)
                .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
-        expected = new RankedPath(-26.25, mockPath, "Calculation: {" +
-                                                    "fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format
-                (0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(40) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(5) + " = " + LOG_DECIMAL
-                .format(2) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-26.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + " + "braveryMod ["
+                + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT.format(1) + " * (("
+                + LOG_DECIMAL.format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
+                + LOG_DECIMAL.format(40) + "] - " +"aggressionMod [" + LOG_DECIMAL.format(5)
+                + " = " + LOG_DECIMAL.format(2) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - " + "herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + ", " + "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
+                + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank > actual.getRank()) {
@@ -672,24 +630,18 @@ public class BasicPathRankerTest {
         doReturn(22.0)
                .when(testRanker)
                .distanceToClosestEnemy(any(Entity.class), any(Coords.class), any(Game.class));
-        expected = new RankedPath(-76.25, mockPath, "Calculation: " +
-                                                    "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(40) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(55) + " = " + LOG_DECIMAL
-                .format(22) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-76.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(55) + " = "
+                + LOG_DECIMAL.format(22) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
+                + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.getRank()) {
@@ -701,69 +653,52 @@ public class BasicPathRankerTest {
 
         // Change the distance to my friends.
         friendsCoords = new Coords(0, 10);
-        expected = new RankedPath(-46.25, mockPath, "Calculation: " +
-                                                    "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(40) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(10) + " = " + LOG_DECIMAL
-                .format(10) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-46.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(10) + " = "
+                + LOG_DECIMAL.format(10) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank > actual.getRank()) {
             fail("The closer I am to my friends, the higher the path rank should be.");
         }
         friendsCoords = new Coords(20, 10);
-        expected = new RankedPath(-56.25, mockPath, "Calculation: " +
-                                                    "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(40) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(20) + " = " + LOG_DECIMAL
-                .format(20) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-56.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(20) + " = "
+                + LOG_DECIMAL.format(20) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
+                + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.getRank()) {
             fail("The further I am from my friends, the lower the path rank should be.");
         }
-        expected = new RankedPath(-36.25, mockPath, "Calculation: " +
-                                                    "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(40) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [0 no friends] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-36.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL .format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [0 no friends] - facingMod ["
+                + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0) + ", "
+                + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
+                + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, null);
         assertRankedPathEquals(expected, actual);
         friendsCoords = new Coords(10, 10);
@@ -771,46 +706,35 @@ public class BasicPathRankerTest {
         // Set myself up to run away.
         final double baseFleeingRank = -51.25;
         when(mockMover.isCrippled()).thenReturn(true);
-        expected = new RankedPath(baseFleeingRank, mockPath, "Calculation: " +
-                                                             "{fall mod [" + LOG_DECIMAL.format(0) + " = " +
-                                                             LOG_DECIMAL.format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                             "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " +
-                                                             LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
-                                                             "aggressionMod [" + LOG_DECIMAL.format(30) + " = " +
-                                                             LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                             "herdingMod [" + LOG_DECIMAL.format(15) + " = " +
-                                                             LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                             "facingMod [" + LOG_DECIMAL.format(0) + " = max(" +
-                                                             LOG_INT.format(0) + ", " +
-                                                             "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + "" +
-                                                             " - " + LOG_INT.format(1) + "})]");
+        expected = new RankedPath(baseFleeingRank, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         doReturn(10)
                .when(testRanker)
                .distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class));
-        expected = new RankedPath(-51.25, mockPath, "Calculation: " +
-                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                     + LOG_DECIMAL.format(40) + "] - " +
-                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                     "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                     "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                     "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                     LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-51.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT.format(0)
+                + ", " + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - "
+                + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseFleeingRank > actual.getRank()) {
@@ -819,24 +743,17 @@ public class BasicPathRankerTest {
         doReturn(30)
                .when(testRanker)
                .distanceToHomeEdge(any(Coords.class), any(CardinalEdge.class), any(Game.class));
-        expected = new RankedPath(-51.25, mockPath, "Calculation: " +
-                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                     + LOG_DECIMAL.format(40) + "] - " +
-                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                     "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                     "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                     "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                     LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-51.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - "+ LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL.format(12)
+                + " * " + LOG_DECIMAL.format(2.5) + "] - herdingMod ["
+                + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL.format(15) + " * "
+                + LOG_DECIMAL.format(1) + "] - facingMod [" + LOG_DECIMAL.format(0)
+                + " = max(" + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseFleeingRank < actual.getRank()) {
@@ -850,71 +767,54 @@ public class BasicPathRankerTest {
 
         // Change my facing.
         when(mockPath.getFinalFacing()).thenReturn(1);
-        expected = new RankedPath(baseRank, mockPath, "Calculation: " +
-                                                      "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                      "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " +
-                                                      LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40) + "] - " +
-                                                      "aggressionMod [" + LOG_DECIMAL.format(30) + " = " +
-                                                      LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                      "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                      "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                      "" + LOG_INT.format(50) + " * {" + LOG_INT.format(1) + " - " +
-                                                      LOG_INT.format(1) + "})]");
+        expected = new RankedPath(baseRank, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(1) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank != actual.getRank()) {
             fail("Being 1 hex off facing should make no difference in rank.");
         }
         when(mockPath.getFinalFacing()).thenReturn(4);
-        expected = new RankedPath(-101.25, mockPath, "Calculation: " +
-                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                     + LOG_DECIMAL.format(40) + "] - " +
-                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                     "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                     "facingMod [" + LOG_DECIMAL.format(50) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                     "" + LOG_INT.format(50) + " * {" + LOG_INT.format(2) + " - " +
-                                                     LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-101.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(50) + " = max("
+                + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(2) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.getRank()) {
             fail("Being 2 or more hexes off facing should lower the path rank.");
         }
         when(mockPath.getFinalFacing()).thenReturn(3);
-        expected = new RankedPath(-151.25, mockPath, "Calculation: " +
-                                                     "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                     "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                     + LOG_DECIMAL.format(40) + "] - " +
-                                                     "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                     "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                     "facingMod [" + LOG_DECIMAL.format(100) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                     "" + LOG_INT.format(50) + " * {" + LOG_INT.format(3) + " - " +
-                                                     LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-151.25, mockPath, "Calculation:{fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(100) + " = max("
+                + LOG_INT.format(0) + ", " + "" + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(3) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         if (baseRank < actual.getRank()) {
@@ -926,24 +826,18 @@ public class BasicPathRankerTest {
         doReturn(null)
                .when(testRanker)
                .findClosestEnemy(eq(mockMover), nullable(Coords.class), any(Game.class));
-        expected = new RankedPath(-51.25, mockPath, "Calculation: " +
-                                                    "{fall mod [" + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL
-                .format(0) + " * " + LOG_DECIMAL.format
-                (100) + "] + " +
-                                                    "braveryMod [" + LOG_DECIMAL.format(-6.25) + " = " + LOG_PERCENT
-                .format(1) + " * ((" + LOG_DECIMAL
-                .format(22.5) + " * " + LOG_DECIMAL.format(1.5) + ") - "
-                                                    + LOG_DECIMAL.format(40) + "] - " +
-                                                    "aggressionMod [" + LOG_DECIMAL.format(30) + " = " + LOG_DECIMAL
-                .format(12) + " * " + LOG_DECIMAL
-                .format(2.5) + "] - " +
-                                                    "herdingMod [" + LOG_DECIMAL.format(15) + " = " + LOG_DECIMAL
-                .format(15) + " * " + LOG_DECIMAL
-                .format(1) + "] - " +
-                                                    "facingMod [" + LOG_DECIMAL.format(0) + " = max(" + LOG_INT
-                .format(0) + ", " +
-                                                    "" + LOG_INT.format(50) + " * {" + LOG_INT.format(0) + " - " +
-                                                    LOG_INT.format(1) + "})]");
+        expected = new RankedPath(-51.25, mockPath, "Calculation: {fall mod ["
+                + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
+                + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
+                + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)
+                + " * " + LOG_DECIMAL.format(1.5) + ") - " + LOG_DECIMAL.format(40)
+                + "] - aggressionMod [" + LOG_DECIMAL.format(30) + " = "
+                + LOG_DECIMAL.format(12) + " * " + LOG_DECIMAL.format(2.5)
+                + "] - herdingMod [" + LOG_DECIMAL.format(15) + " = "
+                + LOG_DECIMAL.format(15) + " * " + LOG_DECIMAL.format(1)
+                + "] - facingMod [" + LOG_DECIMAL.format(0) + " = max("
+                + LOG_INT.format(0) + ", " + LOG_INT.format(50) + " * {"
+                + LOG_INT.format(0) + " - " + LOG_INT.format(1) + "})]");
         actual = testRanker.rankPath(mockPath, mockGame, 18, 0.5, testEnemies, friendsCoords);
         assertRankedPathEquals(expected, actual);
         doReturn(mockEnemyMech1)
@@ -980,35 +874,30 @@ public class BasicPathRankerTest {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(enemyList).when(mockPrincess).getEnemyEntities();
 
-        Entity expected = enemyMech;
-        Targetable actual = testRanker.findClosestEnemy(me, position, mockGame, false);
-        assertEquals(expected, actual);
+        assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame, false));
 
         // Add in an unmoved mech.
         final Entity unmovedMech = mock(BipedMech.class);
-        when(unmovedMech.getPosition()).thenReturn(new Coords(9, 9)); // Now the closest by position.
+        // Now the closest by position.
+        when(unmovedMech.getPosition()).thenReturn(new Coords(9, 9));
         when(unmovedMech.isSelectableThisTurn()).thenReturn(true);
         when(unmovedMech.isImmobile()).thenReturn(false);
-        when(unmovedMech.getWalkMP(anyBoolean(), anyBoolean(), anyBoolean()))
-               .thenReturn(6); // Movement should cause it to be further away.
+        // Movement should cause it to be further away.
+        when(unmovedMech.getWalkMP(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(6);
         enemyList.add(unmovedMech);
-        expected = enemyMech;
-        actual = testRanker.findClosestEnemy(me, position, mockGame);
-        assertEquals(expected, actual);
+        assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame));
 
         // Add in an aero unit right on top of me.
         final Entity mockAero = mock(ConvFighter.class);
         when(mockAero.isAero()).thenReturn(true);
         when(mockAero.isAirborne()).thenReturn(true);
         when(mockAero.isAirborneAeroOnGroundMap()).thenReturn(true);
-        when(mockAero.getPosition()).thenReturn(new Coords(1, 1)); // Right on top of me, but being an aero, it
-        // shouldn't count.
+        // Right on top of me, but being an aero, it shouldn't count
+        when(mockAero.getPosition()).thenReturn(new Coords(1, 1));
         when(mockAero.isSelectableThisTurn()).thenReturn(false);
         when(mockAero.isImmobile()).thenReturn(false);
         enemyList.add(mockAero);
-        expected = enemyMech;
-        actual = testRanker.findClosestEnemy(me, position, mockGame);
-        assertEquals(expected, actual);
+        assertEquals(enemyMech, testRanker.findClosestEnemy(me, position, mockGame));
     }
 
     @Test
@@ -1090,8 +979,7 @@ public class BasicPathRankerTest {
         assertNull(actual);
     }
 
-    private void assertCoordsEqual(final Coords expected,
-                                   final Coords actual) {
+    private void assertCoordsEqual(final Coords expected, final Coords actual) {
         assertNotNull(actual);
         assertEquals(expected.toString(), actual.toString());
     }
@@ -1099,7 +987,7 @@ public class BasicPathRankerTest {
     @Test
     public void testCalculateDamagePotential() {
         final Entity mockMe = generateMockEntity(10, 10);
-        
+
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
 
@@ -1109,54 +997,45 @@ public class BasicPathRankerTest {
         final List<Entity> entities = new ArrayList<>();
         entities.add(mockMe);
         entities.add(mockEnemy);
-        
+
         final Game mockGame = generateMockGame(entities, mockBoard);
 
         final FiringPlan mockFiringPlan = mock(FiringPlan.class);
         when(mockFiringPlan.getUtility()).thenReturn(12.5);
-        when(mockFireControl.determineBestFiringPlan(
-                any(FiringPlanCalculationParameters.class)))
+        when(mockFireControl.determineBestFiringPlan(any(FiringPlanCalculationParameters.class)))
                .thenReturn(mockFiringPlan);
-        
+
         final EntityState mockShooterState = mock(EntityState.class);
         final Coords mockEnemyPosition = mockEnemy.getPosition();
         when(mockShooterState.getPosition()).thenReturn(mockEnemyPosition);
         final EntityState mockTargetState = mock(EntityState.class);
         final Coords mockTargetPosition = mockMe.getPosition();
         when(mockTargetState.getPosition()).thenReturn(mockTargetPosition);
-        
+
         // test an enemy that is out of range
         int testDistance = 30;
-        assertEquals(0.0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
-                                                                   mockTargetState, testDistance, mockGame),
-                            TOLERANCE);
+        assertEquals(0.0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState,
+                mockPath, mockTargetState, testDistance, mockGame), TOLERANCE);
 
         // Test an enemy that's in range and in Line of Sight.
         testDistance = 10;
-        assertEquals(12.5,
-                testRanker.calculateDamagePotential(mockEnemy,
-                                                    mockShooterState,
-                                                    mockPath,
-                                                    mockTargetState,
-                                                    testDistance,
-                                                    mockGame),
-                TOLERANCE);
-        
+        assertEquals(12.5, testRanker.calculateDamagePotential(mockEnemy, mockShooterState,
+                mockPath, mockTargetState, testDistance, mockGame), TOLERANCE);
+
         // Test an enemy both in range but out of LoS.
         when(mockEnemy.getPosition()).thenReturn(null);
         when(mockTargetState.getPosition()).thenReturn(null);
-        assertEquals(0.0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
-                mockTargetState, testDistance, mockGame),
-                TOLERANCE);
+        assertEquals(0.0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState,
+                mockPath, mockTargetState, testDistance, mockGame), TOLERANCE);
     }
 
     @Test
     public void testCalculateMyDamagePotential() {
         final Entity mockMe = generateMockEntity(10, 10);
-        
+
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
         doReturn(mockFireControl).when(testRanker).getFireControl(mockMe);
-       
+
         final Board mockBoard = generateMockBoard();
         final MovePath mockPath = generateMockPath(10, 10, mockMe);
         final Entity mockEnemy = generateMockEntity(10, 15);
@@ -1166,11 +1045,10 @@ public class BasicPathRankerTest {
 
         int testDistance = 10;
         final Game mockGame = generateMockGame(entities, mockBoard);
-        
+
         final FiringPlan mockFiringPlan = mock(FiringPlan.class);
         when(mockFiringPlan.getUtility()).thenReturn(25.2);
-        when(mockFireControl.determineBestFiringPlan(
-                any(FiringPlanCalculationParameters.class)))
+        when(mockFireControl.determineBestFiringPlan(any(FiringPlanCalculationParameters.class)))
                .thenReturn(mockFiringPlan);
 
         // Test being in range and LoS.
@@ -1200,10 +1078,10 @@ public class BasicPathRankerTest {
         when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         when(mockBoard.inSpace()).thenReturn(false);
-        
+
         return mockBoard;
     }
-    
+
     /**
      * Generates an entity at specific coordinates
      * Vital statistics:
@@ -1218,59 +1096,59 @@ public class BasicPathRankerTest {
     private Entity generateMockEntity(int x, int y) {
         final Entity mockEntity = mock(BipedMech.class);
         when(mockEntity.getMaxWeaponRange()).thenReturn(21);
-        
+
         final Crew mockCrew = mock(Crew.class);
         when(mockEntity.getCrew()).thenReturn(mockCrew);
 
         final PilotOptions mockOptions = mock(PilotOptions.class);
         when(mockCrew.getOptions()).thenReturn(mockOptions);
         when(mockOptions.booleanOption(anyString())).thenReturn(false);
-        
+
         final Coords mockMyCoords = new Coords(x, y);
         when(mockEntity.getPosition()).thenReturn(mockMyCoords);
-        
+
         when(mockEntity.getHeatCapacity()).thenReturn(20);
         when(mockEntity.getHeat()).thenReturn(0);
         when(mockEntity.isAirborne()).thenReturn(false);
-        
+
         return mockEntity;
     }
-    
+
     private MovePath generateMockPath(int x, int y, Entity mockEntity) {
         final MovePath mockPath = mock(MovePath.class);
         when(mockPath.getEntity()).thenReturn(mockEntity);
-        
+
         final Coords mockMyCoords = new Coords(x, y);
         when(mockPath.getFinalCoords()).thenReturn(mockMyCoords);
         when(mockPath.getFinalFacing()).thenReturn(0);
-        
+
         return mockPath;
     }
-   
-    /** 
+
+    /**
      * Generates a mock game object.
      * Sets up some values for the passed-in entities as well (game IDs, and the game object itself)
      * @param entities
      * @return
-     */ 
+     */
     private Game generateMockGame(List<Entity> entities, Board mockBoard) {
-       
+
         final Game mockGame = mock(Game.class);
-        
+
         when(mockGame.getBoard()).thenReturn(mockBoard);
         final GameOptions mockGameOptions = mock(GameOptions.class);
         when(mockGame.getOptions()).thenReturn(mockGameOptions);
         when(mockGameOptions.booleanOption(anyString())).thenReturn(false);
-         
+
         for (int x = 0; x < entities.size(); x++) {
             when(mockGame.getEntity(x + 1)).thenReturn(entities.get(x));
             when(entities.get(x).getGame()).thenReturn(mockGame);
             when(entities.get(x).getId()).thenReturn(x + 1);
         }
-        
+
         return mockGame;
     }
-    
+
     @Test
     public void testCheckPathForHazards() {
         final BasicPathRanker testRanker = spy(new BasicPathRanker(mockPrincess));
@@ -1344,7 +1222,7 @@ public class BasicPathRankerTest {
         assertEquals(0, testRanker.checkPathForHazards(mockPath, mockBA, mockGame), TOLERANCE);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
 
-        // Test walking a protomech over magma crust
+        // Test walking a ProtoMek over magma crust
         final Entity mockProto = mock(Protomech.class);
         when(mockProto.locations()).thenReturn(6);
         when(mockProto.getArmor(anyInt())).thenReturn(5);
@@ -1357,7 +1235,7 @@ public class BasicPathRankerTest {
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[0]);
         when(mockHexThree.terrainLevel(Terrains.MAGMA)).thenReturn(0);
 
-        // Test waking a protomech through a fire.
+        // Test waking a ProtoMek through a fire.
         when(mockPath.isJumping()).thenReturn(false);
         when(mockHexThree.getTerrainTypes()).thenReturn(new int[]{Terrains.FIRE, Terrains.WOODS});
         assertEquals(50.0, testRanker.checkPathForHazards(mockPath, mockProto, mockGame), TOLERANCE);

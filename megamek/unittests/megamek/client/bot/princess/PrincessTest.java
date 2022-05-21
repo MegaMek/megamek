@@ -269,7 +269,6 @@ public class PrincessTest {
         Game mockGame = Mockito.mock(Game.class);
         GameOptions mockOptions = Mockito.mock(GameOptions.class);
         Mockito.when(mockGame.getOptions()).thenReturn(mockOptions);
-        Mockito.when(mockOptions.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)).thenReturn(false);
         Mockito.when(mockGame.getPhase()).thenReturn(GamePhase.MOVEMENT);
         GameTurn mockTurn = Mockito.mock(GameTurn.class);
         Mockito.when(mockGame.getTurn()).thenReturn(mockTurn);

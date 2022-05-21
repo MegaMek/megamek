@@ -125,19 +125,15 @@ public class UnitOverview implements IDisplayable {
         if (scroll) {
             if (scrollOffset > 0) {
                 graph.drawImage(pageUp, x, y, null);
-                graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                        null);
+                graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING, null);
             } else {
-                graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
-                graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                        null);
+                graph.drawImage(pageUpG, x, y, null); // Top of list = greyed out buttons
+                graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING, null);
             }
-            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-                    + BUTTON_PADDING;
+            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING + BUTTON_PADDING;
         }
 
-        for (int i = scrollOffset; (i < v.size())
-                && (i < actUnitsPerPage + scrollOffset); i++) {
+        for (int i = scrollOffset; (i < v.size()) && (i < actUnitsPerPage + scrollOffset); i++) {
             Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);

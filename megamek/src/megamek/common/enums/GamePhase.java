@@ -308,10 +308,6 @@ public enum GamePhase {
      */
     public boolean isSimultaneous(final Game game) {
         switch (this) {
-            case DEPLOYMENT:
-                return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT);
-            case MOVEMENT:
-                return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT);
             case FIRING:
                 return game.getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
             case PHYSICAL:

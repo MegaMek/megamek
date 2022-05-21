@@ -49,7 +49,6 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.IlluminationLevel;
 import megamek.common.event.*;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardClusterTracker.BoardCluster;
@@ -4926,14 +4925,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         public void gameEntityChange(GameEntityChangeEvent e) {
             final Vector<UnitLocation> mp = e.getMovePath();
             final Entity en = e.getEntity();
-            final GameOptions gopts = game.getOptions();
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();
             
-            //For Entities that have converted to another mode, check for a different sprite
-            if (game.getPhase() == GamePhase.MOVEMENT
-                    && en.isConvertingNow()) {
+            // For Entities that have converted to another mode, check for a different sprite
+            if (game.getPhase().isMovement() && en.isConvertingNow()) {
                 tileManager.reloadImage(en);
             }
             
@@ -4946,17 +4943,16 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             
             redrawAllEntities();
-            if (game.getPhase() == GamePhase.MOVEMENT) {
+            if (game.getPhase().isMovement()) {
                 refreshMoveVectors();
             }
+
             if ((mp != null) && !mp.isEmpty() && guip.getShowMoveStep()
-                    && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
-                if ((localPlayer == null)
+                    && ((localPlayer == null)
                         || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || !en.getOwner().isEnemyOf(localPlayer)
-                        || en.hasSeenEntity(localPlayer)) {
-                    addMovingUnit(en, mp);
-                }
+                        || en.hasSeenEntity(localPlayer))) {
+                addMovingUnit(en, mp);
             }
         }
 

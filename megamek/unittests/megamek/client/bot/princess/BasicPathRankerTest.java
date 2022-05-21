@@ -28,7 +28,7 @@ import megamek.common.MovePath.Key;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.text.DecimalFormat;
@@ -56,11 +56,11 @@ public class BasicPathRankerTest {
 
     private final double TOLERANCE = 0.001;
 
-    private static Princess mockPrincess;
-    private static FireControl mockFireControl;
+    private Princess mockPrincess;
+    private FireControl mockFireControl;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public void beforeEach() {
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getFallShameValue()).thenReturn(BehaviorSettings.FALL_SHAME_VALUES[5]);
         when(mockBehavior.getBraveryValue()).thenReturn(BehaviorSettings.BRAVERY[5]);
@@ -76,7 +76,6 @@ public class BasicPathRankerTest {
         final List<Targetable> testAdditionalTargets = new ArrayList<>();
         FireControlState mockFireControlState = mock(FireControlState.class);
         when(mockFireControlState.getAdditionalTargets()).thenReturn(testAdditionalTargets);
-
 
         final Map<Key, Double> testSuccessProbabilities = new HashMap<>();
         PathRankerState mockPathRankerState = mock(PathRankerState.class);
@@ -803,7 +802,7 @@ public class BasicPathRankerTest {
             fail("Being 2 or more hexes off facing should lower the path rank.");
         }
         when(mockPath.getFinalFacing()).thenReturn(3);
-        expected = new RankedPath(-151.25, mockPath, "Calculation:{fall mod ["
+        expected = new RankedPath(-151.25, mockPath, "Calculation: {fall mod ["
                 + LOG_DECIMAL.format(0) + " = " + LOG_DECIMAL.format(0) + " * "
                 + LOG_DECIMAL.format(100) + "] + braveryMod [" + LOG_DECIMAL.format(-6.25)
                 + " = " + LOG_PERCENT.format(1) + " * ((" + LOG_DECIMAL.format(22.5)

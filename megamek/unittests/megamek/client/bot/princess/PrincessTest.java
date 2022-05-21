@@ -25,6 +25,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -44,11 +45,11 @@ import static org.mockito.Mockito.when;
  */
 public class PrincessTest {
 
-    private static Princess mockPrincess;
-    private static BasicPathRanker mockPathRanker;
+    private Princess mockPrincess;
+    private BasicPathRanker mockPathRanker;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public void beforeEach() {
         mockPathRanker = mock(BasicPathRanker.class);
 
         MoraleUtil mockMoralUtil = mock(MoraleUtil.class);

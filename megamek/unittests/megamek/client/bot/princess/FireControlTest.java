@@ -29,7 +29,7 @@ import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
 import megamek.common.weapons.missiles.MMLWeapon;
 import megamek.server.SmokeCloud;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
@@ -48,98 +48,97 @@ public class FireControlTest {
     private static final int MOCK_TARGET_ID = 10;
 
     // AC5
-    private static Mounted mockWeaponAC5;
-    private static WeaponType mockWeaponTypeAC5;
+    private Mounted mockWeaponAC5;
+    private WeaponType mockWeaponTypeAC5;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAC5Std;
-    private static Mounted mockAmmoAC5Std;
+    private AmmoType mockAmmoTypeAC5Std;
+    private Mounted mockAmmoAC5Std;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAC5Flak;
-    private static Mounted mockAmmoAC5Flak;
+    private AmmoType mockAmmoTypeAC5Flak;
+    private Mounted mockAmmoAC5Flak;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAC5Incendiary;
-    private static Mounted mockAmmoAc5Incendiary;
+    private AmmoType mockAmmoTypeAC5Incendiary;
+    private Mounted mockAmmoAc5Incendiary;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAc5Flechette;
-    private static Mounted mockAmmoAc5Flechette;
+    private AmmoType mockAmmoTypeAc5Flechette;
+    private Mounted mockAmmoAc5Flechette;
 
     // LB10X
-    private static Mounted mockWeaponLB10X;
-    private static WeaponType mockLB10X;
+    private Mounted mockWeaponLB10X;
+    private WeaponType mockLB10X;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeLB10XSlug;
-    private static Mounted mockAmmoLB10XSlug;
+    private AmmoType mockAmmoTypeLB10XSlug;
+    private Mounted mockAmmoLB10XSlug;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeLB10XCluster;
-    private static Mounted mockAmmoLB10XCluster;
+    private AmmoType mockAmmoTypeLB10XCluster;
+    private Mounted mockAmmoLB10XCluster;
 
     // MML
-    private static Mounted mockWeaponMML5;
-    private static WeaponType mockMML5;
+    private Mounted mockWeaponMML5;
+    private WeaponType mockMML5;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeSRM5;
-    private static Mounted mockAmmoSRM5;
+    private AmmoType mockAmmoTypeSRM5;
+    private Mounted mockAmmoSRM5;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeLRM5;
-    private static Mounted mockAmmoLRM5;
+    private AmmoType mockAmmoTypeLRM5;
+    private Mounted mockAmmoLRM5;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeInferno5;
-    private static Mounted mockAmmoInferno5;
+    private AmmoType mockAmmoTypeInferno5;
+    private Mounted mockAmmoInferno5;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeLrm5Frag;
-    private static Mounted mockAmmoLrm5Frag;
+    private AmmoType mockAmmoTypeLrm5Frag;
+    private Mounted mockAmmoLrm5Frag;
 
     // ATM
-    private static Mounted mockAtm5Weapon;
-    private static WeaponType mockAtm5;
+    private Mounted mockAtm5Weapon;
+    private WeaponType mockAtm5;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAtm5He;
-    private static Mounted mockAmmoAtm5He;
+    private AmmoType mockAmmoTypeAtm5He;
+    private Mounted mockAmmoAtm5He;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAtm5St;
-    private static Mounted mockAmmoAtm5St;
+    private AmmoType mockAmmoTypeAtm5St;
+    private Mounted mockAmmoAtm5St;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAtm5Er;
-    private static Mounted mockAmmoAtm5Er;
+    private AmmoType mockAmmoTypeAtm5Er;
+    private Mounted mockAmmoAtm5Er;
     @SuppressWarnings("FieldCanBeLocal")
-    private static AmmoType mockAmmoTypeAtm5Inferno;
-    private static Mounted mockAmmoAtm5Inferno;
+    private AmmoType mockAmmoTypeAtm5Inferno;
+    private Mounted mockAmmoAtm5Inferno;
 
-    private static Entity mockTarget;
-    private static EntityState mockTargetState;
+    private Entity mockTarget;
+    private EntityState mockTargetState;
     @SuppressWarnings("FieldCanBeLocal")
-    private static ToHitData mockTargetMoveMod;
-    private static Coords mockTargetCoords;
+    private ToHitData mockTargetMoveMod;
+    private Coords mockTargetCoords;
 
-    private static Entity mockShooter;
-    private static Coords mockShooterCoords;
-    private static EntityState mockShooterState;
+    private Entity mockShooter;
+    private Coords mockShooterCoords;
+    private EntityState mockShooterState;
     @SuppressWarnings("FieldCanBeLocal")
-    private static ToHitData mockShooterMoveMod;
-    private static Crew mockCrew;
+    private ToHitData mockShooterMoveMod;
+    private Crew mockCrew;
 
-    private static GameOptions mockGameOptions;
-    private static Hex mockHex;
-    private static Board mockBoard;
-    private static Game mockGame;
+    private GameOptions mockGameOptions;
+    private Hex mockHex;
+    private Board mockBoard;
+    private Game mockGame;
 
-    private static Princess mockPrincess;
+    private Princess mockPrincess;
 
-    private static ArrayList<Mounted> shooterWeapons;
-    private static Mounted mockPPC;
-    private static Mounted mockML;
-    private static Mounted mockLRM5;
-    private static WeaponFireInfo mockPPCFireInfo;
-    private static WeaponFireInfo mockMLFireInfo;
-    private static WeaponFireInfo mockLRMFireInfo;
+    private ArrayList<Mounted> shooterWeapons;
+    private Mounted mockPPC;
+    private Mounted mockML;
+    private Mounted mockLRM5;
+    private WeaponFireInfo mockPPCFireInfo;
+    private WeaponFireInfo mockMLFireInfo;
+    private WeaponFireInfo mockLRMFireInfo;
 
-    private static Map<Mounted, Double> testToHitThreshold;
+    private Map<Mounted, Double> testToHitThreshold;
 
-    private static FireControl testFireControl;
+    private FireControl testFireControl;
 
-
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public void beforeEach() {
         mockPrincess = mock(Princess.class);
 
         final BehaviorSettings mockBehavior = mock(BehaviorSettings.class);

@@ -1,45 +1,49 @@
 /*
  * Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This file is part of MegaMek.
  *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- * for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.verifier;
 
 import megamek.common.*;
 import megamek.common.verifier.TestEntity.Ceil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestProtomechTest {
+public class TestProtoMekTest {
     
-    private Protomech createGenericMockProto() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.hasMainGun()).thenReturn(true);
-        when(mockProto.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
-        when(mockProto.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
-        when(mockProto.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
-        when(mockProto.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
-        return mockProto;
+    private Protomech createGenericMockProtoMek() {
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.hasMainGun()).thenReturn(true);
+        when(mockProtoMek.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
+        when(mockProtoMek.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_STANDARD);
+        when(mockProtoMek.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
+        when(mockProtoMek.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
+        return mockProtoMek;
     }
     
     private TestEntityOption option = new TestEntityOption() {
-
         @Override
         public Ceil getWeightCeilingEngine() {
             return Ceil.KILO;
@@ -158,34 +162,34 @@ public class TestProtomechTest {
     
     @Test
     public void testCalcEngineRating() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.getWeight()).thenReturn(6.0);
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.getWeight()).thenReturn(6.0);
         // walking 6
-        when(mockProto.getOriginalWalkMP()).thenReturn(4);
+        when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
         
-        assertEquals(TestProtomech.calcEngineRating(mockProto), 36);
+        assertEquals(TestProtomech.calcEngineRating(mockProtoMek), 36);
     }
     
     @Test
     public void testCalcEngineRatingGliderEfficiency() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.getWeight()).thenReturn(6.0);
-        when(mockProto.isGlider()).thenReturn(true);
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.getWeight()).thenReturn(6.0);
+        when(mockProtoMek.isGlider()).thenReturn(true);
         // running 6, engine rating calculated as running - 2
-        when(mockProto.getOriginalWalkMP()).thenReturn(4);
+        when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
         
-        assertEquals(TestProtomech.calcEngineRating(mockProto), 24);
+        assertEquals(TestProtomech.calcEngineRating(mockProtoMek), 24);
     }
     
     @Test
     public void testCalcEngineRatingQuadEfficiency() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.getWeight()).thenReturn(6.0);
-        when(mockProto.isQuad()).thenReturn(true);
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.getWeight()).thenReturn(6.0);
+        when(mockProtoMek.isQuad()).thenReturn(true);
         // running 6, engine rating calculated as running - 2
-        when(mockProto.getOriginalWalkMP()).thenReturn(4);
+        when(mockProtoMek.getOriginalWalkMP()).thenReturn(4);
         
-        assertEquals(TestProtomech.calcEngineRating(mockProto), 24);
+        assertEquals(TestProtomech.calcEngineRating(mockProtoMek), 24);
     }
     
     @Test
@@ -220,95 +224,95 @@ public class TestProtomechTest {
         assertEquals(TestProtomech.maxArmorFactor(15.0, false), 67);
         assertEquals(TestProtomech.maxArmorFactor(15.0, true), 73);
     }
-    
+
     @Test
     public void testMaxArmorPasses() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.getWeight()).thenReturn(5.0);
-        when(mockProto.hasMainGun()).thenReturn(false);
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.getWeight()).thenReturn(5.0);
+        when(mockProtoMek.hasMainGun()).thenReturn(false);
         int max = TestProtomech.maxArmorFactor(5.0, false);
-        when(mockProto.getTotalArmor()).thenReturn(max);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        when(mockProtoMek.getTotalArmor()).thenReturn(max);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertTrue(test.correctArmor(new StringBuffer()));
     }
-    
+
     @Test
     public void testExcessArmorFails() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.getWeight()).thenReturn(5.0);
-        when(mockProto.hasMainGun()).thenReturn(false);
-        when(mockProto.getOArmor(anyInt())).thenAnswer(inv -> TestProtomech.maxArmorFactor(mockProto, inv.getArgument(0)) + 1);
-        when(mockProto.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.getWeight()).thenReturn(5.0);
+        when(mockProtoMek.hasMainGun()).thenReturn(false);
+        when(mockProtoMek.getOArmor(anyInt())).thenAnswer(inv -> TestProtomech.maxArmorFactor(mockProtoMek, inv.getArgument(0)) + 1);
+        when(mockProtoMek.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertFalse(test.correctArmor(new StringBuffer()));
     }
-    
+
     @Test
     public void testGliderRequires4MP() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.getOriginalWalkMP()).thenReturn(3);
-        when(mockProto.isGlider()).thenReturn(true);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.getOriginalWalkMP()).thenReturn(3);
+        when(mockProtoMek.isGlider()).thenReturn(true);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertFalse(test.correctMovement(new StringBuffer()));
     }
-    
+
     @Test
     public void testQuadRequires3MP() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.getOriginalWalkMP()).thenReturn(2);
-        when(mockProto.isGlider()).thenReturn(false);
-        when(mockProto.isQuad()).thenReturn(true);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.getOriginalWalkMP()).thenReturn(2);
+        when(mockProtoMek.isGlider()).thenReturn(false);
+        when(mockProtoMek.isQuad()).thenReturn(true);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertFalse(test.correctMovement(new StringBuffer()));
     }
-    
+
     @Test
     public void testExcessWeight() {
-        Protomech mockProto = createGenericMockProto();
+        Protomech mockProtoMek = createGenericMockProtoMek();
         Engine engine = new Engine(30, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
-        when(mockProto.getEngine()).thenReturn(engine);
-        double engineWeight = engine.getWeightEngine(mockProto);
-        when(mockProto.getWeight()).thenReturn(engineWeight);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        when(mockProtoMek.getEngine()).thenReturn(engine);
+        double engineWeight = engine.getWeightEngine(mockProtoMek);
+        when(mockProtoMek.getWeight()).thenReturn(engineWeight);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertFalse(test.correctWeight(new StringBuffer()));
     }
-    
+
     @Test
     public void testMaxWeight() {
-        Protomech mockProto = createGenericMockProto();
+        Protomech mockProtoMek = createGenericMockProtoMek();
         Engine engine = new Engine(30, Engine.NORMAL_ENGINE, Engine.CLAN_ENGINE);
-        when(mockProto.getEngine()).thenReturn(engine);
-        when(mockProto.getWeight()).thenReturn(TestProtomech.MAX_TONNAGE + 1);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        when(mockProtoMek.getEngine()).thenReturn(engine);
+        when(mockProtoMek.getWeight()).thenReturn(TestProtomech.MAX_TONNAGE + 1);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertFalse(test.correctWeight(new StringBuffer()));
     }
-    
+
     @Test
     public void testQuadGliderFails() {
-        Protomech mockProto = createGenericMockProto();
-        when(mockProto.isGlider()).thenReturn(true);
-        when(mockProto.isQuad()).thenReturn(true);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        Protomech mockProtoMek = createGenericMockProtoMek();
+        when(mockProtoMek.isGlider()).thenReturn(true);
+        when(mockProtoMek.isQuad()).thenReturn(true);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
     }
-    
+
     @Test
     public void testExcessiveSlots() {
-        Protomech mockProto = createGenericMockProto();
-        Mounted m = new Mounted(mockProto, EquipmentType.get("CLERSmallLaser"));
+        Protomech mockProtoMek = createGenericMockProtoMek();
+        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         m.setLocation(Protomech.LOC_TORSO);
         ArrayList<Mounted> eqList = new ArrayList<>();
         eqList.add(m);
-        when(mockProto.getEquipment()).thenReturn(eqList);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        when(mockProtoMek.getEquipment()).thenReturn(eqList);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertFalse(test.hasIllegalEquipmentCombinations(new StringBuffer()));
         m.setLocation(Protomech.LOC_HEAD);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
@@ -316,46 +320,46 @@ public class TestProtomechTest {
 
     @Test
     public void testNoArmMountsForQuads() {
-        Protomech mockProto = createGenericMockProto();
-        when(mockProto.isQuad()).thenReturn(true);
-        Mounted m = new Mounted(mockProto, EquipmentType.get("CLERSmallLaser"));
+        Protomech mockProtoMek = createGenericMockProtoMek();
+        when(mockProtoMek.isQuad()).thenReturn(true);
+        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         m.setLocation(Protomech.LOC_LARM);
         ArrayList<Mounted> eqList = new ArrayList<>();
         eqList.add(m);
-        when(mockProto.getEquipment()).thenReturn(eqList);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        when(mockProtoMek.getEquipment()).thenReturn(eqList);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
     }
-    
+
     @Test
     public void testEDPArmorTakesTorsoSlot() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.hasMainGun()).thenReturn(true);
-        when(mockProto.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
-        when(mockProto.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_EDP);
-        when(mockProto.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
-        Mounted m = new Mounted(mockProto, EquipmentType.get("CLERSmallLaser"));
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.hasMainGun()).thenReturn(true);
+        when(mockProtoMek.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
+        when(mockProtoMek.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_EDP);
+        when(mockProtoMek.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
+        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         m.setLocation(Protomech.LOC_TORSO);
         ArrayList<Mounted> eqList = new ArrayList<>();
         eqList.add(m);
-        when(mockProto.getEquipment()).thenReturn(eqList);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        when(mockProtoMek.getEquipment()).thenReturn(eqList);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertFalse(test.hasIllegalEquipmentCombinations(new StringBuffer()));
         eqList.add(m);
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
     }
-    
+
     @Test
     public void testRearMountTorsoOnly() {
-        Protomech mockProto = createGenericMockProto();
-        Mounted m = new Mounted(mockProto, EquipmentType.get("CLERSmallLaser"));
+        Protomech mockProtoMek = createGenericMockProtoMek();
+        Mounted m = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         ArrayList<Mounted> eqList = new ArrayList<>();
         eqList.add(m);
-        when(mockProto.getEquipment()).thenReturn(eqList);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        when(mockProtoMek.getEquipment()).thenReturn(eqList);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         m.setLocation(Protomech.LOC_TORSO, true);
         assertFalse(test.hasIllegalEquipmentCombinations(new StringBuffer()));
         m.setLocation(Protomech.LOC_LARM, true);
@@ -368,29 +372,29 @@ public class TestProtomechTest {
 
     @Test
     public void testIllegalArmor() {
-        Protomech mockProto = mock(Protomech.class);
-        when(mockProto.hasMainGun()).thenReturn(true);
-        when(mockProto.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
-        when(mockProto.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_FERRO_FIBROUS);
-        when(mockProto.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
+        Protomech mockProtoMek = mock(Protomech.class);
+        when(mockProtoMek.hasMainGun()).thenReturn(true);
+        when(mockProtoMek.locations()).thenReturn(Protomech.NUM_PMECH_LOCATIONS);
+        when(mockProtoMek.getArmorType(anyInt())).thenReturn(EquipmentType.T_ARMOR_FERRO_FIBROUS);
+        when(mockProtoMek.getArmorTechLevel(anyInt())).thenReturn(TechConstants.T_CLAN_EXPERIMENTAL);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
         assertTrue(test.hasIllegalEquipmentCombinations(new StringBuffer()));
     }
-    
+
     @Test
     public void testHeatSinkCount() {
-        Protomech mockProto = createGenericMockProto();
-        Mounted laser = new Mounted(mockProto, EquipmentType.get("CLERSmallLaser"));
+        Protomech mockProtoMek = createGenericMockProtoMek();
+        Mounted laser = new Mounted(mockProtoMek, EquipmentType.get("CLERSmallLaser"));
         laser.setLocation(Protomech.LOC_TORSO);
         ArrayList<Mounted> eqList = new ArrayList<>();
         eqList.add(laser);
-        when(mockProto.getEquipment()).thenReturn(eqList);
-        when(mockProto.getWeaponList()).thenReturn(eqList);
-        TestProtomech test = new TestProtomech(mockProto, option, null);
-        
-        assertEquals(test.getCountHeatSinks(), ((WeaponType) laser.getType()).getHeat());
-        eqList.add(new Mounted(mockProto, EquipmentType.get("CLUltraAC5")));
-        assertEquals(test.getCountHeatSinks(), ((WeaponType) laser.getType()).getHeat());
+        when(mockProtoMek.getEquipment()).thenReturn(eqList);
+        when(mockProtoMek.getWeaponList()).thenReturn(eqList);
+        TestProtomech test = new TestProtomech(mockProtoMek, option, null);
+
+        assertEquals(test.getCountHeatSinks(), laser.getType().getHeat());
+        eqList.add(new Mounted(mockProtoMek, EquipmentType.get("CLUltraAC5")));
+        assertEquals(test.getCountHeatSinks(), laser.getType().getHeat());
     }
 }

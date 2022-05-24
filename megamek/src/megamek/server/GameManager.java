@@ -144,7 +144,9 @@ public class GameManager implements IGameManager {
         game.getOptions().initialize();
         game.getOptions().loadOptions();
 
-        changePhase(GamePhase.LOUNGE);
+        game.setPhase(GamePhase.LOUNGE);
+        mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
+        mapSettings.setNullBoards(DEFAULT_BOARD);
 
         // register terrain processors
         terrainProcessors.add(new FireProcessor(this));

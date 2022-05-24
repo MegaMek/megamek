@@ -5,10 +5,9 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
-import megamek.server.Server;
+import megamek.server.GameManager;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ServerTest {
+public class GameManagerTest {
 
     protected Game createMockedGame() {
         Game testGame = mock(Game.class);
@@ -36,8 +35,8 @@ public class ServerTest {
     }
 
     @Test
-    public void testVictory() throws IOException {
-        Server testServer = new Server("test", 0);
+    public void testVictory() {
+        GameManager gameManager = new GameManager();
         VictoryResult testVictoryResultFalse = new VictoryResult(false);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
 
@@ -45,56 +44,56 @@ public class ServerTest {
 
         // test whether the server.victory() returns false when mocking VictoryResult as false
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
-        testServer.setGame(testGame);
-        assertFalse(testServer.victory());
+        gameManager.setGame(testGame);
+        assertFalse(gameManager.victory());
 
         // test whether the server.victory() returns true when mocking VictoryResult as true
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
-        testServer.setGame(testGame);
-        assertTrue(testServer.victory());
+        gameManager.setGame(testGame);
+        assertTrue(gameManager.victory());
     }
 
     @Test
-    public void testVictoryDrawReport() throws IOException {
-        Server testServer = new Server("test", 0);
+    public void testVictoryDrawReport() {
+        GameManager gameManager = new GameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
         Game testGame = createMockedGame();
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
-        testServer.setGame(testGame);
-        testServer.victory();
+        gameManager.setGame(testGame);
+        gameManager.victory();
         verify(testGame, times(1)).setVictoryPlayerId(Player.PLAYER_NONE);
         verify(testGame, times(1)).setVictoryTeam(Player.TEAM_NONE);
     }
 
     @Test
-    public void testVictoryFalseReport() throws IOException {
-        Server testServer = new Server("test", 0);
+    public void testVictoryFalseReport() {
+        GameManager gameManager = new GameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
-        testServer.setGame(testGame);
-        testServer.victory();
+        gameManager.setGame(testGame);
+        gameManager.victory();
         verify(testGame, times(1)).cancelVictory();
     }
 
     @Test
-    public void testCancelVictory() throws IOException {
-        Server testServer = new Server("test", 0);
+    public void testCancelVictory() {
+        GameManager gameManager = new GameManager();
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
         when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         when(testGame.isForceVictory()).thenReturn(true);
 
-        testServer.setGame(testGame);
-        testServer.victory();
+        gameManager.setGame(testGame);
+        gameManager.victory();
         verify(testGame, times(1)).cancelVictory();
     }
 
     @Test
-    public void testVictoryWinReports() throws IOException {
-        Server testServer = new Server("test", 0);
+    public void testVictoryWinReports() {
+        GameManager gameManager = new GameManager();
 
         int winner = 1;
 
@@ -116,20 +115,20 @@ public class ServerTest {
         when(testGame.getVictoryResult()).thenReturn(victoryResult);
         when(testGame.getPlayer(winner)).thenReturn(mockedPlayer);
 
-        testServer.setGame(testGame);
-        testServer.victory();
+        gameManager.setGame(testGame);
+        gameManager.victory();
 
-        assertSame(1, testServer.getvPhaseReport().size());
+        assertSame(1, gameManager.getvPhaseReport().size());
 
         // Second test server tests with both a team != TEAM_NONE and a player != PLAYER_NONE
         // Two reports should be generated
-        Server testServer2 = new Server("test", 0);
+        GameManager gameManager2 = new GameManager();
 
         when(victoryResult.getWinningTeam()).thenReturn(10);
         when(victoryResult.getReports()).thenReturn(new ArrayList<>());
-        testServer2.setGame(testGame);
-        testServer2.victory();
+        gameManager2.setGame(testGame);
+        gameManager2.victory();
 
-        assertSame(2, testServer2.getvPhaseReport().size());
+        assertSame(2, gameManager2.getvPhaseReport().size());
     }
 }

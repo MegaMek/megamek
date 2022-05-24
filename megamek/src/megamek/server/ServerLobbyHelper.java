@@ -206,7 +206,7 @@ class ServerLobbyHelper {
      * making the sent forces top-level. 
      * This method is intended for use in the lobby!
      */
-    static void receiveForceParent(Packet c, int connId, Game game, Server server) {
+    static void receiveForceParent(Packet c, int connId, Game game, GameManager server) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         int newParentId = (int) c.getObject(1);
@@ -234,7 +234,7 @@ class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them.
      * This method is intended for use in the lobby!
      */
-    static void receiveEntitiesAssign(Packet c, int connId, Game game, Server server) {
+    static void receiveEntitiesAssign(Packet c, int connId, Game game, GameManager server) {
         @SuppressWarnings("unchecked")
         var entityList = (Collection<Entity>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
@@ -260,7 +260,7 @@ class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them.
      * This method is intended for use in the lobby!
      */
-    static void receiveForceAssignFull(Packet c, int connId, Game game, Server server) {
+    static void receiveForceAssignFull(Packet c, int connId, Game game, GameManager server) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
@@ -300,7 +300,7 @@ class ServerLobbyHelper {
      * - owner change of only the force (not the entities, only within a team) 
      * This method is intended for use in the lobby!
      */
-    static void receiveForceUpdate(Packet c, int connId, Game game, Server server) {
+    static void receiveForceUpdate(Packet c, int connId, Game game, GameManager server) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         
@@ -322,7 +322,7 @@ class ServerLobbyHelper {
      * Handles a team change, updating units and forces as necessary.
      * This method is intended for use in the lobby!
      */
-    static void receiveLobbyTeamChange(Packet c, int connId, Game game, Server server) {
+    static void receiveLobbyTeamChange(Packet c, int connId, Game game, GameManager server) {
         @SuppressWarnings("unchecked")
         var players = (Collection<Player>) c.getObject(0);
         var newTeam = (int) c.getObject(1);
@@ -396,7 +396,7 @@ class ServerLobbyHelper {
      * sent entities to a force or removing them from any force. 
      * This method is intended for use in the lobby!
      */
-    static void receiveAddEntititesToForce(Packet c, int connId, Game game, Server server) {
+    static void receiveAddEntititesToForce(Packet c, int connId, Game game, GameManager server) {
         @SuppressWarnings("unchecked")
         var entityList = (Collection<Entity>) c.getObject(0);
         var forceId = (int) c.getObject(1);
@@ -430,7 +430,7 @@ class ServerLobbyHelper {
     /**
      * Adds a force with the info from the client. Only valid during the lobby phase.
      */
-    static void receiveForceAdd(Packet c, int connId, Game game, Server server) {
+    static void receiveForceAdd(Packet c, int connId, Game game, GameManager server) {
         var force = (Force) c.getObject(0);
         @SuppressWarnings("unchecked")
         var entities = (Collection<Entity>) c.getObject(1);

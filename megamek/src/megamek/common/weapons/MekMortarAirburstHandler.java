@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.server.GameManager;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
@@ -27,8 +28,8 @@ import java.util.Vector;
 public class MekMortarAirburstHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -2073773899108954657L;
 
-    public MekMortarAirburstHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public MekMortarAirburstHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     @Override
@@ -127,7 +128,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         // Damage building directly
         Building bldg = game.getBoard().getBuildingAt(targetPos);
         if (bldg != null) {
-            newReports = server.damageBuilding(bldg, numRounds, " receives ", targetPos);
+            newReports = gameManager.damageBuilding(bldg, numRounds, " receives ", targetPos);
             adjustReports(newReports);
             vPhaseReport.addAll(newReports);
         }
@@ -145,7 +146,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
         }
         
         // Update hex and report any changes
-        newReports.addAll(server.tryClearHex(targetPos, numRounds, subjectId));
+        newReports.addAll(gameManager.tryClearHex(targetPos, numRounds, subjectId));
         adjustReports(newReports);
         vPhaseReport.addAll(newReports);
         
@@ -159,7 +160,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
             if (Compute.isInBuilding(game, target, targetPos)) {
                 Player tOwner = target.getOwner();
                 String colorcode = tOwner.getColour().getHexString(0x00F0F0F0);
-                newReports = server.damageBuilding(bldg, numRounds, " shields "
+                newReports = gameManager.damageBuilding(bldg, numRounds, " shields "
                         + target.getShortName() + " (<B><font color='"
                         + colorcode + "'>" + tOwner.getName()
                         + "</font></B>)"
@@ -185,7 +186,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     hit.setFirstHit(firstHit);
                     hit.setAttackerId(getAttackerId());
                     hit.setBurstFire(true);
-                    newReports = server.damageEntity(target, hit, damage);
+                    newReports = gameManager.damageEntity(target, hit, damage);
                     adjustReports(newReports);
                     vPhaseReport.addAll(newReports);
                     continue;
@@ -195,7 +196,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     for (int loc = 0; loc < target.locations(); loc++) {
                         if (target.getInternal(loc) > 0) {
                             HitData hit = new HitData(loc);
-                            newReports.addAll(server.damageEntity(target, hit, numRounds));
+                            newReports.addAll(gameManager.damageEntity(target, hit, numRounds));
                         }
                     }
                     adjustReports(newReports);
@@ -213,7 +214,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);
                     hit.setAttackerId(getAttackerId());
-                    newReports = server.damageEntity(target, hit, 1);
+                    newReports = gameManager.damageEntity(target, hit, 1);
                     adjustReports(newReports);
                     vPhaseReport.addAll(newReports);
                 }

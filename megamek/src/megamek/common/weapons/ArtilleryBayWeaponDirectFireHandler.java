@@ -17,7 +17,7 @@ import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -31,9 +31,8 @@ public class ArtilleryBayWeaponDirectFireHandler extends ArtilleryBayWeaponIndir
      * @param w
      * @param g
      */
-    public ArtilleryBayWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
-
+    public ArtilleryBayWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*

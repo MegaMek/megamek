@@ -69,7 +69,7 @@ public class ServerHelper {
      * Worker function that handles heat as applied to aerospace fighter
      */
     public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
-            int radicalHSBonus, int hotDogMod, Server s) {
+            int radicalHSBonus, int hotDogMod, GameManager s) {
         Report r;
         
         // If this aero is part of a squadron, we will deal with its
@@ -426,7 +426,7 @@ public class ServerHelper {
     }
     
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
-            boolean jumpLanding, Vector<Report> vPhaseReport, Server server) {
+            boolean jumpLanding, Vector<Report> vPhaseReport, GameManager server) {
         
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
@@ -454,7 +454,7 @@ public class ServerHelper {
     /**
      * Loops through all active entities in the game and performs mine detection
      */
-    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, Server server) {
+    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, GameManager server) {
         boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
         
         // if the entity is on the board
@@ -475,7 +475,7 @@ public class ServerHelper {
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords, 
-            Vector<Report> vPhaseReport, Server server) {
+            Vector<Report> vPhaseReport, GameManager server) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
         }
@@ -534,7 +534,7 @@ public class ServerHelper {
      * Checks to see if any units can detected hidden units.
      */
     public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
-            Vector<Report> vPhaseReport, Server server) {
+            Vector<Report> vPhaseReport, GameManager server) {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return false;
@@ -636,7 +636,7 @@ public class ServerHelper {
      * Loop through the game and clear 'blood stalker' flag for
      * any entities that have the given unit as the blood stalker target.
      */
-    public static void clearBloodStalkers(Game game, int stalkeeID, Server server) {
+    public static void clearBloodStalkers(Game game, int stalkeeID, GameManager server) {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getBloodStalkerTarget() == stalkeeID) {
                 entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);

@@ -26,6 +26,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
@@ -37,8 +38,8 @@ public class InsulatedLaserWeaponHandler extends EnergyWeaponHandler {
      * @param g
      */
     public InsulatedLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-            Game g, Server s) {
-        super(toHit, waa, g, s);
+            Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     @Override

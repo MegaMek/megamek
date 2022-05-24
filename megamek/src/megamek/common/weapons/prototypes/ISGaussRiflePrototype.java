@@ -27,7 +27,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeGaussHandler;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -75,7 +75,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new PrototypeGaussHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new PrototypeGaussHandler(toHit, waa, game, manager);
     }
 }

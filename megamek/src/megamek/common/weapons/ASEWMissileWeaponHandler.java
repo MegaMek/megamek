@@ -21,7 +21,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 import java.util.Vector;
 
@@ -37,10 +37,10 @@ public class ASEWMissileWeaponHandler extends ThunderBoltWeaponHandler {
      * @param t - ToHit roll data
      * @param w - The weapon attack action for this ASEW missile
      * @param g - The current game
-     * @param s - The current server instance
+     * @param m - The current GameManager instance
      */
-    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ASEWMissileWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
     
     /*

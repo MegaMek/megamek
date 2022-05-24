@@ -29,6 +29,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 public class EnergyWeaponHandler extends WeaponHandler {
@@ -39,8 +40,8 @@ public class EnergyWeaponHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 

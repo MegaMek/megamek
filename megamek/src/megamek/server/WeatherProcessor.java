@@ -40,13 +40,13 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     int sleetTurn = 0;
     int iceTurn = 0;
 
-    public WeatherProcessor(Server server) {
-        super(server);
+    public WeatherProcessor(GameManager gameManager) {
+        super(gameManager);
     }
 
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = server.getGame();
+        game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveWeather();
         this.vPhaseReport = null;
@@ -132,7 +132,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                     if (currentHex.terrainLevel(Terrains.FIRE)
                             == Terrains.FIRE_LVL_NORMAL) {
                         if (conditions.putOutFire()) {
-                            server.removeFire(currentCoords, "weather conditions");
+                            gameManager.removeFire(currentCoords, "weather conditions");
                         }
                     // Downgrade Inferno fires so they can burn out
                     } else if (currentHex.terrainLevel(Terrains.FIRE) 
@@ -140,12 +140,12 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         //inferno fires should become regular fires
                         currentHex.removeTerrain(Terrains.FIRE);
                         currentHex.addTerrain(new Terrain(Terrains.FIRE, 1));
-                        server.getHexUpdateSet().add(currentCoords);
+                        gameManager.getHexUpdateSet().add(currentCoords);
                     // Check Inferno Bombs
                     } else if (currentHex.terrainLevel(Terrains.FIRE) 
                             == Terrains.FIRE_LVL_INFERNO_BOMB) {
                         if (currentHex.getFireTurn() > 30) {
-                            server.removeFire(currentCoords, 
+                            gameManager.removeFire(currentCoords,
                                     "inferno bomb burning out");
                         }
                     }
@@ -155,7 +155,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 if (ice && !currentHex.containsTerrain(Terrains.ICE)
                         && currentHex.containsTerrain(Terrains.WATER)) {
                     currentHex.addTerrain(new Terrain(Terrains.ICE, 1));
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
 
                 if (lightSnow
@@ -164,7 +164,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                                 && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(new Terrain(Terrains.SNOW, 1));
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
 
                 if (deepSnow && !(currentHex.terrainLevel(Terrains.SNOW) > 1)
@@ -172,7 +172,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                                 && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(new Terrain(Terrains.SNOW, 2));
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
 
                 // check for the melting of any snow or ice

@@ -27,13 +27,13 @@ public class FireProcessor extends DynamicTerrainProcessor {
     private Game game;
     Vector<Report> vPhaseReport;
 
-    public FireProcessor(Server server) {
-        super(server);
+    public FireProcessor(GameManager gameManager) {
+        super(gameManager);
     }
 
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = server.getGame();
+        game = gameManager.getGame();
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
             this.vPhaseReport = vPhaseReport;
             resolveFire();
@@ -80,7 +80,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         r = new Report(5120, Report.PUBLIC);
                         r.add(bldg.getName());
                         vPhaseReport.addElement(r);
-                    } else if (!server.checkForCollapse(bldg, positionMap, coords, false, vPhaseReport)) {
+                    } else if (!gameManager.checkForCollapse(bldg, positionMap, coords, false, vPhaseReport)) {
                         // If it doesn't collapse under its load, mark it for update.
                         bldg.setPhaseCF(cf, coords);
                     }
@@ -99,7 +99,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     // has collapsed put non-inferno fires out.
                     if ((currentHex.terrainLevel(Terrains.FIRE) == Terrains.FIRE_LVL_NORMAL)
                             && !currentHex.isIgnitable()) {
-                        server.removeFire(currentCoords, "lack of fuel");
+                        gameManager.removeFire(currentCoords, "lack of fuel");
                         continue;
                     }
 
@@ -153,7 +153,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     }
 
                     // Check for any explosions
-                    server.checkExplodeIndustrialZone(currentCoords, vPhaseReport);
+                    gameManager.checkExplodeIndustrialZone(currentCoords, vPhaseReport);
 
                     // Add smoke, unless tornado or optional rules
                     boolean containsForest = (currentHex.containsTerrain(Terrains.WOODS)
@@ -168,13 +168,13 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         smokeList.add(currentCoords.translated((windDirection + 1) % 6));
                         smokeList.add(currentCoords.translated((windDirection + 5) % 6));
 
-                        server.addSmoke(smokeList, windDirection, bInferno);
+                        gameManager.addSmoke(smokeList, windDirection, bInferno);
                         board.initializeAround(currentXCoord, currentYCoord);
                     }
 
                     // increment the fire turn counter
                     currentHex.incrementFireTurn();
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
             }
         }
@@ -195,7 +195,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         r.add(burnDamage);
         burnReports.addElement(r);
 
-        Vector<Report> newReports = server.tryClearHex(coords, burnDamage, Entity.NONE);
+        Vector<Report> newReports = gameManager.tryClearHex(coords, burnDamage, Entity.NONE);
         for (Report nr : newReports) {
             nr.indent(2);
         }
@@ -266,7 +266,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
             return;
         }
 
-        if (!(hex.containsTerrain(Terrains.FIRE)) && server.checkIgnition(coords, roll)) {
+        if (!(hex.containsTerrain(Terrains.FIRE)) && gameManager.checkIgnition(coords, roll)) {
             Report r = new Report(5150, Report.PUBLIC);
             r.add(coords.getBoardNum());
             r.add(origin.getBoardNum());
@@ -296,7 +296,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         HashMap<SmokeCloud, ArrayList<Coords>> smokeCloudData = new HashMap<>();
 
         // Cycle through all smoke clouds
-        for (SmokeCloud cloud : server.getSmokeCloudList()) {
+        for (SmokeCloud cloud : gameManager.getSmokeCloudList()) {
             smokeToAdd = new ArrayList<>();
             for (Coords currentCoords : cloud.getCoordsList()) {
                 Coords smokeCoords = driftAddSmoke(currentCoords, windDir, windStr);
@@ -327,11 +327,11 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // update all the new coords for the smoke cloud.
         for (SmokeCloud cloud : smokeCloudData.keySet()) {
             smokeToAdd = smokeCloudData.get(cloud);
-            server.updateSmoke(cloud, smokeToAdd);
+            gameManager.updateSmoke(cloud, smokeToAdd);
         }
 
         // Cycle through the vector again and dissipate the smoke, then reporting it
-        for (SmokeCloud cloud : server.getSmokeCloudList()) {
+        for (SmokeCloud cloud : gameManager.getSmokeCloudList()) {
             int roll = Compute.d6(2);
 
             boolean dissipated = driftSmokeDissipate(cloud, roll, windStr);

@@ -25,8 +25,7 @@ import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -40,8 +39,8 @@ public class ACAPHandler extends ACWeaponHandler {
      * @param w
      * @param g
      */
-    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
 
@@ -71,7 +70,7 @@ public class ACAPHandler extends ACWeaponHandler {
             return;
         }
 
-        // Each hit in the salvo get's its own hit location.
+        // Each hit in the salvo gets its own hit location.
         Report r = new Report(3405);
         r.subject = subjectId;
         r.add(toHit.getTableDesc());
@@ -135,7 +134,7 @@ public class ACAPHandler extends ACWeaponHandler {
             }
             hit.makeArmorPiercing(atype, critModifier);
             vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,

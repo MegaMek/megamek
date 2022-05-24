@@ -23,8 +23,8 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
@@ -39,8 +39,8 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ACFlechetteHandler(ToHitData t, WeaponAttackAction w, Game g,
-                              Server s) {
-        super(t, w, g, s);
+                              GameManager m) {
+        super(t, w, g, m);
         damageType = DamageType.FLECHETTE;
     }
 
@@ -94,12 +94,12 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false, false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
 
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

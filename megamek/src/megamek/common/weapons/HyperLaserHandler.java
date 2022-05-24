@@ -31,6 +31,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 public class HyperLaserHandler extends EnergyWeaponHandler {
@@ -42,8 +43,8 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
      * @param g
      */
     public HyperLaserHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+            WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             }
             r.choose(false);
             vPhaseReport.addElement(r);
-            vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
             return true;
         }
         return false;

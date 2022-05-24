@@ -33,6 +33,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -42,8 +43,8 @@ import megamek.server.Server;
 public class LegAttackHandler extends WeaponHandler {
     private static final long serialVersionUID = 4429993211361286138L;
 
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     /*
@@ -90,7 +91,7 @@ public class LegAttackHandler extends WeaponHandler {
         }
 
         // ASSUMPTION: buildings CAN'T absorb *this* damage.
-        vPhaseReport.addAll(server.damageEntity(entityTarget, hit, damage,
+        vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, damage,
                 false, damageType, false, false, throughFront, underWater));
         Report.addNewline(vPhaseReport);
         // Do criticals.
@@ -101,6 +102,6 @@ public class LegAttackHandler extends WeaponHandler {
         if (ae.hasAbility(OptionsConstants.MISC_HUMAN_TRO,Crew.HUMANTRO_MECH)) {
             critMod += 1;
         }
-        vPhaseReport.addAll(server.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));
+        vPhaseReport.addAll(gameManager.criticalEntity(entityTarget, hit.getLocation(), hit.isRear(), critMod, damage));
     }
 }

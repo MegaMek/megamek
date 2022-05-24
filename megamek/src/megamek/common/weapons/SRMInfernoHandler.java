@@ -28,8 +28,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -41,10 +40,10 @@ public class SRMInfernoHandler extends SRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         damageType = DamageType.INFERNO;
         sSalvoType = " inferno missile(s) ";
         bSalvo = false;
@@ -167,7 +166,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // light inferno missiles all at once, if not missed
         if (!bMissed) {
-            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits,
+            vPhaseReport.addAll(gameManager.deliverInfernoMissiles(ae, target, hits,
                     weapon.getCalledShot().getCall()));
         }
         return false;
@@ -285,13 +284,13 @@ public class SRMInfernoHandler extends SRMHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
                         true,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(),
                 nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;

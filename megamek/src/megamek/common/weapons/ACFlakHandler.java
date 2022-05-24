@@ -23,7 +23,7 @@ import megamek.common.AmmoType;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -35,10 +35,10 @@ public class ACFlakHandler extends LBXHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public ACFlakHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ACFlakHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " fragment(s) ";
     }
 

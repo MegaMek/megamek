@@ -2,6 +2,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.Player;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -9,9 +10,12 @@ import megamek.server.Server;
  */
 public class ListEntitiesCommand extends ServerCommand {
 
-    public ListEntitiesCommand(Server server) {
+    private final GameManager gameManager;
+
+    public ListEntitiesCommand(Server server, GameManager gameManager) {
         super(server, "listEntities",
                 "Show the ids of all entities owned by this player. Usage: /listEntities");
+        this.gameManager = gameManager;
     }
 
     /**
@@ -26,7 +30,7 @@ public class ListEntitiesCommand extends ServerCommand {
             return;
         }
 
-        for (Entity ent : server.getGame().getEntitiesVector()) {
+        for (Entity ent : gameManager.getGame().getEntitiesVector()) {
             try {
                 if (ent.getOwnerId() == connId) {
                     server.sendServerChat(connId, ent.getId() + " - " + ent.getDisplayName());

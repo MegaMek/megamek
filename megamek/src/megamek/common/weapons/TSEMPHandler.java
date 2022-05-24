@@ -17,6 +17,7 @@ import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 import java.util.Vector;
@@ -35,10 +36,10 @@ public class TSEMPHandler extends EnergyWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public TSEMPHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -180,7 +181,7 @@ public class TSEMPHandler extends EnergyWeaponHandler {
                 entityTarget.destroyLocation(hit.getLocation());
                 // Check to see if the squad has been eliminated
                 if (entityTarget.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
-                    vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                    vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                             "all troopers eliminated", false));
                 }
             } else {

@@ -25,14 +25,15 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 
 public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
     private static final long serialVersionUID = 7326881584091651519L;
 
-    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public RapidfireHVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -64,7 +65,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
                 rearCoords = src;
             }
 
-            server.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
+            gameManager.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
         }
         return super.handle(phase, vPhaseReport);
     }
@@ -93,7 +94,7 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
                     break;
                 }
             }
-            vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
             r.choose(false);
             vPhaseReport.addElement(r);
             return false;

@@ -23,13 +23,13 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
     private Game game;
     Vector<Report> vPhaseReport;
 
-    public QuicksandProcessor(Server server) {
-        super(server);
+    public QuicksandProcessor(GameManager gameManager) {
+        super(gameManager);
     }
 
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = server.getGame();
+        game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveQuicksand();
         this.vPhaseReport = null;
@@ -56,13 +56,13 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                     // sink any units that occupy this hex
                     for (Entity entity : game.getEntitiesVector(currentCoords)) {
                         if (entity.isStuck()) {
-                            server.doSinkEntity(entity);
+                            gameManager.doSinkEntity(entity);
                         }
                     }
                 } else if (currentHex.terrainLevel(Terrains.SWAMP) == 2) {
                     currentHex.removeTerrain(Terrains.SWAMP);
                     currentHex.addTerrain(new Terrain(Terrains.SWAMP, 3));
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
             }
 

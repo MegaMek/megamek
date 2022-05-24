@@ -49,6 +49,7 @@ import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.GameManager;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
@@ -82,6 +83,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private JFrame frame;
     private Client client;
     private Server server;
+    private GameManager gameManager;
     private CommonAboutDialog about;
     private CommonSettingsDialog settingsDialog;
 
@@ -440,7 +442,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         d6();
         // start server
         try {
-            server = new Server( serverPassword, port, isRegister, metaServer, mailer, false);
+            gameManager = new GameManager();
+            server = new Server( serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
             MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
@@ -722,14 +725,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         server.setGame(g);
         
         // apply any scenario damage
-        sl.applyDamage(server);
+        sl.applyDamage(gameManager);
 
         if (!localName.isBlank()) {
             startClient(playerName, MMConstants.LOCALHOST, port);
         }
 
         // calculate initial BV
-        server.calculatePlayerInitialCounts();
+        gameManager.calculatePlayerInitialCounts();
         
         // setup any bots
         for (int x = 0; x < pa.length; x++) {

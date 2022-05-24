@@ -21,6 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MGAWeaponHandler;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -70,7 +71,7 @@ public class ISLightMGA extends AmmoWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new MGAWeaponHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new MGAWeaponHandler(toHit, waa, game, manager);
     }
 }

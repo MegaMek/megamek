@@ -177,25 +177,6 @@
 		<weightDistribution era='3082' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3082' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
-	<faction key='DGM'>
-		<pctOmni>0,4,11,15,22</pctOmni>
-		<pctClan>0,0,3,7,16</pctClan>
-		<pctSL>22,52,54,66,78</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='6'>FWL:10</salvage>
-	</faction>
-	<faction key='DoO'>
-		<pctOmni>0,4,11,15,22</pctOmni>
-		<pctClan>0,0,3,7,16</pctClan>
-		<pctSL>22,52,54,66,78</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='6'>CC:8,FWL:3</salvage>
-	</faction>
-	<faction key='CEI'>
-		<techMargin>3</techMargin>
-	</faction>
 	<faction key='DA'>
 		<pctOmni>0,2,9,13,19</pctOmni>
 		<pctClan>0,0,2,5,14</pctClan>
@@ -203,6 +184,14 @@
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>CC:4,FWL:10</salvage>
+	</faction>
+	<faction key='DGM'>
+		<pctOmni>0,4,11,15,22</pctOmni>
+		<pctClan>0,0,3,7,16</pctClan>
+		<pctSL>22,52,54,66,78</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='6'>FWL:10</salvage>
 	</faction>
 	<faction key='DO'>
 		<pctOmni>0,4,11,15,22</pctOmni>
@@ -212,6 +201,14 @@
 		<techMargin>3</techMargin>
 		<salvage pct='6'>CC:7,PR:1,FWL:10</salvage>
 	</faction>
+	<faction key='DoO'>
+		<pctOmni>0,4,11,15,22</pctOmni>
+		<pctClan>0,0,3,7,16</pctClan>
+		<pctSL>22,52,54,66,78</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='6'>CC:8,FWL:3</salvage>
+	</faction>
 	<faction key='DTA'>
 		<pctOmni>0,4,11,15,22</pctOmni>
 		<pctClan>0,0,3,7,16</pctClan>
@@ -220,21 +217,8 @@
 		<techMargin>3</techMargin>
 		<salvage pct='5'>LA:5</salvage>
 	</faction>
-	<faction key='MSC'>
-		<pctOmni>0,5,10,15,28</pctOmni>
-		<pctClan>0,0,4,8,18</pctClan>
-		<pctSL>25,56,52,60,82</pctSL>
-		<omniMargin>3</omniMargin>
+	<faction key='CEI'>
 		<techMargin>3</techMargin>
-		<salvage pct='6'>PR:1,FWL:10</salvage>
-	</faction>
-	<faction key='RCM'>
-		<pctOmni>0,4,11,15,22</pctOmni>
-		<pctClan>0,0,3,7,16</pctClan>
-		<pctSL>22,52,54,58,79</pctSL>
-		<omniMargin>3</omniMargin>
-		<techMargin>3</techMargin>
-		<salvage pct='6'>FWL:10</salvage>
 	</faction>
 	<faction key='FS'>
 		<pctOmni>7,12,17,23,28</pctOmni>
@@ -331,6 +315,14 @@
 		<techMargin>3</techMargin>
 		<salvage pct='6'>LA:3,FWL:3,SHC:7</salvage>
 	</faction>
+	<faction key='MSC'>
+		<pctOmni>0,5,10,15,28</pctOmni>
+		<pctClan>0,0,4,8,18</pctClan>
+		<pctSL>25,56,52,60,82</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='6'>PR:1,FWL:10</salvage>
+	</faction>
 	<faction key='MERC'>
 		<pctOmni>0,7,9,13,22</pctOmni>
 		<pctClan>0,3,5,7,19</pctClan>
@@ -423,6 +415,14 @@
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>LA:10</salvage>
+	</faction>
+	<faction key='RCM'>
+		<pctOmni>0,4,11,15,22</pctOmni>
+		<pctClan>0,0,3,7,16</pctClan>
+		<pctSL>22,52,54,58,79</pctSL>
+		<omniMargin>3</omniMargin>
+		<techMargin>3</techMargin>
+		<salvage pct='6'>FWL:10</salvage>
 	</faction>
 	<faction key='SHC'>
 		<omniMargin>3</omniMargin>
@@ -679,7 +679,7 @@
 		<pctSL>73</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:5,OA:1,FVC:1,DC:6,TC:2</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<pctOmni>32</pctOmni>
@@ -707,7 +707,7 @@
 		<pctSL>62</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
-		<salvage pct='7'></salvage>
+		<salvage pct='7'>DTA:4,CDS:1,RIM:1,FWL:2</salvage>
 	</faction>
 	<faction key='Periphery.DD'>
 		<omniMargin>3</omniMargin>
@@ -783,7 +783,7 @@
 		<pctSL>71</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>MOC:2,CC:8,FS:8,TC:2,DTA:4,OA:2,CDS:1,CW:5,LA:8,RIM:1,ROS:5,CNC:3,FWL:10,CJF:5,CGB:5,DC:8</salvage>
 	</faction>
 	<faction key='CGB.FRR'>
 		<pctOmni>12</pctOmni>
@@ -2743,7 +2743,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Lanner' unitType='Mek' omni='Clan'>
-		<availability>CHH:3,CJF:7,CCO:4</availability>
+		<availability>CHH:3,CJF:7,CCO:2</availability>
 		<model name='A'>
 			<roles>recon,spotter</roles>
 			<availability>General:7</availability>
@@ -2757,13 +2757,13 @@
 		</model>
 		<model name='D'>
 			<roles>urban</roles>
-			<availability>General:2</availability>
+			<availability>General:4</availability>
 		</model>
 		<model name='E'>
-			<availability>CLAN:6,CCO:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='H'>
-			<availability>CSA:6,CLAN:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
@@ -5752,10 +5752,10 @@
 		</model>
 	</chassis>
 	<chassis name='Fire Falcon' unitType='Mek' omni='Clan'>
-		<availability>CHH:5,CNC:3,CJF:7,CLAN.HW:5</availability>
+		<availability>CHH:5,CCC:2,CNC:3,CSL:1,CJF:7,CLAN.HW:2,CCO:2</availability>
 		<model name='A'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CW:6,General:8,CWIE:6,CGB:6</availability>
+			<availability>General:8</availability>
 		</model>
 		<model name='B'>
 			<roles>fire_support</roles>
@@ -5774,7 +5774,7 @@
 		</model>
 		<model name='E'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CLAN:6,IS:3,CCO:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='F'>
 			<roles>anti_infantry</roles>
@@ -5783,7 +5783,7 @@
 		</model>
 		<model name='H'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CSA:7,CLAN:6,IS:3</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='Prime'>
 			<deployedWith>Black Lanner</deployedWith>
@@ -15032,9 +15032,9 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:5,HL:2,IS:4,Periphery.Deep:6,FS:5,MERC:6,Periphery:3,TC:4,LA:6,ROS:5,NIOPS:3-,MH:4,DC:5</availability>
+		<availability>CC:5,MERC.KH:4,HL:2,CEI:1+,IS:4,Periphery.Deep:6,FS:5,MERC:6,Periphery:3,TC:4,FVC:4,MERC.WD:2,LA:6,ROS:5,NIOPS:3-,MH:4,DC:5</availability>
 		<model name='C'>
-			<availability>CSA:6,CCC:6</availability>
+			<availability>CSA:1-,CCC:1-,LA:2,CEI:1+,FS:2,DC:1</availability>
 		</model>
 		<model name='C 2'>
 			<availability>CJF:2</availability>

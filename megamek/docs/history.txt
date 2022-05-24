@@ -63,6 +63,10 @@ VERSION HISTORY:
 + Issue #3641: Fixing Server Game End ConMod
 + PR #3636: Standardizing Minimap Spelling
 + PR #3643: Trimming Trailing Whitespace from Service IP Address
++ Data: New Sprites, Updated board folder formating and added new maps.
++ Data: Added Rec Guide 16 to RAT Generator. 
++ Data: Added Factions from Tamar Rising to RAT Generator. 
+    These are set as Minor factions and given limited information RAT are based on the faction they derive from.
 + Moving Outdated Board Editor docs to docs/Archive Stuff
 + Updating to FlatLaf 2.2 from 2.0.1
 + Updating to Jackson XML 2.13.3 from 2.13.1

@@ -579,8 +579,6 @@ public class Princess extends BotClient {
                     }
                 } finally {
                     LogManager.getLogger().info(msg.toString());
-                    // TODO : Windchild Remove me
-                    LogManager.getLogger().error(msg.toString());
                 }
             }
 
@@ -659,7 +657,6 @@ public class Princess extends BotClient {
                     miscPlan = new Vector<>();
                     miscPlan.add(new WeaponAttackAction(shooter.getId(), shooter.getSwarmTargetId(),
                             shooter.getEquipmentNum(stopSwarmWeapon)));
-                    LogManager.getLogger().error("Adding Stop Swarm Action.");
                 }
             }
 

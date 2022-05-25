@@ -68,6 +68,7 @@ VERSION HISTORY:
 + Data: Added Factions from Tamar Rising to RAT Generator. 
     These are set as Minor factions and given limited information RAT are based on the faction they derive from.
 + Moving Outdated Board Editor docs to docs/Archive Stuff
++ Issue #3613: Princess: Adding Stop Swarm Behaviour For Fleeing
 + Updating to FlatLaf 2.2 from 2.0.1
 + Updating to Jackson XML 2.13.3 from 2.13.1
 + Updating to JAXB 4.0.0 from 2.3.2

@@ -19,7 +19,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,7 +67,7 @@ public class KeyBindParser {
 
         // Build the XML document.
         try {
-            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
+            DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
             LogManager.getLogger().debug("Parsing " + file.getName());
             Document doc = builder.parse(file);
             LogManager.getLogger().debug("Parsing finished.");

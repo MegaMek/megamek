@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.utils;
+package megamek.utilities;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;

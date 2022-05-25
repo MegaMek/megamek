@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.*;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
@@ -83,7 +83,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
 
             Unmarshaller um = jc.createUnmarshaller();
             InputStream is = new FileInputStream(config);
-            ev = (EntityVerifier) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            ev = (EntityVerifier) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
         } catch (Exception e) {
             LogManager.getLogger().error("Error loading XML for entity verifier: " + e.getMessage(), e);
 

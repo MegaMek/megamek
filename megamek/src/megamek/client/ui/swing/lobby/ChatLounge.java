@@ -59,7 +59,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.BoardsTagger;
+import megamek.utilities.BoardsTagger;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;

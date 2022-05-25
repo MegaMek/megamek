@@ -15,7 +15,7 @@ package megamek.client.ratgenerator;
 
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.annotations.Nullable;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -406,7 +406,7 @@ public class Ruleset {
 
         DocumentBuilder db;
         try (FileInputStream fis = new FileInputStream(f)) {
-            db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed loading force template from file " + f.getName(), ex);

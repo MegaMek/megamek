@@ -18,7 +18,7 @@ package megamek.common;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -168,7 +168,7 @@ public class WeaponOrderHandler {
         // Build the XML document.
         StringBuilder log = new StringBuilder();
         try {
-            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
+            DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
             log.append("Parsing ").append(path);
             Document doc = builder.parse(file);
             log.append("\n...Parsing finished.");

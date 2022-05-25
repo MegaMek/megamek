@@ -18,7 +18,7 @@ import megamek.client.ratgenerator.UnitTable.TableEntry;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -880,7 +880,7 @@ public class RATGenerator {
         Document xmlDoc;
 
         try {
-            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
@@ -939,7 +939,7 @@ public class RATGenerator {
         Document xmlDoc;
 
         try {
-            DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fis);
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);

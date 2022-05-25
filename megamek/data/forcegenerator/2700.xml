@@ -123,7 +123,7 @@
 		<salvage pct='5'>TH:10,SL:10,FWL:4,FS:7,TC:1</salvage>
 	</faction>
 	<faction key='FS.CrMM'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>CC:10,OA:3,TH:3,SL:10,TC:6,DC:8</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<salvage pct='5'></salvage>
@@ -136,7 +136,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.DG'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:10,SL:10,FWL:4,RWR:2,DC:5</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DMM'>

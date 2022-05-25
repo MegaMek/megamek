@@ -511,7 +511,7 @@
 		<pctOmni>7</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>81</pctSL>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:6,OA:1,FWL:3,CJF:8,TC:3,DC:10</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<pctOmni>27</pctOmni>
@@ -542,7 +542,7 @@
 		<pctOmni>15</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>57</pctSL>
-		<salvage pct='7'></salvage>
+		<salvage pct='7'>FRR:2,CM:1,FWL:10,CJF:1,ARDC:1,DC:6</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DMM'>
@@ -2466,7 +2466,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Lanner' unitType='Mek' omni='Clan'>
-		<availability>CIH:4,CSV:4,CJF:7,CCO:4</availability>
+		<availability>CIH:4,CSV:4,CJF:7,CCO:4:3068</availability>
 		<model name='A'>
 			<roles>recon,spotter</roles>
 			<availability>General:7</availability>
@@ -2480,13 +2480,13 @@
 		</model>
 		<model name='D'>
 			<roles>urban</roles>
-			<availability>General:2</availability>
+			<availability>General:4</availability>
 		</model>
 		<model name='E'>
-			<availability>CLAN:6,CCO:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='H'>
-			<availability>CSA:6,CLAN:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
@@ -5358,10 +5358,10 @@
 		</model>
 	</chassis>
 	<chassis name='Fire Falcon' unitType='Mek' omni='Clan'>
-		<availability>CHH:5,CIH:5,SOC:5,CNC:3,CFM:6,CLAN.HW:5,CJF:7</availability>
+		<availability>CHH:5,CCC:2,CIH:5,SOC:5,CNC:3,CFM:4,CLAN.HW:5,CJF:7,CCO:3,CGS:3</availability>
 		<model name='A'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CW:6,General:8,CWIE:6,CGB:6</availability>
+			<availability>General:8</availability>
 		</model>
 		<model name='B'>
 			<roles>fire_support</roles>
@@ -5380,7 +5380,7 @@
 		</model>
 		<model name='E'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CLAN:6,IS:2,CCO:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='F'>
 			<roles>anti_infantry</roles>
@@ -5389,7 +5389,7 @@
 		</model>
 		<model name='H'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CSA:7,CLAN:6,IS:2</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='Prime'>
 			<deployedWith>Black Lanner</deployedWith>
@@ -14393,9 +14393,9 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:6,HL:3,CLAN:1,IS:6,Periphery.Deep:6,WOB:2-,FS:6,MERC:6,Periphery:4,TC:4,CS:3-,LA:6,NIOPS:3-,MH:4,DC:6</availability>
+		<availability>CC:6,HL:3,MERC.ELH:8,CLAN:1,IS:6,Periphery.Deep:6,WOB:2-,CFM:1,FS:6,MERC:6,Periphery:4,TC:4,CS:3-,FVC:5,MERC.WD:4,LA:6,NIOPS:3-,MH:4,DC:6</availability>
 		<model name='C'>
-			<availability>CSA:6,CCC:6,LA:2,CSV:6,CFM:6,FS:2,CGS:6,CB:6,DC:2</availability>
+			<availability>CSA:1-,CCC:1-,LA:2,CFM:1,CLAN.IS:1-,FS:1,CGS:1-,DC:1+,CB:1</availability>
 		</model>
 		<model name='C 2'>
 			<availability>CJF:2</availability>

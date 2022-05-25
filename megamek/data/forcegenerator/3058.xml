@@ -503,7 +503,7 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>55</pctSL>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:9,OA:1,FWL:3,CSJ:1,CJF:8,TC:3,DC:10</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<pctOmni>9</pctOmni>
@@ -534,7 +534,7 @@
 		<pctOmni>4</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>40</pctSL>
-		<salvage pct='7'></salvage>
+		<salvage pct='7'>FRR:2,CM:0,FWL:10,CJF:10,DC:10</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DMM'>
@@ -1807,7 +1807,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Lanner' unitType='Mek' omni='Clan'>
-		<availability>CIH:4,CSV:4,CJF:5</availability>
+		<availability>CSV:4,CJF:5</availability>
 		<model name='A'>
 			<roles>recon,spotter</roles>
 			<availability>General:7</availability>
@@ -1821,7 +1821,7 @@
 		</model>
 		<model name='D'>
 			<roles>urban</roles>
-			<availability>General:2</availability>
+			<availability>General:4</availability>
 		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
@@ -3628,10 +3628,10 @@
 		</model>
 	</chassis>
 	<chassis name='Fire Falcon' unitType='Mek' omni='Clan'>
-		<availability>CFM:2,CJF:4</availability>
+		<availability>CFM:2,CJF:4,CCO:2</availability>
 		<model name='A'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CW:6,General:8,CWIE:6,CGB:6</availability>
+			<availability>General:8</availability>
 		</model>
 		<model name='B'>
 			<roles>fire_support</roles>
@@ -9030,9 +9030,9 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:7,HL:3,CLAN:2,IS:8,Periphery.Deep:6,WOB:3-,FS:7,MERC:8,Periphery:4,TC:4,CS:4-,LA:8,NIOPS:4-,MH:4,DC:8</availability>
+		<availability>CC:7,CCC:1-,HL:3,MERC.ELH:7+,CLAN:1-,IS:8,Periphery.Deep:6,WOB:3-,CLAN.IS:1-,FS:7,MERC:8,CGS:1-,Periphery:4,TC:4,CS:4-,CSA:1-,MERC.WD:4,LA:8,NIOPS:4-,MH:4,DC:8,CB:1</availability>
 		<model name='C'>
-			<availability>CSA:4,CCC:4,LA:2,CSV:4,CFM:4,FS:2,CGS:4,DC:2,CB:4</availability>
+			<availability>CSA:1-,CCC:1-,LA:2+,CLAN.IS:1-,FS:1+,CGS:1-,CB:1,DC:1+</availability>
 		</model>
 		<model name='C 2'>
 			<availability>CJF:2</availability>

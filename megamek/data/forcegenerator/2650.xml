@@ -126,7 +126,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.DG'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:10,SL:10,FWL:4,RWR:2,DC:4</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DL'>

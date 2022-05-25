@@ -225,7 +225,8 @@ public class Compute {
     }
 
     /**
-     * Wrapper to random#randomInt(n)
+     * Generates a number between 0 and maxValue - 1.
+     * e.g. randomInt(2) will generate either 0s or 1s
      */
     public static int randomInt(int maxValue) {
         Roll roll = new MMRoll(random, maxValue);

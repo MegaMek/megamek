@@ -33,18 +33,19 @@ import megamek.common.commandline.AbstractCommandLineParser;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
-import megamek.common.net.AbstractConnection;
-import megamek.common.net.ConnectionFactory;
-import megamek.common.net.ConnectionListener;
-import megamek.common.net.Packet;
+import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.events.DisconnectedEvent;
 import megamek.common.net.events.PacketReceivedEvent;
+import megamek.common.net.factories.ConnectionFactory;
+import megamek.common.net.listeners.ConnectionListener;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -187,7 +188,7 @@ public class Server implements Runnable {
     }
 
     // game info
-    private Vector<AbstractConnection> connections = new Vector<>(4);
+    private final Vector<AbstractConnection> connections = new Vector<>(4);
 
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
@@ -675,7 +676,8 @@ public class Server implements Runnable {
         // close socket
         try {
             serverSocket.close();
-        } catch (IOException ignored) {
+        } catch (Exception ignored) {
+
         }
 
         // kill pending connections
@@ -687,23 +689,22 @@ public class Server implements Runnable {
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
-        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            send(conn.getId(), new Packet(PacketCommand.CLOSE_CONNECTION));
-        }
+        send(new Packet(PacketCommand.CLOSE_CONNECTION));
 
         // kill active connections
-        for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            conn.close();
+        synchronized (connections) {
+            connections.forEach(AbstractConnection::close);
+            connections.clear();
         }
 
+        connectionIds.clear();
+
+        // Shutdown Email
         if (mailer != null) {
             mailer.shutdown();
         }
 
-        connections.removeAllElements();
-        connectionIds.clear();
+        // Unregister Server Browser Setup
         if (serverBrowserUpdateTimer != null) {
             serverBrowserUpdateTimer.cancel();
         }
@@ -1119,7 +1120,7 @@ public class Server implements Runnable {
             send(new Packet(PacketCommand.PLAYER_REMOVE, player.getId()));
             // Prevent situation where all players but the disconnected one
             // are done, and the disconnecting player causes the game to start
-            if (phase == GamePhase.LOUNGE) {
+            if (phase.isLounge()) {
                 resetActivePlayersDone();
             }
         } else {
@@ -2993,9 +2994,6 @@ public class Server implements Runnable {
     }
 
     private void sendSpecialHexDisplayPackets() {
-        if (connections == null) {
-            return;
-        }
         for (int i = 0; i < connections.size(); i++) {
             if (connections.get(i) != null) {
                 connections.get(i).send(createSpecialHexDisplayPacket(i));
@@ -9975,13 +9973,14 @@ public class Server implements Runnable {
                 final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                 // Make sure we got the right type of response
                 if (!cfrType.isCFRTagTarget()) {
-                    LogManager.getLogger().error("Expected a COMMAND_CFR_TAG_TARGET CFR packet, received: " + cfrType);
+                    LogManager.getLogger().error("Expected a CFR_TAG_TARGET CFR packet, received: " + cfrType);
                     continue;
                 }
                 // Check packet came from right ID
                 if (rp.getConnectionId() != playerId) {
-                    LogManager.getLogger().error("Expected a CFR_TAG_TARGET CFR packet from player  " + playerId
-                                    + " but instead it came from player " + rp.getConnectionId());
+                    LogManager.getLogger().error(String.format(
+                            "Expected a CFR_TAG_TARGET CFR packet from player %d but instead it came from player %d",
+                            playerId, rp.getConnectionId()));
                     continue;
                 }
                 return (int) rp.getPacket().getData()[1];
@@ -12807,9 +12806,10 @@ public class Server implements Runnable {
                     synchronized (cfrPacketQueue) {
                         try {
                             cfrPacketQueue.wait();
-                        } catch (InterruptedException ignored) {
-                            // Do nothing
+                        } catch (Exception ignored) {
+
                         }
+
                         if (!cfrPacketQueue.isEmpty()) {
                             ReceivedPacket rp = cfrPacketQueue.poll();
                             final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
@@ -12904,7 +12904,8 @@ public class Server implements Runnable {
                 PacketCommand.CFR_TAG_TARGET, targetIds, targetTypes));
     }
 
-    private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest, int elev) {
+    private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity, Coords src,
+                                                              Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<>();
         boolean boom = checkVibrabombs(entity, dest, true, vPhaseReport);
         if (game.containsMinefield(dest)) {
@@ -13826,7 +13827,7 @@ public class Server implements Runnable {
                     ReceivedPacket rp = cfrPacketQueue.poll();
                     final PacketCommand cfrType = (PacketCommand) rp.getPacket().getObject(0);
                     // Make sure we got the right type of response
-                    if (!cfrType.isCFRHiddenPBS()) {
+                    if (!cfrType.isCFRAPDSAssign()) {
                         LogManager.getLogger().error("Expected a CFR_APDS_ASSIGN CFR packet, received: " + cfrType);
                         throw new IllegalStateException();
                     }
@@ -13888,16 +13889,15 @@ public class Server implements Runnable {
             WeaponAttackAction targetedWAA = null;
 
             if (ams.curMode().equals("Automatic")) {
-                targetedWAA = Compute.getHighestExpectedDamage(game,
-                        vAttacksInArc, true);
+                targetedWAA = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
             } else {
                 // Send a client feedback request
                 sendAMSAssignCFR(e, ams, vAttacksInArc);
                 synchronized (cfrPacketQueue) {
                     try {
                         cfrPacketQueue.wait();
-                    } catch (InterruptedException ignored) {
-                        // Do nothing
+                    } catch (Exception ignored) {
+
                     }
 
                     if (!cfrPacketQueue.isEmpty()) {
@@ -30054,7 +30054,6 @@ public class Server implements Runnable {
         entityUpdate(entityId);
     }
 
-
     /**
      * receive and process an entity nova network mode change packet
      *
@@ -30612,8 +30611,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Creates a packet containing all entities visible to the player in a blind
-     * game
+     * Creates a packet containing all entities visible to the player in a blind game
      */
     private Packet createFilteredEntitiesPacket(Player p,
                                                 Map<EntityTargetPair, LosEffects> losCache) {
@@ -30852,8 +30850,7 @@ public class Server implements Runnable {
     }
 
     private Packet createIlluminatedHexesPacket() {
-        HashSet<Coords> illuminateHexes = game.getIlluminatedPositions();
-        return new Packet(PacketCommand.SENDING_ILLUM_HEXES, illuminateHexes);
+        return new Packet(PacketCommand.SENDING_ILLUM_HEXES, getGame().getIlluminatedPositions());
     }
 
     /**
@@ -30867,16 +30864,14 @@ public class Server implements Runnable {
      * Send a packet to all connected clients.
      */
     void send(Packet packet) {
-        if (connections == null) {
-            return;
+        synchronized (connections) {
+            connections.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(connection -> connection.send(packet));
         }
-
-        connections.stream()
-                .filter(Objects::nonNull)
-                .forEach(connection -> connection.send(packet));
     }
 
-    public void send_Nova_Change(int id, String net) {
+    public void sendNovaChange(int id, String net) {
         send(new Packet(PacketCommand.ENTITY_NOVA_NETWORK_CHANGE, id, net));
     }
 
@@ -30894,14 +30889,10 @@ public class Server implements Runnable {
                     var reports = filterReportVector(vPhaseReport, player);
                     var message = mailer.newReportMessage(game, reports, player);
                     mailer.send(message);
-                } catch (Exception e) {
-                    LogManager.getLogger().error("Error sending round report", e);
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Error sending round report", ex);
                 }
             }
-        }
-
-        if (connections == null) {
-            return;
         }
 
         for (Enumeration<AbstractConnection> connEnum = connections.elements(); connEnum.hasMoreElements(); ) {
@@ -31161,14 +31152,13 @@ public class Server implements Runnable {
                 Object[] data = packet.getData();
                 Entity ent = game.getEntity((Integer) data[0]);
                 if (ent != null) {
-                    Entity.WeaponSortOrder order = (Entity.WeaponSortOrder) data[1];
+                    WeaponSortOrder order = (WeaponSortOrder) data[1];
                     ent.setWeaponSortOrder(order);
                     // Used by the client but is set in setWeaponSortOrder
                     ent.setWeapOrderChanged(false);
-                    if (order == Entity.WeaponSortOrder.CUSTOM) {
-                        @SuppressWarnings("unchecked")
-                        // Unchecked cause of limitations in Java when casting
-                        // to a collection
+                    if (order.isCustom()) {
+                        // Unchecked cause of limitations in Java when casting to a collection
+                        @SuppressWarnings(value = "unchecked")
                         Map<Integer, Integer> customWeaponOrder = (Map<Integer, Integer>) data[2];
                         ent.setCustomWeaponOrder(customWeaponOrder);
                     }

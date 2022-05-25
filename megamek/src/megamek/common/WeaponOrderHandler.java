@@ -15,8 +15,8 @@
 */
 package megamek.common;
 
-import megamek.common.Entity.WeaponSortOrder;
 import megamek.common.annotations.Nullable;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utils.MegaMekXmlUtil;
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class WeaponOrderHandler {
 
     public static class WeaponOrder {
-        public Entity.WeaponSortOrder orderType = WeaponSortOrder.DEFAULT;
+        public WeaponSortOrder orderType = WeaponSortOrder.DEFAULT;
         public Map<Integer, Integer> customWeaponOrderMap = new HashMap<>();
 
         @Override
@@ -109,8 +109,7 @@ public class WeaponOrderHandler {
                 continue;
             }
 
-
-            if (weapOrder.orderType == WeaponSortOrder.CUSTOM) {
+            if (weapOrder.orderType.isCustom()) {
                 // Build weapon and order lists
                 for (Integer weapId : weapOrder.customWeaponOrderMap.keySet()) {
                     Integer order = weapOrder.customWeaponOrderMap.get(weapId);
@@ -220,10 +219,9 @@ public class WeaponOrderHandler {
 
                 WeaponOrder weapOrder = new WeaponOrder();
                 weapOrder.orderType = WeaponSortOrder.valueOf(orderTypeElement.getTextContent());
-                if (weapOrder.orderType == WeaponSortOrder.CUSTOM) {
+                if (weapOrder.orderType.isCustom()) {
                     String[] weaponList = weaponListElement.getTextContent().split(",");
                     String[] orderList = orderListElement.getTextContent().split(",");
-                    assert (weaponList.length == orderList.length);
                     for (int i = 0; i < weaponList.length; i++) {
                         weapOrder.customWeaponOrderMap.put(
                                 Integer.parseInt(weaponList[i]),

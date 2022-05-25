@@ -440,38 +440,25 @@ public final class Player extends TurnOrdered {
      * @return the bonus to this player's initiative rolls granted by his units
      */
     public int getTurnInitBonus() {
-        int bonusHQ = 0;
-        int bonusMD = 0;
-        int bonusQ = 0;
+        int bonus = 0;
         if (game == null) {
             return 0;
         }
         if (game.getEntitiesVector() == null) {
             return 0;
         }
+        
+        // per TacOps:AR page 162-163, only the highest bonus should available should be used.
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)
-                    && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
-                    bonusHQ = entity.getHQIniBonus();
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)) {
+                    bonus = Math.max(entity.getHQIniBonus(), bonus);
                 }
                 
-                /*
-                 * REMOVED IN IO.
-                 * if (game.getOptions().booleanOption(OptionsConstants.
-                 * RPG_MANEI_DOMINI) && (bonusMD == 0) &&
-                 * (entity.getMDIniBonus() > 0)) { bonusMD =
-                 * entity.getMDIniBonus(); }
-                 */
-                if (entity.getQuirkIniBonus() > bonusQ) {
-                    //TODO: I am assuming that the quirk initiative bonuses go to the highest,
-                    //rather than being cumulative
-                    //http://www.classicbattletech.com/forums/index.php/topic,52903.new.html#new
-                    bonusQ = entity.getQuirkIniBonus();
-                }
+                bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }
-        return bonusHQ + bonusMD + bonusQ;
+        return bonus;
     }
 
     /**

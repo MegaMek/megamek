@@ -324,7 +324,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.CrMM'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>CC:10,TC:1,DC:4</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<salvage pct='5'></salvage>
@@ -343,7 +343,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.DG'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>FWL:6,DC:10</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DMM'>
@@ -5227,7 +5227,10 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:8,HL:3,CLAN:4,IS:8,Periphery.Deep:6,FS:7,MERC:8,Periphery:5,TC:5,CS:5-,LA:8,NIOPS:5-,MH:5,DC:8</availability>
+		<availability>CC:8,CCC:2-,CHH:1-,CSR:2-,HL:3,CLAN:1-,IS:8,Periphery.Deep:6,FS:7,MERC:8,CGS:2-,Periphery:5,TC:5,CS:5-,CSA:1-,LA:8,CBS:2,NIOPS:5-,MH:5,CSJ:1-,CJF:1-,DC:8,CB:2</availability>
+		<model name='C'>
+			<availability>CSA:1-,CCC:2-,CHH:1-,CSR:2-,CBS:2,CSJ:1-,CGS:2-,CJF:1-,CB:2</availability>
+		</model>
 		<model name='TDR-5D'>
 			<availability>FS:4,MERC:2</availability>
 		</model>

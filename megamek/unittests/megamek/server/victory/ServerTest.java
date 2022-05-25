@@ -6,35 +6,34 @@ import megamek.common.Player;
 import megamek.common.force.Forces;
 import megamek.common.options.GameOptions;
 import megamek.server.Server;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(value = JUnit4.class)
 public class ServerTest {
 
     protected Game createMockedGame() {
-        Game testGame = Mockito.mock(Game.class);
+        Game testGame = mock(Game.class);
         Forces testForces = new Forces(testGame);
-        Mockito.when(testGame.getGameListeners()).thenReturn(new Vector<>());
-        Mockito.when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
-        Mockito.when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
-        Mockito.when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
-        Mockito.when(testGame.getForces()).thenReturn(testForces);
-        Mockito.when(testGame.getOptions()).thenReturn(new GameOptions());
+        when(testGame.getGameListeners()).thenReturn(new Vector<>());
+        when(testGame.getEntities()).thenReturn(Collections.emptyIterator());
+        when(testGame.getPlayers()).thenReturn(Collections.emptyEnumeration());
+        when(testGame.getAttacks()).thenReturn(Collections.emptyEnumeration());
+        when(testGame.getForces()).thenReturn(testForces);
+        when(testGame.getOptions()).thenReturn(new GameOptions());
         return testGame;
     }
-
 
     @Test
     public void testVictory() throws IOException {
@@ -44,13 +43,13 @@ public class ServerTest {
 
         Game testGame = createMockedGame();
 
-        //test whether the server.victory() returns false when mocking VictoryResult as false
-        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
+        // test whether the server.victory() returns false when mocking VictoryResult as false
+        when(testGame.getVictoryResult()).thenReturn(testVictoryResultFalse);
         testServer.setGame(testGame);
         assertFalse(testServer.victory());
 
-        //test whether the server.victory() returns true when mocking VictoryResult as true
-        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
+        // test whether the server.victory() returns true when mocking VictoryResult as true
+        when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
         testServer.setGame(testGame);
         assertTrue(testServer.victory());
     }
@@ -60,12 +59,12 @@ public class ServerTest {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(true);
         Game testGame = createMockedGame();
-        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
+        when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
         testServer.victory();
-        Mockito.verify(testGame, Mockito.times(1)).setVictoryPlayerId(Player.PLAYER_NONE);
-        Mockito.verify(testGame, Mockito.times(1)).setVictoryTeam(Player.TEAM_NONE);
+        verify(testGame, times(1)).setVictoryPlayerId(Player.PLAYER_NONE);
+        verify(testGame, times(1)).setVictoryTeam(Player.TEAM_NONE);
     }
 
     @Test
@@ -73,13 +72,11 @@ public class ServerTest {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
-        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
+        when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
 
         testServer.setGame(testGame);
         testServer.victory();
-        Mockito.verify(testGame, Mockito.times(1)).cancelVictory();
-
-
+        verify(testGame, times(1)).cancelVictory();
     }
 
     @Test
@@ -87,14 +84,12 @@ public class ServerTest {
         Server testServer = new Server("test", 0);
         VictoryResult testVictoryResultTrue = new VictoryResult(false);
         Game testGame = createMockedGame();
-        Mockito.when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
-        Mockito.when(testGame.isForceVictory()).thenReturn(true);
-
+        when(testGame.getVictoryResult()).thenReturn(testVictoryResultTrue);
+        when(testGame.isForceVictory()).thenReturn(true);
 
         testServer.setGame(testGame);
         testServer.victory();
-        Mockito.verify(testGame, Mockito.times(1)).cancelVictory();
-
+        verify(testGame, times(1)).cancelVictory();
     }
 
     @Test
@@ -106,20 +101,20 @@ public class ServerTest {
         // Mock a win victory result
         // Only 1 report should be generated as the team is set to TEAM_NONE
         Game testGame = createMockedGame();
-        VictoryResult victoryResult = Mockito.mock(VictoryResult.class);
-        Mockito.when(victoryResult.processVictory(testGame)).thenCallRealMethod();
-        Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());
-        Mockito.when(victoryResult.victory()).thenReturn(true);
-        Mockito.when(victoryResult.isDraw()).thenReturn(false);
-        Mockito.when(victoryResult.getWinningPlayer()).thenReturn(winner);
-        Mockito.when(victoryResult.getWinningTeam()).thenReturn(Player.TEAM_NONE);
+        VictoryResult victoryResult = mock(VictoryResult.class);
+        when(victoryResult.processVictory(testGame)).thenCallRealMethod();
+        when(victoryResult.getReports()).thenReturn(new ArrayList<>());
+        when(victoryResult.victory()).thenReturn(true);
+        when(victoryResult.isDraw()).thenReturn(false);
+        when(victoryResult.getWinningPlayer()).thenReturn(winner);
+        when(victoryResult.getWinningTeam()).thenReturn(Player.TEAM_NONE);
 
-        Player mockedPlayer = Mockito.mock(Player.class);
-        Mockito.when(mockedPlayer.getName()).thenReturn("The champion");
-        Mockito.when(mockedPlayer.getColour()).thenReturn(PlayerColour.BLUE);
+        Player mockedPlayer = mock(Player.class);
+        when(mockedPlayer.getName()).thenReturn("The champion");
+        when(mockedPlayer.getColour()).thenReturn(PlayerColour.BLUE);
 
-        Mockito.when(testGame.getVictoryResult()).thenReturn(victoryResult);
-        Mockito.when(testGame.getPlayer(winner)).thenReturn(mockedPlayer);
+        when(testGame.getVictoryResult()).thenReturn(victoryResult);
+        when(testGame.getPlayer(winner)).thenReturn(mockedPlayer);
 
         testServer.setGame(testGame);
         testServer.victory();
@@ -130,14 +125,11 @@ public class ServerTest {
         // Two reports should be generated
         Server testServer2 = new Server("test", 0);
 
-        Mockito.when(victoryResult.getWinningTeam()).thenReturn(10);
-        Mockito.when(victoryResult.getReports()).thenReturn(new ArrayList<>());
+        when(victoryResult.getWinningTeam()).thenReturn(10);
+        when(victoryResult.getReports()).thenReturn(new ArrayList<>());
         testServer2.setGame(testGame);
         testServer2.victory();
 
         assertSame(2, testServer2.getvPhaseReport().size());
     }
-
 }
-
-

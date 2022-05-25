@@ -100,7 +100,7 @@
 	<faction key='FWL.DA'/>
 	<faction key='DC.DR'/>
 	<faction key='LA.DG'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>TH:7,FWL:3,DC:2</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FWL.FWG'/>

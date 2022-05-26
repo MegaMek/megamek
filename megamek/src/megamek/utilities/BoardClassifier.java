@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.utils;
+package megamek.utilities;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.BoardsTagger.Tags;
+import megamek.utilities.BoardsTagger.Tags;
 
 /**
  * This class scans the boards directory and allows the selection of a random 

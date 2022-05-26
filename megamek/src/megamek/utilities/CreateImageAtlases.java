@@ -12,7 +12,7 @@
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  * for more details.
  */
-package megamek.utils;
+package megamek.utilities;
 
 import megamek.client.ui.swing.tileset.HexTileset;
 import megamek.client.ui.swing.util.ImageAtlasMap;

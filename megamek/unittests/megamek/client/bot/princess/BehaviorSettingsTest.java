@@ -19,7 +19,7 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -184,7 +184,7 @@ public class BehaviorSettingsTest {
 
     @Test
     public void testFromXml() throws ParserConfigurationException, IOException, SAXException, PrincessException {
-        DocumentBuilder documentBuilder = MegaMekXmlUtil.newSafeDocumentBuilder();
+        DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
 
         // Test loading good behavior settings.
         Reader reader = new CharArrayReader(BehaviorSettingsTestConstants.GOOD_BEHAVIOR_XML.toCharArray());

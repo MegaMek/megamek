@@ -25,7 +25,7 @@ import megamek.common.commandline.MegaMekCommandLineFlag;
 import megamek.common.commandline.MegaMekCommandLineParser;
 import megamek.common.preference.PreferenceManager;
 import megamek.server.DedicatedServer;
-import megamek.utils.RATGeneratorEditor;
+import megamek.utilities.RATGeneratorEditor;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;

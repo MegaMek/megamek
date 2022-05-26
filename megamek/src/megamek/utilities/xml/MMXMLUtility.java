@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.utils;
+package megamek.utilities.xml;
 
 import megamek.common.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-public class MegaMekXmlUtil {
+public class MMXMLUtility {
     //region Variable Declarations
     private static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY;
     private static SAXParserFactory SAX_PARSER_FACTORY;

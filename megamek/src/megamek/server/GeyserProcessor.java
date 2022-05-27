@@ -39,7 +39,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
     @Override
     public void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         // 1st time, find geysers on board
-        if (geysers == null || gameManager.getGame().getRoundCount() == 1) {
+        if ((geysers == null) || (gameManager.getGame().getRoundCount() == 1)) {
             geysers = new Vector<>();
             findGeysers();
         }

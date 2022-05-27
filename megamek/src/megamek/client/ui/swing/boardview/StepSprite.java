@@ -131,7 +131,6 @@ class StepSprite extends Sprite {
         drawConditions(step, graph, col);
 
         Shape currentArrow;
-        boolean shiftFlag = false;
         // draw arrows and cost for the step
         switch (step.getType()) {
             case FORWARDS:
@@ -150,8 +149,7 @@ class StepSprite extends Sprite {
             case LOOP:
                 // forward movement arrow
                 drawArrowShape(g2D, moveArrow, col);
-                
-                drawMovementCost(step, isLastStep, jumped, bv.game, new Point(0, 0), graph, col, true);
+                drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, true);
                 drawRemainingVelocity(step, graph, true);
                 break;
             case GO_PRONE:
@@ -163,7 +161,7 @@ class StepSprite extends Sprite {
                 // draw arrow indicating dropping prone
                 currentArrow = upDownOffset.createTransformedShape(bv.downArrow);
                 drawArrowShape(g2D, currentArrow, col);
-                drawMovementCost(step, isLastStep, jumped, bv.game, new Point(1, 15), graph, col, false);
+                drawMovementCost(step, isLastStep, new Point(1, 15), graph, col, false);
                 drawRemainingVelocity(step, graph, true);
                 break;
             case GET_UP:
@@ -172,7 +170,7 @@ class StepSprite extends Sprite {
                 // draw arrow indicating standing up
                 currentArrow = upDownOffset.createTransformedShape(bv.upArrow);
                 drawArrowShape(g2D, currentArrow, col);
-                drawMovementCost(step, isLastStep, jumped, bv.game, new Point(0, 15), graph, col, false);
+                drawMovementCost(step, isLastStep, new Point(0, 15), graph, col, false);
                 drawRemainingVelocity(step, graph, true);
                 break;
             case CLIMB_MODE_ON:
@@ -206,13 +204,13 @@ class StepSprite extends Sprite {
                 }
 
                 if (bv.game.useVectorMove()) {
-                    drawMovementCost(step, isLastStep, jumped, bv.game, new Point(0, 0), graph, col, false);
+                    drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, false);
                 }
                 break;
             case BOOTLEGGER:
                 // draw arrows showing them entering the next
                 drawArrowShape(g2D, moveArrow, col);
-                drawMovementCost(step, isLastStep, jumped, bv.game, new Point(0, 0), graph, col, true);
+                drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, true);
                 break;
             case LOAD:
                 String load = Messages.getString("BoardView1.Load");
@@ -262,7 +260,7 @@ class StepSprite extends Sprite {
                 int modePos = 38;
                 if (step.getMp() > 0) {
                     // draw movement cost
-                    drawMovementCost(step, isLastStep, jumped, bv.game, new Point(0, 0), graph, col, true);
+                    drawMovementCost(step, isLastStep, new Point(0, 0), graph, col, true);
                     modePos += 16;
                 }
                 // show new movement mode
@@ -286,10 +284,13 @@ class StepSprite extends Sprite {
             drawArrowShape(g2D, finalFacingArrow, col);
         }
 
-
         if (step.isVTOLBombingStep() || step.isStrafingStep()) {
             graph.setColor(col);
             g2D.fill(HexDrawUtilities.getHexFullBorderArea(3, 0));
+        }
+
+        if (isLastLegalStep) {
+            drawTMMAndRolls(step, isLastStep, jumped, bv.game, new Point(0, 0), graph, col, true);
         }
 
         baseScaleImage = bv.createImage(tempImage.getSource());
@@ -455,7 +456,7 @@ class StepSprite extends Sprite {
         }
     }
 
-    private void drawMovementCost(MoveStep step, boolean isLastStep, boolean jumped, Game game,
+    private void drawMovementCost(MoveStep step, boolean isLastStep,
                                   Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
         StringBuilder costStringBuf = new StringBuilder();
         costStringBuf.append(step.getMpUsed());
@@ -484,18 +485,12 @@ class StepSprite extends Sprite {
         }
 
         EntityMovementType moveType = step.getMovementType(isLastStep);
-        if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
-                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)
-                || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
-                || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
-            costStringBuf.append('{').append(step.getElevation())
-                    .append('}');
+        if ((moveType == EntityMovementType.MOVE_VTOL_WALK) || (moveType == EntityMovementType.MOVE_VTOL_RUN) || (moveType == EntityMovementType.MOVE_VTOL_SPRINT) || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK) || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
+            costStringBuf.append('{').append(step.getElevation()).append('}');
         }
 
         if (step.getAltitude() > 0) {
-            costStringBuf.append('{').append(step.getAltitude())
-                    .append('}');
+            costStringBuf.append('{').append(step.getAltitude()).append('}');
         }
 
         // Convert the buffer to a String and draw it.
@@ -509,56 +504,51 @@ class StepSprite extends Sprite {
         graph.drawString(costString, costX, stepPos.y + 39);
         graph.setColor(col);
         graph.drawString(costString, costX - 1, stepPos.y + 38);
+    }
 
-        if (isLastStep) {
-            // draw MASC/Supecharger target number hints smaller
-            StringBuilder subscriptStringBuf = new StringBuilder();
+    private void drawTMMAndRolls(MoveStep step, boolean isLastStep, boolean jumped, Game game,
+                                 Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
 
-            int distance = step.getDistance();
-            boolean isVTOL = false; //step.getEntity().;
+        StringBuilder subscriptStringBuf = new StringBuilder();
 
-            ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, isVTOL, game);
-            subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
-            subscriptStringBuf.append(toHitData.getValue());
+        int distance = step.getDistance();
+        boolean isVTOL = false; //step.getEntity().;
 
-            boolean closeParens = false;
-            if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
-                subscriptStringBuf.append(" S");
-                subscriptStringBuf.append(step.getTargetNumberSupercharger());
-                subscriptStringBuf.append('+');
-                closeParens = true;
-            }
+        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, isVTOL, game);
+        subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
+        subscriptStringBuf.append(toHitData.getValue());
 
-            if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
-                if (step.isUsingSupercharger()) {
-                    subscriptStringBuf.append(" M");
-                } else {
-                    subscriptStringBuf.append(" M");
-                }
-                subscriptStringBuf.append(step.getTargetNumberMASC());
-                subscriptStringBuf.append('+');
-                closeParens = true;
-            }
-
-//            if (closeParens) {
-//                subscriptStringBuf.append(')');
-//            }
-
-            if (subscriptStringBuf.length() != 0) {
-                // draw it below the main string.
-                int subscriptY = stepPos.y + 39 + (graph.getFontMetrics(graph.getFont()).getHeight() / 2);
-                String subscriptString = subscriptStringBuf.toString();
-                Font subscriptFont = getMovementFont().deriveFont(getMovementFont().getSize() * 0.5f);
-                graph.setFont(subscriptFont);
-                int subscriptX = stepPos.x + 42;
-                if (shiftFlag) {
-                    subscriptX -= (graph.getFontMetrics(graph.getFont()).stringWidth(subscriptString) / 2);
-                }
-                graph.setColor(Color.darkGray);
-                graph.drawString(subscriptString, subscriptX, subscriptY);
-                graph.setColor(col);
-                graph.drawString(subscriptString, subscriptX - 1, subscriptY - 1);
-            }
+        if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+            subscriptStringBuf.append(" S");
+            subscriptStringBuf.append(step.getTargetNumberSupercharger());
+            subscriptStringBuf.append('+');
         }
+
+        if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+            if (step.isUsingSupercharger()) {
+                subscriptStringBuf.append(" M");
+            } else {
+                subscriptStringBuf.append(" M");
+            }
+            subscriptStringBuf.append(step.getTargetNumberMASC());
+            subscriptStringBuf.append('+');
+        }
+
+        if (subscriptStringBuf.length() != 0) {
+            // draw it below the main string.
+            int subscriptY = stepPos.y + 39 + (graph.getFontMetrics(graph.getFont()).getHeight() / 2);
+            String subscriptString = subscriptStringBuf.toString();
+            Font subscriptFont = getMovementFont().deriveFont(getMovementFont().getSize() * 0.5f);
+            graph.setFont(subscriptFont);
+            int subscriptX = stepPos.x + 42;
+            if (shiftFlag) {
+                subscriptX -= (graph.getFontMetrics(graph.getFont()).stringWidth(subscriptString) / 2);
+            }
+            graph.setColor(Color.darkGray);
+            graph.drawString(subscriptString, subscriptX, subscriptY);
+            graph.setColor(col);
+            graph.drawString(subscriptString, subscriptX - 1, subscriptY - 1);
+        }
+
     }
 }

@@ -272,8 +272,6 @@ public class MegaMek {
         mmg.startHost(resolver.password, resolver.port, resolver.registerServer,
                 resolver.announceUrl, resolver.mailPropertiesFile, gameFile,
                 resolver.playerName );
-
-        mmg.startClient(resolver.playerName+".2", resolver.serverAddress, resolver.port);
     }
 
     /**

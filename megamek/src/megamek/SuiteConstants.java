@@ -26,7 +26,7 @@ import java.time.LocalDate;
 public abstract class SuiteConstants {
     //region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
-    public static final Version VERSION = new Version("0.49.8-SNAPSHOT");
+    public static final Version VERSION = new Version("0.49.8");
     public static final LocalDate RELEASE_DATE = LocalDate.of(2022, 02, 18);
     public static final int MAXIMUM_D6_VALUE = 6;
 

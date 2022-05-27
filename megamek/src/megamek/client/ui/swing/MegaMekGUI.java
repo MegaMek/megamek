@@ -443,7 +443,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // start server
         try {
             gameManager = new GameManager();
-            server = new Server( serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
+            server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
             MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);

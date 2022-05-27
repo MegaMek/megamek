@@ -124,7 +124,7 @@ task copyFiles(type: Copy) {
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
     description = 'Combines individual image files into a set of image atlases.'
     classpath = sourceSets.main.runtimeClasspath
-    main = "megamek.utils.CreateImageAtlases"
+    main = "megamek.utilities.CreateImageAtlases"
     workingDir = file(fileStagingDir)
     inputs.dir "${projectDir}/${data}/images/units"
     outputs.dir "${fileStagingDir}/${data}/images/units"

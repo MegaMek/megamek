@@ -1,4 +1,11 @@
 size 48 51
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 1 "woods:1;foliage_elev:2" "grass"
 hex 0201 1 "woods:1;foliage_elev:2" "grass"
 hex 0301 1 "woods:1;foliage_elev:2" "grass"

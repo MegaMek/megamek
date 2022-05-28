@@ -1,4 +1,11 @@
 size 40 40
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "Cliffs (Auto)"
+tag "DesertTheme (Auto)"
+tag "HighHills (Auto)"
+tag "MediumForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 4 "" "desert"
 hex 0201 4 "" "desert"
 hex 0301 4 "" "desert"

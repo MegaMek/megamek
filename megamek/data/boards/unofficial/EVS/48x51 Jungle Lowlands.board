@@ -1,4 +1,11 @@
 size 48 51
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "Swamp (Auto)"
+tag "HighHills (Auto)"
+tag "Jungle (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 1 "" "mars"
 hex 0201 1 "" "mars"
 hex 0301 2 "jungle:2;foliage_elev:2" ""

@@ -1,4 +1,13 @@
 size 45 45
+tag "Foliage (Auto)"
+tag "Cliffs (Auto)"
+tag "SnowTheme (Auto)"
+tag "HighHills (Auto)"
+tag "IceTerrain (Auto)"
+tag "Lava (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 4 "snow:2;metal_deposit:10" ""
 hex 0201 4 "snow:2;metal_deposit:10" ""
 hex 0301 4 "snow:2;metal_deposit:10" ""

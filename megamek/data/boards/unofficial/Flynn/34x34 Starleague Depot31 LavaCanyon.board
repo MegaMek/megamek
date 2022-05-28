@@ -1,4 +1,9 @@
 size 34 34
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
 hex 0101 7 "" "desert"
 hex 0201 7 "" "desert"
 hex 0301 0 "" "desert"

@@ -1,4 +1,11 @@
 size 50 50
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "volcano"
 hex 0201 0 "" "volcano"
 hex 0301 0 "" "volcano"

@@ -1,4 +1,13 @@
 size 34 34
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 2 "" "transparent"
 hex 0201 2 "" "transparent"
 hex 0301 2 "" "transparent"

@@ -1,4 +1,10 @@
 size 64 68
+tag "Water (Auto)"
+tag "HeavyUrban (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 1 "bldg_elev:3;pavement:1;building:2:4;bldg_cf:40" "desert"
 hex 0201 1 "bldg_elev:3;pavement:1;building:2:32;bldg_cf:40" "desert"
 hex 0301 1 "bldg_elev:3;pavement:1;building:1:8;bldg_cf:15" "desert"

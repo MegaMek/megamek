@@ -1,4 +1,10 @@
 size 34 34
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "HighHills (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 1 "sand:1" "desert"
 hex 0201 1 "sand:1" "desert"
 hex 0301 0 "" "desert"

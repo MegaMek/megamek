@@ -1,4 +1,8 @@
 size 35 35
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "DesertTheme (Auto)"
+tag "HighHills (Auto)"
 hex 0101 4 "pavement:1" "desert"
 hex 0201 4 "pavement:1" "desert"
 hex 0301 4 "pavement:1" "desert"

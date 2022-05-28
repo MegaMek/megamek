@@ -1,4 +1,11 @@
 size 30 30
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "MediumForest (Auto)"
+tag "LowHills (Auto)"
+tag "Jungle (Auto)"
 hex 0101 1 "pavement:1" "tropical"
 hex 0201 1 "pavement:1" "tropical"
 hex 0301 1 "pavement:1" "tropical"

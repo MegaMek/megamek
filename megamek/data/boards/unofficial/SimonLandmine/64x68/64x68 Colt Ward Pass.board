@@ -1,4 +1,12 @@
 size 64 68
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "MediumForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 10 "cliff_top:1:4" "desert"
 hex 0201 9 "" "grass"
 hex 0301 9 "" "grass"

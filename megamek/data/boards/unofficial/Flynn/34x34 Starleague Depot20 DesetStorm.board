@@ -1,4 +1,11 @@
 size 34 34
+tag "Foliage (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "LowHills (Auto)"
+tag "Jungle (Auto)"
 hex 0101 3 "" "desert"
 hex 0201 3 "" "desert"
 hex 0301 3 "" "desert"

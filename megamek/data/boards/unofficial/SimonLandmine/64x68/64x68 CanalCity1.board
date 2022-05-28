@@ -1,5 +1,14 @@
 size 64 68
 option exit_roads_to_pavement false
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "HeavyUrban (Auto)"
+tag "Swamp (Auto)"
+tag "Roads (Auto)"
+tag "Ocean (Auto)"
+tag "LightForest (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 4 "" "desert"
 hex 0201 4 "" "desert"
 hex 0301 4 "" "desert"

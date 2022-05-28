@@ -1,4 +1,12 @@
 size 34 34
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "MediumForest (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" ""
 hex 0201 0 "" ""
 hex 0301 0 "" ""

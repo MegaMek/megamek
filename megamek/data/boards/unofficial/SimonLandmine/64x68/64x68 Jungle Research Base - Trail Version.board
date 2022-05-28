@@ -1,5 +1,14 @@
 size 64 68
 option exit_roads_to_pavement false
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "TropicalTheme (Auto)"
+tag "LowHills (Auto)"
+tag "Jungle (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 2 "jungle:1;foliage_elev:2" "tropical"
 hex 0201 2 "jungle:1;foliage_elev:2" "tropical"
 hex 0301 2 "jungle:1;foliage_elev:2" "tropical"

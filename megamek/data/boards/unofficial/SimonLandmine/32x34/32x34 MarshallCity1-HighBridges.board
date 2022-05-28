@@ -1,5 +1,10 @@
 size 32 34
 option exit_roads_to_pavement false
+tag "Water (Auto)"
+tag "HeavyUrban (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "Woods (Auto)"
 hex 0101 3 "bldg_elev:3;building:2:0;bldg_cf:40" "desert"
 hex 0201 3 "road:1:18" "desert"
 hex 0301 3 "road:1:21" "desert"

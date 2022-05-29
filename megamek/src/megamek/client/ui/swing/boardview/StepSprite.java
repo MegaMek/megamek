@@ -290,7 +290,7 @@ class StepSprite extends Sprite {
         }
 
         if (isLastLegalStep) {
-            drawTMMAndRolls(step, isLastStep, jumped, bv.game, new Point(0, 0), graph, col, true);
+            drawTMMAndRolls(step, jumped, bv.game, new Point(0, 0), graph, col, true);
         }
 
         baseScaleImage = bv.createImage(tempImage.getSource());
@@ -485,7 +485,11 @@ class StepSprite extends Sprite {
         }
 
         EntityMovementType moveType = step.getMovementType(isLastStep);
-        if ((moveType == EntityMovementType.MOVE_VTOL_WALK) || (moveType == EntityMovementType.MOVE_VTOL_RUN) || (moveType == EntityMovementType.MOVE_VTOL_SPRINT) || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK) || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
+        if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
+                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)
+                || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
+                || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
             costStringBuf.append('{').append(step.getElevation()).append('}');
         }
 
@@ -506,7 +510,7 @@ class StepSprite extends Sprite {
         graph.drawString(costString, costX - 1, stepPos.y + 38);
     }
 
-    private void drawTMMAndRolls(MoveStep step, boolean isLastStep, boolean jumped, Game game,
+    private void drawTMMAndRolls(MoveStep step, boolean jumped, Game game,
                                  Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
 
         StringBuilder subscriptStringBuf = new StringBuilder();

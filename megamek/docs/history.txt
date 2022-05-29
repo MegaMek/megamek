@@ -3,6 +3,7 @@ VERSION HISTORY:
 0.49.9-SNAPSHOT
 + Data: Updating Tags on Board Files
 + Issue #3662: Draw "Target Movement Modifier" on final legal step of current movement path
++ Updating to Mockito 4.6.0 from 4.5.1
 
 0.49.8 (2022-05-27 1430 UTC)
 + PR #3431: MUL ID
@@ -13,7 +14,7 @@ VERSION HISTORY:
 + Issues #2749 and #3418: Proper Supercharger Implementation and Improved MASC/Supercharger Hex Movement Display
 + PR #3446: Adding the Legendary SkillLevel
 + PR #3427: Properly Loading All Fonts in MegaMek
-+ PR #3452: Mech melee equipment validation update
++ PR #3452: 'Mek melee equipment validation update
 + PR #3454: Hull-down vehicles can indirectly fire body-mounted LRMs per errata
 + PR #3458: Rat Generator Editor UI Updates
 + Issue #3460: Preventing Gun Emplacement Offboard Deployment and NPEs
@@ -28,7 +29,7 @@ VERSION HISTORY:
 + Data: New Sprites and a few new camos.
 + Issue #3400: Introduced new pre-movement and pre-firing phases; currently they allow eligible units to unhide (rather than having to select an option via arcane dropdown in the Extras tab on the previous turn).
 + Issue #3505: Improved bot valuation of attacks by variable-damage infantry weapons (e.g. support lasers)
-+ Issue #3448: Display unit cost in mech summary without counting ammo.
++ Issue #3448: Display unit cost in 'Mek summary without counting ammo.
 + Issue #3502: Disable Jump Button when prone
 + Data: Adding Shrapnel Infantry Weapons. These have been converted per the rules in AToWC but things like
         proper intro dates are missing. These have been estimated based on fluff text, and availability codes. 
@@ -67,7 +68,7 @@ VERSION HISTORY:
 + Issue #3641: Fixing Server Game End ConMod
 + PR #3636: Standardizing Minimap Spelling
 + PR #3643: Trimming Trailing Whitespace from Service IP Address
-+ Data: New Sprites, Updated board folder formating and added new maps.
++ Data: New Sprites, Updated board folder formatting and added new maps.
 + Data: Added Rec Guide 16 to RAT Generator. 
 + Data: Added Factions from Tamar Rising to RAT Generator. 
     These are set as Minor factions and given limited information RAT are based on the faction they derive from.
@@ -85,7 +86,7 @@ VERSION HISTORY:
 
 0.49.7 (2021-12-18 0300 UTC)
 + Issue #504: Adding View Active Unit keybind, to view active unit in Unit Display and target previously viewed unit
-+ PR #3347: TacOps: AR bracing rule (mechs and protomechs can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
++ PR #3347: TacOps: AR bracing rule ('Meks and ProtoMeks can brace to get a bonus to hit on some shots, but are a lot easier to hit themselves)
 + PR #3346: Logging: Default Global Exception Handler and Standardized Legacy Logging
 + Data: New Sprites, Fluff, Issue #3355, and some general mechset fixes.
 + PR #3358: Per latest errata, transports now load infantry at the end of their movement; the infantry unit has to not have moved yet

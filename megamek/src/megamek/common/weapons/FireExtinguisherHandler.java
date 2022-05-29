@@ -23,6 +23,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -37,8 +38,8 @@ public class FireExtinguisherHandler extends WeaponHandler {
      * @param waa
      * @param g
      */
-    public FireExtinguisherHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public FireExtinguisherHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     /*
@@ -62,7 +63,7 @@ public class FireExtinguisherHandler extends WeaponHandler {
                 r.indent(3);
                 vPhaseReport.add(r);
                 game.getBoard().getHex(target.getPosition()).removeTerrain(Terrains.FIRE);
-                server.sendChangedHex(target.getPosition());
+                gameManager.sendChangedHex(target.getPosition());
                 game.getBoard().removeInfernoFrom(target.getPosition());
             } else if (target instanceof Entity) {
                 if (entityTarget.infernos.isStillBurning()

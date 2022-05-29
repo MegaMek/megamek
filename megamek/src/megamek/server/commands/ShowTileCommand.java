@@ -6,6 +6,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Hex;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -15,9 +16,12 @@ import megamek.server.Server;
  */
 public class ShowTileCommand extends ServerCommand {
 
-    public ShowTileCommand(Server server) {
+    private final GameManager gameManager;
+
+    public ShowTileCommand(Server server, GameManager gameManager) {
         super(server, "tile",
                 "print the information about a tile into the chat window. Usage: /tile 01 01 whih would show the details for the hex numbered 01 01.");
+        this.gameManager = gameManager;
     }
 
     /**
@@ -34,7 +38,7 @@ public class ShowTileCommand extends ServerCommand {
             Hex hex;
 
             do {
-                hex = server.getGame().getBoard().getHex(coord);
+                hex = gameManager.getGame().getBoard().getHex(coord);
                 if (hex != null) {
                     str = "Details for hex (" + (coord.getX() + 1) + ", "
                           + (coord.getY() + 1) + ") : " + hex;
@@ -43,7 +47,7 @@ public class ShowTileCommand extends ServerCommand {
                     // units in this tile.
                     if (!server.getGame().getOptions().booleanOption(
                             OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
-                        Iterator<Entity> entList = server.getGame().getEntities(coord);
+                        Iterator<Entity> entList = gameManager.getGame().getEntities(coord);
                         if (entList.hasNext()) {
                             str = str + "; Contains entities: " + entList.next().getId();
                             while (entList.hasNext()) {

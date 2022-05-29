@@ -15,8 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 
 import java.util.Vector;
 
@@ -30,11 +29,11 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " tandem charge missile(s) ";
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;
     }
@@ -143,7 +142,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 }
             }
             vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : DamageType.NONE, false, false,

@@ -23,7 +23,7 @@ import megamek.common.weapons.ACWeaponHandler;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LBXHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -42,13 +42,13 @@ public abstract class LBXACWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
-            return new LBXHandler(toHit, waa, game, server);
+            return new LBXHandler(toHit, waa, game, manager);
         }
-        return new ACWeaponHandler(toHit, waa, game, server);
+        return new ACWeaponHandler(toHit, waa, game, manager);
     }
 
     public LBXACWeapon() {

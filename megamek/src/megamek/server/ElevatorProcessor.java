@@ -29,14 +29,14 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
 
     private ElevatorInfo[] elevators = null;
 
-    public ElevatorProcessor(Server server) {
-        super(server);
+    public ElevatorProcessor(GameManager gameManager) {
+        super(gameManager);
     }
 
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         // 1st time, find elevators on board
-        if (elevators == null || server.getGame().getRoundCount() == 1) {
+        if (elevators == null || gameManager.getGame().getRoundCount() == 1) {
             elevators = new ElevatorInfo[6];
             for (int i = 0; i < 6; i++) {
                 elevators[i] = new ElevatorInfo();
@@ -54,7 +54,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
 
         for (Iterator<Coords> i = elevators[roll].positions.iterator(); i.hasNext();) {
             Coords c = i.next();
-            Hex hex = server.getGame().getBoard().getHex(c);
+            Hex hex = gameManager.getGame().getBoard().getHex(c);
             Terrain terr = hex.getTerrain(Terrains.ELEVATOR);
             // Swap the elevator and hex elevations
             // Entity elevations are not adjusted. This makes sense for
@@ -65,12 +65,12 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
             hex.setLevel(terr.getLevel());
             hex.removeTerrain(Terrains.ELEVATOR);
             hex.addTerrain(new Terrain(Terrains.ELEVATOR, elevation, true, terr.getExits()));
-            server.getHexUpdateSet().add(c);
+            gameManager.getHexUpdateSet().add(c);
         }
     }
 
     private void findElevators() {
-        Board b = server.getGame().getBoard();
+        Board b = gameManager.getGame().getBoard();
         int height = b.getHeight();
         int width = b.getWidth();
         int exits = 0;

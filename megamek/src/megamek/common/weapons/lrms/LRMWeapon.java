@@ -38,7 +38,7 @@ import megamek.common.weapons.LRMSwarmHandler;
 import megamek.common.weapons.LRMSwarmIHandler;
 import megamek.common.weapons.MissileMineClearanceHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -70,41 +70,41 @@ public abstract class LRMWeapon extends MissileWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
-            return new LRMFragHandler(toHit, waa, game, server);
+            return new LRMFragHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
-            return new LRMAntiTSMHandler(toHit, waa, game, server);
+            return new LRMAntiTSMHandler(toHit, waa, game, manager);
         }
         if ((atype.getMunitionType() == AmmoType.M_THUNDER)
                 || (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
                 || (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)
                 || (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
                 || (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)) {
-            return new LRMScatterableHandler(toHit, waa, game, server);
+            return new LRMScatterableHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_SWARM) {
-            return new LRMSwarmHandler(toHit, waa, game, server);
+            return new LRMSwarmHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_SWARM_I) {
-            return new LRMSwarmIHandler(toHit, waa, game, server);
+            return new LRMSwarmIHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
-            return new LRMDeadFireHandler(toHit, waa, game, server);
+            return new LRMDeadFireHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER) {
-            return new LRMFollowTheLeaderHandler(toHit, waa, game, server);
+            return new LRMFollowTheLeaderHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
-            return new LRMSmokeWarheadHandler(toHit, waa, game, server);
+            return new LRMSmokeWarheadHandler(toHit, waa, game, manager);
         }
         if (atype.getMunitionType() == AmmoType.M_MINE_CLEARANCE) {
-            return new MissileMineClearanceHandler(toHit, waa, game, server);
+            return new MissileMineClearanceHandler(toHit, waa, game, manager);
         }
-        return new LRMHandler(toHit, waa, game, server);
+        return new LRMHandler(toHit, waa, game, manager);
     }
     
     @Override

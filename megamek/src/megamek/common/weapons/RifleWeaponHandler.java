@@ -27,8 +27,8 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Jason Tighe
@@ -42,11 +42,11 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -174,7 +174,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport
-                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront,

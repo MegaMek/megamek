@@ -26,7 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RLHandler;
 import megamek.common.weapons.missiles.RLWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author David Nawton
@@ -59,8 +59,8 @@ public abstract class PrimRLWeapon extends RLWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new RLHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new RLHandler(toHit, waa, game, manager);
     }
 }
 

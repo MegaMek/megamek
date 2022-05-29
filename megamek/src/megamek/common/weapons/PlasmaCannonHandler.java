@@ -17,7 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 import java.util.Vector;
 
@@ -29,8 +29,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -157,7 +157,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             hits = calcHits(vPhaseReport);
             // Plasma Cannons do double damage per-hit to buildings
             int nDamage = 2 * hits;
-            Vector<Report> buildingReport = server.damageBuilding(coverBuilding, nDamage,
+            Vector<Report> buildingReport = gameManager.damageBuilding(coverBuilding, nDamage,
                     " blocks the shot and takes ", coverLoc);
             target = origTarget;
             for (Report report : buildingReport) {
@@ -166,7 +166,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addAll(buildingReport);
             // Damage any infantry in the building.
-            Vector<Report> infantryReport = server.damageInfantryIn(coverBuilding, nDamage,
+            Vector<Report> infantryReport = gameManager.damageInfantryIn(coverBuilding, nDamage,
                     coverLoc, wtype.getInfantryDamageClass());
             for (Report report : infantryReport) {
                 report.indent(2);
@@ -290,7 +290,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
                     tn, true, -1, vPhaseReport);
         }
     }
@@ -320,13 +320,13 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, true,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

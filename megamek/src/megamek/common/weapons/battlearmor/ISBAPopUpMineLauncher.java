@@ -21,6 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PopUpMineLauncherHandler;
 import megamek.common.weapons.Weapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -72,7 +73,7 @@ public class ISBAPopUpMineLauncher extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new PopUpMineLauncherHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new PopUpMineLauncherHandler(toHit, waa, game, manager);
     }
 }

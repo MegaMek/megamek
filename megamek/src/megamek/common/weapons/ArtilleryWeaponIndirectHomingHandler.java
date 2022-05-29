@@ -24,8 +24,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +43,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
      * @param g
      */
     public ArtilleryWeaponIndirectHomingHandler(ToHitData t,
-            WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+            WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
@@ -225,7 +224,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
             }
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
-            Vector<Report> buildingReport = server.damageBuilding(bldg,
+            Vector<Report> buildingReport = gameManager.damageBuilding(bldg,
                     nDamPerHit, target.getPosition());
             if (entityTarget != null) {
                 for (Report report : buildingReport) {
@@ -248,13 +247,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
         
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, ae);
         } else if (!bMissed && // The attack is targeting a specific building
                 (target.getTargetType() == Targetable.TYPE_BLDG_TAG)) {
             r = new Report(3390);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-            vPhaseReport.addAll(server.damageBuilding(bldg,
+            vPhaseReport.addAll(gameManager.damageBuilding(bldg,
                     nDamPerHit, target.getPosition()));
         } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
@@ -296,10 +295,10 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                         waa.getAimingMode(), toHit.getCover());
                 hit.setAttackerId(getAttackerId());
                 // BA gets damage to all troopers
-                vPhaseReport.addAll(server.damageEntity(entity, hit,
+                vPhaseReport.addAll(gameManager.damageEntity(entity, hit,
                             ratedDamage, false, DamageType.NONE, false, true,
                             throughFront, underWater));
-                server.creditKill(entity, ae);
+                gameManager.creditKill(entity, ae);
             }
         }
         Report.addNewline(vPhaseReport);
@@ -393,7 +392,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 targetIds.add(target.target.getTargetId());
                 targetTypes.add(target.target.getTargetType());
             }
-            int choice = server.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
+            int choice = gameManager.processTAGTargetCFR(ae.getOwnerId(), targetIds, targetTypes);
             newTarget = allowed.get(choice).target;
             target = newTarget;
             aaa.setTargetId(target.getTargetId());
@@ -462,7 +461,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends ArtilleryWeaponIndirec
                 || ((AmmoType) ammo.getType()).getAmmoType() == BombType.B_HOMING) {
 
             //this has to be called here or it fires before the TAG shot and we have no target
-            server.assignAMS();
+            gameManager.assignAMS();
             calcCounterAV();
             // Report AMS/Pointdefense failure due to Overheating.
             if (pdOverheated 

@@ -19,7 +19,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.HyperLaserHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -71,7 +71,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new HyperLaserHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new HyperLaserHandler(toHit, waa, game, manager);
     }
 }

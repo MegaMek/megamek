@@ -14,8 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.*;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -119,7 +118,8 @@ public class AreaEffectHelper {
      * Helper function that processes damage for fuel-air explosives.
      * Single-entity version.
      */
-    public static void processFuelAirDamage(Entity target, Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
+    public static void processFuelAirDamage(Entity target, Coords center, EquipmentType ordnanceType, Entity attacker,
+                                            Vector<Report> vPhaseReport, GameManager gameManager) {
         Game game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
@@ -165,16 +165,17 @@ public class AreaEffectHelper {
             damage = (int) Math.ceil(damage / 2.0);
         }
                 
-        checkInfantryDestruction(target, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game, server);
+        checkInfantryDestruction(target, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game, gameManager);
                 
         artilleryDamageEntity(target, damage, null, 0, false, false, false, 0, center, (AmmoType) ordnanceType, target.getPosition(), true,
-                attacker, null, attacker.getId(), vPhaseReport, server);
+                attacker, null, attacker.getId(), vPhaseReport, gameManager);
     }
     
     /**
      * Helper function that processes damage for fuel-air explosives.
      */
-    public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker, Vector<Report> vPhaseReport, Server server) {
+    public static void processFuelAirDamage(Coords center, EquipmentType ordnanceType, Entity attacker,
+                                            Vector<Report> vPhaseReport, GameManager gameManager) {
         Game game = attacker.getGame();
         // sanity check: if this attack is happening in vacuum through very thin atmo, add that to the phase report and terminate early 
         boolean notEnoughAtmo = game.getBoard().inSpace() ||
@@ -218,15 +219,15 @@ public class AreaEffectHelper {
                     damage = (int) Math.ceil(damage / 2.0);
                 }
                 
-                checkInfantryDestruction(coords, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game, server);
+                checkInfantryDestruction(coords, distFromCenter, attacker, entitiesToExclude, vPhaseReport, game, gameManager);
                 
-                server.artilleryDamageHex(coords, center, damage, (AmmoType) ordnanceType, attacker.getId(), attacker, null, false, 0, vPhaseReport, false,
+                gameManager.artilleryDamageHex(coords, center, damage, (AmmoType) ordnanceType, attacker.getId(), attacker, null, false, 0, vPhaseReport, false,
                         entitiesToExclude, false);
                 
                 TargetRoll fireRoll = new TargetRoll(7, "fuel-air ordnance");
-                server.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
+                gameManager.tryIgniteHex(coords, attacker.getId(), false, false, fireRoll, true, -1, vPhaseReport);
                 
-                clearMineFields(coords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game, server);
+                clearMineFields(coords, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, attacker, vPhaseReport, game, gameManager);
             }
         }
     }
@@ -236,9 +237,9 @@ public class AreaEffectHelper {
      * Checks all units at given coords.
      */
     public static void checkInfantryDestruction(Coords coords, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, Game game, Server server) {
+            Vector<Report> vPhaseReport, Game game, GameManager gameManager) {
         for (Entity entity : game.getEntitiesVector(coords)) {
-            checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, server);
+            checkInfantryDestruction(entity, distFromCenter, attacker, alreadyHit, vPhaseReport, game, gameManager);
         }
     }
     
@@ -247,7 +248,7 @@ public class AreaEffectHelper {
      * Single-entity version.
      */
     public static void checkInfantryDestruction(Entity entity, int distFromCenter, Entity attacker, Vector<Integer> alreadyHit,
-            Vector<Report> vPhaseReport, Game game, Server server) {
+            Vector<Report> vPhaseReport, Game game, GameManager gameManager) {
         int rollTarget = -1;
         if (entity instanceof BattleArmor) {
             rollTarget = 7;
@@ -272,7 +273,7 @@ public class AreaEffectHelper {
         vPhaseReport.addElement(r);
         
         if (destroyed) {
-            vPhaseReport.addAll(server.destroyEntity(entity, "fuel-air ordnance detonation", false, false));
+            vPhaseReport.addAll(gameManager.destroyEntity(entity, "fuel-air ordnance detonation", false, false));
             alreadyHit.add(entity.getId());
         }
         return;
@@ -281,18 +282,19 @@ public class AreaEffectHelper {
     /**
      * Worker function that clears minefields.
      */
-    public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport, Game game, Server server) {
+    public static void clearMineFields(Coords targetPos, int targetNum, Entity ae, Vector<Report> vPhaseReport,
+                                       Game game, GameManager gameManager) {
         Enumeration<Minefield> minefields = game.getMinefields(targetPos).elements();
         ArrayList<Minefield> mfRemoved = new ArrayList<>();
         while (minefields.hasMoreElements()) {
             Minefield mf = minefields.nextElement();
-            if (server.clearMinefield(mf, ae, targetNum, vPhaseReport)) {
+            if (gameManager.clearMinefield(mf, ae, targetNum, vPhaseReport)) {
                 mfRemoved.add(mf);
             }
         }
         // we have to do it this way to avoid a concurrent error problem
         for (Minefield mf : mfRemoved) {
-            server.removeMinefield(mf);
+            gameManager.removeMinefield(mf);
         }
     }
 
@@ -315,12 +317,12 @@ public class AreaEffectHelper {
      * @param hex The hex, if any, where the shell landed
      * @param subjectId The ID of the entity carrying out the attack, for reporting in double blind games
      * @param vPhaseReport Vector of reports to which we append reports
-     * @param server Server object for invocation of various methods
+     * @param gameManager GameManager object for invocation of various methods
      */
     public static void artilleryDamageEntity(Entity entity, int damage, Building bldg, int bldgAbsorbs, 
             boolean variableDamage, boolean asfFlak, boolean flak, int altitude,
             Coords attackSource, AmmoType ammo, Coords coords, boolean isFuelAirBomb,
-            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, Server server) {
+            Entity killer, Hex hex, int subjectId, Vector<Report> vPhaseReport, GameManager gameManager) {
         Report r;
         
         int hits = damage;
@@ -434,7 +436,7 @@ public class AreaEffectHelper {
                     r.add(toHit.getTableDesc());
                     r.add(0);
                     vPhaseReport.add(r);
-                    vPhaseReport.addAll(server.vehicleMotiveDamage((Tank) entity, 0));
+                    vPhaseReport.addAll(gameManager.vehicleMotiveDamage((Tank) entity, 0));
                     return;
                 }
                 
@@ -526,7 +528,7 @@ public class AreaEffectHelper {
             for (int loc = 0; loc < entity.locations(); loc++) {
                 if (entity.getInternal(loc) > 0) {
                     HitData hit = new HitData(loc);
-                    vPhaseReport.addAll(server.damageEntity(entity, hit, hits,
+                    vPhaseReport.addAll(gameManager.damageEntity(entity, hit, hits,
                             false, DamageType.NONE, false, false, false));
                 }
             }
@@ -548,13 +550,13 @@ public class AreaEffectHelper {
                     r.newlines = 1;
                     vPhaseReport.addElement(r);
                 }
-                vPhaseReport.addAll(server.damageEntity(entity, hit, damageToDeal,
+                vPhaseReport.addAll(gameManager.damageEntity(entity, hit, damageToDeal,
                         false, DamageType.NONE, false, true, false));
                 hits -= Math.min(cluster, hits);
             }
         }
         if (killer != null) {
-            server.creditKill(entity, killer);
+            gameManager.creditKill(entity, killer);
         }
     }
     
@@ -665,7 +667,8 @@ public class AreaEffectHelper {
     /**
      * Abbreviated nuclear explosion logic when the weapon is targeted at a single off-board entity.
      */
-    public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport, Server server) {
+    public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport,
+                                          GameManager gameManager) {
         NukeStats nukeStats = getNukeStats(nukeType);
                 
         if (nukeStats == null) {
@@ -687,7 +690,7 @@ public class AreaEffectHelper {
         
         // if the entity is in the crater radius, bye
         if (blastDistance < craterRadius) {
-            vPhaseReport.addAll(server.destroyEntity(entity, "nuclear explosion proximity", false, false));
+            vPhaseReport.addAll(gameManager.destroyEntity(entity, "nuclear explosion proximity", false, false));
             // Kill the crew
             entity.getCrew().setDoomed(true);
             // no need to do any more damage, it's already destroyed.
@@ -699,7 +702,7 @@ public class AreaEffectHelper {
         if (damageToEntity < 0) {
             return;
         } else {
-            applyExplosionClusterDamageToEntity(entity, damageToEntity, 5, coords, vPhaseReport, server);
+            applyExplosionClusterDamageToEntity(entity, damageToEntity, 5, coords, vPhaseReport, gameManager);
         }
         
         // if the entity hasn't been blown up yet, 
@@ -707,7 +710,7 @@ public class AreaEffectHelper {
         // Since the effects are unit-dependent, we'll just define it in the
         // entity. 
         if (!entity.isDestroyed() && (blastDistance <= nukeStats.secondaryRadius)) {
-            server.applySecondaryNuclearEffects(entity, coords, vPhaseReport);
+            gameManager.applySecondaryNuclearEffects(entity, coords, vPhaseReport);
         }
         
     }
@@ -716,7 +719,9 @@ public class AreaEffectHelper {
      * Apply a series of cluster hits to the given entity, as from an explosion at a particular position.
      * Generate reports for each cluster.
      */
-    public static void applyExplosionClusterDamageToEntity(Entity entity, int damage, int clusterAmt, Coords position, Vector<Report> vDesc, Server server) {
+    public static void applyExplosionClusterDamageToEntity(Entity entity, int damage, int clusterAmt,
+                                                           Coords position, Vector<Report> vDesc,
+                                                           GameManager gameManager) {
         Report r = new Report(6175);
         r.subject = entity.getId();
         r.indent(2);
@@ -734,7 +739,7 @@ public class AreaEffectHelper {
                 table = ToHitData.HIT_SPECIAL_PROTO;
             }
             HitData hit = entity.rollHitLocation(table, Compute.targetSideTable(position, entity));
-            vDesc.addAll(server.damageEntity(entity, hit, cluster, false,
+            vDesc.addAll(gameManager.damageEntity(entity, hit, cluster, false,
                     DamageType.IGNORE_PASSENGER, false, true));
             damage -= cluster;
         }

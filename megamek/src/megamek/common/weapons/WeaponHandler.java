@@ -1354,9 +1354,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         r.indent(2);
         vPhaseReport.addElement(r);
 
-        int damagableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
+        int damageableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
         Building coverBuilding = null;
-        Entity coverDropship = null;
+        Entity coverDropShip = null;
         Coords coverLoc = null;
 
         // Determine if there is primary and secondary cover,
@@ -1366,32 +1366,32 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 // 75% cover has a primary and secondary
                 (toHit.getCover() == LosEffects.COVER_HORIZONTAL && toHit
                         .getDamagableCoverTypeSecondary() != LosEffects.DAMAGABLE_COVER_NONE)) {
-            // Horiztonal cover provided by two 25%'s, so primary and secondary
+            // Horizontal cover provided by two 25%'s, so primary and secondary
             int hitLoc = pcHit.getLocation();
             // Primary stores the left side, from the perspective of the
             // attacker
             if (hitLoc == Mech.LOC_RLEG || hitLoc == Mech.LOC_RT
                     || hitLoc == Mech.LOC_RARM) {
                 // Left side is primary
-                damagableCoverType = toHit.getDamagableCoverTypePrimary();
+                damageableCoverType = toHit.getDamagableCoverTypePrimary();
                 coverBuilding = toHit.getCoverBuildingPrimary();
-                coverDropship = toHit.getCoverDropshipPrimary();
+                coverDropShip = toHit.getCoverDropshipPrimary();
                 coverLoc = toHit.getCoverLocPrimary();
             } else {
                 // If not left side, then right side, which is secondary
-                damagableCoverType = toHit.getDamagableCoverTypeSecondary();
+                damageableCoverType = toHit.getDamagableCoverTypeSecondary();
                 coverBuilding = toHit.getCoverBuildingSecondary();
-                coverDropship = toHit.getCoverDropshipSecondary();
+                coverDropShip = toHit.getCoverDropshipSecondary();
                 coverLoc = toHit.getCoverLocSecondary();
             }
         } else { // Only primary cover exists
-            damagableCoverType = toHit.getDamagableCoverTypePrimary();
+            damageableCoverType = toHit.getDamagableCoverTypePrimary();
             coverBuilding = toHit.getCoverBuildingPrimary();
-            coverDropship = toHit.getCoverDropshipPrimary();
+            coverDropShip = toHit.getCoverDropshipPrimary();
             coverLoc = toHit.getCoverLocPrimary();
         }
         // Check if we need to damage the cover that absorbed the hit.
-        if (damagableCoverType == LosEffects.DAMAGABLE_COVER_DROPSHIP) {
+        if (damageableCoverType == LosEffects.DAMAGABLE_COVER_DROPSHIP) {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
@@ -1403,15 +1403,15 @@ public class WeaponHandler implements AttackHandler, Serializable {
             bSalvo = true;
             // Create new toHitData
             toHit = new ToHitData(0, "", ToHitData.HIT_NORMAL,
-                    Compute.targetSideTable(ae, coverDropship));
+                    Compute.targetSideTable(ae, coverDropShip));
             // Report cover was damaged
             int sizeBefore = vPhaseReport.size();
             r = new Report(3465);
             r.subject = subjectId;
-            r.add(coverDropship.getShortName());
+            r.add(coverDropShip.getShortName());
             vPhaseReport.add(r);
             // Damage the DropShip
-            handleEntityDamage(coverDropship, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+            handleEntityDamage(coverDropShip, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             // Remove a blank line in the report list
             if (vPhaseReport.elementAt(sizeBefore).newlines > 0) {
                 vPhaseReport.elementAt(sizeBefore).newlines--;
@@ -1427,7 +1427,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             waa.setAimedLocation(savedAimedLocation);
             bSalvo = savedSalvo;
             // Damage a building that blocked a shot
-        } else if (damagableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING) {
+        } else if (damageableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING) {
             // Normal damage
             int nDamage = nDamPerHit * Math.min(nCluster, hits);
             Vector<Report> buildingReport = gameManager.damageBuilding(
@@ -1994,7 +1994,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
         }
         if (refrac != 0) {
-            // Damage reduced by 2 for each interviening smoke.
+            // Damage reduced by 2 for each intervening smoke.
             refrac = (refrac * 2);
 
             // Do not absorb more damage than the weapon can do. (Are both of
@@ -2015,10 +2015,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * Insert any additionaly attacks that should occur before this attack
+     * Insert any additional attacks that should occur before this attack
      */
     protected void insertAttacks(GamePhase phase, Vector<Report> vPhaseReport) {
-        return;
+
     }
 
     /**

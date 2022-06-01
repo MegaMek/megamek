@@ -60,7 +60,7 @@ public final class RefrigeratedCargoBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuffer returnString = new StringBuffer(
                 "Refrigerated Cargo Space " + numDoorsString() + " - ");
 

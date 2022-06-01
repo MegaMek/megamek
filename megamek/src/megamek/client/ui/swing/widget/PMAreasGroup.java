@@ -1,5 +1,8 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the Free 
@@ -32,7 +35,7 @@ public class PMAreasGroup implements PMElement {
     }
 
     /**
-     * Remoes area from group
+     * Removes area from group
      */
     public boolean removeArea(PMElement ag) {
         return gr.removeElement(ag);
@@ -102,7 +105,7 @@ public class PMAreasGroup implements PMElement {
     }
 
     /**
-     * Draws all elements in group into specifyed Graphics
+     * Draws all elements in group into specified Graphics
      */
     @Override
     public void drawInto(Graphics g) {
@@ -116,7 +119,7 @@ public class PMAreasGroup implements PMElement {
     }
 
     /**
-     * Sets visibility of all elements in roup to true or false.
+     * Sets visibility of all elements in the group to true or false.
      */
     @Override
     public void setVisible(boolean v) {

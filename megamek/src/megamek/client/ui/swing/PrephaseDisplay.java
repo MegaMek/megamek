@@ -387,7 +387,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getClient().sendActivateHidden(cen, GamePhase.UNKNOWN);
     }
     /**
-     * Refeshes all displays.
+     * Refreshes all displays.
      */
     private void refreshAll() {
         refreshButtons();

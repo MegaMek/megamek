@@ -176,7 +176,7 @@ VERSION HISTORY:
 + PR #3334: GitHub Actions: Adding Support For Multiple Java Distributions and Versions, with Temurin as our default, and Fixing Missing Release Inclusions
 + Issue #3337: Fixing EntityListFile NPE when using OS weapon with no linked munition type
 + PR #3335: MegaMekXMLUtil: Skip Null LocalDates During File Output and Fixing Empty UUID Write
-+ PR #3266: Fix incorrect saxarba structured water tile sizes
++ PR #3266: Fix incorrect Saxarba structured water tile sizes
 + Data: Fixes for #3342, #3333, #3242, #3067 and #3236 includes fixes to RAT Generator and RATs for name changes etc.
 + Data: Updated boards for Flynn, new sprites, more fluff for selected units. 
 
@@ -279,7 +279,7 @@ VERSION HISTORY:
 + Issue #3042: Properly Set Anti-Mek Skill For Battle Armour and Infantry
 + PR #3082: AbstractUnitSelectorDialog: Properly Catching NPEs and other MechFileParser Exceptions in getSelectedEntity
 + PR #2980: Do not use GUIPreferences from Board
-+ Issue #2951: Update to-hit modifiers for weapon and phyiscal attacks against grounded dropships and other superheavy units.
++ Issue #2951: Update to-hit modifiers for weapon and physical attacks against grounded DropShips and other superheavy units.
 + Data: Updated Boards including MegaMek Invitational Boards
 + Issue #2918: Shaky Stick SPA now applies for airborne VTOLs and WIGEs.
 + Issue #3094: Double Blind: Fixing Unjam Turret Action Report
@@ -427,14 +427,14 @@ VERSION HISTORY:
 + Issues #1967/1968: Swapping to use ImageIO.read() for Portrait Zip File reads
 + PR #2567: Colour Camouflage: Fixing Colour Camouflage Tint Application and Colour Setter
 + Issue #2565: Bot performance improvement for situations where there are C3/ECM type units on the field
-+ PR #2562: Prevent "mount" button from being active for grounded dropships, as it doesn't do anything and throws an exception when clicked
++ PR #2562: Prevent "mount" button from being active for grounded DropShips, as it doesn't do anything and throws an exception when clicked
 + Issue #2584: UnitSelectorDialog: Player ComboBox now properly updates on load
 + Issue #2585, 2586: When destroying locations, multi-location equipment (e.g. Chameleon, Null-Sig) is now properly destroyed
 + Issue #2580: Fix non-unique IDs for Buildings
 + Issue #2609: Fix for bot deployment hang on maps with phantom buildings
 + Issue #2613: Graceful failure for DFA attacks against improperly picked targets (no DFA occurs, rather than the game locking up)
 + Issue #2619: Prevent unwanted turn skip if loading a save game with only one unit left to move
-+ Issue #2598: Dropship can't mount(load units) if on hexes higher than level 2
++ Issue #2598: DropShip can't mount (load units) if on hexes higher than level 2
 + Issue #2620: Homing Arrow IV no longer deals excessive splash damage to battle armor
 + Data: Fixing issues #2623, #2612, #2603, #2602, #2600, #2582, #2566, #2064, #2036
 + Data: New Sprites
@@ -573,7 +573,7 @@ VERSION HISTORY:
 + Issue #2269: 0.47.10 Prototype LB-10X record sheet typo
 + Issue #2271: 0.47.9 Rocket Launcher introduction dates
 + Issue #2215: Fix for exception drawing background image in certain themes on 4k monitors
-+ Issue #2043: Artillery flak attacks can damage flying Battle Armor, WIGEs, LAMs in airmech mode, etc.
++ Issue #2043: Artillery flak attacks can damage flying Battle Armor, WIGEs, LAMs in AirMech mode, etc.
 + PR #2283: Fixing Large Support Tank isCrippled Check
 + PR #2284: Fix soft-lock when selecting infantry units using infantry weapons
 + PR #2285: Fixing isCrippled check for Super Heavy Tanks
@@ -581,11 +581,11 @@ VERSION HISTORY:
 + PR #2289: Fixing Unit Selector Name Generation
 + Issue #2240: Unit Tooltip Work
 + Issue #2214: Generic Infantry Types Data
-+ Issue #2270: Recovered Prototype Gauss Rifle Ammuntion intro date wrong
++ Issue #2270: Recovered Prototype Gauss Rifle Ammunition intro date wrong
 + Issue #2235: Primitive Prototype Weapons missing Static Tech tags.
-+ Data: Fix for #2154 Stoat Weight, Protomek Sprites and Fluff for Units (Thanks Greekfire).
++ Data: Fix for #2154 Stoat Weight, ProtoMek Sprites and Fluff for Units (Thanks Greekfire).
 + Issue #2253: Screwy speed on a Notos with QuadVee
-+ Issue #2273: Address instability in BV calcs for Aeros
++ Issue #2273: Address instability in BV calculations for Aeros
 + PR #2286: IS foot infantry fixes
 + PR #2295: Implement ammo feed problem quirk
 + Issue #1898: Boards of sizes xx:yyy don't load
@@ -599,7 +599,7 @@ VERSION HISTORY:
 + Issue #2146: Grounded LAMs no longer have to make PSRs when prone and taking damage.
 + Issue #2099: Advanced option to display attacker/defender sprites in the combat log
 + Issue #2141, 2142: Attempts to fix multiple threading-related bot freezes (addressable by kicking and replacing)
-+ PR #2148: Out-of-control spheroid dropships in atmo no longer pretend to let the player control movement
++ PR #2148: Out-of-control spheroid DropShips in atmosphere no longer pretend to let the player control movement
 + Data: New Sprites
 + PR #2132: No more sending malformed game data objects over to the server to exploit deserialization vulnerabilities. Sorry.
 + Issue #2150: Fixing Princess Vehicle Abandonment NPE
@@ -618,13 +618,13 @@ VERSION HISTORY:
 + PR #2194: Princess will avoid bulldozing her own turrets when doing long-range pathfinding
 + Data: New Sprites (Includes start of new Deadborder Proto sprites)
 + Data: Fixing Issues #2203, #2159, #2157, #2145
-+ PR #2149: StratOps ECHO maneuver for airborne dropships and warships (basically, torso twisting with an MP/to-hit cost)
++ PR #2149: StratOps ECHO maneuver for airborne DropShips and WarShips (basically, torso twisting with an MP/to-hit cost)
 + Issue #2206: Reduced DFA damage to proper levels
 + PR #2219: Track ammo for small support vehicles
 + Issue #2186, 2190: Inconsistent Combat Log Sprites
 + PR #2221: Combat Sprite are now default in the round report
 + PR #2198: New Camo and Portrait Choosers
-+ Data: New Protomek Sprites, removing OTP Tokasha as the units are all in Golden Century.
++ Data: New ProtoMek Sprites, removing OTP Tokasha as the units are all in Golden Century.
 + Issue #1719: Level 1 Foliage
 + Issue #2212: Diagramming LOS calculation issue
 + PR #2467: Remove outdated final BV multiplier for tripod cockpits.
@@ -659,7 +659,7 @@ VERSION HISTORY:
 + Issue #2066: Changing year or tech level for DropShip sometimes removes anti-missile systems from assigned bays
 + Data: First units from Fluff Text project (Thanks to Greekfire for this batch)
 + Data: RAT and Force Gen name fixes.
-+ Issue #2054: New Ahne Texture pack (Tileset) for the megamek client
++ Issue #2054: New Ahne Texture pack (Tileset) for the MegaMek client
 + Issue #2037: New additions to TheJungle for Kaji maps (and some other new maps)
 + Issue #2071: Battle armor taser attacks against battle armor no longer lock the game up when a BA suit in the target unit shuts down
 + Issue #2028: Units now visually indicate damage levels
@@ -673,7 +673,7 @@ VERSION HISTORY:
 + PR #2087: Gun emplacements are no longer considered to have dual turrets (fixing some tech progression calculation issues for those units)
 + Data: Some infantry name fixes.
 + Data: New Sprites (fix for HMG ranges)
-+ PR #2092: Screamer, Pwkka, Yurei LAMs have actual bomb bays; removed incorrect alias for protomech MG ammo; micro laser tech ratings corrected
++ PR #2092: Screamer, Pwkka, Yurei LAMs have actual bomb bays; removed incorrect alias for ProtoMek MG ammo; micro laser tech ratings corrected
 + PR #1992: Inclines and cliffs, as per TacOps page 39
 + Issue #2065: PPCs with charging capacitors now build up heat on the first turn of the charge
 + Data: New Sprites (Thanks Bloodwolf for working on making some of these royals)
@@ -699,8 +699,8 @@ VERSION HISTORY:
 + PR #1929: Some commonly-used dialogs now recognize ESC button as cancel, minor visual improvements to said dialogs
 + PR #1877: Add options to BoardsValidator for automation usage
 + Issue #1905: LAM and Leaping Optional Rule
-+ Isse #1974: Start of Game Stuck at Transmitting Game Data Packet Pump Null Pointer Exception (Generated Map Settings) 
-+ Data: Updated Grounded Dropship image now works with Camos.
++ Issue #1974: Start of Game Stuck at Transmitting Game Data Packet Pump Null Pointer Exception (Generated Map Settings)
++ Data: Updated Grounded DropShip image now works with Camos.
 + PR #1969: Draw larger arrow for final facing of move
 + Issue #1141: DFA victim takes no fall damage if pushed off building onto lower building
 + Issue #1887: View Game Board now shows actual board instead of minimap for more detail
@@ -718,7 +718,7 @@ VERSION HISTORY:
 + Data: Tech Progression Fixes.
 + PR #1999: fix the /localload command
 + Issue #2008: fix NPE related to artillery being fired from unit with phantom ammo trailer
-+ PR #2012: fix NPE when attempting to view TRO in meklab after setting # of secondary weapons on infantry to 0
++ PR #2012: fix NPE when attempting to view TRO in MegaMekLab after setting # of secondary weapons on infantry to 0
 + Data: New Sprites with clean up of Vehicle folder.
 + Issue #2015: Only update valid ammo selections in Configure Mech dialog
 + Data: Resolving #2006, #1982, #1981, #1957, #1945, #1941, #1870
@@ -829,14 +829,14 @@ v0.47.3 (2020-2-01 2200 UTC)
 + Issue #911: Implements "flamers do both damage and heat" rule from BMM p. 99; multiple flamer damage/heat handling corrections with regards to relevant specialized armor.
 + PR #1560: Vehicles and Atlas from House Arano sourcebook added
 + PR #1565: Aerospace fighters fighting in atmosphere no longer always report attack direction as being against the nose
-+ Issue #1580: Indirect fire penalty occuring on C3 Master TAG again
++ Issue #1580: Indirect fire penalty occurring on C3 Master TAG again
 + PR #1588: Graphical editor for RAT Generator data. See documentation in docs/RAT Stuff/rat-generator.txt
 + PR #1589: Fix support for adapting to unit name changes.
 + Issue #1590: Fa Shih unable to lay mines
 + Issue #1587: Max Integer Substituted for Target Number
 + Issue #1568: Several Trailer Units not tow-able
-+ Issue #1562: Critical Hit on Protomech Near Miss
-+ PR #1574: Grounded dropships no longer able to fire nose-mounted weapons at ground targets
++ Issue #1562: Critical Hit on ProtoMek Near Miss
++ PR #1574: Grounded DropShips no longer able to fire nose-mounted weapons at ground targets
 + PR #1598: Bot will no longer attempt to indirect-fire LRMs from airborne aircraft
 + Issue #1576: Target on Predesignated Artillery Hex is automatically hit
 + PR #1611: Individual AMS will no longer engage homing Arrow IV missiles
@@ -851,7 +851,7 @@ v0.47.3 (2020-2-01 2200 UTC)
 + Data: RAT Fixes, and adding EVS Map pack (very large maps for anyone interested)
 
 v0.47.2 (2019-11-15 2000 UTC) 
-+PR #1535: Use correct cost for Protomech EDP armor
++PR #1535: Use correct cost for ProtoMek EDP armor
 +PR #1533: Improved bot usage of field gun infantry
 +PR #1541: Fixes an issue where tanks that took "immobilized" motive damage in high-G would still be considered mobile
 
@@ -859,12 +859,12 @@ v0.47.1 (2019-11-05 0300 UTC)
 + PR #1451: Enable bot use of searchlights when necessary
 + Account for all bay types in large craft cost calculations.
 + Bug: Vehicle reduced to half movement not considered heavy damage
-+ PR #1473: Allow the bot to gracefully handle deployment of grounded dropships on maps with no valid places to put them
++ PR #1473: Allow the bot to gracefully handle deployment of grounded DropShips on maps with no valid places to put them
 + PR #1474: TRO display in MegaMek lobby displays data for gun emplacements
 + Issue #1459: Using XXL(Clan) fusion engine on combat vehicle by mixed IS tech is not loaded properly
 + Issue #1481: Selecting the Adelante Train throws IndexOutOfBounds Exception
 + PR #1484: JS/SS max armor calculation (affects validation and MML).
-+ PR #1478: Grounded Dropships and Individual Weapons (implements errata).
++ PR #1478: Grounded DropShips and Individual Weapons (implements errata).
 + PR #1488: Nuclear warheads for large craft properly differentiate themselves from their standard versions when swapping ammo
 + Issue #1490: Fixed Ramshackle quirk description
 + Issue #1489: Fix jet booster and supercharger weight calculations
@@ -880,13 +880,13 @@ v0.47.1 (2019-11-05 0300 UTC)
 + Updating the Simon Landmine Map Pack.
 + PR #1519: Validation for support vehicles, corrections to many of the support vehicle unit files.
 + PR #1521: Multiple fixes and errata related to handling of large craft missile weapons;
-    grounded dropships can now fire missiles as artillery;
-    grounded dropships cannot directly fire capital weapons at ground targets;
+    grounded DropShips can now fire missiles as artillery;
+    grounded DropShips cannot directly fire capital weapons at ground targets;
 + PR #1527/Issue #1303: Mostly implemented current TW rules for movement of spheroid dropships in atmosphere
 + PR #1530: Treat fixed wing support vehicles as support vehicles instead of conventional fighters for cost calculation.
 + Issue #1516: Rotary RAC does not generate extra heat when rapid firing
 + Issue #1523: Fixes to 3145 FWL RATs
-+ Issue #1514: Some Protomechs Missing Map Art
++ Issue #1514: Some ProtoMek Missing Map Art
 + Issue #1454: RS:SW New Mechs are listed as Level 2 instead of Level 1
 
 v0.47.0 (2019-08-21 0300 UTC)
@@ -894,14 +894,14 @@ v0.47.0 (2019-08-21 0300 UTC)
 + PR #1323: implement "#sitrep" client command which can be used to display, 
     in the console, a list of units near the entity with the given ID.
 + PR #1329: Princess will now fire at multiple targets with units that have no secondary target penalty. 
-    This should be most noticeable with dropships and other large spacecraft.
+    This should be most noticeable with DropShips and other large spacecraft.
 + PR #1358: Princess properly operates really slow aircraft on ground maps and can actually drop thunder bombs now.
 + PR #1354: Support for detailed large craft parts (K-F boom, grav deck, CIC, etc)
 + PR #1401: Improved bot behavior using field gun infantry.
 + PR #1404: Princess can now use rapid-fire autocannons; will respect "no AMS as weapon" setting
 + PR #1405: Introduced Princess capability for indirect fire at spotted units
-+ PR #1409: Dropship artillery bays now fully functional
-    Dropships can optionally load/fire alternate artillery munitions
++ PR #1409: DropShip artillery bays now fully functional
+    DropShips can optionally load/fire alternate artillery munitions
     Copperhead ammo functions as homing rounds
 + Issue #1351: When a homing round lands, the firing player will now get asked which tagged unit gets clobbered.
 + PR #1406: Princess can now spot units for indirect fire
@@ -926,7 +926,7 @@ v0.46.0-rc.2 (2019-08-12 0100 UTC)
 
 v0.46.0-rc.1 (2019-07-23 0300 UTC)
 + PR #1331: Infantry with "forest ranger" SPA is no longer able to move through woods for free.
-+ Issue #1356: Partial Wing won't work on Ultralight Battlemech.
++ Issue #1356: Partial Wing won't work on Ultralight BattleMeks.
 + PR #1359, 1364, 1365: Multiple fixes preventing bot freezes in "edge" cases
 + Issue #1353: Battle Armor Heavy Flamer only raise 2 heat per hit
 + Issue #1297: LRM5 smoke rounds says 'heavy smoke' on the report.
@@ -937,7 +937,7 @@ v0.46.0-rc.1 (2019-07-23 0300 UTC)
 + MegaMekLab Issue #314: Fixed availability ratings for inner sphere LMG and ammo
 + Issue #1249: Industrial TSM now applies 2x damage to appropriate melee attacks
 + Issue #1352: Changing Planetary Conditions prior to starting a new game causes a -40C without input
-+ Issue #1400: Fleeing while carrying a non-existent mechwarrior no longer causes a soft-lock
++ Issue #1400: Fleeing while carrying a non-existent MechWarrior no longer causes a soft-lock
 + Data: Corsair fighter once again shows proper sprite
 + Issue #1407: Attacks on transported battle armor no longer cause soft lock
 + PR #1412: Switch to XStream's ID_REFERENCES mode for save games, shrinking their size considerably.
@@ -951,7 +951,7 @@ v0.45.4 (2019-03-24 1700 UTC)
 + Issue #1272: Clan BA SRM missing Multi-Purpose Missiles
 + Data: New Sprites and New Units.
 + Issue #1256: Magna Laser Rifle has range 0 instead of 2
-+ Data: Fixing broken Protomeks in some RATs
++ Data: Fixing broken ProtoMeks in some RATs
 + PR #1278: Fix a soft-lock that would occur when using double-blind and the previous round's target would leave a unit's LOS
 + Issue #587 PR #1273: Fixes for Post-Battle Handling of Capital Fighters.
 + PR #1280: Add proper labels for host dialog controls (Accessibility Support)
@@ -975,7 +975,7 @@ v0.45.3 (2019-02-12 0500 UTC)
 + PR #1214: Prevent players from being able to control their out-of-control spacecraft when the default flight path would take the spacecraft off board.
 + Data: New Sprites
 + PR #1212: Adds new Edge options for Aerospace units
-+ Issue #1218: Fixed protomech-related game-stopping server crash
++ Issue #1218: Fixed ProtoMek-related game-stopping server crash
 + Data: Adding the Saxarba HQ Tileset.
 + Issue #1194: C3i function should apply to boosted cyber comm and enhanced multi model sensor (not standard multimodal sensor) implants per IO
 + PR #1227: Enable Princess to unjam weapons, turrets and rapid-fire autocannons (RACs, etc).
@@ -990,7 +990,7 @@ v0.45.2 (2018-11-18 0200 UTC)
 + Switched build system from ant to gradle.
 + Issue #1122: Piloting/gunnery skills generated from the wrong tables [Force Generator]
 + PR #1132: Zweihander
-+ Issue #1149: Force Generator switching from Mechs to Protomechs for Clans that deploy them
++ Issue #1149: Force Generator switching from Mechs to ProtoMeks for Clans that deploy them
 + Data: Various fixes to unit names as a result of the Large Craft changes.
 + Data: New Sprites
 + PR #1152: Refactor of methods for getting pilot SPAs
@@ -1000,8 +1000,8 @@ v0.45.2 (2018-11-18 0200 UTC)
 + Data: New Sprites
 + PR #1170: Bullet-proofing various edge cases for space maps; weather related info no longer displayed in space
 + Issue #1177: Rocket Launcher bug after configuring unit
-+ PR #1185: Protomech validation, updates to protomech unit files from errata and addition of Wars of Reaving units.
-+ PR #1186: Protomech equipment (implentation of melee weapon, quad melee system, fusillade, and magnetic clamps) 
++ PR #1185: ProtoMek validation, updates to ProtoMek unit files from errata and addition of Wars of Reaving units.
++ PR #1186: ProtoMek equipment (implementation of melee weapon, quad melee system, fusillade, and magnetic clamps)
 + PR #1184: Bot handling for aerospace units on low-atmospheric maps and on space maps using non-advanced flight rules
 + PR #1193: TRO style summary
 + Data: New Sprites
@@ -1057,11 +1057,11 @@ v0.45.0 (2018-08-02 0200 UTC)
 + PR #1071 - Mech Sprites
 + Data - New Sprites
 + Issue #1073: Princess will no longer be able to move out-of-control aeros on ground and atmospheric maps
-+ PR #1064: Fixes targeting and landing issues with glider protomechs
++ PR #1064: Fixes targeting and landing issues with glider ProtoMeks
 
 v0.44.0 (2018-06-24 1900 UTC)
-+ Data: Dropship infantry bay fixes.
-+ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) mechwarrior.
++ Data: DropShip infantry bay fixes.
++ PR #995: Fix for server freeze when destroying a unit which has picked up a phantom (no longer existing) MechWarrior.
 + Data: New Sprites
 + Issue #1000: Ignore AP-mounted weapons when calculating BA suit weight
 + PR #1003: Fix validation failures from configuring ammo.
@@ -1075,7 +1075,7 @@ v0.43.11-RC5 (2018-06-04 0100 UTC)
         Fix inability to switch firing modes on capital missiles
 + PR #963: Fix for glitchy-looking empty hexes near window edges when rendering large/zoomed maps in isometric mode
 + Data: New and Updated Sprites.
-+ Updated RAT generator files with dropship name changes and conformed mechs and vehicles to MUL early SW era.
++ Updated RAT generator files with DropShip name changes and conformed mechs and vehicles to MUL early SW era.
 + Data: New and Fixed RATs (thanks mkerensky)
 + Data: Various minor data fixes, including fix for #984,#719
 + Data: Fixing #906 Incorrect heat for Prototype Rocket Launcher 15 
@@ -1128,7 +1128,7 @@ v0.43.9-RC3 (2018-03-13 18:00 UTC)
 + PR #839: Add check to ignore SI damage for squadron status display
 + PR #917: Implemented break in PD heat checks instead of continue
 + PR #909: Add MiscType entry for Clan Endo-Composite structure
-    Fixes Issue MegaMek/megameklab#143: Endo-Composite not showing up as an option
+    Fixes Issue MegaMek/MegaMekLab#143: Endo-Composite not showing up as an option
 + PR #923: Bogdown after DFA
     Fixes Issue #420: Jumping Mech is Not Bogged Down in Swamp Automatically After Successful DFA
 + Remove duplicate Glancing Blow and Direct Blow report messages
@@ -1166,11 +1166,11 @@ v0.43.7-RC1 (2018-01-21 22:00 UTC)
 + Issue #696: Arrow IV infernos calculate cover incorrectly?
 + Issue #737: Oblique Attacker can't indirect fire without a spotter
 + Changed ghost target ECM modifier from +2 to +3 per errata.
-+ Issue #761: Protomechs and ghost targets
++ Issue #761: ProtoMeks and ghost targets
 + Issue #815: Space movement for aero units being resolved incorrectly
 + Issue #837: Mauser IIc and other clan infantry weapons missing in customization
 + Issue #838: NPE Princess.calculatePhysicalTurn
-+ Issue #463: Megamek sometimes fails to show the * symbol to warn that movement will require a PSR
++ Issue #463: MegaMek sometimes fails to show the * symbol to warn that movement will require a PSR
 + Fixes for multiple hangs during turn change when deploying minefields and unloading stranded passengers from transports.
 + PR#842: Inner Sphere & Periphery skins update
 + Issue #839: Bots on "no team" no longer refuse to fire on other players with "no team".
@@ -1184,7 +1184,7 @@ v0.43.7-RC1 (2018-01-21 22:00 UTC)
 + Issue #862: Fighter Squadron BV
 + Data: New Sprites and adding MWO Canon Mechs(Sun Spider and Roughneck)
 + Issue #859: Game Options Tooltip Exception
-+ Princess will no longer waste firepower targeting solitary mechwarriors in buildings.
++ Princess will no longer waste firepower targeting solitary MechWarriors in buildings.
 + PR#851 Change Default KeyBinds (adds ctrl to overlay and unit label toggles).
 
 v0.43.6 (2017-12-22 10:00 UTC)
@@ -1201,7 +1201,7 @@ v0.43.6 (2017-12-22 10:00 UTC)
 
 v0.43.5 (2017-12-17 11:00 UTC)
 + Tech Progression Fixes.
-+ PR #686: Large Craft Advanced Point Defense Rules from Stratops p96
++ PR #686: Large Craft Advanced Point Defense Rules from StratOps p96
 + PR #686: Expanded AMS functionality. Now works against Arrow IV Homing and LAA/AAA/AS missiles per the rules for
     large, single missiles in TW.
 + PR #686: Santa Anna S2S nuclear missiles now correctly deal *10 damage to SI on a successful cap missile roll.
@@ -1226,7 +1226,7 @@ v0.43.5 (2017-12-17 11:00 UTC)
 + Issue #716: Targeting a non-Entity with Arrow IV Homing Missile no longer causes NPE
 + Issue #666: Linked equipment now works with bay weapons
 + PR #740: Optional cargo/transport bay damage on cargo critical hit for large craft
-+ Issue #205: Airborne dropships can now fire Arrow IV artillery from weapon bays (as long as there's only one artillery weapon per bay)
++ Issue #205: Airborne DropShips can now fire Arrow IV artillery from weapon bays (as long as there's only one artillery weapon per bay)
 + Issue #743: Skidding Vehicle freezing Client(s)
 + Issue #738: CamoChoiceDialog.valueChanged NPE
 + Issue #521: Submarine cannot pass under bridges in a turn when their elevation changes.
@@ -1237,7 +1237,7 @@ v0.43.5 (2017-12-17 11:00 UTC)
 + Data - New Sprites and unit file fixes.
 + Issue #697: Over verbose princess
 + Issue #548: View > Round Report Does Not Allow Copy & Paste of Text
-+ Issue #519: Fuel cells producing heat in battlemechs
++ Issue #519: Fuel cells producing heat in BattleMechs
 + Issue #727: Sniper and Range Master SPAs now work with Line of Sight range
 + Issue #460: Field of Fire/firing arc sprites not cleared when unit finishes movement
 + Issue #758: Princess doesn't check for ownership when deploying units
@@ -1250,7 +1250,7 @@ v0.43.5 (2017-12-17 11:00 UTC)
 + PR #757: Caseless ammunition Implemented
 + Data: Rat fixes
 + Easier ammo configuration for large craft.
-+ Validation for Small Craft and Dropships.
++ Validation for Small Craft and DropShips.
 + Changed infantry bay capacity to match transport weights of platoon
   type rather than treating all infantry as foot.
 + Specialized cargo bays treat value in unit file as capacity rather than
@@ -1284,7 +1284,7 @@ v0.43.4 (2017-10-01 11:00 UTC)
 + Feature #479: Added BV listing to unit tooltip.
 + New Sprites and mechset fixes.
 + Updated GUIPreferences for BV Matching and changing default splash screen. 
-+ Feature: LAMs and glider Protomechs.
++ Feature: LAMs and glider ProtoMeks.
 + Feature: TacOps VTOL bombing and strafing option (per pending errata, VTOL strafing is a separate unofficial option).
 + Issue #539 - Enable Princess to rotate turrets and use "extended torso twist" quirk.
 + Data - LRM Infantry date fixes. Also Clan LRM infantry become unofficial since LRM Infantry is a IS weapon.
@@ -1324,7 +1324,7 @@ v0.43.4 (2017-10-01 11:00 UTC)
 + PR #642: Bug #597: Fix NPE when recovering aeros within visual range of the enemy
 + PR #642: Bug: Fix recovery slot update on Small Craft Bays
 + PR #642: Bug: Change recovery code to always put ASFs in an available ASF bay first if one is present
-+ PR #642: Bug: Remove landing gear crit checkbox from unit editor for Jumpships, warships and stations
++ PR #642: Bug: Remove landing gear crit checkbox from unit editor for JumpShips, WarShips and stations
 + PR #655: Popup mines (fixed loading and validation problems, added modes for squads larger than 4 troopers.
 + PR #650: IO Tech
     o Updates all tech intro dates to the Universal Technology Advancement Table in Interstellar Operations.
@@ -1511,7 +1511,7 @@ v0.41.26 (2016-11-02 02:00 UTC)
 
 v0.41.25 (2016-10-15 14:40 UTC)
 + Added movement type filters to RAT Generator for BA.
-+ Issue #356: Almost all dropships have 2/3 movement
++ Issue #356: Almost all DropShips have 2/3 movement
 + Data: New Sprites
 
 v0.41.24 (2016-10-06 03:15 UTC)
@@ -1579,7 +1579,7 @@ v0.41.22 (2016-08-26 03:00 UTC)
 + Issue #315: Nag for Lava PSR shown when moving on bridge over lava
 + Issue #306: Thread-safety issues in Princess.Precognition
 + Issue #223: ECM hex display not always updating, especially in deployment
-+ Issue #180: Unit labels can now have a color border that correspondes to owner
++ Issue #180: Unit labels can now have a color border that corresponds to owner
 + Issue #180: Units now have a set draw order based on unit type.  Draw order:
     Infantry, BA, Tank, Mech, VTOL, Aero
 + Board background image can now be scaled instead of tiled
@@ -1596,7 +1596,7 @@ v0.41.21 (2016-07-31 10:00 UTC)
 + Bug: Fixed error in blue shield failure report
 + Issue #280: Adding snow theme to default tileset
 + Bug: Fixing some weight issues causing units to fail.
-+ Issue #264: Dropship.isLocationProhibited Error
++ Issue #264: DropShip::isLocationProhibited Error
 + Issue #262: Unloaded ammo in ATMs and MMLs can cause NPEs
 + Issue #261: Host cannot deploy as observer if commander killed victory active
 + Bug: Rounding issues when computing SV engine weights
@@ -1618,8 +1618,7 @@ v0.41.21 (2016-07-31 10:00 UTC)
 + Bug: Superheavy meks should halve number of criticals for armor (and weren't)
 + Added Superheavy Gyro type for Superheavy meks
 + Unit fixes and new sprites
-+ Added missing report 6051 for reporting no damage from non-peneetrating inf
-    weapons
++ Added missing report 6051 for reporting no damage from non-penetrating inf weapons
 + Issue #373: LargeTexture.tileset completion
 + Issue #390: MegaMek Thinks bldg_basement_type:* Is A Base
 
@@ -1631,7 +1630,7 @@ v0.41.20 (2016-06-27 02:00)
 + Issue #242: Unit Can Self Destruct and Stackpole in same turn
 + Issue #236: PSR Terrain modifiers added inappropriately
 + Issue #243: PSR issues related to high/low gravity
-+ Issue #241: Dropship Cannot Eject w/o expending all velocity
++ Issue #241: DropShip Cannot Eject w/o expending all velocity
 + Issue #244: Added TigerShark's alternative Pilot Skill BV mod table to docs
 + Issue #245: Smoke & chaff from weapons fire appears in end phase
 + Bug: EntityWeightClass.getWeightClass missing entry for hydrofoil support vees
@@ -1692,7 +1691,7 @@ v0.41.18 (2016-05-26 19:30 UTC)
 + Fixed #127 Bug: Jungle move cost for infantry incorrect.
 + Fixed #74 Bog Down Rules - Both stuck/unstuck should use same PSR modifiers
 + Fixed #43 Conflicting rules on Rubble unit restrictions
-+ Fixed #187: Mechnized infantry able to enter prohibited terrain
++ Fixed #187: Mechanized infantry able to enter prohibited terrain
 + PR #141: SPA: Eagle's Eyes
 + Fixed #191: Replacement truck_wreck image
 + PR #99: Added a UI editor for skins
@@ -1714,7 +1713,6 @@ v0.41.18 (2016-05-26 19:30 UTC)
 + SPA: Golden Goose #227
 + New Sprites
 
-
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.
 + Issue #162: "The armor panel is null." warning during deployment phase
@@ -1725,7 +1723,7 @@ v0.41.16 (2016-04-10 21:53 UTC)
 + PR #49: Adding runway overlay fluff images
 + PR #45: SPA organization
 + Issue #51: Missing i18n entry: BoardView1. (for crew stunned)
-+ Data: New Sprites and Unit Fixes (Thanks Greekfire)
++ Data: New Sprites and Unit Fixes (Thanks GreekFire)
 + Remove classpath entries for TinyXML (Also fixes #67)
 + PR #46: TacOps Alternate BattleArmor weights
 + PR #57: Remove dependency on TinyXML
@@ -1734,7 +1732,7 @@ v0.41.16 (2016-04-10 21:53 UTC)
 + PR #65: Tilesets can use an 'include' keyword
 + PR #68: Ultra Rubble terrain level missing +2 movement cost
 + Issue #63: ASF free facing changes incorrect on ground maps
-+ Data: New Sprites and Unit Fixes (Thanks Greekfire)
++ Data: New Sprites and Unit Fixes (Thanks GreekFire)
 + PR #87: Adding Simplex-based random landscape generator
 + PR #50: Shadows (optimizations, new effects for low-light levels)
 + Fixing MML Issue #6 - Wrong damage for Enhanced ER PPC  (#6)
@@ -1742,8 +1740,8 @@ v0.41.16 (2016-04-10 21:53 UTC)
 + Issue #81: Grappling a 'mech involved in a Grapple may cause hang
 + Issue #80: Flare Rounds not Illuminating Targets for Visual Detection
 + Bug: Floor deploy dialog for Infantry in buildings could select wrong floor
-+ Bug: Landed dropships were allowed to hang off the edge of the board
-+ Issue #82: Dropship Deployment Overlapping
++ Bug: Landed DropShips were allowed to hang off the edge of the board
++ Issue #82: DropShip Deployment Overlapping
 + PR #96/Issue #98: Fixed Industrial TSM calculation
 + PR #100: Minimap unit icons made more visible
 + Bug/PR #89: Keyboard scrolling made smoother by reducing calls to the minimap
@@ -1763,10 +1761,10 @@ v0.41.16 (2016-04-10 21:53 UTC)
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error
-+ Issue #20: Cluster Master should be labeled Unofficial not atow
++ Issue #20: Cluster Master should be labeled Unofficial not AToW
 + Issue #18: Small Patch: changes lounge tooltip to act similar to board view tt
 + Issue #11: RFE: Open Minimap during Artillery Designate Targets automatically
-+ Added BattleValue field to MechcacheCSVTool
++ Added BattleValue field to MechCacheCSVTool
 + Data: New Sprites and Unit Fixes.
 + Issue #22: Mech UMUs attacker movement modifier and heat generation
 + Bug [#4683]: EntityWeightClass.getWeightClass doesn't consider SupportVTOL
@@ -1815,7 +1813,7 @@ v0.41.13 (2016-01-01 03:35 UTC)
 + Bug: Potential NPE in MapSettings.setMapSize
 + Bug: Fixes to dates with Engines/Cockpits/equipment.
 + Data: New Sprites, Unit Fixes and Reorganized Small Craft again.
-+ Data: New and RATs (ATOW,MW3rd, missing TRO 3085)(Thanks Magnus Kerensky)
++ Data: New and RATs (AToW, MW3rd, missing TRO 3085)(Thanks Magnus Kerensky)
 + Bug: Couple of Ammo Date Fixes.
 + Feature: Added unofficial option to not generate smoke from burning woods
 + UnitSelectorDialog: Escape/Enter keys now work in a broader set of situations
@@ -1826,13 +1824,13 @@ v0.41.12 (2015-12-23 2:48 UTC)
 + Bug [#4648]: "add a combat unit" stops working after you close the window
 + Data: New Sprites, OTP Capellan Crusades, unit fixes.
 + Bug [#4650]: ASFs not getting free turn between game turns
-+ Dropship cost summary now properly displayed
++ DropShip cost summary now properly displayed
 + Bug [#4655]: Vehicles falling into basements cannot move
 + Bug: Basement collapsed i18n entry for tooltip incorrect
 + Bug [#4645]: Map switches from [GENERATED] to [SURPRISE] with Map Size button
 + Bug [#4656]: isInSameBuilding Error
-+ Feature: Adding facing arrow for landed dropships
-+ Bug [#4653]: Attacks against landed Dropships potentially use wrong side table
++ Feature: Adding facing arrow for landed DropShips
++ Bug [#4653]: Attacks against landed DropShips potentially use wrong side table
 + Bug [#4654]: Vehicles falling into basements: facing and damage issues
 + Bug [#4050]: Game-year based Tech Levels for Engines/Gyros/Cockpits
 + Bug [#4555]: Aeros strike/dive bomb now lose altitude before attacks resolve
@@ -1849,7 +1847,7 @@ v0.41.12 (2015-12-23 2:48 UTC)
 + Bug [#4662]: Strafing Error When Targeting Building with Infantry
 + Bug: Answering 'No' to Vertical Takeoff PSR Nag doesn't clear move path
 + Bug: Missing 'in crater' penalty for vertical take-off (TW pg 88)
-+ Bug [#4665]: Landed dropships unable to takeoff/unload if on prohibited terrain
++ Bug [#4665]: Landed DropShips unable to takeoff/unload if on prohibited terrain
 + Data: New Sprites, Unit Fixes, adding XTRO Republic III units
 + Bug [#4667]: Problem with assigning bombs to ASFs in the lobby
 + Bug [#4668]: UnitDisplay/Minimap positions save poorly with multi-monitors
@@ -1876,7 +1874,7 @@ v0.41.11 (2015-11-15 16:50 UTC)
 + Added function to possibly ignore key presses, used from MekWars
 + Data: New Sprites.
 + Bug: /load command requires players to disconnect/reconnect after game loads
-+ Bug [#4638]: Advanced Aero Rules Broken in 41.10 (specfically with Evade)
++ Bug [#4638]: Advanced Aero Rules Broken in 41.10 (specifically with Evade)
 + Bug: Issues with updating double-blind visuals information
 + Feature: Implemented RISC APDS
 + New Sprites/Couple of unit fixes.
@@ -1887,7 +1885,7 @@ v0.41.11 (2015-11-15 16:50 UTC)
 + Bug [#4644]: Player names not visible if player color is selected as "white"
 + Bug: FiringSprites from previous Firing phase still drawn in Targeting phase
 + Bug: Added missing i18n entries for Cancel key
-+ Added tooltip to Type list in UntiSelectorDialog
++ Added tooltip to Type list in UnitSelectorDialog
 + Added KeyBind for "Done" action
 + New Sprites
 
@@ -1909,7 +1907,7 @@ v0.41.10 (2015-10-12 00:11 UTC)
 + Bug [#4507]: Units can now set deployment zone if deploying after round 1
 + Bug [#4448]: Moved Game Year option to Allowed Units and Equipment tab
 + Bug [#4448]: Added Tech Level option in Allowed Units and Equipment tab
-+ Bug [#4448]: Removed several redudant options from Alowed Units and Equipment
++ Bug [#4448]: Removed several redundant options from Allowed Units and Equipment
 + Bug [#4057]: track turret weight for omnitanks correctly
 + Construction data for Remote Drone Command Console
 + verifier for RISC super-cooled myomer
@@ -1920,7 +1918,7 @@ v0.41.10 (2015-10-12 00:11 UTC)
 
 
 v0.41.9 (2015-09-14 01:25 UTC)
-+ Bug: Infantry BLK files with true/false for antimek fail to load
++ Bug: Infantry BLK files with true/false for Anti-Mek fail to load
 + Bug: Wind direction was actually wind strength
 + Data: New Sprites
 + Bug [#4619] Mech Icon not displayed in MM and new sprites
@@ -1950,13 +1948,13 @@ v0.41.8 (2015-09-01 12:10 UTC)
 + Data: New Sprites
 + Data: Source file changes (Mechs TRO 3039)
 + Bug: Fixing broken unit test from change in Mech Data directory
-+ Bug: Infantry BLK files with true/false for antimek fail to load
++ Bug: Infantry BLK files with true/false for Anti-Mek fail to load
 
 v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings
 + Bug [#4595]: Bad translation for PlanetaryConditions internationalization
 + Bug [#4593]: Mech in climb mode ends up on top of building post DFA
-+ Bug [#4531]: Issues with Protomechs and individual initiative
++ Bug [#4531]: Issues with ProtoMeks and individual initiative
 + Bug [#4598]: BestFiringPlanUnderHeat Error
 + Bug [#4597]: Vehicular Grenade Launcher Error
 + Bug [#4588]: Field Guns jamming in Rapid mode
@@ -1972,7 +1970,7 @@ v0.41.7 (2015-08-26 21:30 UTC)
 + setOriginalShots for Protos
 + Bug [#4603]: Weapon Order always revert to default
 + Data: New Sprites
-+ MechView constructor that allows for display of alterate costs
++ MechView constructor that allows for display of alternate costs
 + Bug: Direct/Glancing Blow applies both cluster and damage modifier to rapid-
     fire autocannons (should be cluster only in rapid-fire modes).
 + Bug [#4606]: Careful Stand doesn't end movement on failure
@@ -1980,10 +1978,10 @@ v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4608]: Added more hotkeys for targeting phase (similar to firing phase)
 + Bug [#4607]: Check for "crippled" condition doesn't work for GunEmplacement
     instances
-+ Bug [#4605]: Escape doesn't seem to work occassionally
++ Bug [#4605]: Escape doesn't seem to work occasionally
 + detailed weapon bay description in MechView
 + Bug: weapon criticals on vehicles and aeros do not damage the critical slot
-+ Bug: thruster and dropship collar crits not showing in MechView
++ Bug: thruster and DropShip collar crits not showing in MechView
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement
@@ -2920,9 +2918,9 @@ v0.39.1 (2014-08-26 14:56 UTC)
 + Feature [#1158]: Map Editor: Re-size maps
 + Refactored Compute.get*ECMFieldSize() methods to be cleaner and a bit more
     efficient
-+ Updated Game to cache which Coords have Entitys in them, and what those
-    Entitys are.  Now Game.getEntities(Coords) uses the cache to return much
-    quicker.  This is important for games with a large number of Entitys, as
++ Updated Game to cache which Coords have Entities in them, and what those
+    Entities are. Now Game.getEntities(Coords) uses the cache to return much
+    quicker. This is important for games with a large number of Entities, as
     Game.getEntities(Coords) can be called frequently (like when computing LoS)
 + Bug: View -> Round Report was displaying the phase report for the current
     round instead of the round report
@@ -3028,7 +3026,7 @@ v0.39.1 (2014-08-26 14:56 UTC)
 + Data: New Images/Unit Fixes few new Camos
 
 v0.39.0 (2014-07-02 21:14 UTC)
-+ Night-time modifiers now effected by hexes being illuminated by a searchlight
++ Nighttime modifiers now effected by hexes being illuminated by a searchlight
 + Bug: Team initiative not properly calculated when negative values are present
     (such as for team constant init bonus, or player init bonus, etc)
 + Bug [#4161]: Run MP allowed after moving backwards and failing a fall PSR
@@ -3412,7 +3410,7 @@ v0.37.9, 0.38.0 Release Candidate 1 (2014-03-29 14:25 UTC)
     is any unit that has an init bonus (but not the highest), a C3 slave system,
     ECM, Active Probe, TAG, EI Cockpit or is currently using a spotlight.
 + Bug [#2244]: ECM in Double Blind games -> wrong hit roll reporting
-+ Bug [#3996]: Cleaned up a few more areas where not all of an Entitys loaded
++ Bug [#3996]: Cleaned up a few more areas where not all of an Entities loaded
     units were being sent to Clients during updates
 + Bug: Firing solutions was always drawing data for teammate units, even if
     friendly fire was off, also wouldn't draw friendly units that weren't
@@ -4829,7 +4827,7 @@ v0.35.36 (2013-04-13, 23:23 UTC+2)
 + Bug 3325: Oversized custom platoon causes client to hang on deployment
 + Bug: weapon swarm attack possible when not swarming a mek
 + Bug 3658: Infantry with AA guns cannot attack aircraft
-+ Bug: cant load magnetic clamp BA in chat lounge
++ Bug: can't load magnetic clamp BA in chat lounge
 + Bug 3647: Chameleon LPS not working
 + Bug 3648: Issues with "skip ineligible for firing phase" option
 + Bug 3532: Arty splash damage listing
@@ -5009,7 +5007,7 @@ v0.35.34 (2013-01-27, 22:55 UTC+1)
     some equipment (thanks Hammer and Neil!)
 + Bug 1136:  Princess Bot Ignores Infantry.
 + Bug 3620: Princess Bot Does Not Move Heavy Infantry
-+ change to MekViewPanel dimensions to accomodate MML
++ change to MekViewPanel dimensions to accommodate MML
 + Bug 3626: falling while standing on building - mech not prone
 + Bug 3615: VTOL Jet Booster too heavy
 + Patch 441: Orthographics for Bridges and Submersables
@@ -5074,7 +5072,7 @@ v0.35.33 (2012-11-26, 22:19 UTC+1)
 + Bug 2764: Manei Domini and P/L MASC
 + Bug 3327: Some MD enhancement quirks
 + Bug 3359: Fighter Squadrons have 0 overthrust
-+ Bug 3255: Deleting unit in squadron doesnt get removed
++ Bug 3255: Deleting unit in squadron doesn't get removed
 + Bug: some cluster weapons not doing aero damage correctly
 + Bug: squadron base weapon damage not based on attack value
 + some fixes to InfantryHeatWeaponHandler.java
@@ -6153,7 +6151,7 @@ v0.35.19 (2010-10-13, 16:39 UTC+2)
 + helper functions for unloading, loading, and deleting units in the lobby
 + units loaded on other units are sorted immediately below their loaded unit
 + indent MekTable in chat lounge for loaded units
-+ Bug: units not at the same altitude cant load in chat lounge
++ Bug: units not at the same altitude can't load in chat lounge
 + Start Fighter Squadron Context menuitem
 + disabled Start Fighter Squadron menuitem because of bugs
 + no loading of teammates in chat lounge (yet)
@@ -8413,7 +8411,7 @@ v0.33.17 (2008-02-01)
 + Bug 1882694: Map rotation error
 + Bug: movement along road not checking destination hex for road, too
 + Physical Attacks against Infantry should do only 1/10 damage
-+ Bug: Draw occuring on Team Game Victories
++ Bug: Draw occurring on Team Game Victories
 
 v0.33.16 (2008-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change
@@ -8994,8 +8992,7 @@ v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.
 + Added PXH-7K and MAD-4K (RS:PPU)
 + Clearing woods changed to TW rules
-+ Anti mech attacks partially updated for TW rules (swarm pulls in too many
-    rules)
++ Anti mech attacks partially updated for TW rules (swarm pulls in too many rules)
 + Tank and quad hit location tables partially updated for TW rules
 + Infantry anti-mech skill is customisable
 + Update the motive system damage table, and make vehicles use it
@@ -9004,21 +9001,19 @@ v0.33.0 (2006-10-13 22:39 GMT+9)
 + New <troopers> tag in infantry BLK files
 + Updated infantry unit files to have the correct number of troopers
 + Foot infantry now restricted from firing on the move except with rifles
-+ Created unit files for mechanized infantry, they load but don't work correctly
-    yet
++ Created unit files for mechanized infantry, they load but don't work correctly yet
 + Infantry flamers can now inflict heat (TW rule change)
 + Non mechanized infantry pay 1 less MP to enter woods
 + Support for 6 man BA squads
 + Blakist versions of Achileus, Longinus and Purifier
-+ Comstar version of the IS standard
-+ Updated german translations.
++ ComStar version of the IS standard
++ Updated German translations.
 + Combat vehicle critical hit table (no chance for unjam yet)
 + VTOL critical hit table
 + removed maxtech mechanised BA option, as its now integrated to core rules
 + implemented instant death roll for mechanized BA on a dying transport
 + implemented avoid damage roll for mechanized BA when their transport is shot
-+ mechanised hover infantry and UMU infantry can cross water (removed the undine
-    hardcode)
++ mechanised hover infantry and UMU infantry can cross water (removed the undine hardcode)
 + MP reduction for carrying Fa Shih on a non-omni
 + Omnivehicles can carry BA
 + removed maxtech physical BTH, as its integrated into core rules
@@ -9233,7 +9228,7 @@ v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Data 1545661: 3055U Mek MTFs
 + Added updated retroweaver-rt.jar, so clients work again with Java 1.4
 + Bug 1464952/1298206: purifier's mimetic armour now cancels +1 for jump
-  Note this is changed in TW so mimetic doesnt cancel anything so I've
+  Note this is changed in TW so mimetic doesn't cancel anything so I've
   documented that and added a FIXME for when we change ruleset
 + Changed "host game" startup so that game options are loaded by the Server
   instead of the MegamekGUI, to address a rare lockup caused by game options

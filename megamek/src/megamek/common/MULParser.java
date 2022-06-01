@@ -2456,7 +2456,7 @@ public class MULParser {
             return;
         }
 
-        // Add the newly mounted maniplator
+        // Add the newly mounted manipulator
         try {
             int baMountLoc = mountedManip.getBaMountLoc();
             mountedManip = entity.addEquipment(manipType, mountedManip.getLocation());

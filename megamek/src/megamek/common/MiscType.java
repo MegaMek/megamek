@@ -4218,7 +4218,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createComstarInfArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Comstar Infantry Kit";
+        misc.name = "ComStar Infantry Kit";
         misc.setInternalName(misc.name);
         misc.addLookupName("CSInfKit");
         misc.addLookupName("ComstarKit");
@@ -7895,12 +7895,12 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLSpaceMineDispenser");
         misc.cost = 15000;
         misc.tonnage = 10;
-        // TODO: implement game rules for this, analog to the mine for BAs
+        // TODO : implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_SPACE_MINE_DISPENSER);
         misc.bv = 200; // because it includes 2 mines. 100 for each mine,
-                       // becaues it deals a max potential damage of 100
+                       // because it deals a max potential damage of 100
         misc.rulesRefs = "325, TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_D).setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)

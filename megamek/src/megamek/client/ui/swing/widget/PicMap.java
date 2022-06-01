@@ -1,5 +1,8 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the Free 
@@ -21,8 +24,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * PicMap is a lightweight component, which area is composed by the set of cutom
- * elements added to PicMap Engine. There are three main groups of cutom
+ * PicMap is a lightweight component, which area is composed by the set of custom
+ * elements added to PicMap Engine. There are three main groups of custom
  * elements<br>
  * 1) BackgroundDrawers<br>
  * 2) Hot areas<br>
@@ -51,8 +54,8 @@ public abstract class PicMap extends JComponent {
     // Labels
     private PMAreasGroup labels = new PMAreasGroup();
     // Number of Hot areas on stage
-    private int areascount = 0;
-    // Root groop of hot areas (required for general operations)
+    private int areasCount = 0;
+    // Root group of hot areas (required for general operations)
     private PMAreasGroup rootGroup = new PMAreasGroup();
     // Offscreen image
     private Image offScr;
@@ -73,7 +76,7 @@ public abstract class PicMap extends JComponent {
     private boolean bgIsOpaque = true;
 
     /**
-     * creates PicMap engine. If no areas, labels or Backround-drawers added
+     * creates PicMap engine. If no areas, labels or Background-drawers added
      * this is just transparent layer over container.
      */
     public PicMap() {
@@ -103,7 +106,7 @@ public abstract class PicMap extends JComponent {
             labels.addArea(e);
         } else if (e instanceof PMHotArea) {
             hotAreas.addArea(e);
-            areascount++;
+            areasCount++;
         } else if (e instanceof PMAreasGroup) {
             PMAreasGroup ag = (PMAreasGroup) e;
             Enumeration<PMElement> iter = ag.elements();
@@ -125,7 +128,7 @@ public abstract class PicMap extends JComponent {
             labels.removeArea(e);
         } else if (e instanceof PMHotArea) {
             if (hotAreas.removeArea(e)) {
-                areascount--;
+                areasCount--;
             }
         } else {
             otherAreas.removeArea(e);
@@ -142,7 +145,7 @@ public abstract class PicMap extends JComponent {
         hotAreas.removeAll();
         labels.removeAll();
         bgDrawers.removeAllElements();
-        areascount = 0;
+        areasCount = 0;
         activeHotArea = null;
     }
 
@@ -152,19 +155,11 @@ public abstract class PicMap extends JComponent {
      */
     public void addBgDrawer(BackGroundDrawer bd) {
         bgDrawers.addElement(bd);
-
-    }
-
-    /**
-     * Removes Background drawer from component.
-     */
-    public void removeBgDrawer(BackGroundDrawer bd) {
-        bgDrawers.removeElement(bd);
     }
 
     /**
      * Sets margins in pixels around Content of component. Does not affect
-     * Backgroun Drawers.
+     * Background Drawers.
      * 
      * @param l Left margin
      * @param t Top margin
@@ -223,7 +218,7 @@ public abstract class PicMap extends JComponent {
             // background
             g.drawImage(offScr, 0, 0, null);
         } else {
-            // Disrectly drawing to the place (use buffering in conainer)
+            // Directly drawing to the place (use buffering in container)
             // Makes background of PicMap transparent
             drawInto(g);
         }
@@ -272,7 +267,7 @@ public abstract class PicMap extends JComponent {
     public PMHotArea getAreaUnder(int x, int y) {
         // Have to check all elements of hotAreas vector
         // from end to start. Compare against zero works faster.
-        for (int i = (areascount - 1); i >= 0; i--) {
+        for (int i = (areasCount - 1); i >= 0; i--) {
             PMHotArea ha = (PMHotArea) hotAreas.elementAt(i);
             if ((ha != null) && intersects(ha.getAreaShape(), x, y)) {
                 return ha;

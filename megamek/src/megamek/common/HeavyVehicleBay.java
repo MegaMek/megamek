@@ -81,7 +81,7 @@ public final class HeavyVehicleBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Heavy Vehicle Bay " + numDoorsString() + " - "
                 + String.format("%1$,.0f", getUnused())
                 + (getUnused() > 1 ? " units" : " unit");

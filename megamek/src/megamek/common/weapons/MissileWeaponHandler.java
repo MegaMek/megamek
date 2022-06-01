@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -31,7 +32,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     boolean advancedAMS = false;
     boolean advancedPD = false;
     boolean multiAMS = false;
-
 
     /**
      * @param t
@@ -671,7 +671,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(newWaa, game, gameManager);
-                // increase ammo by one, becaues we just incorrectly used one up
+                // increase ammo by one, because we just incorrectly used one up
                 weapon.getLinked().setShotsLeft(weapon.getLinked().getBaseShotsLeft() + 1);
                 // if the new attack has an impossible to-hit, go on to next entity
                 if (ah == null) {
@@ -984,10 +984,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     firstHit = false;
                 }
             }
-        } else { // We missed, but need to handle special miss cases
-
+        } else {
+            // We missed, but need to handle special miss cases
             // When shooting at a non-infantry unit in a building and the
-            //  shot misses, the building is damaged instead, TW pg 171
+            // shot misses, the building is damaged instead, TW pg 171
             if (bldgDamagedOnMiss) {
                 r = new Report(6429);
                 r.indent(2);

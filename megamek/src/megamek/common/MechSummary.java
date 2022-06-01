@@ -74,8 +74,8 @@ public class MechSummary implements Serializable {
     private int internalsType;
     
     /**
-     * Each location can have a separate armor type, but this is used for 
-     * search purposes we we really only care about which types are present.
+     * Each location can have a separate armor type, but this is used for search purposes. We really
+     * only care about which types are present.
      */
     private final HashSet<Integer> armorTypeSet;
     

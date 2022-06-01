@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -36,7 +37,7 @@ import megamek.server.Server;
 public class UltraWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
-    private final boolean twoRollsUltra; // Tracks whether or not this is an
+    private final boolean twoRollsUltra; // Tracks whether this is an
 
     // ultra AC using the unofficial "two rolls" rule. Can be final because
     // this isn't really going to change over the course of a game.
@@ -172,7 +173,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // infantry get hit by all shots
         if (target.isConventionalInfantry()) {
-            if (howManyShots > 1) { // Is this a cluser attack?
+            if (howManyShots > 1) { // Is this a cluster attack?
                 // Compute maximum damage potential for cluster weapons
                 toReturn = howManyShots * wtype.getDamage();
                 toReturn = Compute.directBlowInfantryDamage(toReturn,

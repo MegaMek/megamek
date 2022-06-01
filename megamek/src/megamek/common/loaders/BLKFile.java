@@ -1249,7 +1249,7 @@ public class BLKFile {
             // a:b:c:d
             // a is the size of the bay, in tons or # of units and is required
             // b is the number of doors in the bay, and is required
-            // c is the bay number OR an indicator that this bay is a comstar bay OR an indicator of the kind of infantry bay it is, and is optional
+            // c is the bay number OR an indicator that this bay is a ComStar bay OR an indicator of the kind of infantry bay it is, and is optional
             // d is like c except that it's not going to be the bay number
             
             String[] temp = numbers.split(Bay.FIELD_SEPARATOR);
@@ -1269,7 +1269,7 @@ public class BLKFile {
             }
                         
             if (!potentialBayTypeIndicator.isEmpty()) {
-                // normally a great time for a switch statement, but we're using equalsignorecase for the comparator
+                // normally a great time for a switch statement, but we're using equalsIgnoreCase for the comparator
                 if (potentialBayTypeIndicator.equalsIgnoreCase(COMSTAR_BAY)) {
                     isComstarBay = true;
                 } else if (potentialBayTypeIndicator.equalsIgnoreCase("jump")) {

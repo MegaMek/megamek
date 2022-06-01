@@ -1,0 +1,12 @@
+3063 ComStar Medium Aerospace
+Ironsides IRN-SD1b,1
+Hellcat II HCT-214,2
+Hellcat II HCT-213B,3
+Ironsides IRN-SD1,4
+Ironsides IRN-SD1,5
+Hellcat II HCT-213B,6
+Gotha GTHA-500,5
+Gotha GTHA-500b,4
+Hellcat II HCT-214,3
+Lightning LTN-G15b,2
+Lightning LTN-G15b,1

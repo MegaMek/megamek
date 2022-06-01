@@ -3459,9 +3459,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public MekTable(MekTableModel mekModel) {
             super(mekModel);
         }
-        
+
+        /**
+         * Places the tooltips to the right of the cell so it doesn't get in the way.
+         */
         @Override
-        /** Places the tooltips to the right of the cell so it doesnt get in the way. */
         public Point getToolTipLocation(MouseEvent event) {
             int row = rowAtPoint(event.getPoint());
             int col = columnAtPoint(event.getPoint());

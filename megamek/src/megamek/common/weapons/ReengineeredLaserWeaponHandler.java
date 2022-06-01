@@ -1,6 +1,6 @@
 /*
- * MegaMek
- * Copyright (C) 2013 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -19,7 +19,6 @@ import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = -7390162086880372388L;
@@ -27,7 +26,7 @@ public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
     public ReengineeredLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g,
                                           GameManager m) {
         super(toHit, waa, g, m);
-        // so that reflective armor doesn't halve the damae
+        // so that reflective armor doesn't halve the damage
         generalDamageType = HitData.DAMAGE_IGNORES_DMG_REDUCTION;
     }
 }

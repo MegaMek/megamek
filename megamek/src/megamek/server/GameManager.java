@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  */
-
 package megamek.server;
 
 import com.thoughtworks.xstream.XStream;
@@ -19,6 +18,7 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.*;
+import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
@@ -70,15 +70,15 @@ public class GameManager implements IGameManager {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(@Nullable Object o) {
             if (this == o) {
                 return true;
-            }
-            if ((null == o) || (getClass() != o.getClass())) {
+            } else if ((null == o) || (getClass() != o.getClass())) {
                 return false;
+            } else {
+                final EntityTargetPair other = (EntityTargetPair) o;
+                return Objects.equals(ent, other.ent) && Objects.equals(target, other.target);
             }
-            final EntityTargetPair other = (EntityTargetPair) o;
-            return Objects.equals(ent, other.ent) && Objects.equals(target, other.target);
         }
 
         @Override
@@ -117,7 +117,7 @@ public class GameManager implements IGameManager {
      */
     private Set<Coords> hexUpdateSet = new LinkedHashSet<>();
 
-    private List<Building.DemolitionCharge> explodingCharges = new ArrayList<>();
+    private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
     /**
      * Keeps track of what team a player requested to join.
@@ -1304,7 +1304,6 @@ public class GameManager implements IGameManager {
         }
     }
 
-
     /**
      * Called when a player declares that he is "done." Checks to see if all
      * players are done, and if so, moves on to the next phase.
@@ -1467,14 +1466,17 @@ public class GameManager implements IGameManager {
 
             // Calculate the number of EntityClassTurns need to be added.
             if (infMoveMulti && infMoved) {
-                remaining += game.getInfantryLeft(playerId);
+                remaining += getGame().getInfantryLeft(playerId);
             }
+
             if (protosMoveMulti && protosMoved) {
-                remaining += game.getProtomechsLeft(playerId);
+                remaining += getGame().getProtoMeksLeft(playerId);
             }
+
             if (usedEntityNotDone) {
                 remaining--;
             }
+
             int moreInfAndProtoTurns = Math.min(
                     gameOpts.intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI) - 1, remaining);
 

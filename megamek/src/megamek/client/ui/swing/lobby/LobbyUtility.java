@@ -282,8 +282,8 @@ public class LobbyUtility {
      */
     static boolean validateLobbyLoad(Collection<Entity> entities, Entity loader, int bayNumber,
             boolean loadRear, StringBuilder errorMsg) {
-        // Protomek loading uses only 1 entity, get that (doesnt matter if it's something else):
-        Entity soleProtomek = entities.stream().findAny().get();
+        // ProtoMek loading uses only 1 entity, get that (doesn't matter if it's something else)
+        Entity soleProtoMek = entities.stream().findAny().get();
         double capacity;
         boolean hasEnoughCargoCapacity;
         String errorMessage = "";
@@ -297,9 +297,9 @@ public class LobbyUtility {
                 errorMessage = Messages.getString("LoadingBay.baytoomany",
                         (int) bay.getUnusedSlots(), bay.getDefaultSlotDescription());
             } else if (loader.hasETypeFlag(Entity.ETYPE_MECH)
-                    && soleProtomek.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
+                    && soleProtoMek.hasETypeFlag(Entity.ETYPE_PROTOMECH)) {
                 // We're also using bay number to distinguish between front and rear locations
-                // for protomech mag clamp systems
+                // for ProtoMek mag clamp systems
                 hasEnoughCargoCapacity = entities.size() == 1;
                 errorMessage = Messages.getString("LoadingBay.protostoomany");
             } else {
@@ -420,11 +420,6 @@ public class LobbyUtility {
         errorMsg.append(errorMessage);
         return hasEnoughCargoCapacity;
     }
-
-    
-    // PRIVATE
-    //  
-    //
 
     /** 
      * Returns true when the two starting positions overlap, i.e.

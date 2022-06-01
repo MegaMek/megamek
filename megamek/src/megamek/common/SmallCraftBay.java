@@ -147,7 +147,7 @@ public final class SmallCraftBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder();
         if (arts) {
             sb.append("ARTS ");
@@ -155,7 +155,7 @@ public final class SmallCraftBay extends Bay {
         sb.append("Small Craft ").append(numDoorsString()).append(" - ")
             .append(String.format("%1$,.0f", getUnused()))
             .append(getUnused() > 1 ? " units" : " unit");
-        if (showrecovery) {
+        if (showRecovery) {
             sb.append(" (").append(getRecoverySlots()).append(" recovery open)");
         }
         return sb.toString();

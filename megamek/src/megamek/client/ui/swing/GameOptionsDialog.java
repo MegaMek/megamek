@@ -236,7 +236,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     /** 
      * When show is true, options that contain the given String str are shown.
      * When show is false, these options are hidden and deselected. 
-     * Used to show/hide unofficial and legcy options.
+     * Used to show/hide unofficial and legacy options.
      */
     private void toggleOptions() {
         for (List<DialogOptionComponent> comps : optionComps.values()) {

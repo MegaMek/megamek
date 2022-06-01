@@ -338,7 +338,7 @@ public class Bay implements Transporter, ITechnology {
      *
      * @return A <code>String</code> meant for a human.
      */
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return numDoorsString() + "  - " + getUnused() + ((getUnused() > 1) ? " units" : " unit");
     }
 

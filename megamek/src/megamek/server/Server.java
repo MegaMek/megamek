@@ -22,7 +22,7 @@ import megamek.Version;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.commandline.AbstractCommandLineParser;
+import megamek.common.commandline.AbstractCommandLineParser.ParseException;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.connections.AbstractConnection;
@@ -35,7 +35,7 @@ import megamek.common.net.packets.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.SerializationHelper;
-import megamek.server.commands.*;
+import megamek.server.commands.ServerCommand;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
@@ -153,6 +153,31 @@ public class Server implements Runnable {
 
     private Timer serverBrowserUpdateTimer = null;
 
+    /**
+     * Used to ensure only one thread at a time is accessing this particular
+     * instance of the server.
+     */
+    private final Object serverLock = new Object();
+
+    public static final String ORIGIN = "***Server";
+
+    // Easter eggs. Happy April Fool's Day!!
+    private static final String DUNE_CALL = "They tried and failed?";
+
+    private static final String DUNE_RESPONSE = "They tried and died!";
+
+    private static final String STAR_WARS_CALL = "I'd just as soon kiss a Wookiee.";
+
+    private static final String STAR_WARS_RESPONSE = "I can arrange that!";
+
+    private static final String INVADER_ZIM_CALL = "What does the G stand for?";
+
+    private static final String INVADER_ZIM_RESPONSE = "I don't know.";
+
+    private static final String WARGAMES_CALL = "Shall we play a game?";
+
+    private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
+
     private ConnectionListener connectionListener = new ConnectionListener() {
         /**
          * Called when it is sensed that a connection has terminated.
@@ -207,38 +232,20 @@ public class Server implements Runnable {
         }
     };
 
-    public static final String ORIGIN = "***Server";
-
-    // Easter eggs. Happy April Fool's Day!!
-    private static final String DUNE_CALL = "They tried and failed?";
-
-    private static final String DUNE_RESPONSE = "They tried and died!";
-
-    private static final String STAR_WARS_CALL = "I'd just as soon kiss a Wookiee.";
-
-    private static final String STAR_WARS_RESPONSE = "I can arrange that!";
-
-    private static final String INVADER_ZIM_CALL = "What does the G stand for?";
-
-    private static final String INVADER_ZIM_RESPONSE = "I don't know.";
-
-    private static final String WARGAMES_CALL = "Shall we play a game?";
-
-    private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
-
     /**
      *
      * @param serverAddress
      * @return valid hostName
-     * @throws AbstractCommandLineParser.ParseException for null or empty serverAddress
+     * @throws ParseException for null or empty serverAddress
      */
-    public static String validateServerAddress(String serverAddress) throws AbstractCommandLineParser.ParseException {
+    public static String validateServerAddress(String serverAddress) throws ParseException {
         if ((serverAddress == null) || serverAddress.isBlank()) {
-            String msg = String.format("serverAddress must not be null or empty");
+            String msg = "serverAddress must not be null or empty";
             LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
+            throw new ParseException(msg);
+        } else {
+            return serverAddress.trim();
         }
-        return serverAddress.trim();
     }
 
     /**
@@ -246,20 +253,18 @@ public class Server implements Runnable {
      * @param playerName throw ParseException if null or empty
      * @return valid playerName
      */
-    public static String validatePlayerName(String playerName) throws AbstractCommandLineParser.ParseException {
+    public static String validatePlayerName(String playerName) throws ParseException {
         if (playerName == null) {
-            String msg = String.format("playerName must not be null");
+            String msg = "playerName must not be null";
             LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
-        }
-
-        if (playerName.isBlank()) {
-            String msg = String.format("playerName must not be empty string");
+            throw new ParseException(msg);
+        } else if (playerName.isBlank()) {
+            String msg = "playerName must not be empty string";
             LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
+            throw new ParseException(msg);
+        } else {
+            return playerName.trim();
         }
-
-        return playerName.trim();
     }
 
     /**
@@ -267,17 +272,13 @@ public class Server implements Runnable {
      * @param password
      * @return valid password or null if no password or password is blank string
      */
-    @Nullable
-    public static String validatePassword(@Nullable String password) {
-        if ((password == null) || password.isBlank()) {
-            return null;
-        }
-        return password.trim();
+    public static @Nullable String validatePassword(@Nullable String password) {
+        return ((password == null) || password.isBlank()) ? null : password.trim();
     }
 
     /**
      * Checks a String against the server password
-     * @param password The password provided by the user..
+     * @param password The password provided by the user.
      * @return true if the user-supplied data matches the server password or no password is set.
      */
     public boolean passwordMatches(Object password) {
@@ -289,25 +290,17 @@ public class Server implements Runnable {
      * @param port if 0 or less, will return default, if illegal number, throws ParseException
      * @return valid port number
      */
-    public static int validatePort(int port) throws AbstractCommandLineParser.ParseException {
+    public static int validatePort(int port) throws ParseException {
         if (port <= 0) {
             return MMConstants.DEFAULT_PORT;
-        }
-
-        if ((port < MMConstants.MIN_PORT) || (port > MMConstants.MAX_PORT)) {
+        } else if ((port < MMConstants.MIN_PORT) || (port > MMConstants.MAX_PORT)) {
             String msg = String.format("Port number %d outside allowed range %d-%d", port, MMConstants.MIN_PORT, MMConstants.MAX_PORT);
             LogManager.getLogger().error(msg);
-            throw new AbstractCommandLineParser.ParseException(msg);
-
+            throw new ParseException(msg);
+        } else {
+            return port;
         }
-        return port;
     }
-
-    /**
-     * Used to ensure only one thread at a time is accessing this particular
-     * instance of the server.
-     */
-    private final Object serverLock = new Object();
 
     public Server(String password, int port, IGameManager gameManager) throws IOException {
         this(password, port, gameManager, false, "", null, false);
@@ -330,7 +323,7 @@ public class Server implements Runnable {
      *                                  used
      * @param gameManager               the {@link IGameManager} instance for this server instance.
      * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register
-     *                                  with the master server browser on megamek.info
+     *                                  with the master server browser on MegaMek.info
      * @param mailer an email service instance to use for sending round reports.
      * @param dedicated set to true if this server is started from a GUI-less context
      */
@@ -358,12 +351,12 @@ public class Server implements Runnable {
             sb.append(host);
             sb.append("' port = ");
             sb.append(serverSocket.getLocalPort());
-            sb.append("\n");
+            sb.append('\n');
             InetAddress[] addresses = InetAddress.getAllByName(host);
             for (InetAddress address : addresses) {
                 sb.append("s: hosting on address = ");
                 sb.append(address.getHostAddress());
-                sb.append("\n");
+                sb.append('\n');
             }
 
             LogManager.getLogger().info(sb.toString());
@@ -539,8 +532,8 @@ public class Server implements Runnable {
      */
     public int getFreeConnectionId() {
         while ((getPendingConnection(connectionCounter) != null)
-               || (getConnection(connectionCounter) != null)
-               || (getPlayer(connectionCounter) != null)) {
+                || (getConnection(connectionCounter) != null)
+                || (getPlayer(connectionCounter) != null)) {
             connectionCounter++;
         }
         return connectionCounter;
@@ -570,11 +563,11 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFActive(player.getNbrMFActive());
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
             if (gamePlayer.getConstantInitBonus()
-                != player.getConstantInitBonus()) {
+                    != player.getConstantInitBonus()) {
                 sendServerChat("Player " + gamePlayer.getName()
-                               + " changed their initiative bonus from "
-                               + gamePlayer.getConstantInitBonus()
-                               + " to " + player.getConstantInitBonus() + ".");
+                        + " changed their initiative bonus from "
+                        + gamePlayer.getConstantInitBonus()
+                        + " to " + player.getConstantInitBonus() + '.');
             }
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
             gamePlayer.setEmail(player.getEmail());
@@ -595,9 +588,9 @@ public class Server implements Runnable {
                 String newName = oldName;
                 int dupNum;
                 try {
-                    dupNum = Integer.parseInt(oldName.substring(oldName.lastIndexOf(".") + 1));
+                    dupNum = Integer.parseInt(oldName.substring(oldName.lastIndexOf('.') + 1));
                     dupNum++;
-                    newName = oldName.substring(0, oldName.lastIndexOf("."));
+                    newName = oldName.substring(0, oldName.lastIndexOf('.'));
                 } catch (Exception e) {
                     // If this fails, we don't care much.
                     // Just assume it's the first time for this name.
@@ -632,11 +625,11 @@ public class Server implements Runnable {
         if (clientChecksum == null) {
             message = "Client Checksum is null. Client may not have a jar file";
             LogManager.getLogger().info(message);
-        // print message indicating server doesn't have jar file
+            // print message indicating server doesn't have jar file
         } else if (serverChecksum == null) {
             message = "Server Checksum is null. Server may not have a jar file";
             LogManager.getLogger().info(message);
-        // print message indicating a client/server checksum mismatch
+            // print message indicating a client/server checksum mismatch
         } else if (!clientChecksum.equals(serverChecksum)) {
             message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s",
                     serverChecksum, clientChecksum);
@@ -647,7 +640,7 @@ public class Server implements Runnable {
 
         // Now, if we need to, send message!
         if (message.isEmpty()) {
-            LogManager.getLogger().info("SUCCESS: Client/Server Version (" + version + ") and Checksum (" 
+            LogManager.getLogger().info("SUCCESS: Client/Server Version (" + version + ") and Checksum ("
                     + clientChecksum + ") matched");
         } else {
             Player player = getPlayer(connId);
@@ -886,7 +879,7 @@ public class Server implements Runnable {
      * @return A <code>boolean</code> value whether or not the loading was successful
      */
     public boolean loadGame(File f, boolean sendInfo) {
-        LogManager.getLogger().info("s: loading saved game file '" + f + "'");
+        LogManager.getLogger().info("s: loading saved game file '" + f + '\'');
 
         Game newGame;
         try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
@@ -935,7 +928,7 @@ public class Server implements Runnable {
     public void remapConnIds(Map<String, Integer> nameToIdMap, Map<Integer, String> idToNameMap) {
         // Keeps track of connections without Ids
         List<AbstractConnection> unassignedConns = new ArrayList<>();
-       // Keep track of which ids are used
+        // Keep track of which ids are used
         Set<Integer> usedPlayerIds = new HashSet<>();
         Set<String> currentPlayerNames = new HashSet<>();
         for (Player p : getGame().getPlayersVector()) {
@@ -1042,7 +1035,7 @@ public class Server implements Runnable {
     /**
      * Returns a pending connection
      */
-    AbstractConnection getPendingConnection(int connId) {
+    public @Nullable AbstractConnection getPendingConnection(int connId) {
         for (AbstractConnection conn : connectionsPending) {
             if (conn.getId() == connId) {
                 return conn;
@@ -1058,7 +1051,7 @@ public class Server implements Runnable {
         for (var player: getGame().getPlayersVector()) {
             var connectionId = connection.getId();
             connection.send(
-                createPlayerConnectPacket(player, player.getId() != connectionId)
+                    createPlayerConnectPacket(player, player.getId() != connectionId)
             );
         }
     }
@@ -1071,15 +1064,15 @@ public class Server implements Runnable {
             for (var connection: connections) {
                 var playerId = player.getId();
                 connection.send(
-                    createPlayerConnectPacket(player, playerId != connection.getId())
+                        createPlayerConnectPacket(player, playerId != connection.getId())
                 );
             }
         }
     }
 
-     /**
-      * Creates a packet informing that the player has connected
-      */
+    /**
+     * Creates a packet informing that the player has connected
+     */
     private Packet createPlayerConnectPacket(Player player, boolean isPrivate) {
         var playerId = player.getId();
         var destPlayer = player;
@@ -1100,7 +1093,7 @@ public class Server implements Runnable {
             for (var connection : connections) {
                 var playerId = player.getId();
                 var destPlayer = player;
-    
+
                 if (playerId != connection.getId()) {
                     // Sending the player's data to another player's
                     // connection, need to redact any private data
@@ -1356,8 +1349,7 @@ public class Server implements Runnable {
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
-            String content;
-            content = "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
+            String content = "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
             if (register) {
                 for (AbstractConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());

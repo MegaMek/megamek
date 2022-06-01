@@ -20,7 +20,7 @@ import java.util.Vector;
 
 /**
  * Represents a set of handles on an OmniMech used by Battle Armor units
- * equiped with Boarding Claws to attach themselves for transport. This is
+ * equipped with Boarding Claws to attach themselves for transport. This is
  * standard equipment on OmniMechs.
  *
  * @see MechFileParser#postLoadInit
@@ -155,7 +155,7 @@ class BattleArmorHandles implements Transporter {
      *
      * @return A <code>List</code> of loaded <code>Entity</code> units. This
      *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independant from the under- lying
+     *         returned <code>List</code> is independent from the underlying
      *         data structure; modifying one does not affect the other.
      */
     @Override
@@ -177,7 +177,7 @@ class BattleArmorHandles implements Transporter {
      *
      * @param unit
      *            - the <code>Entity</code> to be unloaded.
-     * @return <code>true</code> if the unit was contain is loadeded in this
+     * @return <code>true</code> if the unit was contained is loaded in this
      *         space, <code>false</code> otherwise.
      */
     @Override

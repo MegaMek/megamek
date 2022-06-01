@@ -3473,9 +3473,8 @@ public class MoveStep implements Serializable {
                 return false;
             }
 
-            // cant move through a hex with a LargeSupportTank or a grounded
-            // Dropship unless infantry
-            // or a VTOL at high enough elevation
+            // Can't move through a hex with a LargeSupportTank or a grounded DropShip unless
+            // infantry or a VTOL at high enough elevation
             if (!(entity instanceof Infantry)) {
                 boolean validRoadTrain = false;
                 for (Entity inHex : game.getEntitiesVector(src)) {
@@ -3483,8 +3482,8 @@ public class MoveStep implements Serializable {
                         continue;
                     }
                     
-                    //ignore the first trailer behind a non-superheavy tractor
-                    //which can be in the same hex
+                    // Ignore the first trailer behind a non-superheavy tractor which can be in the
+                    // same hex
                     if (!entity.getAllTowedUnits().isEmpty() && !entity.isSuperHeavy()) {
                         Entity firstTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
                         if (inHex.equals(firstTrailer)) {
@@ -3543,8 +3542,8 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // We need extra checking for dropships, due to secondary positions
-        // if the Dropship is taking off, movetype will be safe thrust
+        // We need extra checking for DropShips, due to secondary positions
+        // if the DropShip is taking off, MoveType will be safe thrust
         if ((entity instanceof Dropship) && !entity.isAirborne()
                 && isPavementStep() && entity.isLocationProhibited(dest, getElevation())
                 && (movementType != EntityMovementType.MOVE_SAFE_THRUST)
@@ -3862,8 +3861,7 @@ public class MoveStep implements Serializable {
             return false;
         }
 
-        // cant use thrust turns in the first hex of movement (or first 8 if
-        // ground)
+        // Can't use thrust turns in the first hex of movement (or first 8 if ground)
         if (game.getBoard().onGround()) {
             // if flying on the ground map then they need to move 8 hexes first
             if (distance < 8) {
@@ -3875,17 +3873,15 @@ public class MoveStep implements Serializable {
 
         // must have been no prior turns in this hex (or 8 hexes if on ground)
         return getNTurns() == 0;
-
     }
 
     public boolean dueFreeTurn() {
-
         Entity en = getEntity();
         int straight = getNStraight();
         int vel = getVelocity();
         int thresh = 99;
 
-        // I will assume that small craft should be treated as dropships?
+        // I will assume that small craft should be treated as DropShips?
         if (en instanceof SmallCraft) {
             if (vel > 15) {
                 thresh = 6;
@@ -3976,7 +3972,7 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * Should we treat this movement as if it is occuring for an aerodyne unit
+     * Should we treat this movement as if it is occurring for an aerodyne unit
      * flying in atmosphere?
      */
     boolean useAeroAtmosphere(Game game, Entity en) {

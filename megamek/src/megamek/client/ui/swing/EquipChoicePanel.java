@@ -961,7 +961,7 @@ public class EquipChoicePanel extends JPanel {
                     return;
                 }
                     
-                // Add the newly mounted maniplator
+                // Add the newly mounted manipulator
                 try {
                     m_Manipmounted = entity.addEquipment(manipType, m_Manipmounted.getLocation());
                     m_Manipmounted.setBaMountLoc(baMountLoc);

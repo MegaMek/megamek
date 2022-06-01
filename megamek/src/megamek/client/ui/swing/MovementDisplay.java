@@ -896,9 +896,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(true);
         }
 
-
-        // if small craft/dropship that has unloaded units, then only allowed
-        // to unload more
+        // If a Small Craft / DropShip that has unloaded units, then only allowed to unload more
         if (ce.hasUnloadedUnitsFromBays()) {
             disableButtons();
             updateLoadButtons();
@@ -953,7 +951,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private synchronized void endMyTurn() {
         final Entity ce = ce();
 
-        //get rid of still running timer, if turn is concluded before time is up
+        // get rid of still running timer, if turn is concluded before time is up
         if (tt != null) {
             tt.stopTimer();
             tt = null;
@@ -1204,12 +1202,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         cmd.clipToPossible();
         if ((cmd.length() == 0) && !ce().isAirborne()
-            && GUIPreferences.getInstance().getNagForNoAction()) {
-            // Hmm....no movement steps, comfirm this action
-            String title = Messages
-                    .getString("MovementDisplay.ConfirmNoMoveDlg.title");
-            String body = Messages
-                    .getString("MovementDisplay.ConfirmNoMoveDlg.message");
+                && GUIPreferences.getInstance().getNagForNoAction()) {
+            // Hmm.... no movement steps, confirm this action
+            String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
+            String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
@@ -2613,7 +2609,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        // can this unit mount a dropship/small craft/train?
+        // Can this unit mount a DropShip / Small Craft / Train?
         setMountEnabled(false);
         Coords pos = ce.getPosition();
         int elev = ce.getElevation();
@@ -4091,7 +4087,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // On simultaneous phases, each player ending their turn will generate a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
         if (clientgui.getClient().getGame().getPhase().isSimultaneous(clientgui.getClient().getGame())
@@ -4165,7 +4161,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * GEAR_LAND (standard "walk forward").
      * 
      * @param suggestion The suggested Entity to use to compute the movement envelope. If used, the
-     *                   gear will be set to GEAR_LAND. This takes precendence over the currently
+     *                   gear will be set to GEAR_LAND. This takes precedence over the currently
      *                   selected unit.
      * @param suggestion
      */
@@ -5042,14 +5038,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         checkOOC();
         checkAtmosphere();
 
-        // if small craft/dropship that has unloaded units, then only allowed
-        // to unload more
+        // If small craft / DropShip that has unloaded units, then only allowed to unload more
         if (ce.hasUnloadedUnitsFromBays()) {
             disableButtons();
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-
     }
     
     /**
@@ -5059,7 +5053,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @param endMode The mode to convert to
      */
     private void adjustConvertSteps(EntityMovementMode endMode) {
-        //Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
+        // Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
         if (ce().getMovementMode() == endMode
                 // Account for grounded LAMs in fighter mode with movement type wheeled 
                 || (ce().isAero() && endMode == EntityMovementMode.AERODYNE)) {

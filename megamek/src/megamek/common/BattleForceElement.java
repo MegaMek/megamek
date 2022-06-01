@@ -362,7 +362,7 @@ public class BattleForceElement {
                 }
             }
 
-            // Targetting Computer
+            // Targeting Computer
             if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE)
                     && (weapon.getAmmoType() != AmmoType.T_AC_LBX)
                     && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {

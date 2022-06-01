@@ -482,7 +482,7 @@ public class ForceDescriptor {
      * vehicle lances out of the same model or pairing fighter chassis. The equipment rating has an
      * effect on unit cohesion, such that lower rated units are more likely to have mismatched equipment.
      *
-     * @param subs The subforces that describe the indiviual elements of the lance
+     * @param subs The subforces that describe the individual elements of the lance
      */
     public void generateLance(List<ForceDescriptor> subs) {
         if (subs.isEmpty()) {

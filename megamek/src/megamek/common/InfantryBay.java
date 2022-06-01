@@ -148,7 +148,7 @@ public final class InfantryBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder();
         sb.append("Infantry Bay ").append(numDoorsString()).append(" - ")
                 .append(getUnusedSlots())

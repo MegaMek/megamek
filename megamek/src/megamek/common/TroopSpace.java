@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying troops and their equipment under battle
+ * Represents a volume of space set aside for carrying troops and their equipment under battle
  * conditions. Typically, a component of an APC.
  */
 public final class TroopSpace implements Transporter {
@@ -115,10 +115,9 @@ public final class TroopSpace implements Transporter {
     /**
      * Get a <code>List</code> of the units currently loaded into this payload.
      *
-     * @return A <code>List</code> of loaded <code>Entity</code> units. This
-     *         list will never be <code>null</code>, but it may be empty. The
-     *         returned <code>List</code> is independant from the under- lying
-     *         data structure; modifying one does not affect the other.
+     * @return A <code>List</code> of loaded <code>Entity</code> units. This list will never be
+     * <code>null</code>, but it may be empty. The returned <code>List</code> is independent from
+     * the underlying data structure; modifying one does not affect the other.
      */
     @Override
     public Vector<Entity> getLoadedUnits() {

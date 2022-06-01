@@ -362,7 +362,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         
         final Game game = clientgui.getClient().getGame();
-        // On simultaneous phases, each player ending their turn will generalte a turn change
+        // On simultaneous phases, each player ending their turn will generate a turn change
         // We want to ignore turns from other players and only listen to events we generated
         // Except on the first turn
         if (game.getPhase().isSimultaneous(game)

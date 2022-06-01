@@ -1806,7 +1806,7 @@ public class Client implements IClientCommandHandler {
      */
     @Override
     public void registerCommand(ClientCommand command) {
-        //Warning, the special direction commands are registered seperatly
+        // Warning, the special direction commands are registered separately
         commandsHash.put(command.getName(), command);
     }
 

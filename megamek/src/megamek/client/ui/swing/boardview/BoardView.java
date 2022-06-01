@@ -1379,7 +1379,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private void updateShadowMap() {
         // Issues:
         // Bridge shadows show a gap towards connected hexes. I don't know why.
-        // More than one super image on a hex (building + road) doesnt work. how do I get
+        // More than one super image on a hex (building + road) doesn't work. how do I get
         //   the super for a hex for a specific terrain? This would also help
         //   with building shadowing other buildings.
         // AO shadows might be handled by this too. But:
@@ -2576,7 +2576,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        // Darken the hex for night-time, if applicable
+        // Darken the hex for nighttime, if applicable
         if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
@@ -2792,7 +2792,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             for (Image image : tileManager.orthoFor(oHex)) {
                 BufferedImage scaledImage = ImageUtil.createAcceleratedImage(getScaledImage(image, true));
 
-                // Darken the hex for night-time, if applicable
+                // Darken the hex for nighttime, if applicable
                 if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                         && IlluminationLevel.determineIlluminationLevel(game, c).isNone()
                         && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
@@ -6260,7 +6260,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return;
         }
 
-        // If the field of fire is not dispalyed
+        // If the field of fire is not displayed
         // for the active unit, then don't change anything
         if (fieldofFireUnit.equals(ce)) {
 

@@ -3,7 +3,8 @@ VERSION HISTORY:
 0.49.9-SNAPSHOT
 + Data: Updating Tags on Board Files
 + Issue #3662: Draw "Target Movement Modifier" on final legal step of current movement path
-+ PR #3672 - Removed No Torso Twist & updated quirks per BMM v6 errata
++ PR #3672: Removed No Torso Twist & updated quirks per BMM v6 errata
++ PR #3620: Suite Cleanup 2: Fixing a Ton of Internal Typos: Phase 1
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.0 from 4.5.1
 
@@ -39,7 +40,7 @@ VERSION HISTORY:
         rifles.
 + PR #3490: RATGeneratorEditor UX Improvements
 + PR #3515: Modernizing a bunch of Legacy Logging
-+ Data #3262 - BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
++ Data #3262: BattleArmorTROView NPE Reached from AbstractUnitSelectorDialog (Oni BA remade)
 + Data #3533, #3529, #3528, #3527, #3518, #3517, #3516, #3430, and #3410 fixes for various unit files. 
     RAT Generator Rec Guide 18 updates, Tech Progression errata.
 + MML Issue #927: Add LAM FuelTank

@@ -19,13 +19,9 @@ import java.awt.image.BufferedImage;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
-import megamek.common.EntityMovementType;
-import megamek.common.IAero;
-import megamek.common.MiscType;
+import megamek.codeUtilities.StringUtility;
+import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for
@@ -94,6 +90,7 @@ class StepSprite extends Sprite {
                 (step.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL);
 
         Color col;
+        boolean jumped = false;
         // Choose the color according to the type of movement
         switch (step.getMovementType(isLastStep)) {
             case MOVE_RUN:
@@ -106,6 +103,7 @@ class StepSprite extends Sprite {
                 }
                 break;
             case MOVE_JUMP:
+                jumped = true;
                 col = GUIP.getColor("AdvancedMoveJumpColor");
                 break;
             case MOVE_SPRINT:
@@ -288,9 +286,11 @@ class StepSprite extends Sprite {
 
         if (step.isVTOLBombingStep() || step.isStrafingStep()) {
             graph.setColor(col);
-//            g2D.fill(AffineTransform.getTranslateInstance(stepPos.x, stepPos.y)
-//                    .createTransformedShape(HexDrawUtilities.getHexFullBorderArea(3, 0)));
             g2D.fill(HexDrawUtilities.getHexFullBorderArea(3, 0));
+        }
+
+        if (isLastLegalStep) {
+            drawTMMAndRolls(step, jumped, bv.game, new Point(0, 0), graph, col, true);
         }
 
         baseScaleImage = bv.createImage(tempImage.getSource());
@@ -465,23 +465,23 @@ class StepSprite extends Sprite {
 
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavement() && e.isEligibleForPavementBonus()) {
-            costStringBuf.append("+");
+            costStringBuf.append('+');
         }
 
         // Show WiGE descent bonus
         for (int i = 0; i < step.getWiGEBonus(); i++) {
-            costStringBuf.append("+");
+            costStringBuf.append('+');
         }
 
         // If the step is dangerous, mark it.
         if (step.isDanger()) {
-            costStringBuf.append("*");
+            costStringBuf.append('*');
         }
 
         // If the step is past danger, mark that.
         if (step.isPastDanger()) {
-            costStringBuf.insert(0, "(");
-            costStringBuf.append(")");
+            costStringBuf.insert(0, '(');
+            costStringBuf.append(')');
         }
 
         EntityMovementType moveType = step.getMovementType(isLastStep);
@@ -490,13 +490,11 @@ class StepSprite extends Sprite {
                 || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)
                 || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
                 || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
-            costStringBuf.append("{").append(step.getElevation())
-                    .append("}");
+            costStringBuf.append('{').append(step.getElevation()).append('}');
         }
 
         if (step.getAltitude() > 0) {
-            costStringBuf.append("{").append(step.getAltitude())
-                    .append("}");
+            costStringBuf.append('{').append(step.getAltitude()).append('}');
         }
 
         // Convert the buffer to a String and draw it.
@@ -510,38 +508,51 @@ class StepSprite extends Sprite {
         graph.drawString(costString, costX, stepPos.y + 39);
         graph.setColor(col);
         graph.drawString(costString, costX - 1, stepPos.y + 38);
+    }
 
-        // draw target number hints smaller
-        int rollY = (graph.getFontMetrics(graph.getFont()).getHeight() / 2);
-        StringBuilder rollsStringBuf = new StringBuilder();
+    private void drawTMMAndRolls(MoveStep step, boolean jumped, Game game,
+                                 Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
+
+        StringBuilder subscriptStringBuf = new StringBuilder();
+
+        int distance = step.getDistance();
+        boolean isVTOL = false; //step.getEntity().;
+
+        ToHitData toHitData = Compute.getTargetMovementModifier(distance, jumped, isVTOL, game);
+        subscriptStringBuf.append((toHitData.getValue() < 0) ? '-' : '+');
+        subscriptStringBuf.append(toHitData.getValue());
+
         if (step.isUsingSupercharger() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
-            rollsStringBuf.append('S');
-            rollsStringBuf.append(step.getTargetNumberSupercharger());
-            rollsStringBuf.append('+');
+            subscriptStringBuf.append(" S");
+            subscriptStringBuf.append(step.getTargetNumberSupercharger());
+            subscriptStringBuf.append('+');
         }
 
         if (step.isUsingMASC() && !step.getEntity().hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
             if (step.isUsingSupercharger()) {
-                rollsStringBuf.append(' ');
+                subscriptStringBuf.append(" M");
+            } else {
+                subscriptStringBuf.append(" M");
             }
-            rollsStringBuf.append('M');
-            rollsStringBuf.append(step.getTargetNumberMASC());
-            rollsStringBuf.append('+');
+            subscriptStringBuf.append(step.getTargetNumberMASC());
+            subscriptStringBuf.append('+');
         }
 
-        if (rollsStringBuf.length() != 0) {
+        if (subscriptStringBuf.length() != 0) {
             // draw it below the main string.
-            String rollsString = rollsStringBuf.toString();
-            Font smallFont = getMovementFont().deriveFont(getMovementFont().getSize() * 0.5f);
-            graph.setFont(smallFont);
-            int rollsX = stepPos.x + 42;
+            int subscriptY = stepPos.y + 39 + (graph.getFontMetrics(graph.getFont()).getHeight() / 2);
+            String subscriptString = subscriptStringBuf.toString();
+            Font subscriptFont = getMovementFont().deriveFont(getMovementFont().getSize() * 0.5f);
+            graph.setFont(subscriptFont);
+            int subscriptX = stepPos.x + 42;
             if (shiftFlag) {
-                rollsX -= (graph.getFontMetrics(graph.getFont()).stringWidth(rollsString) / 2);
+                subscriptX -= (graph.getFontMetrics(graph.getFont()).stringWidth(subscriptString) / 2);
             }
             graph.setColor(Color.darkGray);
-            graph.drawString(rollsString, rollsX, stepPos.y + 39 + rollY);
+            graph.drawString(subscriptString, subscriptX, subscriptY);
             graph.setColor(col);
-            graph.drawString(rollsString, rollsX - 1, stepPos.y + 38 + rollY);
+            graph.drawString(subscriptString, subscriptX - 1, subscriptY - 1);
         }
+
     }
 }

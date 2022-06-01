@@ -26,6 +26,7 @@ import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -40,8 +41,8 @@ public class FluidGunCoolHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public FluidGunCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public FluidGunCoolHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     @Override

@@ -24,7 +24,7 @@ import megamek.common.Game;
 import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -32,8 +32,8 @@ import megamek.server.Server;
 public class SRMDeadFireHandler extends SRMHandler {
     private static final long serialVersionUID = -1511452503641090393L;
 
-    public SRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public SRMDeadFireHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " dead fire missile(s) ";
     }
 

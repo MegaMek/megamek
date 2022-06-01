@@ -16,13 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.client.ui.minimap;
+package megamek.client.ui.swing.minimap;
 
-import java.awt.Dimension;
-import java.awt.geom.Path2D;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
-import static java.lang.Math.*;
+
+import java.awt.*;
+import java.awt.geom.Path2D;
+
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.toRadians;
 
 /** Contains geometric paths for drawing the minimap unit symbols. */
 public class MinimapUnitSymbols {
@@ -273,6 +278,4 @@ public class MinimapUnitSymbols {
             return stratOps ? STRAT_INFANTRY : STD_INFANTRY;
         }
     }
-    
- 
 }

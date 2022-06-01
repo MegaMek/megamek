@@ -1,4 +1,7 @@
 size 16 17
+tag "DesertTheme (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 2 "" "desert"
 hex 0201 2 "" "desert"
 hex 0301 2 "" "desert"

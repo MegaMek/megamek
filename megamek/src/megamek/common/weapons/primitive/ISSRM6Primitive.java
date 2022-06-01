@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.SRMHandler;
 import megamek.common.weapons.srms.SRMWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -71,7 +71,7 @@ public class ISSRM6Primitive extends SRMWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new SRMHandler(toHit, waa, game, server, -2);
+                                              GameManager manager) {
+        return new SRMHandler(toHit, waa, game, manager, -2);
     }
 }

@@ -1,4 +1,13 @@
 size 96 102
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "HeavyUrban (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "LightForest (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 2 "" "desert"
 hex 0201 2 "" "desert"
 hex 0301 2 "" "desert"

@@ -24,6 +24,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BayWeaponHandler;
 import megamek.common.weapons.Weapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -46,11 +47,11 @@ public abstract class BayWeapon extends Weapon {
     }
 
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
+    public AttackHandler fire(WeaponAttackAction waa, Game game, GameManager manager) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
-        return super.fire(waa, game, server);
+        return super.fire(waa, game, manager);
     }
 
     /*
@@ -62,8 +63,8 @@ public abstract class BayWeapon extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new BayWeaponHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new BayWeaponHandler(toHit, waa, game, manager);
     }
     
     @Override

@@ -1,4 +1,9 @@
 size 34 34
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "grass"
 hex 0201 0 "" "grass"
 hex 0301 0 "road:1:9" "grass"

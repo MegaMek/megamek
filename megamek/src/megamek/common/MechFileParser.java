@@ -460,7 +460,7 @@ public class MechFileParser {
 
                 if (ent.hasTargComp()
                         || ((Mech) ent).hasTSM(true)
-                        || (ent.getMPBoosters().hasMASCAndOrSupercharger() && !ent.hasWorkingMisc(
+                        || (!ent.getMPBoosters().isNone() && !ent.hasWorkingMisc(
                                 MiscType.F_MASC, MiscType.S_SUPERCHARGER))) {
                     throw new EntityLoadingException(
                             "Unable to load AES due to incompatible systems for "+ent.getShortName());

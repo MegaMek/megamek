@@ -16,7 +16,7 @@ package megamek.client.bot.princess;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -735,7 +735,7 @@ public class BehaviorSettings implements Serializable {
             final Element behavior = doc.createElement("behavior");
 
             final Element nameNode = doc.createElement("name");
-            nameNode.setTextContent(MegaMekXmlUtil.escape(getDescription()));
+            nameNode.setTextContent(MMXMLUtility.escape(getDescription()));
             behavior.appendChild(nameNode);
 
             final Element destinationEdgeNode = doc.createElement("destinationEdge");
@@ -782,7 +782,7 @@ public class BehaviorSettings implements Serializable {
             if (includeTargets) {
                 for (final String t : getStrategicBuildingTargets()) {
                     final Element targetElement = doc.createElement("target");
-                    targetElement.setTextContent(MegaMekXmlUtil.escape(t));
+                    targetElement.setTextContent(MMXMLUtility.escape(t));
                     targetsNode.appendChild(targetElement);
                 }
                 for (final int id : getPriorityUnitTargets()) {

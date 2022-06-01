@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MechTaserHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -72,7 +72,7 @@ public class ISMekTaser extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new MechTaserHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new MechTaserHandler(toHit, waa, game, manager);
     }
 }

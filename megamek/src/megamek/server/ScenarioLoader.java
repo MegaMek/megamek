@@ -177,13 +177,13 @@ public class ScenarioLoader {
      * The damage procedures are built into a server object, so we delay dealing
      * the random damage until a server is made available to us.
      */
-    public void applyDamage(Server s) {
+    public void applyDamage(GameManager m) {
         for (DamagePlan damagePlan : damagePlans) {
             LogManager.getLogger().debug(String.format("Applying damage to %s", damagePlan.entity.getShortName()));
             for (int y = 0; y < damagePlan.nBlocks; ++ y) {
                 HitData hit = damagePlan.entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                 LogManager.getLogger().debug("[s.damageEntity(dp.entity, hit, 5)]");
-                s.damageEntity(damagePlan.entity, hit, 5);
+                m.damageEntity(damagePlan.entity, hit, 5);
             }
 
             // Apply Spec Damage
@@ -272,7 +272,7 @@ public class ScenarioLoader {
                                     chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
                         } else {
                             LogManager.getLogger().debug("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            s.applyCriticalHit(chp.entity, critHit.loc, cs, false, 0, false);
+                            m.applyCriticalHit(chp.entity, critHit.loc, cs, false, 0, false);
                         }
                     }
                     // Handle Tanks differently.
@@ -283,7 +283,7 @@ public class ScenarioLoader {
                         } else {
                             CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot + 1);
                             LogManager.getLogger().debug("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            s.applyCriticalHit(chp.entity, Entity.NONE, cs, false, 0, false);
+                            m.applyCriticalHit(chp.entity, Entity.NONE, cs, false, 0, false);
                         }
                     }
                 }
@@ -304,7 +304,7 @@ public class ScenarioLoader {
                                 LogManager.getLogger().error(String.format("%s - invalid slot specified %d: %d",
                                         sap.entity.getShortName(), sa.loc, sa.slot + 1));
                             } else if (ammo.getType() instanceof AmmoType) {
-                                AmmoType newAmmoType = getValidAmmoType(s.getGame(), ammo, sa.type);
+                                AmmoType newAmmoType = getValidAmmoType(m.getGame(), ammo, sa.type);
                                 if (newAmmoType != null) {
                                     ammo.changeAmmoType(newAmmoType);
                                 } else {

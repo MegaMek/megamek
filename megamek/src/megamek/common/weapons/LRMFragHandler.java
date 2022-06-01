@@ -16,8 +16,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 
 import java.util.Vector;
 
@@ -31,10 +30,10 @@ public class LRMFragHandler extends LRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public LRMFragHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " fragmentation missile(s) ";
         damageType = DamageType.FRAGMENTATION;
     }
@@ -94,14 +93,14 @@ public class LRMFragHandler extends LRMHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, false,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
 
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

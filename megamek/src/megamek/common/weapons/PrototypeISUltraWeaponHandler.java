@@ -18,6 +18,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 import java.util.Vector;
@@ -34,8 +35,8 @@ public class PrototypeISUltraWeaponHandler extends UltraWeaponHandler {
      * @param w
      * @param g
      */
-    public PrototypeISUltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public PrototypeISUltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*

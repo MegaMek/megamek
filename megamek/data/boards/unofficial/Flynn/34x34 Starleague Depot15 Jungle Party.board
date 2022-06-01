@@ -1,4 +1,12 @@
 size 34 34
+tag "Water (Auto)"
+tag "Swamp (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
+tag "TropicalTheme (Auto)"
+tag "LightForest (Auto)"
+tag "Jungle (Auto)"
 hex 0101 0 "road:1:13" "tropical"
 hex 0201 0 "road:1" "tropical"
 hex 0301 0 "" "tropical"

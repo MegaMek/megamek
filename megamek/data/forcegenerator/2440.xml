@@ -89,7 +89,7 @@
 	<faction key='Periphery.Deep'/>
 	<faction key='DC.DR'/>
 	<faction key='LA.DG'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>TH:6,FWL:2,DC:1</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FWL.FWG'/>

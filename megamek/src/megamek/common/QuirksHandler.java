@@ -19,7 +19,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -192,7 +192,7 @@ public class QuirksHandler {
         // Build the XML document.
         StringBuilder log = new StringBuilder();
         try {
-            DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
+            DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
             log.append("Parsing ").append(path);
             Document doc = builder.parse(file);
             log.append("\n...Parsing finished.");

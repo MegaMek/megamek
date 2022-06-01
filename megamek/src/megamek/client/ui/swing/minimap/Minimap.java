@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2002-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -57,9 +57,9 @@ import java.io.StreamTokenizer;
 import java.util.List;
 import java.util.*;
 
-import static megamek.client.ui.minimap.MinimapUnitSymbols.STRAT_BASERECT;
-import static megamek.client.ui.minimap.MinimapUnitSymbols.STRAT_CX;
-import static megamek.client.ui.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
+import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_BASERECT;
+import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_CX;
+import static megamek.client.ui.swing.minimap.MinimapUnitSymbols.STRAT_SYMBOLSIZE;
 import static megamek.common.Terrains.*;
 
 /**
@@ -943,8 +943,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         multiUnits.put(p, eStack);
         g2.translate(20 * (eStack - 1), -20 * (eStack - 1));
         
-        Path2D form = megamek.client.ui.minimap.MinimapUnitSymbols.getForm(entity);
-        
+        Path2D form = MinimapUnitSymbols.getForm(entity);
+
         if (stratOpsSymbols) {
             // White border to set off the icon from the background
             g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));

@@ -18,8 +18,8 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -31,11 +31,11 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public LRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " anti-TSM missile(s) ";
         damageType = DamageType.ANTI_TSM;
     }

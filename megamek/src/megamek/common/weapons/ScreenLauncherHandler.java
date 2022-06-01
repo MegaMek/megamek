@@ -25,6 +25,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -41,11 +42,11 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public ScreenLauncherHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
     }
 
     /**
@@ -93,7 +94,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
 
         // deliver screen
         Coords coords = target.getPosition();
-        server.deliverScreen(coords, vPhaseReport);
+        gameManager.deliverScreen(coords, vPhaseReport);
 
         // damage any entities in the hex
         for (Entity entity :  game.getEntitiesVector(coords)) {
@@ -105,16 +106,16 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
                         squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
                         HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
                         hit.setCapital(false);
-                        vPhaseReport.addAll(server.damageEntity(ent, hit, attackValue));
-                        server.creditKill(ent, ae);
+                        vPhaseReport.addAll(gameManager.damageEntity(ent, hit, attackValue));
+                        gameManager.creditKill(ent, ae);
                     });
             } else {
                 ToHitData hexToHit = new ToHitData();
                 hexToHit.setHitTable(ToHitData.HIT_NORMAL);
                 HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
                 hit.setCapital(false);
-                vPhaseReport.addAll(server.damageEntity(entity, hit, attackValue));
-                server.creditKill(entity, ae);
+                vPhaseReport.addAll(gameManager.damageEntity(entity, hit, attackValue));
+                gameManager.creditKill(entity, ae);
             }
         }
         return false;

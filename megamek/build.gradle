@@ -27,8 +27,8 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
-    implementation 'com.formdev:flatlaf:2.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.3'
+    implementation 'com.formdev:flatlaf:2.3'
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
     implementation 'com.thoughtworks.xstream:xstream:1.4.14'
@@ -40,8 +40,7 @@ dependencies {
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.0-M4'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
-    testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.2'
-    testImplementation 'org.mockito:mockito-core:4.5.1'
+    testImplementation 'org.mockito:mockito-core:4.6.0'
 }
 
 mainClassName = 'megamek.MegaMek'
@@ -125,7 +124,7 @@ task copyFiles(type: Copy) {
 task createImageAtlases(type: JavaExec, dependsOn: copyFiles) {
     description = 'Combines individual image files into a set of image atlases.'
     classpath = sourceSets.main.runtimeClasspath
-    main = "megamek.utils.CreateImageAtlases"
+    main = "megamek.utilities.CreateImageAtlases"
     workingDir = file(fileStagingDir)
     inputs.dir "${projectDir}/${data}/images/units"
     outputs.dir "${fileStagingDir}/${data}/images/units"
@@ -379,6 +378,7 @@ task cleanPublishingDir (type: Delete) {
 publishPublishMMLibraryPublicationToMavenRepository.dependsOn cleanPublishingDir
 
 test {
+    useJUnitPlatform()
     // report is always generated after tests run
     finalizedBy jacocoTestReport
 }

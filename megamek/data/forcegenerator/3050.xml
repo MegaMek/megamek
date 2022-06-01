@@ -451,7 +451,7 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>15</pctSL>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:9,OA:1,FWL:3,TC:3,DC:10</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<pctOmni>0</pctOmni>
@@ -482,7 +482,7 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>15</pctSL>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>FRR:2,FWL:10,DC:10</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DMM'>
@@ -557,7 +557,7 @@
 		<pctOmni>0</pctOmni>
 		<pctClan>5</pctClan>
 		<pctSL>20</pctSL>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:10,MOC:2,FRR:2,CSV:3,FS:10,TC:2,OA:2,CW:5,LA:10,CNC:3,FWL:20,CSJ:5,CJF:5,DC:20,CGB:5</salvage>
 	</faction>
 	<faction key='CFM.BG'>
 		<pctOmni>0,0,5,45,100</pctOmni>
@@ -1542,7 +1542,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Lanner' unitType='Mek' omni='Clan'>
-		<availability>CJF:4</availability>
+		<availability>CSV:2,CJF:4</availability>
 		<model name='A'>
 			<roles>recon,spotter</roles>
 			<availability>General:7</availability>
@@ -1556,7 +1556,7 @@
 		</model>
 		<model name='D'>
 			<roles>urban</roles>
-			<availability>General:2</availability>
+			<availability>General:4</availability>
 		</model>
 		<model name='Prime'>
 			<availability>General:8</availability>
@@ -3066,10 +3066,10 @@
 		</model>
 	</chassis>
 	<chassis name='Fire Falcon' unitType='Mek' omni='Clan'>
-		<availability>CJF:3</availability>
+		<availability>CFM:1,CJF:3,CCO:1</availability>
 		<model name='A'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CW:6,General:8,CGB:6</availability>
+			<availability>General:8</availability>
 		</model>
 		<model name='B'>
 			<roles>fire_support</roles>
@@ -7375,7 +7375,10 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:7,HL:2,CLAN:2,IS:8,Periphery.Deep:6,WOB:4-,FS:7,MERC:8,Periphery:4,TC:4,CS:5-,LA:8,NIOPS:5-,MH:4,DC:8</availability>
+		<availability>HL:2,CLAN:1-,Periphery.Deep:6,FS:7,CSA:1-,CBS:1,NIOPS:5-,MH:4,CSJ:2-,CB:1,CC:7,CCC:1-,CSR:1-,MERC.ELH:5+,IS:8,WOB:4-,CLAN.IS:1-,MERC:8,CGS:1-,Periphery:4,TC:4,CS:5-,MERC.WD:1,LA:8,FC:8,CJF:2-,DC:8</availability>
+		<model name='C'>
+			<availability>CCC:1-,CSR:1-,CLAN.IS:1-,FS:1+,CGS:1-,CSA:1-,CBS:1,LA:2+,CSJ:2-,FC:2+,CJF:2-,CB:1,DC:1+</availability>
+		</model>
 		<model name='TDR-5D'>
 			<availability>FS:2,MERC:3</availability>
 		</model>

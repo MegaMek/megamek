@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.server.GameManager;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
@@ -27,8 +28,8 @@ import java.util.Vector;
 public class MekMortarSmokeHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -2073773899108954657L;
 
-    public MekMortarSmokeHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public MekMortarSmokeHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
             }
         }
 
-        server.deliverSmokeMortar(targetPos, vPhaseReport, duration);
+        gameManager.deliverSmokeMortar(targetPos, vPhaseReport, duration);
         return false;
     }
 

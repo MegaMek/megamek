@@ -18,6 +18,7 @@ import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -39,12 +40,12 @@ public abstract class AmmoWeapon extends Weapon {
      * , megamek.common.Game)
      */
     @Override
-    public AttackHandler fire(WeaponAttackAction waa, Game game, Server server) {
+    public AttackHandler fire(WeaponAttackAction waa, Game game, GameManager manager) {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
         checkAmmo(waa, game);
-        return super.fire(waa, game, server);
+        return super.fire(waa, game, manager);
     }
 
     protected void checkAmmo(WeaponAttackAction waa, Game g) {
@@ -66,7 +67,7 @@ public abstract class AmmoWeapon extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new AmmoWeaponHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new AmmoWeaponHandler(toHit, waa, game, manager);
     }
 }

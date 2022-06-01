@@ -29,6 +29,7 @@ import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.server.GameManager;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
@@ -46,8 +47,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         super();
     }
 
-    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ArtilleryCannonWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     @Override
@@ -169,18 +170,18 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             } else {
                 radius = 1;
             }
-            server.deliverArtilleryFlare(targetPos, radius);
+            gameManager.deliverArtilleryFlare(targetPos, radius);
             return false;
         } else if (ammoType.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
-            server.doNuclearExplosion(targetPos, 1, vPhaseReport);
+            gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
             return false;
         } else if (ammoType.getMunitionType() == AmmoType.M_FASCAM) {
-            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
+            gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(),
                     ammoType.getRackSize(), ae.getId());
             return false;
         } else if (ammoType.getMunitionType() == AmmoType.M_SMOKE) {
-            server.deliverArtillerySmoke(targetPos, vPhaseReport);
+            gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
             return false;
         }
 
@@ -200,17 +201,17 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, gameManager);
         }
 
-        server.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
+        gameManager.artilleryDamageArea(targetPos, ae.getPosition(), ammoType,
             subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
             asfFlak, -1);
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying to
         // TODO : Does this apply to arty cannons?
         if (!mineClear) {
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, gameManager);
         }
 
         return false;

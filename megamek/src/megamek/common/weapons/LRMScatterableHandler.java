@@ -23,7 +23,7 @@ import megamek.common.Game;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -39,11 +39,11 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
     public LRMScatterableHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -115,19 +115,19 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
 
         // Handle the thunder munitions.
         if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
-            server.deliverThunderAugMinefield(coords, ae.getOwner().getId(),
+            gameManager.deliverThunderAugMinefield(coords, ae.getOwner().getId(),
                     density, ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
-            server.deliverThunderMinefield(coords, ae.getOwner().getId(),
+            gameManager.deliverThunderMinefield(coords, ae.getOwner().getId(),
                     density, ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO) {
-            server.deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
+            gameManager.deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
                     density, ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
-            server.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
+            gameManager.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
                     density, waa.getOtherAttackInfo(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE) {
-            server.deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
+            gameManager.deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
                     density, ae.getId());
         }
         return true;

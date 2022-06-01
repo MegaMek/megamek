@@ -26,10 +26,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
 import megamek.common.MovePath.MoveStepType;
-import megamek.common.actions.DisengageAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FindClubAction;
-import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameCFREvent;
@@ -42,6 +39,7 @@ import megamek.common.pathfinder.PathDecorator;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.StopSwarmAttack;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -563,15 +561,17 @@ public class Princess extends BotClient {
             // d) best firing plan comes up as crap (no expected damage/null)
             //
             // If foregoing firing, unjam highest-damage weapons first, then turret
-            
             boolean skipFiring = false;
-            
+
             // If my unit is forced to withdraw, don't fire unless I've been fired on.
             if (getForcedWithdrawal() && shooter.isCrippled()) {
                 final StringBuilder msg = new StringBuilder(shooter.getDisplayName())
                         .append(" is crippled and withdrawing.");
                 try {
-                    if (attackedWhileFleeing.contains(shooter.getId())) {
+                    if (shooter.getSwarmTargetId() != Entity.NONE) {
+                        msg.append("\n\tBut will need to stop swarming before fleeing.");
+                        skipFiring = true;
+                    } else if (attackedWhileFleeing.contains(shooter.getId())) {
                         msg.append("\n\tBut I was fired on, so I will return fire.");
                     } else {
                         msg.append("\n\tI will not fire so long as I'm not fired on.");
@@ -581,7 +581,7 @@ public class Princess extends BotClient {
                     LogManager.getLogger().info(msg.toString());
                 }
             }
-            
+
             if (shooter.isHidden()) {
                 skipFiring = true;
                 LogManager.getLogger().info("Hidden unit skips firing.");
@@ -592,19 +592,17 @@ public class Princess extends BotClient {
             if (!skipFiring) {
                 // Set up ammo conservation.
                 final Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
-    
+
                 // entity that can act this turn make sure weapons are loaded
                 final FiringPlan plan = getFireControl(shooter).getBestFiringPlan(shooter,
-                                                                      getHonorUtil(),
-                                                                      game,
-                                                                      ammoConservation);
+                        getHonorUtil(), game, ammoConservation);
                 if ((null != plan) && (plan.getExpectedDamage() > 0)) {
                     getFireControl(shooter).loadAmmo(shooter, plan);
                     plan.sortPlan();
-    
+
                     LogManager.getLogger().info(shooter.getDisplayName() + " - Best Firing Plan: " +
                             plan.getDebugDescription(LogManager.getLogger().getLevel().isLessSpecificThan(Level.DEBUG)));
-    
+
                     // Add expected damage from the chosen FiringPlan to the 
                     // damageMap for the target enemy.
                     // while we're looping through all the shots anyway, send any firing mode changes
@@ -613,69 +611,88 @@ public class Princess extends BotClient {
                         double existingTargetDamage = damageMap.getOrDefault(targetId, 0.0);
                         double newDamage = existingTargetDamage + shot.getExpectedDamage();
                         damageMap.put(targetId, newDamage);
-                        
+
                         if (shot.getUpdatedFiringMode() != null) {
                             super.sendModeChange(shooter.getId(), shooter.getEquipmentNum(shot.getWeapon()), shot.getUpdatedFiringMode());
                         }
                     }
-    
+
                     // tell the game I want to fire
                     Vector<EntityAction> actions = new Vector<>();
-                    
+
                     // if using search light, it needs to go before the other actions so we can light up what we're shooting at
                     SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, plan);
                     if (searchLightAction != null) {
                         actions.add(searchLightAction);
                     }
-                    
+
                     actions.addAll(plan.getEntityActionVector());
                     
                     EntityAction spotAction = getFireControl(shooter).getSpotAction(plan, shooter, fireControlState);
                     if (spotAction != null) {
                         actions.add(spotAction);
                     }
-                    
+
                     sendAttackData(shooter.getId(), actions);
                     return;
                 } else {
                     LogManager.getLogger().info("No best firing plan for " + shooter.getDisplayName());
-                    skipFiring = true;
                 }
             }
-            
-            // if I have decided to skip firing, let's consider unjamming some weapons or turrets anyway
-            if (skipFiring) {
-                Vector<EntityAction> miscPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
 
-                // if we didn't produce an "unjam weapon" plan, consider spotting and lighting
-                // things up with a searchlight
-                if (miscPlan.isEmpty()) {
-                    EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
-                    if (spotAction != null) {
-                        miscPlan.add(spotAction);
-                    }
+            // if I have decided to skip firing or don't have a firing plan, so let's consider some
+            // alternative uses of my turn
+            Vector<EntityAction> miscPlan = null;
 
-                    SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
-                    if (searchLightAction != null) {
-                        miscPlan.add(searchLightAction);
-                    }
+            if (shooter.getSwarmTargetId() != Entity.NONE) {
+                // If we are skipping firing while swarming, it is because we are fleeing...
+                // so let's stop swarming if we are doing so
+                final Mounted stopSwarmWeapon = shooter.getIndividualWeaponList().stream()
+                        .filter(weapon -> weapon.getType() instanceof StopSwarmAttack)
+                        .findFirst()
+                        .orElse(null);
+                if (stopSwarmWeapon == null) {
+                    LogManager.getLogger().error("Failed to find a Stop Swarm Weapon while Swarming a unit, which should not be possible.");
+                } else {
+                    miscPlan = new Vector<>();
+                    miscPlan.add(new WeaponAttackAction(shooter.getId(), shooter.getSwarmTargetId(),
+                            shooter.getEquipmentNum(stopSwarmWeapon)));
                 }
-
-                // if we have absolutely nothing else to do, see if we can find a club
-                if (miscPlan.isEmpty()) {
-                    FindClubAction findClubAction = getFireControl(shooter).getFindClubAction(shooter);
-                    if (findClubAction != null) {
-                        miscPlan.add(findClubAction);
-                    }
-                }
-                
-                sendAttackData(shooter.getId(), miscPlan);
             }
+
+            if (miscPlan == null) {
+                // If we don't have any plans, let's consider unjamming our weaponry
+                miscPlan = getFireControl(shooter).getUnjamWeaponPlan(shooter);
+            }
+
+            // if we didn't produce an "unjam weapon" plan, consider spotting and lighting
+            // things up with a searchlight
+            if (miscPlan.isEmpty()) {
+                EntityAction spotAction = getFireControl(shooter).getSpotAction(null, shooter, fireControlState);
+                if (spotAction != null) {
+                    miscPlan.add(spotAction);
+                }
+
+                SearchlightAttackAction searchLightAction = getFireControl(shooter).getSearchLightAction(shooter, null);
+                if (searchLightAction != null) {
+                    miscPlan.add(searchLightAction);
+                }
+            }
+
+            // if we have absolutely nothing else to do, see if we can find a club
+            if (miscPlan.isEmpty()) {
+                FindClubAction findClubAction = getFireControl(shooter).getFindClubAction(shooter);
+                if (findClubAction != null) {
+                    miscPlan.add(findClubAction);
+                }
+            }
+
+            sendAttackData(shooter.getId(), miscPlan);
         } catch (Exception ignored) {
 
         }
     }
-    
+
     /**
      * Calculates the targeting/ offboard turn
      * This includes firing TAG and non-direct-fire artillery
@@ -694,11 +711,11 @@ public class Princess extends BotClient {
         }
 
         FiringPlan firingPlan = getArtilleryTargetingControl().calculateIndirectArtilleryPlan(entityToFire, getGame(), this);
-        
+
         sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
         sendDone(true);
     }
-    
+
     private Map<Mounted, Double> calcAmmoConservation(final Entity shooter) {
         final double aggroFactor = (10 - getBehaviorSettings().getHyperAggressionIndex()) * 2;
         final StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ")

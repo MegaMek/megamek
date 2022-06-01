@@ -31,7 +31,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -45,10 +45,10 @@ public class LRMSwarmHandler extends LRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         sSalvoType = " swarm missile(s) ";
     }
 
@@ -252,7 +252,7 @@ public class LRMSwarmHandler extends LRMHandler {
             if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                         nCluster, bldgAbsorbs);
-                server.creditKill(entityTarget, ae);
+                gameManager.creditKill(entityTarget, ae);
                 hits -= nCluster;
                 firstHit = false;
             }
@@ -287,7 +287,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 // in the next line
                 weapon.getLinked().setShotsLeft(
                         weapon.getLinked().getBaseShotsLeft() + 1);
-                AttackHandler ah = w.fire(newWaa, game, server);
+                AttackHandler ah = w.fire(newWaa, game, gameManager);
                 LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
                 wh.handledHeat = true;
@@ -391,7 +391,7 @@ public class LRMSwarmHandler extends LRMHandler {
             // in the next line
             weapon.getLinked().setShotsLeft(
                     weapon.getLinked().getBaseShotsLeft() + 1);
-            AttackHandler ah = w.fire(newWaa, game, server);
+            AttackHandler ah = w.fire(newWaa, game, gameManager);
             LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target
             wh.handledHeat = true;

@@ -19,7 +19,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.CapitalMissileBayHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson
@@ -57,8 +57,8 @@ public class SubCapitalMissileBayWeapon extends AmmoBayWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new CapitalMissileBayHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new CapitalMissileBayHandler(toHit, waa, game, manager);
     }
     
     @Override

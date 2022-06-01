@@ -34,8 +34,8 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -45,8 +45,8 @@ public class PPCHandler extends EnergyWeaponHandler {
     private static final long serialVersionUID = 5545991061428671743L;
     private int chargedCapacitor = 0;
 
-    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public PPCHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         // remember capacitor state and turn it off here,
         // so a crit in the firing phase does not cause an explosion, per the
         // rules in TO
@@ -184,7 +184,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 r.choose(false);
                 r.indent(2);
                 vPhaseReport.addElement(r);
-                Vector<Report> newReports = server.damageEntity(ae,
+                Vector<Report> newReports = gameManager.damageEntity(ae,
                         new HitData(wlocation), 10, false, DamageType.NONE,
                         true);
                 for (Report rep : newReports) {
@@ -192,7 +192,7 @@ public class PPCHandler extends EnergyWeaponHandler {
                 }
                 vPhaseReport.addAll(newReports);
                 // Deal 2 damage to the pilot
-                vPhaseReport.addAll(server.damageCrew(ae, 2, ae.getCrew().getCurrentPilotIndex()));
+                vPhaseReport.addAll(gameManager.damageCrew(ae, 2, ae.getCrew().getCurrentPilotIndex()));
                 r = new Report(3185);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

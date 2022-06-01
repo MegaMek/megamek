@@ -1,4 +1,10 @@
 size 34 34
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 1 "" "transparent"
 hex 0201 1 "" "transparent"
 hex 0301 1 "" "transparent"

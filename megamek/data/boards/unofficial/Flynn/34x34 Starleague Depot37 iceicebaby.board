@@ -1,4 +1,13 @@
 size 34 34
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "SnowTheme (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "IceTerrain (Auto)"
+tag "MediumForest (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 0 "" "snow"
 hex 0201 0 "" "snow"
 hex 0301 0 "" "snow"

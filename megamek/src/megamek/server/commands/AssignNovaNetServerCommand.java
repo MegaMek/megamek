@@ -9,6 +9,7 @@ import java.util.List;
 
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -18,7 +19,9 @@ import megamek.server.Server;
 
 public class AssignNovaNetServerCommand extends ServerCommand {
 
-    public AssignNovaNetServerCommand(Server server) {
+    private final GameManager gameManager;
+
+    public AssignNovaNetServerCommand(Server server, GameManager gameManager) {
         super(
                 server,
                 "nova",
@@ -31,6 +34,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
          * ID will link the 3 IDs in their own network. Unlinks from all other
          * networks /nova unlink will unlink all /nova unlink ID will unlink ID
          */
+        this.gameManager = gameManager;
     }
 
     /**
@@ -141,7 +145,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         server.sendServerChat(connID,
                 "Check if server really thinks that stuff is connected");
         List<Entity> novaUnits = getMyNovaUnits(connID);
-        List<Entity> opponent = server.getGame().getEntitiesVector();
+        List<Entity> opponent = gameManager.getGame().getEntitiesVector();
         for (Entity e : novaUnits) {
             List<Entity> curNetwork = listNetwork(connID, e, false);
 
@@ -165,7 +169,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
             for (Entity t : opponent) {
                 if (t.getOwnerId() != e.getOwnerId()) {
                     // we are hostile
-                    Entity s = Compute.exposed_findC3Spotter(server.getGame(),
+                    Entity s = Compute.exposed_findC3Spotter(gameManager.getGame(),
                             e, t);
                     if (s.getId() != e.getId()) {
                         server.sendServerChat(connID, "ID " + e.getId()
@@ -184,15 +188,15 @@ public class AssignNovaNetServerCommand extends ServerCommand {
         ent.setNewRoundNovaNetworkString(net);
         // TODO: Send packet to client.
 
-        server.sendNovaChange(ent.getId(), net);
+        gameManager.sendNovaChange(ent.getId(), net);
     }
 
     private String strLink3(int connID, int id1, int id2, int id3) {
         String rval = "";
 
-        Entity ent1 = server.getGame().getEntity(id1);
-        Entity ent2 = server.getGame().getEntity(id2);
-        Entity ent3 = server.getGame().getEntity(id3);
+        Entity ent1 = gameManager.getGame().getEntity(id1);
+        Entity ent2 = gameManager.getGame().getEntity(id2);
+        Entity ent3 = gameManager.getGame().getEntity(id3);
 
         if ((ent1 == null) || (ent2 == null) || (ent3 == null)) {
             return "ID Mismatch!\n";
@@ -230,8 +234,8 @@ public class AssignNovaNetServerCommand extends ServerCommand {
     private String strLink2(int connID, int id1, int id2) {
         String rval = "";
 
-        Entity ent1 = server.getGame().getEntity(id1);
-        Entity ent2 = server.getGame().getEntity(id2);
+        Entity ent1 = gameManager.getGame().getEntity(id1);
+        Entity ent2 = gameManager.getGame().getEntity(id2);
         if ((ent1 == null) || (ent2 == null)) {
             return "ID Mismatch!\n";
         }
@@ -256,7 +260,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
     }
 
     private String strUnlinkID(int connID, int id) {
-        Entity ent = server.getGame().getEntity(id);
+        Entity ent = gameManager.getGame().getEntity(id);
 
         if (ent == null) {
             return "ID Mismatch\n";
@@ -351,7 +355,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
 
     private String strListNetwork(int connID, int id, boolean planned) {
         String rval = "";
-        Entity ent = server.getGame().getEntity(id);
+        Entity ent = gameManager.getGame().getEntity(id);
         if (ent != null) {
             if (ent.getOwnerId() != connID) {
                 return "This unit doesn't belong to you!\n";
@@ -406,7 +410,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
      */
     private List<Entity> getMyNovaUnits(int connID) {
         List<Entity> novaUnits = new LinkedList<>();
-        for (Entity ent : server.getGame().getEntitiesVector()) {
+        for (Entity ent : gameManager.getGame().getEntitiesVector()) {
             if ((ent.getOwnerId() == connID) && ent.hasNovaCEWS()) {
                 novaUnits.add(ent);
             }

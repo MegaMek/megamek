@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.client.ui.swing.lobby.LobbyUtility;
 import megamek.common.util.BuildingTemplate;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import javax.xml.namespace.QName;
@@ -373,7 +373,7 @@ public class MapSettings implements Serializable {
             JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
 
             Unmarshaller um = jc.createUnmarshaller();
-            ms = (MapSettings) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            ms = (MapSettings) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
         } catch (Exception e) {
             LogManager.getLogger().error("Error loading XML for map settings: " + e.getMessage(), e);
         }

@@ -1,37 +1,32 @@
 package megamek.common.verifier;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import megamek.common.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 
 import java.io.File;
 import java.util.Vector;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import megamek.common.Bay;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
-import megamek.common.NavalRepairFacility;
-import megamek.common.SpaceStation;
-import org.mockito.ArgumentMatchers;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TestAdvancedAerospaceTest {
 
     private static EntityVerifier verifier;
     private Vector<Bay> bays;
 
-    @BeforeClass
-    public static void loadOptions() {
+    @BeforeAll
+    public static void beforeAll() {
         File file = new File(TestAdvancedAerospaceTest.class.getResource("empty-verifier-options.xml").getFile());
         verifier = EntityVerifier.getInstance(file);
     }
     
-    @Before
-    public void initBayList() {
+    @BeforeEach
+    public void beforeEach() {
         bays = new Vector<>();
     }
     
@@ -87,10 +82,8 @@ public class TestAdvancedAerospaceTest {
     public void correctBaysFailsWhenShipHasMultipleRepair() {
         Jumpship js = createJumpship();
         TestAdvancedAerospace test = new TestAdvancedAerospace(js, verifier.aeroOption, "test");
-        
         bays.add(new NavalRepairFacility(500.0, 1, 1, Jumpship.LOC_NOSE, false));
         bays.add(new NavalRepairFacility(500.0, 1, 1, Jumpship.LOC_AFT, false));
-        
         assertFalse(test.correctBays(new StringBuffer()));
     }
 
@@ -104,5 +97,4 @@ public class TestAdvancedAerospaceTest {
         
         assertTrue(test.correctBays(new StringBuffer()));
     }
-
 }

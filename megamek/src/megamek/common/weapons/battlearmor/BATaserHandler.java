@@ -28,6 +28,7 @@ import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeaponHandler;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 public class BATaserHandler extends AmmoWeaponHandler {
@@ -43,8 +44,8 @@ public class BATaserHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public BATaserHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public BATaserHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -80,7 +81,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
                 // Check to see if the squad has been eliminated
                 if (entityTarget.getTransferLocation(hit).getLocation() == 
                         Entity.LOC_DESTROYED) {
-                    vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                    vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                             "all troopers eliminated", false));
                 }
                 done = true;
@@ -144,7 +145,7 @@ public class BATaserHandler extends AmmoWeaponHandler {
             vPhaseReport.add(r);
             // kill the firing trooper
             // TODO: should just be shut down for remainder of scenario
-            vPhaseReport.addAll(server.criticalEntity(ae, weapon.getLocation(),
+            vPhaseReport.addAll(gameManager.criticalEntity(ae, weapon.getLocation(),
                     false, 0, false, false, 0));
         }
         return done;

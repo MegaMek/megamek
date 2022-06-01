@@ -198,10 +198,10 @@
 		<weightDistribution era='3028' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3028' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
-	<faction key='EF'/>
 	<faction key='DA'>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='EF'/>
 	<faction key='FC'>
 		<salvage pct='6'>CC:5,FWL:8,DC:10</salvage>
 	</faction>
@@ -350,7 +350,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FS.CrMM'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:10,TC:1,DC:3</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<salvage pct='6'></salvage>
@@ -369,7 +369,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='LA.DG'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>CC:1,FWL:5,DC:10</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DMM'>
@@ -403,7 +403,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='MERC.KH'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>MOC:2,CC:11,OA:2,LA:10,FWL:15,FS:10,TC:2,DC:20</salvage>
 	</faction>
 	<faction key='CFM.BG'>
 		<pctOmni>0,0,5,45,100</pctOmni>
@@ -5767,7 +5767,10 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:8,HL:2,CLAN:3,IS:8,Periphery.Deep:6,FS:7,MERC:8,Periphery:4,TC:4,CS:5-,LA:8,NIOPS:5-,MH:4,DC:8</availability>
+		<availability>CC:8,CCC:1-,CHH:1-,CSR:2-,HL:2,CLAN:1-,IS:8,Periphery.Deep:6,FS:7,MERC:8,CGS:1-,Periphery:4,TC:4,CS:5-,CSA:1-,LA:8,CBS:1,NIOPS:5-,MH:4,CSJ:1-,FC:8,CJF:1-,DC:8,CB:1</availability>
+		<model name='C'>
+			<availability>CSA:1-,CCC:1-,CHH:1-,CSR:2-,CBS:1,CSJ:1-,CGS:1-,CJF:1-,CB:1</availability>
+		</model>
 		<model name='TDR-5D'>
 			<availability>FS:4,MERC:2</availability>
 		</model>

@@ -21,7 +21,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryCannonWeaponHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -47,10 +47,10 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         // AmmoType atype = (AmmoType)
         // game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
-        return new ArtilleryCannonWeaponHandler(toHit, waa, game, server);
+        return new ArtilleryCannonWeaponHandler(toHit, waa, game, manager);
     }
     
     @Override

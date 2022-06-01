@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
-public class Game implements Serializable {
+public class Game implements IGame, Serializable {
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -330,6 +330,7 @@ public class Game implements Serializable {
         return vibrabombs.contains(mf);
     }
 
+    @Override
     public GameOptions getOptions() {
         return options;
     }
@@ -346,6 +347,7 @@ public class Game implements Serializable {
     /**
      * Return an enumeration of teams in the game
      */
+    @Override
     public Enumeration<Team> getTeams() {
         return teams.elements();
     }
@@ -385,6 +387,7 @@ public class Game implements Serializable {
      * placed in the appropriate vector. Any player on 'No Team', is placed in
      * their own object
      */
+    @Override
     public void setupTeams() {
         Vector<Team> initTeams = new Vector<>();
         boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
@@ -448,6 +451,7 @@ public class Game implements Serializable {
     /**
      * Return the players vector
      */
+    @Override
     public Vector<Player> getPlayersVector() {
         return players;
     }
@@ -462,10 +466,12 @@ public class Game implements Serializable {
     /**
      * Returns the individual player assigned the id parameter.
      */
+    @Override
     public @Nullable Player getPlayer(final int id) {
         return (Player.PLAYER_NONE == id) ? null : playerIds.get(id);
     }
 
+    @Override
     public void addPlayer(int id, Player player) {
         player.setGame(this);
         players.addElement(player);
@@ -487,6 +493,7 @@ public class Game implements Serializable {
         processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
+    @Override
     public void removePlayer(int id) {
         Player playerToRemove = getPlayer(id);
         players.removeElement(playerToRemove);
@@ -499,6 +506,7 @@ public class Game implements Serializable {
      * Returns the number of entities owned by the player, regardless of their
      * status, as long as they are in the game.
      */
+    @Override
     public int getEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : entities) {
@@ -627,6 +635,7 @@ public class Game implements Serializable {
     /**
      * @return the current GameTurn object
      */
+    @Override
     public @Nullable GameTurn getTurn() {
         if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
             return null;
@@ -740,6 +749,7 @@ public class Game implements Serializable {
         this.turnVector.addAll(turnVector);
     }
 
+    @Override
     public GamePhase getPhase() {
         return phase;
     }
@@ -1358,6 +1368,7 @@ public class Game implements Serializable {
     /**
      * @return int containing an unused entity id
      */
+    @Override
     public int getNextEntityId() {
         return lastEntityId + 1;
     }
@@ -2564,6 +2575,7 @@ public class Game implements Serializable {
      *
      * @return Value of property forceVictory.
      */
+    @Override
     public boolean isForceVictory() {
         return forceVictory;
     }

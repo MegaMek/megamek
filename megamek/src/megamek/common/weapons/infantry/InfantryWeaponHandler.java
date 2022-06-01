@@ -16,9 +16,9 @@ package megamek.common.weapons.infantry;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.DamageType;
 import megamek.common.weapons.WeaponHandler;
-import megamek.server.Server;
-import megamek.server.Server.DamageType;
+import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
@@ -36,8 +36,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
      * @param g
      */
     public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         bSalvo = true;
     }
 

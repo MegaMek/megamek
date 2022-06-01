@@ -129,9 +129,6 @@
 		<weightDistribution era='3135' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3135' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
-	<faction key='CEI'>
-		<techMargin>13</techMargin>
-	</faction>
 	<faction key='DA'>
 		<pctOmni>0,8,14,18,28</pctOmni>
 		<pctClan>0,0,5,10,20</pctClan>
@@ -150,41 +147,8 @@
 		<upgradeMargin>10</upgradeMargin>
 		<salvage pct='5'>LA:8,MH:1</salvage>
 	</faction>
-	<faction key='MSC'>
-		<pctOmni>0,10,14,18,35</pctOmni>
-		<pctClan>0,0,6,12,20</pctClan>
-		<pctSL>60,75,80,75,80</pctSL>
-		<omniMargin>13</omniMargin>
+	<faction key='CEI'>
 		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'>RF:2,LA:5,ROS:8</salvage>
-	</faction>
-	<faction key='OP'>
-		<pctOmni>0,10,16,20,30</pctOmni>
-		<pctClan>0,0,6,12,20</pctClan>
-		<pctSL>60,75,86,83,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'>CC:10,RF:1,ROS:4,DA:1</salvage>
-	</faction>
-	<faction key='RF'>
-		<pctOmni>0,8,14,18,28</pctOmni>
-		<pctClan>0,0,6,10,20</pctClan>
-		<pctSL>60,75,84,83,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'>OP:1,FWL:10,MSC:2</salvage>
-	</faction>
-	<faction key='RCM'>
-		<pctOmni>0,10,16,20,30</pctOmni>
-		<pctClan>0,0,6,12,20</pctClan>
-		<pctSL>60,75,84,82,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'>RF:1,FWL:10</salvage>
 	</faction>
 	<faction key='FS'>
 		<pctOmni>9,14,20,28,38</pctOmni>
@@ -282,6 +246,15 @@
 		<upgradeMargin>10</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='MSC'>
+		<pctOmni>0,10,14,18,35</pctOmni>
+		<pctClan>0,0,6,12,20</pctClan>
+		<pctSL>60,75,80,75,80</pctSL>
+		<omniMargin>13</omniMargin>
+		<techMargin>13</techMargin>
+		<upgradeMargin>10</upgradeMargin>
+		<salvage pct='5'>RF:2,LA:5,ROS:8</salvage>
+	</faction>
 	<faction key='MERC'>
 		<pctOmni>0,12,14,18,28</pctOmni>
 		<pctClan>0,8,10,12,24</pctClan>
@@ -307,6 +280,15 @@
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
 		<salvage pct='5'>MH:2,RCM:2</salvage>
+	</faction>
+	<faction key='OP'>
+		<pctOmni>0,10,16,20,30</pctOmni>
+		<pctClan>0,0,6,12,20</pctClan>
+		<pctSL>60,75,86,83,80</pctSL>
+		<omniMargin>13</omniMargin>
+		<techMargin>13</techMargin>
+		<upgradeMargin>10</upgradeMargin>
+		<salvage pct='5'>CC:10,RF:1,ROS:4,DA:1</salvage>
 	</faction>
 	<faction key='Periphery'>
 		<omniMargin>13</omniMargin>
@@ -351,6 +333,15 @@
 		<techMargin>13</techMargin>
 		<salvage pct='10'>FS:10,DC:9</salvage>
 	</faction>
+	<faction key='RF'>
+		<pctOmni>0,8,14,18,28</pctOmni>
+		<pctClan>0,0,6,10,20</pctClan>
+		<pctSL>60,75,84,83,80</pctSL>
+		<omniMargin>13</omniMargin>
+		<techMargin>13</techMargin>
+		<upgradeMargin>10</upgradeMargin>
+		<salvage pct='5'>OP:1,FWL:10,MSC:2</salvage>
+	</faction>
 	<faction key='RR'>
 		<pctOmni>5,10,20,30</pctOmni>
 		<pctClan>0,14,22,30</pctClan>
@@ -374,6 +365,15 @@
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
 		<salvage pct='5'>LA:10</salvage>
+	</faction>
+	<faction key='RCM'>
+		<pctOmni>0,10,16,20,30</pctOmni>
+		<pctClan>0,0,6,12,20</pctClan>
+		<pctSL>60,75,84,82,80</pctSL>
+		<omniMargin>13</omniMargin>
+		<techMargin>13</techMargin>
+		<upgradeMargin>10</upgradeMargin>
+		<salvage pct='5'>RF:1,FWL:10</salvage>
 	</faction>
 	<faction key='RT'>
 		<omniMargin>13</omniMargin>
@@ -707,7 +707,7 @@
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>CC:10,FVC:1,ROS:7,TC:3,RA:1,DC:7,Periphery:3</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<pctOmni>40</pctOmni>
@@ -744,7 +744,7 @@
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>DTA:3,RT:1,CDS:1,CW:1,RIM:1,ROS:10,FWL:6,MSC:2,CJF:5,DC:2,Periphery:1</salvage>
 	</faction>
 	<faction key='Periphery.DD'>
 		<omniMargin>13</omniMargin>
@@ -858,7 +858,7 @@
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>MOC:2,CC:8,RT:1,FS:8,Periphery:1,TC:2,DTA:3,RD:5,CDS:1,CW:6,LA:8,RIM:1,ROS:15,CNC:3,FWL:14,MSC:2,CJF:10,DC:10</salvage>
 	</faction>
 	<faction key='DC.LV'>
 		<pctOmni>17</pctOmni>
@@ -3185,7 +3185,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Lanner' unitType='Mek' omni='Clan'>
-		<availability>CHH:4,CJF:7</availability>
+		<availability>CJF:7</availability>
 		<model name='A'>
 			<roles>recon,spotter</roles>
 			<availability>General:7</availability>
@@ -3199,10 +3199,10 @@
 		</model>
 		<model name='D'>
 			<roles>urban</roles>
-			<availability>General:2</availability>
+			<availability>General:4</availability>
 		</model>
 		<model name='E'>
-			<availability>CLAN:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='F'>
 			<availability>CJF:4</availability>
@@ -3211,7 +3211,7 @@
 			<availability>CJF:4</availability>
 		</model>
 		<model name='H'>
-			<availability>CLAN:6</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='I'>
 			<availability>CJF:2</availability>
@@ -6693,10 +6693,10 @@
 		</model>
 	</chassis>
 	<chassis name='Fire Falcon' unitType='Mek' omni='Clan'>
-		<availability>CHH:5,CNC:3,CP:3,CJF:7</availability>
+		<availability>CJF:7</availability>
 		<model name='A'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CWE:6,RD:6,CW:6,General:8,CWIE:6</availability>
+			<availability>General:8</availability>
 		</model>
 		<model name='B'>
 			<roles>fire_support</roles>
@@ -6713,26 +6713,25 @@
 			<deployedWith>Black Lanner</deployedWith>
 			<availability>General:7</availability>
 		</model>
-		<model name='E'>
-			<deployedWith>Black Lanner</deployedWith>
-			<availability>CLAN:6,IS:3</availability>
-		</model>
 		<model name='F'>
 			<roles>anti_infantry</roles>
 			<deployedWith>Black Lanner</deployedWith>
 			<availability>General:3</availability>
 		</model>
 		<model name='G'>
+			<deployedWith>Black Lanner</deployedWith>
 			<availability>CJF:6</availability>
 		</model>
 		<model name='H'>
 			<deployedWith>Black Lanner</deployedWith>
-			<availability>CLAN:6,IS:3</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='I'>
-			<availability>CJF:4</availability>
+			<deployedWith>Black Lanner</deployedWith>
+			<availability>CJF:6</availability>
 		</model>
 		<model name='L'>
+			<deployedWith>Black Lanner</deployedWith>
 			<availability>CJF:4</availability>
 		</model>
 		<model name='Prime'>
@@ -6740,6 +6739,7 @@
 			<availability>General:9</availability>
 		</model>
 		<model name='T'>
+			<deployedWith>Black Lanner</deployedWith>
 			<availability>CJF:2</availability>
 		</model>
 	</chassis>
@@ -14659,7 +14659,10 @@
 		</model>
 	</chassis>
 	<chassis name='Rawhide' unitType='Mek'>
-		<availability>LA:2,MERC:6</availability>
+		<availability>LA:2,MERC:2</availability>
+		<model name='RWD-R1'>
+			<availability>LA:2,MERC:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Razorback' unitType='Mek'>
 		<availability>OP:4,RF:4,LA:6,ROS:4,FWL:2:3139,MH:4,MERC:4,FS:4,DA:4,CP:2</availability>
@@ -15050,7 +15053,7 @@
 			<availability>CHH:1,RD:1,CW:1,CEI:2,CLAN.IS:2:3131,MERC:2,FS:1:3131,CJF:1,DC:2,CWIE:1,RA:1</availability>
 		</model>
 	</chassis>
-	<chassis name='Ryoken III-XP (Skinwalker)' unitType='Mek' omni='IS'>
+	<chassis name='Ryoken III-XP (Skinwalker)' unitType='Mek' omni='Clan'>
 		<availability>CWE:2</availability>
 		<model name='A'>
 			<availability>General:7</availability>
@@ -17535,13 +17538,7 @@
 		<model name='(DCMS) [ER Laser]' mechanized='false'>
 			<availability>DC:4</availability>
 		</model>
-		<model name='(DCMS)(Pulse Laser)' mechanized='false'>
-			<availability>DC:4</availability>
-		</model>
 		<model name='(DCMS)(Upgrade)[LBX]' mechanized='false'>
-			<availability>DC:4</availability>
-		</model>
-		<model name='(DCMS)[AP Gauss]' mechanized='false'>
 			<availability>DC:4</availability>
 		</model>
 		<model name='(DCMS)[Upgrade](ER Laser)' mechanized='false'>
@@ -17549,9 +17546,6 @@
 		</model>
 		<model name='(DCMS)[Upgrade](Pulse Laser)' mechanized='false'>
 			<availability>DC:4</availability>
-		</model>
-		<model name='(Upgrade)[LBX]' mechanized='true'>
-			<availability>General:8</availability>
 		</model>
 		<model name='[AP Gauss]' mechanized='true'>
 			<availability>General:6</availability>
@@ -17561,12 +17555,6 @@
 		</model>
 		<model name='[Pulse Laser]' mechanized='true'>
 			<availability>General:6</availability>
-		</model>
-		<model name='[Upgrade](ER Laser)' mechanized='true'>
-			<availability>General:8</availability>
-		</model>
-		<model name='[Upgrade](Pulse Laser)' mechanized='true'>
-			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Thunderbird II Battle Armor' unitType='BattleArmor'>
@@ -17603,7 +17591,10 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:4,LA:6,ROS:5,MH:4,FS:5,MERC:6,Periphery:2,TC:4,DC:3</availability>
+		<availability>CC:4,MERC.KH:4,CEI:2+,FS:5,MERC:6,Periphery:2,TC:4,CWE:2,SE:2+,FVC:3,MERC.WD:4,CW:2,LA:6,ROS:5,MH:4,DC:3</availability>
+		<model name='C'>
+			<availability>SE:2+,CEI:2+</availability>
+		</model>
 		<model name='C 2'>
 			<availability>CJF:2</availability>
 		</model>
@@ -19427,6 +19418,9 @@
 		</model>
 		<model name='WLF-5'>
 			<availability>MERC.KH:8,LA:6,ROS:6,MERC:4,FS:6,CWIE:6</availability>
+		</model>
+		<model name='WLF-6S'>
+			<availability>MERC.KH:2,MERC.WD:2,LA:4,MERC:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>

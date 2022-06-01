@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import megamek.common.Game;
 import megamek.common.MechSummaryCache;
+import megamek.server.GameManager;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
@@ -82,9 +83,10 @@ public class ScenarioLoaderTest {
             ScenarioLoader loader = new ScenarioLoader(file);
             try {
                 Game game = loader.createGame();
-                Server server = new Server("test", port + 1);
+                GameManager gameManager = new GameManager();
+                Server server = new Server("test", port + 1, gameManager);
                 server.setGame(game);
-                loader.applyDamage(server);
+                loader.applyDamage(gameManager);
                 server.die();
             } catch (Exception ex) {
                 ex.printStackTrace();

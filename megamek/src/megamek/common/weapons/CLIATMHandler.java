@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -13,34 +14,15 @@
  */
 package megamek.common.weapons;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import megamek.common.Aero;
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Minefield;
-import megamek.common.Mounted;
-import megamek.common.RangeType;
-import megamek.common.Report;
-import megamek.common.Tank;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
+
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks, modified by Greg
@@ -53,10 +35,10 @@ public class CLIATMHandler extends ATMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public CLIATMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
     }
 
@@ -342,14 +324,14 @@ public class CLIATMHandler extends ATMHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, ae,
                         Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
+                gameManager.removeMinefield(mf);
             }
             return true;
         }
@@ -592,13 +574,9 @@ public class CLIATMHandler extends ATMHandler {
             int hits = calcHits(vPhaseReport);
             Report.addNewline(vPhaseReport);
 
-            if (bMissed) {
-                return false;
-            } // End missed-target
-
-            // light inferno missiles all at once, if not missed
             if (!bMissed) {
-                vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target,
+                // light inferno missiles all at once, if not missed
+                vPhaseReport.addAll(gameManager.deliverInfernoMissiles(ae, target,
                         hits, weapon.getCalledShot().getCall()));
             }
             return false;
@@ -655,7 +633,7 @@ public class CLIATMHandler extends ATMHandler {
                     newWaa.setNemesisConfused(true);
                     Mounted m = ae.getEquipment(waa.getWeaponId());
                     Weapon w = (Weapon) m.getType();
-                    AttackHandler ah = w.fire(newWaa, game, server);
+                    AttackHandler ah = w.fire(newWaa, game, gameManager);
                     // increase ammo by one, because we just incorrectly used
                     // one up
                     weapon.getLinked().setShotsLeft(
@@ -885,7 +863,7 @@ public class CLIATMHandler extends ATMHandler {
                 if (entityTarget != null) {
                     handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                                        nCluster, bldgAbsorbs);
-                    server.creditKill(entityTarget, ae);
+                    gameManager.creditKill(entityTarget, ae);
                     hits -= nCluster;
                     firstHit = false;
                     // do IMP stuff here!

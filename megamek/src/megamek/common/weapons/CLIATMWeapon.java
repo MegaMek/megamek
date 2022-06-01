@@ -28,7 +28,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.missiles.MissileWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks, Modified by Greg
@@ -60,10 +60,10 @@ public abstract class CLIATMWeapon extends MissileWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         
         // MML does different handlers here. I think I'll go with implementing different ammo in the Handler.
-        return new CLIATMHandler(toHit, waa, game, server);
+        return new CLIATMHandler(toHit, waa, game, manager);
     }
 
     @Override

@@ -35,6 +35,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -48,10 +49,10 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public CapitalMissileHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         advancedPD = g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADV_POINTDEF);
     }
     
@@ -311,7 +312,7 @@ public class CapitalMissileHandler extends AmmoWeaponHandler {
                 if (entityTarget != null) {
                     handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                             nCluster, bldgAbsorbs);
-                    server.creditKill(entityTarget, ae);
+                    gameManager.creditKill(entityTarget, ae);
                     hits -= nCluster;
                     firstHit = false;
                 }

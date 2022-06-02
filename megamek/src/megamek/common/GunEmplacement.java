@@ -442,11 +442,15 @@ public class GunEmplacement extends Tank {
     public void setDeployed(boolean deployed) {
         super.setDeployed(deployed);
 
-        if (deployed) {
+        // very aggressive null defense
+        if (deployed && (getGame() != null) && (getGame().getBoard() != null) && 
+                getPosition() != null) {
             Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
             
-            initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
-            initialBuildingArmor = occupiedStructure.getArmor(getPosition());
+            if (occupiedStructure != null) {
+                initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
+                initialBuildingArmor = occupiedStructure.getArmor(getPosition());
+            }
         } else {
             initialBuildingCF = initialBuildingArmor = 0;
         }

@@ -49,7 +49,7 @@ public final class SteerageQuartersCargoBay extends Bay {
     /**
      * Create space for certain number of crew/passengers
      *
-     * @param space The number of crew or passengers to accomodate
+     * @param space The number of crew or passengers to accommodate
      */
     public SteerageQuartersCargoBay(int space) {
         this(space * 5, 0);
@@ -69,7 +69,7 @@ public final class SteerageQuartersCargoBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Steerage Quarters (" + getCurrentDoors() + " doors) - " + (int) currentSpace;
     }
 

@@ -313,11 +313,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     @Override
     public void ready() {
         if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
-            // comfirm this action
-            ConfirmDialog response = clientgui
-                    .doYesNoBotherDialog(
-                            Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
-                            Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message"));
+            // confirm this action
+            ConfirmDialog response = clientgui.doYesNoBotherDialog(
+                    Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
+                    Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message"));
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
             }

@@ -101,7 +101,7 @@ public class ConnectDialog extends AbstractGameConnectionDialog {
     public void actionPerformed(ActionEvent e) {
         // reached from the Okay button or pressing Enter in the text fields
         super.actionPerformed(e);
-        setServerAddress(serverAddressField.getText());
+        setServerAddress(serverAddressField.getText().trim());
 
         // update settings
         getClientPreferences().setLastConnectAddr(getServerAddress());

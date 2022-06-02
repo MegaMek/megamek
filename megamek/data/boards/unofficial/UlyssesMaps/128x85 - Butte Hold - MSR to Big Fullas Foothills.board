@@ -1,4 +1,8 @@
 size 128 85
+tag "Rough (Auto)"
+tag "Roads (Auto)"
+tag "DesertTheme (Auto)"
+tag "HighHills (Auto)"
 hex 0101 0 "" "desert"
 hex 0201 0 "" "desert"
 hex 0301 0 "" "desert"

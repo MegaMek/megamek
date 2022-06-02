@@ -5,6 +5,7 @@ import megamek.common.LosEffects;
 import megamek.common.LosEffects.AttackInfo;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -12,9 +13,13 @@ import megamek.server.Server;
  * @author dirk
  */
 public class RulerCommand extends ServerCommand {
-    public RulerCommand(Server server) {
+
+    private final GameManager gameManager;
+
+    public RulerCommand(Server server, GameManager gameManager) {
         super(server, "ruler",
                 "Show Line of Sight (LOS) information between two points of the map. Usage: /ruler x1 y1 x2 y2 [elev1 [elev2]]. Where x1, y1 and x2, y2 are the coordinates of the tiles, and the optional elev numbers are the elevations of the targets over the terrain. If elev is not given 1 is assumed which is for standing mechs. Prone mechs and most other units are at elevation 0.");
+        this.gameManager = gameManager;
     }
 
     /*
@@ -46,15 +51,15 @@ public class RulerCommand extends ServerCommand {
                 }
             }
 
-            ToHitData thd = LosEffects.calculateLos(server.getGame(), buildAttackInfo(start, end, elev1, elev2))
-                    .losModifiers(server.getGame());
+            ToHitData thd = LosEffects.calculateLos(gameManager.getGame(), buildAttackInfo(start, end, elev1, elev2))
+                    .losModifiers(gameManager.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit1 = thd.getValue() + " because ";
             }
             toHit1 += thd.getDesc();
 
-            thd = LosEffects.calculateLos(server.getGame(), buildAttackInfo(end, start, elev2, elev1))
-                    .losModifiers(server.getGame());
+            thd = LosEffects.calculateLos(gameManager.getGame(), buildAttackInfo(end, start, elev2, elev1))
+                    .losModifiers(gameManager.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit2 = thd.getValue() + " because ";
             }
@@ -85,8 +90,8 @@ public class RulerCommand extends ServerCommand {
         ai.targetPos = c2;
         ai.attackHeight = h1;
         ai.targetHeight = h2;
-        ai.attackAbsHeight = server.getGame().getBoard().getHex(c1).floor() + h1;
-        ai.targetAbsHeight = server.getGame().getBoard().getHex(c2).floor() + h2;
+        ai.attackAbsHeight = gameManager.getGame().getBoard().getHex(c1).floor() + h1;
+        ai.targetAbsHeight = gameManager.getGame().getBoard().getHex(c2).floor() + h2;
         return ai;
     }
 }

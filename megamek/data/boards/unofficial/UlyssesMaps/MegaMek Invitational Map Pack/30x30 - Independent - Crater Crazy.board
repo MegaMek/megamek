@@ -1,4 +1,10 @@
 size 30 30
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "LunarTheme (Auto)"
+tag "LightForest (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 -2 "pavement:1" "lunar"
 hex 0201 -2 "pavement:1" "lunar"
 hex 0301 -2 "pavement:1" "lunar"

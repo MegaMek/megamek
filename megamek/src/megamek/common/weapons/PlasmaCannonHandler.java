@@ -17,7 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 import java.util.Vector;
 
@@ -29,8 +29,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -71,9 +71,9 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         r.indent(2);
         vPhaseReport.addElement(r);
 
-        int damagableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
+        int damageableCoverType = LosEffects.DAMAGABLE_COVER_NONE;
         Building coverBuilding = null;
-        Entity coverDropship = null;
+        Entity coverDropShip = null;
         Coords coverLoc = null;
 
         // Determine if there is primary and secondary cover,
@@ -83,32 +83,32 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 // 75% cover has a primary and secondary
                 (toHit.getCover() == LosEffects.COVER_HORIZONTAL && toHit
                         .getDamagableCoverTypeSecondary() != LosEffects.DAMAGABLE_COVER_NONE)) {
-            // Horiztonal cover provided by two 25%'s, so primary and secondary
+            // Horizontal cover provided by two 25%'s, so primary and secondary
             int hitLoc = hit.getLocation();
             // Primary stores the left side, from the perspective of the
             // attacker
             if (hitLoc == Mech.LOC_RLEG || hitLoc == Mech.LOC_RT
                     || hitLoc == Mech.LOC_RARM) {
                 // Left side is primary
-                damagableCoverType = toHit.getDamagableCoverTypePrimary();
+                damageableCoverType = toHit.getDamagableCoverTypePrimary();
                 coverBuilding = toHit.getCoverBuildingPrimary();
-                coverDropship = toHit.getCoverDropshipPrimary();
+                coverDropShip = toHit.getCoverDropshipPrimary();
                 coverLoc = toHit.getCoverLocPrimary();
             } else {
                 // If not left side, then right side, which is secondary
-                damagableCoverType = toHit.getDamagableCoverTypeSecondary();
+                damageableCoverType = toHit.getDamagableCoverTypeSecondary();
                 coverBuilding = toHit.getCoverBuildingSecondary();
-                coverDropship = toHit.getCoverDropshipSecondary();
+                coverDropShip = toHit.getCoverDropshipSecondary();
                 coverLoc = toHit.getCoverLocSecondary();
             }
         } else { // Only primary cover exists
-            damagableCoverType = toHit.getDamagableCoverTypePrimary();
+            damageableCoverType = toHit.getDamagableCoverTypePrimary();
             coverBuilding = toHit.getCoverBuildingPrimary();
-            coverDropship = toHit.getCoverDropshipPrimary();
+            coverDropShip = toHit.getCoverDropshipPrimary();
             coverLoc = toHit.getCoverLocPrimary();
         }
         // Check if we need to damage the cover that absorbed the hit.
-        if (damagableCoverType == LosEffects.DAMAGABLE_COVER_DROPSHIP) {
+        if (damageableCoverType == LosEffects.DAMAGABLE_COVER_DROPSHIP) {
             // We need to adjust some state and then restore it later
             // This allows us to make a call to handleEntityDamage
             ToHitData savedToHit = toHit;
@@ -120,20 +120,20 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             boolean savedSalvo = bSalvo;
             bSalvo = true;
             Targetable origTarget = target;
-            target = coverDropship;
+            target = coverDropShip;
             hits = calcHits(vPhaseReport);
             // Create new toHitData
             toHit = new ToHitData(0, "", ToHitData.HIT_NORMAL,
-                    Compute.targetSideTable(ae, coverDropship));
+                    Compute.targetSideTable(ae, coverDropShip));
             // Report cover was damaged
             int sizeBefore = vPhaseReport.size();
             r = new Report(3465);
             r.subject = subjectId;
-            r.add(coverDropship.getShortName());
+            r.add(coverDropShip.getShortName());
             r.newlines++;
             vPhaseReport.add(r);
             // Damage the DropShip
-            handleEntityDamage(coverDropship, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+            handleEntityDamage(coverDropShip, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
             // Remove a blank line in the report list
             if (vPhaseReport.elementAt(sizeBefore).newlines > 0) {
                 vPhaseReport.elementAt(sizeBefore).newlines--;
@@ -150,14 +150,14 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             bSalvo = savedSalvo;
             target = origTarget;
             // Damage a building that blocked a shot
-        } else if (damagableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING) {
+        } else if (damageableCoverType == LosEffects.DAMAGABLE_COVER_BUILDING) {
             // Normal damage
             Targetable origTarget = target;
             target = new BuildingTarget(coverLoc, game.getBoard(), false);
             hits = calcHits(vPhaseReport);
             // Plasma Cannons do double damage per-hit to buildings
             int nDamage = 2 * hits;
-            Vector<Report> buildingReport = server.damageBuilding(coverBuilding, nDamage,
+            Vector<Report> buildingReport = gameManager.damageBuilding(coverBuilding, nDamage,
                     " blocks the shot and takes ", coverLoc);
             target = origTarget;
             for (Report report : buildingReport) {
@@ -166,7 +166,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addAll(buildingReport);
             // Damage any infantry in the building.
-            Vector<Report> infantryReport = server.damageInfantryIn(coverBuilding, nDamage,
+            Vector<Report> infantryReport = gameManager.damageInfantryIn(coverBuilding, nDamage,
                     coverLoc, wtype.getInfantryDamageClass());
             for (Report report : infantryReport) {
                 report.indent(2);
@@ -290,7 +290,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
+            gameManager.tryIgniteHex(target.getPosition(), subjectId, true, false,
                     tn, true, -1, vPhaseReport);
         }
     }
@@ -320,13 +320,13 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-                && server.tryIgniteHex(target.getPosition(), subjectId, true,
+                && gameManager.tryIgniteHex(target.getPosition(), subjectId, true,
                         false,
                         new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
                         vPhaseReport)) {
             return;
         }
-        Vector<Report> clearReports = server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        Vector<Report> clearReports = gameManager.tryClearHex(target.getPosition(), nDamage, subjectId);
         if (!clearReports.isEmpty()) {
             vPhaseReport.lastElement().newlines = 0;
         }

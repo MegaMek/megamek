@@ -17,6 +17,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -243,15 +244,15 @@ public abstract class InfantryWeapon extends Weapon {
      * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager manager) {
         Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (((null != m) && (m.curMode().equals(Weapon.MODE_FLAMER_HEAT)
                 || (waa.getEntity(game).isSupportVehicle()
                     && m.getLinked() != null
                     && m.getLinked().getType() != null
                     && (((AmmoType) m.getLinked().getType()).getMunitionType() == AmmoType.M_INFERNO))))) {
-            return new InfantryHeatWeaponHandler(toHit, waa, game, server);
+            return new InfantryHeatWeaponHandler(toHit, waa, game, manager);
         }
-        return new InfantryWeaponHandler(toHit, waa, game, server);
+        return new InfantryWeaponHandler(toHit, waa, game, manager);
     }
 }

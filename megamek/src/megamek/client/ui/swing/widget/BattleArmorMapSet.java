@@ -1,6 +1,7 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -27,7 +28,7 @@ import java.util.Vector;
 
 /**
  * Class which keeps set of all areas required to represent Battle Armor unit in
- * MechDsiplay.ArmorPanel class.
+ * MechDisplay.ArmorPanel class.
  */
 public class BattleArmorMapSet implements DisplayMapSet {
     // Picture with figure
@@ -44,7 +45,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
     private PMValueLabel[] armorLabels = new PMValueLabel[BattleArmor.BA_MAX_MEN];
     // Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
-    // Set of Backgrpund drawers which will be sent to PicMap component
+    // Set of Background drawers which will be sent to PicMap component
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
 
     private int stepY = 53;
@@ -53,7 +54,7 @@ public class BattleArmorMapSet implements DisplayMapSet {
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     /**
-     * This constructor has to be called anly from addNotify() method
+     * This constructor can only be called from the addNotify method
      */
     public BattleArmorMapSet(JComponent c) {
         comp = c;

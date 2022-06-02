@@ -1,4 +1,8 @@
 size 45 70
+tag "Rough (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "HighHills (Auto)"
 hex 0101 20 "" "volcano"
 hex 0201 20 "" "volcano"
 hex 0301 20 "" "volcano"

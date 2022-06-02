@@ -19,6 +19,7 @@
 package megamek.common;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.CachedEntityState;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +38,7 @@ import java.util.Vector;
  */
 public class MoveStep implements Serializable {
     private static final long serialVersionUID = -6075640793056182285L;
-    private MoveStepType type = MoveStepType.NONE;
+    private MoveStepType type;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;
     private Coords targetPos;
@@ -2153,7 +2154,7 @@ public class MoveStep implements Serializable {
                             && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
-            }                
+            }
             // evading means running
             movementType = EntityMovementType.MOVE_RUN;
         }
@@ -2233,18 +2234,18 @@ public class MoveStep implements Serializable {
                     tmpWalkMP = ((LandAirMech) entity).getAirMechWalkMP();
                     runMPNoMASC = ((LandAirMech) entity).getAirMechRunMP();
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
-                    Entity.MPBoosters mpBoosters = ((LandAirMech)entity).getArmedMPBoosters();
-                    if (mpBoosters.hasMASCAndOrSupercharger()) {
-                        runMP = mpBoosters.calcRunMP(tmpWalkMP);
+                    MPBoosters mpBoosters = ((LandAirMech) entity).getArmedMPBoosters();
+                    if (!mpBoosters.isNone()) {
+                        runMP = mpBoosters.calculateRunMP(tmpWalkMP);
                     } else {
                         runMP = runMPNoMASC;
                     }
                 } else {
-                    // Only 1 ground MP for ground effect vehicles and glider protomechs
+                    // Only 1 ground MP for ground effect vehicles and glider ProtoMeks
                     tmpWalkMP = runMP = runMPNoMASC = sprintMP = sprintMPNoMASC = 1;
                 }
             } else if (entity instanceof LandAirMech) {
-                // LAMs cannot use overdrive and MASC does not effect airborne MP.
+                // LAMs cannot use overdrive and MASC does not affect airborne MP.
                 tmpWalkMP = ((LandAirMech) entity).getAirMechCruiseMP();
                 runMP = runMPNoMASC = sprintMP = sprintMPNoMASC = ((LandAirMech) entity).getAirMechFlankMP();
             }
@@ -2260,12 +2261,12 @@ public class MoveStep implements Serializable {
         }
         
         if (stepType == MoveStepType.CONVERT_MODE) {
-            //QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
+            // QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
             if (currHex.containsTerrain(Terrains.WATER)
                     && getClearance() < 0) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
+            // QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
             // and can switch to track mode while prone then stand.
             if (getEntity().isProne()
                     && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
@@ -2376,7 +2377,7 @@ public class MoveStep implements Serializable {
             } else if ((getMpUsed() <= runMPOneMASC) && !isRunProhibited()
                     && !isEvading()) {
                 // decide which to use if both are active
-                Entity.MPBoosters mpBoosters = entity.getArmedMPBoosters();
+                MPBoosters mpBoosters = entity.getArmedMPBoosters();
                 int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
                 int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
                 if (mascTarget < scTarget) {
@@ -2417,7 +2418,7 @@ public class MoveStep implements Serializable {
                     && !isEvading()) {
                 // decide if using MASC or Supercharger if need only one
                 // choose Super if even
-                Entity.MPBoosters mpBoosters = entity.getArmedMPBoosters();
+                MPBoosters mpBoosters = entity.getArmedMPBoosters();
                 int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
                 int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
                 if (mascTarget < scTarget) {
@@ -3472,9 +3473,8 @@ public class MoveStep implements Serializable {
                 return false;
             }
 
-            // cant move through a hex with a LargeSupportTank or a grounded
-            // Dropship unless infantry
-            // or a VTOL at high enough elevation
+            // Can't move through a hex with a LargeSupportTank or a grounded DropShip unless
+            // infantry or a VTOL at high enough elevation
             if (!(entity instanceof Infantry)) {
                 boolean validRoadTrain = false;
                 for (Entity inHex : game.getEntitiesVector(src)) {
@@ -3482,8 +3482,8 @@ public class MoveStep implements Serializable {
                         continue;
                     }
                     
-                    //ignore the first trailer behind a non-superheavy tractor
-                    //which can be in the same hex
+                    // Ignore the first trailer behind a non-superheavy tractor which can be in the
+                    // same hex
                     if (!entity.getAllTowedUnits().isEmpty() && !entity.isSuperHeavy()) {
                         Entity firstTrailer = game.getEntity(entity.getAllTowedUnits().get(0));
                         if (inHex.equals(firstTrailer)) {
@@ -3542,8 +3542,8 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // We need extra checking for dropships, due to secondary positions
-        // if the Dropship is taking off, movetype will be safe thrust
+        // We need extra checking for DropShips, due to secondary positions
+        // if the DropShip is taking off, MoveType will be safe thrust
         if ((entity instanceof Dropship) && !entity.isAirborne()
                 && isPavementStep() && entity.isLocationProhibited(dest, getElevation())
                 && (movementType != EntityMovementType.MOVE_SAFE_THRUST)
@@ -3861,8 +3861,7 @@ public class MoveStep implements Serializable {
             return false;
         }
 
-        // cant use thrust turns in the first hex of movement (or first 8 if
-        // ground)
+        // Can't use thrust turns in the first hex of movement (or first 8 if ground)
         if (game.getBoard().onGround()) {
             // if flying on the ground map then they need to move 8 hexes first
             if (distance < 8) {
@@ -3874,17 +3873,15 @@ public class MoveStep implements Serializable {
 
         // must have been no prior turns in this hex (or 8 hexes if on ground)
         return getNTurns() == 0;
-
     }
 
     public boolean dueFreeTurn() {
-
         Entity en = getEntity();
         int straight = getNStraight();
         int vel = getVelocity();
         int thresh = 99;
 
-        // I will assume that small craft should be treated as dropships?
+        // I will assume that small craft should be treated as DropShips?
         if (en instanceof SmallCraft) {
             if (vel > 15) {
                 thresh = 6;
@@ -3975,7 +3972,7 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * Should we treat this movement as if it is occuring for an aerodyne unit
+     * Should we treat this movement as if it is occurring for an aerodyne unit
      * flying in atmosphere?
      */
     boolean useAeroAtmosphere(Game game, Entity en) {

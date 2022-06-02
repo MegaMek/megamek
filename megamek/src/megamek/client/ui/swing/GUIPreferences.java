@@ -1,23 +1,22 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.Entity;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
@@ -114,7 +113,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
-    public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
+    public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
@@ -224,7 +223,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
-    public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
+    public static final String DEFAULT_WEAPON_SORT_ORDER = "DefaultWeaponSortOrder";
     public static final String UI_THEME = "UITheme";
     public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
@@ -337,7 +336,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
-        store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
@@ -440,7 +438,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPSHEETS, false);
 
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
-        store.setDefault(DEFAULT_WEAP_SORT_ORDER, Entity.WeaponSortOrder.DEFAULT.ordinal());
+        store.setDefault(DEFAULT_WEAPON_SORT_ORDER, WeaponSortOrder.DEFAULT.name());
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
@@ -544,8 +542,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(GAME_SUMMARY_BOARD_VIEW);
     }
 
-    public boolean getGameSummaryMiniMap() {
-        return store.getBoolean(GAME_SUMMARY_MINI_MAP);
+    public boolean getGameSummaryMinimap() {
+        return store.getBoolean(GAME_SUMMARY_MINIMAP);
     }
 
     public boolean getEntityOwnerLabelColor() {
@@ -945,10 +943,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getString(UI_THEME);
     }
 
-    public int getDefaultWeaponSortOrder() {
-        return store.getInt(DEFAULT_WEAP_SORT_ORDER);
+    public WeaponSortOrder getDefaultWeaponSortOrder() {
+        return WeaponSortOrder.valueOf(store.getString(DEFAULT_WEAPON_SORT_ORDER));
     }
-    
+
+    public void setDefaultWeaponSortOrder(final WeaponSortOrder weaponSortOrder) {
+        store.setValue(DEFAULT_WEAPON_SORT_ORDER, weaponSortOrder.name());
+    }
+
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
     }
@@ -1025,8 +1027,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(GAME_SUMMARY_BOARD_VIEW, state);
     }
 
-    public void setGameSummaryMiniMap(boolean state) {
-        store.setValue(GAME_SUMMARY_MINI_MAP, state);
+    public void setGameSummaryMinimap(boolean state) {
+        store.setValue(GAME_SUMMARY_MINIMAP, state);
     }
 
     public void setEntityOwnerLabelColor(boolean i) {
@@ -1403,10 +1405,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUITheme(String s) {
         store.setValue(UI_THEME, s);
-    }
-    
-    public void setDefaultWeaponSortOrder(int i) {
-        store.setValue(DEFAULT_WEAP_SORT_ORDER, i);
     }
 
     public int getRATTechLevel() {

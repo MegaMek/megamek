@@ -34,7 +34,7 @@ import megamek.common.weapons.MekMortarAntiPersonnelHandler;
 import megamek.common.weapons.MekMortarFlareHandler;
 import megamek.common.weapons.MekMortarHandler;
 import megamek.common.weapons.MekMortarSmokeHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -55,24 +55,24 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_AIRBURST) {
-            return new MekMortarAirburstHandler(toHit, waa, game, server);
+            return new MekMortarAirburstHandler(toHit, waa, game, manager);
         } else if (atype.getMunitionType() == AmmoType.M_ANTI_PERSONNEL) {
-            return new MekMortarAntiPersonnelHandler(toHit, waa, game, server);
+            return new MekMortarAntiPersonnelHandler(toHit, waa, game, manager);
         } else if (atype.getMunitionType() == AmmoType.M_FLARE) {
-            return new MekMortarFlareHandler(toHit, waa, game, server);
+            return new MekMortarFlareHandler(toHit, waa, game, manager);
         } else if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
             // Semi-guided works like shaped-charge, but can benefit from tag
-            return new MekMortarHandler(toHit, waa, game, server);
+            return new MekMortarHandler(toHit, waa, game, manager);
         } else if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
-            return new MekMortarSmokeHandler(toHit, waa, game, server);
+            return new MekMortarSmokeHandler(toHit, waa, game, manager);
         }
         // If it doesn't match other types, it's the default armor-piercing
-        return new MekMortarHandler(toHit, waa, game, server);
+        return new MekMortarHandler(toHit, waa, game, manager);
     }
     
     @Override

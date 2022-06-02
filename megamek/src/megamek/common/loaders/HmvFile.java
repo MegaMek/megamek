@@ -1111,7 +1111,7 @@ public class HmvFile implements IMechLoader {
         try {
             equipName = EQUIPMENT.get(techType).get(equipment);
         } catch (Exception ignored) {
-            // is handeled by the if below.
+            // is handled by the if below.
         }
         if (equipName == null) {
             Hashtable<Long, String> techEquipment = EQUIPMENT.get(techType);
@@ -1166,7 +1166,7 @@ public class HmvFile implements IMechLoader {
         try {
             ammoName = AMMO.get(techType).get(ammo);
         } catch (NullPointerException e) {
-            // is handeled by the if below.
+            // is handled by the if below.
         }
         if (ammoName == null) {
             Hashtable<Long, String> techAmmo = AMMO.get(techType);

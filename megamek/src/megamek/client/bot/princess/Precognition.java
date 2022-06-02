@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -19,7 +20,7 @@ import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.options.GameOptions;
 import megamek.server.SmokeCloud;
@@ -234,8 +235,7 @@ public class Precognition implements Runnable {
                     break;
                 case SENDING_SPECIAL_HEX_DISPLAY:
                     getGame().getBoard().setSpecialHexDisplayTable(
-                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
-                                    .getObject(0));
+                            (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
                     getGame().processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case ENTITY_NOVA_NETWORK_CHANGE:
@@ -258,6 +258,8 @@ public class Precognition implements Runnable {
                             cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
                             cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
                             break;
+                        default:
+                            break;
                     }
                     getGame().processGameEvent(cfrEvt);
                     break;
@@ -266,7 +268,8 @@ public class Precognition implements Runnable {
                     getGame().processGameEvent(gve);
                     break;
                 default:
-                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand of " + c.getCommand().name());
+                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand of "
+                            + c.getCommand().name());
                     break;
             }
         } catch (Exception ex) {
@@ -281,7 +284,8 @@ public class Precognition implements Runnable {
         while (!getWaiting().get() && !getDone().get()) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException ignored) {
+            } catch (Exception ignored) {
+
             }
         }
     }

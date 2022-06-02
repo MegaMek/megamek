@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <factions>
+	<faction key='AML' name='Alyina Mercantile League' minor='true' clan='true' periphery='false'>
+		<years>3151-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Front Line</ratingLevels>
+		<parentFaction>CJF</parentFaction>
+	</faction>
 	<faction key='ARDC' name='Arc-Royal Defense Cordon' minor='false' clan='false' periphery='false'>
 		<years>3058-3067</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -329,6 +334,11 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>FS.CrMM</parentFaction>
 	</faction>
+	<faction key='MalCon' name='Malthus Confederation' minor='true' clan='false' periphery='false'>
+		<years>3151-</years>
+		<ratingLevels>F,D,C</ratingLevels>
+		<parentFaction>MERC</parentFaction>
+	</faction>
 	<faction key='MH' name='Marian Hegemony' minor='false' clan='false' periphery='true'>
 		<years>2920-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -526,6 +536,11 @@
 		<years>3136-3144</years>
 		<parentFaction>ROS</parentFaction>
 	</faction>
+	<faction key='TamPact' name='Tamar Pact' minor='true' clan='false' periphery='false'>
+		<years>3151-</years>
+		<ratingLevels>F,D,A</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
 	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
 		<years>2335-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -579,6 +594,11 @@
 		<years>2240-2540</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='VesMar' name='Vesper Marches' minor='true' clan='false' periphery='false'>
+		<years>3151-</years>
+		<ratingLevels>F,D,A</ratingLevels>
+		<parentFaction>LA</parentFaction>
 	</faction>
 	<faction key='CWE' name='Wolf Empire' minor='false' clan='true' periphery='false'>
 		<years>3143-</years>
@@ -1387,6 +1407,11 @@
 		<years>2341-</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='CJF.TA' name='Turkina Ascendancy' minor='true' clan='true' periphery='false'>
+		<years>3150-3152</years>
+		<ratingLevels>Provisional Garrison,Solahma</ratingLevels>
+		<parentFaction>CJF</parentFaction>
 	</faction>
 	<faction key='CC.VCR' name='Victoria Commonality Rangers' minor='false' clan='false' periphery='false'>
 		<years>3060-</years>

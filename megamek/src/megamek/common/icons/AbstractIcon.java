@@ -20,7 +20,7 @@ package megamek.common.icons;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -194,18 +194,18 @@ public abstract class AbstractIcon implements Serializable {
             return;
         }
 
-        MegaMekXmlUtil.writeSimpleXMLOpenTag(pw, indent++, name);
+        MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, name);
         writeBodyToXML(pw, indent);
-        MegaMekXmlUtil.writeSimpleXMLCloseTag(pw, --indent, name);
+        MMXMLUtility.writeSimpleXMLCloseTag(pw, --indent, name);
     }
 
     protected void writeBodyToXML(final PrintWriter pw, int indent) {
         if (!hasDefaultCategory()) {
-            MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "category", getCategory());
+            MMXMLUtility.writeSimpleXMLTag(pw, indent, "category", getCategory());
         }
 
         if (!hasDefaultFilename()) {
-            MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "filename", getFilename());
+            MMXMLUtility.writeSimpleXMLTag(pw, indent, "filename", getFilename());
         }
     }
 
@@ -218,10 +218,10 @@ public abstract class AbstractIcon implements Serializable {
     protected void parseNode(final Node wn) {
         switch (wn.getNodeName()) {
             case "category":
-                setCategory(MegaMekXmlUtil.unEscape(wn.getTextContent().trim()));
+                setCategory(MMXMLUtility.unEscape(wn.getTextContent().trim()));
                 break;
             case "filename":
-                setFilename(MegaMekXmlUtil.unEscape(wn.getTextContent().trim()));
+                setFilename(MMXMLUtility.unEscape(wn.getTextContent().trim()));
                 break;
             default:
                 break;

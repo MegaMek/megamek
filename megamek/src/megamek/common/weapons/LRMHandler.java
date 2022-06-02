@@ -35,7 +35,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.lrms.ExtendedLRMWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -47,15 +47,15 @@ public class LRMHandler extends MissileWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        this(t, w, g, s, 0);
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        this(t, w, g, m, 0);
     }
 
-    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, Server s,
+    public LRMHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m,
             int salvoMod) {
-        super(t, w, g, s);
+        super(t, w, g, m);
         nSalvoBonus = salvoMod;
     }
 
@@ -83,14 +83,14 @@ public class LRMHandler extends MissileWeaponHandler {
             ArrayList<Minefield> mfRemoved = new ArrayList<>();
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
-                if (server.clearMinefield(mf, ae,
+                if (gameManager.clearMinefield(mf, ae,
                         Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
             // we have to do it this way to avoid a concurrent error problem
             for (Minefield mf : mfRemoved) {
-                server.removeMinefield(mf);
+                gameManager.removeMinefield(mf);
             }
             return true;
         }

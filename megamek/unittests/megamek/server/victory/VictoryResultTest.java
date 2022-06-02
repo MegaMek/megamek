@@ -2,17 +2,16 @@ package megamek.server.victory;
 
 import megamek.common.Game;
 import megamek.common.Player;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-@RunWith(value = JUnit4.class)
 public class VictoryResultTest {
 
     @Test
@@ -68,11 +67,11 @@ public class VictoryResultTest {
         // Trivial cases
         VictoryResult victoryResult = new VictoryResult(true);
 
-        Player playerMock = Mockito.mock(Player.class);
-        Mockito.when(playerMock.getColorForPlayer()).thenReturn("");
+        Player playerMock = mock(Player.class);
+        when(playerMock.getColorForPlayer()).thenReturn("");
 
-        Game gameMock = Mockito.mock(Game.class);
-        Mockito.when(gameMock.getPlayer(Mockito.anyInt())).thenReturn(playerMock);
+        Game gameMock = mock(Game.class);
+        when(gameMock.getPlayer(anyInt())).thenReturn(playerMock);
 
         assertTrue(victoryResult.processVictory(gameMock).isEmpty());
 

@@ -1344,12 +1344,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         
         // limit large craft to zero net heat and to heat by arc
-        final int heatcap = ae.getHeatCapacity();
+        final int heatCapacity = ae.getHeatCapacity();
         if (ae.usesWeaponBays() && (weapon != null) && !weapon.getBayWeapons().isEmpty()) {
-            int totalheat = 0;
+            int totalHeat = 0;
 
             // first check to see if there are any usable weapons
-            boolean useable = false;
+            boolean usable = false;
             for (int wId : weapon.getBayWeapons()) {
                 Mounted m = ae.getEquipment(wId);
                 WeaponType bayWType = ((WeaponType) m.getType());
@@ -1357,16 +1357,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (m.canFire()) {
                     if (bayWUsesAmmo) {
                         if ((m.getLinked() != null) && (m.getLinked().getUsableShotsLeft() > 0)) {
-                            useable = true;
+                            usable = true;
                             break;
                         }
                     } else {
-                        useable = true;
+                        usable = true;
                         break;
                     }
                 }
             }
-            if (!useable) {
+            if (!usable) {
                 return Messages.getString("WeaponAttackAction.BayNotReady");
             }
 
@@ -1395,17 +1395,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         boolean rearMount = prevWeapon.isRearMounted();
                         if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                             for (int bwId : prevWeapon.getBayWeapons()) {
-                                totalheat += ae.getEquipment(bwId).getCurrentHeat();
+                                totalHeat += ae.getEquipment(bwId).getCurrentHeat();
                             }
                         } else {
                             if (!rearMount) {
                                 if (!usedFrontArc[loc]) {
-                                    totalheat += ae.getHeatInArc(loc, rearMount);
+                                    totalHeat += ae.getHeatInArc(loc, rearMount);
                                     usedFrontArc[loc] = true;
                                 }
                             } else {
                                 if (!usedRearArc[loc]) {
-                                    totalheat += ae.getHeatInArc(loc, rearMount);
+                                    totalHeat += ae.getHeatInArc(loc, rearMount);
                                     usedRearArc[loc] = true;
                                 }
                             }
@@ -1437,18 +1437,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
-                if ((totalheat + currentHeat) > heatcap) {
+                if ((totalHeat + currentHeat) > heatCapacity) {
                     // FIXME: This is causing weird problems (try firing all the
                     // Suffen's nose weapons)
                     return Messages.getString("WeaponAttackAction.HeatOverCap");
                 }
             } else {
                 if (!rearMount) {
-                    if (!usedFrontArc[loc] && ((totalheat + currentHeat) > heatcap) && !onlyArc) {
+                    if (!usedFrontArc[loc] && ((totalHeat + currentHeat) > heatCapacity) && !onlyArc) {
                         return Messages.getString("WeaponAttackAction.HeatOverCap");
                     }
                 } else {
-                    if (!usedRearArc[loc] && ((totalheat + currentHeat) > heatcap) && !onlyArc) {
+                    if (!usedRearArc[loc] && ((totalHeat + currentHeat) > heatCapacity) && !onlyArc) {
                         return Messages.getString("WeaponAttackAction.HeatOverCap");
                     }
                 }
@@ -1468,7 +1468,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if (weapon != null && ((totalheat + weapon.getCurrentHeat()) > heatcap)) {
+            if (weapon != null && ((totalheat + weapon.getCurrentHeat()) > heatCapacity)) {
                 return Messages.getString("WeaponAttackAction.HeatOverCap");
             }
         }
@@ -1667,7 +1667,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (ae.isAero()) {
                     altLossThisRound = ((IAero) ae).getAltLossThisRound();
                 }
-                // you cant make attacks that would lower you to zero altitude
+                // You can't make attacks that would lower you to zero altitude
                 if (altitudeLoss >= (ae.getAltitude() + altLossThisRound)) {
                     return Messages.getString("WeaponAttackAction.TooMuchAltLoss");
                 }
@@ -4459,8 +4459,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             losMods = los.losModifiers(game, eistatus, underWater);
         }
         
-        // Change hit table for partial cover, accomodate for partial
-        // underwater(legs)
+        // Change hit table for partial cover, accommodate for partial underwater (legs)
         if (los.getTargetCover() != LosEffects.COVER_NONE) {
             if (underWater && (targetHexContainsWater && (targEl == 0) 
                     && (te != null && te.height() > 0))) {

@@ -2,6 +2,7 @@ package megamek.server.commands;
 
 import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -11,10 +12,13 @@ import megamek.server.Server;
  */
 public class ShowEntityCommand extends ServerCommand {
 
-    public ShowEntityCommand(Server server) {
+    private final GameManager gameManager;
+
+    public ShowEntityCommand(Server server, GameManager gameManager) {
         super(server, "entity",
                 "Print the information about a entity into the chat window. Usage: /entity # which would show the details for the entity numbered #.");
         // to be extended by adding /entity unit# loc# to list details on locations.
+        this.gameManager = gameManager;
     }
 
     /**
@@ -30,7 +34,7 @@ public class ShowEntityCommand extends ServerCommand {
         }
         try {
             int id = Integer.parseInt(args[1]);
-            Entity ent = server.getGame().getEntity(id);
+            Entity ent = gameManager.getGame().getEntity(id);
 
             if (ent != null) {
                 server.sendServerChat(connId, ent.statusToString());

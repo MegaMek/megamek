@@ -15,7 +15,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.GunEmplacementBVCalculator;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
@@ -116,7 +115,7 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreHeat) {
         return 0;
     }
 

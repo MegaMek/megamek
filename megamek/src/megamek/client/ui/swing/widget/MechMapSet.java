@@ -55,8 +55,7 @@ public class MechMapSet implements DisplayMapSet {
     // Reference to Component class (need to manage images and fonts)
     private JComponent comp;
 
-    // Points for build hot areas (may be too heavy, think of to load from
-    // exteranl file)
+    // Points for build hot areas (maybe too heavy, think of to load from external file)
     // Mek armor - Front
     // Right hand
     private Polygon rightArm = new Polygon(new int[] { 106, 105, 110, 114, 111,

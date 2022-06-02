@@ -24,6 +24,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.TAGHandler;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -60,7 +61,7 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new TAGHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new TAGHandler(toHit, waa, game, manager);
     }
 }

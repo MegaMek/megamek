@@ -47,7 +47,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
     /**
      * Create space for certain number of crew/passengers
      *
-     * @param space The number of crew or passengers to accomodate
+     * @param space The number of crew or passengers to accommodate
      */
     public FirstClassQuartersCargoBay(int space) {
         this(space * 10, 0);
@@ -69,7 +69,7 @@ public final class FirstClassQuartersCargoBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuffer returnString = new StringBuffer("1st Class Quarters ("
                 + getCurrentDoors() + " doors) - ");
         returnString.append((int) currentSpace);

@@ -1,13 +1,12 @@
 package megamek.common;
 
 import megamek.server.victory.VictoryResult;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
-@RunWith(JUnit4.class)
 public class GameTest {
 
     @Test
@@ -56,5 +55,4 @@ public class GameTest {
         assertSame(winningPlayer, victoryResult2.getWinningPlayer());
         assertSame(winningTeam, victoryResult2.getWinningTeam());
     }
-
 }

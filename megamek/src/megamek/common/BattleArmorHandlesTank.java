@@ -28,7 +28,7 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
      * Sub-classes are encouraged to override this method.
      *
      * @param isRear a <code>boolean</code> value stating if the given location is rear facing; if
-     *              <code>false</code>, the ocation is front facing.
+     *              <code>false</code>, the location is front facing.
      * @return an array of <code>int</code> listing the exterior locations.
      */
     @Override

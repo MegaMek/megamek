@@ -32,6 +32,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -53,8 +54,8 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
      * @param g
      */
     public VGLWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_NONE;
     }
     
@@ -98,14 +99,14 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         for (Coords c : affectedCoords) {
             Building bldg = game.getBoard().getBuildingAt(c);
             if (atype.getMunitionType() == AmmoType.M_SMOKE) {
-                server.deliverSmokeGrenade(c, vPhaseReport);
+                gameManager.deliverSmokeGrenade(c, vPhaseReport);
             } else if (atype.getMunitionType() == AmmoType.M_CHAFF) {
-                server.deliverChaffGrenade(c, vPhaseReport);
+                gameManager.deliverChaffGrenade(c, vPhaseReport);
             } else if (atype.getMunitionType() == AmmoType.M_INCENDIARY) {
                 Vector<Report> dmgReports;
                 // Delivery an inferno to the hex
                 Targetable grenadeTarget = new HexTarget(c, Targetable.TYPE_HEX_IGNITE);
-                dmgReports = server
+                dmgReports = gameManager
                         .deliverInfernoMissiles(ae, grenadeTarget, 1);
                 r = new Report(3372);
                 r.add("Hex " + c.getBoardNum());
@@ -120,7 +121,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                 if (bldg != null) {
                     grenadeTarget = new BuildingTarget(c, game.getBoard(),
                             Targetable.TYPE_BLDG_IGNITE);
-                    dmgReports = server.deliverInfernoMissiles(ae,
+                    dmgReports = gameManager.deliverInfernoMissiles(ae,
                             grenadeTarget, 1);
                     r = new  Report(3372);
                     r.add(bldg.getName());
@@ -140,7 +141,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                             && Compute.isInBuilding(game, entTarget)) {
                         continue;
                     }
-                    dmgReports = server
+                    dmgReports = gameManager
                             .deliverInfernoMissiles(ae, entTarget, 1);
                     r = new  Report(3371);
                     r.addDesc(entTarget);
@@ -170,7 +171,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                                 WeaponType.WEAPON_BURST_2D6,
                                 ((Infantry) entTarget).isMechanized(),
                                 toHit.getThruBldg() != null);
-                        dmgReports = server.damageEntity(entTarget, hit, infDmg);
+                        dmgReports = gameManager.damageEntity(entTarget, hit, infDmg);
                     } else if (inBuilding && entTarget.isConventionalInfantry()) {
                         r = new Report(3417);
                         r.addDesc(entTarget);
@@ -178,7 +179,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                         dmgReports.add(r);
                     } else if (entTarget.getBARRating(hit.getLocation()) < 5) {
                         int dmg = 5 - entTarget.getBARRating(hit.getLocation());
-                        dmgReports = server.damageEntity(entTarget, hit, dmg);
+                        dmgReports = gameManager.damageEntity(entTarget, hit, dmg);
                     } else {
                         r = new Report(3416);
                         r.addDesc(entTarget);

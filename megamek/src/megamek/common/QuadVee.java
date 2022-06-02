@@ -1,5 +1,6 @@
 package megamek.common;
 
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -270,7 +271,7 @@ public class QuadVee extends QuadMech {
         }
         return super.getActiveUMUCount();
     }    
-    
+
     /**
      * QuadVees cannot benefit from MASC in vehicle mode
      */
@@ -280,6 +281,7 @@ public class QuadVee extends QuadMech {
         if (getConversionMode() != CONV_MODE_VEHICLE) {
             return  mpBoosters;
         }
+
         switch (mpBoosters) {
             case MASC_AND_SUPERCHARGER:
                 return MPBoosters.SUPERCHARGER_ONLY;

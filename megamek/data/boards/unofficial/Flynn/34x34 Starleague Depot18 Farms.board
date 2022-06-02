@@ -1,4 +1,11 @@
 size 34 34
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "Fields (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "woods:1;foliage_elev:1" ""
 hex 0201 0 "woods:1;foliage_elev:1" ""
 hex 0301 0 "woods:1;foliage_elev:1" ""

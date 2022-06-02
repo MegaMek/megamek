@@ -1,4 +1,11 @@
 size 64 68
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "SnowTheme (Auto)"
+tag "IceTerrain (Auto)"
+tag "LowHills (Auto)"
+tag "Woods (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 2 "woods:2;foliage_elev:2" "snow"
 hex 0201 2 "woods:2;foliage_elev:2" "snow"
 hex 0301 2 "woods:1;foliage_elev:2" "snow"

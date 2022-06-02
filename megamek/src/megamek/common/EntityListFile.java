@@ -20,7 +20,7 @@ import megamek.common.force.Force;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -168,7 +168,7 @@ public class EntityListFile {
      */
     public static String indentStr(int level) {
         // Just redirect to the XML Util for now, and this will make it easy to find for future replacement
-        return MegaMekXmlUtil.indentStr(level);
+        return MMXMLUtility.indentStr(level);
     }
 
     /**

@@ -1,158 +1,169 @@
+/*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.bot.princess;
 
-import junit.framework.TestCase;
 import megamek.client.bot.princess.FireControl.FireControlType;
-import megamek.common.BipedMech;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EquipmentMode;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 12/18/13 1:02 PM
  */
-@RunWith(JUnit4.class)
 public class WeaponFireInfoTest {
 
-    private final int SHOOTER_ID = 1;
-    private final int TARGET_ID = 2;
-    private final int WEAPON_ID = 3;
+    private static final int SHOOTER_ID = 1;
+    private static final int TARGET_ID = 2;
+    private static final int WEAPON_ID = 3;
 
-    private final Coords SHOOTER_COORDS = new Coords(10, 10);
+    private static final Coords SHOOTER_COORDS = new Coords(10, 10);
 
-    private final Coords TARGET_COORDS_9 = new Coords(10, 19);
-    private final int TARGET_FACING = 3;
+    private static final Coords TARGET_COORDS_9 = new Coords(10, 19);
+    private static final int TARGET_FACING = 3;
 
-    private ToHitData mockToHitEight;
-    private ToHitData mockToHitSix;
-    private ToHitData mockToHitThirteen;
-    private BipedMech mockShooter;
-    private EntityState mockShooterState;
-    private BipedMech mockTarget;
-    private EntityState mockTargetState;
-    private Game mockGame;
-    private Mounted mockWeapon;
-    private WeaponType mockWeaponType;
-    private WeaponAttackAction mockWeaponAttackAction;
-    private EquipmentMode mockEquipmentMode;
-    private Princess mockPrincess;
-    private FireControl mockFireControl;
+    private static ToHitData mockToHitEight;
+    private static ToHitData mockToHitSix;
+    private static ToHitData mockToHitThirteen;
+    private static BipedMech mockShooter;
+    private static EntityState mockShooterState;
+    private static BipedMech mockTarget;
+    private static EntityState mockTargetState;
+    private static Game mockGame;
+    private static Mounted mockWeapon;
+    private static WeaponType mockWeaponType;
+    private static WeaponAttackAction mockWeaponAttackAction;
+    private static EquipmentMode mockEquipmentMode;
+    private static Princess mockPrincess;
+    private static FireControl mockFireControl;
 
-    @Before
-    public void setUp() {
-        mockGame = Mockito.mock(Game.class);
+    @BeforeAll
+    public static void beforeAll() {
+        mockGame = mock(Game.class);
 
-        mockToHitSix = Mockito.mock(ToHitData.class);
-        Mockito.when(mockToHitSix.getValue()).thenReturn(6);
+        mockToHitSix = mock(ToHitData.class);
+        when(mockToHitSix.getValue()).thenReturn(6);
 
-        mockToHitEight = Mockito.mock(ToHitData.class);
-        Mockito.when(mockToHitEight.getValue()).thenReturn(8);
+        mockToHitEight = mock(ToHitData.class);
+        when(mockToHitEight.getValue()).thenReturn(8);
 
-        mockToHitThirteen = Mockito.mock(ToHitData.class);
-        Mockito.when(mockToHitThirteen.getValue()).thenReturn(ToHitData.AUTOMATIC_FAIL);
+        mockToHitThirteen = mock(ToHitData.class);
+        when(mockToHitThirteen.getValue()).thenReturn(ToHitData.AUTOMATIC_FAIL);
 
-        mockFireControl = Mockito.mock(FireControl.class);
-        Mockito.when(mockFireControl.guessToHitModifierForWeapon(Mockito.any(Entity.class), Mockito.any(EntityState
-                                                                                                                .class),
-                                                                 Mockito.any(Targetable.class),
-                                                                 Mockito.any(EntityState.class),
-                                                                 Mockito.any(Mounted.class), Mockito.any(Game.class)))
-               .thenReturn(mockToHitEight);
+        mockFireControl = mock(FireControl.class);
+        when(mockFireControl.guessToHitModifierForWeapon(any(Entity.class), any(EntityState.class),
+                any(Targetable.class), any(EntityState.class), any(Mounted.class), any(Game.class)))
+                .thenReturn(mockToHitEight);
 
-        mockPrincess = Mockito.mock(Princess.class);
-        Mockito.when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
-        Mockito.when(mockPrincess.getMaxWeaponRange(Mockito.any(Entity.class))).thenReturn(21);
+        mockPrincess = mock(Princess.class);
+        when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
+        when(mockPrincess.getMaxWeaponRange(any(Entity.class))).thenReturn(21);
 
-        mockShooter = Mockito.mock(BipedMech.class);
-        Mockito.when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);
-        Mockito.when(mockShooter.getWeight()).thenReturn(75.0);
-        Mockito.when(mockShooter.getId()).thenReturn(SHOOTER_ID);
-        Mockito.when(mockShooter.getDisplayName()).thenReturn("Test shooter 1");
-        Mockito.when(mockShooter.getEquipmentNum(Mockito.eq(mockWeapon))).thenReturn(WEAPON_ID);
+        mockShooter = mock(BipedMech.class);
+        when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);
+        when(mockShooter.getWeight()).thenReturn(75.0);
+        when(mockShooter.getId()).thenReturn(SHOOTER_ID);
+        when(mockShooter.getDisplayName()).thenReturn("Test shooter 1");
+        when(mockShooter.getEquipmentNum(eq(mockWeapon))).thenReturn(WEAPON_ID);
 
-        mockShooterState = Mockito.mock(EntityState.class);
-        Mockito.when(mockShooterState.getPosition()).thenReturn(SHOOTER_COORDS);
+        mockShooterState = mock(EntityState.class);
+        when(mockShooterState.getPosition()).thenReturn(SHOOTER_COORDS);
 
-        mockTarget = Mockito.mock(BipedMech.class);
-        Mockito.when(mockTarget.getPosition()).thenReturn(TARGET_COORDS_9);
-        Mockito.when(mockTarget.isLocationBad(Mockito.anyInt())).thenReturn(false);
-        Mockito.when(mockTarget.getId()).thenReturn(TARGET_ID);
-        Mockito.when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_ENTITY);
-        Mockito.when(mockTarget.getDisplayName()).thenReturn("Mock target 2");
+        mockTarget = mock(BipedMech.class);
+        when(mockTarget.getPosition()).thenReturn(TARGET_COORDS_9);
+        when(mockTarget.isLocationBad(anyInt())).thenReturn(false);
+        when(mockTarget.getId()).thenReturn(TARGET_ID);
+        when(mockTarget.getTargetType()).thenReturn(Targetable.TYPE_ENTITY);
+        when(mockTarget.getDisplayName()).thenReturn("Mock target 2");
 
-        mockTargetState = Mockito.mock(EntityState.class);
-        Mockito.when(mockTargetState.getFacing()).thenReturn(TARGET_FACING);
-        Mockito.when(mockTargetState.getPosition()).thenReturn(TARGET_COORDS_9);
+        mockTargetState = mock(EntityState.class);
+        when(mockTargetState.getFacing()).thenReturn(TARGET_FACING);
+        when(mockTargetState.getPosition()).thenReturn(TARGET_COORDS_9);
 
-        mockWeaponType = Mockito.mock(WeaponType.class);
-        mockWeapon = Mockito.mock(Mounted.class);
-        mockEquipmentMode = Mockito.mock(EquipmentMode.class);
-        Mockito.when(mockWeapon.getType()).thenReturn(mockWeaponType);
-        Mockito.when(mockEquipmentMode.getName()).thenReturn("");
-        Mockito.when(mockWeapon.curMode()).thenReturn(mockEquipmentMode);
+        mockWeaponType = mock(WeaponType.class);
+        mockWeapon = mock(Mounted.class);
+        mockEquipmentMode = mock(EquipmentMode.class);
+        when(mockWeapon.getType()).thenReturn(mockWeaponType);
+        when(mockEquipmentMode.getName()).thenReturn("");
+        when(mockWeapon.curMode()).thenReturn(mockEquipmentMode);
 
-        mockWeaponAttackAction = Mockito.mock(WeaponAttackAction.class);
-        Mockito.when(mockWeaponAttackAction.getEntity(Mockito.any(Game.class))).thenReturn(mockShooter);
+        mockWeaponAttackAction = mock(WeaponAttackAction.class);
+        when(mockWeaponAttackAction.getEntity(any(Game.class))).thenReturn(mockShooter);
     }
 
     private void setupLightTarget() {
-        Mockito.when(mockTarget.getInternal(Mockito.anyInt())).thenReturn(6);
-        Mockito.when(mockTarget.getInternal(Mockito.eq(0))).thenReturn(3);
-        Mockito.when(mockTarget.getArmor(Mockito.anyInt(), Mockito.anyBoolean())).thenReturn(12);
-        Mockito.when(mockTarget.getArmor(Mockito.eq(0), Mockito.anyBoolean())).thenReturn(4);
+        when(mockTarget.getInternal(anyInt())).thenReturn(6);
+        when(mockTarget.getInternal(eq(0))).thenReturn(3);
+        when(mockTarget.getArmor(anyInt(), anyBoolean())).thenReturn(12);
+        when(mockTarget.getArmor(eq(0), anyBoolean())).thenReturn(4);
     }
 
     private void setupMediumTarget() {
-        Mockito.when(mockTarget.getInternal(Mockito.anyInt())).thenReturn(10);
-        Mockito.when(mockTarget.getInternal(Mockito.eq(0))).thenReturn(3);
-        Mockito.when(mockTarget.getArmor(Mockito.anyInt(), Mockito.anyBoolean())).thenReturn(16);
-        Mockito.when(mockTarget.getArmor(Mockito.eq(0), Mockito.anyBoolean())).thenReturn(9);
+        when(mockTarget.getInternal(anyInt())).thenReturn(10);
+        when(mockTarget.getInternal(eq(0))).thenReturn(3);
+        when(mockTarget.getArmor(anyInt(), anyBoolean())).thenReturn(16);
+        when(mockTarget.getArmor(eq(0), anyBoolean())).thenReturn(9);
     }
 
     private void setupMediumLaser() {
-        Mockito.when(mockWeaponType.getHeat()).thenReturn(3);
-        Mockito.when(mockWeaponType.getDamage()).thenReturn(5);
-        Mockito.when(mockWeaponType.getShortRange()).thenReturn(3);
-        Mockito.when(mockWeaponType.getMediumRange()).thenReturn(6);
-        Mockito.when(mockWeaponType.getLongRange()).thenReturn(9);
-        Mockito.when(mockWeapon.getDesc()).thenReturn("Medium Laser");
+        when(mockWeaponType.getHeat()).thenReturn(3);
+        when(mockWeaponType.getDamage()).thenReturn(5);
+        when(mockWeaponType.getShortRange()).thenReturn(3);
+        when(mockWeaponType.getMediumRange()).thenReturn(6);
+        when(mockWeaponType.getLongRange()).thenReturn(9);
+        when(mockWeapon.getDesc()).thenReturn("Medium Laser");
     }
 
     private void setupPPC() {
-        Mockito.when(mockWeaponType.getHeat()).thenReturn(10);
-        Mockito.when(mockWeaponType.getDamage()).thenReturn(10);
-        Mockito.when(mockWeaponType.getShortRange()).thenReturn(6);
-        Mockito.when(mockWeaponType.getMediumRange()).thenReturn(12);
-        Mockito.when(mockWeaponType.getLongRange()).thenReturn(18);
-        Mockito.when(mockWeapon.getDesc()).thenReturn("PPC");
+        when(mockWeaponType.getHeat()).thenReturn(10);
+        when(mockWeaponType.getDamage()).thenReturn(10);
+        when(mockWeaponType.getShortRange()).thenReturn(6);
+        when(mockWeaponType.getMediumRange()).thenReturn(12);
+        when(mockWeaponType.getLongRange()).thenReturn(18);
+        when(mockWeapon.getDesc()).thenReturn("PPC");
     }
 
     private void setupCGR() {
-        Mockito.when(mockWeaponType.getHeat()).thenReturn(1);
-        Mockito.when(mockWeaponType.getDamage()).thenReturn(15);
-        Mockito.when(mockWeaponType.getShortRange()).thenReturn(7);
-        Mockito.when(mockWeaponType.getMediumRange()).thenReturn(15);
-        Mockito.when(mockWeaponType.getLongRange()).thenReturn(22);
-        Mockito.when(mockWeapon.getDesc()).thenReturn("Gauss Rifle (C)");
+        when(mockWeaponType.getHeat()).thenReturn(1);
+        when(mockWeaponType.getDamage()).thenReturn(15);
+        when(mockWeaponType.getShortRange()).thenReturn(7);
+        when(mockWeaponType.getMediumRange()).thenReturn(15);
+        when(mockWeaponType.getLongRange()).thenReturn(22);
+        when(mockWeapon.getDesc()).thenReturn("Gauss Rifle (C)");
     }
 
     @Test
     public void testInitDamage() {
         final double DELTA = 0.00001;
 
-        WeaponFireInfo testWeaponFireInfo = Mockito.spy(new WeaponFireInfo(mockPrincess));
+        WeaponFireInfo testWeaponFireInfo = spy(new WeaponFireInfo(mockPrincess));
         testWeaponFireInfo.setShooter(mockShooter);
         testWeaponFireInfo.setShooterState(mockShooterState);
         testWeaponFireInfo.setTarget(mockTarget);
@@ -167,16 +178,16 @@ public class WeaponFireInfoTest {
         double expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
         double expectedCriticals = 0.02460;
         double expectedKill = 0;
-        Mockito.doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
-        Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
-        Mockito.when(mockShooter.getEquipment(Mockito.anyInt())).thenReturn(mockWeapon);
+        doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
+        doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
+        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        when(mockShooter.getEquipment(anyInt())).thenReturn(mockWeapon);
         testWeaponFireInfo.initDamage(null, false, true, null);
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
-        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a PPC vs light target with a to hit roll of 8.
         setupPPC();
@@ -185,15 +196,15 @@ public class WeaponFireInfoTest {
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
         expectedCriticals = 0.01867;
         expectedKill = 0.01155;
-        Mockito.doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
-        Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
+        doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
+        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
-        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs a light target with a to hit roll of 6.
         setupCGR();
@@ -202,15 +213,15 @@ public class WeaponFireInfoTest {
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
         expectedCriticals = 0.46129;
         expectedKill = 0.02005;
-        Mockito.doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
-        Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
+        doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
+        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
-        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a Gauss Rifle vs. a medium target with a to hit roll of 8.
         setupCGR();
@@ -219,15 +230,15 @@ public class WeaponFireInfoTest {
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
         expectedCriticals = 0.01867;
         expectedKill = 0.01155;
-        Mockito.doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
-        Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
+        doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
+        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
-        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // Test a medium laser vs. a medium target with no chance to hit.
         setupMediumLaser();
@@ -236,17 +247,16 @@ public class WeaponFireInfoTest {
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitThirteen.getValue()) / 100;
         expectedCriticals = 0;
         expectedKill = 0;
-        Mockito.doReturn(mockToHitThirteen).when(testWeaponFireInfo).calcToHit();
-        Mockito.doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
-        Mockito.doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
+        doReturn(mockToHitThirteen).when(testWeaponFireInfo).calcToHit();
+        doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
+        doReturn(expectedMaxDamage).when(testWeaponFireInfo).computeExpectedDamage();
         testWeaponFireInfo.initDamage(null, false, true, null);
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
-        TestCase.assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
-        TestCase.assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
-        TestCase.assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
-        TestCase.assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getMaxDamage());
+        assertEquals(expectedMaxDamage, testWeaponFireInfo.getExpectedDamageOnHit());
+        assertEquals(expectedProbabilityToHit, testWeaponFireInfo.getProbabilityToHit(), DELTA);
+        assertEquals(expectedCriticals, testWeaponFireInfo.getExpectedCriticals(), DELTA);
+        assertEquals(expectedKill, testWeaponFireInfo.getKillProbability(), DELTA);
 
         // todo build tests for AeroSpace attacks.
     }
-
 }

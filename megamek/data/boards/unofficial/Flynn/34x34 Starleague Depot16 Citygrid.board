@@ -1,4 +1,13 @@
 size 34 34
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "GrassTheme (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "Flat (Auto)"
+tag "MediumForest (Auto)"
+tag "Woods (Auto)"
+tag "MediumUrban (Auto)"
 hex 0101 0 "woods:1;foliage_elev:2" ""
 hex 0201 0 "woods:1;foliage_elev:2" ""
 hex 0301 0 "woods:1;foliage_elev:2" ""

@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -22,8 +23,7 @@ import megamek.common.options.OptionsConstants;
 import java.util.Enumeration;
 
 /**
- * Abstract superclass for any action where an entity is attacking another
- * entity.
+ * Abstract superclass for any action where an entity is attacking another entity.
  */
 public abstract class AbstractAttackAction extends AbstractEntityAction implements AttackAction {
     private static final long serialVersionUID = -897197664652217134L;
@@ -71,7 +71,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * Gets the entity associated with this attack action, using the passed-in game object.
      * @return the entity even if it was destroyed or fled.
      */
-    public Entity getEntity(Game g) {
+    public @Nullable Entity getEntity(Game g) {
         return getEntity(g, getEntityId());
     }
     
@@ -79,14 +79,10 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      * Gets an entity with the given ID, using the passed-in game object.
      * @return the entity even if it was destroyed or fled.
      */
-    public Entity getEntity(Game g, int entityID) {
+    public @Nullable Entity getEntity(Game g, int entityID) {
         Entity e = g.getEntity(entityID);
-        // if we have an artyattack, we might need to get an out-of-game entity
-        // if it died or fled
-        if (e == null) {
-            e = g.getOutOfGameEntity(entityID);
-        }
-        return e;
+        // if we have an artyattack, we might need to get an out-of-game entity if it died or fled
+        return (e == null) ? g.getOutOfGameEntity(entityID) : e;
     }
 
     /**
@@ -95,42 +91,32 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
      *
      * @param game The current {@link Game}
      */
-    public static ToHitData nightModifiers(Game game, Targetable target,
-            AmmoType atype, Entity attacker, boolean isWeapon) {
-        ToHitData toHit = null;
-
-        Entity te = null;
-        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-            te = (Entity) target;
-        }
-        toHit = new ToHitData();
+    public static ToHitData nightModifiers(Game game, Targetable target, AmmoType atype,
+                                           Entity attacker, boolean isWeapon) {
+        Entity te = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target : null;
+        ToHitData toHit = new ToHitData();
 
         int lightCond = game.getPlanetaryConditions().getLight();
         if (lightCond == PlanetaryConditions.L_DAY) {
-            //not nighttime so just return
+            // It's the day, so just return
             return toHit;
         }
 
         // The base night penalty
         final IlluminationLevel hexIllumLvl = IlluminationLevel.determineIlluminationLevel(game,
                 target.getPosition());
-        int night_modifier = 0;
-        night_modifier = game.getPlanetaryConditions().getLightHitPenalty(
-                isWeapon);
-        toHit.addModifier(night_modifier, game.getPlanetaryConditions()
-                .getLightDisplayableName());
+        int night_modifier = game.getPlanetaryConditions().getLightHitPenalty(isWeapon);
+        toHit.addModifier(night_modifier, game.getPlanetaryConditions().getLightDisplayableName());
 
         boolean illuminated = false;
         if (te != null) {
             illuminated = te.isIlluminated();
             // hack for unresolved actions so client shows right BTH
             if (!illuminated) {
-                for (Enumeration<EntityAction> actions = game.getActions(); 
-                        actions.hasMoreElements();) {
+                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
                     EntityAction a = actions.nextElement();
                     if (a instanceof SearchlightAttackAction) {
-                        SearchlightAttackAction saa = 
-                                (SearchlightAttackAction) a;
+                        SearchlightAttackAction saa = (SearchlightAttackAction) a;
                         if (saa.willIlluminate(game, te)) {
                             illuminated = true;
                             break;
@@ -140,7 +126,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             }
         }
         // Searchlights reduce the penalty to zero (or 1 for pitch-black) 
-        //  (except for dusk/dawn)
+        // (except for dusk/dawn)
         int searchlightMod = Math.min(3, night_modifier);
         if ((te != null) && (lightCond > PlanetaryConditions.L_DUSK)
                 && (te.isUsingSearchlight() || illuminated)) {
@@ -148,8 +134,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
                 toHit.addModifier(-searchlightMod, "target using searchlight");
                 night_modifier = night_modifier - searchlightMod;
             } else if (illuminated) {
-                toHit.addModifier(-searchlightMod,
-                        "target illuminated by searchlight");
+                toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
                 night_modifier = night_modifier - searchlightMod;
             }
         } else if (hexIllumLvl.isFlare()) {
@@ -163,48 +148,38 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
         } else if (hexIllumLvl.isSearchlight()) {
             toHit.addModifier(-searchlightMod, "target illuminated by searchlight");
             night_modifier -= searchlightMod;
-        }
-        // Certain ammunitions reduce the penalty
-        else if (atype != null) {
+        } else if (atype != null) {
+            // Certain ammunitions reduce the penalty
             if (((atype.getAmmoType() == AmmoType.T_AC) 
                     || (atype.getAmmoType() == AmmoType.T_LAC)
                     || (atype.getAmmoType() == AmmoType.T_AC_IMP)
                     || (atype.getAmmoType() == AmmoType.T_PAC))
                     && ((atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) 
-                            || (atype.getMunitionType() 
-                                    == AmmoType.M_TRACER))) {
+                            || (atype.getMunitionType() == AmmoType.M_TRACER))) {
                 toHit.addModifier(-1, "incendiary/tracer ammo");
                 night_modifier--;
             }
         }
+
         // Laser heatsinks
-        if ((night_modifier > 0) && (te != null) && (te instanceof Mech)
-                && ((Mech) te).hasLaserHeatSinks()) {
+        if ((night_modifier > 0) && (te instanceof Mech) && ((Mech) te).hasLaserHeatSinks()) {
             boolean lhsused = false;
             if (te.heat > 0) {
-                toHit.addModifier(-night_modifier,
-                        "target overheated with laser heatsinks");
-                night_modifier = 0;
-            }
-            // actions that generate heat give a -1 modifier
-            else if ((te.heatBuildup > 0) || te.isStealthActive()) {
+                toHit.addModifier(-night_modifier, "target overheated with laser heatsinks");
+            } else if ((te.heatBuildup > 0) || te.isStealthActive()) {
+                // actions that generate heat give a -1 modifier
                 lhsused = true;
             } else {
-                // Unfortunately, we can't just check weapons fired by the
-                // target
-                // because isUsedThisRound() is not valid if the attacker
-                // declared first.
+                // Unfortunately, we can't just check weapons fired by the target
+                // because isUsedThisRound() is not valid if the attacker declared first.
                 // therefore, enumerate WeaponAttackActions...
-                for (Enumeration<EntityAction> actions = game.getActions(); 
-                        actions.hasMoreElements();) {
+                for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
                     EntityAction a = actions.nextElement();
                     if (a instanceof WeaponAttackAction) {
                         WeaponAttackAction waa = (WeaponAttackAction) a;
                         if (waa.getEntityId() == te.getId()) {
-                            Mounted weapon = te.getEquipment(waa
-                                    .getWeaponId());
-                            if ((weapon.getCurrentHeat() != 0)
-                                    || weapon.isRapidfire()) {
+                            Mounted weapon = te.getEquipment(waa.getWeaponId());
+                            if ((weapon.getCurrentHeat() != 0) || weapon.isRapidfire()) {
                                 // target fired a weapon that generates heat
                                 lhsused = true;
                                 break;
@@ -219,8 +194,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             }
         }
 
-
-        //now check for general hit bonuses for heat
+        // now check for general hit bonuses for heat
         if ((te != null) && !attacker.isConventionalInfantry()) {
             int heatBonus = game.getPlanetaryConditions().getLightHeatBonus(te.heat);
             if (heatBonus < 0) {
@@ -237,7 +211,9 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
     }
 
     @Override
-    public String toDisplayableString(Client client) {
-        return "attacking " + getTarget(client.getGame()).getDisplayName();
+    public String toDisplayableString(final Client client) {
+        final Targetable target = getTarget(client.getGame());
+        return (target == null) ? "Attacking Null Target with id " + getTargetId()
+                : "Attacking " + target.getDisplayName();
     }
 }

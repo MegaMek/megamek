@@ -153,8 +153,8 @@ public class TankTrailerHitch implements Transporter {
      *
      * @param unit
      *            - the <code>Entity</code> to be unloaded.
-     * @return <code>true</code> if the unit was contain is loadeded in this
-     *         space, <code>false</code> otherwise.
+     * @return <code>true</code> if the unit was contained is loaded in this space,
+     * <code>false</code> otherwise.
      */
     @Override
     public final boolean unload(Entity unit) {

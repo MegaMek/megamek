@@ -1,5 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2004 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,6 +27,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -35,7 +37,7 @@ import megamek.server.Server;
 public class UltraWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
-    private final boolean twoRollsUltra; // Tracks whether or not this is an
+    private final boolean twoRollsUltra; // Tracks whether this is an
 
     // ultra AC using the unofficial "two rolls" rule. Can be final because
     // this isn't really going to change over the course of a game.
@@ -45,8 +47,8 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                 && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                         || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
@@ -171,7 +173,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // infantry get hit by all shots
         if (target.isConventionalInfantry()) {
-            if (howManyShots > 1) { // Is this a cluser attack?
+            if (howManyShots > 1) { // Is this a cluster attack?
                 // Compute maximum damage potential for cluster weapons
                 toReturn = howManyShots * wtype.getDamage();
                 toReturn = Compute.directBlowInfantryDamage(toReturn,

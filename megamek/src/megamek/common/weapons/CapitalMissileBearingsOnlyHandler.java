@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.TeleOperatedMissileBayWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
@@ -55,8 +55,8 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         super(); 
     }
 
-    public CapitalMissileBearingsOnlyHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public CapitalMissileBearingsOnlyHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     @Override
@@ -290,7 +290,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                     if (bayWType instanceof Weapon) {
                         replaceReport = vPhaseReport.size();
                         WeaponAttackAction bayWaa = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), wId);
-                        AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, server);
+                        AttackHandler bayWHandler = ((Weapon) bayWType).getCorrectHandler(autoHit, bayWaa, game, gameManager);
                         bayWHandler.setAnnouncedEntityFiring(false);
                         // This should always be true. Maybe there's a better way to write this?
                         if (bayWHandler instanceof WeaponHandler) {
@@ -375,7 +375,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         }
         if (!bMissed && (entityTarget != null)) {
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
-            server.creditKill(entityTarget, ae);
+            gameManager.creditKill(entityTarget, ae);
         } else if (!bMissed) { // Hex is targeted, need to report a hit
             r = new Report(3390);
             r.subject = subjectId;
@@ -489,14 +489,14 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                 targetIds.add(target.getId());
                 toHitValues.add(toHit.getValue());
             }
-            int choice = server.processTeleguidedMissileCFR(ae.getOwnerId(), targetIds, toHitValues);
+            int choice = gameManager.processTeleguidedMissileCFR(ae.getOwnerId(), targetIds, toHitValues);
             newTarget = targets.get(choice);
             target = newTarget;
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
             // Run this again, otherwise toHit is left set to the value for the last target in the list...
             setToHit(target);
-            server.assignAMS();
+            gameManager.assignAMS();
         } else {
             // Otherwise, find the largest and closest target of those available
             int bestDistance = Integer.MAX_VALUE;
@@ -576,7 +576,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             aaa.setTargetId(target.getTargetId());
             aaa.setTargetType(target.getTargetType());
             setToHit(target);
-            server.assignAMS();
+            gameManager.assignAMS();
         }
     }
 

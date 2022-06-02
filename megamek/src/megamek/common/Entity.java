@@ -23,9 +23,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.AimingMode;
-import megamek.common.enums.BasementType;
-import megamek.common.enums.GamePhase;
+import megamek.common.enums.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.icons.Camouflage;
@@ -125,83 +123,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public static final int DMG_CRIPPLED = 4;
 
     public static final int USE_STRUCTURAL_RATING = -1;
-
-    // Weapon sort order defines
-    public enum WeaponSortOrder {
-        DEFAULT("DEFAULT"),
-        RANGE_LH("RANGE_LH"),
-        RANGE_HL("RANGE_HL"),
-        DAMAGE_LH("DAMAGE_LH"),
-        DAMAGE_HL("DAMAGE_HL"),
-        ARC("ARC"),
-        CUSTOM("CUSTOM");
-
-        public final String i18nEntry;
-
-        WeaponSortOrder(String s) {
-            i18nEntry = s;
-        }
-    }
-
-    public enum MPBoosters {
-        NONE(),
-        MASC_ONLY(),
-        SUPERCHARGER_ONLY(),
-        MASC_AND_SUPERCHARGER();
-
-        // common methods so we can change implementation if needed
-        public boolean hasMASCOnly()
-        {
-            return (this == MASC_ONLY);
-        }
-
-        public boolean hasSuperchargerOnly() {
-            return (this == SUPERCHARGER_ONLY);
-        }
-
-        public boolean hasMASCXorSupercharger() {
-            return (this == MASC_ONLY || this == SUPERCHARGER_ONLY);
-        }
-
-        // common methods so we can change implementation if needed
-        public boolean hasMASCAndOrSupercharger()
-        {
-            return (this != NONE);
-        }
-
-        public boolean hasMASCAndSupercharger() {
-            return (this == MASC_AND_SUPERCHARGER);
-        }
-
-        public boolean hasMASC() {
-            return (this == MASC_ONLY || this == MASC_AND_SUPERCHARGER);
-        }
-
-        public boolean hasSupercharger() {
-            return (this == SUPERCHARGER_ONLY || this == MASC_AND_SUPERCHARGER);
-        }
-
-        public int calcRunMP(int walkMP) {
-            if (hasMASCXorSupercharger()) {
-                return (int) Math.ceil(walkMP * 2);
-            }
-            if (hasMASCAndSupercharger()) {
-                return (int) Math.ceil(walkMP * 2.5);
-            }
-            return (int) Math.ceil(walkMP * 1.5);
-        }
-
-        public int calcSprintMP(int walkMP) {
-            if (hasMASCXorSupercharger()) {
-                return (int) Math.ceil(walkMP * 2.5);
-            }
-            if (hasMASCAndSupercharger()) {
-                return (int) Math.ceil(walkMP * 3);
-            }
-            return (int) Math.ceil(walkMP * 2);
-        }
-
-    }
 
     protected transient Game game;
 
@@ -845,7 +766,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Maps a weapon id to a user-specified index, used to get a custom ordering
      * for weapons.
      */
-    private Map<Integer, Integer> customWeapOrder = null;
+    private Map<Integer, Integer> customWeaponOrder = null;
 
     /**
      * Flag that indicates weapon sort order has changed (included ordering for
@@ -916,9 +837,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         impThisTurn = 0;
         impLastTurn = 0;
 
-        weaponSortOrder = WeaponSortOrder.values()[GUIPreferences.getInstance().getDefaultWeaponSortOrder()];
+        weaponSortOrder = GUIPreferences.getInstance().getDefaultWeaponSortOrder();
 
-        //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
+        // set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         // and should have no effect on MM (but need to make sure it doesn't screw up MekWars)
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
@@ -5550,11 +5471,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // check for quirks
         int quirkBonus = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)) {
-            if (isClan()) {
-                quirkBonus = 5;
-            } else {
-                quirkBonus = 4;
-            }
+            quirkBonus = isClan() ? 5 : 4;
         }
 
         // check for SPA
@@ -5565,9 +5482,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)
-                && !m.isInoperable()) {
-
+            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP) && !m.isInoperable()) {
                 // Quirk bonus is only 2 if equipped with BAP
                 if (quirkBonus > 0) {
                     quirkBonus = 2;
@@ -5575,31 +5490,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
                 // in space the range of all BAPs is given by the mode
                 if (game.getBoard().inSpace()) {
-                    if (m.curMode().equals("Medium")) {
-                        return 12;
-                    }
-                    return 6;
+                    return m.curMode().equals("Medium") ? 12 : 6;
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)")
-                    || m.getName().equals(Sensor.BAP)) {
+                        || m.getName().equals(Sensor.BAP)) {
                     return 8 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP)
-                    || (m.getType()).getInternalName().equals(Sensor.WATCHDOG)
-                    || (m.getType()).getInternalName().equals(Sensor.NOVA)) {
+                        || (m.getType()).getInternalName().equals(Sensor.WATCHDOG)
+                        || (m.getType()).getInternalName().equals(Sensor.NOVA)) {
                     return 5 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)
-                    || (m.getType().getInternalName()
-                         .equals(Sensor.CLBALIGHT_AP))
-                    || (m.getType().getInternalName()
-                         .equals(Sensor.ISBALIGHT_AP))) {
+                        || (m.getType().getInternalName().equals(Sensor.CLBALIGHT_AP))
+                        || (m.getType().getInternalName().equals(Sensor.ISBALIGHT_AP))) {
                     return 3 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)
-                    || (m.getType().getInternalName()
-                         .equals(Sensor.CLIMPROVED))) {
+                        || (m.getType().getInternalName().equals(Sensor.CLIMPROVED))) {
                     return 2 + cyberBonus + quirkBonus + spaBonus;
                 }
                 return 4 + cyberBonus + quirkBonus + spaBonus;// everthing else should be
@@ -5668,7 +5577,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Only Meks can have CASE II so all other entites return false.
+     * Only Meks can have CASE II so all other entities return false.
      *
      * @return true iff the mech has CASE II.
      */
@@ -5677,7 +5586,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Only Meks have CASE II so all other entites return false.
+     * Only Meks have CASE II so all other entities return false.
      *
      * @param location
      * @return true iff the mech has CASE II at this location.
@@ -8082,7 +7991,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Returns the maximum number of downard elevation changes a unit can make.
+     * Returns the maximum number of downward elevation changes a unit can make.
      * For some units (namely, WiGEs), this can depend upon their current
      * elevation (since elevation determines if the WiGEs is using WiGE movement
      * or not).
@@ -8309,11 +8218,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * Damages a randomly determined bay door on the entity, if one exists
      */
     public String damageBayDoor() {
-
         String bayType = "none";
 
-        Vector<Bay> potential;
-        potential = new Vector<>();
+        Vector<Bay> potential = new Vector<>();
 
         Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
@@ -8390,7 +8297,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         for (Transporter next : transports) {
-            //Don't look at trailer hitches here, that's separate
+            // Don't look at trailer hitches here, that's separate
             if (next instanceof TankTrailerHitch) {
                 continue;
             }
@@ -15198,10 +15105,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public WeaponSortOrder getWeaponSortOrder() {
-        if (weaponSortOrder == null) {
-            return WeaponSortOrder.DEFAULT;
-        }
-        return weaponSortOrder;
+        return (weaponSortOrder == null) ? WeaponSortOrder.DEFAULT : weaponSortOrder;
     }
 
     public void setWeaponSortOrder(WeaponSortOrder weaponSortOrder) {
@@ -15210,30 +15114,30 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         // If sort mode is custom, and the custom order is null, create it
         // and make the order the same as default (based on eqId)
-        if ((weaponSortOrder == WeaponSortOrder.CUSTOM) && (customWeapOrder == null)) {
-            customWeapOrder = new HashMap<>();
-            for (Mounted weap : weaponList) {
-                int eqId = getEquipmentNum(weap);
-                customWeapOrder.put(eqId, eqId);
+        if (weaponSortOrder.isCustom() && (customWeaponOrder == null)) {
+            customWeaponOrder = new HashMap<>();
+            for (Mounted weapon : weaponList) {
+                int eqId = getEquipmentNum(weapon);
+                customWeaponOrder.put(eqId, eqId);
             }
         }
         this.weaponSortOrder = weaponSortOrder;
     }
 
     public Map<Integer, Integer> getCustomWeaponOrder() {
-        return customWeapOrder;
+        return customWeaponOrder;
     }
 
     public void setCustomWeaponOrder(Map<Integer, Integer> customWeapOrder) {
-        this.customWeapOrder = customWeapOrder;
+        this.customWeaponOrder = customWeapOrder;
     }
 
     public int getCustomWeaponOrder(Mounted weapon) {
         int eqId = getEquipmentNum(weapon);
-        if (customWeapOrder == null) {
+        if (customWeaponOrder == null) {
             return eqId;
         }
-        Integer order = customWeapOrder.get(eqId);
+        Integer order = customWeaponOrder.get(eqId);
         return Objects.requireNonNullElse(order, -1);
     }
 
@@ -15243,7 +15147,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (eqId == -1) {
             return;
         }
-        customWeapOrder.put(eqId, order);
+        customWeaponOrder.put(eqId, order);
     }
 
     public boolean isWeapOrderChanged() {
@@ -15909,7 +15813,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
     
     
-    //Getters and setters for sensor contacts and firing solutions. Currently, only used in space combat
+    // Getters and setters for sensor contacts and firing solutions. Currently, only used in space combat
     /**
      * Retrieves the IDs of all entities that this entity has detected with sensors
      * @return the contents of this entity's sensorContacts set
@@ -16068,6 +15972,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * @return does this mech have MASC, Supercharger or both?
+     */
+    public MPBoosters getMPBoosters() {
+        return getMPBoosters(false);
+    }
+
+    /**
+     * @return does this mech have Armed MASC, Supercharger or both?
+     */
+    public MPBoosters getArmedMPBoosters() {
+        return getMPBoosters(true);
+    }
+
+    /**
      * @return if this mech has MASC, Supercharger or both?
      */
     public MPBoosters getMPBoosters(boolean onlyArmed) {
@@ -16083,33 +16001,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     hasMASC = !onlyArmed || m.curMode().equals("Armed");
                 }
             }
+
             if (hasMASC && hasSupercharger) {
                 break;
             }
         }
 
         if (hasMASC && hasSupercharger) {
-            return  MPBoosters.MASC_AND_SUPERCHARGER;
+            return MPBoosters.MASC_AND_SUPERCHARGER;
         } else if (hasMASC) {
             return MPBoosters.MASC_ONLY;
         } else if (hasSupercharger) {
             return MPBoosters.SUPERCHARGER_ONLY;
+        } else {
+            return MPBoosters.NONE;
         }
-        return MPBoosters.NONE;
-    }
-
-    /**
-     * @return does this mech have MASC, Supercharger or both?
-     */
-    public MPBoosters getMPBoosters() {
-        return getMPBoosters(false);
-    }
-
-    /**
-     * @return does this mech have Armed MASC, Supercharger or both?
-     */
-    public MPBoosters getArmedMPBoosters() {
-        return getMPBoosters(true);
     }
 
     /**

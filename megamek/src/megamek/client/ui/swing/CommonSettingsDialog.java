@@ -1,7 +1,7 @@
 /*
  * MegaMek
- * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2003-2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -22,13 +22,14 @@ package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
-import megamek.common.Entity;
 import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -136,7 +137,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private final JCheckBox showArmorMiniVisTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showArmorMiniVisTT"));
     private final JCheckBox showPilotPortraitTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showPilotPortraitTT"));
     private final JCheckBox chkAntiAliasing = new JCheckBox(Messages.getString("CommonSettingsDialog.antiAliasing"));
-    private JComboBox<String> defaultWeaponSortOrder;
+    private MMComboBox<WeaponSortOrder> comboDefaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
     private JTextField tooltipDistSupression;
@@ -397,19 +398,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         JLabel defaultSortOrderLabel = new JLabel(Messages.getString("CommonSettingsDialog.defaultWeaponSortOrder"));
         String toolTip = Messages.getString("CommonSettingsDialog.defaultWeaponSortOrderTooltip");
         defaultSortOrderLabel.setToolTipText(toolTip);
-        defaultWeaponSortOrder = new JComboBox<>();
-        defaultWeaponSortOrder.setToolTipText(toolTip);
-        for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
-            // Skip custom: it doesn't make sense as a default.
-            if (s.equals(Entity.WeaponSortOrder.CUSTOM)) {
-                continue;
-            }
-            String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
-            defaultWeaponSortOrder.addItem(Messages.getString(entry));
-        }
+
+        final DefaultComboBoxModel<WeaponSortOrder> defaultWeaponSortOrderModel = new DefaultComboBoxModel<>(WeaponSortOrder.values());
+        defaultWeaponSortOrderModel.removeElement(WeaponSortOrder.CUSTOM); // Custom makes no sense as a default
+        comboDefaultWeaponSortOrder = new MMComboBox<>("comboDefaultWeaponSortOrder", defaultWeaponSortOrderModel);
+        comboDefaultWeaponSortOrder.setToolTipText(toolTip);
         row = new ArrayList<>();
         row.add(defaultSortOrderLabel);
-        row.add(defaultWeaponSortOrder);
+        row.add(comboDefaultWeaponSortOrder);
         comps.add(row);
 
         addLineSpacer(comps);
@@ -516,7 +512,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             showWpsinTT.setSelected(gs.getShowWpsinTT());
             showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
             showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
-            defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
+            comboDefaultWeaponSortOrder.setSelectedItem(gs.getDefaultWeaponSortOrder());
             mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
             mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
 
@@ -583,7 +579,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             }
 
             gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
-            gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
+            gameSummaryMM.setSelected(gs.getGameSummaryMinimap());
 
             skinFiles.removeAllItems();
             List<String> xmlFiles = new ArrayList<>(Arrays
@@ -709,7 +705,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         gs.setTeamColoring(teamColoring.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
-        gs.setDefaultWeaponSortOrder(defaultWeaponSortOrder.getSelectedIndex());
+        gs.setDefaultWeaponSortOrder(Objects.requireNonNull(comboDefaultWeaponSortOrder.getSelectedItem()));
         gs.setNagForMASC(nagForMASC.isSelected());
         gs.setNagForPSR(nagForPSR.isSelected());
         gs.setNagForWiGELanding(nagForWiGELanding.isSelected());
@@ -759,7 +755,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         gs.setHexInclines(hexInclines.isSelected());
         gs.setValue("SOFTCENTER", useSoftCenter.isSelected());
         gs.setGameSummaryBoardView(gameSummaryBV.isSelected());
-        gs.setGameSummaryMiniMap(gameSummaryMM.isSelected());
+        gs.setGameSummaryMinimap(gameSummaryMM.isSelected());
 
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
         String oldUITheme = gs.getUITheme();

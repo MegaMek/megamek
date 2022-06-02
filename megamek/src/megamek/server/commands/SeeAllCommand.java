@@ -14,6 +14,7 @@
 package megamek.server.commands;
 
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -23,9 +24,13 @@ import megamek.server.Server;
  * @since April 28, 2003, 9:00pm
  */
 public class SeeAllCommand extends ServerCommand {
-    public SeeAllCommand(Server server) {
+
+    private final GameManager gameManager;
+
+    public SeeAllCommand(Server server, GameManager gameManager) {
         super(server, "seeall",
                 "Allows a player to see all in double blind game if you are an observer. Usage: /seeall <password> <player id#>. For a list of player id #s, use the /who command (default is yourself)");
+        this.gameManager = gameManager;
     }
 
     /**
@@ -74,7 +79,7 @@ public class SeeAllCommand extends ServerCommand {
                 }
 
                 server.getPlayer(playerId).setSeeAll(!has_see_all);
-                server.sendEntities(playerId);
+                gameManager.sendEntities(playerId);
             } catch (Exception ex) {
                 server.sendServerChat("/seeall : seeall failed. Type /who for a list of players with id #s.");
             }

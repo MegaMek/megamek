@@ -1,8 +1,9 @@
 package megamek.common;
 
+import megamek.common.EquipmentTypeLookup.EquipmentName;
 import org.apache.logging.log4j.LogManager;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EquipmentTypeLookupTest {
 
@@ -20,7 +21,7 @@ public class EquipmentTypeLookupTest {
         final StringJoiner sj = new StringJoiner(", ");
 
         for (Field field : EquipmentTypeLookup.class.getFields()) {
-            if (field.isAnnotationPresent(EquipmentTypeLookup.EquipmentName.class)
+            if (field.isAnnotationPresent(EquipmentName.class)
                     && ((field.getModifiers() & Modifier.STATIC) == Modifier.STATIC)) {
                 String eqName = field.get(null).toString();
                 if (EquipmentType.get(eqName) == null) {
@@ -37,7 +38,7 @@ public class EquipmentTypeLookupTest {
      * but is here because it is valuable as an integration test to check whether any units have equipment
      * that cannot be loaded.
      */
-    @Ignore
+    @Disabled
     @Test
     public void testFailedEquipment() {
         final Set<String> failedEquipment = new HashSet<>();
@@ -46,8 +47,8 @@ public class EquipmentTypeLookupTest {
         while (!msc.isInitialized()) {
             try {
                 Thread.sleep(50);
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
         }
 
@@ -56,8 +57,8 @@ public class EquipmentTypeLookupTest {
                 Entity entity = new MechFileParser(ms.getSourceFile(),
                         ms.getEntryName()).getEntity();
                 failedEquipment.addAll(entity.failedEquipmentList);
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
         }
 

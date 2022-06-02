@@ -24,7 +24,7 @@ import megamek.common.weapons.ArtilleryWeaponDirectHomingHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.ArtilleryWeaponIndirectHomingHandler;
 import megamek.common.weapons.AttackHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -50,19 +50,19 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         Mounted ammo = game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked();
 
         if (ammo.isHomingAmmoInHomingMode()) {
             if (game.getPhase() == GamePhase.FIRING) {
-                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, server);
+                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, manager);
             }
-            return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, manager);
         } else if (game.getPhase() == GamePhase.FIRING) {
-            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, manager);
         } else {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, manager);
         }
     }
 }

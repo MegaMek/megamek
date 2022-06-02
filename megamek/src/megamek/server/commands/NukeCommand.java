@@ -14,6 +14,7 @@
 package megamek.server.commands;
 
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -21,8 +22,10 @@ import megamek.server.Server;
  */
 public class NukeCommand extends ServerCommand {
 
+    private final GameManager gameManager;
+
     /** Creates new NukeCommand */
-    public NukeCommand(Server server) {
+    public NukeCommand(Server server, GameManager gameManager) {
         super(server, "nuke", "Drops a nuke onto the board, to be exploded at" +
                 "the end of the next weapons attack phase." +
                 "Allowed formats:"+
@@ -30,7 +33,7 @@ public class NukeCommand extends ServerCommand {
                 "/nuke <x> <y> <damage> <degredation> <secondary radius> <craterdepth>" +
                 "where type is 0-4 (0: Davy-Crockett-I, 1: Davy-Crockett-M, 2: Alamo, 3: Santa Ana, 4: Peacemaker)" +
                 "and hex x, y is x=column number and y=row number (hex 0923 would be x=9 and y=23)");
-
+        this.gameManager = gameManager;
     }
 
     /**
@@ -54,11 +57,11 @@ public class NukeCommand extends ServerCommand {
                     nuke[i - 1] = Integer.parseInt(args[i]);
                 }
                 // is the hex on the board?
-                if (!server.getGame().getBoard().contains(nuke[0] - 1, nuke[1] - 1)) {
+                if (!gameManager.getGame().getBoard().contains(nuke[0] - 1, nuke[1] - 1)) {
                     server.sendServerChat(connId, "Specified hex is not on the board.");
                     return;
                 }
-                server.addScheduledNuke(nuke);
+                gameManager.addScheduledNuke(nuke);
                 server.sendServerChat(connId, "A nuke is incoming!  Take cover!");
             } catch (Exception e) {
                 server.sendServerChat(connId, "Nuke command failed (1).  Proper format is \"/nuke <x> <y> <type>\" or \"/nuke <x> <y> <damage> <degredation> <secondary radius> <craterdepth>\" where type is 0-4 (0: Davy-Crockett-I, 1: Davy-Crockett-M, 2: Alamo, 3: Santa Ana, 4: Peacemaker) and hex x, y is x=column number and y=row number (hex 0923 would be x=9 and y=23)");
@@ -71,11 +74,11 @@ public class NukeCommand extends ServerCommand {
                     nuke[i-1] = Integer.parseInt(args[i]);
                 }
                 // is the hex on the board?
-                if (!server.getGame().getBoard().contains(nuke[0] - 1, nuke[1] - 1)) {
+                if (!gameManager.getGame().getBoard().contains(nuke[0] - 1, nuke[1] - 1)) {
                     server.sendServerChat(connId, "Specified hex is not on the board.");
                     return;
                 }
-                server.addScheduledNuke(nuke);
+                gameManager.addScheduledNuke(nuke);
                 server.sendServerChat(connId, "A nuke is incoming!  Take cover!");
             } catch (Exception e) {
                 server.sendServerChat(connId, "Nuke command failed (2).  Proper format is \"/nuke <x> <y> <type>\" or \"/nuke <x> <y> <damage> <degredation> <secondary radius> <craterdepth>\"");

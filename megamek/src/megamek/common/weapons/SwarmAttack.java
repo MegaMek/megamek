@@ -18,7 +18,7 @@ import megamek.common.Infantry;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -47,7 +47,7 @@ public class SwarmAttack extends InfantryAttack {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new SwarmAttackHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new SwarmAttackHandler(toHit, waa, game, manager);
     }
 }

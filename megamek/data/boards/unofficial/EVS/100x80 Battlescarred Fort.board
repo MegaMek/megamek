@@ -1,4 +1,11 @@
 size 100 80
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 14 "woods:2;foliage_elev:2" ""
 hex 0201 14 "woods:2;foliage_elev:2" ""
 hex 0301 14 "woods:2;foliage_elev:2" ""

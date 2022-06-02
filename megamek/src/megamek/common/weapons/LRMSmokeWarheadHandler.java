@@ -21,7 +21,7 @@ package megamek.common.weapons;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
+import megamek.server.GameManager;
 import megamek.server.SmokeCloud;
 
 import java.util.Vector;
@@ -36,10 +36,10 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public LRMSmokeWarheadHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -88,9 +88,9 @@ public class LRMSmokeWarheadHandler extends LRMHandler {
                 smokeType = SmokeCloud.SMOKE_HEAVY;
             }
             
-            server.deliverMissileSmoke(center, smokeType, vPhaseReport);
+            gameManager.deliverMissileSmoke(center, smokeType, vPhaseReport);
         } else if (atype.getMunitionType() == AmmoType.M_ANTI_TSM) {
-            server.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
+            gameManager.deliverMissileSmoke(center, SmokeCloud.SMOKE_GREEN, vPhaseReport);
             return false;
         }
         return true;

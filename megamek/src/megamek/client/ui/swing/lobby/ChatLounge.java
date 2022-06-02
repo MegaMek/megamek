@@ -37,6 +37,7 @@ import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.client.ui.swing.lobby.PlayerTable.PlayerTableModel;
 import megamek.client.ui.swing.lobby.sorters.*;
 import megamek.client.ui.swing.lobby.sorters.MekTableSorter.Sorting;
+import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.util.ScalingPopup;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -58,7 +59,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.utils.BoardsTagger;
+import megamek.utilities.BoardsTagger;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -1004,7 +1005,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     if (boardName.startsWith(MapSettings.BOARD_GENERATED) 
                             || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                         buttonBoard = BoardUtilities.generateRandom(mapSettings);
-                        image = MiniMap.getMinimapImageMaxZoom(buttonBoard);
+                        image = Minimap.getMinimapImageMaxZoom(buttonBoard);
                     } else { 
                         String boardForImage = boardName;
                         // For a surprise board, just use the first board as example
@@ -1034,10 +1035,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                             } catch (IOException ex) {
                                 buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
                             }
-                            image = MiniMap.getMinimapImageMaxZoom(buttonBoard);
+                            image = Minimap.getMinimapImageMaxZoom(buttonBoard);
                         } else {
                             buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
-                            BufferedImage emptyBoardMap = MiniMap.getMinimapImageMaxZoom(buttonBoard);
+                            BufferedImage emptyBoardMap = Minimap.getMinimapImageMaxZoom(buttonBoard);
                             markServerSideBoard(emptyBoardMap);
                             image = emptyBoardMap;
                         }
@@ -3337,7 +3338,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             if (zoom < 0) {
                 zoom = 0;
             }
-            BufferedImage bufImage = MiniMap.getMinimapImage(board, zoom);
+            BufferedImage bufImage = Minimap.getMinimapImage(board, zoom);
 
             // Add the board name label and the server-side board label if necessary
             String text = LobbyUtility.cleanBoardName(boardName, mapSettings);
@@ -3458,9 +3459,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         public MekTable(MekTableModel mekModel) {
             super(mekModel);
         }
-        
+
+        /**
+         * Places the tooltips to the right of the cell so it doesn't get in the way.
+         */
         @Override
-        /** Places the tooltips to the right of the cell so it doesnt get in the way. */
         public Point getToolTipLocation(MouseEvent event) {
             int row = rowAtPoint(event.getPoint());
             int col = columnAtPoint(event.getPoint());

@@ -25,7 +25,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -39,8 +39,8 @@ public class MicroBombHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public MicroBombHandler(ToHitData toHit, WeaponAttackAction waa, Game g, Server s) {
-        super(toHit, waa, g, s);
+    public MicroBombHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
+        super(toHit, waa, g, m);
     }
 
     /*
@@ -82,7 +82,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
         }
         Infantry ba = (Infantry) ae;
         int ratedDamage = ba.getShootingStrength();
-        server.artilleryDamageArea(coords, ae.getPosition(),
+        gameManager.artilleryDamageArea(coords, ae.getPosition(),
                 (AmmoType) ammo.getType(), subjectId, ae, ratedDamage * 2,
                 ratedDamage, false, 0, vPhaseReport, false);
         return true;

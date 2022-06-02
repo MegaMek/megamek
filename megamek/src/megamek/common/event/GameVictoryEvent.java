@@ -71,21 +71,21 @@ public class GameVictoryEvent extends GameEvent {
     }
 
     /**
-     * Returns an enumeration of all the entites in the game.
+     * @return an enumeration of all the entities in the game.
      */
     public Enumeration<Entity> getEntities() {
         return entities.elements();
     }
 
     /**
-     * Returns the entity with the given id number, if any.
+     * @return the entity with the given id number, if any.
      */
     public Entity getEntity(int id) {
         return entityIds.get(id);
     }
 
     /**
-     * Returns an enumeration of salvagable entities.
+     * @return an enumeration of salvageable entities.
      */
     // TODO: Correctly implement "Captured" Entities
     public Enumeration<Entity> getGraveyardEntities() {
@@ -103,7 +103,7 @@ public class GameVictoryEvent extends GameEvent {
     }
 
     /**
-     * Returns an enumeration of wrecked entities.
+     * @return an enumeration of wrecked entities.
      */
     public Enumeration<Entity> getWreckedEntities() {
         Vector<Entity> wrecks = new Vector<>();

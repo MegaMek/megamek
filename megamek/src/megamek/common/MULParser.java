@@ -20,7 +20,7 @@ import megamek.common.enums.Gender;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -337,7 +337,7 @@ public class MULParser {
         Document xmlDoc;
 
         try {
-            final DocumentBuilder db = MegaMekXmlUtil.newSafeDocumentBuilder();
+            final DocumentBuilder db = MMXMLUtility.newSafeDocumentBuilder();
             xmlDoc = db.parse(fin);
         } catch (Exception e) {
             warning.append("Error parsing MUL file!\n");
@@ -2456,7 +2456,7 @@ public class MULParser {
             return;
         }
 
-        // Add the newly mounted maniplator
+        // Add the newly mounted manipulator
         try {
             int baMountLoc = mountedManip.getBaMountLoc();
             mountedManip = entity.addEquipment(manipType, mountedManip.getLocation());

@@ -27,6 +27,7 @@ import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 public class MechTaserHandler extends AmmoWeaponHandler {
@@ -42,8 +43,8 @@ public class MechTaserHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public MechTaserHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public MechTaserHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
@@ -78,7 +79,7 @@ public class MechTaserHandler extends AmmoWeaponHandler {
             entityTarget.destroyLocation(hit.getLocation());
             // Check to see if the squad has been eliminated
             if (entityTarget.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
-                vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                         "all troopers eliminated", false));
             }
             done = true;

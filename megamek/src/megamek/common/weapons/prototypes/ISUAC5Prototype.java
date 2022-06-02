@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeISUltraWeaponHandler;
 import megamek.common.weapons.autocannons.UACWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -76,11 +76,11 @@ public class ISUAC5Prototype extends UACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
-            return new PrototypeISUltraWeaponHandler(toHit, waa, game, server);
+            return new PrototypeISUltraWeaponHandler(toHit, waa, game, manager);
         }
-        return super.getCorrectHandler(toHit, waa, game, server);
+        return super.getCorrectHandler(toHit, waa, game, manager);
     }
 }

@@ -19,6 +19,7 @@ import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ public class SharedUtility {
             // Check for Ejecting
             if (step.getType() == MoveStepType.EJECT 
                     && (entity.isFighter())) {
-                rollTarget = Server.getEjectModifiers(game, entity, 0, false);
+                rollTarget = GameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
         }
@@ -479,7 +480,7 @@ public class SharedUtility {
 
             // Check for Ejecting
             if ((step.getType() == MoveStepType.EJECT) && (entity instanceof Mech)) {
-                rollTarget = Server.getEjectModifiers(game, entity, 0, false);
+                rollTarget = GameManager.getEjectModifiers(game, entity, 0, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
 
@@ -491,7 +492,7 @@ public class SharedUtility {
                         && (targ instanceof Infantry)
                         && (((Entity) targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {
-                    rollTarget = Server.getEjectModifiers(game, (Entity) targ, 0,
+                    rollTarget = GameManager.getEjectModifiers(game, (Entity) targ, 0,
                             false, entity.getPosition(), "zip lining");
                     // Factor in Elevation
                     if (entity.getElevation() > 0) {

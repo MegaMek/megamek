@@ -18,6 +18,7 @@ import megamek.client.Client;
 import megamek.client.ui.SharedUtility;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -264,15 +265,15 @@ public class CEntity {
         bv = entity.calculateBattleValue();
 
         // Make a guess as to whether MASC should be turned on or off
-        // TODO: Link this to a Bot configuration file
+        // TODO : Link this to a Bot configuration file
         runMP = entity.getRunMP();
         if (entity instanceof Mech) {
-            Entity.MPBoosters mpBoosters = ((Mech) entity).getMPBoosters();
-            if (mpBoosters.hasMASCAndOrSupercharger()) {
+            MPBoosters mpBoosters = entity.getMPBoosters();
+            if (!mpBoosters.isNone()) {
                 // do a check for each system
                 masc_threat = false;
                 if (mpBoosters.hasMASC()) {
-                    if (((Mech) entity).getMASCTarget() <= (5 + Compute.randomInt(6))) {
+                    if (entity.getMASCTarget() <= (5 + Compute.randomInt(6))) {
                         masc_threat = false;
                     } else {
                         masc_threat = true;
@@ -282,7 +283,7 @@ public class CEntity {
 
                 if ((masc_threat == false) && mpBoosters.hasSupercharger()) {
                     //we passed masc, but test for supercharger
-                    if (((Mech) entity).getSuperchargerTarget() <= (5 + Compute.randomInt(6))) {
+                    if (entity.getSuperchargerTarget() <= (5 + Compute.randomInt(6))) {
                         masc_threat = false;
                     } else {
                         masc_threat = true;
@@ -290,13 +291,11 @@ public class CEntity {
                     }
                 }
             } else {
-
                 // If this is a Mech equipped with TSM, push for the sweet
                 // spot at 9 heat
                 if (((Mech) entity).hasTSM(false)) {
                     tsm_offset = true;
                 }
-
             }
         }
         jumpMP = entity.getJumpMP();
@@ -309,7 +308,6 @@ public class CEntity {
         int heat_capacity = entity.getHeatCapacity();
         int heat = entity.heat;
         if (entity instanceof Mech) {
-
             // Include heat from active stealth armor systems
             if (entity.isStealthActive() || entity.isNullSigActive()
                     || entity.isVoidSigActive()) {

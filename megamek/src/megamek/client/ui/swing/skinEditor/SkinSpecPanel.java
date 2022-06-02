@@ -434,7 +434,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
     }
 
     /**
-     * Remove thsi SkinSpecEditor as a listener from all components.
+     * Remove this SkinSpecEditor as a listener from all components.
      */
     private void removeListeners() {
         for (JButton colorButton : colorButtons) {

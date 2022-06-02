@@ -54,7 +54,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
 
     private JButton saveSkinButton = new JButton(Messages.getString("SkinEditor.SaveSkinButton"));
 
-    private JButton resetSkinButton = new JButton(Messages.getString("SkinEditor.ResestSkinButton"));
+    private JButton resetSkinButton = new JButton(Messages.getString("SkinEditor.ResetSkinButton"));
 
     /**
      * Lists all SkinSpecifications for the current skin.
@@ -98,7 +98,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
         addCompButton.setToolTipText(Messages.getString("SkinEditor.AddCompButtonToolTip"));
         removeCompButton.setToolTipText(Messages.getString("SkinEditor.RemoveCompButtonToolTip"));
         saveSkinButton.setToolTipText(Messages.getString("SkinEditor.SaveSkinButtonToolTip"));
-        resetSkinButton.setToolTipText(Messages.getString("SkinEditor.ResestSkinButtonToolTip"));
+        resetSkinButton.setToolTipText(Messages.getString("SkinEditor.ResetSkinButtonToolTip"));
 
         JScrollPane compListScroll = new JScrollPane(skinSpecCompList);
         JScrollPane editPanelScroll = new JScrollPane(editPanel,
@@ -177,7 +177,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener, Act
     }
     
     /**
-     * Remove thsi SkinSpecEditor as a listener from all components.
+     * Remove this SkinSpecEditor as a listener from all components.
      */
     private void removeListeners() {
         skinSpecCompList.removeListSelectionListener(this);

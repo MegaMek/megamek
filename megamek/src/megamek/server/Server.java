@@ -1059,7 +1059,6 @@ public class Server implements Runnable {
         }
     }
 
-
     /**
      * Creates a packet informing that the player has connected
      */

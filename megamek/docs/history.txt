@@ -5,6 +5,8 @@ VERSION HISTORY:
 + Issue #3662: Draw "Target Movement Modifier" on final legal step of current movement path
 + PR #3672: Removed No Torso Twist & updated quirks per BMM v6 errata
 + PR #3620: Suite Cleanup 2: Fixing a Ton of Internal Typos: Phase 1
++ PR #3615: Fixing all Assert Usages
++ PR #3686: Fixing Resource Leaks in Server::registerWithServerBrowser
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.0 from 4.5.1
 

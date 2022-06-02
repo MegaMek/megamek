@@ -23,7 +23,6 @@ import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser.ParseException;
-import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -303,11 +302,14 @@ public class Server implements Runnable {
         this(password, port, gameManager, false, "", null, false);
     }
 
-    public Server(String password, int port, IGameManager gameManager, boolean registerWithServerBrowser, String metaServerUrl) throws IOException {
+    public Server(String password, int port, IGameManager gameManager,
+                  boolean registerWithServerBrowser, String metaServerUrl) throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, null, false);
     }
 
-    public Server(String password, int port, IGameManager gameManager, boolean registerWithServerBrowser, String metaServerUrl, EmailService mailer) throws IOException {
+    public Server(String password, int port, IGameManager gameManager,
+                  boolean registerWithServerBrowser, String metaServerUrl, EmailService mailer)
+            throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, mailer, false);
     }
 
@@ -323,7 +325,9 @@ public class Server implements Runnable {
      * @param mailer                    an email service instance to use for sending round reports.
      * @param dedicated                 set to true if this server is started from a GUI-less context
      */
-    public Server(@Nullable String password, int port, IGameManager gameManager, boolean registerWithServerBrowser, @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
+    public Server(@Nullable String password, int port, IGameManager gameManager,
+                  boolean registerWithServerBrowser, @Nullable String metaServerUrl,
+                  @Nullable EmailService mailer, boolean dedicated) throws IOException {
         this.metaServerUrl = (metaServerUrl != null) && (!metaServerUrl.isBlank()) ? metaServerUrl : null;
         this.password = (password != null) && (!password.isBlank()) ? password : null;
         this.gameManager = gameManager;
@@ -526,7 +530,9 @@ public class Server implements Runnable {
      * Returns a free connection id.
      */
     public int getFreeConnectionId() {
-        while ((getPendingConnection(connectionCounter) != null) || (getConnection(connectionCounter) != null) || (getPlayer(connectionCounter) != null)) {
+        while ((getPendingConnection(connectionCounter) != null)
+                || (getConnection(connectionCounter) != null)
+                || (getPlayer(connectionCounter) != null)) {
             connectionCounter++;
         }
         return connectionCounter;
@@ -556,7 +562,10 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFActive(player.getNbrMFActive());
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
             if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
-                sendServerChat("Player " + gamePlayer.getName() + " changed their initiative bonus from " + gamePlayer.getConstantInitBonus() + " to " + player.getConstantInitBonus() + '.');
+                sendServerChat("Player " + gamePlayer.getName()
+                        + " changed their initiative bonus from "
+                        + gamePlayer.getConstantInitBonus() + " to "
+                        + player.getConstantInitBonus() + '.');
             }
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
             gamePlayer.setEmail(player.getEmail());
@@ -595,11 +604,14 @@ public class Server implements Runnable {
     private boolean receivePlayerVersion(Packet packet, int connId) {
         final Version version = (Version) packet.getObject(0);
         if (!MMConstants.VERSION.is(version)) {
-            final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s", version, MMConstants.VERSION);
+            final String message = String.format("Client/Server Version Mismatch -- Client: %s, Server: %s",
+                    version, MMConstants.VERSION);
             LogManager.getLogger().error(message);
 
             final Player player = getPlayer(connId);
-            sendServerChat(String.format("For %s, Server reports:%s%s", ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(), message));
+            sendServerChat(String.format("For %s, Server reports:%s%s",
+                    ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(),
+                    message));
             return false;
         }
 
@@ -617,7 +629,8 @@ public class Server implements Runnable {
             LogManager.getLogger().info(message);
             // print message indicating a client/server checksum mismatch
         } else if (!clientChecksum.equals(serverChecksum)) {
-            message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s", serverChecksum, clientChecksum);
+            message = String.format("Client/Server checksum mismatch. Server reports: %s, Client reports %s",
+                    serverChecksum, clientChecksum);
             LogManager.getLogger().warn(message);
         } else {
             message = "";
@@ -625,10 +638,13 @@ public class Server implements Runnable {
 
         // Now, if we need to, send message!
         if (message.isEmpty()) {
-            LogManager.getLogger().info("SUCCESS: Client/Server Version (" + version + ") and Checksum (" + clientChecksum + ") matched");
+            LogManager.getLogger().info("SUCCESS: Client/Server Version (" + version + ") and Checksum ("
+                    + clientChecksum + ") matched");
         } else {
             Player player = getPlayer(connId);
-            sendServerChat(String.format("For %s, Server reports:%s%s", ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(), message));
+            sendServerChat(String.format("For %s, Server reports:%s%s",
+                    ((player == null) ? "unknown player" : player.getName()), System.lineSeparator(),
+                    message));
         }
 
         return true;
@@ -681,7 +697,8 @@ public class Server implements Runnable {
 
         // if it is not the lounge phase, this player becomes an observer
         Player player = getPlayer(connId);
-        if ((getGame().getPhase() != GamePhase.LOUNGE) && (null != player) && (getGame().getEntitiesOwnedBy(player) < 1)) {
+        if (!getGame().getPhase().isLounge() && (null != player)
+                && (getGame().getEntitiesOwnedBy(player) < 1)) {
             player.setObserver(true);
         }
 
@@ -1119,7 +1136,9 @@ public class Server implements Runnable {
 
     void send(Packet packet) {
         synchronized (connections) {
-            connections.stream().filter(Objects::nonNull).forEach(connection -> connection.send(packet));
+            connections.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(connection -> connection.send(packet));
         }
     }
 
@@ -1323,7 +1342,7 @@ public class Server implements Runnable {
                 for (AbstractConnection iconn : connections) {
                     content += "&players[]=" + (getPlayer(iconn.getId()).getName());
                 }
-                if ((getGame().getPhase() != GamePhase.LOUNGE) && (getGame().getPhase() != GamePhase.UNKNOWN)) {
+                if (!getGame().getPhase().isLounge() && !getGame().getPhase().isUnknown()) {
                     content += "&close=yes";
                 }
                 content += "&version=" + MMConstants.VERSION;

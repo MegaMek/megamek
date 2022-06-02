@@ -450,10 +450,11 @@ public class GunEmplacement extends Tank {
             if (occupiedStructure != null) {
                 initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
                 initialBuildingArmor = occupiedStructure.getArmor(getPosition());
+                return;
             }
-        } else {
-            initialBuildingCF = initialBuildingArmor = 0;
-        }
+        }        
+        
+        initialBuildingCF = initialBuildingArmor = 0;
     }
     
     /**

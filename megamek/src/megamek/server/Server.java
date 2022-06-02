@@ -1348,40 +1348,46 @@ public class Server implements Runnable {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setDoOutput(true);
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            DataOutputStream printout = new DataOutputStream(conn.getOutputStream());
-            String content = "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
-            if (register) {
-                for (AbstractConnection iconn : connections) {
-                    content += "&players[]=" + (getPlayer(iconn.getId()).getName());
+            try (OutputStream os = conn.getOutputStream();
+                 DataOutputStream dos = new DataOutputStream(os)) {
+                String content = "port=" + URLEncoder.encode(Integer.toString(serverSocket.getLocalPort()), StandardCharsets.UTF_8);
+                if (register) {
+                    for (AbstractConnection iconn : connections) {
+                        content += "&players[]=" + getPlayer(iconn.getId()).getName();
+                    }
+
+                    if (!getGame().getPhase().isLounge() && !getGame().getPhase().isUnknown()) {
+                        content += "&close=yes";
+                    }
+                    content += "&version=" + MMConstants.VERSION;
+                    if (isPassworded()) {
+                        content += "&pw=yes";
+                    }
+                } else {
+                    content += "&delete=yes";
                 }
-                if ((getGame().getPhase() != GamePhase.LOUNGE)
-                        && (getGame().getPhase() != GamePhase.UNKNOWN)) {
-                    content += "&close=yes";
+
+                if (serverAccessKey != null) {
+                    content += "&key=" + serverAccessKey;
                 }
-                content += "&version=" + MMConstants.VERSION;
-                if (isPassworded()) {
-                    content += "&pw=yes";
-                }
-            } else {
-                content += "&delete=yes";
-            }
-            if (serverAccessKey != null) {
-                content += "&key=" + serverAccessKey;
-            }
-            printout.writeBytes(content);
-            printout.flush();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            if (conn.getResponseCode() == 200) {
-                while ((line = rd.readLine()) != null) {
-                    if (serverAccessKey == null) {
-                        serverAccessKey = line;
+                dos.writeBytes(content);
+                dos.flush();
+
+                try (InputStream is = conn.getInputStream();
+                     InputStreamReader isr = new InputStreamReader(is);
+                     BufferedReader br = new BufferedReader(isr)) {
+                    String line;
+                    if (conn.getResponseCode() == 200) {
+                        while ((line = br.readLine()) != null) {
+                            if (serverAccessKey == null) {
+                                serverAccessKey = line;
+                            }
+                        }
                     }
                 }
             }
-            rd.close();
-            printout.close();
         } catch (Exception ignored) {
+
         }
     }
 

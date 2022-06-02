@@ -444,7 +444,7 @@ public class GunEmplacement extends Tank {
 
         // very aggressive null defense
         if (deployed && (getGame() != null) && (getGame().getBoard() != null) && 
-                getPosition() != null) {
+                (getPosition() != null)) {
             Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
             
             if (occupiedStructure != null) {

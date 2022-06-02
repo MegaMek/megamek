@@ -65,7 +65,7 @@ public class CostDisplayDialog extends AbstractDialog {
     }
 
     @Override
-    protected void finalizeInitialization() {
+    protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
         if (entity != null) {
             setTitle(getTitle() + " (" + entity.getShortName() + ")");

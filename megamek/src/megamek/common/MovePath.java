@@ -735,7 +735,7 @@ public class MovePath implements Cloneable, Serializable {
         return steps.elements();
     }
 
-    public MoveStep getStep(final int index) {
+    public @Nullable MoveStep getStep(final int index) {
         if ((index < 0) || (index >= steps.size())) {
             return null;
         }
@@ -816,8 +816,7 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Returns the starting {@link Coords} of this path.
      */
-    @Nullable
-    public Coords getStartCoords() {
+    public @Nullable Coords getStartCoords() {
         for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements(); ) {
             final MoveStep step = e.nextElement();
             final Coords coords = step.getPosition();
@@ -1256,6 +1255,7 @@ public class MovePath implements Cloneable, Serializable {
                 finPath = bestMp;
             }
         }
+
         if (finPath != null) {
             finPath.compile(game, entity, false);
             this.steps = finPath.steps;

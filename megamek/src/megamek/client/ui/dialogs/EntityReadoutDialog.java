@@ -53,9 +53,8 @@ public class EntityReadoutDialog extends AbstractDialog {
     }
     
     @Override
-    protected void setCustomPreferences(final PreferencesNode preferences) {
+    protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
         super.setCustomPreferences(preferences);
         preferences.manage(new JTabbedPanePreference(entityView));
     }
-    
 }

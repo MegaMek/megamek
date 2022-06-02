@@ -23,7 +23,6 @@ import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.commandline.AbstractCommandLineParser.ParseException;
-import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
 import megamek.common.net.connections.AbstractConnection;
 import megamek.common.net.enums.PacketCommand;
@@ -233,7 +232,6 @@ public class Server implements Runnable {
     };
 
     /**
-     *
      * @param serverAddress
      * @return valid hostName
      * @throws ParseException for null or empty serverAddress
@@ -249,7 +247,6 @@ public class Server implements Runnable {
     }
 
     /**
-     *
      * @param playerName throw ParseException if null or empty
      * @return valid playerName
      */
@@ -268,7 +265,6 @@ public class Server implements Runnable {
     }
 
     /**
-     *
      * @param password
      * @return valid password or null if no password or password is blank string
      */
@@ -278,6 +274,7 @@ public class Server implements Runnable {
 
     /**
      * Checks a String against the server password
+     *
      * @param password The password provided by the user.
      * @return true if the user-supplied data matches the server password or no password is set.
      */
@@ -286,7 +283,6 @@ public class Server implements Runnable {
     }
 
     /**
-     *
      * @param port if 0 or less, will return default, if illegal number, throws ParseException
      * @return valid port number
      */
@@ -306,15 +302,17 @@ public class Server implements Runnable {
         this(password, port, gameManager, false, "", null, false);
     }
 
-    public Server(String password, int port, IGameManager gameManager, boolean registerWithServerBrowser,
-                  String metaServerUrl) throws IOException {
+    public Server(String password, int port, IGameManager gameManager,
+                  boolean registerWithServerBrowser, String metaServerUrl) throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, null, false);
     }
 
-    public Server(String password, int port, IGameManager gameManager, boolean registerWithServerBrowser,
-                  String metaServerUrl, EmailService mailer) throws IOException {
+    public Server(String password, int port, IGameManager gameManager,
+                  boolean registerWithServerBrowser, String metaServerUrl, EmailService mailer)
+            throws IOException {
         this(password, port, gameManager, registerWithServerBrowser, metaServerUrl, mailer, false);
     }
+
     /**
      * Construct a new GameHost and begin listening for incoming clients.
      *
@@ -324,11 +322,12 @@ public class Server implements Runnable {
      * @param gameManager               the {@link IGameManager} instance for this server instance.
      * @param registerWithServerBrowser a <code>boolean</code> indicating whether we should register
      *                                  with the master server browser on MegaMek.info
-     * @param mailer an email service instance to use for sending round reports.
-     * @param dedicated set to true if this server is started from a GUI-less context
+     * @param mailer                    an email service instance to use for sending round reports.
+     * @param dedicated                 set to true if this server is started from a GUI-less context
      */
-    public Server(@Nullable String password, int port, IGameManager gameManager, boolean registerWithServerBrowser,
-                  @Nullable String metaServerUrl, @Nullable EmailService mailer, boolean dedicated) throws IOException {
+    public Server(@Nullable String password, int port, IGameManager gameManager,
+                  boolean registerWithServerBrowser, @Nullable String metaServerUrl,
+                  @Nullable EmailService mailer, boolean dedicated) throws IOException {
         this.metaServerUrl = (metaServerUrl != null) && (!metaServerUrl.isBlank()) ? metaServerUrl : null;
         this.password = (password != null) && (!password.isBlank()) ? password : null;
         this.gameManager = gameManager;
@@ -375,7 +374,7 @@ public class Server implements Runnable {
         packetPumpThread.start();
 
         if (registerWithServerBrowser) {
-            if ( (metaServerUrl != null) && (!metaServerUrl.isBlank())) {
+            if ((metaServerUrl != null) && (!metaServerUrl.isBlank())) {
                 final TimerTask register = new TimerTask() {
                     @Override
                     public void run() {
@@ -562,12 +561,11 @@ public class Server implements Runnable {
             gamePlayer.setNbrMFVibra(player.getNbrMFVibra());
             gamePlayer.setNbrMFActive(player.getNbrMFActive());
             gamePlayer.setNbrMFInferno(player.getNbrMFInferno());
-            if (gamePlayer.getConstantInitBonus()
-                    != player.getConstantInitBonus()) {
+            if (gamePlayer.getConstantInitBonus() != player.getConstantInitBonus()) {
                 sendServerChat("Player " + gamePlayer.getName()
                         + " changed their initiative bonus from "
-                        + gamePlayer.getConstantInitBonus()
-                        + " to " + player.getConstantInitBonus() + '.');
+                        + gamePlayer.getConstantInitBonus() + " to "
+                        + player.getConstantInitBonus() + '.');
             }
             gamePlayer.setConstantInitBonus(player.getConstantInitBonus());
             gamePlayer.setEmail(player.getEmail());
@@ -699,7 +697,7 @@ public class Server implements Runnable {
 
         // if it is not the lounge phase, this player becomes an observer
         Player player = getPlayer(connId);
-        if ((getGame().getPhase() != GamePhase.LOUNGE) && (null != player)
+        if (!getGame().getPhase().isLounge() && (null != player)
                 && (getGame().getEntitiesOwnedBy(player) < 1)) {
             player.setObserver(true);
         }
@@ -719,8 +717,7 @@ public class Server implements Runnable {
         final boolean showIPAddressesInChat = PreferenceManager.getClientPreferences().getShowIPAddressesInChat();
 
         try {
-            InetAddress[] addresses = InetAddress.getAllByName(InetAddress
-                    .getLocalHost().getHostName());
+            InetAddress[] addresses = InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
             for (InetAddress address : addresses) {
                 LogManager.getLogger().info("s: machine IP " + address.getHostAddress());
                 if (showIPAddressesInChat) {
@@ -870,12 +867,10 @@ public class Server implements Runnable {
     /**
      * load the game
      *
-     * @param f
-     *            The <code>File</code> to load
-     * @param sendInfo
-     *            Determines whether the connections should be updated with
-     *            current info. This may be false if some reconnection remapping
-     *            needs to be done first.
+     * @param f        The <code>File</code> to load
+     * @param sendInfo Determines whether the connections should be updated with
+     *                 current info. This may be false if some reconnection remapping
+     *                 needs to be done first.
      * @return A <code>boolean</code> value whether or not the loading was successful
      */
     public boolean loadGame(File f, boolean sendInfo) {
@@ -919,11 +914,9 @@ public class Server implements Runnable {
      * to their current ids, and uses the list of players to figure out what the
      * current ids should change to.
      *
-     * @param nameToIdMap
-     *            This maps a player name to the current connection ID
-     * @param idToNameMap
-     *            This maps a current conn ID to a player name, and is just the
-     *            inverse mapping from nameToIdMap
+     * @param nameToIdMap This maps a player name to the current connection ID
+     * @param idToNameMap This maps a current conn ID to a player name, and is just the
+     *                    inverse mapping from nameToIdMap
      */
     public void remapConnIds(Map<String, Integer> nameToIdMap, Map<Integer, String> idToNameMap) {
         // Keeps track of connections without Ids
@@ -935,7 +928,7 @@ public class Server implements Runnable {
             currentPlayerNames.add(p.getName());
         }
         // Map the old connection Id to new value
-        Map<Integer,Integer> connIdRemapping = new HashMap<>();
+        Map<Integer, Integer> connIdRemapping = new HashMap<>();
         for (Player p : getGame().getPlayersVector()) {
             // Check to see if this player was already connected
             Integer oldId = nameToIdMap.get(p.getName());
@@ -988,7 +981,7 @@ public class Server implements Runnable {
             conn.setId(newId);
             Player newPlayer = addNewPlayer(newId, name, false);
             newPlayer.setObserver(true);
-            connectionIds.put(newId,  conn);
+            connectionIds.put(newId, conn);
             send(newId, new Packet(PacketCommand.LOCAL_PN, newId));
         }
 
@@ -1048,11 +1041,9 @@ public class Server implements Runnable {
      * Sends out all player info to the specified connection
      */
     private void transmitPlayerConnect(AbstractConnection connection) {
-        for (var player: getGame().getPlayersVector()) {
+        for (var player : getGame().getPlayersVector()) {
             var connectionId = connection.getId();
-            connection.send(
-                    createPlayerConnectPacket(player, player.getId() != connectionId)
-            );
+            connection.send(createPlayerConnectPacket(player, player.getId() != connectionId));
         }
     }
 
@@ -1061,11 +1052,9 @@ public class Server implements Runnable {
      */
     private void transmitPlayerConnect(Player player) {
         synchronized (connections) {
-            for (var connection: connections) {
+            for (var connection : connections) {
                 var playerId = player.getId();
-                connection.send(
-                        createPlayerConnectPacket(player, playerId != connection.getId())
-                );
+                connection.send(createPlayerConnectPacket(player, playerId != connection.getId()));
             }
         }
     }
@@ -1109,7 +1098,7 @@ public class Server implements Runnable {
      * Sends out the player info updates for all players to all connections
      */
     private void transmitAllPlayerUpdates() {
-        for (var player: getGame().getPlayersVector()) {
+        for (var player : getGame().getPlayersVector()) {
             transmitPlayerUpdate(player);
         }
     }
@@ -1198,11 +1187,9 @@ public class Server implements Runnable {
     /**
      * Process a packet from a connection.
      *
-     * @param connId
-     *            - the <code>int</code> ID the connection that received the
-     *            packet.
-     * @param packet
-     *            - the <code>Packet</code> to be processed.
+     * @param connId - the <code>int</code> ID the connection that received the
+     *               packet.
+     * @param packet - the <code>Packet</code> to be processed.
      */
     protected void handle(int connId, Packet packet) {
         Player player = getGame().getPlayer(connId);

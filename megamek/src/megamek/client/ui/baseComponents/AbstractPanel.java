@@ -106,15 +106,19 @@ public abstract class AbstractPanel extends JPanel {
     /**
      * This is used to set preferences based on the preference node for this class. It is overridden
      * for MekHQ usage
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setPreferences() {
+    protected void setPreferences() throws Exception {
         setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**
      * This sets the base preferences for this class, and calls the custom preferences method
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setPreferences(final PreferencesNode preferences) {
+    protected void setPreferences(final PreferencesNode preferences) throws Exception {
         setCustomPreferences(preferences);
     }
 
@@ -124,8 +128,10 @@ public abstract class AbstractPanel extends JPanel {
      * By default, this panel will track no preferences
      * Other preferences can be added by overriding this method.
      * @param preferences the preference node for this panel
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setCustomPreferences(final PreferencesNode preferences) {
+    protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
 
     }
     //endregion Initialization

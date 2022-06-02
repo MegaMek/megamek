@@ -1330,7 +1330,6 @@ public class Game implements IGame, Serializable {
             ((Mech) entity).setCondEjectHeadshot(true);
         }
 
-        assert (entities.size() == entityIds.size()) : "Add Entity failed";
         if (genEvent) {
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
@@ -1359,10 +1358,8 @@ public class Game implements IGame, Serializable {
                 lastEntityId = id;
             }
 
-            processGameEvent(
-                    new GameEntityChangeEvent(this, entity, movePath, oldEntity));
+            processGameEvent(new GameEntityChangeEvent(this, entity, movePath, oldEntity));
         }
-        assert (entities.size() == entityIds.size()) : "Set Entity Failed";
     }
 
     /**

@@ -42,6 +42,7 @@ import org.apache.logging.log4j.LogManager;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -11985,7 +11986,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
             }
         }
-        
+
         for (Mounted mounted : getWeaponList()) {
             if (mounted.getType() instanceof Weapon) {
                 ((Weapon) mounted.getType()).adaptToGameOptions(game.getOptions());
@@ -12004,6 +12005,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 misc.getType().setModes(modes.toArray(stringArray));
                 misc.getType().setInstantModeSwitch(false);
             }
+
             if (misc.getType().hasFlag(MiscType.F_ECM)) {
                 ArrayList<String> modes = new ArrayList<>();
                 modes.add("ECM");
@@ -12020,6 +12022,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         modes.add("ECM & ECCM");
                     }
                 }
+
                 if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
@@ -12030,10 +12033,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         modes.add("Ghost Targets");
                     }
                 }
+
                 misc.getType().setModes(modes.toArray(stringArray));
             }
         }
-
     }
 
     public void setGrappleSide(int side) {

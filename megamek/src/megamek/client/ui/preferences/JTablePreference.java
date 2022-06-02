@@ -18,6 +18,9 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -40,7 +43,7 @@ public class JTablePreference extends PreferenceElement implements MouseListener
     //endregion Variable Declarations
 
     //region Constructors
-    public JTablePreference(final JTable table) {
+    public JTablePreference(final JTable table) throws Exception {
         super(table.getName());
 
         if (!table.getRowSorter().getSortKeys().isEmpty()) {
@@ -85,8 +88,11 @@ public class JTablePreference extends PreferenceElement implements MouseListener
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JTablePreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final JTable element = getWeakReference().get();
         if (element != null) {

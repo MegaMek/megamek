@@ -41,7 +41,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Precognition implements Runnable {
 
     private final Princess owner;
-    
+
     /**
      * Precognition's version of the game, which should mirror the game in
      * Princess, but should not be the same reference. If Precognition and
@@ -57,12 +57,11 @@ public class Precognition implements Runnable {
      * re-use the cache.
      */
     private List<ECMInfo> ecmInfo;
-        
+
     private PathEnumerator pathEnumerator;
     private final ReentrantReadWriteLock PATH_ENUMERATOR_LOCK = new ReentrantReadWriteLock();
 
-
-    // units who's path I need to update
+    // units whose path I need to update
     private final ConcurrentSkipListSet<Integer> dirtyUnits = new ConcurrentSkipListSet<>();
 
     // events that may affect which units are dirty
@@ -93,7 +92,7 @@ public class Precognition implements Runnable {
         ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
                 getGame().getEntitiesVector());
     }
-    
+
     /**
      * Pared down version of Client.handlePacket; essentially it's only looking
      * for packets that update Game.  This ensures that Precognition's Game
@@ -269,8 +268,12 @@ public class Precognition implements Runnable {
                     getGame().processGameEvent(gve);
                     break;
                 default:
+                    LogManager.getLogger().error("Attempted to parse unknown PacketCommand of "
+                            + c.getCommand().name());
                     break;
             }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         } finally {
             GAME_LOCK.unlock();
         }
@@ -687,15 +690,8 @@ public class Precognition implements Runnable {
     }
 
     private void receiveEntityAdd(Packet packet) {
-        @SuppressWarnings("unchecked")
-        List<Integer> entityIds = (List<Integer>) packet.getObject(0);
-        @SuppressWarnings("unchecked")
-        List<Entity> entities = (List<Entity>) packet.getObject(1);
-
-        assert (entityIds.size() == entities.size());
-        for (int i = 0; i < entityIds.size(); i++) {
-            assert (entityIds.get(i) == entities.get(i).getId());
-        }
+        @SuppressWarnings(value = "unchecked")
+        List<Entity> entities = (List<Entity>) packet.getObject(0);
         getGame().addEntities(entities);
     }
 
@@ -812,7 +808,7 @@ public class Precognition implements Runnable {
             }
         }
     }
-    
+
     /**
      * receive and process an entity nova network mode change packet
      *
@@ -831,5 +827,4 @@ public class Precognition implements Runnable {
         }
 
     }
-
 }

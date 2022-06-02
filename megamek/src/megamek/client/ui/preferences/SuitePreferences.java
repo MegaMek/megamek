@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class SuitePreferences {
     //region Variable Declarations
@@ -81,15 +82,18 @@ public class SuitePreferences {
 
                 writer.close();
             }
-        } catch (FileNotFoundException e) {
-            LogManager.getLogger().error("Could not save nameToPreferencesMap to: " + filePath, e);
-        } catch (IOException e) {
-            LogManager.getLogger().error("Error writing to the nameToPreferencesMap file: " + filePath, e);
+        } catch (FileNotFoundException ex) {
+            LogManager.getLogger().error("Could not save nameToPreferencesMap to: " + filePath, ex);
+        } catch (IOException ex) {
+            LogManager.getLogger().error("Error writing to the nameToPreferencesMap file: " + filePath, ex);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 
     private static void writePreferencesNode(final JsonGenerator writer,
-                                             final Map.Entry<String, PreferencesNode> nodeInfo) throws IOException {
+                                             final Entry<String, PreferencesNode> nodeInfo)
+            throws Exception {
         writer.writeStartObject();
         writer.writeStringField(CLASS_TOKEN, nodeInfo.getKey());
         writer.writeFieldName(ELEMENTS_TOKEN);
@@ -187,8 +191,10 @@ public class SuitePreferences {
             final PreferencesNode node = new PreferencesNode(Class.forName(className));
             node.initialize(elements);
             nodes.put(node.getNode().getName(), node);
-        } catch (ClassNotFoundException e) {
-            LogManager.getLogger().error("No class with name " + className + " found", e);
+        } catch (ClassNotFoundException ex) {
+            LogManager.getLogger().error("No class with name " + className + " found", ex);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 

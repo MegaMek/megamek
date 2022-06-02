@@ -887,8 +887,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             disableButtons();
             if (ce instanceof LandAirMech) {
                 updateConvertModeButton();
-                if (ce.getMovementMode() == EntityMovementMode.WIGE
-                        && ce.getAltitude() <= 3) {
+                if (ce.getMovementMode().isWiGE() && (ce.getAltitude() <= 3)) {
                     updateHoverButton();
                 }
                 getBtn(MoveCommand.MOVE_MORE).setEnabled(numButtonGroups > 1);
@@ -904,7 +903,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setupButtonPanel();
     }
-    
+
     private void updateAeroButtons() {
         if (ce() != null && ce().isAero()) {
             getBtn(MoveCommand.MOVE_THRUST).setEnabled(true);
@@ -961,8 +960,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         disableButtons();
         Entity next = clientgui.getClient().getGame()
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
-        if ((GamePhase.MOVEMENT == clientgui.getClient().getGame()
-                .getPhase())
+        if (clientgui.getClient().getGame().getPhase().isMovement()
                 && (null != next)
                 && (null != ce)
                 && (next.getOwnerId() != ce.getOwnerId())) {
@@ -1157,7 +1155,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-        
     }
 
     private void removeLastStep() {
@@ -1203,7 +1200,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd.clipToPossible();
         if ((cmd.length() == 0) && !ce().isAirborne()
                 && GUIPreferences.getInstance().getNagForNoAction()) {
-            // Hmm.... no movement steps, confirm this action
+            // Hmm... no movement steps, confirm this action
             String title = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.title");
             String body = Messages.getString("MovementDisplay.ConfirmNoMoveDlg.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);

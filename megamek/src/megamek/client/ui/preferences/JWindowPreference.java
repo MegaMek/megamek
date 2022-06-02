@@ -18,6 +18,9 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -44,7 +47,7 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
     //endregion Variable Declarations
 
     //region Constructors
-    public JWindowPreference(final Window window) {
+    public JWindowPreference(final Window window) throws Exception {
         super(window.getName());
 
         setWidth(window.getWidth());
@@ -115,8 +118,11 @@ public class JWindowPreference extends PreferenceElement implements ComponentLis
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JWindowPreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final Window element = getWeakReference().get();
         if (element != null) {

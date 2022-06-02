@@ -1123,9 +1123,11 @@ public class Server implements Runnable {
     }
 
     void send(Packet packet) {
-        connections.stream()
-                .filter(Objects::nonNull)
-                .forEach(connection -> connection.send(packet));
+        synchronized (serverLock) {
+            connections.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(connection -> connection.send(packet));
+        }
     }
 
     /**

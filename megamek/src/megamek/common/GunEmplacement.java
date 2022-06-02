@@ -15,7 +15,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.GunEmplacementBVCalculator;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
@@ -471,5 +470,23 @@ public class GunEmplacement extends Tank {
         
         return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition()))
                 / ((double) (initialBuildingCF + initialBuildingArmor));
+    }
+    
+    /**
+     * Gun emplacements don't have critical slots per se, so we
+     * simply return 1 if the piece of equipment has been hit and 0 otherwise.
+     */
+    @Override
+    public int getDamagedCriticals(int type, int index, int loc) {
+        Mounted m = null;
+        if (type == CriticalSlot.TYPE_EQUIPMENT) {
+            m = getEquipment(index);
+            
+            if (m != null && m.isHit()) {
+                return 1;
+            }
+        }
+        
+        return 0;
     }
 }

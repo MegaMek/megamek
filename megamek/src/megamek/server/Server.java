@@ -486,15 +486,8 @@ public class Server implements Runnable {
         connectionsPending.removeAllElements();
 
         // Send "kill" commands to all connections
-        // N.B. I may be starting a race here.
+        // This WILL handle the connection end on both sides
         send(new Packet(PacketCommand.CLOSE_CONNECTION));
-
-        // kill active connections
-        synchronized (connections) {
-            connections.forEach(AbstractConnection::close);
-            connections.clear();
-        }
-
         connectionIds.clear();
 
         // Shutdown Email
@@ -1051,11 +1044,9 @@ public class Server implements Runnable {
      * Sends out player info to all connections
      */
     private void transmitPlayerConnect(Player player) {
-        synchronized (connections) {
-            for (var connection : connections) {
-                var playerId = player.getId();
-                connection.send(createPlayerConnectPacket(player, playerId != connection.getId()));
-            }
+        for (var connection : connections) {
+            var playerId = player.getId();
+            connection.send(createPlayerConnectPacket(player, playerId != connection.getId()));
         }
     }
 
@@ -1078,19 +1069,17 @@ public class Server implements Runnable {
      * Sends out player info updates for a player to all connections
      */
     void transmitPlayerUpdate(Player player) {
-        synchronized (connections) {
-            for (var connection : connections) {
-                var playerId = player.getId();
-                var destPlayer = player;
+        for (var connection : connections) {
+            var playerId = player.getId();
+            var destPlayer = player;
 
-                if (playerId != connection.getId()) {
-                    // Sending the player's data to another player's
-                    // connection, need to redact any private data
-                    destPlayer = player.copy();
-                    destPlayer.redactPrivateData();
-                }
-                connection.send(new Packet(PacketCommand.PLAYER_UPDATE, playerId, destPlayer));
+            if (playerId != connection.getId()) {
+                // Sending the player's data to another player's
+                // connection, need to redact any private data
+                destPlayer = player.copy();
+                destPlayer.redactPrivateData();
             }
+            connection.send(new Packet(PacketCommand.PLAYER_UPDATE, playerId, destPlayer));
         }
     }
 
@@ -1134,11 +1123,9 @@ public class Server implements Runnable {
     }
 
     void send(Packet packet) {
-        synchronized (connections) {
-            connections.stream()
-                    .filter(Objects::nonNull)
-                    .forEach(connection -> connection.send(packet));
-        }
+        connections.stream()
+                .filter(Objects::nonNull)
+                .forEach(connection -> connection.send(packet));
     }
 
     /**

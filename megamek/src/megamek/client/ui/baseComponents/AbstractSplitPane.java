@@ -22,6 +22,7 @@ import megamek.MegaMek;
 import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
 import megamek.common.util.EncodeControl;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -81,7 +82,11 @@ public abstract class AbstractSplitPane extends JSplitPane {
     protected void initialize() {
         setLeftComponent(createLeftComponent());
         setRightComponent(createRightComponent());
-        finalizeInitialization();
+        try {
+            finalizeInitialization();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error finalizing the split pane. Returning the created dialog, but this is likely to cause some oddities.", ex);
+        }
     }
 
     /**
@@ -97,8 +102,11 @@ public abstract class AbstractSplitPane extends JSplitPane {
     /**
      * This MUST be called at the end of initialization to finalize it. This is the key method for
      * this being the abstract basis for all other split panes
+     * @throws Exception if there's an issue finishing initialization. Normally this means there's
+     * an issue setting the preferences, which normally means that a component has had its name
+     * value set.
      */
-    protected void finalizeInitialization() {
+    protected void finalizeInitialization() throws Exception {
         setOneTouchExpandable(true);
         setPreferences();
     }
@@ -106,17 +114,25 @@ public abstract class AbstractSplitPane extends JSplitPane {
     /**
      * This is used to set preferences based on the preference node for this class. It is overridden
      * for MekHQ usage
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setPreferences() {
+    protected void setPreferences() throws Exception {
         setPreferences(MegaMek.getMMPreferences().forClass(getClass()));
     }
 
     /**
      * This sets the base preferences for this class, and calls the custom preferences method
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setPreferences(final PreferencesNode preferences) {
-        preferences.manage(new JSplitPanePreference(this));
-        setCustomPreferences(preferences);
+    protected void setPreferences(final PreferencesNode preferences) throws Exception {
+        try {
+            preferences.manage(new JSplitPanePreference(this));
+            setCustomPreferences(preferences);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to set preferences", ex);
+        }
     }
 
     /**
@@ -125,8 +141,10 @@ public abstract class AbstractSplitPane extends JSplitPane {
      * By default, this pane will track preferences related to the location of the split
      * Other preferences can be added by overriding this method.
      * @param preferences the preference node for this pane
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setCustomPreferences(final PreferencesNode preferences) {
+    protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
 
     }
     //endregion Initialization

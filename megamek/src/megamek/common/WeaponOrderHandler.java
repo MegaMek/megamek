@@ -231,8 +231,8 @@ public class WeaponOrderHandler {
                 weapOrderMap.put(unitId, weapOrder);
             }
             return weapOrderMap;
-        } catch (Exception e) {
-            throw new IOException(e);
+        } catch (Exception ex) {
+            throw new IOException(ex);
         } finally {
             LogManager.getLogger().info(log);
         }
@@ -252,8 +252,8 @@ public class WeaponOrderHandler {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
-            } catch (Exception e) {
-                LogManager.getLogger().error("Failed to load custom weapon order file", e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Failed to load custom weapon order file", ex);
                 return null;
             }
         }

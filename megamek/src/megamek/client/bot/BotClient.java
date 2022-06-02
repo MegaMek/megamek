@@ -200,7 +200,7 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateFiringTurn();
 
-    protected abstract void calculateDeployment();
+    protected abstract void calculateDeployment() throws Exception;
 
     protected void initTargeting() { }
     
@@ -504,13 +504,12 @@ public abstract class BotClient extends Client {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
-        
+
         try {
             if (game.getPhase() == GamePhase.MOVEMENT) {
                 MovePath mp;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
-                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
-                            .getTurn();
+                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
                     Entity mustMove = game.getEntity(turn.getEntityNum());
                     mp = continueMovementFor(mustMove);
                 } else {
@@ -549,7 +548,7 @@ public abstract class BotClient extends Client {
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if ((game.getPhase() == GamePhase.TARGETING)
                        || (game.getPhase() == GamePhase.OFFBOARD)) {
-                // Princess implements arty targeting; no plans to do so for testbod
+                // Princess implements arty targeting
                 calculateTargetingOffBoardTurn();
             } else if ((game.getPhase() == GamePhase.PREMOVEMENT)
                     || (game.getPhase() == GamePhase.PREFIRING)) {
@@ -557,8 +556,8 @@ public abstract class BotClient extends Client {
             }
             
             return true;
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return false;
         }
     }
@@ -1147,14 +1146,16 @@ public abstract class BotClient extends Client {
     }
 
     @Override
-    protected void correctName(Packet inP) {
+    protected void correctName(Packet inP) throws Exception {
         // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
             Map<String, Client> bots = getClientGUI().getBots();
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
-            assert (equals(bots.get(oldName)));
+            if (!this.equals(bots.get(oldName))) {
+                throw new Exception();
+            }
             bots.remove(oldName);
             bots.put(newName, this);
         }

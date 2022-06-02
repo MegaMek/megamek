@@ -45,7 +45,7 @@ public class BVDisplayDialog extends AbstractDialog {
     }
 
     @Override
-    protected void finalizeInitialization() {
+    protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
         setTitle(getTitle() + " (" + entity.getShortName() + ")");
         UIUtil.adjustDialog(getContentPane());

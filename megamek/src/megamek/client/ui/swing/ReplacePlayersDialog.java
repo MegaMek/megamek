@@ -26,6 +26,7 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
 import megamek.common.Player;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -74,12 +75,16 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     protected void initialize() {
         super.initialize();
         UIUtil.adjustDialog(this.getContentPane());
-        finalizeInitialization();
+        try {
+            finalizeInitialization();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error finalizing the ReplacePlayersDialog. Returning the created dialog, but this is likely to cause some oddities.", ex);
+        }
     }
 
     @Override
     protected Container createCenterPane() {
-        // Construct the available replacements for the combobox chooser
+        // Construct the available replacements for the ComboBox chooser
         Vector<String> replacements = new Vector<>();
         replacements.add(NOREPLACE_STRING);
         replacements.add(PRINCESS_STRING);

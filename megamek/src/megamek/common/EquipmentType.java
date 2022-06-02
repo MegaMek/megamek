@@ -165,8 +165,6 @@ public class EquipmentType implements ITechnology {
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
 
-//    protected Map<Integer,Integer> techLevel = new HashMap<>();
-    
     protected TechAdvancement techAdvancement = new TechAdvancement();
 
     protected BigInteger flags = BigInteger.valueOf(0);
@@ -591,8 +589,7 @@ public class EquipmentType implements ITechnology {
      * @param modes
      *            non null, non empty list of available mode names.
      */
-    protected void setModes(String[] modes) {
-        assert ((modes != null) && (modes.length > 0)) : "List of modes must not be null or empty";
+    protected void setModes(String... modes) {
         Vector<EquipmentMode> newModes = new Vector<>(modes.length);
         for (String mode : modes) {
             newModes.addElement(EquipmentMode.getMode(mode));
@@ -682,7 +679,6 @@ public class EquipmentType implements ITechnology {
      * @see #hasModes()
      */
     public EquipmentMode getMode(int modeNum) {
-        assert ((modes != null) && (modeNum >= 0) && (modeNum < modes.size())) : "Invalid Mode";
         return modes.elementAt(modeNum);
     }
 

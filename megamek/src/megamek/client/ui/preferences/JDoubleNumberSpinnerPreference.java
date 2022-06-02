@@ -18,6 +18,9 @@
  */
 package megamek.client.ui.preferences;
 
+import megamek.codeUtilities.StringUtility;
+import org.apache.logging.log4j.LogManager;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -37,9 +40,11 @@ public class JDoubleNumberSpinnerPreference extends PreferenceElement implements
     //endregion Variable Declarations
 
     //region Constructors
-    public JDoubleNumberSpinnerPreference(final JSpinner spinner) {
+    public JDoubleNumberSpinnerPreference(final JSpinner spinner) throws Exception {
         super(spinner.getName());
-        assert spinner.getModel() instanceof SpinnerNumberModel;
+        if (!(spinner.getModel() instanceof SpinnerNumberModel)) {
+            throw new Exception("Cannot create a double spinner without using a number model");
+        }
         setDoubleValue((Double) spinner.getValue());
         weakReference = new WeakReference<>(spinner);
         spinner.addChangeListener(this);
@@ -67,8 +72,11 @@ public class JDoubleNumberSpinnerPreference extends PreferenceElement implements
     }
 
     @Override
-    protected void initialize(final String value) {
-        assert (value != null) && !value.isBlank();
+    protected void initialize(final String value) throws Exception {
+        if (StringUtility.isNullOrBlank(value)) {
+            LogManager.getLogger().error("Cannot create a JDoubleNumberSpinnerPreference because of a null or blank input value");
+            throw new Exception();
+        }
 
         final JSpinner element = getWeakReference().get();
         if (element != null) {

@@ -1663,8 +1663,7 @@ public class TestBot extends BotClient {
 
     // Where do I put my units? This prioritizes hexes and facings
     @Override
-    protected void calculateDeployment() {
-
+    protected void calculateDeployment() throws Exception {
         int weapon_count;
         int hex_count, x_ave, y_ave, nDir;
         double av_range;
@@ -1672,7 +1671,9 @@ public class TestBot extends BotClient {
         Coords pointing_to;
 
         int entNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
-        assert (entNum != Entity.NONE) : "The bot is trying to deploy without units being left.";
+        if (entNum == Entity.NONE) {
+            throw new Exception("The bot is trying to deploy without units being left.");
+        }
 
         List<Coords> cStart = getStartingCoordsArray(game.getEntity(entNum));
         Coords cDeploy = getFirstValidCoords(getEntity(entNum), cStart);
@@ -1771,16 +1772,15 @@ public class TestBot extends BotClient {
         }
 
         Entity ce = game.getEntity(entNum);
-        assert (!ce.isLocationProhibited(cDeploy)) : "Bot tried to deploy to an invalid hex";
+        if (ce.isLocationProhibited(cDeploy)) {
+            throw new Exception("Bot tried to deploy to an invalid hex");
+        }
         deploy(entNum, cDeploy, nDir, 0);
     }
 
     @Override
     protected MovePath continueMovementFor(Entity entity) {
-        if (entity == null) {
-            throw new NullPointerException("Entity is null.");
-        }
-
+        Objects.requireNonNull(entity);
         LogManager.getLogger().info("Contemplating movement of " + entity.getShortName() + " " + entity.getId());
         CEntity cen = centities.get(entity);
         cen.refresh();

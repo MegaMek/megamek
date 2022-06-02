@@ -29882,7 +29882,7 @@ public class GameManager implements IGameManager {
         final List<Force> forceList = forceIds.stream()
                 .map(id -> getGame().getForces().getForce(id))
                 .collect(Collectors.toList());
-        return new Packet(PacketCommand.ENTITY_ADD, entityIds, entities, forceList);
+        return new Packet(PacketCommand.ENTITY_ADD, entities, forceList);
     }
 
     /**

@@ -442,14 +442,19 @@ public class GunEmplacement extends Tank {
     public void setDeployed(boolean deployed) {
         super.setDeployed(deployed);
 
-        if (deployed) {
+        // very aggressive null defense
+        if (deployed && (getGame() != null) && (getGame().getBoard() != null) && 
+                (getPosition() != null)) {
             Building occupiedStructure = getGame().getBoard().getBuildingAt(getPosition());
             
-            initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
-            initialBuildingArmor = occupiedStructure.getArmor(getPosition());
-        } else {
-            initialBuildingCF = initialBuildingArmor = 0;
-        }
+            if (occupiedStructure != null) {
+                initialBuildingCF = occupiedStructure.getCurrentCF(getPosition());
+                initialBuildingArmor = occupiedStructure.getArmor(getPosition());
+                return;
+            }
+        }        
+        
+        initialBuildingCF = initialBuildingArmor = 0;
     }
     
     /**
@@ -470,5 +475,23 @@ public class GunEmplacement extends Tank {
         
         return (occupiedStructure.getCurrentCF(getPosition()) + occupiedStructure.getArmor(getPosition()))
                 / ((double) (initialBuildingCF + initialBuildingArmor));
+    }
+    
+    /**
+     * Gun emplacements don't have critical slots per se, so we
+     * simply return 1 if the piece of equipment has been hit and 0 otherwise.
+     */
+    @Override
+    public int getDamagedCriticals(int type, int index, int loc) {
+        Mounted m = null;
+        if (type == CriticalSlot.TYPE_EQUIPMENT) {
+            m = getEquipment(index);
+            
+            if (m != null && m.isHit()) {
+                return 1;
+            }
+        }
+        
+        return 0;
     }
 }

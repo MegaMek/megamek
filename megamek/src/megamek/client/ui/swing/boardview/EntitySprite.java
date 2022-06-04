@@ -785,11 +785,14 @@ class EntitySprite extends Sprite {
                     || (bv.game.getPhase() == GamePhase.FIRING))) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
                 Color tmmColor = tmm < 0 ? Color.RED : tmm > MAX_TMM_PIPS ? Color.MAGENTA : Color.GREEN;
-                Color bgColor = tmm == 0 ? Color.BLACK : Color.DARK_GRAY;
                 tmm = tmm < 0 ? -tmm : tmm;
+
+                graph.setColor(Color.darkGray);
+                graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
                 for (int i = 0; i < MAX_TMM_PIPS; i++ )
                 {
-                    graph.setColor( i < tmm ? tmmColor : bgColor);
+                    graph.setColor( Color.DARK_GRAY);
+                    graph.setColor( i < tmm ? tmmColor : Color.BLACK);
                     graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE,
                             TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
                 }

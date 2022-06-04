@@ -47,6 +47,10 @@ class EntitySprite extends Sprite {
 
     // Statics
     private static final int SMALL = 0;
+    private static final int STATUS_BAR_LENGTH = 24;
+    private static final int STATUS_BAR_X = 55;
+    private static final int MAX_TMM_PIPS = 6;
+    private static final int TMM_PIP_SIZE = STATUS_BAR_LENGTH / MAX_TMM_PIPS;
     private static final boolean DIRECT = true;
     private static final Color LABEL_TEXT_COLOR = Color.WHITE;
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
@@ -627,6 +631,8 @@ class EntitySprite extends Sprite {
                     stStr.add(new Status(damageColor, 0, SMALL));
                 }
             }
+
+
             
             // Unit Label
             // no scaling for the label, its size is changed by varying
@@ -746,32 +752,47 @@ class EntitySprite extends Sprite {
                 }
             }
 
-            // armor and internal status bars
-            int baseBarLength = 23;
+            // armor, internal and TMM status bars
             int barLength = 0;
             double percentRemaining = 0.00;
 
             percentRemaining = entity.getArmorRemainingPercent();
-            barLength = (int) (baseBarLength * percentRemaining);
+            barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
             graph.setColor(Color.darkGray);
-            graph.fillRect(56, 7, 23, 3);
+            graph.fillRect(STATUS_BAR_X +1, 7, STATUS_BAR_LENGTH, 3);
             graph.setColor(Color.lightGray);
-            graph.fillRect(55, 6, 23, 3);
+            graph.fillRect(STATUS_BAR_X, 6, STATUS_BAR_LENGTH, 3);
             graph.setColor(getStatusBarColor(percentRemaining));
-            graph.fillRect(55, 6, barLength, 3);
+            graph.fillRect(STATUS_BAR_X, 6, barLength, 3);
 
             if (!ge) {
                 // Gun emplacements don't have internal structure
                 percentRemaining = entity.getInternalRemainingPercent();
-                barLength = (int) (baseBarLength * percentRemaining);
+                barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
                 graph.setColor(Color.darkGray);
-                graph.fillRect(56, 11, 23, 3);
+                graph.fillRect(STATUS_BAR_X +1, 11, STATUS_BAR_LENGTH, 3);
                 graph.setColor(Color.lightGray);
-                graph.fillRect(55, 10, 23, 3);
+                graph.fillRect(STATUS_BAR_X, 10, STATUS_BAR_LENGTH, 3);
                 graph.setColor(getStatusBarColor(percentRemaining));
-                graph.fillRect(55, 10, barLength, 3);
+                graph.fillRect(STATUS_BAR_X, 10, barLength, 3);
+            }
+
+            // show when done in movement, or on all during firing
+            if (!ge
+                    && ((entity.isDone() && bv.game.getPhase() == GamePhase.MOVEMENT)
+                    || (bv.game.getPhase() == GamePhase.FIRING))) {
+                int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
+                Color tmmColor = tmm < 0 ? Color.RED : tmm > MAX_TMM_PIPS ? Color.MAGENTA : Color.GREEN;
+                Color bgColor = tmm == 0 ? Color.BLACK : Color.DARK_GRAY;
+                tmm = tmm < 0 ? -tmm : tmm;
+                for (int i = 0; i < MAX_TMM_PIPS; i++ )
+                {
+                    graph.setColor( i < tmm ? tmmColor : bgColor);
+                    graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE,
+                            TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                }
             }
         }
 

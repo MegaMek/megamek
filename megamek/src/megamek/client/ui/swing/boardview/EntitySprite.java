@@ -785,7 +785,7 @@ class EntitySprite extends Sprite {
                     && ((entity.isDone() && bv.game.getPhase() == GamePhase.MOVEMENT)
                     || (bv.game.getPhase() == GamePhase.FIRING))) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
-                Color tmmColor = (pipOption == 1) ? Color.LIGHT_GRAY : guip.getColorForMovement(entity.moved);
+                Color tmmColor = (pipOption == 1) ? Color.WHITE : guip.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
                 graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
                 if (tmm >= 0) {

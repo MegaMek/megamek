@@ -779,28 +779,37 @@ class EntitySprite extends Sprite {
                 graph.fillRect(STATUS_BAR_X, 10, barLength, 3);
             }
 
-            // show when done in movement, or on all during firing
+            // TMM pips show if done in movement, or on all units during firing
             if (!ge
                     && ((entity.isDone() && bv.game.getPhase() == GamePhase.MOVEMENT)
                     || (bv.game.getPhase() == GamePhase.FIRING))) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
-                Color tmmColor = tmm < 0 ? Color.RED : tmm > MAX_TMM_PIPS ? Color.MAGENTA : Color.GREEN;
-                tmm = tmm < 0 ? -tmm : tmm;
-
+                Color tmmColor = guip.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
                 graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
-                for (int i = 0; i < MAX_TMM_PIPS; i++ )
+                if (tmm >= 0) {
+                    // draw left to right for positive TMM
+                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                        graph.setColor(Color.DARK_GRAY);
+                        graph.setColor(i < tmm ? tmmColor : Color.BLACK);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                    }
+                } else
                 {
-                    graph.setColor( Color.DARK_GRAY);
-                    graph.setColor( i < tmm ? tmmColor : Color.BLACK);
-                    graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE,
-                            TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                    // draw pips right to left for negative TMM
+                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                        graph.setColor(Color.DARK_GRAY);
+                        graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                    }
                 }
             }
         }
 
         graph.dispose();
     }
+
+
 
     /** 
      * Returns true when an indicator should be shown that a unit with the same facing

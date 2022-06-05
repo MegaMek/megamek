@@ -16,6 +16,8 @@ package megamek.client.ui.swing;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
+import megamek.common.EntityMovementType;
+import megamek.common.MovePath;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -1560,6 +1562,69 @@ public class GUIPreferences extends PreferenceStoreProxy {
         }
     }
 
+    /***
+     * @return The color associated with this movement type
+     */
+    public Color getColorForMovement(EntityMovementType movementType) {
+        switch (movementType) {
+            case MOVE_RUN:
+            case MOVE_VTOL_RUN:
+            case MOVE_OVER_THRUST:
+                return getColor("AdvancedMoveRunColor");
+            case MOVE_JUMP:
+                return getColor("AdvancedMoveJumpColor");
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                return getColor("AdvancedMoveSprintColor");
+            case MOVE_ILLEGAL:
+                return getColor("AdvancedMoveIllegalColor");
+            default:
+                return getColor("AdvancedMoveDefaultColor");
+        }
+    }
+
+    /***
+     * @return The color associated with a movement type
+     */
+    public Color getColorForMovement(EntityMovementType movementType, boolean isMASCOrSuperCharger, boolean isBackwards) {
+        if (isMASCOrSuperCharger)
+        {
+            return getColor("AdvancedMoveMASCColor");
+        }
+
+        if (isBackwards)
+        {
+            return getColor("AdvancedMoveBackColor");
+        }
+
+        return getColorForMovement(movementType);
+    }
+    /***
+     * @return The color associated with a heat in the range 0-30
+     */
+    public Color getColorForHeat(int heat) {
+        return getColorForHeat(heat, Color.LIGHT_GRAY);
+    }
+
+    /***
+     * @return The color associated with a heat in the range 0-30
+     */
+    public Color getColorForHeat(int heat, Color defaultColor) {
+        if (heat <= 5) {
+            return defaultColor;
+        }
+        if (heat < 10) {
+            return Color.GREEN;
+        }
+        if (heat < 20) {
+            return Color.YELLOW;
+        }
+        if (heat < 30) {
+            return Color.ORANGE;
+        }
+        return Color.RED;
+    }
+
     public void setUnitLabelStyle(LabelDisplayStyle style) {
         store.setValue(UNIT_LABEL_STYLE, style.name());
     }
@@ -1599,4 +1664,5 @@ public class GUIPreferences extends PreferenceStoreProxy {
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
     }
+
 }

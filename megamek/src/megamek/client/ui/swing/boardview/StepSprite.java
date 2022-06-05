@@ -114,39 +114,6 @@ class StepSprite extends Sprite {
 
         Color col = GUIP.getColorForMovement(step.getMovementType(isLastStep), isMASCOrSuperCharger, isBackwards);
 
-        // Choose the color according to the type of movement
-//        switch (step.getMovementType(isLastStep)) {
-//            case MOVE_RUN:
-//            case MOVE_VTOL_RUN:
-//            case MOVE_OVER_THRUST:
-//                if (step.isUsingMASC() || step.isUsingSupercharger()) {
-//                    col = GUIP.getColor("AdvancedMoveMASCColor");
-//                } else {
-//                    col = GUIP.getColor("AdvancedMoveRunColor");
-//                }
-//                break;
-//            case MOVE_JUMP:
-//                jumped = true;
-//                col = GUIP.getColor("AdvancedMoveJumpColor");
-//                break;
-//            case MOVE_SPRINT:
-//            case MOVE_VTOL_SPRINT:
-//                col = GUIP.getColor("AdvancedMoveSprintColor");
-//                break;
-//            case MOVE_ILLEGAL:
-//                col = GUIP.getColor("AdvancedMoveIllegalColor");
-//                break;
-//            default:
-//                if ((step.getType() == MoveStepType.BACKWARDS)
-//                        || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
-//                        || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
-//                    col = GUIP.getColor("AdvancedMoveBackColor");
-//                } else {
-//                    col = GUIP.getColor("AdvancedMoveDefaultColor");
-//                }
-//                break;
-//        }
-
         if (bv.game.useVectorMove()) {
             drawActiveVectors(step, graph);
         }

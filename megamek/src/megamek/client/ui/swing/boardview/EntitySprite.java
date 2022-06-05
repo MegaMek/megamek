@@ -780,11 +780,12 @@ class EntitySprite extends Sprite {
             }
 
             // TMM pips show if done in movement, or on all units during firing
-            if (!ge
+            int pipOption = guip.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
+            if ((pipOption != 0) && (!ge)
                     && ((entity.isDone() && bv.game.getPhase() == GamePhase.MOVEMENT)
                     || (bv.game.getPhase() == GamePhase.FIRING))) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
-                Color tmmColor = guip.getColorForMovement(entity.moved);
+                Color tmmColor = (pipOption == 1) ? Color.LIGHT_GRAY : guip.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
                 graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
                 if (tmm >= 0) {

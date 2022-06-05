@@ -17,7 +17,6 @@ import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.EntityMovementType;
-import megamek.common.MovePath;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -95,6 +94,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_USE_CAMO_OVERLAY = "AdvancedUseCamoOverlay";
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
+    public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
+
     /* --End advanced settings-- */
 
     public static final String SHOW_COORDS = "showCoords";
@@ -289,6 +290,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(150, 80, 80));  // medium dark red  
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(ADVANCED_WARNING_COLOR, Color.RED);
+        setDefault(ADVANCED_TMM_PIP_MODE, 2); // show pips with colors based on move type
         setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
         setDefault(ADVANCED_NO_SAVE_NAG, false);
         setDefault(ADVANCED_USE_CAMO_OVERLAY, true);

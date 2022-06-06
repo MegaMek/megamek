@@ -18,22 +18,20 @@
  */
 package megamek.client.ui.dialogs;
 
+import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.AlphaStrikeViewPanel;
+import megamek.client.ui.swing.MMToggleButton;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Entity;
+import megamek.common.alphaStrike.ASConverter;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Locale;
-
-import javax.swing.*;
-
-import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.AlphaStrikeViewPanel;
-import megamek.client.ui.swing.MMToggleButton;
-import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
-import megamek.common.alphaStrike.ASConverter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 
 public class AlphaStrikeStatsDialog extends AbstractDialog {
     
@@ -45,7 +43,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     private final JPanel centerPanel = new JPanel();
 
     public AlphaStrikeStatsDialog(JFrame frame, Collection<Entity> en) {
-        super(frame, "AlphaStrikeStatsDialog", "Ok.text");
+        super(frame, "AlphaStrikeStatsDialog", "AlphaStrikeStatsDialog.title");
         entities = en;
         initialize();
         UIUtil.adjustDialog(this);
@@ -103,22 +101,20 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         
         for (Entity entity: entities) {
             var element = ASConverter.convert(entity);
-                result.append(entity.getShortName());
-                result.append(element.getUnitType().toString());
-                result.append(element.getSize() + "");
-                result.append(element.getTargetMoveModifier()+"");
-                if (moveToggle.isSelected()) {
-                    result.append(""+element.getPrimaryMovementValue()/2);
-                } else {
-                    result.append(element.getMovementAsString());
-                }
-                result.append(UnitRoleHandler.getRoleFor(entity).toString());
-//                addGridElement(element.getDamage(0)+"/"+element.getDamage(1)+"/"+element.getDamage(2));
-                
-                result.append(element.calcHeatCapacity(entity)+"");
-                result.append(element.getFinalArmor() + "/" + element.getStructure());
-                result.append(element.getFinalPoints()+"");
-                result.append("?");
+//                result.append(entity.getShortName());
+//                result.append(element.getUnitType().toString());
+//                result.append(element.getSize() + "");
+//                result.append(element.getTargetMoveModifier()+"");
+//                if (moveToggle.isSelected()) {
+//                    result.append("" + element.getPrimaryMovementValue()/2);
+//                } else {
+//                    result.append(element.getMovementAsString());
+//                }
+//                result.append(UnitRoleHandler.getRoleFor(entity).toString());
+//                result.append(element.calcHeatCapacity(entity)+"");
+//                result.append(element.getFinalArmor() + "/" + element.getStructure());
+//                result.append(element.getFinalPoints()+"");
+//                result.append("?");
             Locale cl = Locale.getDefault();
             NumberFormat numberFormatter = NumberFormat.getNumberInstance(cl);
 //            result.append(numberFormatter.format(entity.getWeight())).append("\t");

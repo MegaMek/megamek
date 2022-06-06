@@ -284,10 +284,9 @@ final class ASMovementConverter {
 
         int base = element.getPrimaryMovementValue();
         if (element.isInfantry()) {
-            for (String moveMode : element.movement.keySet()) {
+            for (String moveMode : element.getMovementModes()) {
                 if (!moveMode.equals("f")) {
-                    base = element.movement.get(moveMode);
-
+                    base = element.getMovement(moveMode);
                     break;
                 }
             }

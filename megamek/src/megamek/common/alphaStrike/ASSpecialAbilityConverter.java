@@ -492,7 +492,7 @@ final class ASSpecialAbilityConverter {
             element.addSPA(SRCH);
         }
 
-        if ((element.getUnitType() == SC) || (element.getUnitType() == DS)) {
+        if (element.isAnyTypeOf(SC, DS, DA)) {
             if (element.getSize() == 1) {
                 element.addSPA(LG);
             } else if (element.getSize() == 2) {

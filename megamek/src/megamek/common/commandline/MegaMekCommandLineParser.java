@@ -111,9 +111,6 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                     case OUL:
                         processUnitExporter(true);
                         break;
-                    case BFC:
-                        processUnitBattleForceConverter();
-                        break;
                     case ASC:
                         processUnitAlphaStrikeConverter();
                         break;
@@ -249,45 +246,6 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         } else {
             throw new ParseException("\"chassis model\" expected as input");
         }
-        System.exit(0);
-    }
-
-    private void processUnitBattleForceConverter() {
-        String filename;
-        if (getTokenType() == TOK_LITERAL) {
-            filename = getTokenValue();
-            nextToken();
-
-            if (!new File("./docs").exists()) {
-                if (!new File("./docs").mkdir()) {
-                    LogManager.getLogger().error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologise. "
-                                    + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
-                                    + " and we will try to resolve your issue.");
-                }
-            }
-            File file = new File("./docs/" + filename);
-            try (Writer w = new FileWriter(file); BufferedWriter fw = new BufferedWriter(w)) {
-                fw.write("Megamek Unit BattleForce Converter");
-                fw.newLine();
-                fw.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
-                fw.newLine();
-                fw.write("Element\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilities");
-                fw.newLine();
-
-                MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
-                for (MechSummary unit : units) {
-                    Entity entity = new MechFileParser(unit.getSourceFile(),
-                            unit.getEntryName()).getEntity();
-
-                    AlphaStrikeElement bfe = ASConverter.convert(entity);
-                    bfe.writeCsv(fw);
-                }
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
-            }
-        }
-
         System.exit(0);
     }
 

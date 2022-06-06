@@ -35,6 +35,9 @@ public class ASDamage {
     /** True if this is minimal damage, i.e. 0*  */
     public final boolean minimal;
 
+    /** A constant that represents zero damage. May be used as a return value instead of null. */
+    public static final ASDamage ZERO = new ASDamage(0, false);
+
     /**
      * Creates an AlphaStrike damage value that may be minimal damage, i.e. 0*.
      * When 0 < damageValue < 0.5, the result will be minimal damage.

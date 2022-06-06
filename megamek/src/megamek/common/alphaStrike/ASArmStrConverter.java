@@ -131,9 +131,9 @@ final class ASArmStrConverter {
 
         if (entity instanceof Aero) {
             int arcs = entity.isFighter() ? 1 : 4;
-            int threshold = ASConverter.roundUp((double) element.getFinalArmor() / 3 / arcs);
+            int threshold = ASConverter.roundUp((double) element.getArmor() / 3 / arcs);
             report.addLine("Threshold",
-                    "Armor " + element.getFinalArmor() + " / 3 / " + arcs + " (#Arcs), round up",
+                    "Armor " + element.getArmor() + " / 3 / " + arcs + " (#Arcs), round up",
                     "= ", threshold);
             return threshold;
         } else {

@@ -86,19 +86,19 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getChassis());
         stats.add(element.getModel());
         stats.add(element.getRole().toString());
-        stats.add(element.getUnitType().toString());
+        stats.add(element.getType().toString());
         stats.add(element.getSize() + "");
         stats.add(element.getMovementAsString());
-        stats.add(element.getFinalArmor() + "");
+        stats.add(element.getArmor() + "");
         stats.add(element.getStructure() + "");
-        stats.add(element.usesThreshold() ? element.getFinalThreshold() + "" : " ");
+        stats.add(element.usesThreshold() ? element.getThreshold() + "" : " ");
         if (element.usesSML()) {
             stats.add(element.getStandardDamage() + "");
         } else if (element.usesSMLE()) {
             stats.add(element.getStandardDamage() + "");
         }
         stats.add(element.getOverheat() + "");
-        stats.add(element.getFinalPoints()+"");
+        stats.add(element.getPointValue()+"");
         stats.add(element.getSpecialsString());
         stats.add(element.getMulId() + "");
         stats.add("\n");

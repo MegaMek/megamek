@@ -19,5 +19,5 @@
 package megamek.common.alphaStrike;
 
 public enum ASArcs {
-    Front, Left, Right, Rear
+    FRONT, LEFT, RIGHT, REAR
 }

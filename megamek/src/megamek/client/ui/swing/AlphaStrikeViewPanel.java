@@ -31,7 +31,6 @@ import megamek.common.alphaStrike.ASConverter;
 
 public class AlphaStrikeViewPanel extends JPanel {
     
-    public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
     public static final int COLS = 13;
 
@@ -56,21 +55,21 @@ public class AlphaStrikeViewPanel extends JPanel {
             boolean oddRow = (row++ % 2) == 1;
             var element2 = ASConverter.convert(entity, includePilot);
             addGridElement(entity.getShortName(), oddRow, JComponent.LEFT_ALIGNMENT);
-            addGridElement(element2.getUnitType().toString(), oddRow);
+            addGridElement(element2.getType().toString(), oddRow);
             addGridElement(element2.getSize() + "", oddRow);
-            addGridElement(element2.getTMM()+"", oddRow);
+            addGridElement(element2.getTMM() + "", oddRow);
             if (hexMovement) {
-                addGridElement(""+element2.getPrimaryMovementValue()/2, oddRow);
+                addGridElement(element2.getPrimaryMovementValue() / 2 + "", oddRow);
             } else {
                 addGridElement(element2.getMovementAsString(), oddRow);
             }
             addGridElement(UnitRoleHandler.getRoleFor(entity).toString(), oddRow);
             addGridElement(element2.getStandardDamage() + "", oddRow);
             addGridElement(element2.getOverheat() + "", oddRow);
-            addGridElement(element2.getFinalArmor() + " / " + element2.getStructure(), oddRow);
-            addGridElement(element2.usesThreshold() ? element2.getFinalThreshold() + "" : " ", oddRow);
+            addGridElement(element2.getArmor() + " / " + element2.getStructure(), oddRow);
+            addGridElement(element2.usesThreshold() ? element2.getThreshold() + "" : " ", oddRow);
             addGridElement(element2.getSkill() + "", oddRow);
-            addGridElement(element2.getFinalPoints() + "", oddRow);
+            addGridElement(element2.getPointValue() + "", oddRow);
             addGridElement(element2.getSpecialsString(), oddRow, JComponent.LEFT_ALIGNMENT);
         }
 

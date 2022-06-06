@@ -42,7 +42,7 @@ final class ASDamageConverter {
     };
 
     static void convertDamage(Entity entity, AlphaStrikeElement result) {
-        double[] baseDamage = new double[result.rangeBands];
+        double[] baseDamage = new double[result.getRangeBands()];
         boolean hasTC = entity.hasTargComp();
         int[] ranges;
         double pointDefense = 0;
@@ -244,14 +244,14 @@ final class ASDamageConverter {
                 for (int index : mount.getBayWeapons()) {
                     Mounted m = entity.getEquipment(index);
                     if (m.getType() instanceof WeaponType) {
-                        for (int r = 0; r < result.rangeBands; r++) {
+                        for (int r = 0; r < result.getRangeBands(); r++) {
                             baseDamage[r] += ((WeaponType)m.getType()).getBattleForceDamage(ranges[r], m.getLinkedBy());
                             result.heat[r] += ((WeaponType)m.getType()).getBattleForceHeatDamage(ranges[r]);
                         }
                     }
                 }
             } else {
-                for (int r = 0; r < result.rangeBands; r++) {
+                for (int r = 0; r < result.getRangeBands(); r++) {
                     if (entity instanceof BattleArmor) {
                         baseDamage[r] = baseDamage[r] = getBattleArmorDamage(weapon, ranges[r], ((BattleArmor)entity),
                                 mount.isAPMMounted());
@@ -293,7 +293,7 @@ final class ASDamageConverter {
                 if (locMultiplier == 0) {
                     continue;
                 }
-                for (int r = 0; r < result.rangeBands; r++) {
+                for (int r = 0; r < result.getRangeBands(); r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
 //                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": " + dam + " Mul: " + damageModifier);
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
@@ -373,9 +373,9 @@ final class ASDamageConverter {
             result.addSPA(HT, ASDamageVector.createNormRndDmg(htS, htM, htL));
         }
 
-        // IF
+        // IF (uses an ASDamage as value)
         if (result.weaponLocations[0].getIF() > 0) {
-            result.addSPA(IF, ASDamageVector.createNormRndDmg(result.weaponLocations[0].getIF()));
+            result.addSPA(IF, ASDamageVector.createNormRndDmg(result.weaponLocations[0].getIF()).S);
         }
 
         // LRM ... IATM specials
@@ -390,10 +390,10 @@ final class ASDamageConverter {
                 if (spa == SRM) {
                     result.addSPA(SRM, ASDamageVector.createNormRndDmgNoMin(dmg, 2));
                 } else if ((spa == LRM) || (spa == AC) || (spa == IATM)) {
-                    result.addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, result.rangeBands));
+                    result.addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, result.getRangeBands()));
                 } else if ((spa == FLK) || (spa == TOR)) {
 //                    System.out.println(spa.toString() + ": " + dmg);
-                    result.addSPA(spa, ASDamageVector.createNormRndDmg(dmg, result.rangeBands));
+                    result.addSPA(spa, ASDamageVector.createNormRndDmg(dmg, result.getRangeBands()));
                 } else if (spa == REL) {
                     result.addSPA(spa);
                 }
@@ -408,15 +408,15 @@ final class ASDamageConverter {
         // Standard damage
 
 //        result.weaponLocations[0].standardDamage.forEach(System.out::println);
-        result.standardDamage = ASDamageVector.createUpRndDmg(
-                result.weaponLocations[0].standardDamage, result.rangeBands);
+        result.setStandardDamage(ASDamageVector.createUpRndDmg(
+                result.weaponLocations[0].standardDamage, result.getRangeBands()));
 
         // REAR damage
         int rearLoc = getRearLocation(result);
         if (rearLoc != -1 && result.weaponLocations[rearLoc].hasDamage()) {
             // Double check; Moray Heavy Attack Sub has only LTR in the rear leading to REAR-/-/- otherwise
             ASDamageVector rearDmg = ASDamageVector.createNormRndDmg(
-                    result.weaponLocations[rearLoc].standardDamage, result.rangeBands);
+                    result.weaponLocations[rearLoc].standardDamage, result.getRangeBands());
             if (rearDmg.hasDamage()) {
                 result.addSPA(REAR, rearDmg);
             }
@@ -429,7 +429,7 @@ final class ASDamageConverter {
             if (turretsArcs.containsKey(result.locationNames[loc])) {
                 ASArcSummary arcTurret = turretsArcs.get(result.locationNames[loc]);
                 arcTurret.setStdDamage(ASDamageVector.createUpRndDmgMinus(result.weaponLocations[loc].standardDamage,
-                        result.rangeBands));
+                        result.getRangeBands()));
                 for (int i = WeaponType.BFCLASS_LRM; i <= WeaponType.BFCLASS_REL; i++) {
                     BattleForceSPA spa = BattleForceSPA.getSPAForDmgClass(i);
                     List<Double> dmg = result.weaponLocations[loc].specialDamage.get(i);
@@ -437,9 +437,9 @@ final class ASDamageConverter {
                         if (spa == SRM) {
                             arcTurret.addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, 2));
                         } else if ((spa == LRM) || (spa == TOR) || (spa == AC) || (spa == IATM)) {
-                            arcTurret.addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, result.rangeBands));
+                            arcTurret.addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, result.getRangeBands()));
                         } else if (spa == FLK) {
-                            arcTurret.addSPA(spa, ASDamageVector.createNormRndDmg(dmg, result.rangeBands));
+                            arcTurret.addSPA(spa, ASDamageVector.createNormRndDmg(dmg, result.getRangeBands()));
                         } else if (spa == REL) {
                             arcTurret.addSPA(spa);
                         }
@@ -587,11 +587,11 @@ final class ASDamageConverter {
         }
         double nonRounded = element.weaponLocations[0].standardDamage.get(RANGE_BAND_MEDIUM);
 //        System.out.println("Total M damage before heat adjust: " + nonRounded);
-        element.overheat = Math.min(heatDelta(nonRounded, heatCapacity, totalFrontHeat), 4);
+        element.setOverheat(Math.min(heatDelta(nonRounded, heatCapacity, totalFrontHeat), 4));
 //        System.out.println("Total M damage before heat adjust: " + nonRounded);
 
         // Determine OVL from long range damage and heat
-        if (element.overheat > 0 && element.usesOVL()) {
+        if (element.getOverheat() > 0 && element.usesOVL()) {
             double heatLong = getHeatGeneration(entity, element, false, true);
 //            System.out.println("Long Range Heat: " + heatLong);
             if (heatLong - 4 > heatCapacity) {
@@ -609,7 +609,7 @@ final class ASDamageConverter {
         double rearHeat = getHeatGeneration(entity, element,true, false);
         double rearAdjustment = rearHeat - 4 > heatCapacity ? heatCapacity / (rearHeat - 4) : 1;
         for (int loc = 0; loc < element.weaponLocations.length; loc++) {
-            AlphaStrikeElement.WeaponLocation wloc = element.weaponLocations[loc];
+            ASConverter.WeaponLocation wloc = element.weaponLocations[loc];
             double adjustment = element.locationNames[loc].equals("REAR") ? rearAdjustment : frontadjustment;
             for (int i = 0; i < Math.min(maxAdjustmentRange, wloc.standardDamage.size()); i++) {
                 wloc.standardDamage.set(i, heatAdjust(wloc.standardDamage.get(i), adjustment));

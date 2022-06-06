@@ -34,13 +34,15 @@ import java.util.stream.Collectors;
 import java.lang.String;
 
 /**
- * Primarily concerned with calculating AlphaStrike values for an undamaged entity, and exporting
- * stats in csv form.
-
- * @author Neoancient
+ * This class represents an AlphaStrike Element which is a single unit such as a Mek with
+ * AlphaStrike values such as S, M, L damage and a single Armor and Structure value.
  *
+ * @author Neoancient
+ * @author Simon (Juliez)
  */
 public class AlphaStrikeElement {
+
+    public static final String INCH = "\"";
 
     static final int RANGEBANDS_SML = 3;
     static final int RANGEBANDS_SMLE = 4;
@@ -57,58 +59,57 @@ public class AlphaStrikeElement {
     public static final int LONG_RANGE = STANDARD_RANGES[RANGE_BAND_LONG];
     public static final int EXTREME_RANGE = STANDARD_RANGES[RANGE_BAND_EXTREME];
 
-    protected String name;
-    protected String chassis;
-    protected String model;
-    protected UnitRole role;
-    protected int size;
-    protected Map<String,Integer> movement = new LinkedHashMap<>();
-    protected int tmm;
+    //TODO: When used for gameplay, original values are probably required for any values that can change
+    //TODO: Maybe add a copy of the original AS element instead of duplicated fields?
+
+    /** The unit's display name; may include a duplicate unit marker such as "#2". */
+    private String name;
+
+    private String chassis;
+    private String model;
+    private int mulId = -1;
+    private int pointValue;
+
+    private ASUnitType asUnitType;
+    private int size;
+    private int tmm;
+    private Map<String,Integer> movement = new LinkedHashMap<>();
+    private UnitRole role;
+    private int skill = 4;
 
     /**
      * The normal damage values of a ground unit (S/M/L) or fighter (S/M/L/E).
-     * Spaceships and LG support vehicles use arcDamage instead.
+     * Large Aerospace and large SV use the arcs field instead.
      */
-    protected ASDamageVector standardDamage;
+    private ASDamageVector standardDamage;
+    private int overheat;
 
-    protected int overheat;
-    protected double armor;
-    protected double threshold = -1;
-    protected int structure;
-    protected int rangeBands = RANGEBANDS_SML;
-    protected WeaponLocation[] weaponLocations;
-    protected String[] locationNames;
-    protected int[] heat;
-    protected double points;
-    protected EnumMap<BattleForceSPA,Integer> specialAbilities = new EnumMap<>(BattleForceSPA.class);
-    
-    // AP weapon mounts have a set damage value.
-    static final double AP_MOUNT_DAMAGE = 0.05;
+    /**
+     * The multiple arced damage value groups and specials of spaceships, MSs and large SVs.
+     * Ground units and fighters use standardDamage instead.
+     */
+    private EnumMap<ASArcs, ASArcSummary> arcs = new EnumMap<>(ASArcs.class);
 
-    private int mulId = -1;
-    protected ASUnitType asUnitType;
-    
-    /** 
-     * NEW Version
+    private int armor;
+    private int structure;
+    private int threshold = -1;
+
+    /**
      * This covers all SpAs, including the damage values such as SRM2/2.
      * SpAs not associated with a number, e.g. RCN, have null assigned as Object.
      * SpAs associated with a number, such as MHQ5 (but not IF2), have an Integer or Double as Object.
-     * SpAs assoicated with one or more damage numbers, such as IF2 or AC2/2/-, 
-     * have an ASDamageVector or ASDamage as Object. 
-     * TUR has a List<List<Object>> wherein each List<Object> contains a 
+     * SpAs assoicated with one or more damage numbers, such as IF2 or AC2/2/-,
+     * have an ASDamageVector or ASDamage as Object.
+     * TUR has a List<List<Object>> wherein each List<Object> contains a
      * ASDamageVector as the first item and a Map<BattleForceSPA, ASDamageVector> as the second item.
      * This represents multiple turrets, each with a standard damage value and SpA damage values.
      * If TUR is present, none of the objects is null and the outer List must contain one item (one turret)
      * with standard damage at least.
-     * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field. 
+     * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
      */
-    protected EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
-    
-    /** 
-     * The multiple arced damage value groups and specials of spaceships, MSs and large SVs.
-     * Ground units and fighters use standardDamage instead. 
-     */
-    public EnumMap<ASArcs, ASArcSummary> arcs = new EnumMap<>(ASArcs.class);
+    private EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
+
+    protected int[] heat; //TODO: whats this?
 
     /**
      * AlphaStrike Quirks.
@@ -117,32 +118,180 @@ public class AlphaStrikeElement {
      */
     private Quirks quirks = new Quirks();
 
+    // The following are used during conversion from TW to AS
+    protected ASConverter.WeaponLocation[] weaponLocations;
+    protected String[] locationNames;
+
+    /** @return The AS element's chassis, such as "Atlas". */
+    public String getChassis() {
+        return chassis;
+    }
+
+    /** @return The AS element's model, such as "AS7-D". */
+    public String getModel() {
+        return model;
+    }
+
+    /** @return The AS element's battlefield role (ROLE). */
+    public UnitRole getRole() {
+        return role;
+    }
+
+    /** @return The AS element's display name, including duplicate markers such as "#2". */
+    public String getName() {
+        return name;
+    }
+
+    /** @return The AS element's size (SZ). */
     public int getSize() {
         return size;
     }
 
+    /** @return The AS element's Target Movement Modifier (TMM). */
+    public int getTMM() {
+        return tmm;
+    }
 
+    /** @return The TW quirks of this AS element (currently not converted to AS quirks). */
     public Quirks getQuirks() {
         return quirks;
+    }
+
+    /** @return The AS element's Pilot Skill (SKILL). Unless another skill has been set, this is 4. */
+    public int getSkill() {
+        return skill;
+    }
+
+    /** @return The AS element's type (TP), e.g. BM or CV. */
+    public ASUnitType getType() {
+        return asUnitType;
+    }
+
+    /** @return The AS element's extra Overheat Damage capability (OV) (not the current heat buildup). */
+    public int getOverheat() {
+        return overheat;
+    }
+
+    /** @return The AS element's Point Value (PV). This is not adjusted for damage. */
+    public int getPointValue() {
+        return pointValue;
+    }
+
+    /** @return The AS element's current Armor (A).*/
+    public int getArmor() {
+        return armor;
+    }
+
+    /** @return The AS element's Threshold (TH). Returns -1 for elements that don't use Threshold. */
+    public int getThreshold() {
+        return threshold;
+    }
+
+    /** @return The AS element's current Structure (S).*/
+    public int getStructure() {
+        return structure;
+    }
+
+    /** @return The AS element's entire movement capability (MV). */
+    public Map<String, Integer> getMovement() {
+        return movement;
+    }
+
+    /**
+     * @return The movement value (in inches where applicable) for the given movement mode key such as "" or "j".
+     * Returns 0 when the unit does not have the given movement mode.
+     */
+    public int getMovement(String mode) {
+        return movement.getOrDefault(mode, 0);
+    }
+
+    public int getRangeBands() {
+        return usesSML() ? RANGEBANDS_SML : RANGEBANDS_SMLE;
     }
 
     public void setQuirks(Quirks quirks) {
         this.quirks = quirks;
     }
 
+    /** @return True if this element has the given quirk. */
     public boolean hasQuirk(String name) {
         return quirks.booleanOption(name);
     }
 
-    public int getSkill() {
-        return skill;
+    /** Sets the AS element's chassis to the given value, such as "Atlas". */
+    public void setChassis(String newChassis) {
+        chassis = newChassis;
     }
 
-    public void setSkill(int skill) {
-        this.skill = skill;
+    /** Sets the AS element's model to the given value, such as "AS7-D". */
+    public void setModel(String newModel) {
+        model = newModel;
     }
 
-    private int skill = 4;
+    /** Sets the AS element's battlefield role (ROLE). */
+    public void setRole(UnitRole newRole) {
+        role = newRole;
+    }
+
+    /** Sets the AS element's display name. */
+    public void setName(String newName) {
+        name = newName;
+    }
+
+    /** Sets the AS element's size (SZ). */
+    public void setSize(int newSize) {
+        size = newSize;
+    }
+
+    /** Sets the AS element's Target Movement Modifier (TMM). */
+    public void setTMM(int newTMM) {
+        tmm = newTMM;
+    }
+
+    /** Sets the AS element's Pilot Skill (SKILL). */
+    public void setSkill(int newSkill) {
+        skill = newSkill;
+    }
+
+    /** Sets the AS element's type (TP), e.g. BM or CV. */
+    public void setType(ASUnitType newType) {
+        asUnitType = newType;
+    }
+
+    /** Sets the AS element's extra Overheat Damage capability (OV) (not the current heat buildup). */
+    public void setOverheat(int newOV) {
+        overheat = newOV;
+    }
+
+    /** Sets the AS element's Point Value (PV). */
+    public void setPointValue(int newPointValue) {
+        pointValue = newPointValue;
+    }
+
+    /** Sets the AS element's current Armor (A).*/
+    public void setArmor(int newArmor) {
+        armor = newArmor;
+    }
+
+    /** Sets the AS element's Threshold (TH). */
+    public void setThreshold(int newThreshold) {
+        threshold = newThreshold;
+    }
+
+    /** Sets the AS element's current Structure (S). */
+    public void setStructure(int newStructure) {
+        structure = newStructure;
+    }
+
+    /** Sets the AS element's movement (MV). */
+    public void setMovement(Map<String, Integer> newMovement) {
+        movement = newMovement;
+    }
+
+    /** Sets the AS element's standard damage (SML or SMLE, but not arc damage). */
+    public void setStandardDamage(ASDamageVector newDamage) {
+        standardDamage = newDamage;
+    }
 
     public AlphaStrikeElement() {
         
@@ -270,151 +419,78 @@ public class AlphaStrikeElement {
     public void addBimSPA(Map<String, Integer> specialMoves) {
         specialUnitAbilities.put(BIM, specialMoves);
     }
-    
+
+    /** @return True if this AS element uses three range bands S, M and L (equivalent to {@link #isGround()}). */
     public boolean usesSML() {
-        return rangeBands == RANGEBANDS_SML;
+        return isGround();
     }
-    
+
+    /** @return True if this AS element uses four range bands S, M, L and E (equivalent to {@link #isAerospace()}). */
     public boolean usesSMLE() {
-        return rangeBands == RANGEBANDS_SMLE;
+        return isAerospace();
     }
-    
+
+    /**
+     * @return The standard damage (SML or SMLE depending on type). This will be empty for
+     * elements that use arcs.
+     */
     public ASDamageVector getStandardDamage() {
         return standardDamage;
     }
-    
+
+    /**
+     * @return True when this AS element has the given Special Unit Ability. When the element has
+     * the spa and the spa is associated with some value, this value can be assumed to be non-empty
+     * or greater than zero. E.g., if an element has the MHQ spa, then MHQ >= 1. If it has IF, then
+     * the IF value is at least 0*.
+     */
     public boolean hasSPA(BattleForceSPA spa) {
         return specialUnitAbilities.containsKey(spa);
     }
-    
+
+    /**
+     * Removes the given Special Unit Ability from the element.
+     *
+     * @param spa The SPA to remove
+     */
     public void removeSPA(BattleForceSPA spa) {
         specialUnitAbilities.remove(spa);
     }
-    
+
+    /** @return True when this AS element has at least one of the given Special Unit Abilities. */
     public boolean hasAnySPAOf(BattleForceSPA spa, BattleForceSPA... furtherSPAs) {
-        if (hasSPA(spa)) {
-            return true;
-        }
-        for (BattleForceSPA furtherSPA : furtherSPAs) {
-            if (hasSPA(furtherSPA)) {
-                return true;
-            }
-        }
-        return false;
+        return hasSPA(spa) || Arrays.stream(furtherSPAs).anyMatch(this::hasSPA);
     }
 
-//    protected void initWeaponLocations(Entity en) {
-//        weaponLocations = new WeaponLocation[en.getNumAlphaStrikeWeaponsLocations()];
-//        locationNames = new String[weaponLocations.length];
-//        for (int loc = 0; loc < locationNames.length; loc++) {
-//            weaponLocations[loc] = new WeaponLocation();
-//            locationNames[loc] = en.getAlphaStrikeLocationName(loc);
-//            if (locationNames[loc].length() > 0) {
-//                locationNames[loc] += ":";
-//            }
-//        }
-//    }
-    
-    protected double locationMultiplier(Entity en, int loc, Mounted mount) {
-    	return en.getAlphaStrikeLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
-    }
-    
-//    protected void computeMovement(Entity en) {
-//    	en.setAlphaStrikeMovement(movement);
-//    }
-    
+    /**
+     * @return The formatted String for the complete movement capability of this AS element, e.g. 4"/6"j. This
+     * includes all movement modes of the element.
+     */
     public String getMovementAsString() {
     	return movement.entrySet().stream().map(this::moveString).collect(joining("/"));    	
     }
     
-    /** Returns the formatted String for a single movement type, e.g. 4a or 12"j. */
-    private String moveString(Entry<String, Integer> move) {
-        if (move.getKey().equals("k")) {
-            return "0." + move.getValue() + "k";
-        } else if (move.getKey().equals("a")) {
-            return move.getValue() + "a";
-        } else if (move.getKey().equals("p")) {
-            return move.getValue() + "p";
-        } else if (isAnyTypeOf(DS, WS, DA, JS, SS) && move.getKey().isBlank()) {
-            return move.getValue() + "";
+    /** @return The formatted String for a single movement mode entry, e.g. 4a or 12"j. */
+    private String moveString(Entry<String, Integer> moveMode) {
+        if (moveMode.getKey().equals("k")) {
+            return "0." + moveMode.getValue() + "k";
+        } else if (moveMode.getKey().equals("a")) {
+            return moveMode.getValue() + "a";
+        } else if (moveMode.getKey().equals("p")) {
+            return moveMode.getValue() + "p";
+        } else if (isAnyTypeOf(DS, WS, DA, JS, SS) && moveMode.getKey().isBlank()) {
+            return moveMode.getValue() + "";
         } else {
-            return move.getValue() + "\"" + move.getKey();
+            return moveMode.getValue() + INCH + moveMode.getKey();
         }
     }
-    
-    public int getTMM() {
-        return tmm;
-    }
-    
-    public int getTargetMoveModifier() {
-    	int base = getPrimaryMovementValue();
-    	if (base > 34) {
-    		return 5;
-    	} else if (base > 18) {
-    		return 4;
-    	} else if (base > 12) {
-    		return 3;
-    	} else if (base > 8) {
-    		return 2;
-    	} else if (base > 4) {
-    		return 1;
-    	}
-    	return 0;
-    }
-    
-    protected static final int[] TROOP_FACTOR = {
-        0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6,
-        7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
-        13, 14, 15, 16, 16, 17, 17, 17, 18, 18
-    };
-    
-    protected double getConvInfantryStandardDamage(int range, Infantry inf) {
-        if (inf.getPrimaryWeapon() == null) {
-            return inf.getDamagePerTrooper() * TROOP_FACTOR[Math.min(inf.getShootingStrength(), 30)]
-                    / 10.0;
-        } else {
-            return 0;
-        }
-    }
-    
-    protected double getBattleArmorDamage(WeaponType weapon, int range, BattleArmor ba, boolean apmMount) {
-        double dam = 0;
-        if (apmMount) {
-            if (range == 0) {
-                dam = AP_MOUNT_DAMAGE;
-            }
-        } else {
-            dam = weapon.getBattleForceDamage(range);
-        }
-        return dam * (TROOP_FACTOR[Math.min(ba.getShootingStrength(), 30)] + 0.5);        
-    }
-    
-    public ASUnitType getUnitType() {
-        return asUnitType;
-    }
-    
-    //TODO: Override calculatePointValue(Entity en)
 
-    public String getASDamageString(int loc) {
-    	return getASDamageString(loc, true);
-    }
-    
-    public String getSMLDamageString() {
-        if (!usesSML()) {
-            return "Error: this AlphaStrike element does not use the S/M/L damage format!";
-        }
-        if (!weaponLocations[0].hasDamage()) {
-            return "";
-        }
-        StringBuilder str = new StringBuilder(locationNames[0]);
-        str.append(weaponLocations[0].formatDamageRounded(true));
-        return str.toString();
-    }
-    
-    public int getOverheat() {
-        return overheat;
-    }
-    
+    /**
+     * Returns a formatted SPA string for this AS element. The string is formatted in the way SPAs are
+     * printed on an AS element's card or summary.
+     *
+     * @return A formatted Special Unit Ability string for this AS element
+     */
     public String getSpecialsString() {
         return specialUnitAbilities.keySet().stream()
                 .filter(this::showSpecial)
@@ -422,20 +498,35 @@ public class AlphaStrikeElement {
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(","));
     }
-    
-    public boolean hasIF() {
-        return weaponLocations[0].getIF() > 0; 
+
+    /**
+     * Convenience method to obtain the element's IF damage.
+     *
+     * @return The ASDamage that represents the element's IF value. If the element does not
+     * have IF, this will return ASDamage.ZERO.
+     */
+    public ASDamage getIF() {
+        return hasSPA(IF) ? (ASDamage) getSPA(IF) : ASDamage.ZERO;
+    }
+
+    /**
+     * Convenience method to obtain the element's LRM ability.
+     *
+     * @return The ASDamageVector that represents the element's LRM ability. If the element does not
+     * have LRM, this will return {@link ASDamageVector#ZERO}.
+     */
+    public ASDamageVector getLRM() {
+        return hasSPA(LRM) ? (ASDamageVector) getSPA(LRM) : ASDamageVector.ZERO;
     }
     
-    public int getIF() {
-        return (int)Math.round(weaponLocations[0].getIF());
-    }
-    
-    public boolean isMinimalIF() {
-        return weaponLocations[0].getIF() < 0.5 && weaponLocations[0].getIF() > 0;
-    }
-    
-    
+    /**
+     * Returns true if the given Special Unit Ability should be shown on this AS element's card or summary.
+     * This is usually true but false for some, e.g. BM automatically have SOA and do not need to
+     * show this on the unit card.
+     *
+     * @param spa The Special Unit Ability to check
+     * @return True when the given Special Unit Ability should be listed on the element's card
+     */
     public boolean showSpecial(BattleForceSPA spa) {
         if (isAnyTypeOf(BM, PM) && (spa == SOA)) {
             return false;
@@ -452,147 +543,57 @@ public class AlphaStrikeElement {
         return true;
     }
 
+    /** @return True when this AS element has the Auto-Seal Special Unit Ability. */
     public boolean hasAutoSeal() {
         return isSubmarine()
                 || isAnyTypeOf(BM, AF, SC, DS, JS, WS, SS, DA);
-//                || isType(BA) Exoskeleton??
+                // TODO               || isType(BA) Exoskeleton??
     }
 
+    /**
+     * Returns true when this AS element is a submarine. This checks if it is a combat vehicle
+     * and has the "s" primary movement type.
+     *
+     * @return True when this AS element is as a submarine
+     */
     public boolean isSubmarine() {
         return isType(CV) && getPrimaryMovementType().equals("s");
     }
-   
-    
-    public String getASDamageString(int loc, boolean showIfNoDamage) {
-    	if (!weaponLocations[loc].hasDamage()) {
-    		return "";
-    	}
-        StringBuilder str = new StringBuilder(locationNames[loc]);
-        if (locationNames[loc].length() > 0) {
-            str.append("(");
-        }
-        str.append(weaponLocations[loc].formatDamageRounded(true));
-        for (int i = WeaponType.BFCLASS_CAPITAL; i < WeaponType.BFCLASS_NUM; i++) {
-            if (weaponLocations[loc].hasDamageClass(i)) {
-                str.append(";").append(WeaponType.BF_CLASS_NAMES[i])
-                    .append(weaponLocations[loc].formatDamageRounded(i, true));
-            }
-        }
-        for (int i = 1; i < WeaponType.BFCLASS_CAPITAL; i++) {
-            if (weaponLocations[loc].hasDamageClass(i)) {
-                str.append(";").append(WeaponType.BF_CLASS_NAMES[i])
-                    .append(weaponLocations[loc].formatDamageRounded(i, true));
-            }
-        }
-        if (weaponLocations[loc].getIF() >= 0.5) {
-            str.append(";IF").append((int)Math.round(weaponLocations[loc].getIF()));
-        }
-        if (locationNames[loc].length() > 0) {
-            str.append(")");
-        }
-        return str.toString();
-    }
-    
-//    public void writeCsv(BufferedWriter w) throws IOException {
-//        w.write(name);
-//        w.write("\t");
-//        w.write(asUnitType.toString());
-//        w.write("\t");
-//        w.write(Integer.toString(size));
-//        w.write("\t");
-//        w.write(getMovementAsString());
-//        w.write("\t");
-//        w.write(Integer.toString((int)Math.round(armor)));
-//        if (threshold >= 0) {
-//            w.write("-" + (int)Math.ceil(threshold));//TODO: threshold
-//        }
-//        w.write("\t");
-//        w.write(Integer.toString(structure));
-//        w.write("\t");
-//        StringJoiner sj = new StringJoiner(", ");
-//        for (int loc = 0; loc < weaponLocations.length; loc++) {
-//            StringBuilder str = new StringBuilder();
-//            String damStr = getASDamageString(loc, false);
-//            if (damStr.length() > 0) {
-//                str.append(damStr);
-//                sj.add(str.toString());
-//            }
-//        }
-//        if (sj.length() > 0) {
-//            w.write(sj.toString());
-//        } else {
-//            w.write(rangeBands > 3? "0/0/0/0" : "0/0/0");
-//        }
-//        w.write("\t");
-//        sj = new StringJoiner(", ");
-//        for (int loc = 0; loc < weaponLocations.length; loc++) {
-//            if (weaponLocations[loc].getOverheat() >= 1) {
-//                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat())));
-//            }
-//        }
-//        if (sj.length() > 0) {
-//            w.write(sj.toString());
-//        } else {
-//            w.write("-");
-//        }
-//        w.write("\t");
-//        w.write(Integer.toString(getFinalPoints()));
-//        w.write("\t");
-//        w.write(specialAbilities.keySet().stream()
-//                .filter(spa -> spa.usedByAlphaStrike()
-//                        && !spa.isDoor())
-//                .map(spa -> formatSPAString(spa))
-//                .collect(Collectors.joining(", ")));
-//        w.newLine();
-//    }
 
     public void writeCsv(BufferedWriter w) throws IOException {
-        w.write(name);
+        w.write(getName());
         w.write("\t");
-        w.write(asUnitType + "");
+        w.write(getType() + "");
         w.write("\t");
-        w.write(size + "");
+        w.write(getSize() + "");
         w.write("\t");
         w.write(getMovementAsString());
         w.write("\t");
         w.write(getTMM() + "");
         w.write("\t");
-        w.write(getFinalArmor() + "");
+        w.write(getArmor() + "");
         w.write("\t");
-        w.write(getFinalThreshold() + "");
+        w.write(getThreshold() + "");
         w.write("\t");
-        w.write(structure + "");
+        w.write(getStructure() + "");
         w.write("\t");
         w.write(getStandardDamage() + "");
         w.write("\t");
         w.write(getOverheat() + "");
         w.write("\t");
-        w.write(getFinalPoints() + "");
+        w.write(getPointValue() + "");
         w.write("\t");
         w.write(getSpecialsString());
         w.newLine();
     }
 
-    public int getFinalPoints() {
-        return Math.max(1, (int) Math.round(points));
-    }
-
-    public int getFinalArmor() {
-        return (int) Math.round(armor);
-    }
-
-    public double getArmor() {
-        return armor;
-    }
-
-    public int getFinalThreshold() {
-        return (int) Math.ceil(threshold);
-    }
-
-    public double getThreshold() {
-        return threshold;
-    }
-
+    /**
+     * Creates the formatted SPA string for the given spa and SPA value (the object assigned
+     * to the SPA such as an ASDamageVector). For turrets this includes everything in that
+     * turret.
+     *
+     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-".
+     */
     public static String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
         if (spa == TUR) {
             return "TUR(" + spaObject + ")";
@@ -606,410 +607,129 @@ public class AlphaStrikeElement {
         }
     }
     
-    /** 
-     * Returns the formatted TUR Special Ability string such as TUR(3/3/1,AC2/2/-). Requires TUR to
-     * be present. 
-     */ 
-    private String turretString() {
-        List<List<Object>> turList = (List<List<Object>>) getSPA(TUR);
-        String result = "";
-        for (List<Object> currentTurret : turList) {
-            result += "TUR(";
-            for (Object turDamage : currentTurret) {
-                if (turDamage instanceof ASDamageVector) {
-                    result += turDamage;
-                } else {
-                    for (Entry<BattleForceSPA, Object> specialDmg : 
-                        ((Map<BattleForceSPA, Object>) turDamage).entrySet()) {
-                        result += "," + specialDmg.getKey() + specialDmg.getValue();
-                    }
-                }
-            }
-            result +=")";
-        }
-        return result;
-    }
-    
-    /** 
-     * Returns the formatted LAM/BIM Special Ability string such as LAM(36"g/4a). Requires LAM or BIM to
-     * be present. 
-     */ 
+    /** @return The formatted LAM/BIM Special Ability string such as LAM(36"g/4a). */
     private static String lamString(BattleForceSPA spa, Object spaObject) {
         String result = spa.toString() + "(";
         if (spa == LAM) {
-            result += ((Map<String, Integer>)spaObject).get("g") + "\"" + "g/";
+            result += ((Map<String, Integer>)spaObject).get("g") + INCH + "g/";
         }
         result += ((Map<String, Integer>)spaObject).get("a") + "a)";
         return result;
     }
-    
-    public String specialDamageString(double damageValue) {
-        if (damageValue == 0) {
-            return "-";
-        } else if (damageValue < 0.5) {
-            return "0*";
-        } else {
-            return String.valueOf((int)Math.round(damageValue));
-        }
-    }
-    
+
+    /**
+     * @return The value associated with the given Special Unit Ability. Depending on the given spa, this
+     * value can be null or of different types.
+     */
     public Object getSPA(BattleForceSPA spa) {
         return specialUnitAbilities.get(spa);
     }
-    
+
+    /** @return True when this AS element is of a type that can have the OVL ability (BM and AF). */
     public boolean usesOVL() {
         return isAnyTypeOf(BM, AF);
     }
-    
+
+    /**
+     * @return True when this AS element is jump-capable. This is the case when its movement modes
+     * contains the "j" movement mode.
+     */
     public boolean isJumpCapable() {
-        return movement.keySet().contains("j");
+        return movement.containsKey("j");
     }
 
-    /** Returns the element's jump movement (in inches) or 0 if it has no jump movement. */
+    /** @return This AS element's jump movement (in inches) or 0 if it has no jump movement. */
     public int getJumpMove() {
-        return movement.getOrDefault("j", 0);
-    }
-    
-    public ASUnitType getType() {
-        return asUnitType;
+        return getMovement("j");
     }
 
-    /** Returns true if this AS Element is of the given type. */
+    /** @return True if this AS element is of the given type. */
     public boolean isType(ASUnitType type) {
         return asUnitType == type;
     }
 
-    /** Returns true if this AS Element is any of the given types. */
+    /** @return True if this AS element is any of the given types. */
     public boolean isAnyTypeOf(ASUnitType type, ASUnitType... furtherTypes) {
         return isType(type) || Arrays.stream(furtherTypes).anyMatch(this::isType);
     }
-    
+
+    /** @return True if this AS element uses the Threshold value (equivalent to {@link #isAerospace()}). */
     public boolean usesThreshold() {
-        return threshold != -1;
+        return isAerospace();
     }
     
     /** 
-     * Returns true if this unit uses the 4 firing arcs of Warships, Dropships and other units. 
-     * When this is the case, the standardDamage of this unit is not used and is zero. Instead,
-     * arcDamage is used. 
+     * Returns true if this unit uses the 4 firing arcs of Warships, Dropships and other units.
+     * When this is the case, the standardDamage of this unit is not used and is empty. Instead,
+     * the arcs field is used.
+     *
+     * @return True if this unit uses firing arcs
      */
     public boolean usesArcs() {
-        if (isAnyTypeOf(JS, WS, DA, DS, SS, SC) || (isType(SV) && hasAnySPAOf(LG, SLG, VLG))) {
-            return true;
-        } else {
-            return false;
-        }
+        return isAnyTypeOf(JS, WS, DA, DS, SS, SC) || (isType(SV) && hasAnySPAOf(LG, SLG, VLG));
     }
 
-    /** Returns true if this AlphaStrike element is either BA or CI. */
+    /** @return True if this AS element is Infantry (BA or CI). */
     public boolean isInfantry() {
         return isAnyTypeOf(BA, CI);
     }
 
-    /** Returns true if this AS Element Type represents a ground unit. */
+    /**
+     * @return True if this AS element is a ground unit. An AS element is a ground unit when it is not
+     * an aerospace unit. See {@link #isAerospace()}
+     */
     public boolean isGround() {
         return !isAerospace();
     }
 
-    /** Returns true if this AS Element Type represents an aerospace unit (including some SV units). */
+    /**
+     * Returns true if this AS element is an aerospace unit, i.e. a fighter, a capital aerospace
+     * element or an aerospace SV (SV with a movement mode of "a", "k", "i", and "p" count as aerospace).
+     *
+     * @return True if this AS element is an aerospace unit (including aero SV units).
+     */
     public boolean isAerospace() {
         return isAnyTypeOf(AF, CF, SC, DS, DA, JS, WS, SS)
-                || (isType(SV) && getMovementModes().contains("a") || getMovementModes().contains("k")
-                || getMovementModes().contains("i") || getMovementModes().contains("p"));
+                || (isType(SV) && hasMovementMode("a") || hasMovementMode("k")
+                || hasMovementMode("i") || hasMovementMode("p"));
     }
 
-
+    /** @return This AS element's MUL ID if it has one, -1 otherwise. */
     public int getMulId() {
         return mulId;
     }
 
+    /** @return True if this AS element has a valid MUL ID. */
+    public boolean hasMulId() {
+        return mulId > 0;
+    }
+
+    /**
+     * Sets this AS element's MUL ID to the given mulId. The MUL ID should be > 0 when this AS element
+     * has a MUL entry and -1 otherwise.
+     */
     public void setMulId(int mulId) {
         this.mulId = mulId;
     }
 
-    public class WeaponLocation {
-        List<Double> standardDamage = new ArrayList<>();
-        Map<Integer,List<Double>> specialDamage = new HashMap<>();
-        List<Integer> heatDamage = new ArrayList<>();
-        double indirect;
-        double overheat;
-
-        WeaponLocation() {
-            while (standardDamage.size() < 4) {
-                standardDamage.add(0.0);
-            }
-            while (heatDamage.size() < 4) {
-                heatDamage.add(0);
-            }
-        }
-
-        public boolean hasStandardDamage() {
-            return standardDamage.stream().mapToDouble(Double::doubleValue).sum() > 0;
-        }
-
-        public boolean hasStandardDamageRounded() {
-            return standardDamage.stream()
-                    .filter(d -> d >= 0.5)
-                    .mapToDouble(Double::doubleValue).sum() > 0;
-        }
-
-        public boolean hasDamage() {
-            return hasStandardDamage()
-                    || specialDamage.keySet().stream().anyMatch(this::hasDamageClass);
-        }
-
-        public boolean hasDamageRounded() {
-            return hasStandardDamageRounded()
-                    || specialDamage.keySet().stream().anyMatch(this::hasDamageClassRounded);
-        }
-
-        public boolean hasDamageClass(int damageClass) {
-            if (damageClass == WeaponType.BFCLASS_FLAK) {
-                return specialDamage.containsKey(damageClass)
-                        && specialDamage.get(damageClass).stream().mapToDouble(Double::doubleValue).sum() > 0;
-            } else {
-                return specialDamage.containsKey(damageClass)
-                        && specialDamage.get(damageClass).get(1) >= 1;
-            }
-        }
-
-        public boolean hasDamageClassRounded(int damageClass) {
-            return specialDamage.containsKey(damageClass)
-                    && specialDamage.get(damageClass).stream()
-                    .filter(d -> d >= 0.5)
-                    .mapToDouble(Double::doubleValue).sum() > 0;
-        }
-
-        public void addDamage(int rangeIndex, double val) {
-            addDamage(standardDamage, rangeIndex, val);
-        }
-
-        public void addDamage(int damageClass, int rangeIndex, double val) {
-            if (!specialDamage.containsKey(damageClass)) {
-                specialDamage.put(damageClass, new ArrayList<>());
-            }
-            addDamage(specialDamage.get(damageClass), rangeIndex, val);
-        }
-
-        public double getDamage(int rangeIndex) {
-            if (standardDamage.size() > rangeIndex) {
-                return standardDamage.get(rangeIndex);
-            }
-            return 0;
-        }
-
-        public double getDamage(int damageClass, int rangeIndex) {
-            if (specialDamage.containsKey(damageClass)
-                    && specialDamage.get(damageClass).size() > rangeIndex) {
-                return specialDamage.get(damageClass).get(rangeIndex);
-            }
-            return 0;
-        }
-
-        public List<Double> getDamageForClass(int damageClass) {
-            if (specialDamage.containsKey(damageClass)) {
-                return specialDamage.get(damageClass);
-            }
-            return new ArrayList<>();
-        }
-
-        public String formatDamageUp() {
-            return formatDamageUp(standardDamage);
-        }
-
-        public String formatDamageUp(int damageClass) {
-            if (specialDamage.containsKey(damageClass)) {
-                return formatDamageUp(specialDamage.get(damageClass));
-            }
-            return rangeBands > 3? "0/0/0/0" : "0/0/0";
-        }
-
-        public String formatDamageRounded(boolean showMinDamage) {
-            return formatDamageRounded(standardDamage, showMinDamage);
-        }
-
-        public String getSpecialDamageString(int damageClass) {
-            if (!specialDamage.containsKey(damageClass)) {
-                return rangeBands > 3? "0/0/0/0" : "0/0/0";
-            }
-            List<Double> damageList = specialDamage.get(damageClass);
-            if (damageClass == WeaponType.BFCLASS_SRM) {
-                return WeaponType.BF_CLASS_NAMES[WeaponType.BFCLASS_SRM]
-                        + specialDamageString(damageList.get(0)) + "/"
-                        + specialDamageString(damageList.get(1));
-            } else {
-                return WeaponType.BF_CLASS_NAMES[damageClass]
-                        + specialDamage.get(damageClass).stream().map(this::specialDamageString).collect(Collectors.joining("/"));
-            }
-        }
-
-        public String specialDamageString(double damageValue) {
-            if (damageValue == 0) {
-                return "-";
-            } else if (damageValue < 0.5) {
-                return "0*";
-            } else {
-                return String.valueOf((int)Math.round(damageValue));
-            }
-        }
-
-        public String formatDamageRounded(int damageClass, boolean showMinDamage) {
-            if (specialDamage.containsKey(damageClass)) {
-                return formatDamageRounded(specialDamage.get(damageClass), showMinDamage);
-            }
-            return rangeBands > 3? "0/0/0/0" : "0/0/0";
-        }
-
-        public double getIF() {
-            return indirect;
-        }
-
-        public void addIF(double val) {
-            indirect += val;
-        }
-
-        public double getOverheat() {
-            return overheat;
-        }
-
-        public void setOverheat(double val) {
-            overheat = val;
-        }
-
-        public void adjustForHeat(double mul) {
-            for (int i = 0; i < standardDamage.size(); i++) {
-                standardDamage.set(i, standardDamage.get(i) * mul);
-            }
-            for (List<Double> damage : specialDamage.values()) {
-                for (int i = 0; i < damage.size(); i++) {
-                    damage.set(i, damage.get(i) * mul);
-                }
-            }
-        }
-
-        private void addDamage(List<Double> damage, int rangeIndex, double val) {
-            while (damage.size() <= rangeIndex) {
-                damage.add(0.0);
-            }
-            damage.set(rangeIndex, damage.get(rangeIndex) + val);
-        }
-
-        private String formatDamageUp(List<Double> damage) {
-            while (damage.size() < rangeBands) {
-                damage.add(0.0);
-            }
-            return damage.stream().map(d -> String.valueOf((int) Math.ceil(d)))
-                    .collect(Collectors.joining("/"));
-        }
-
-        private String formatDamageRounded(List<Double> damage, boolean showMinDamage) {
-//            while (damage.size() < rangeBands) {
-//                damage.add(0.0);
-//            }
-            return damage.stream().map(d -> {
-                if (d == 0) {
-                    return "0";
-                } else if (d < 0.5 && showMinDamage) {
-                    return "0*";
-                } else {
-                    return String.valueOf((int) Math.round(d));
-                }
-            }).collect(Collectors.joining("/"));
-        }
-    }
-
-
-    /** Returns the primary movement value, i.e. the type "" for ground units or "s" for submarines. */
+    /** @return The primary movement value in inches, i.e. the type "" for ground units or "s" for submarines. */
     public int getPrimaryMovementValue() {
         return movement.values().iterator().next();
     }
 
-    /** Returns the primary movement type String, such as "" for ground units or "s" for submarines. */
+    /** @return The primary movement type String, such as "" for ground units or "s" for submarines. */
     public String getPrimaryMovementType() {
         return movement.keySet().iterator().next();
     }
 
+    /** @return All movement mode Strings of this AS element, such as ["", "j"]. */
     public Set<String> getMovementModes() {
         return movement.keySet();
     }
 
-    public int getDmgS() {
-        double dmgS = weaponLocations[0].standardDamage.get(0);
-        return dmgS < 0.5 ? 0 : (int)Math.ceil(dmgS);
+    /** @return True if this AS element has the given movement mode. */
+    public boolean hasMovementMode(String mode) {
+        return movement.keySet().contains(mode);
     }
 
-    public boolean isMinimalDmgS() {
-        double dmgS = weaponLocations[0].standardDamage.get(0);
-        return (dmgS < 0.5) && (dmgS > 0);
-    }
-
-    public int getDmgM() {
-        double dmgM = weaponLocations[0].standardDamage.get(1);
-        return dmgM < 0.5 ? 0 : (int)Math.ceil(dmgM);
-    }
-
-    public boolean isMinimalDmgM() {
-        double dmgM = weaponLocations[0].standardDamage.get(1);
-        return (dmgM < 0.5) && (dmgM > 0);
-    }
-
-    public int getDmgL() {
-        double dmgL = weaponLocations[0].standardDamage.get(2);
-        return dmgL < 0.5 ? 0 : (int)Math.ceil(dmgL);
-    }
-
-    public boolean isMinimalDmgL() {
-        double dmgL = weaponLocations[0].standardDamage.get(2);
-        return (dmgL < 0.5) && (dmgL > 0);
-    }
-
-    public int getStructure() {
-        return structure;
-    }
-
-    public int getMovement(String mode) {
-        return movement.get(mode);
-    }
-
-    public String getChassis() {
-        return chassis;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public UnitRole getRole() {
-        return role;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getDamage(int loc, int rangeIndex, int damageClass) {
-        return weaponLocations[loc].getDamage(damageClass, rangeIndex);
-    }
-
-    public double getDamage(int rangeIndex) {
-        return weaponLocations[0].getDamage(rangeIndex);
-    }
-
-    public double getDamage(int rangeIndex, int damageClass) {
-        return getDamage(0, rangeIndex, damageClass);
-    }
-
-    public int calcHeatCapacity(Entity en) {
-        int capacity = en.getHeatCapacity();
-        for (Mounted mounted : en.getEquipment()) {
-            if (mounted.getType() instanceof AmmoType
-                    && ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
-                capacity++;
-            } else if (mounted.getType() instanceof MiscType
-                    && mounted.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-                capacity += 1;
-            }
-        }
-        return capacity;
-    }
 }

@@ -147,7 +147,7 @@ public enum UnitRole {
             case AMBUSHER:
                 /* Slow, light armor, preference for short range */
                 score -= Math.max(0, speed - 6) * 0.5;
-                score -= Math.max(0, unit.getFinalArmor() - 5);
+                score -= Math.max(0, unit.getArmor() - 5);
                 if (unit.hasSPA(BattleForceSPA.ECM)
                         || unit.hasSPA(BattleForceSPA.LECM)
                         || unit.hasSPA(BattleForceSPA.WAT)) {
@@ -158,23 +158,23 @@ public enum UnitRole {
                         || unit.hasSPA(BattleForceSPA.LMAS)) {
                     score++;
                 }
-                if (unit.getDmgS() >
-                        unit.getDmgM()) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDmgS() >
-                        unit.getDmgL()) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case BRAWLER:
                 /* Not too slow, preference for medium range */
                 score += Math.min(0, speed - 8);
-                if (unit.getDmgM() >=
-                        unit.getDmgS()) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDmgM() >
-                        unit.getDmgL()) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
@@ -183,16 +183,16 @@ public enum UnitRole {
                 score -= Math.max(0, speed - 6) * 0.5;
                 /* Per ASC, a Juggernaut should have an armor value of 7, but there are a large number
                  * of smaller units with lower armor values that have an official role of juggernaut.*/
-                score += Math.min(0,  unit.getFinalArmor() - (unit.getSize() + 4));
-                if (Math.max(unit.getDmgS(),
-                            unit.getDmgM())* 2 >= unit.getArmor()) {
+                score += Math.min(0,  unit.getArmor() - (unit.getSize() + 4));
+                if (Math.max(unit.getStandardDamage().S.damage,
+                            unit.getStandardDamage().M.damage)* 2 >= unit.getArmor()) {
                     score++;
                 }
-                if (unit.getDmgS() >
-                        unit.getDmgM()) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDmgS() >
-                        unit.getDmgL()) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 if (unit.hasSPA(BattleForceSPA.MEL)
@@ -211,8 +211,7 @@ public enum UnitRole {
                 break;
             case MISSILE_BOAT:
                 /* Any artillery piece or can do damage by indirect fire at long range */
-                return (unit.getDmgL() > 0
-                            && unit.hasIF())
+                return (unit.getStandardDamage().L.damage > 0 && unit.hasSPA(BattleForceSPA.IF))
                         || unit.hasSPA(BattleForceSPA.ARTAIS)
                         || unit.hasSPA(BattleForceSPA.ARTAC)
                         || unit.hasSPA(BattleForceSPA.ARTBA)
@@ -229,7 +228,7 @@ public enum UnitRole {
             case SCOUT:
                 /* Fast (jump, WiGE, or VTOL helpful but not required), lightly armored, preference for short range */
                 score += Math.min(0, speed - 8) * 0.5;
-                score -= Math.max(0, unit.getFinalArmor() - 4);
+                score -= Math.max(0, unit.getArmor() - 4);
                 if (unit.getMovementModes().contains("j") || unit.getMovementModes().contains("g")
                         || unit.getMovementModes().contains("v")) {
                     score++;
@@ -246,11 +245,11 @@ public enum UnitRole {
                 if (unit.hasSPA(BattleForceSPA.ECM)) {
                     score++;
                 }
-                if (unit.getDmgS() >
-                        unit.getDmgM()) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDmgS() >
-                        unit.getDmgL()) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
@@ -261,70 +260,69 @@ public enum UnitRole {
                 } else {
                     score += Math.min(0, speed - 9) * 0.5;
                 }
-                score += Math.min(0, unit.getFinalArmor() - 4) + Math.min(0, 8 - unit.getFinalArmor());
-                if (unit.getDmgM() >=
-                        unit.getDmgS()) {
+                score += Math.min(0, unit.getArmor() - 4) + Math.min(0, 8 - unit.getArmor());
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDmgM() >
-                        unit.getDmgL()) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case SNIPER:
                 /* Can do damage at long range without LRMs */
-                return unit.getDmgL()
-                        - unit.getDamage(AlphaStrikeElement.RANGE_BAND_LONG, WeaponType.BFCLASS_LRM) > 0;
+                return unit.getStandardDamage().L.damage - unit.getLRM().L.damage > 0;
             case STRIKER:
                 /* Fast and light-medium armor, preference for short range */
                 score += Math.min(0, speed - 9) * 0.5;
-                score -= Math.max(0, unit.getFinalArmor() - 5);
-                if (unit.getDmgS() >
-                        unit.getDmgM()) {
+                score -= Math.max(0, unit.getArmor() - 5);
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDmgS() >
-                        unit.getDmgL()) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case ATTACK_FIGHTER:
                 /* Slow, preference for short range */
                 score -= Math.max(0, speed - 5);
-                if (unit.getDmgS() >
-                        unit.getDmgM()) {
+                if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().M.damage) {
                     score++;
-                } else if (unit.getDmgS() >
-                        unit.getDmgL()) {
+                } else if (unit.getStandardDamage().S.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case DOGFIGHTER:
                 /* Medium speed, preference for medium range */
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed) * 0.5;
-                if (unit.getDmgM() >=
-                        unit.getDmgS()) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDmgM() >
-                        unit.getDmgL()) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case FAST_DOGFIGHTER:
                 /* Fast with preference for medium range */
                 score += Math.min(0, speed - 7) + Math.min(0, 9 - speed) * 0.5;
-                if (unit.getDmgM() >=
-                        unit.getDmgS()) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDmgM() >
-                        unit.getDmgL()) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;
             case FIRE_SUPPORT:
                 /* Not too slow and can do damage at long range */
-                if (unit.getDmgL() < 0.5) {
+                if (unit.getStandardDamage().L.damage < 0.5) {
                     return false;
                 }
                 score += Math.min(0, speed - 5) + Math.min(0, 7 - speed);
@@ -332,12 +330,12 @@ public enum UnitRole {
             case INTERCEPTOR:
                 /* Very fast, preference for damage at medium range */
                 score += Math.min(0, speed - 10);
-                if (unit.getDmgM() >=
-                        unit.getDmgS()) {
+                if (unit.getStandardDamage().M.damage >=
+                        unit.getStandardDamage().S.damage) {
                     score += 0.5;
                 }
-                if (unit.getDmgM() >
-                        unit.getDmgL()) {
+                if (unit.getStandardDamage().M.damage >
+                        unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
                 break;

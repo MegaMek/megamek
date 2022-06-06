@@ -393,7 +393,7 @@ public class SBFUnitConverter {
     private static int calcUnitArmor(Collection<AlphaStrikeElement> elements) {
         double result = 0;
         for (AlphaStrikeElement element : elements) {
-            result += element.getFinalArmor() + element.getStructure();
+            result += element.getArmor() + element.getStructure();
             result += (element.getStructure() >= 3 || element.hasAnySPAOf(AMS, CASE)) ? 0.5 : 0;
             result += (element.hasAnySPAOf(ENE, CASEII, CR, RAMS)) ? 1 : 0;
         }
@@ -401,7 +401,7 @@ public class SBFUnitConverter {
     }
 
     private static int calcUnitPointValue(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        int intermediate = (int) Math.round( 1.0d / 3 * elements.stream().mapToInt(AlphaStrikeElement::getFinalPoints).sum());
+        int intermediate = (int) Math.round( 1.0d / 3 * elements.stream().mapToInt(AlphaStrikeElement::getPointValue).sum());
         double result = intermediate;
         if (unit.getSkill() > 4) {
             result = (1.0d + (unit.getSkill() - 4) * 0.1) * intermediate;

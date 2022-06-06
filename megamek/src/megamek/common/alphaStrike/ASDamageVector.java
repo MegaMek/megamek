@@ -42,6 +42,10 @@ import java.util.function.Function;
  */
 public class ASDamageVector {
 
+    /** A constant that represents zero damage. May be used as a return value instead of null. */
+    public static final ASDamageVector ZERO = new ASDamageVector(ASDamage.ZERO, ASDamage.ZERO,
+            ASDamage.ZERO, ASDamage.ZERO, 4, true);
+
     /**
      * The number of damage values used by this damage vector. 2 indicates that only the S and M
      * damage values are used, as with SRM. 4 indicates all S/M/L/E damage values are used such

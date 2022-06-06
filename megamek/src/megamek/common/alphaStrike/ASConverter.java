@@ -22,9 +22,8 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
-import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -57,30 +56,30 @@ public final class ASConverter {
         final ConversionData conversionData = new ConversionData(undamagedEntity, element, conversionReport);
 
         // Basic info
-        element.name = undamagedEntity.getShortName();
+        element.setName(undamagedEntity.getShortName());
         element.setQuirks(undamagedEntity.getQuirks());
-        element.model = undamagedEntity.getModel();
-        element.chassis = undamagedEntity.getChassis();
+        element.setModel(undamagedEntity.getModel());
+        element.setChassis(undamagedEntity.getChassis());
         element.setMulId(undamagedEntity.getMulId());
-        element.role = UnitRoleHandler.getRoleFor(undamagedEntity);
+        element.setRole(UnitRoleHandler.getRoleFor(undamagedEntity));
 
         conversionReport.addHeader("AlphaStrike Conversion for " + undamagedEntity.getShortName());
         conversionReport.addSubHeader("Basic Info:");
-        conversionReport.addLine("Model:", element.model);
-        conversionReport.addLine("Chassis:", element.chassis);
+        conversionReport.addLine("Model:", element.getModel());
+        conversionReport.addLine("Chassis:", element.getChassis());
         conversionReport.addLine("MUL ID:", Integer.toString(element.getMulId()));
-        conversionReport.addLine("Unit Role:", element.role.toString());
+        conversionReport.addLine("Unit Role:", element.getRole().toString());
 
         // Type
-        element.asUnitType = ASUnitType.getUnitType(undamagedEntity);
+        element.setType(ASUnitType.getUnitType(undamagedEntity));
         String unitType = Entity.getEntityTypeName(undamagedEntity.getEntityType());
         if ((undamagedEntity instanceof Mech) && ((Mech) undamagedEntity).isIndustrial()) {
             unitType += " / Industrial";
         }
-        conversionReport.addLine("Unit Type:", unitType, element.asUnitType.toString());
+        conversionReport.addLine("Unit Type:", unitType, element.getType().toString());
 
         // Size
-        element.size = ASSizeConverter.convertSize(conversionData);
+        element.setSize(ASSizeConverter.convertSize(conversionData));
 
         // Skill
         if (includePilot) {
@@ -88,17 +87,17 @@ public final class ASConverter {
         }
         conversionReport.addLine("Skill:", Integer.toString(element.getSkill()));
 
-        element.movement = ASMovementConverter.convertMovement(conversionData);
-        element.tmm = ASMovementConverter.convertTMM(conversionData);
-        element.armor = ASArmStrConverter.convertArmor(conversionData);
-        element.structure = ASArmStrConverter.convertStructure(conversionData);
-        element.threshold = ASArmStrConverter.convertThreshold(conversionData);
+        element.setMovement(ASMovementConverter.convertMovement(conversionData));
+        element.setTMM(ASMovementConverter.convertTMM(conversionData));
+        element.setArmor(ASArmStrConverter.convertArmor(conversionData));
+        element.setStructure(ASArmStrConverter.convertStructure(conversionData));
+        element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASSpecialAbilityConverter.convertSpecialUnitAbilities(conversionData);
         initWeaponLocations(undamagedEntity, element);
-        element.heat = new int[element.rangeBands];
+        element.heat = new int[element.getRangeBands()];
         ASDamageConverter.convertDamage(undamagedEntity, element);
         ASSpecialAbilityConverter.finalizeSpecials(element);
-        element.points = ASPointValueConverter.getPointValue(conversionData);
+        element.setPointValue(ASPointValueConverter.getPointValue(conversionData));
         ASPointValueConverter.adjustPVforSkill(element);
 //        System.out.println(conversionReport);
         return element;
@@ -166,13 +165,10 @@ public final class ASConverter {
     }
 
     private static void initWeaponLocations(Entity entity, AlphaStrikeElement result) {
-        if (entity instanceof Aero) {
-            result.rangeBands = RANGEBANDS_SMLE;
-        }
-        result.weaponLocations = new AlphaStrikeElement.WeaponLocation[entity.getNumBattleForceWeaponsLocations()];
+        result.weaponLocations = new WeaponLocation[entity.getNumBattleForceWeaponsLocations()];
         result.locationNames = new String[result.weaponLocations.length];
         for (int loc = 0; loc < result.locationNames.length; loc++) {
-            result.weaponLocations[loc] = result.new WeaponLocation();
+            result.weaponLocations[loc] = new WeaponLocation();
             result.locationNames[loc] = entity.getBattleForceLocationName(loc);
         }
     }
@@ -185,6 +181,71 @@ public final class ASConverter {
     /** Returns the given number, rounded up to the nearest integer, based on the first decimal only. */
     static int roundUp(double number) {
         return (int) Math.round(number + 0.4); 
+    }
+
+    /**
+     * This class is used to gather weapon and damage values for conversion purposes.
+     */
+    public static class WeaponLocation {
+        List<Double> standardDamage = new ArrayList<>();
+        Map<Integer,List<Double>> specialDamage = new HashMap<>();
+        List<Integer> heatDamage = new ArrayList<>();
+        double indirect;
+
+        WeaponLocation() {
+            while (standardDamage.size() < 4) {
+                standardDamage.add(0.0);
+            }
+            while (heatDamage.size() < 4) {
+                heatDamage.add(0);
+            }
+        }
+
+        public boolean hasStandardDamage() {
+            return standardDamage.stream().mapToDouble(Double::doubleValue).sum() > 0;
+        }
+
+        public boolean hasDamage() {
+            return hasStandardDamage()
+                    || specialDamage.keySet().stream().anyMatch(this::hasDamageClass);
+        }
+
+        public boolean hasDamageClass(int damageClass) {
+            if (damageClass == WeaponType.BFCLASS_FLAK) {
+                return specialDamage.containsKey(damageClass)
+                        && specialDamage.get(damageClass).stream().mapToDouble(Double::doubleValue).sum() > 0;
+            } else {
+                return specialDamage.containsKey(damageClass)
+                        && specialDamage.get(damageClass).get(1) >= 1;
+            }
+        }
+
+        public void addDamage(int rangeIndex, double val) {
+            addDamage(standardDamage, rangeIndex, val);
+        }
+
+        public void addDamage(int damageClass, int rangeIndex, double val) {
+            if (!specialDamage.containsKey(damageClass)) {
+                specialDamage.put(damageClass, new ArrayList<>());
+            }
+            addDamage(specialDamage.get(damageClass), rangeIndex, val);
+        }
+
+        public double getIF() {
+            return indirect;
+        }
+
+        public void addIF(double val) {
+            indirect += val;
+        }
+
+        private void addDamage(List<Double> damage, int rangeIndex, double val) {
+            while (damage.size() <= rangeIndex) {
+                damage.add(0.0);
+            }
+            damage.set(rangeIndex, damage.get(rangeIndex) + val);
+        }
+
     }
 
 }

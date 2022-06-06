@@ -19,5 +19,5 @@
 package megamek.common.alphaStrike;
 
 public enum ASRange {
-    SHORT, MEDIUM, LONG, EXTREME
+    SHORT, MEDIUM, LONG, EXTREME, HORIZON
 }

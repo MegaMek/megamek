@@ -1564,7 +1564,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         }
     }
 
-    /***
+    /**
      * @return The color associated with this movement type
      */
     public Color getColorForMovement(EntityMovementType movementType) {
@@ -1585,43 +1585,36 @@ public class GUIPreferences extends PreferenceStoreProxy {
         }
     }
 
-    /***
+    /**
      * @return The color associated with a movement type
      */
     public Color getColorForMovement(EntityMovementType movementType, boolean isMASCOrSuperCharger, boolean isBackwards) {
-        if (isMASCOrSuperCharger)
-        {
+        if (isMASCOrSuperCharger) {
             return getColor("AdvancedMoveMASCColor");
-        }
-
-        if (isBackwards)
-        {
+        } else if (isBackwards) {
             return getColor("AdvancedMoveBackColor");
         }
-
         return getColorForMovement(movementType);
     }
-    /***
+
+    /**
      * @return The color associated with a heat in the range 0-30
      */
     public Color getColorForHeat(int heat) {
         return getColorForHeat(heat, Color.LIGHT_GRAY);
     }
 
-    /***
+    /**
      * @return The color associated with a heat in the range 0-30
      */
     public Color getColorForHeat(int heat, Color defaultColor) {
         if (heat <= 5) {
             return defaultColor;
-        }
-        if (heat < 10) {
+        } else if (heat < 10) {
             return Color.GREEN;
-        }
-        if (heat < 20) {
+        } else if (heat < 20) {
             return Color.YELLOW;
-        }
-        if (heat < 30) {
+        } else if (heat < 30) {
             return Color.ORANGE;
         }
         return Color.RED;

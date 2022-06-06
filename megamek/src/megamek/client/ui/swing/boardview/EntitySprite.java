@@ -632,8 +632,6 @@ class EntitySprite extends Sprite {
                 }
             }
 
-
-            
             // Unit Label
             // no scaling for the label, its size is changed by varying
             // the font size directly => better control
@@ -760,7 +758,7 @@ class EntitySprite extends Sprite {
             barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
             graph.setColor(Color.darkGray);
-            graph.fillRect(STATUS_BAR_X +1, 7, STATUS_BAR_LENGTH, 3);
+            graph.fillRect(STATUS_BAR_X + 1, 7, STATUS_BAR_LENGTH, 3);
             graph.setColor(Color.lightGray);
             graph.fillRect(STATUS_BAR_X, 6, STATUS_BAR_LENGTH, 3);
             graph.setColor(getStatusBarColor(percentRemaining));
@@ -772,7 +770,7 @@ class EntitySprite extends Sprite {
                 barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
                 graph.setColor(Color.darkGray);
-                graph.fillRect(STATUS_BAR_X +1, 11, STATUS_BAR_LENGTH, 3);
+                graph.fillRect(STATUS_BAR_X + 1, 11, STATUS_BAR_LENGTH, 3);
                 graph.setColor(Color.lightGray);
                 graph.fillRect(STATUS_BAR_X, 10, STATUS_BAR_LENGTH, 3);
                 graph.setColor(getStatusBarColor(percentRemaining));
@@ -782,8 +780,8 @@ class EntitySprite extends Sprite {
             // TMM pips show if done in movement, or on all units during firing
             int pipOption = guip.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
             if ((pipOption != 0) && (!ge)
-                    && ((entity.isDone() && bv.game.getPhase() == GamePhase.MOVEMENT)
-                    || (bv.game.getPhase() == GamePhase.FIRING))) {
+                    && ((entity.isDone() && bv.game.getPhase().isMovement())
+                    || (bv.game.getPhase().isFiring()))) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
                 Color tmmColor = (pipOption == 1) ? Color.WHITE : guip.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
@@ -795,8 +793,7 @@ class EntitySprite extends Sprite {
                         graph.setColor(i < tmm ? tmmColor : Color.BLACK);
                         graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
                     }
-                } else
-                {
+                } else {
                     // draw pips right to left for negative TMM
                     for (int i = 0; i < MAX_TMM_PIPS; i++) {
                         graph.setColor(Color.DARK_GRAY);

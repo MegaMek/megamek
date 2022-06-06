@@ -112,7 +112,7 @@ class StepSprite extends Sprite {
                 break;
         }
 
-        Color col = GUIP.getColorForMovement(step.getMovementType(isLastStep), isMASCOrSuperCharger, isBackwards);
+        Color col = GUIP.getColorForMovement(movementType, isMASCOrSuperCharger, isBackwards);
 
         if (bv.game.useVectorMove()) {
             drawActiveVectors(step, graph);

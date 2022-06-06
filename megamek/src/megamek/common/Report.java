@@ -334,10 +334,16 @@ public class Report implements Serializable {
             if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
-            add("<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
-                    + "\">" + entity.getShortName() + "</a></font>", true);
-            add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
-                    + entity.getOwner().getName() + "</font></B>");
+            String name = "<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
+                    + "\">" + entity.getShortName() + "</a></font>";
+            String color = entity.getOwner().getColour().getHexString(0x00F0F0F0);
+
+            if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
+                // pilot nickname, also known as callsign
+                name += " <font color='"+color+"'>\"" + entity.getCrew().getNickname().toUpperCase() + "\"</font>";
+            }
+            add(name, true);
+            add("<B><font color='" + color + "'>" + entity.getOwner().getName() + "</font></B>");
         }
     }
 

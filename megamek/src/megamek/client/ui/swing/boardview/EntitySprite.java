@@ -779,9 +779,9 @@ class EntitySprite extends Sprite {
 
             // TMM pips show if done in movement, or on all units during firing
             int pipOption = guip.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
-            if ((pipOption != 0) && (!ge)
+            if ((pipOption != 0) && !ge
                     && ((entity.isDone() && bv.game.getPhase().isMovement())
-                    || (bv.game.getPhase().isFiring()))) {
+                    || bv.game.getPhase().isFiring())) {
                 int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
                 Color tmmColor = (pipOption == 1) ? Color.WHITE : guip.getColorForMovement(entity.moved);
                 graph.setColor(Color.darkGray);
@@ -806,8 +806,6 @@ class EntitySprite extends Sprite {
 
         graph.dispose();
     }
-
-
 
     /** 
      * Returns true when an indicator should be shown that a unit with the same facing

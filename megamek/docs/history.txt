@@ -9,6 +9,7 @@ VERSION HISTORY:
 + PR #3686: Fixing Resource Leaks in Server::registerWithServerBrowser
 + PR #3687: Gun Emplacements can now have damage done to their equipment persist to MekHQ
 + Issue #3689: Show pilot callsign in damage phase report
++ Issue #3664: Draw TMM pips in movement and firing phases
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.0 from 4.5.1
 

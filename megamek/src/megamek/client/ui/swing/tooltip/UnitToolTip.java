@@ -590,12 +590,12 @@ public final class UnitToolTip {
 
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
-            if (entity.heat == 0) {
-                result.append(guiScaledFontHTML(uiGreen()));
+            int heat = entity.heat;
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForHeat(heat)));
+            if (heat == 0) {
                 result.append(addToTT("Heat0", BR));
             } else { 
-                result.append(guiScaledFontHTML(uiLightRed()));
-                result.append(addToTT("Heat", BR, entity.heat));
+                result.append(addToTT("Heat", BR, heat));
             }
             result.append("</FONT>");
         }
@@ -607,6 +607,7 @@ public final class UnitToolTip {
                 result.append(addToTT("NotYetMoved", BR));
             } else if ((entity.isDone() && game.getPhase() == GamePhase.MOVEMENT)
                     || game.getPhase() == GamePhase.FIRING) {
+                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForMovement(entity.moved)));
                 int tmm = Compute.getTargetMovementModifier(game, entity.getId()).getValue();
                 if (entity.moved == EntityMovementType.MOVE_NONE) {
                     result.append(addToTT("NoMove", BR, tmm));
@@ -630,6 +631,7 @@ public final class UnitToolTip {
                 if (entity.isMakingDfa()) { 
                     result.append(addToTT("DFA", NOBR));
                 }
+
             }
         }
 

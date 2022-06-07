@@ -4,6 +4,7 @@ import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.HeatEffects;
 import megamek.client.ui.swing.Slider;
 import megamek.client.ui.swing.widget.*;
@@ -510,6 +511,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 mtHeat = true;
             }
+            heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
             heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
         } else {
             // Non-Mechs cannot configure their heat sinks

@@ -347,6 +347,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             heatCapacityStr = heatCap + " [" + heatCapWater + "]";
         }
 
+        heatR.color = GUIPreferences.getInstance().getColorForHeat(en.heat, Color.WHITE);
         heatR.setString(en.heat
                 + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 
@@ -368,7 +369,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 || (en instanceof Mech && ((Mech) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
-                //Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
+                // Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
             } else if (en.getMovementMode() == EntityMovementMode.WIGE) {
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.WIGE"));

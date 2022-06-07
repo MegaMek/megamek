@@ -4,10 +4,7 @@ import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.FiringDisplay;
-import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.TargetingPhaseDisplay;
+import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -1036,10 +1033,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         String heatText = Integer.toString(currentHeatBuildup);
-        if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
+        int heatOverCapacity = currentHeatBuildup - en.getHeatCapacityWithWater();
+        if (heatOverCapacity > 0) {
             heatText += "*"; // overheat indication
         }
 
+        currentHeatBuildupR.setForeground(GUIPreferences.getInstance().getColorForHeat(
+                heatOverCapacity, Color.WHITE));
         currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')');
 
         // change what is visible based on type

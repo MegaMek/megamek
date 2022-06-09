@@ -20,6 +20,7 @@ package megamek.client.ui.preferences;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import org.apache.logging.log4j.LogManager;
@@ -62,22 +63,21 @@ public class SuitePreferences {
     public void saveToFile(final String filePath) {
         LogManager.getLogger().debug("Saving nameToPreferencesMap to: " + filePath);
         final JsonFactory factory = new JsonFactory();
-        try (FileOutputStream output = new FileOutputStream(filePath)) {
-            try (JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter()) {
-                writer.enable(JsonGenerator.Feature.STRICT_DUPLICATE_DETECTION);
+        try (FileOutputStream output = new FileOutputStream(filePath);
+             JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter()) {
+            writer.enable(Feature.STRICT_DUPLICATE_DETECTION);
 
-                writer.writeStartObject();
-                writer.writeFieldName(PREFERENCES_TOKEN);
-                writer.writeStartArray();
+            writer.writeStartObject();
+            writer.writeFieldName(PREFERENCES_TOKEN);
+            writer.writeStartArray();
 
-                // Write each PreferencesNode
-                for (final Map.Entry<String, PreferencesNode> preferences : getNameToPreferencesMap().entrySet()) {
-                    writePreferencesNode(writer, preferences);
-                }
-
-                writer.writeEndArray();
-                writer.writeEndObject();
+            // Write each PreferencesNode
+            for (final Entry<String, PreferencesNode> preferences : getNameToPreferencesMap().entrySet()) {
+                writePreferencesNode(writer, preferences);
             }
+
+            writer.writeEndArray();
+            writer.writeEndObject();
         } catch (FileNotFoundException ex) {
             LogManager.getLogger().error("Could not save nameToPreferencesMap to: " + filePath, ex);
         } catch (IOException ex) {
@@ -96,7 +96,7 @@ public class SuitePreferences {
         writer.writeStartArray();
 
         // Write all PreferenceElement in this node
-        for (final Map.Entry<String, String> element : nodeInfo.getValue().getFinalValues().entrySet()) {
+        for (final Entry<String, String> element : nodeInfo.getValue().getFinalValues().entrySet()) {
             writePreferenceElement(writer, element);
         }
 
@@ -116,24 +116,23 @@ public class SuitePreferences {
     //region Load From File
     public void loadFromFile(final String filePath) {
         LogManager.getLogger().info("Loading user preferences from: " + filePath);
-        try (FileInputStream input = new FileInputStream(filePath)) {
-            final JsonFactory factory = new JsonFactory();
-            try (JsonParser parser = factory.createParser(input)) {
-                if (parser.nextToken() != JsonToken.START_OBJECT) {
-                    throw new IOException("Expected an object start ({)" + getParserInformation(parser));
-                } else if (parser.nextToken() != JsonToken.FIELD_NAME && !parser.getCurrentName().equals(PREFERENCES_TOKEN)) {
-                    throw new IOException("Expected a field called (" + PREFERENCES_TOKEN + ")" + getParserInformation(parser));
-                } else if (parser.nextToken() != JsonToken.START_ARRAY) {
-                    throw new IOException("Expected an array start ([)" + getParserInformation(parser));
-                }
+        final JsonFactory factory = new JsonFactory();
+        try (FileInputStream input = new FileInputStream(filePath);
+             JsonParser parser = factory.createParser(input)) {
+            if (parser.nextToken() != JsonToken.START_OBJECT) {
+                throw new IOException("Expected an object start ({)" + getParserInformation(parser));
+            } else if ((parser.nextToken() != JsonToken.FIELD_NAME) && !parser.getCurrentName().equals(PREFERENCES_TOKEN)) {
+                throw new IOException("Expected a field called (" + PREFERENCES_TOKEN + ')' + getParserInformation(parser));
+            } else if (parser.nextToken() != JsonToken.START_ARRAY) {
+                throw new IOException("Expected an array start ([)" + getParserInformation(parser));
+            }
 
-                // Parse all PreferencesNode
-                while (parser.nextToken() != JsonToken.END_ARRAY) {
-                    try {
-                        readPreferencesNode(parser, getNameToPreferencesMap());
-                    } catch (IOException e) {
-                        LogManager.getLogger().error("Error reading node. " + getParserInformation(parser), e);
-                    }
+            // Parse all PreferencesNode
+            while (parser.nextToken() != JsonToken.END_ARRAY) {
+                try {
+                    readPreferencesNode(parser, getNameToPreferencesMap());
+                } catch (IOException e) {
+                    LogManager.getLogger().error("Error reading node. " + getParserInformation(parser), e);
                 }
             }
             LogManager.getLogger().info("Finished loading user preferences");

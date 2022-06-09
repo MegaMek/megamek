@@ -1670,15 +1670,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
             return defaultColor;
         } else if (heat <= 5) {
             return getColor(ADVANCED_HEAT_5_COLOR);
-        } else if (heat < 10) {
+        } else if (heat <= 10) {
             return getColor(ADVANCED_HEAT_10_COLOR);
-        } else if (heat < 15) {
+        } else if (heat <= 15) {
             return getColor(ADVANCED_HEAT_15_COLOR);
-        } else if (heat < 20) {
+        } else if (heat <= 20) {
             return  getColor(ADVANCED_HEAT_20_COLOR);
-        } else if (heat < 25) {
+        } else if (heat <= 25) {
             return  getColor(ADVANCED_HEAT_25_COLOR);
-        } else if (heat < 30) {
+        } else if (heat <= 30) {
             return  getColor(ADVANCED_HEAT_30_COLOR);
         }
         return  getColor(ADVANCED_HEAT_OVERHEAT_COLOR);

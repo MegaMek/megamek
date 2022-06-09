@@ -336,17 +336,17 @@ public class Report implements Serializable {
             if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
-            String ownerColorHex = entity.getOwner().getColour().getHexString(0x00F0F0F0);
 
+            Color ownerColor = entity.getOwner().getColour().getColour();
             String unitName = colorBlock(GUIPreferences.DEFAULT_BLACK,
                     hrefBlock(ENTITY_LINK + entity.getId(), entity.getShortName()));
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
-                unitName += colorBlock(ownerColorHex, ' '+ entity.getCrew().getNickname().toUpperCase());
+                unitName += colorBlock(ownerColor, ' '+ entity.getCrew().getNickname().toUpperCase());
             }
 
             add(unitName, true);
-            add(boldBlock(colorBlock(ownerColorHex, entity.getOwner().getName())));
+            add(boldBlock(colorBlock(ownerColor, entity.getOwner().getName())));
         }
     }
 

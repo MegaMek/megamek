@@ -14,8 +14,10 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.GUIPreferences;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -334,16 +336,17 @@ public class Report implements Serializable {
             if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
-            String name = "<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
-                    + "\">" + entity.getShortName() + "</a></font>";
-            String color = entity.getOwner().getColour().getHexString(0x00F0F0F0);
+            String ownerColorHex = entity.getOwner().getColour().getHexString(0x00F0F0F0);
+
+            String unitName = colorBlock(GUIPreferences.DEFAULT_BLACK,
+                    hrefBlock(ENTITY_LINK + entity.getId(), entity.getShortName()));
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
-                // pilot nickname, also known as callsign
-                name += " <font color='"+color+"'>\"" + entity.getCrew().getNickname().toUpperCase() + "\"</font>";
+                unitName += colorBlock(ownerColorHex, ' '+ entity.getCrew().getNickname().toUpperCase());
             }
-            add(name, true);
-            add("<B><font color='" + color + "'>" + entity.getOwner().getName() + "</font></B>");
+
+            add(unitName, true);
+            add(boldBlock(colorBlock(ownerColorHex, entity.getOwner().getName())));
         }
     }
 
@@ -555,6 +558,28 @@ public class Report implements Serializable {
         } catch (Exception ex) {
             LogManager.getLogger().error("Cannot add a new line", ex);
         }
+    }
+
+    /**f
+     * Adds a newline to the last report in the given Vector.
+     *
+     * @param v a Vector of Report objects
+     */
+    public static String colorBlock(Color color, String str) {
+        String hexColor = String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
+        return colorBlock(hexColor, str);
+    }
+
+    public static String colorBlock(String hexColor, String str) {
+        return "<font color='" + hexColor + "'>" + str + "</font>";
+    }
+
+    public static String boldBlock(String str) {
+        return "<B>" + str + "</B>";
+    }
+
+    public static String hrefBlock(String href, String str) {
+        return "<font color='" + href + "'>" + str + "</font>";
     }
 
     /**

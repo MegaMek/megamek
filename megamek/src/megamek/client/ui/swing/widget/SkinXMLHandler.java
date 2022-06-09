@@ -508,10 +508,9 @@ public class SkinXMLHandler {
      * @param filename
      */
     public static void writeSkinToFile(String filename) {
-        File filePath = new MegaMekFile(Configuration.skinsDir(), filename).getFile();
-
-        try (Writer output = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream(filePath)))) {
+        try (FileOutputStream fos = new FileOutputStream(new MegaMekFile(Configuration.skinsDir(), filename).getFile());
+             OutputStreamWriter osw = new OutputStreamWriter(fos);
+             Writer output = new BufferedWriter(osw)) {
             output.write(SKIN_HEADER);
             for (String component : skinSpecs.keySet()) {
                 writeSkinComponent(component, output);

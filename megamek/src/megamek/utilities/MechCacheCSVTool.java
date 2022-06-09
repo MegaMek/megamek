@@ -27,7 +27,7 @@ import megamek.common.*;
 import java.util.stream.Stream;
 
 /**
- * This class provides a utility to read in all the data/mechfiles and print
+ * This class provides a utility to read in all the /data/mechfiles and print
  * that data out into a CSV format.
  *
  * @author arlith
@@ -36,7 +36,8 @@ import java.util.stream.Stream;
 public class MechCacheCSVTool {
 
     public static void main(String... args) {
-        try (BufferedWriter fout = new BufferedWriter(new PrintWriter("Units.csv"))) {
+        try (PrintWriter pw = new PrintWriter("Units.csv"); // TODO : Remove inline filename
+             BufferedWriter bw = new BufferedWriter(pw)) {
             MechSummaryCache cache = MechSummaryCache.getInstance(true);
             MechSummary[] units = cache.getAllMechs();
 
@@ -45,7 +46,7 @@ public class MechCacheCSVTool {
             csvLine.append("Chassis,Model,MUL ID,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year," +
                     "Standard year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure,Myomer," +
                     "Cockpit Type,Gyro Type,Armor Types,Equipment (multiple entries)\n");
-            fout.write(csvLine.toString());
+            bw.write(csvLine.toString());
 
             for (MechSummary unit : units) {
                 if (unit.getUnitType().equals("Gun Emplacement")) {
@@ -163,7 +164,7 @@ public class MechCacheCSVTool {
                     csvLine.append(name).append(",");
                 }
                 csvLine.append("\n");
-                fout.write(csvLine.toString());
+                bw.write(csvLine.toString());
             }
         } catch (FileNotFoundException e) {
             System.out.println("Could not open file for output!");

@@ -52,10 +52,9 @@ public class MechFileParser {
             }
         } else {
             // try zip file
-            try {
-                ZipFile zFile = new ZipFile(f.getAbsolutePath());
-                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
-                zFile.close();
+            try (ZipFile zipFile = new ZipFile(f.getAbsolutePath());
+                 InputStream is = zipFile.getInputStream(zipFile.getEntry(entryName))) {
+                parse(is, entryName);
             } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
             } catch (NullPointerException npe) {
@@ -70,13 +69,12 @@ public class MechFileParser {
     public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
         try {
             parse(is, fileName);
+        } catch (EntityLoadingException ex) {
+            LogManager.getLogger().error("", ex);
+            throw new EntityLoadingException(ex.getMessage());
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
-            if (ex instanceof EntityLoadingException) {
-                throw new EntityLoadingException(ex.getMessage());
-            } else {
-                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
-            }
+            throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
         }
     }
 
@@ -140,8 +138,7 @@ public class MechFileParser {
                 } else if (sType.equals("SpaceStation")) {
                     loader = new BLKSpaceStationFile(bb);
                 } else {
-                    throw new EntityLoadingException("Unknown UnitType: "
-                            + sType);
+                    throw new EntityLoadingException("Unknown UnitType: " + sType);
                 }
             } else {
                 loader = new BLKMechFile(bb);
@@ -191,26 +188,26 @@ public class MechFileParser {
             ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent.hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)) {
-            //Conventional Fighters get a combined sensor suite
+            // Conventional Fighters get a combined sensor suite
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
             ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent.hasETypeFlag(Entity.ETYPE_DROPSHIP) 
                 || ent.hasETypeFlag(Entity.ETYPE_SPACE_STATION)
                 || ent.hasETypeFlag(Entity.ETYPE_JUMPSHIP)
                 || ent.hasETypeFlag(Entity.ETYPE_WARSHIP)) {
-        //Large craft get active radar
-        //And both a passive sensor suite and thermal/optical sensors, which only work in space
-        ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
-        ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
-            //Only military craft get ESM, which detects active radar
+            // Large craft get active radar
+            // And both a passive sensor suite and thermal/optical sensors, which only work in space
+            ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_THERMAL));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_RADAR));
+            // Only military craft get ESM, which detects active radar
             Aero lc = (Aero) ent;
             if (lc.getDesignType() == Aero.MILITARY) {
                 ent.getSensors().add(new Sensor(Sensor.TYPE_SPACECRAFT_ESM));
             }
-        ent.setNextSensor(ent.getSensors().firstElement());
+            ent.setNextSensor(ent.getSensors().firstElement());
         } else if (ent.isAero()) {
-            //ASFs and small craft get a combined sensor suite
-            //And thermal/optical sensors, which only work in space
+            // ASFs and small craft get a combined sensor suite
+            // And thermal/optical sensors, which only work in space
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_THERMAL));
             ent.getSensors().add(new Sensor(Sensor.TYPE_AERO_SENSOR));
             ent.setNextSensor(ent.getSensors().firstElement());
@@ -223,11 +220,9 @@ public class MechFileParser {
 
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
-
             // link laser insulators
             if ((m.getType().hasFlag(MiscType.F_LASER_INSULATOR)
                     || m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
-
                 // We can link to a laser in the same location that isn't already linked.
                 Predicate<Mounted> linkable = mount ->
                         (mount.getLinkedBy() == null) && (mount.getLocation() == m.getLocation())
@@ -754,8 +749,9 @@ public class MechFileParser {
             if (canonUnitNames == null) {
                 canonUnitNames = new Vector<>();
                 // init the list.
-                try (BufferedReader br = new BufferedReader(new FileReader(new MegaMekFile(
-                            Configuration.docsDir(), FILENAME_OFFICIAL_UNITS).getFile()))) {
+                try (FileReader fr = new FileReader(new MegaMekFile(
+                        Configuration.docsDir(), FILENAME_OFFICIAL_UNITS).getFile());
+                     BufferedReader br = new BufferedReader(fr)) {
                     String s;
                     String name;
                     while ((s = br.readLine()) != null) {
@@ -773,12 +769,12 @@ public class MechFileParser {
         } catch (Exception ignored) {
 
         }
+
         int index = Collections.binarySearch(canonUnitNames, ent.getShortNameRaw());
         if (index >= 0) {
             ent.setCanon(true);
         }        
         ent.initMilitary();
-
     }
 
     /**

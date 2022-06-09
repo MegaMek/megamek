@@ -121,7 +121,7 @@ public class ScenarioLoader {
         scenarioFile = f;
     }
     
-    // TODO: legal/valid ammo type handling and game options, since they are set at this point
+    // TODO : legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(Game game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
         final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
@@ -882,10 +882,12 @@ public class ScenarioLoader {
 
     private StringMultiMap load() throws ScenarioLoaderException {
         StringMultiMap props = new StringMultiMap();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(scenarioFile), StandardCharsets.UTF_8))) {
+        try (FileInputStream fis = new FileInputStream(scenarioFile);
+             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+             BufferedReader br = new BufferedReader(isr)) {
             String line;
             int lineNum = 0;
-            while ((line = reader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 lineNum++;
                 line = line.trim();
                 if (line.startsWith(COMMENT_MARK) || line.isBlank()) {

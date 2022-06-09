@@ -267,7 +267,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             }
             File file = new File("./docs/" + filename);
             try (Writer w = new FileWriter(file); BufferedWriter fw = new BufferedWriter(w)) {
-                fw.write("Megamek Unit BattleForce Converter");
+                fw.write("MegaMek Unit BattleForce Converter");
                 fw.newLine();
                 fw.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
                 fw.newLine();

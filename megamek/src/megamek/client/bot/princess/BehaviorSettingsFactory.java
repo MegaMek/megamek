@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import megamek.common.annotations.Nullable;
 import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Document;
@@ -111,19 +112,19 @@ public class BehaviorSettingsFactory {
         return behaviorMap.get(desc);
     }
 
-    private Document buildPrincessBehaviorDoc() {
-        
+    private @Nullable Document buildPrincessBehaviorDoc() {
         try {
             File behaviorFile = new File(PRINCESS_BEHAVIOR_PATH);
             if (!behaviorFile.exists() || !behaviorFile.isFile()) {
                 LogManager.getLogger().error("Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
+
             try (InputStream is = new FileInputStream(behaviorFile)) {
                 return MMXMLUtility.newSafeDocumentBuilder().parse(is);
             }
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return null;
         }
     }

@@ -60,12 +60,10 @@ public class SuitePreferences {
 
     //region Write To File
     public void saveToFile(final String filePath) {
-        try {
-            try (FileOutputStream output = new FileOutputStream(filePath)) {
-                LogManager.getLogger().debug("Saving nameToPreferencesMap to: " + filePath);
-
-                final JsonFactory factory = new JsonFactory();
-                final JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter();
+        LogManager.getLogger().debug("Saving nameToPreferencesMap to: " + filePath);
+        final JsonFactory factory = new JsonFactory();
+        try (FileOutputStream output = new FileOutputStream(filePath)) {
+            try (JsonGenerator writer = factory.createGenerator(output).useDefaultPrettyPrinter()) {
                 writer.enable(JsonGenerator.Feature.STRICT_DUPLICATE_DETECTION);
 
                 writer.writeStartObject();
@@ -79,8 +77,6 @@ public class SuitePreferences {
 
                 writer.writeEndArray();
                 writer.writeEndObject();
-
-                writer.close();
             }
         } catch (FileNotFoundException ex) {
             LogManager.getLogger().error("Could not save nameToPreferencesMap to: " + filePath, ex);
@@ -119,13 +115,10 @@ public class SuitePreferences {
 
     //region Load From File
     public void loadFromFile(final String filePath) {
-        try {
-            try (FileInputStream input = new FileInputStream(filePath)) {
-                LogManager.getLogger().info("Loading user preferences from: " + filePath);
-
-                final JsonFactory factory = new JsonFactory();
-                final JsonParser parser = factory.createParser(input);
-
+        LogManager.getLogger().info("Loading user preferences from: " + filePath);
+        try (FileInputStream input = new FileInputStream(filePath)) {
+            final JsonFactory factory = new JsonFactory();
+            try (JsonParser parser = factory.createParser(input)) {
                 if (parser.nextToken() != JsonToken.START_OBJECT) {
                     throw new IOException("Expected an object start ({)" + getParserInformation(parser));
                 } else if (parser.nextToken() != JsonToken.FIELD_NAME && !parser.getCurrentName().equals(PREFERENCES_TOKEN)) {
@@ -142,11 +135,8 @@ public class SuitePreferences {
                         LogManager.getLogger().error("Error reading node. " + getParserInformation(parser), e);
                     }
                 }
-
-                parser.close();
-
-                LogManager.getLogger().info("Finished loading user preferences");
             }
+            LogManager.getLogger().info("Finished loading user preferences");
         } catch (FileNotFoundException ignored) {
 
         } catch (Exception e) {

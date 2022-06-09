@@ -324,16 +324,17 @@ public class MechSummaryCache {
 
     private void saveCache(List<MechSummary> data) {
         loadReport.append("Saving unit cache.\n");
-        File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
-        try (ObjectOutputStream wr = new ObjectOutputStream(
-                new BufferedOutputStream(new FileOutputStream(unit_cache_path)))) {
-            wr.writeObject(data.size());
+        try (FileOutputStream fos = new FileOutputStream(
+                new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile());
+             BufferedOutputStream bos = new BufferedOutputStream(fos);
+             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+            oos.writeObject(data.size());
             for (MechSummary element : data) {
-                wr.writeObject(element);
+                oos.writeObject(element);
             }
-        } catch (Exception e) {
+        } catch (Exception ex) {
             loadReport.append(" Unable to save mech cache\n");
-            LogManager.getLogger().error("", e);
+            LogManager.getLogger().error("", ex);
         }
     }
 
@@ -722,16 +723,17 @@ public class MechSummaryCache {
     private void addLookupNames() {
         File lookupNames = new MegaMekFile(getUnitCacheDir(), FILENAME_LOOKUP).getFile();
         if (lookupNames.exists()) {
-            try (InputStream is = new FileInputStream(lookupNames);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+            try (FileInputStream fis = new FileInputStream(lookupNames);
+                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                 BufferedReader br = new BufferedReader(isr)) {
                 String line;
                 String lookupName;
                 String entryName;
-                while (null != (line = reader.readLine())) {
+                while (null != (line = br.readLine())) {
                     if (line.startsWith("#")) {
                         continue;
                     }
-                    int index = line.indexOf("|");
+                    int index = line.indexOf('|');
                     if (index > 0) {
                         lookupName = line.substring(0, index);
                         entryName = line.substring(index + 1);
@@ -760,5 +762,4 @@ public class MechSummaryCache {
     public int getZipCount() {
         return zipCount;
     }
-
 }

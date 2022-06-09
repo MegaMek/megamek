@@ -360,72 +360,74 @@ public class QuirksHandler {
         String filePath = userDir + "mmconf" + File.separator + "unitQuirksOverride.xml"; // TODO : Remove inline file path
 
         // TODO : Convert to MegaMekXMLUtil
-        try (Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath)))) {
-            output.write(CUSTOM_QUIRKS_HEADER);
+        try (FileOutputStream fos = new FileOutputStream(filePath);
+             OutputStreamWriter osw = new OutputStreamWriter(fos);
+             BufferedWriter bw = new BufferedWriter(osw)) {
+            bw.write(CUSTOM_QUIRKS_HEADER);
             for (String unitId : customQuirkMap.keySet()) {
                 String chassis = getChassis(unitId);
                 String model = getModel(unitId);
                 String unitType = getUnitType(unitId);
 
-                output.write("\t" + getOpenTag(UNIT) + "\n");
+                bw.write("\t" + getOpenTag(UNIT) + "\n");
 
                 // Write Chassis
-                output.write("\t\t" + getOpenTag(CHASSIS));
-                output.write(chassis);
-                output.write(getCloseTag(CHASSIS) + "\n");
+                bw.write("\t\t" + getOpenTag(CHASSIS));
+                bw.write(chassis);
+                bw.write(getCloseTag(CHASSIS) + "\n");
 
                 // Write Model
                 if (!StringUtility.isNullOrBlank(model)) {
-                    output.write("\t\t" + getOpenTag(MODEL));
-                    output.write(model);
-                    output.write(getCloseTag(MODEL) + "\n");
+                    bw.write("\t\t" + getOpenTag(MODEL));
+                    bw.write(model);
+                    bw.write(getCloseTag(MODEL) + "\n");
                 }
 
                 // Write unit type
-                output.write("\t\t" + getOpenTag(UNIT_TYPE));
-                output.write(null == unitType ? "" : unitType);
-                output.write(getCloseTag(UNIT_TYPE) + "\n");
+                bw.write("\t\t" + getOpenTag(UNIT_TYPE));
+                bw.write(null == unitType ? "" : unitType);
+                bw.write(getCloseTag(UNIT_TYPE) + "\n");
 
                 // Write out quirks
                 List<QuirkEntry> quirks = customQuirkMap.get(unitId);
                 if (quirks.isEmpty()) {
-                    output.write("\t\t" + getOpenTag(QUIRK));
-                    output.write(NO_QUIRKS);
-                    output.write(getCloseTag(QUIRK) + "\n");
+                    bw.write("\t\t" + getOpenTag(QUIRK));
+                    bw.write(NO_QUIRKS);
+                    bw.write(getCloseTag(QUIRK) + "\n");
                 } else {
                     for (QuirkEntry quirk : quirks) {
                         // Write Weapon Quirk
                         if (quirk.isWeaponQuirk()) {
-                            output.write("\t\t" + getOpenTag(WEAPON_QUIRK) + "\n");
+                            bw.write("\t\t" + getOpenTag(WEAPON_QUIRK) + "\n");
                             // Quirk Name
-                            output.write("\t\t\t" + getOpenTag(WEAPON_QUIRK_NAME));
-                            output.write(quirk.getQuirk());
-                            output.write(getCloseTag(WEAPON_QUIRK_NAME) + "\n");
+                            bw.write("\t\t\t" + getOpenTag(WEAPON_QUIRK_NAME));
+                            bw.write(quirk.getQuirk());
+                            bw.write(getCloseTag(WEAPON_QUIRK_NAME) + "\n");
                             // Location
-                            output.write("\t\t\t" + getOpenTag(LOCATION));
-                            output.write(quirk.getLocation());
-                            output.write(getCloseTag(LOCATION) + "\n");
+                            bw.write("\t\t\t" + getOpenTag(LOCATION));
+                            bw.write(quirk.getLocation());
+                            bw.write(getCloseTag(LOCATION) + "\n");
                             // Slot
-                            output.write("\t\t\t" + getOpenTag(SLOT));
-                            output.write(quirk.getSlot() + "");
-                            output.write(getCloseTag(SLOT) + "\n");
+                            bw.write("\t\t\t" + getOpenTag(SLOT));
+                            bw.write(quirk.getSlot() + "");
+                            bw.write(getCloseTag(SLOT) + "\n");
                             // Weapon Name
-                            output.write("\t\t\t" + getOpenTag(WEAPON_NAME));
-                            output.write(quirk.getWeaponName());
-                            output.write(getCloseTag(WEAPON_NAME) + "\n");
+                            bw.write("\t\t\t" + getOpenTag(WEAPON_NAME));
+                            bw.write(quirk.getWeaponName());
+                            bw.write(getCloseTag(WEAPON_NAME) + "\n");
                             // Close Tag
-                            output.write("\t\t" + getCloseTag(WEAPON_QUIRK) + "\n");
+                            bw.write("\t\t" + getCloseTag(WEAPON_QUIRK) + "\n");
                         } else { // Write normal quirk
-                            output.write("\t\t" + getOpenTag(QUIRK));
-                            output.write(quirk.getQuirk());
-                            output.write(getCloseTag(QUIRK) + "\n");
+                            bw.write("\t\t" + getOpenTag(QUIRK));
+                            bw.write(quirk.getQuirk());
+                            bw.write(getCloseTag(QUIRK) + "\n");
                         }
                     }
                 }
-                output.write("\t" + getCloseTag(UNIT) + "\n\n");
+                bw.write("\t" + getCloseTag(UNIT) + "\n\n");
             }
 
-            output.write(CUSTOM_QUIRKS_FOOTER);
+            bw.write(CUSTOM_QUIRKS_FOOTER);
         } catch (Exception e) {
             LogManager.getLogger().error("Error writing CustomQuirks file!", e);
         }

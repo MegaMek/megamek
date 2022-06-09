@@ -129,7 +129,8 @@ public class MtfFile implements IMechLoader {
      * Creates new MtfFile
      */
     public MtfFile(InputStream is) throws EntityLoadingException {
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(is))) {
+        try (InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader r = new BufferedReader(isr)) {
             String version = r.readLine();
             if (version == null) {
                 throw new EntityLoadingException("MTF File empty!");

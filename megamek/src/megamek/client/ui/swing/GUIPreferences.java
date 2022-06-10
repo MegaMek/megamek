@@ -93,6 +93,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_USE_CAMO_OVERLAY = "AdvancedUseCamoOverlay";
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
+    public static final String ADVANCED_REPORT_TEXT_COLOR = "AdvancedReportTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
     public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
     public static final String ADVANCED_HEAT_5_COLOR = "ADVANCED_HEAT_5_COLOR";
@@ -257,41 +258,38 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static String RAT_PAD_BV = "RATPadBV";
     public static String RAT_SELECTED_RAT = "RATSelectedRAT";
 
-    public static final Color DEFAULT_WHITE = new Color(255, 255, 255);
-    public static final Color DEFAULT_BLACK = new Color(0, 0, 0);
+    private static final Color DEFAULT_WHITE = new Color(255, 255, 255);
+    private static final Color DEFAULT_BLACK = new Color(0, 0, 0);
 
     // Text colors that read over light and dark backgrounds
-    public static final Color DEFAULT_DARK_GRAY = new Color(64, 64, 64);
-    public static final Color DEFAULT_LIGHT_GRAY = new Color(196, 196, 196);
-    public static final Color DEFAULT_CYAN = new Color(0, 228, 228);
-    public static final Color DEFAULT_MAGENTA = new Color(228, 0, 228);
-    public static final Color DEFAULT_PINK = new Color(228, 20, 147);
-    public static final Color DEFAULT_RED = new Color(196, 0, 0);
-    public static final Color DEFAULT_GREEN = new Color(0, 196, 0);
-    public static final Color DEFAULT_BLUE = new Color(64, 96, 228);
-
+    private static final Color DEFAULT_DARK_GRAY = new Color(64, 64, 64);
+    private static final Color DEFAULT_LIGHT_GRAY = new Color(196, 196, 196);
+    private static final Color DEFAULT_CYAN = new Color(0, 228, 228);
+    private static final Color DEFAULT_MAGENTA = new Color(228, 0, 228);
+    private static final Color DEFAULT_PINK = new Color(228, 20, 147);
+    private static final Color DEFAULT_RED = new Color(196, 0, 0);
+    private static final Color DEFAULT_GREEN = new Color(0, 212, 0);
+    private static final Color DEFAULT_BLUE = new Color(64, 96, 228);
     private static final Color DEFAULT_MEDIUM_DARK_RED = new Color(150, 80, 80);  // medium dark red
     private static final Color DEFAULT_MEDIUM_YELLOW = new Color(180, 180, 100);
-    private static final Color DEFAULT_ORANGE = new Color(255, 140, 0);
+    private static final Color DEFAULT_ORANGE = new Color(248, 140, 0);
     private static final Color DEFAULT_YELLOW = new Color(216, 200, 0);
     private static final Color DEFAULT_MEDIUM_GREEN = new Color(100, 180, 100);
 
     // Heat Scale
-    private static final Color DEFAULT_HEAT_5 = new Color(64, 128, 255);
-    private static final Color DEFAULT_HEAT_10 = new Color(64, 164, 128);
-    private static final Color DEFAULT_HEAT_15 = new Color(48, 228, 48);
-    private static final Color DEFAULT_HEAT_20 = new Color(228, 198, 0);
-    private static final Color DEFAULT_HEAT_25 = new Color(228, 128, 0);
-    private static final Color DEFAULT_HEAT_30 = new Color(228, 64, 64);
-    private static final Color DEFAULT_HEAT_OVERHEAT = new Color(228, 12, 12);
+    private static final Color DEFAULT_HEAT_5_COLOR = new Color(64, 128, 255);
+    private static final Color DEFAULT_HEAT_10_COLOR = new Color(64, 164, 128);
+    private static final Color DEFAULT_HEAT_15_COLOR = new Color(48, 212, 48);
+    private static final Color DEFAULT_HEAT_20_COLOR = new Color(228, 198, 0);
+    private static final Color DEFAULT_HEAT_25_COLOR = new Color(248, 128, 0);
+    private static final Color DEFAULT_HEAT_30_COLOR = new Color(248, 64, 64);
+    private static final Color DEFAULT_HEAT_OVERHEAT_COLOR = new Color(248, 12, 12);
 
     // Map colors
-    private static final Color DEFAULT_FOLIAGE_GREEN = new Color(80, 230, 80);
-    private static final Color DEFAULT_ALLY_COLOR = new Color(60, 140, 240);  // greenish blue
-    private static final Color DEFAULT_ENEMY_COLOR = new Color(200, 40, 40); // red
-    private static final Color DEFAULT_MY_COLOR = new Color(40, 210, 40);  // light green
-
-
+    private static final Color DEFAULT_MAP_BRIGHT_GREEN = new Color(80, 230, 80);
+    private static final Color DEFAULT_MAP_BLUE = new Color(60, 140, 240);  // greenish blue
+    private static final Color DEFAULT_MAP_RED = new Color(200, 40, 40); // red
+    private static final Color DEFAULT_MAP_GREEN = new Color(40, 210, 40);  // light green
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -311,17 +309,17 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
         store.setDefault(BOARDEDIT_RNDDIALOG_START, false);
         setDefault(ADVANCED_MOVE_DEFAULT_CLIMB_MODE, true);
-        setDefault(ADVANCED_MOVE_DEFAULT_COLOR, Color.CYAN);
-        setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, Color.DARK_GRAY);
-        setDefault(ADVANCED_MOVE_JUMP_COLOR, Color.RED);
+        setDefault(ADVANCED_MOVE_DEFAULT_COLOR, DEFAULT_CYAN.CYAN);
+        setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, DEFAULT_DARK_GRAY);
+        setDefault(ADVANCED_MOVE_JUMP_COLOR, DEFAULT_RED);
         setDefault(ADVANCED_MOVE_MASC_COLOR, DEFAULT_ORANGE);
         setDefault(ADVANCED_MOVE_RUN_COLOR, DEFAULT_YELLOW);
         setDefault(ADVANCED_MOVE_BACK_COLOR, DEFAULT_YELLOW);
         setDefault(ADVANCED_MOVE_SPRINT_COLOR, DEFAULT_PINK);
         setDefault(ADVANCED_UNITOVERVIEW_SELECTED_COLOR, DEFAULT_MAGENTA);
-        setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, Color.CYAN);
-        setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, Color.CYAN);
-        setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, Color.RED);
+        setDefault(ADVANCED_UNITOVERVIEW_VALID_COLOR, DEFAULT_CYAN);
+        setDefault(ADVANCED_FIRE_SOLN_CANSEE_COLOR, DEFAULT_CYAN);
+        setDefault(ADVANCED_FIRE_SOLN_NOSEE_COLOR, DEFAULT_RED);
         setDefault(ADVANCED_ARMORMINI_UNITS_PER_BLOCK, 10);
         setDefault(ADVANCED_ARMORMINI_ARMOR_CHAR, "\u2B1B"); // Centered Filled Square    
         setDefault(ADVANCED_ARMORMINI_CAP_ARMOR_CHAR, "\u26CA"); // Shield
@@ -333,7 +331,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(ADVANCED_WARNING_COLOR, DEFAULT_RED);
         setDefault(ADVANCED_TMM_PIP_MODE, 2); // show pips with colors based on move type
-        setDefault(ADVANCED_LOW_FOLIAGE_COLOR, DEFAULT_FOLIAGE_GREEN);
+        setDefault(ADVANCED_LOW_FOLIAGE_COLOR, DEFAULT_MAP_BRIGHT_GREEN);
         setDefault(ADVANCED_NO_SAVE_NAG, false);
         setDefault(ADVANCED_USE_CAMO_OVERLAY, true);
 
@@ -359,13 +357,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
-        setDefault(ADVANCED_HEAT_5_COLOR, DEFAULT_HEAT_5);
-        setDefault(ADVANCED_HEAT_10_COLOR, DEFAULT_HEAT_10);
-        setDefault(ADVANCED_HEAT_15_COLOR, DEFAULT_HEAT_15);
-        setDefault(ADVANCED_HEAT_20_COLOR, DEFAULT_HEAT_20);
-        setDefault(ADVANCED_HEAT_25_COLOR, DEFAULT_HEAT_25);
-        setDefault(ADVANCED_HEAT_20_COLOR, DEFAULT_HEAT_30);
-        setDefault(ADVANCED_HEAT_OVERHEAT_COLOR, DEFAULT_HEAT_OVERHEAT);
+        setDefault(ADVANCED_HEAT_5_COLOR, DEFAULT_HEAT_5_COLOR);
+        setDefault(ADVANCED_HEAT_10_COLOR, DEFAULT_HEAT_10_COLOR);
+        setDefault(ADVANCED_HEAT_15_COLOR, DEFAULT_HEAT_15_COLOR);
+        setDefault(ADVANCED_HEAT_20_COLOR, DEFAULT_HEAT_20_COLOR);
+        setDefault(ADVANCED_HEAT_25_COLOR, DEFAULT_HEAT_25_COLOR);
+        setDefault(ADVANCED_HEAT_20_COLOR, DEFAULT_HEAT_30_COLOR);
+        setDefault(ADVANCED_HEAT_OVERHEAT_COLOR, DEFAULT_HEAT_OVERHEAT_COLOR);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -400,7 +398,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(LOBBY_MEKTABLE_PILOT_WIDTH, 80);
         store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
         store.setDefault(LOBBY_MEKTABLE_BV_WIDTH, 50);
-        setDefault(ADVANCED_MAP_TEXT_COLOR, Color.BLACK);
+        setDefault(ADVANCED_MAP_TEXT_COLOR, DEFAULT_BLACK);
+        setDefault(ADVANCED_REPORT_TEXT_COLOR, DEFAULT_BLACK);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_NAME, true);
@@ -511,9 +510,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
 
-        setDefault(ALLY_UNIT_COLOR, DEFAULT_ALLY_COLOR);
-        setDefault(ENEMY_UNIT_COLOR, DEFAULT_ENEMY_COLOR);
-        setDefault(MY_UNIT_COLOR, DEFAULT_MY_COLOR);
+        setDefault(ALLY_UNIT_COLOR, DEFAULT_MAP_BLUE);
+        setDefault(ENEMY_UNIT_COLOR, DEFAULT_MAP_RED);
+        setDefault(MY_UNIT_COLOR, DEFAULT_MAP_GREEN);
         setDefault(TEAM_COLORING, true);
 
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
@@ -654,6 +653,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public Color getMapTextColor() {
         return getColor(ADVANCED_MAP_TEXT_COLOR);
+    }
+
+    public Color getReportTextColor() {
+        return getColor(ADVANCED_REPORT_TEXT_COLOR);
     }
 
     public int getMapZoomIndex() {
@@ -1719,7 +1722,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static void AntiAliasifSet(Graphics graph) {
         if (getInstance().getAntiAliasing()) {
-            ((Graphics2D) graph).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            ((Graphics2D) graph).setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
         }
     }
 

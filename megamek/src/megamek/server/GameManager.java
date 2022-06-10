@@ -18616,7 +18616,7 @@ public class GameManager implements IGameManager {
             r.add(entity.heatBuildup);
             r.add(toSink);
             Color color = GUIPreferences.getInstance().getColorForHeat(entity.heat, Color.BLACK);
-            r.add(r.boldBlock(r.fgColorBlock(color, String.valueOf(entity.heat))));
+            r.add(r.bold(r.fgColor(color, String.valueOf(entity.heat))));
             addReport(r);
             entity.heatBuildup = 0;
             vPhaseReport.addAll(rhsReports);
@@ -31216,7 +31216,7 @@ public class GameManager implements IGameManager {
                 r = new Report(6436, Report.PUBLIC);
                 r.indent(1);
                 if (curCF <= 0) {
-                    r.add(r.fgColorBlock(GUIPreferences.DEFAULT_RED, String.valueOf(curCF)));
+                    r.add(r.warning(String.valueOf(curCF)));
                 } else {
                     r.add(curCF);
                 }

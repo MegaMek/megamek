@@ -15,8 +15,12 @@
 package megamek.common;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import org.apache.logging.log4j.LogManager;
 
+import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Enumeration;
@@ -337,17 +341,18 @@ public class Report implements Serializable {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
 
-//            String unitName = fgColorBlock(GUIPreferences.DEFAULT_BLACK,
-//                    hrefBlock(ENTITY_LINK + entity.getId(), entity.getShortName()));
-            String unitName = fgColorBlock(GUIPreferences.DEFAULT_BLACK,
-                    hrefBlock(ENTITY_LINK + entity.getId(), entity.getShortName()));
             Color ownerColor = entity.getOwner().getColour().getColour();
+//            String unitName = fgColor(GUIPreferences.getInstance().getReportTextColor(),
+//                    href(ENTITY_LINK + entity.getId(), entity.getShortName()));
+            String unitName =
+                    href(ENTITY_LINK + entity.getId(), entity.getShortName());
+
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
-                unitName += fgColorBlock(ownerColor, ' '+ entity.getCrew().getNickname().toUpperCase());
+                unitName += fgColor(ownerColor, ' '+ entity.getCrew().getNickname().toUpperCase());
             }
 
             add(unitName, true);
-            add(boldBlock(fgColorBlock(ownerColor, entity.getOwner().getName())));
+            add(bold(fgColor(ownerColor, entity.getOwner().getName())));
         }
     }
 
@@ -561,29 +566,51 @@ public class Report implements Serializable {
         }
     }
 
-    public String fgColorBlock(Color color, String str) {
-        String hexColor = String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
-        return fgColorBlock(hexColor, str);
+    public static void setupStylesheet(StyleSheet styleSheet) {
+        Font font = UIManager.getFont("Label.font");
+        int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
+
+        GUIPreferences guip = GUIPreferences.getInstance();
+        styleSheet.addRule(
+                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
+        styleSheet.addRule("a {color: #565656 }");
+        styleSheet.addRule("span.warning { color: "+ hexColor(guip.getWarningColor())+" }");
+
     }
 
-    public String fgColorBlock(String hexColor, String str) {
+    public String span(String name, String text) {
+        return "<span class='" + name + "'>" + text + "</span>";
+    }
+
+    public String warning(String text) {
+        return span("warning", text);
+    }
+
+    private static String hexColor(Color color) {
+        return String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
+    }
+
+    public String fgColor(Color color, String str) {
+        return fgColor(hexColor(color), str);
+    }
+
+    public String fgColor(String hexColor, String str) {
         return "<span style='color:" + hexColor + "'>" + str + "</span>";
     }
 
-    public String bgColorBlock(Color color, String str) {
-        String hexColor = String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
-        return bgColorBlock(hexColor, str);
+    public String bgColor(Color color, String str) {
+        return bgColor(hexColor(color), str);
     }
 
-    public String bgColorBlock(String hexColor, String str) {
+    public String bgColor(String hexColor, String str) {
         return "<span style='background-color:"+ hexColor +"'>" + str + "</span>";
     }
 
-    public static String boldBlock(String str) {
+    public static String bold(String str) {
         return "<B>" + str + "</B>";
     }
 
-    public String hrefBlock(String href, String str) {
+    public String href(String href, String str) {
         return "<a href='" + href + "'>" + str + "</a>";
     }
 

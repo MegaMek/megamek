@@ -1,12 +1,11 @@
 Version:1.1
 Warhammer
 C 3
-mul id:7566
 
 Config:Biped
 techbase:Clan
-era:2874
-source:Rec Guide:ilClan #7 - Early Succession Wars
+era:2850
+source:Succession Wars
 rules level:2
 
 mass:70
@@ -14,7 +13,7 @@ engine:280 XL (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:17 Double
+heat sinks:17 Clan Double
 walk mp:4
 jump mp:0
 
@@ -78,10 +77,10 @@ CLERMediumLaser
 CLMediumPulseLaser
 Clan Streak SRM 6 Ammo
 Clan Endo Steel
--Empty-
--Empty-
--Empty-
--Empty-
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
 
 Right Torso:
 Fusion Engine

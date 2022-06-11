@@ -21,6 +21,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
 import megamek.server.GameManager;

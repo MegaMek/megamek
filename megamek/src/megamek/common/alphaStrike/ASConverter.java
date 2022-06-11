@@ -19,6 +19,7 @@
 package megamek.common.alphaStrike;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
@@ -35,11 +36,19 @@ import java.util.*;
  */
 public final class ASConverter {
 
+    public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
+        return convert(entity, true, conversionReport);
+    }
+
     public static AlphaStrikeElement convert(Entity entity) {
-        return convert(entity, true);
+        return convert(entity, true, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
+        return convert(entity, includePilot, new DummyCalculationReport());
+    }
+
+    public static AlphaStrikeElement convert(Entity entity, boolean includePilot, CalculationReport conversionReport) {
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
             LogManager.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
@@ -51,7 +60,6 @@ public final class ASConverter {
             return null;
         }
 
-        FlexibleCalculationReport conversionReport = new FlexibleCalculationReport();
         var element = new AlphaStrikeElement();
         final ConversionData conversionData = new ConversionData(undamagedEntity, element, conversionReport);
 
@@ -99,7 +107,6 @@ public final class ASConverter {
         ASSpecialAbilityConverter.finalizeSpecials(element);
         element.setPointValue(ASPointValueConverter.getPointValue(conversionData));
         ASPointValueConverter.adjustPVforSkill(element);
-//        System.out.println(conversionReport);
         return element;
     }
 

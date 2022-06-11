@@ -19,6 +19,7 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
@@ -34,35 +35,31 @@ import java.util.Objects;
 
 public class ASConversionInfoDialog extends AbstractDialog {
 
-    private final Entity entity;
+    private final FlexibleCalculationReport report;
 
-    public ASConversionInfoDialog(final JFrame frame, final Entity entity) {
+    public ASConversionInfoDialog(final JFrame frame, FlexibleCalculationReport report) {
         super(frame, false, "BVDisplayDialog", "BVDisplayDialog.title");
-        this.entity = Objects.requireNonNull(entity);
+        this.report = Objects.requireNonNull(report);
         initialize();
     }
 
     @Override
-    protected void finalizeInitialization() {
+    protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
-        setTitle(getTitle() + " (" + entity.getShortName() + ")");
         UIUtil.adjustDialog(getContentPane());
         pack();
-//        Dimension screenSize = UIUtil.getScaledScreenSize(this);
-//        setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));
+        Dimension screenSize = UIUtil.getScaledScreenSize(this);
+        setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));
     }
 
     @Override
     protected Container createCenterPane() {
-        FlexibleCalculationReport conversionReport = new FlexibleCalculationReport();
-//        AlphaStrikeElement element = ASConverter.convert(entity, conversionReport);
-
         JButton exportText = new JButton("Copy as Text");
-        exportText.addActionListener(evt -> copyToClipboard(conversionReport.getTextReport().toString()));
+        exportText.addActionListener(evt -> copyToClipboard(report.getTextReport().toString()));
         JButton exportHTML = new JButton("Copy as HTML");
-        exportHTML.addActionListener(evt -> copyToClipboard(conversionReport.getHtmlReport().toString()));
+        exportHTML.addActionListener(evt -> copyToClipboard(report.getHtmlReport().toString()));
 
-        var scrollPane = new JScrollPane(conversionReport.toJComponent(), ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+        var scrollPane = new JScrollPane(report.toJComponent(), ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBorder(new EmptyBorder(10, 0, 0, 0));

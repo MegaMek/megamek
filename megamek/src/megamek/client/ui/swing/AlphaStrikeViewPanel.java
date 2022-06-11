@@ -25,6 +25,8 @@ import java.util.Collection;
 import javax.swing.*;
 
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -33,7 +35,7 @@ import megamek.common.alphaStrike.ASConverter;
 public class AlphaStrikeViewPanel extends JPanel {
     
     public static final int DEFAULT_HEIGHT = 600;
-    public static final int COLS = 13;
+    public static final int COLS = 14;
 
     public AlphaStrikeViewPanel(Collection<Entity> entities, boolean hexMovement, boolean includePilot) {
         setLayout(new SpringLayout());
@@ -50,11 +52,13 @@ public class AlphaStrikeViewPanel extends JPanel {
         addHeader("Skill");
         addHeader("PV");
         addHeader("Specials");
+        addHeader("Conversion");
         
         int row = 1;
         for (Entity entity : entities) {
             boolean oddRow = (row++ % 2) == 1;
-            var element2 = ASConverter.convert(entity, includePilot);
+            FlexibleCalculationReport conversionReport = new FlexibleCalculationReport();
+            var element2 = ASConverter.convert(entity, includePilot, conversionReport);
             addGridElement(entity.getShortName(), oddRow, JComponent.LEFT_ALIGNMENT);
             addGridElement(element2.getType().toString(), oddRow);
             addGridElement(element2.getSize() + "", oddRow);
@@ -72,19 +76,19 @@ public class AlphaStrikeViewPanel extends JPanel {
             addGridElement(element2.getSkill() + "", oddRow);
             addGridElement(element2.getPointValue() + "", oddRow);
             addGridElement(element2.getSpecialsString(), oddRow, JComponent.LEFT_ALIGNMENT);
-
+            addConversionInfo(oddRow, conversionReport);
         }
 
         SpringUtilities.makeCompactGrid(this, row, COLS, 5, 5, 1, 5);
     }
 
-    private void addConversionInfo(boolean coloredBG) {
+    private void addConversionInfo(boolean coloredBG, FlexibleCalculationReport conversionReport) {
         var panel = new UIUtil.FixedYPanel();
         if (coloredBG) {
             panel.setBackground(UIUtil.alternateTableBGColor());
         }
         JButton button = new JButton("?");
-//        button.addActionListener(e -> new ASConversionInfoDialog(null, ));
+        button.addActionListener(e -> new ASConversionInfoDialog(null, conversionReport).setVisible(true));
         panel.add(button);
         add(panel);
     }

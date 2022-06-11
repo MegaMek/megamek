@@ -24,6 +24,7 @@ import java.util.Collection;
 
 import javax.swing.*;
 
+import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
@@ -71,9 +72,21 @@ public class AlphaStrikeViewPanel extends JPanel {
             addGridElement(element2.getSkill() + "", oddRow);
             addGridElement(element2.getPointValue() + "", oddRow);
             addGridElement(element2.getSpecialsString(), oddRow, JComponent.LEFT_ALIGNMENT);
+
         }
 
         SpringUtilities.makeCompactGrid(this, row, COLS, 5, 5, 1, 5);
+    }
+
+    private void addConversionInfo(boolean coloredBG) {
+        var panel = new UIUtil.FixedYPanel();
+        if (coloredBG) {
+            panel.setBackground(UIUtil.alternateTableBGColor());
+        }
+        JButton button = new JButton("?");
+//        button.addActionListener(e -> new ASConversionInfoDialog(null, ));
+        panel.add(button);
+        add(panel);
     }
     
     private void addGridElement(String text, boolean coloredBG) {

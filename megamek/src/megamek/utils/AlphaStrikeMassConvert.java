@@ -40,7 +40,7 @@ public class AlphaStrikeMassConvert {
         MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
         for (MechSummary unit : units) {
             Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
-            if (!ASConverter.canConvert(entity)) {
+            if (!ASConverter.canConvert(entity) || !entity.hasMulId()) {
                 continue;
             }
             if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech

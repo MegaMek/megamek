@@ -295,7 +295,7 @@ final class ASDamageConverter {
                 }
                 for (int r = 0; r < result.getRangeBands(); r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
-//                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": " + dam + " Mul: " + damageModifier);
+                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": " + dam + " Mul: " + damageModifier);
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
                         // Standard Damage
                         result.weaponLocations[loc].addDamage(r, dam);
@@ -324,6 +324,7 @@ final class ASDamageConverter {
                 pointDefense += baseDamage[RANGE_BAND_SHORT] * damageModifier * locationMultiplier(entity, 0, mount);
             }
         }
+        System.out.println("END\n");
 
         if (entity.getEntityType() == Entity.ETYPE_INFANTRY) {
             int baseRange = 0;

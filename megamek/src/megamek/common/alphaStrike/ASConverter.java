@@ -36,7 +36,7 @@ import java.util.*;
 public final class ASConverter {
 
     public static AlphaStrikeElement convert(Entity entity) {
-        return convert(entity, false);
+        return convert(entity, true);
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {

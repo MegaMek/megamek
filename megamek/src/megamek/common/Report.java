@@ -341,9 +341,7 @@ public class Report implements Serializable {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
 
-            Color ownerColor = entity.getOwner().getColour().getColour();
-//            String unitName = fgColor(GUIPreferences.getInstance().getReportTextColor(),
-//                    href(ENTITY_LINK + entity.getId(), entity.getShortName()));
+            Color ownerColor = entity.getOwner().getColour().getColour();;
             String unitName =
                     href(ENTITY_LINK + entity.getId(), entity.getShortName());
 
@@ -575,7 +573,6 @@ public class Report implements Serializable {
                 "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
         styleSheet.addRule("a {color: #565656 }");
         styleSheet.addRule("span.warning { color: "+ hexColor(guip.getWarningColor())+" }");
-
     }
 
     public String span(String name, String text) {

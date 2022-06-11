@@ -93,7 +93,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_NO_SAVE_NAG = "AdvancedNoSaveNag";
     public static final String ADVANCED_USE_CAMO_OVERLAY = "AdvancedUseCamoOverlay";
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
-    public static final String ADVANCED_REPORT_TEXT_COLOR = "AdvancedReportTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
     public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
     public static final String ADVANCED_HEAT_5_COLOR = "ADVANCED_HEAT_5_COLOR";
@@ -399,7 +398,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(LOBBY_MEKTABLE_PLAYER_WIDTH, 50);
         store.setDefault(LOBBY_MEKTABLE_BV_WIDTH, 50);
         setDefault(ADVANCED_MAP_TEXT_COLOR, DEFAULT_BLACK);
-        setDefault(ADVANCED_REPORT_TEXT_COLOR, DEFAULT_BLACK);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
         store.setDefault(MECH_SELECTOR_INCLUDE_NAME, true);
@@ -653,10 +651,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public Color getMapTextColor() {
         return getColor(ADVANCED_MAP_TEXT_COLOR);
-    }
-
-    public Color getReportTextColor() {
-        return getColor(ADVANCED_REPORT_TEXT_COLOR);
     }
 
     public int getMapZoomIndex() {

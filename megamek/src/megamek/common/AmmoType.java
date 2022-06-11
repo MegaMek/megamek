@@ -13568,8 +13568,8 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
                     || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && ((munition.getMunitionType() == AmmoType.M_DEAD_FIRE))) {
-                cost *= .6;
-                //TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo. 
+                cost *= 0.6;
+                // TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo. 
             }
 
             if (((munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)

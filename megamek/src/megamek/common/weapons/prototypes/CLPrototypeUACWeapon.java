@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004-2005 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,11 +20,11 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeCLUltraWeaponHandler;
 import megamek.common.weapons.autocannons.UACWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
- * @since Sep 29, 2004
+ * @since Sept 29, 2004
  */
 public abstract class CLPrototypeUACWeapon extends UACWeapon {
     private static final long serialVersionUID = 8905222321912752035L;
@@ -38,11 +38,11 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         if (weapon.curMode().equals("Ultra")) {
-            return new PrototypeCLUltraWeaponHandler(toHit, waa, game, server);
+            return new PrototypeCLUltraWeaponHandler(toHit, waa, game, manager);
         }
-        return super.getCorrectHandler(toHit, waa, game, server);
+        return super.getCorrectHandler(toHit, waa, game, manager);
     }
 }

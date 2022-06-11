@@ -1,0 +1,106 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Thunderbird Battle Armor
+</Name>
+
+<Model>
+(Upgrade) [Pulse Laser]
+</Model>
+
+<year>
+3089
+</year>
+
+<originalBuildYear>
+3089
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+CLBASmallPulseLaser:RA
+BAJumpBooster:Body
+BABasicManipulator:RA
+BABattleClaw:LA
+Clan BA Laser Reflective (Reflec/Glazed):Body
+Clan BA Laser Reflective (Reflec/Glazed):LA
+Clan BA Laser Reflective (Reflec/Glazed):Body
+Clan BA Laser Reflective (Reflec/Glazed):Body
+Clan BA Laser Reflective (Reflec/Glazed):LA
+Clan BA Laser Reflective (Reflec/Glazed):LA
+Clan BA Laser Reflective (Reflec/Glazed):Body
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+RS3145 NT NU
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+

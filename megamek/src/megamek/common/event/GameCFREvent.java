@@ -2,25 +2,24 @@
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * MegaMek - Copyright (C) 2014 Nicholas Walczak (walczak@cs.umn.edu)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.event;
+
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.net.enums.PacketCommand;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import megamek.common.actions.WeaponAttackAction;
-import megamek.common.net.Packet;
 
 /**
  * A Client Feedback Request Event.  This event is created when the server 
@@ -30,13 +29,9 @@ import megamek.common.net.Packet;
  * @author arlith
  */
 public class GameCFREvent extends GameEvent {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 230173422932412803L;
     
-    private int cfrType;
+    private PacketCommand cfrType;
     
     private int eId;
 
@@ -78,9 +73,9 @@ public class GameCFREvent extends GameEvent {
     /**
      * Construct game event
      */
-    public GameCFREvent(Object source, int t) {
+    public GameCFREvent(Object source, PacketCommand cfrType) {
         super(source);
-        cfrType = t;
+        this.cfrType = cfrType;
     }
     
     /**
@@ -97,37 +92,36 @@ public class GameCFREvent extends GameEvent {
     public String getEventName() {
         String evtName = "Client Feedback Request, ";
         switch (cfrType) {
-            case Packet.COMMAND_CFR_DOMINO_EFFECT:
-                evtName += " stepping out of a domino effect for Entity Id "
-                        + eId;
+            case CFR_DOMINO_EFFECT:
+                evtName += " stepping out of a domino effect for Entity Id " + eId;
                 break;
-            case Packet.COMMAND_CFR_AMS_ASSIGN:
+            case CFR_AMS_ASSIGN:
                 evtName += " assigning AMS for Entity Id " + eId;
                 break;
-            case Packet.COMMAND_CFR_APDS_ASSIGN:
+            case CFR_APDS_ASSIGN:
                 evtName += " assigning APDS for Entity Id " + eId;
                 break;
-            case Packet.COMMAND_CFR_HIDDEN_PBS:
+            case CFR_HIDDEN_PBS:
                 evtName += " assigning pointblank shot for Entity Id " + eId + ", target: " + targetId;
                 break;
-            case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+            case CFR_TELEGUIDED_TARGET:
                 evtName += " assigning teleguided missile targets: " + telemissileTargets;
                 break;
-            case Packet.COMMAND_CFR_TAG_TARGET:
+            case CFR_TAG_TARGET:
                 evtName += " assigning homing artillery targets: " + tagTargets;
+                break;
+            default:
+                break;
         }
         return evtName;
     }
 
     @Override
     public String toString() {
-        StringBuffer buff = new StringBuffer();
-        buff.append(getEventName());
-        buff.append(" game event ");
-        return buff.toString();
+        return getEventName() + " game event ";
     }
 
-    public int getCFRType() {
+    public PacketCommand getCFRType() {
         return cfrType;
     }
     

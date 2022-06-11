@@ -56,9 +56,10 @@ public class GameReports implements Serializable {
         if (round <= reports.size()) {
             return reports.elementAt(round - 1);
         }
-        Exception badRound = new RuntimeException(
-                "ERROR: GameReports.get() was asked for reports of a round [" + round + "] which it does not posses.");
-        LogManager.getLogger().error(badRound);
+
+        LogManager.getLogger().error(
+                "GameReports.get() was asked for reports of a round [" + round + "] which it does not posses.",
+                new RuntimeException());
         return null;
     }
 

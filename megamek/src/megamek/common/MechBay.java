@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -27,15 +27,12 @@ public final class MechBay extends Bay {
         currentSpace = 0;
     }
 
-    // Public constructors and methods.
-
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      * @param bayNumber
      */
     public MechBay(double space, int doors, int bayNumber) {
@@ -51,10 +48,8 @@ public final class MechBay extends Bay {
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
@@ -84,7 +79,7 @@ public final class MechBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Mech " + numDoorsString() + " - "
                 + String.format("%1$,.0f", getUnused())
                 + (getUnused() > 1 ? " units" : " unit");
@@ -111,7 +106,8 @@ public final class MechBay extends Bay {
     }
     
     public static TechAdvancement techAdvancement() {
-        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2445, 2470, 2500)
+        return new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(2445, 2470, 2500)
                 .setApproximate(true, false, false).setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_C, RATING_C, RATING_C)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);

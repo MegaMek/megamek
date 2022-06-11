@@ -19,22 +19,13 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.Compute;
-import megamek.common.Game;
-import megamek.common.SimpleTechLevel;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 public class CLBALBX extends Weapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 2978911783244524588L;
 
     public CLBALBX() {
@@ -60,16 +51,19 @@ public class CLBALBX extends Weapon {
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_BALLISTIC).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
-            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setClanAdvancement(3075, 3085).setClanApproximate(false, false)
-            .setPrototypeFactions(F_CNC).setProductionFactions(F_CNC)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+                .setTechRating(RATING_F)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setClanAdvancement(3075, 3085)
+                .setClanApproximate(false, false)
+                .setPrototypeFactions(F_CNC)
+                .setProductionFactions(F_CNC)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new BALBXHandler(toHit, waa, game, server);
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
+                                              GameManager manager) {
+        return new BALBXHandler(toHit, waa, game, manager);
     }
 
     /**

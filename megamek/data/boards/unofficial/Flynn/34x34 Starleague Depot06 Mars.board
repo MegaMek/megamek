@@ -1,4 +1,13 @@
 size 34 34
+tag "Rough (Auto)"
+tag "Foliage (Auto)"
+tag "Cliffs (Auto)"
+tag "MarsTheme (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "mars"
 hex 0201 0 "" "mars"
 hex 0301 0 "" "mars"

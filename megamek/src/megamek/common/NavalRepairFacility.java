@@ -171,7 +171,7 @@ public class NavalRepairFacility extends Bay {
     }
     
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         StringBuilder sb = new StringBuilder("Standard ");
         if (pressurized) {
             sb.append("Pressurized");

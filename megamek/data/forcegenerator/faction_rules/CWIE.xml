@@ -115,7 +115,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocat
 		</weightClass>
 
 		<!--ProtoMeks appear on the FM:U RATs but not FM:3085, indicating
-		the the exiles abandoned their use during or after the Jihad.-->
+		the exiles abandoned their use during or after the Jihad.-->
 		
 		<unitType ifUnitType="Mek" ifRole="!command"
 				ifDateBetween="3060,3084" ifTopLevel="0">

@@ -121,7 +121,7 @@ public class ScenarioLoader {
         scenarioFile = f;
     }
     
-    // TODO: legal/valid ammo type handling and game options, since they are set at this point
+    // TODO : legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(Game game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
         final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
@@ -177,13 +177,13 @@ public class ScenarioLoader {
      * The damage procedures are built into a server object, so we delay dealing
      * the random damage until a server is made available to us.
      */
-    public void applyDamage(Server s) {
+    public void applyDamage(GameManager m) {
         for (DamagePlan damagePlan : damagePlans) {
             LogManager.getLogger().debug(String.format("Applying damage to %s", damagePlan.entity.getShortName()));
             for (int y = 0; y < damagePlan.nBlocks; ++ y) {
                 HitData hit = damagePlan.entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                 LogManager.getLogger().debug("[s.damageEntity(dp.entity, hit, 5)]");
-                s.damageEntity(damagePlan.entity, hit, 5);
+                m.damageEntity(damagePlan.entity, hit, 5);
             }
 
             // Apply Spec Damage
@@ -199,7 +199,7 @@ public class ScenarioLoader {
                             LogManager.getLogger().debug(String.format("\tSet armor value for (internal %s) to %d",
                                     damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
                             if (specDamage.setArmorTo == 0) {
-                                LogManager.getLogger().debug(String.format("\tSection destoyed %s",
+                                LogManager.getLogger().debug(String.format("\tSection destroyed %s",
                                         damagePlan.entity.getLocationName(specDamage.loc)));
                                 damagePlan.entity.destroyLocation(specDamage.loc);
                             }
@@ -238,7 +238,7 @@ public class ScenarioLoader {
             }
         }
 
-        // Loop throught Crit Hits
+        // Loop through Crit Hits
         for (CritHitPlan chp : critHitPlans) {
             LogManager.getLogger().debug("Applying critical hits to " + chp.entity.getShortName());
             for (CritHit critHit : chp.critHits) {
@@ -272,7 +272,7 @@ public class ScenarioLoader {
                                     chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
                         } else {
                             LogManager.getLogger().debug("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            s.applyCriticalHit(chp.entity, critHit.loc, cs, false, 0, false);
+                            m.applyCriticalHit(chp.entity, critHit.loc, cs, false, 0, false);
                         }
                     }
                     // Handle Tanks differently.
@@ -283,7 +283,7 @@ public class ScenarioLoader {
                         } else {
                             CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot + 1);
                             LogManager.getLogger().debug("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            s.applyCriticalHit(chp.entity, Entity.NONE, cs, false, 0, false);
+                            m.applyCriticalHit(chp.entity, Entity.NONE, cs, false, 0, false);
                         }
                     }
                 }
@@ -304,7 +304,7 @@ public class ScenarioLoader {
                                 LogManager.getLogger().error(String.format("%s - invalid slot specified %d: %d",
                                         sap.entity.getShortName(), sa.loc, sa.slot + 1));
                             } else if (ammo.getType() instanceof AmmoType) {
-                                AmmoType newAmmoType = getValidAmmoType(s.getGame(), ammo, sa.type);
+                                AmmoType newAmmoType = getValidAmmoType(m.getGame(), ammo, sa.type);
                                 if (newAmmoType != null) {
                                     ammo.changeAmmoType(newAmmoType);
                                 } else {
@@ -882,13 +882,15 @@ public class ScenarioLoader {
 
     private StringMultiMap load() throws ScenarioLoaderException {
         StringMultiMap props = new StringMultiMap();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(scenarioFile), StandardCharsets.UTF_8))) {
+        try (FileInputStream fis = new FileInputStream(scenarioFile);
+             InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+             BufferedReader br = new BufferedReader(isr)) {
             String line;
             int lineNum = 0;
-            while ((line = reader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 lineNum++;
                 line = line.trim();
-                if (line.startsWith(COMMENT_MARK) || (line.length() == 0)) {
+                if (line.startsWith(COMMENT_MARK) || line.isBlank()) {
                     continue;
                 } else if (!line.contains(SEPARATOR_PROPERTY)) {
                     LogManager.getLogger().error(String.format("Equality sign in scenario file %s on line %d missing; ignoring",
@@ -1164,7 +1166,7 @@ public class ScenarioLoader {
 
         public String getString(String key, String separator) {
             Collection<String> values = get(key);
-            if ((values == null) || (values.size() == 0)) {
+            if ((values == null) || values.isEmpty()) {
                 return null;
             }
             

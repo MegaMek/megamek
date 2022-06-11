@@ -1,4 +1,10 @@
 size 30 20
+tag "Foliage (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "TropicalTheme (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
 hex 0101 0 "" "tropical"
 hex 0201 0 "" "tropical"
 hex 0301 0 "" "tropical"

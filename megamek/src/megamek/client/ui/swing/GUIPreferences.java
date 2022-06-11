@@ -1,30 +1,28 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing;
-
-import java.awt.*;
-
-import javax.swing.*;
 
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.client.ui.swing.widget.DetachablePane;
-import megamek.common.Entity;
+import megamek.common.EntityMovementType;
+import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class GUIPreferences extends PreferenceStoreProxy {
 
@@ -96,6 +94,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_USE_CAMO_OVERLAY = "AdvancedUseCamoOverlay";
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
+    public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
+
     /* --End advanced settings-- */
 
     public static final String SHOW_COORDS = "showCoords";
@@ -111,13 +111,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
-    public static final String UNIT_DETAIL_POS_X = "UnitDetailPosX";
-    public static final String UNIT_DETAIL_POS_Y = "UnitDetailPosY";
-    public static final String UNIT_DETAIL_SIZE_HEIGHT = "UnitDetailSizeHeight";
-    public static final String UNIT_DETAIL_SIZE_WIDTH = "UnitDetailSizeWidth";
-    public static final String UNIT_DETAIL_STATE = "UnitDetailState";
+    public static final String DISPLAY_POS_X = "DisplayPosX";
+    public static final String DISPLAY_POS_Y = "DisplayPosY";
+    public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
+    public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
-    public static final String GAME_SUMMARY_MINI_MAP = "GameSummaryMiniMap";
+    public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String UNIT_LABEL_BORDER = "EntityOwnerLabelColor";
     public static final String TEAM_COLORING = "EntityTeamLabelColor";
@@ -227,7 +226,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
-    public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
+    public static final String DEFAULT_WEAPON_SORT_ORDER = "DefaultWeaponSortOrder";
     public static final String UI_THEME = "UITheme";
     public static final String BOARDEDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARDEDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
@@ -291,6 +290,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_ARMORMINI_COLOR_DAMAGED, new Color(150, 80, 80));  // medium dark red  
         setDefault(ADVANCED_ARMORMINI_FONT_SIZE_MOD, -2);
         setDefault(ADVANCED_WARNING_COLOR, Color.RED);
+        setDefault(ADVANCED_TMM_PIP_MODE, 2); // show pips with colors based on move type
         setDefault(ADVANCED_LOW_FOLIAGE_COLOR, new Color(80, 230, 80));
         setDefault(ADVANCED_NO_SAVE_NAG, false);
         setDefault(ADVANCED_USE_CAMO_OVERLAY, true);
@@ -337,11 +337,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
-        store.setDefault(UNIT_DETAIL_SIZE_HEIGHT, 500);
-        store.setDefault(UNIT_DETAIL_SIZE_WIDTH, 300);
-        store.setDefault(UNIT_DETAIL_STATE, DetachablePane.Mode.EXPANDED.name());
+        store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
+        store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
-        store.setDefault(GAME_SUMMARY_MINI_MAP, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
         store.setDefault(UNIT_LABEL_STYLE, LabelDisplayStyle.NICKNAME.name());
@@ -444,7 +442,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_MAPSHEETS, false);
 
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
-        store.setDefault(DEFAULT_WEAP_SORT_ORDER, Entity.WeaponSortOrder.DEFAULT.ordinal());
+        store.setDefault(DEFAULT_WEAPON_SORT_ORDER, WeaponSortOrder.DEFAULT.name());
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
@@ -528,32 +526,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(CUSTOM_UNIT_WIDTH);
     }
 
-    public int getUnitDetailPosX() {
-        return store.getInt(UNIT_DETAIL_POS_X);
+    public int getDisplayPosX() {
+        return store.getInt(DISPLAY_POS_X);
     }
 
-    public int getUnitDetailPosY() {
-        return store.getInt(UNIT_DETAIL_POS_Y);
+    public int getDisplayPosY() {
+        return store.getInt(DISPLAY_POS_Y);
     }
 
-    public int getUnitDetailSizeHeight() {
-        return store.getInt(UNIT_DETAIL_SIZE_HEIGHT);
+    public int getDisplaySizeHeight() {
+        return store.getInt(DISPLAY_SIZE_HEIGHT);
     }
 
-    public int getUnitDetailSizeWidth() {
-        return store.getInt(UNIT_DETAIL_SIZE_WIDTH);
-    }
-
-    public DetachablePane.Mode getUnitDetailState() {
-        return DetachablePane.Mode.valueOf(store.getString(UNIT_DETAIL_STATE));
+    public int getDisplaySizeWidth() {
+        return store.getInt(DISPLAY_SIZE_WIDTH);
     }
 
     public boolean getGameSummaryBoardView() {
         return store.getBoolean(GAME_SUMMARY_BOARD_VIEW);
     }
 
-    public boolean getGameSummaryMiniMap() {
-        return store.getBoolean(GAME_SUMMARY_MINI_MAP);
+    public boolean getGameSummaryMinimap() {
+        return store.getBoolean(GAME_SUMMARY_MINIMAP);
     }
 
     public boolean getEntityOwnerLabelColor() {
@@ -953,10 +947,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getString(UI_THEME);
     }
 
-    public int getDefaultWeaponSortOrder() {
-        return store.getInt(DEFAULT_WEAP_SORT_ORDER);
+    public WeaponSortOrder getDefaultWeaponSortOrder() {
+        return WeaponSortOrder.valueOf(store.getString(DEFAULT_WEAPON_SORT_ORDER));
     }
-    
+
+    public void setDefaultWeaponSortOrder(final WeaponSortOrder weaponSortOrder) {
+        store.setValue(DEFAULT_WEAPON_SORT_ORDER, weaponSortOrder.name());
+    }
+
     public boolean getBoardEdRndStart() {
         return store.getBoolean(BOARDEDIT_RNDDIALOG_START);
     }
@@ -1013,32 +1011,28 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(CUSTOM_UNIT_WIDTH, state);
     }
 
-    public void setUnitDetailPosX(int i) {
-        store.setValue(UNIT_DETAIL_POS_X, i);
+    public void setDisplayPosX(int i) {
+        store.setValue(DISPLAY_POS_X, i);
     }
 
-    public void setUnitDetailPosY(int i) {
-        store.setValue(UNIT_DETAIL_POS_Y, i);
+    public void setDisplayPosY(int i) {
+        store.setValue(DISPLAY_POS_Y, i);
     }
 
-    public void setUnitDetailSizeHeight(int i) {
-        store.setValue(UNIT_DETAIL_SIZE_HEIGHT, i);
+    public void setDisplaySizeHeight(int i) {
+        store.setValue(DISPLAY_SIZE_HEIGHT, i);
     }
 
-    public void setUnitDetailSizeWidth(int i) {
-        store.setValue(UNIT_DETAIL_SIZE_WIDTH, i);
-    }
-
-    public void setUnitDetailState(DetachablePane.Mode state) {
-        store.setValue(UNIT_DETAIL_STATE, state.name());
+    public void setDisplaySizeWidth(int i) {
+        store.setValue(DISPLAY_SIZE_WIDTH, i);
     }
 
     public void setGameSummaryBoardView(boolean state) {
         store.setValue(GAME_SUMMARY_BOARD_VIEW, state);
     }
 
-    public void setGameSummaryMiniMap(boolean state) {
-        store.setValue(GAME_SUMMARY_MINI_MAP, state);
+    public void setGameSummaryMinimap(boolean state) {
+        store.setValue(GAME_SUMMARY_MINIMAP, state);
     }
 
     public void setEntityOwnerLabelColor(boolean i) {
@@ -1416,10 +1410,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setUITheme(String s) {
         store.setValue(UI_THEME, s);
     }
-    
-    public void setDefaultWeaponSortOrder(int i) {
-        store.setValue(DEFAULT_WEAP_SORT_ORDER, i);
-    }
 
     public int getRATTechLevel() {
         return store.getInt(RAT_TECH_LEVEL);
@@ -1574,6 +1564,62 @@ public class GUIPreferences extends PreferenceStoreProxy {
         }
     }
 
+    /**
+     * @return The color associated with this movement type
+     */
+    public Color getColorForMovement(EntityMovementType movementType) {
+        switch (movementType) {
+            case MOVE_RUN:
+            case MOVE_VTOL_RUN:
+            case MOVE_OVER_THRUST:
+                return getColor("AdvancedMoveRunColor");
+            case MOVE_JUMP:
+                return getColor("AdvancedMoveJumpColor");
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                return getColor("AdvancedMoveSprintColor");
+            case MOVE_ILLEGAL:
+                return getColor("AdvancedMoveIllegalColor");
+            default:
+                return getColor("AdvancedMoveDefaultColor");
+        }
+    }
+
+    /**
+     * @return The color associated with a movement type
+     */
+    public Color getColorForMovement(EntityMovementType movementType, boolean isMASCOrSuperCharger, boolean isBackwards) {
+        if (isMASCOrSuperCharger) {
+            return getColor("AdvancedMoveMASCColor");
+        } else if (isBackwards) {
+            return getColor("AdvancedMoveBackColor");
+        }
+        return getColorForMovement(movementType);
+    }
+
+    /**
+     * @return The color associated with a heat in the range 0-30
+     */
+    public Color getColorForHeat(int heat) {
+        return getColorForHeat(heat, Color.LIGHT_GRAY);
+    }
+
+    /**
+     * @return The color associated with a heat in the range 0-30
+     */
+    public Color getColorForHeat(int heat, Color defaultColor) {
+        if (heat <= 5) {
+            return defaultColor;
+        } else if (heat < 10) {
+            return Color.GREEN;
+        } else if (heat < 20) {
+            return Color.YELLOW;
+        } else if (heat < 30) {
+            return Color.ORANGE;
+        }
+        return Color.RED;
+    }
+
     public void setUnitLabelStyle(LabelDisplayStyle style) {
         store.setValue(UNIT_LABEL_STYLE, style.name());
     }
@@ -1613,4 +1659,5 @@ public class GUIPreferences extends PreferenceStoreProxy {
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
     }
+
 }

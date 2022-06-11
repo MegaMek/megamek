@@ -1,31 +1,29 @@
-/**
+/*
  * MegaMek -
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.client.bot.ga;
 
 import java.util.Arrays;
 
 public abstract class GA {
-    final double mutationProb; // probability of a mutation occuring during
+    final double mutationProb; // probability of a mutation occurring during
                                // genetic mating. For example, 0.03 means 3% chance
     final int maxGenerations; // maximum generations to evolve
     final double randomSelectionChance;
-    final double crossoverProb; // probability that a crossover will occur
-                                // during
+    final double crossoverProb; // probability that a crossover will occur during
     // genetic mating
-    final protected int chromosomeDim; // dimension of chromosome (number of
-                                        // genes)
+    final protected int chromosomeDim; // dimension of chromosome (number of genes)
     final protected int populationDim;
     final protected Chromosome[] chromosomes;
     Chromosome[] chromNextGen;
@@ -83,7 +81,7 @@ public abstract class GA {
     }
 
     protected void doExhaustiveSearch() {
-        // TODO: add something here
+        // TODO : add something here
     }
 
     public int evolve() {
@@ -131,8 +129,7 @@ public abstract class GA {
     protected double getESquared() {
         double square_sum = 0;
         for (int i = 0; i < populationDim; i++) {
-            square_sum += this.chromosomes[i].fitness
-                    * this.chromosomes[i].fitness;
+            square_sum += this.chromosomes[i].fitness * this.chromosomes[i].fitness;
         }
         return (square_sum / populationDim);
     }
@@ -160,8 +157,9 @@ public abstract class GA {
     }
 
     void computeFitnessRankings() {
-        for (int i = 0; i < populationDim; i++)
+        for (int i = 0; i < populationDim; i++) {
             this.chromosomes[i].fitness = getFitness(i);
+        }
 
         Arrays.sort(chromosomes);
     }

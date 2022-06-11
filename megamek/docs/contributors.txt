@@ -6,7 +6,10 @@
   Current Maintainer:
      MegaMek GitHub Organization <https://github.com/MegaMek>
 
-  Active Developers:
+ Website:
+    megamek.org
+
+   Active Developers:
 	 Carl "Neoancient" Spain
 	 NickAragua
 	 Juliez
@@ -131,6 +134,7 @@
 	 Kaji
 	 UlyssesSockdrawer
 	 Stonewall072
+	 Ashnod
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

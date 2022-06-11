@@ -23,7 +23,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
-import megamek.common.net.Packet;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
@@ -107,9 +107,9 @@ public abstract class BotClient extends Client {
             public void gamePhaseChange(GamePhaseChangeEvent e) {
                 calculatedTurnThisPhase = false;
                 if (e.getOldPhase().isSimultaneous(getGame())) {
-                    int numOwnedEntities = game.getEntitiesOwnedBy(getLocalPlayer());
-                    System.out.println("BotClient calculated turns, " + getName() + " phase " + e.getOldPhase()
-                            + " " + calculatedTurnsThisPhase + "/" + numOwnedEntities);
+                    LogManager.getLogger().info(String.format("%s: Calculated %d / %d turns for phase %s",
+                            getName(), calculatedTurnsThisPhase,
+                            getGame().getEntitiesOwnedBy(getLocalPlayer()), e.getOldPhase()));
                 }
                 calculatedTurnsThisPhase = 0;
             }
@@ -127,31 +127,28 @@ public abstract class BotClient extends Client {
             @Override
             public void gameClientFeedbackRequest(GameCFREvent evt) {
                 switch (evt.getCFRType()) {
-                    case Packet.COMMAND_CFR_DOMINO_EFFECT:
+                    case CFR_DOMINO_EFFECT:
                         // This will always send a "no action" response.
-                        // In effect, it works the way it did before.  However..
-                        // TODO: Bots should figure out how to step out of a
-                        //   domino effect
+                        // In effect, it works the way it did before. However..
+                        // TODO: Bots should figure out how to step out of a domino effect
                         sendDominoCFRResponse(null);
                         break;
-                    case Packet.COMMAND_CFR_AMS_ASSIGN:
+                    case CFR_AMS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         //  essentially same as if the auto_ams option was on
                         WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
-                    case Packet.COMMAND_CFR_APDS_ASSIGN:
+                    case CFR_APDS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         //  essentially same as if the auto_ams option was on
-                        waa =
-                            Compute.getHighestExpectedDamage(game,
-                                    evt.getWAAs(), true);
+                        waa = Compute.getHighestExpectedDamage(game, evt.getWAAs(), true);
                         sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
-                    case Packet.COMMAND_CFR_HIDDEN_PBS:
+                    case CFR_HIDDEN_PBS:
                         try {
                             Vector<EntityAction> pointBlankShots = calculatePointBlankShot(evt.getEntityId(), evt.getTargetId());
-                            
+
                             if (pointBlankShots.isEmpty()) {
                                 sendHiddenPBSCFRResponse(null);
                             } else {
@@ -159,19 +156,19 @@ public abstract class BotClient extends Client {
                                 sendHiddenPBSCFRResponse(new Vector<>());
                                 sendHiddenPBSCFRResponse(pointBlankShots);
                             }
-                        } catch (Exception e) {
+                        } catch (Exception ex) {
                             // if we screw up, don't keep everyone else waiting
                             sendHiddenPBSCFRResponse(null);
-                            throw e;
+                            throw ex;
                         }
-
                         break;
-                    case Packet.COMMAND_CFR_TAG_TARGET:
+                    case CFR_TAG_TARGET:
                         sendTAGTargetCFRResponse(pickTagTarget(evt));
+                        break;
+                    default:
                         break;
                 }
             }
-
         });
     }
 
@@ -193,8 +190,8 @@ public abstract class BotClient extends Client {
     protected abstract void initFiring();
 
     /**
-     * Determines which entity should be moved next and then calls to {@link #continueMovementFor(Entity)} with
-     * that entity.
+     * Determines which entity should be moved next and then calls to {@link #continueMovementFor(Entity)}
+     * with that entity.
      *
      * @return The calculated move path.
      * @throws NullPointerException if no entity can be found to move.
@@ -203,7 +200,7 @@ public abstract class BotClient extends Client {
 
     protected abstract void calculateFiringTurn();
 
-    protected abstract void calculateDeployment();
+    protected abstract void calculateDeployment() throws Exception;
 
     protected void initTargeting() { }
     
@@ -217,7 +214,16 @@ public abstract class BotClient extends Client {
                 new Vector<>(0));
         sendDone(true);
     }
-    
+
+    /**
+     * Calculates the prephase turn
+     * currently does nothing other than end turn
+     */
+    protected void calculatePrephaseTurn() {
+        sendPrephaseData(game.getFirstEntityNum(getMyTurn()));
+        sendDone(true);
+    }
+
     @Nullable
     protected abstract PhysicalOption calculatePhysicalTurn();
     
@@ -353,6 +359,8 @@ public abstract class BotClient extends Client {
                 case DEPLOYMENT:
                     initialize();
                     break;
+                case PREMOVEMENT:
+                    break;
                 case MOVEMENT:
                     /* Do not uncomment this. It is so that bots stick around till end of game
                      * for proper salvage. If the bot dies out here, the salvage for all but the
@@ -377,6 +385,8 @@ public abstract class BotClient extends Client {
                         }
                     }
                     initMovement();
+                    break;
+                case PREFIRING:
                     break;
                 case FIRING:
                     initFiring();
@@ -410,7 +420,7 @@ public abstract class BotClient extends Client {
                     break;
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            LogManager.getLogger().error("", t);
         }
     }
 
@@ -494,13 +504,12 @@ public abstract class BotClient extends Client {
         // clear out transient data
         currentTurnEnemyEntities = null;
         currentTurnFriendlyEntities = null;
-        
+
         try {
             if (game.getPhase() == GamePhase.MOVEMENT) {
                 MovePath mp;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
-                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
-                            .getTurn();
+                    GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
                     Entity mustMove = game.getEntity(turn.getEntityNum());
                     mp = continueMovementFor(mustMove);
                 } else {
@@ -539,13 +548,16 @@ public abstract class BotClient extends Client {
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if ((game.getPhase() == GamePhase.TARGETING)
                        || (game.getPhase() == GamePhase.OFFBOARD)) {
-                // Princess implements arty targeting; no plans to do so for testbod
+                // Princess implements arty targeting
                 calculateTargetingOffBoardTurn();
+            } else if ((game.getPhase() == GamePhase.PREMOVEMENT)
+                    || (game.getPhase() == GamePhase.PREFIRING)) {
+                calculatePrephaseTurn();
             }
             
             return true;
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return false;
         }
     }
@@ -574,7 +586,8 @@ public abstract class BotClient extends Client {
      * method iterates through the list of Coords and returns the first Coords
      * that does not have a stacking violation.
      */
-    protected Coords getFirstValidCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
+    protected @Nullable Coords getFirstValidCoords(Entity deployedUnit,
+                                                   List<Coords> possibleDeployCoords) {
         // Check all of the hexes in order.
         for (Coords dest : possibleDeployCoords) {
             Entity violation = Compute.stackingViolation(game, deployedUnit,
@@ -596,7 +609,7 @@ public abstract class BotClient extends Client {
             return dest;
         }
 
-        System.out.println("Returning no deployment position; THIS IS BAD!");
+        LogManager.getLogger().error("Returning no deployment position; THIS IS BAD!");
         // If NONE of them are acceptable, then just return null.
         return null;
     }
@@ -779,7 +792,7 @@ public abstract class BotClient extends Client {
                         coord.fitness -= board.getHex(x, y).depth();
                     }
                 }
-                //If building, make sure not too heavy to safely move out of
+                // If building, make sure not too heavy to safely move out of
                 coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
                                                          deployed_ent);
             }
@@ -1074,12 +1087,10 @@ public abstract class BotClient extends Client {
                                 // hiding;
                                 // Default to stealth armor on in this case
 
-                                if ((known_count == 0)
-                                    || (known_bv < (total_bv / 2))) {
+                                if ((known_count == 0) || (known_bv < (total_bv / 2))) {
                                     new_stealth = 1;
                                 } else {
-                                    if ((known_range / known_count) <= (5 + Compute
-                                            .randomInt(5))) {
+                                    if ((known_range / known_count) <= (5 + Compute.randomInt(5))) {
                                         new_stealth = 0;
                                     } else {
                                         new_stealth = 1;
@@ -1087,8 +1098,7 @@ public abstract class BotClient extends Client {
                                 }
                             }
                             mEquip.setMode(new_stealth);
-                            sendModeChange(check_ent.getId(), check_ent
-                                    .getEquipmentNum(mEquip), new_stealth);
+                            sendModeChange(check_ent.getId(), check_ent.getEquipmentNum(mEquip), new_stealth);
                             break;
                         }
                     }
@@ -1097,32 +1107,26 @@ public abstract class BotClient extends Client {
         }
     }
 
-    private String getRandomBotMessage() {
-        String message = "";
+    private @Nullable String getRandomBotMessage() {
+        String message = null;
 
-        try {
-            String scrapFile = "./mmconf/botmessages.txt";
-            FileInputStream fis = new FileInputStream(scrapFile);
-            BufferedReader dis = new BufferedReader(new InputStreamReader(fis));
-            while (dis.ready()) {
-                message = dis.readLine();
+        try (FileInputStream fis = new FileInputStream("./mmconf/botmessages.txt"); // TODO : Remove inline file path
+             InputStreamReader isr = new InputStreamReader(fis);
+             BufferedReader br = new BufferedReader(isr)) {
+            while (br.ready()) {
+                message = br.readLine();
                 if (Compute.randomInt(10) == 1) {
                     break;
                 }
             }
-            dis.close();
-            fis.close();
-        }// File not found don't do anything just return a null and allow the
-        // bot to remain silent
-        catch (FileNotFoundException fnfe) {
-            // no chat message found continue on.
+        } catch (FileNotFoundException ignored) {
+            // Don't do anything, just return a null and allow the bot to remain silent
             return null;
-        }// CYA exception
-        catch (Exception ex) {
-            System.err.println("Error while reading ./mmconf/botmessages.txt.");
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Error while reading ./mmconf/botmessages.txt", ex);
             return null;
         }
+
         return message;
     }
 
@@ -1134,21 +1138,24 @@ public abstract class BotClient extends Client {
         ReportDisplay.setupStylesheet(textArea);
 
         textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                                                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane scrollPane = new JScrollPane(textArea,
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         textArea.setText("<pre>" + message + "</pre>");
         JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
     }
 
     @Override
-    protected void correctName(Packet inP) {
+    protected void correctName(Packet inP) throws Exception {
         // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
             Map<String, Client> bots = getClientGUI().getBots();
             String oldName = getName();
             String newName = (String) (inP.getObject(0));
-            assert (equals(bots.get(oldName)));
+            if (!this.equals(bots.get(oldName))) {
+                throw new Exception();
+            }
             bots.remove(oldName);
             bots.put(newName, this);
         }
@@ -1251,20 +1258,13 @@ public abstract class BotClient extends Client {
 
         @Override
         public int hashCode() {
-            int result;
-            long temp;
-            result = coords.hashCode();
-            temp = Double.doubleToLongBits(fitness);
-            result = 31 * result + (int) (temp ^ (temp >>> 32));
-            return result;
+            long temp = Double.doubleToLongBits(fitness);
+            return 31 * coords.hashCode() + (int) (temp ^ (temp >>> 32));
         }
 
         @Override
         public String toString() {
-            return "RankedCoords{" +
-                   "coords=" + coords +
-                   ", fitness=" + fitness +
-                   '}';
+            return String.format("RankedCoords { coords=%s, fitness=%f }", coords, fitness);
         }
 
         int getX() {

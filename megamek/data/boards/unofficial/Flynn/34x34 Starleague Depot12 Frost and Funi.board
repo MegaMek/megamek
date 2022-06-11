@@ -1,4 +1,13 @@
 size 34 34
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Lava (Auto)"
+tag "LightForest (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
 hex 0101 2 "" ""
 hex 0201 2 "" ""
 hex 0301 2 "road:1:9" ""

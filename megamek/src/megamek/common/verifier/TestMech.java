@@ -85,37 +85,39 @@ public class TestMech extends TestEntity {
      * @return
      */
     public static List<EquipmentType> legalArmorsFor(long etype, boolean industrial, ITechManager techManager) {
-        List<EquipmentType> retVal = new ArrayList<>();
+        List<EquipmentType> legalArmors = new ArrayList<>();
         boolean industrialOnly = industrial
                 && (techManager.getTechLevel().ordinal() < SimpleTechLevel.EXPERIMENTAL.ordinal());
         boolean isLam = (etype & Entity.ETYPE_LAND_AIR_MECH) != 0;
-        for (int at = 0; at < EquipmentType.armorNames.length; at++) {
-            if ((at == EquipmentType.T_ARMOR_PATCHWORK)
-                    || (isLam && (at == EquipmentType.T_ARMOR_HARDENED))) {
+        for (int armorType = 0; armorType < EquipmentType.armorNames.length; armorType++) {
+            if ((armorType == EquipmentType.T_ARMOR_PATCHWORK)
+                    || (isLam && (armorType == EquipmentType.T_ARMOR_HARDENED))) {
                 continue;
             }
-            String name = EquipmentType.getArmorTypeName(at, techManager.useClanTechBase());
+            String name = EquipmentType.getArmorTypeName(armorType, techManager.useClanTechBase());
             EquipmentType eq = EquipmentType.get(name);
             if ((null != eq)
                     && eq.hasFlag(MiscType.F_MECH_EQUIPMENT)
+                    && ((armorType != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
                     && techManager.isLegal(eq)
                     && (!isLam || (eq.getCriticals(null) == 0))
                     && (!industrialOnly || ((MiscType) eq).isIndustrial())) {
-                retVal.add(eq);
+                legalArmors.add(eq);
             }
             if (techManager.useMixedTech()) {
-                name = EquipmentType.getArmorTypeName(at, !techManager.useClanTechBase());
+                name = EquipmentType.getArmorTypeName(armorType, !techManager.useClanTechBase());
                 EquipmentType eq2 = EquipmentType.get(name);
                 if ((null != eq2) && (eq != eq2)
                         && eq2.hasFlag(MiscType.F_MECH_EQUIPMENT)
+                        && ((armorType != EquipmentType.T_ARMOR_COMMERCIAL) || industrial)
                         && techManager.isLegal(eq2)
                         && (!isLam || (eq2.getCriticals(null) == 0))
                         && (!industrialOnly || ((null != eq) && ((MiscType) eq).isIndustrial()))) {
-                    retVal.add(eq2);
+                    legalArmors.add(eq2);
                 }
             }
         }
-        return retVal;
+        return legalArmors;
     }
     
     private Mech mech = null;
@@ -212,8 +214,8 @@ public class TestMech extends TestEntity {
         // LAM/QuadVee equipment is 10% of mass, rounded up to whole number (15% for bimodal LAM).
         // IO p. 113 (LAM), 134 (QV)
         if (mech instanceof LandAirMech) {
-            return Math.ceil(mech.getWeight()) *
-                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1);
+            return Math.ceil(mech.getWeight() *
+                    (((LandAirMech) mech).getLAMType() == LandAirMech.LAM_BIMODAL ? 0.15 : 0.1));
         } else if (mech instanceof QuadVee) {
             return Math.ceil(mech.getWeight() * 0.1);
         }
@@ -600,17 +602,7 @@ public class TestMech extends TestEntity {
         Vector<Mounted> unallocated = new Vector<>();
         Vector<Serializable> allocation = new Vector<>();
         Vector<Integer> heatSinks = new Vector<>();
-        boolean correct = checkCriticalSlotsForEquipment(mech, unallocated, allocation,
-                heatSinks, buff);
-        /*
-         * StringBuffer critAlloc = new StringBuffer(); need to redo this, in
-         * MML, spread equipment gets one mounted per block that needs to be
-         * allocated for (Mounted m : mech.getEquipment()) { if
-         * ((m.getLocation() != Entity.LOC_NONE) && (m.getType() instanceof
-         * MiscType)) { if (!checkMiscSpreadAllocation(mech, m, critAlloc)) {
-         * correct = false; buff.append(critAlloc.toString()); } } }
-         */
-
+        boolean correct = checkCriticalSlotsForEquipment(mech, unallocated, allocation, heatSinks, buff);
         if (!unallocated.isEmpty()) {
             buff.append("Unallocated Equipment:\n");
             for (Mounted mount : unallocated) {
@@ -620,13 +612,11 @@ public class TestMech extends TestEntity {
         }
         if (!allocation.isEmpty()) {
             buff.append("Allocated Equipment:\n");
-            for (Enumeration<Serializable> serializableEnum = allocation
-                    .elements(); serializableEnum.hasMoreElements();) {
+            for (Enumeration<Serializable> serializableEnum = allocation.elements();
+                 serializableEnum.hasMoreElements();) {
                 Mounted mount = (Mounted) serializableEnum.nextElement();
-                int needCrits = ((Integer) serializableEnum.nextElement())
-                        .intValue();
-                int aktCrits = ((Integer) serializableEnum.nextElement())
-                        .intValue();
+                int needCrits = (Integer) serializableEnum.nextElement();
+                int aktCrits = (Integer) serializableEnum.nextElement();
                 buff.append(mount.getType().getInternalName()).append(" has ")
                         .append(needCrits).append(" Slots, but ")
                         .append(aktCrits).append(" Slots are allocated!")

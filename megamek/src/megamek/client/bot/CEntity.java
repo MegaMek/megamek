@@ -18,11 +18,13 @@ import megamek.client.Client;
 import megamek.client.ui.SharedUtility;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.ppc.ISSnubNosePPC;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
@@ -263,15 +265,15 @@ public class CEntity {
         bv = entity.calculateBattleValue();
 
         // Make a guess as to whether MASC should be turned on or off
-        // TODO: Link this to a Bot configuration file
+        // TODO : Link this to a Bot configuration file
         runMP = entity.getRunMP();
         if (entity instanceof Mech) {
-            Entity.MPBoosters mpBoosters = ((Mech) entity).getMPBoosters();
-            if (mpBoosters.hasMASCAndOrSupercharger()) {
+            MPBoosters mpBoosters = entity.getMPBoosters();
+            if (!mpBoosters.isNone()) {
                 // do a check for each system
                 masc_threat = false;
                 if (mpBoosters.hasMASC()) {
-                    if (((Mech) entity).getMASCTarget() <= (5 + Compute.randomInt(6))) {
+                    if (entity.getMASCTarget() <= (5 + Compute.randomInt(6))) {
                         masc_threat = false;
                     } else {
                         masc_threat = true;
@@ -281,7 +283,7 @@ public class CEntity {
 
                 if ((masc_threat == false) && mpBoosters.hasSupercharger()) {
                     //we passed masc, but test for supercharger
-                    if (((Mech) entity).getSuperchargerTarget() <= (5 + Compute.randomInt(6))) {
+                    if (entity.getSuperchargerTarget() <= (5 + Compute.randomInt(6))) {
                         masc_threat = false;
                     } else {
                         masc_threat = true;
@@ -289,13 +291,11 @@ public class CEntity {
                     }
                 }
             } else {
-
                 // If this is a Mech equipped with TSM, push for the sweet
                 // spot at 9 heat
                 if (((Mech) entity).hasTSM(false)) {
                     tsm_offset = true;
                 }
-
             }
         }
         jumpMP = entity.getJumpMP();
@@ -308,7 +308,6 @@ public class CEntity {
         int heat_capacity = entity.getHeatCapacity();
         int heat = entity.heat;
         if (entity instanceof Mech) {
-
             // Include heat from active stealth armor systems
             if (entity.isStealthActive() || entity.isNullSigActive()
                     || entity.isVoidSigActive()) {
@@ -1071,16 +1070,13 @@ public class CEntity {
             possible.add((base.clone()).addStep(MoveStepType.START_JUMP));
         }
 
-        possible.add(base); // Add the base movement option to the arraylist of
-        // possibles
-        discovered.put(base); // Add the base movement option to the movement
-        // option table
+        possible.add(base); // Add the base movement option to the arraylist of possibles
+        discovered.put(base); // Add the base movement option to the movement option table
 
-        while (possible.size() > 0) { // Keep going until the arraylist is
-            // empty (why?)
+        while (!possible.isEmpty()) {
+            // Keep going until the arraylist is empty (why?)
 
-            // Get the first movement option, while stripping it from the
-            // arraylist
+            // Get the first movement option, while stripping it from the arraylist
             MoveOption min = possible.remove(0);
             Iterator<MovePath> adjacent = min.getNextMoves(true, true).iterator();
             while (adjacent.hasNext()) {
@@ -1101,8 +1097,7 @@ public class CEntity {
                         if (next.isJumping()) {
                             MoveOption left = next.clone();
                             MoveOption right = next.clone();
-                            // Think about skipping this for infantry, which
-                            // have no facing
+                            // Think about skipping this for infantry, which have no facing
                             for (int turn = 0; turn < 2; turn++) {
                                 left.addStep(MoveStepType.TURN_LEFT);
                                 right.addStep(MoveStepType.TURN_RIGHT);
@@ -1153,7 +1148,7 @@ public class CEntity {
                 }
             }
             String pilotChecks = SharedUtility.doPSRCheck(next);
-            if (pilotChecks.length() > 0) {
+            if (!pilotChecks.isBlank()) {
                 next.inDanger = true;
             }
         }
@@ -1548,9 +1543,7 @@ public class CEntity {
                     raw_damage_array[i] = damage_value;
                 }
                 raw_damage_array[0] = damage_value / 2.0;
-
             }
-
         }
 
         // Zero damage is acceptable, but negative damage means
@@ -1560,10 +1553,8 @@ public class CEntity {
 
         if ((raw_damage_array[0] < 0) || (raw_damage_array[1] < 0)
                 || (raw_damage_array[2] < 0) || (raw_damage_array[3] < 0)) {
-
-            System.out
-                    .println("Weapons characterization: negative damage for weapon "
-                            + weapon.getName() + ".");
+            LogManager.getLogger().debug("Weapons characterization: negative damage for weapon "
+                    + weapon.getName() + ".");
 
             raw_damage_array[0] = 1.0;
             raw_damage_array[1] = 1.0;
@@ -1588,7 +1579,6 @@ public class CEntity {
      *            ArrayList of Mounted returned by Entity.getAmmo()
      * @return 3-element array indicating short/medium/long ranges available
      */
-
     private static boolean[] getAmmoRanges(WeaponType weapon,
             ArrayList<Mounted> ammo_list) {
 

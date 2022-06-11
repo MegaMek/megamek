@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.ScreenLauncherHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson
@@ -45,7 +45,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.cost = 250000;
         this.shortAV = 15;
         this.maxRange = RANGE_SHORT;
-        this.capital = false;
+        this.capital = true;
         this.atClass = CLASS_SCREEN;
         rulesRefs = "237, TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
@@ -69,7 +69,7 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new ScreenLauncherHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new ScreenLauncherHandler(toHit, waa, game, manager);
     }
 }

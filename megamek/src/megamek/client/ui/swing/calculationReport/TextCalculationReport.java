@@ -23,6 +23,11 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is a Calculation Report that builds its output as a monospace-formatted pure text
+ * String. The report can be obtained from toString() as a String or from toJComponent()
+ * inside a JEditorPane.
+ */
 public class TextCalculationReport implements CalculationReport {
 
     private final static int COL_SPACER = 3;
@@ -92,8 +97,8 @@ public class TextCalculationReport implements CalculationReport {
 
     @Override
     public CalculationReport addResultLine(String type, String calculation, String result) {
-        addLine(type, calculation, result);
         reportLines.add(new ReportLine("", "", "", LineType.RESULT_LINE));
+        addLine(type, calculation, result);
         return this;
     }
 

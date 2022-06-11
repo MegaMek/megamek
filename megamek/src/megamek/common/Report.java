@@ -334,10 +334,16 @@ public class Report implements Serializable {
             if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
-            add("<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
-                    + "\">" + entity.getShortName() + "</a></font>", true);
-            add("<B><font color='" + entity.getOwner().getColour().getHexString(0x00F0F0F0) + "'>"
-                    + entity.getOwner().getName() + "</font></B>");
+            String name = "<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
+                    + "\">" + entity.getShortName() + "</a></font>";
+            String color = entity.getOwner().getColour().getHexString(0x00F0F0F0);
+
+            if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
+                // pilot nickname, also known as callsign
+                name += " <font color='"+color+"'>\"" + entity.getCrew().getNickname().toUpperCase() + "\"</font>";
+            }
+            add(name, true);
+            add("<B><font color='" + color + "'>" + entity.getOwner().getName() + "</font></B>");
         }
     }
 
@@ -421,12 +427,10 @@ public class Report implements Serializable {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Error: Report#getText --> Array Index out of "
-                    + "Bounds Exception (index: " + index
-                    + ") for a report with ID " + messageId
-                    + ".  Maybe Report#add wasn't called enough "
-                    + "times for the amount of tags in the message?");
-            return "[Reporting Error: see megameklog.txt for details]";
+            LogManager.getLogger().error("Error: Report#getText --> Array Index out of Bounds Exception (index: "
+                    + index + ") for a report with ID " + messageId
+                    + ". Maybe Report#add wasn't called enough times for the amount of tags in the message?");
+            return "[Reporting Error: see megamek.log for details]";
         }
     }
 
@@ -445,10 +449,8 @@ public class Report implements Serializable {
 
         if (raw == null) {
             // Should we handle this better? Check alternate language files?
-            System.out.println("Error: No message found for ID "
-                    + messageId);
-            text.append("[Reporting Error for message ID ").append(
-                    messageId).append("]");
+            LogManager.getLogger().error("No message found for ID " + messageId);
+            text.append("[Reporting Error for message ID ").append(messageId).append("]");
         } else {
             int i = 0;
             int mark = 0;

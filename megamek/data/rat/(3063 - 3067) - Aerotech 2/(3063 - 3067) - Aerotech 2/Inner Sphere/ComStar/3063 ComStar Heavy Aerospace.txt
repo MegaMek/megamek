@@ -1,0 +1,12 @@
+3063 ComStar Heavy Aerospace
+Rapier RPR-100b,1
+Hammerhead HMR-HDb,2
+Rapier RPR-100,3
+Hammerhead HMR-HDb,4
+Ahab AHB-443b,5
+Hammerhead HMR-HD,6
+Eagle EGL-R6b,5
+Ahab AHB-443b,4
+Eagle EGL-R6b,3
+Rapier RPR-100b,2
+Ahab AHB-443b,1

@@ -44,7 +44,7 @@ import java.util.stream.Stream;
  * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
-public class Game implements Serializable {
+public class Game implements IGame, Serializable {
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -330,6 +330,7 @@ public class Game implements Serializable {
         return vibrabombs.contains(mf);
     }
 
+    @Override
     public GameOptions getOptions() {
         return options;
     }
@@ -346,6 +347,7 @@ public class Game implements Serializable {
     /**
      * Return an enumeration of teams in the game
      */
+    @Override
     public Enumeration<Team> getTeams() {
         return teams.elements();
     }
@@ -385,6 +387,7 @@ public class Game implements Serializable {
      * placed in the appropriate vector. Any player on 'No Team', is placed in
      * their own object
      */
+    @Override
     public void setupTeams() {
         Vector<Team> initTeams = new Vector<>();
         boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
@@ -448,6 +451,7 @@ public class Game implements Serializable {
     /**
      * Return the players vector
      */
+    @Override
     public Vector<Player> getPlayersVector() {
         return players;
     }
@@ -462,10 +466,12 @@ public class Game implements Serializable {
     /**
      * Returns the individual player assigned the id parameter.
      */
+    @Override
     public @Nullable Player getPlayer(final int id) {
         return (Player.PLAYER_NONE == id) ? null : playerIds.get(id);
     }
 
+    @Override
     public void addPlayer(int id, Player player) {
         player.setGame(this);
         players.addElement(player);
@@ -487,6 +493,7 @@ public class Game implements Serializable {
         processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
+    @Override
     public void removePlayer(int id) {
         Player playerToRemove = getPlayer(id);
         players.removeElement(playerToRemove);
@@ -499,6 +506,7 @@ public class Game implements Serializable {
      * Returns the number of entities owned by the player, regardless of their
      * status, as long as they are in the game.
      */
+    @Override
     public int getEntitiesOwnedBy(Player player) {
         int count = 0;
         for (Entity entity : entities) {
@@ -627,6 +635,7 @@ public class Game implements Serializable {
     /**
      * @return the current GameTurn object
      */
+    @Override
     public @Nullable GameTurn getTurn() {
         if ((turnIndex < 0) || (turnIndex >= turnVector.size())) {
             return null;
@@ -740,6 +749,7 @@ public class Game implements Serializable {
         this.turnVector.addAll(turnVector);
     }
 
+    @Override
     public GamePhase getPhase() {
         return phase;
     }
@@ -753,7 +763,9 @@ public class Game implements Serializable {
                 reset();
                 break;
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
             case DEPLOYMENT:
@@ -825,8 +837,7 @@ public class Game implements Serializable {
 
     public boolean shouldDeployForRound(int round) {
         Vector<Entity> vec = getEntitiesToDeployForRound(round);
-
-        return (((null == vec) || (vec.size() == 0)) ? false : true);
+        return (null != vec) && !vec.isEmpty();
     }
 
     private Vector<Entity> getEntitiesToDeployForRound(int round) {
@@ -950,7 +961,7 @@ public class Game implements Serializable {
      * @return the out-of-game <code>Entity</code> with that ID. If no
      * out-of-game entity has that ID, returns a <code>null</code>.
      */
-    public Entity getOutOfGameEntity(int id) {
+    public @Nullable Entity getOutOfGameEntity(int id) {
         Entity match = null;
         Enumeration<Entity> iter = vOutOfGame.elements();
         while ((null == match) && iter.hasMoreElements()) {
@@ -979,26 +990,25 @@ public class Game implements Serializable {
      */
     public Vector<Entity> getC3NetworkMembers(Entity entity) {
         Vector<Entity> members = new Vector<>();
-        //WOR
+        // WOR
         // Does the unit have a C3 computer?
         if ((entity != null) && entity.hasAnyC3System()) {
 
-            // Walk throught the entities in the game, and add all
+            // Walk through the entities in the game, and add all
             // members of the C3 network to the output Vector.
             for (Entity unit : entities) {
                 if (entity.equals(unit) || entity.onSameC3NetworkAs(unit)) {
                     members.addElement(unit);
                 }
             }
-
-        } // End entity-has-C3
+        }
 
         return members;
     }
 
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s that
-     * are in the C3 sub-network under the passed-in unit. The output will
+     * are in the C3 subnetwork under the passed-in unit. The output will
      * contain the passed-in unit, if the unit has a C3 computer. If the unit
      * has no C3 computer, the output will be empty (but it will never be
      * <code>null</code>). If the passed-in unit is a company commander or a
@@ -1014,7 +1024,7 @@ public class Game implements Serializable {
      * @see #getC3NetworkMembers(Entity)
      */
     public Vector<Entity> getC3SubNetworkMembers(Entity entity) {
-        //WOR
+        // WOR
         // Handle null, C3i, NC3, and company commander units.
         if ((entity == null) || entity.hasC3i() || entity.hasNavalC3() || entity.hasActiveNovaCEWS() || entity.C3MasterIs(entity)) {
             return getC3NetworkMembers(entity);
@@ -1024,16 +1034,14 @@ public class Game implements Serializable {
 
         // Does the unit have a C3 computer?
         if (entity.hasC3()) {
-
-            // Walk throught the entities in the game, and add all
+            // Walk through the entities in the game, and add all
             // sub-members of the C3 network to the output Vector.
             for (Entity unit : entities) {
                 if (entity.equals(unit) || unit.C3MasterIs(entity)) {
                     members.addElement(unit);
                 }
             }
-
-        } // End entity-has-C3
+        }
 
         return members;
     }
@@ -1077,7 +1085,7 @@ public class Game implements Serializable {
     }
 
     /**
-     * Returns an enumeration of salvagable entities.
+     * Returns an enumeration of salvageable entities.
      */
     public Enumeration<Entity> getGraveyardEntities() {
         Vector<Entity> graveyard = new Vector<>();
@@ -1322,7 +1330,6 @@ public class Game implements Serializable {
             ((Mech) entity).setCondEjectHeadshot(true);
         }
 
-        assert (entities.size() == entityIds.size()) : "Add Entity failed";
         if (genEvent) {
             entity.setInitialBV(entity.calculateBattleValue(false, false));
             processGameEvent(new GameEntityNewEvent(this, entity));
@@ -1351,15 +1358,14 @@ public class Game implements Serializable {
                 lastEntityId = id;
             }
 
-            processGameEvent(
-                    new GameEntityChangeEvent(this, entity, movePath, oldEntity));
+            processGameEvent(new GameEntityChangeEvent(this, entity, movePath, oldEntity));
         }
-        assert (entities.size() == entityIds.size()) : "Set Entity Failed";
     }
 
     /**
      * @return int containing an unused entity id
      */
+    @Override
     public int getNextEntityId() {
         return lastEntityId + 1;
     }
@@ -1398,7 +1404,7 @@ public class Game implements Serializable {
 
         // We also need to remove it from the list of things to be deployed...
         // we might still be in this list if we never joined the game
-        if (deploymentTable.size() > 0) {
+        if (!deploymentTable.isEmpty()) {
             Enumeration<Vector<Entity>> iter = deploymentTable.elements();
 
             while (iter.hasMoreElements()) {
@@ -1990,9 +1996,9 @@ public class Game implements Serializable {
 
     /**
      * @param playerId the player's Id
-     * @return number of ProtoMechs <code>playerId</code> has not selected yet this turn
+     * @return number of ProtoMeks <code>playerId</code> has not selected yet this turn
      */
-    public int getProtomechsLeft(int playerId) {
+    public int getProtoMeksLeft(int playerId) {
         Player player = getPlayer(playerId);
         int remaining = 0;
 
@@ -2066,7 +2072,7 @@ public class Game implements Serializable {
      * Used when, say, an entity dies mid-phase.
      */
     public void removeTurnFor(Entity entity) {
-        if (turnVector.size() == 0) {
+        if (turnVector.isEmpty()) {
             return;
         }
         // If the game option "move multiple infantry per mech" is selected,
@@ -2093,13 +2099,13 @@ public class Game implements Serializable {
                 return;
             }
         }
-        // Same thing but for protos
+        // Same thing but for ProtoMeks
         if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)
                 && (entity instanceof Protomech) && getPhase().isMovement()) {
-            if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
+            if ((getProtoMeksLeft(entity.getOwnerId()) % getOptions()
                     .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
-                // exception, if the _next_ turn is an protomek turn, remove that
-                // contrived, but may come up e.g. one inf accidently kills another
+                // exception, if the _next_ turn is an ProtoMek turn, remove that
+                // contrived, but may come up e.g. one inf accidentally kills another
                 if (hasMoreTurns()) {
                     GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
                     if (nextTurn instanceof GameTurn.EntityClassTurn) {
@@ -2161,7 +2167,7 @@ public class Game implements Serializable {
 
 
         boolean useInfantryMoveLaterCheck = true;
-        // If we have the "infantry move later" or "protos move later" optional
+        // If we have the "infantry move later" or "ProtoMeks move later" optional
         //  rules, then we may be removing an infantry unit that would be
         //  considered invalid unless we don't consider the extra validity
         //  checks.
@@ -2566,6 +2572,7 @@ public class Game implements Serializable {
      *
      * @return Value of property forceVictory.
      */
+    @Override
     public boolean isForceVictory() {
         return forceVictory;
     }
@@ -3258,35 +3265,8 @@ public class Game implements Serializable {
         return false;
     }
 
-    public boolean checkForValidJumpships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof Jumpship) && !(entity instanceof Warship)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkForValidWarships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
-        while (iter.hasNext()) {
-            Entity entity = iter.next();
-            if ((entity instanceof Warship)
-                && getTurn().isValidEntity(entity, this)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean checkForValidDropships(int playerId) {
-        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false)
-                .iterator();
+    public boolean checkForValidDropShips(int playerId) {
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId), false).iterator();
         while (iter.hasNext()) {
             Entity entity = iter.next();
             if ((entity instanceof Dropship)

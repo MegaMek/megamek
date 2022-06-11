@@ -367,9 +367,6 @@ public class OptionsConstants {
     public static final String ADVANCED_MAXTECH_MOVEMENT_MODS= "maxtech_movement_mods";  
     public static final String ADVANCED_ALTERNATE_MASC= "alternate_masc";  
     public static final String ADVANCED_ALTERNATE_MASC_ENHANCED= "alternate_masc_enhanced";  
-    public static final String ADVANCED_GEOMETRIC_MEAN_BV= "geometric_mean_bv";  
-    public static final String ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV= "reduced_overheat_modifier_bv";  
-    public static final String ADVANCED_ALTERNATE_PILOT_BV_MOD= "alternate_pilot_bv_mod";  
 
     public static final String ADVCOMBAT_TACOPS_AMS= "tacops_ams";  
     public static final String ADVCOMBAT_TACOPS_MANUAL_AMS= "tacops_manual_ams";  

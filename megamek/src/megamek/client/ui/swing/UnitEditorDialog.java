@@ -13,55 +13,15 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-import java.util.function.BiConsumer;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-
 import megamek.client.ui.Messages;
-
-import megamek.common.ASFBay;
-import megamek.common.Aero;
-import megamek.common.Bay;
-import megamek.common.CriticalSlot;
-import megamek.common.DockingCollar;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.IArmorState;
-import megamek.common.Infantry;
-import megamek.common.Jumpship;
-import megamek.common.LandAirMech;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.Protomech;
-import megamek.common.QuadMech;
-import megamek.common.QuadVee;
-import megamek.common.SmallCraft;
-import megamek.common.SmallCraftBay;
-import megamek.common.Tank;
-import megamek.common.VTOL;
+import megamek.common.*;
 import megamek.common.options.OptionsConstants;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 /**
  * This dialog will allow the user to edit the damage and status characteristics of a unit.
@@ -172,12 +132,7 @@ public class UnitEditorDialog extends JDialog {
             setVisible(false);
         });
         JButton butCancel = new JButton(Messages.getString("Cancel"));
-        butCancel.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-            }
-        });
+        butCancel.addActionListener(evt -> setVisible(false));
 
         panButtons.add(butOK);
         panButtons.add(butCancel);
@@ -1531,12 +1486,7 @@ public class UnitEditorDialog extends JDialog {
             for (int i = 0; i < crits; i++) {
                 JCheckBox check = new JCheckBox("");
                 check.setActionCommand(Integer.toString(i));
-                check.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        checkBoxes(evt);
-                    }
-                });
+                check.addActionListener(this::checkBoxes);
                 checks.add(check);
                 add(check);
             }

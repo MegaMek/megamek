@@ -45,5 +45,4 @@ public class TestDice {
     public static void main(String[] args) {
         testDice();
     }
-
 }

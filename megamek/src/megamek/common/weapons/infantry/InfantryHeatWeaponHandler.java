@@ -19,6 +19,7 @@ import java.util.Vector;
 import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -38,8 +39,8 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
      * @param g
      */
     public InfantryHeatWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         bSalvo = true;
     }
     

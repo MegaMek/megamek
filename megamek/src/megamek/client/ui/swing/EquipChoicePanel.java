@@ -23,11 +23,11 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.*;
@@ -264,8 +264,9 @@ public class EquipChoicePanel extends JPanel {
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        // Set up rapidfire mg
-        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST)) {
+        // Set up rapidfire mg; per errata infantry of any kind cannot use them
+        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST) &&
+                !(entity instanceof Infantry)) {
             setupRapidfireMGs();
             add(panRapidfireMGs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -855,23 +856,20 @@ public class EquipChoicePanel extends JPanel {
                     
                 // Add the newly mounted weapon
                 try {
-                    Mounted newWeap =  entity.addEquipment(apType, 
-                            m_APmounted.getLocation());
+                    Mounted newWeap = entity.addEquipment(apType, m_APmounted.getLocation());
                     m_APmounted.setLinked(newWeap);
                     newWeap.setLinked(m_APmounted);
                     newWeap.setAPMMounted(true);
                 } catch (LocationFullException ex) {
                     // This shouldn't happen for BA...
-                    ex.printStackTrace();
+                    LogManager.getLogger().error("", ex);
                 }
-
             }
 
             @Override
             public void setEnabled(boolean enabled) {
                 m_choice.setEnabled(enabled);
             }
-
         }
         
         /**
@@ -898,7 +896,6 @@ public class EquipChoicePanel extends JPanel {
              * The BattleArmor mount location of the modular equipment adaptor.
              */
             private int baMountLoc;
-            
 
             MEAChoicePanel(Entity e, int mountLoc, Mounted m, 
                     ArrayList<MiscType> manips) {
@@ -964,23 +961,20 @@ public class EquipChoicePanel extends JPanel {
                     return;
                 }
                     
-                // Add the newly mounted maniplator
+                // Add the newly mounted manipulator
                 try {
-                    m_Manipmounted = entity.addEquipment(manipType, 
-                            m_Manipmounted.getLocation());
+                    m_Manipmounted = entity.addEquipment(manipType, m_Manipmounted.getLocation());
                     m_Manipmounted.setBaMountLoc(baMountLoc);
                 } catch (LocationFullException ex) {
                     // This shouldn't happen for BA...
-                    ex.printStackTrace();
+                    LogManager.getLogger().error("", ex);
                 }
-
             }
 
             @Override
             public void setEnabled(boolean enabled) {
                 m_choice.setEnabled(enabled);
             }
-
         }
 
         class MunitionChoicePanel extends JPanel {

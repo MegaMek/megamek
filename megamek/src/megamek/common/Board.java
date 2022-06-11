@@ -44,11 +44,11 @@ public class Board implements Serializable {
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
     
-    //Board Dimensions
-    //Used for things like artillery rules that reference the standard mapsheet dimensions
+    // Board Dimensions
+    // Used for things like artillery rules that reference the standard mapsheet dimensions
     public static final int DEFAULT_BOARD_HEIGHT = 17;
     public static final int DEFAULT_BOARD_WIDTH = 16;
-    //Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
+    // Variable board width and height. Used for most everything else since we're not restricted to paper map sizes
     protected int width;
     protected int height;
 
@@ -59,8 +59,7 @@ public class Board implements Serializable {
 
     private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
 
-    // Min and Max elevation values for when they are undefined (since you cant
-    // set an int to null).
+    // Min and Max elevation values for when they are undefined (since you can't set an int to null).
     private static final int UNDEFINED_MIN_ELEV = 10000;
     private static final int UNDEFINED_MAX_ELEV = -10000;
 
@@ -720,9 +719,9 @@ public class Board implements Serializable {
     public static boolean boardIsSize(final File filepath, final BoardDimensions size) {
         int boardx = 0;
         int boardy = 0;
-        try (Reader r = new BufferedReader(new FileReader(filepath))) {
+        try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
             // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -754,9 +753,9 @@ public class Board implements Serializable {
     public static BoardDimensions getSize(final File filepath) {
         int boardx = 0;
         int boardy = 0;
-        try (Reader r = new BufferedReader(new FileReader(filepath))) {
+        try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
             // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -779,9 +778,9 @@ public class Board implements Serializable {
     /** Inspects the given board file and returns a set of its tags. */
     public static Set<String> getTags(final File filepath) {
         var result = new HashSet<String>();
-        try (Reader r = new BufferedReader(new FileReader(filepath))) {
+        try (FileReader fr = new FileReader(filepath); BufferedReader br = new BufferedReader(fr)) {
             // read board, looking for "size"
-            StreamTokenizer st = new StreamTokenizer(r);
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -814,7 +813,7 @@ public class Board implements Serializable {
         } catch (IOException ex) {
             return false;
         }
-        
+
         return tempBoard.isValid();
     }
 
@@ -927,8 +926,9 @@ public class Board implements Serializable {
         Hex[] nd = new Hex[0];
         int index = 0;
         resetStoredElevation();
-        try (Reader r = new BufferedReader(new InputStreamReader(is))) {
-            StreamTokenizer st = new StreamTokenizer(r);
+        try (InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader br = new BufferedReader(isr)) {
+            StreamTokenizer st = new StreamTokenizer(br);
             st.eolIsSignificant(true);
             st.commentChar('#');
             st.quoteChar('"');
@@ -1037,7 +1037,6 @@ public class Board implements Serializable {
         } else if (errBuff == null) {
             LogManager.getLogger().error("Invalid board data!");
         }
-
     }
 
     public boolean isValid() {
@@ -1104,7 +1103,7 @@ public class Board implements Serializable {
      */
     public void save(OutputStream os) {
         try (Writer w = new OutputStreamWriter(os)) {
-            w.write("size " + width + " " + height + "\r\n");
+            w.write("size " + width + ' ' + height + "\r\n");
             if (!roadsAutoExit) {
                 w.write("option exit_roads_to_pavement false\r\n");
             }
@@ -1149,10 +1148,6 @@ public class Board implements Serializable {
                 hexBuff.append("\"\r\n");
 
                 w.write(hexBuff.toString());
-                // w.write("hex \"" + hex.getTerrain().name + "\" " +
-                // Terrain.TERRAIN_NAMES[hex.getTerrainType()] + " \"" +
-                // hex.getTerrain().picfile + "\" " + hex.getElevation() +
-                // "\r\n");
             }
             w.write("end\r\n");
             // make sure it's written
@@ -1191,7 +1186,6 @@ public class Board implements Serializable {
 
         // Update the tracker.
         tracker.add(round, hits);
-
     }
 
     /**
@@ -1775,7 +1769,7 @@ public class Board implements Serializable {
     }
 
     public boolean hasBoardBackground() {
-        return (backgroundPaths != null) && backgroundPaths.size() > 0;
+        return (backgroundPaths != null) && !backgroundPaths.isEmpty();
     }
 
     /**

@@ -40,7 +40,7 @@ import megamek.client.ui.swing.dialog.MMConfirmDialog;
 import megamek.common.*;
 import megamek.common.options.*;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.client.ui.Messages.*;
 
@@ -172,7 +172,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 DialogOptionComponent comp = comps.get(0);
                 if (comp.hasChanged()) {
                     changed.addElement(comp.changedOption());
@@ -181,7 +181,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
             }
         }
 
-        if ((clientGui != null) && (changed.size() > 0)) {
+        if ((clientGui != null) && !changed.isEmpty()) {
             clientGui.getClient().sendGameOptions(texPass.getText(), changed);
         }
     }
@@ -196,7 +196,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking
             // the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 IBasicOption option = comps.get(0).changedOption();
                 output.addElement(option);
             }
@@ -236,12 +236,12 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     /** 
      * When show is true, options that contain the given String str are shown.
      * When show is false, these options are hidden and deselected. 
-     * Used to show/hide unofficial and legcy options.
+     * Used to show/hide unofficial and legacy options.
      */
     private void toggleOptions() {
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking the first is fine
-            if (comps.size() > 0) {
+            if (!comps.isEmpty()) {
                 DialogOptionComponent comp = comps.get(0);
                 if (isUnofficialOption(comp) || isLegacyOption(comp)) {
                     comp.setVisible(shouldShow(comp));
@@ -837,7 +837,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
                     return true;
                 } else if (dir.getName().endsWith(".xml")) {
                     try {
-                        DocumentBuilder builder = MegaMekXmlUtil.newSafeDocumentBuilder();
+                        DocumentBuilder builder = MMXMLUtility.newSafeDocumentBuilder();
                         Document doc = builder.parse(dir);
                         NodeList listOfComponents = doc.getElementsByTagName("options");
                         return listOfComponents.getLength() > 0;

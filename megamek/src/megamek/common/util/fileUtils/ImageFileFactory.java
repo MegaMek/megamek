@@ -121,9 +121,9 @@ public class ImageFileFactory implements ItemFileFactory {
      */
     protected Image createZippedImage(final ZipEntry zipEntry, final ZipFile zipFile) throws Exception {
         // Get ready to read from the item.
-        try (InputStream in = new BufferedInputStream(zipFile.getInputStream(zipEntry),
-                (int) zipEntry.getSize())) {
-            return ImageIO.read(in);
+        try (InputStream is = zipFile.getInputStream(zipEntry);
+             BufferedInputStream bis = new BufferedInputStream(is, (int) zipEntry.getSize())) {
+            return ImageIO.read(bis);
         }
     }
 

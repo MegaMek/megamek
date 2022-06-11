@@ -28,7 +28,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FluidGunCoolHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -60,13 +60,13 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_COOLANT) {
-            return new FluidGunCoolHandler(toHit, waa, game, server);
+            return new FluidGunCoolHandler(toHit, waa, game, manager);
         }
-        return super.getCorrectHandler(toHit, waa, game, server);
+        return super.getCorrectHandler(toHit, waa, game, manager);
 
     }
 

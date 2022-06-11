@@ -59,10 +59,9 @@ public class ISMML9 extends MMLWeapon {
         	.setUnofficial(false)
             .setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3067, 3068, 3072, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_MERC)
-            .setProductionFactions(F_WB);
+            .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, true, false, false)
+            .setProductionFactions(F_MERC,F_WB);
     }
 
     @Override

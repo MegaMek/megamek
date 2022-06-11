@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BPodHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jason Tighe
@@ -72,8 +72,8 @@ public abstract class BPodWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new BPodHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new BPodHandler(toHit, waa, game, manager);
     }
 
     @Override

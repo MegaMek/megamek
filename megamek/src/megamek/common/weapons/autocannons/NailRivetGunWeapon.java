@@ -20,7 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.NailRivetGunHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -57,7 +57,7 @@ public abstract class NailRivetGunWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new NailRivetGunHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new NailRivetGunHandler(toHit, waa, game, manager);
     }
 }

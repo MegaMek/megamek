@@ -23,7 +23,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * Weaponhandler for the Centurion Weapon System weapon, 
@@ -39,10 +39,10 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public CenturionWeaponSystemHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public CenturionWeaponSystemHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -140,7 +140,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                     // Check to see if the squad has been eliminated
                     if (entityTarget.getTransferLocation(hit).getLocation() == 
                             Entity.LOC_DESTROYED) {
-                        vPhaseReport.addAll(server.destroyEntity(entityTarget,
+                        vPhaseReport.addAll(gameManager.destroyEntity(entityTarget,
                                 "all troopers eliminated", false));
                     }
                 } else {

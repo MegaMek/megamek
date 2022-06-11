@@ -96,13 +96,11 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
          * @param elementName
          * @param imgPath
          */
-        BorderElement(SkinSpecPanel skinPanel, String elementName,
-                String imgPath) {
+        BorderElement(SkinSpecPanel skinPanel, String elementName, String imgPath) {
             super(new GridBagLayout());
             this.skinPanel = skinPanel;
-            setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), elementName,
-                    TitledBorder.LEFT, TitledBorder.TOP));
+            setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
+                    elementName, TitledBorder.LEFT, TitledBorder.TOP));
 
             displayTiled = false;
 
@@ -136,8 +134,8 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
          * @param imgPath
          * @param isTiled
          */
-        BorderElement(SkinSpecPanel skinPanel, String elementName,
-                List<String> imgPath, List<Boolean> isTiled) {
+        BorderElement(SkinSpecPanel skinPanel, String elementName, List<String> imgPath,
+                      List<Boolean> isTiled) throws Exception {
             this(skinPanel, elementName, imgPath, isTiled, imgPath.size() > 1);
         }
 
@@ -154,9 +152,8 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
          * @param removeEnabled
          *            Determines if remove buttons are enabled
          */
-        BorderElement(SkinSpecPanel skinPanel, String elementName,
-                List<String> imgPath, List<Boolean> isTiled,
-                boolean removeEnabled) {
+        BorderElement(SkinSpecPanel skinPanel, String elementName, List<String> imgPath,
+                      List<Boolean> isTiled, boolean removeEnabled) throws Exception {
             super(new GridBagLayout());
             this.skinPanel = skinPanel;
             setBorder(BorderFactory.createTitledBorder(
@@ -164,7 +161,10 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
                     TitledBorder.LEFT, TitledBorder.TOP));
 
             displayTiled = true;
-            assert (imgPath.size() == isTiled.size());
+            if (imgPath.size() != isTiled.size()) {
+                throw new Exception();
+            }
+
             for (int i = 0; i < imgPath.size(); i++) {
                 addPathRow(imgPath.get(i), isTiled.get(i), removeEnabled);
             }
@@ -335,17 +335,17 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         }
 
         @Override
-        public void changedUpdate(DocumentEvent arg0) {
+        public void changedUpdate(DocumentEvent evt) {
             skinPanel.notifySkinChanges(false);
         }
 
         @Override
-        public void insertUpdate(DocumentEvent arg0) {
+        public void insertUpdate(DocumentEvent evt) {
             skinPanel.notifySkinChanges(false);
         }
 
         @Override
-        public void removeUpdate(DocumentEvent arg0) {
+        public void removeUpdate(DocumentEvent evt) {
             skinPanel.notifySkinChanges(false);
         }
     }
@@ -359,10 +359,9 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
     private class BackgroundElement extends BorderElement {
         private static final long serialVersionUID = 3448867645483831732L;
 
-        BackgroundElement(SkinSpecPanel skinPanel, List<String> imgPath,
-                List<Boolean> isTiled) {
-            super(skinPanel, Messages.getString("SkinEditor.Background"),
-                    imgPath, isTiled, true);
+        BackgroundElement(SkinSpecPanel skinPanel, List<String> imgPath, List<Boolean> isTiled)
+                throws Exception {
+            super(skinPanel, Messages.getString("SkinEditor.Background"), imgPath, isTiled, true);
         }
 
         @Override
@@ -394,7 +393,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
             }
             super.actionPerformed(e);
         }
-
     }
 
     private static final long serialVersionUID = -37452332974426228L;
@@ -436,7 +434,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
     }
 
     /**
-     * Remove thsi SkinSpecEditor as a listener from all components.
+     * Remove this SkinSpecEditor as a listener from all components.
      */
     private void removeListeners() {
         for (JButton colorButton : colorButtons) {
@@ -508,7 +506,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
             skinSpec.backgrounds.add(background.path.get(i).getText());
         }
         skinSpec.tileBackground = false;
-        if (background.tiled.size() > 0) {
+        if (!background.tiled.isEmpty()) {
             skinSpec.tileBackground = background.tiled.get(0).isSelected();
         }
 
@@ -526,7 +524,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
     /**
      * Update the editing panel with the currently selected SkinSpecification.
      */
-    public void setupSkinEditPanel(SkinSpecification skinSpec) {
+    public void setupSkinEditPanel(SkinSpecification skinSpec) throws Exception {
         removeListeners();
         removeAll();
 
@@ -579,16 +577,14 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         gbc.gridx = 0;
 
         // Top Edge
-        topEdge = new BorderElement(this,
-                Messages.getString("SkinEditor.TopEdge"),
+        topEdge = new BorderElement(this, Messages.getString("SkinEditor.TopEdge"),
                 skinSpec.topEdge, skinSpec.topShouldTile);
         topEdge.setEnabled(enableBorders);
         borderPanel.add(topEdge, gbc);
         gbc.gridx++;
 
         // Bottom Edge
-        bottomEdge = new BorderElement(this,
-                Messages.getString("SkinEditor.BottomEdge"),
+        bottomEdge = new BorderElement(this, Messages.getString("SkinEditor.BottomEdge"),
                 skinSpec.bottomEdge, skinSpec.bottomShouldTile);
         bottomEdge.setEnabled(enableBorders);
         borderPanel.add(bottomEdge, gbc);
@@ -596,16 +592,14 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         gbc.gridy++;
 
         // Left Edge
-        leftEdge = new BorderElement(this,
-                Messages.getString("SkinEditor.LeftEdge"),
+        leftEdge = new BorderElement(this, Messages.getString("SkinEditor.LeftEdge"),
                 skinSpec.leftEdge, skinSpec.leftShouldTile);
         leftEdge.setEnabled(enableBorders);
         borderPanel.add(leftEdge, gbc);
         gbc.gridx++;
 
         // Right Edge
-        rightEdge = new BorderElement(this,
-                Messages.getString("SkinEditor.RightEdge"),
+        rightEdge = new BorderElement(this, Messages.getString("SkinEditor.RightEdge"),
                 skinSpec.rightEdge, skinSpec.rightShouldTile);
         rightEdge.setEnabled(enableBorders);
         borderPanel.add(rightEdge, gbc);
@@ -616,8 +610,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
         add(borderPanel, gbc);
 
         background = new BackgroundElement(this, skinSpec.backgrounds,
-                Collections.nCopies(skinSpec.backgrounds.size(),
-                        skinSpec.tileBackground));
+                Collections.nCopies(skinSpec.backgrounds.size(), skinSpec.tileBackground));
 
         gbc.gridy++;
 
@@ -648,9 +641,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener, Acti
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (e.getValueIsAdjusting()) {
-            return;
-        }
 
     }
 

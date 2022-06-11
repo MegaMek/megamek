@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import megamek.common.*;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 
 import java.io.InputStream;
 import java.util.*;
@@ -63,7 +63,7 @@ public class TdbFile implements IMechLoader {
             JAXBContext jc = JAXBContext.newInstance(TdbFile.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            TdbFile tdbFile = (TdbFile) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            TdbFile tdbFile = (TdbFile) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
             
             return tdbFile;
         } catch (Exception e) {
@@ -221,10 +221,6 @@ public class TdbFile implements IMechLoader {
             // locations first, which is necessary for split crits to work
             for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
-            }
-
-            if (mech.isClan()) {
-                mech.addClanCase();
             }
 
             mech.setArmorTonnage(mech.getArmorWeight());

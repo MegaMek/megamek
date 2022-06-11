@@ -187,7 +187,8 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+        try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(isr)) {
             int lineNumber = 0;
             String key = "Huh";
             float totalWeight = 0.0f;
@@ -260,7 +261,7 @@ public class RandomUnitGenerator implements Serializable {
         RatTreeNode result = root;
         String[] pathElements = path.split("/", -1);
         for (int i = 0; i < pathElements.length - 1; i++) {
-            if (pathElements[i].length() == 0) {
+            if (pathElements[i].isBlank()) {
                 continue;
             }
             RatTreeNode subNode = null;
@@ -344,8 +345,8 @@ public class RandomUnitGenerator implements Serializable {
                             }
                         }
                     }
-                } catch (IOException e) {
-                    LogManager.getLogger().error("Unable to load " + ratFile.getName());
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
                 }
             }
 
@@ -355,8 +356,8 @@ public class RandomUnitGenerator implements Serializable {
 
             try (InputStream ratInputStream = new FileInputStream(ratFile)) {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
-            } catch (Exception e) {
-                LogManager.getLogger().error("Unable to load " + ratFile.getName(), e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("Unable to load " + ratFile.getName(), ex);
             }
         }
     }
@@ -385,13 +386,13 @@ public class RandomUnitGenerator implements Serializable {
             int retryCount = 0;
             
             // give the RATs a few seconds to load
-            while (!initialized && retryCount < 5) {
+            while (!initialized && (retryCount < 5)) {
                 try {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     
                 }
-                
+
                 retryCount++;
             }
             
@@ -418,7 +419,7 @@ public class RandomUnitGenerator implements Serializable {
                     }
                     re = filtered;
                 }
-                if ((null != re) && (re.getUnits().size() > 0)) {
+                if ((null != re) && !re.getUnits().isEmpty()) {
                     for (int roll = 0; roll < numRolls; roll++) {
                         double rand = getRandom();
                         int i = 0;

@@ -140,18 +140,6 @@ public class Crew implements Serializable {
             {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
     };
 
-    private static final double[][] alternateBvMod = new double[][]{
-            {2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59},
-            {2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44},
-            {2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25},
-            {1.80, 1.68, 1.56, 1.44, 1.32, 1.20, 1.14, 1.08, 1.06},
-            {1.50, 1.40, 1.30, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
-            {1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
-            {1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
-            {1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
-            {1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64},
-    };
-
     //region extraData inner map keys
     public static final String MAP_GIVEN_NAME = "givenName";
     public static final String MAP_SURNAME = "surname";
@@ -1050,9 +1038,6 @@ public class Crew implements Serializable {
     }
 
     public static double getBVSkillMultiplier(int gunnery, int piloting, Game game) {
-        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD)) {
-            return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
-        }
         return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
     }
 

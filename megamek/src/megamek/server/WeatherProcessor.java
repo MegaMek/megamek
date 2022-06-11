@@ -40,40 +40,17 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
     int sleetTurn = 0;
     int iceTurn = 0;
 
-    public WeatherProcessor(Server server) {
-        super(server);
+    public WeatherProcessor(GameManager gameManager) {
+        super(gameManager);
     }
 
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = server.getGame();
+        game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveWeather();
         this.vPhaseReport = null;
 
-    }
-
-    /**
-     * This debug/profiling function will print the current time
-     * (in milliseconds) to the log.  If the boolean is true, the
-     * garbage collector will be called in an attempt to minimize
-     * timing errors.  You should try and minimize applications
-     * being run in the background when using this function.
-     * Note that MS Windows only has 10 milisecond resolution.
-     *
-     * The function should be optimized completely out of the code
-     * when the first if-statement below reads "if (false)...", so
-     * performance shouldn't be impacted if you leave calls to this
-     * function in the code (I think).
-     */
-    @SuppressWarnings("unused")
-    private void debugTime(String s, boolean collectGarbage) {
-        //Change the "false" below to "true" to enable this function
-        if (false) {
-            if (collectGarbage)
-                System.gc();
-            System.out.println(s + ": " + System.currentTimeMillis());
-        }
     }
 
     private void resolveWeather() {
@@ -85,12 +62,11 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         boolean deepSnow = false;
         boolean ice = false;
 
-        if (!conditions.isTerrainAffected())
+        if (!conditions.isTerrainAffected()) {
             return;
+        }
 
-        debugTime("resolve weather 1", true);
-
-        //first we need to increment the conditions
+        // first we need to increment the conditions
         if (conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW
                 || conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
                 && game.getBoard().onGround()) {
@@ -152,11 +128,11 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
 
                 // check for fires and potentially put them out
                 if (currentHex.containsTerrain(Terrains.FIRE)) {
-                    //only standard fires get put out
+                    // only standard fires get put out
                     if (currentHex.terrainLevel(Terrains.FIRE)
                             == Terrains.FIRE_LVL_NORMAL) {
                         if (conditions.putOutFire()) {
-                            server.removeFire(currentCoords, "weather conditions");
+                            gameManager.removeFire(currentCoords, "weather conditions");
                         }
                     // Downgrade Inferno fires so they can burn out
                     } else if (currentHex.terrainLevel(Terrains.FIRE) 
@@ -164,12 +140,12 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                         //inferno fires should become regular fires
                         currentHex.removeTerrain(Terrains.FIRE);
                         currentHex.addTerrain(new Terrain(Terrains.FIRE, 1));
-                        server.getHexUpdateSet().add(currentCoords);
+                        gameManager.getHexUpdateSet().add(currentCoords);
                     // Check Inferno Bombs
                     } else if (currentHex.terrainLevel(Terrains.FIRE) 
                             == Terrains.FIRE_LVL_INFERNO_BOMB) {
                         if (currentHex.getFireTurn() > 30) {
-                            server.removeFire(currentCoords, 
+                            gameManager.removeFire(currentCoords,
                                     "inferno bomb burning out");
                         }
                     }
@@ -179,7 +155,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 if (ice && !currentHex.containsTerrain(Terrains.ICE)
                         && currentHex.containsTerrain(Terrains.WATER)) {
                     currentHex.addTerrain(new Terrain(Terrains.ICE, 1));
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
 
                 if (lightSnow
@@ -188,7 +164,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                                 && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(new Terrain(Terrains.SNOW, 1));
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
 
                 if (deepSnow && !(currentHex.terrainLevel(Terrains.SNOW) > 1)
@@ -196,7 +172,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                                 && !currentHex.containsTerrain(Terrains.ICE))
                         && !currentHex.containsTerrain(Terrains.MAGMA)) {
                     currentHex.addTerrain(new Terrain(Terrains.SNOW, 2));
-                    server.getHexUpdateSet().add(currentCoords);
+                    gameManager.getHexUpdateSet().add(currentCoords);
                 }
 
                 // check for the melting of any snow or ice
@@ -231,7 +207,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 }
 
                 // check for rapids/torrents created by wind
-                //FIXME: This doesn't seem to be doing anything
+                // FIXME: This doesn't seem to be doing anything
                 if (conditions.getWindStrength() > PlanetaryConditions.WI_MOD_GALE
                         && currentHex.containsTerrain(Terrains.WATER) 
                         && currentHex.depth(true) > 0) {
@@ -248,7 +224,5 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 }
             }
         }
-        debugTime("resolve weather 1 end", true);
     }
-
 }

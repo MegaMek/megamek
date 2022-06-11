@@ -32,7 +32,7 @@ public interface IBasicOptionGroup {
     String getName();
 
     /**
-     * Returns the the <code>String</code> key that can be used by clients to
+     * Returns the <code>String</code> key that can be used by clients to
      * distinguish option groups by their own criterion
      * 
      * @return group key which can be an empty <code>String</code>

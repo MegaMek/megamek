@@ -25,6 +25,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
@@ -33,6 +34,7 @@ import megamek.client.ui.swing.dialog.AbstractUnitSelectorDialog;
 import megamek.client.ui.swing.dialog.MegaMekUnitSelectorDialog;
 import megamek.client.ui.swing.lobby.ChatLounge;
 import megamek.client.ui.swing.lobby.PlayerSettingsDialog;
+import megamek.client.ui.swing.minimap.Minimap;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -40,10 +42,10 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
-import megamek.common.net.Packet;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
@@ -142,7 +144,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String VIEW_UNIT_DISPLAY = "viewMekDisplay";
     public static final String VIEW_ACCESSIBILITY_WINDOW = "viewAccessibilityWindow";
     public static final String VIEW_KEYBINDS_OVERLAY = "viewKeyboardShortcuts";
-    public static final String VIEW_MINI_MAP = "viewMiniMap";
+    public static final String VIEW_MINI_MAP = "viewMinimap";
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
@@ -191,8 +193,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     private BoardView bv;
     private Component bvc;
-    private UnitDetailPane unitDetailPane;
-    public UnitDisplay mechD;
+    public UnitDisplay unitDisplay;
+    private JDialog unitDisplayDialog;
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -265,7 +267,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private int selectedEntityNum = Entity.NONE;
 
     /**
-     * Flag that indicates whether hotkeys should be ignored or not.  This is
+     * Flag that indicates whether hotkeys should be ignored or not. This is
      * used for disabling hot keys when various dialogs are displayed.
      */
     private boolean ignoreHotKeys = false;
@@ -301,8 +303,20 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return bv;
     }
 
-    public UnitDetailPane getUnitDetailPane() {
-        return this.unitDetailPane;
+    public UnitDisplay getUnitDisplay() {
+        return unitDisplay;
+    }
+
+    public void setUnitDisplay(final UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
+    }
+
+    public JDialog getUnitDisplayDialog() {
+        return unitDisplayDialog;
+    }
+
+    public void setUnitDisplayDialog(final UnitDisplayDialog unitDisplayDialog) {
+        this.unitDisplayDialog = unitDisplayDialog;
     }
 
     /**
@@ -312,6 +326,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (GUIPreferences.getInstance().getSoundBingFilename() == null) {
             return;
         }
+
         try {
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
@@ -319,8 +334,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
         }
     }
 
@@ -331,7 +346,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     public void systemMessage(String message) {
         cb.systemMessage(message);
-        cb2.addChatMessage("Megamek: " + message);
+        cb2.addChatMessage("MegaMek: " + message);
     }
 
     /**
@@ -341,15 +356,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame = new JFrame(Messages.getString("ClientGUI.title"));
         frame.setJMenuBar(menuBar);
 
-        var prefs = GUIPreferences.getInstance();
-        if (prefs.getWindowSizeHeight() != 0) {
+        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
             frame.setLocation(
-                prefs.getWindowPosX(),
-                prefs.getWindowPosY()
+                    GUIPreferences.getInstance().getWindowPosX(),
+                    GUIPreferences.getInstance().getWindowPosY()
             );
             frame.setSize(
-                prefs.getWindowSizeWidth(),
-                prefs.getWindowSizeHeight()
+                    GUIPreferences.getInstance().getWindowSizeWidth(),
+                    GUIPreferences.getInstance().getWindowSizeHeight()
             );
         } else {
             frame.setSize(800, 600);
@@ -396,8 +410,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * is created.
      */
     public void initialize() {
-        var prefs = GUIPreferences.getInstance();
-
         menuBar = new CommonMenuBar(getClient());
         initializeFrame();
         try {
@@ -409,10 +421,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bvc.setName("BoardView");
             bv.addBoardViewListener(this);
             client.setBoardView(bv);
-        } catch (Exception e) {
-            LogManager.getLogger().fatal(e);
+        } catch (Exception ex) {
+            LogManager.getLogger().fatal("", ex);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
-                    Messages.getString("ClientGUI.FatalError.message") + e);
+                    Messages.getString("ClientGUI.FatalError.message") + ex);
             die();
         }
 
@@ -436,10 +448,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             return;
                         }
                     }
-                    if (savePrompt == JOptionPane.NO_OPTION || savePrompt == JOptionPane.YES_OPTION)
-                    {
+
+                    if ((savePrompt == JOptionPane.NO_OPTION)
+                            || (savePrompt == JOptionPane.YES_OPTION)) {
                         frame.setVisible(false);
-                        unitDetailPane.setVisible(false);
                         saveSettings();
                         die();
                     }
@@ -463,27 +475,44 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         bv.addDisplayable(uo);
         bv.addDisplayable(offBoardOverlay);
 
-        mechD = new UnitDisplay(this, controller);
-        mechD.addMechDisplayListener(bv);
+        setUnitDisplay(new UnitDisplay(this, controller));
+        getUnitDisplay().addMechDisplayListener(bv);
 
-        this.unitDetailPane = new UnitDetailPane(this.mechD);
-        this.unitDetailPane.setVisible(false);
-        add(this.unitDetailPane, BorderLayout.EAST);
+        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
+        getUnitDisplayDialog().setLocation(
+                GUIPreferences.getInstance().getDisplayPosX(),
+                GUIPreferences.getInstance().getDisplayPosY()
+        );
+        getUnitDisplayDialog().setSize(
+                GUIPreferences.getInstance().getDisplaySizeHeight(),
+                GUIPreferences.getInstance().getDisplaySizeWidth()
+        );
+        UIUtil.updateWindowBounds(getUnitDisplayDialog());
+        getUnitDisplayDialog().setResizable(true);
+        getUnitDisplayDialog().setFocusable(false);
+        getUnitDisplayDialog().setFocusableWindowState(false);
+        getUnitDisplayDialog().add(getUnitDisplay());
+        getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                GUIPreferences.getInstance().hideUnitDisplay();
+            }
+        });
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
         ruler = new Ruler(frame, client, bv);
         ruler.setLocation(
-            prefs.getRulerPosX(),
-            prefs.getRulerPosY()
+                GUIPreferences.getInstance().getRulerPosX(),
+                GUIPreferences.getInstance().getRulerPosY()
         );
         ruler.setSize(
-            prefs.getRulerSizeHeight(),
-            prefs.getRulerSizeWidth()
+                GUIPreferences.getInstance().getRulerSizeHeight(),
+                GUIPreferences.getInstance().getRulerSizeWidth()
         );
         UIUtil.updateWindowBounds(ruler);
 
-        minimapW = MiniMap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
+        minimapW = Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
         cb = new ChatterBox(this);
         cb.setChatterBox2(cb2);
         cb2.setChatterBox(cb);
@@ -575,11 +604,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Called when the user selects the "View->Game Options" menu item.
      */
     private void showOptions() {
-        if (client.getGame().getPhase() == GamePhase.LOUNGE) {
-            getGameOptionsDialog().setEditable(true);
-        } else {
-            getGameOptionsDialog().setEditable(false);
-        }
+        getGameOptionsDialog().setEditable(client.getGame().getPhase().isLounge());
         // Display the game options dialog.
         getGameOptionsDialog().update(client.getGame().getOptions());
         getGameOptionsDialog().setVisible(true);
@@ -617,8 +642,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
-                this.unitDetailPane.getWindow().setLocation(0, 0);
-                this.unitDetailPane.getWindow().pack();
+                getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
                 break;
             case FILE_GAME_SAVE:
                 saveGame();
@@ -628,7 +652,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
-                String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, MMConstants.DEFAULT_SAVEGAME_NAME);
+                String filename = (String) JOptionPane.showInputDialog(frame,
+                        Messages.getString("ClientGUI.FileSaveServerDialog.message"),
+                        Messages.getString("ClientGUI.FileSaveServerDialog.title"),
+                        JOptionPane.QUESTION_MESSAGE, null, null,
+                        MMConstants.DEFAULT_SAVEGAME_NAME);
                 if (filename != null) {
                     client.sendChat("/save " + filename);
                 }
@@ -779,7 +807,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (curPanel instanceof MovementDisplay) {
                     GUIPreferences.getInstance().setMoveEnvelope(
                             !GUIPreferences.getInstance().getMoveEnvelope());
-                    ((MovementDisplay) curPanel).computeMovementEnvelope(mechD.getCurrentEntity());
+                    ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
                 }
                 break;
             case VIEW_MOVE_MOD_ENV:
@@ -791,11 +819,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 bv.changeTheme();
                 break;
             case FIRE_SAVE_WEAPON_ORDER:
-                Entity ent = mechD.getCurrentEntity();
+                Entity ent = getUnitDisplay().getCurrentEntity();
                 if (ent != null) {
-                    WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
-                            ent.getModel(), ent.getWeaponSortOrder(),
-                            ent.getCustomWeaponOrder());
+                    WeaponOrderHandler.setWeaponOrder(ent.getChassis(), ent.getModel(),
+                            ent.getWeaponSortOrder(), ent.getCustomWeaponOrder());
                     client.sendEntityWeaponOrderUpdate(ent);
                 }
                 break;
@@ -831,14 +858,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 destroyed.add(entity);
             }
         }
-        if (destroyed.size() > 0) {
+
+        if (!destroyed.isEmpty()) {
             String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
             File logDir = new File(sLogDir);
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            // TODO : Salvage file name shouldn't be inline
-            String fileName = "salvage.mul";
+            String fileName = "salvage.mul"; // TODO : remove inline filename
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 fileName = StringUtil.addDateTimeStamp(fileName);
             }
@@ -846,40 +873,39 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             try {
                 // Save the destroyed entities to the file.
                 EntityListFile.saveTo(unitFile, destroyed);
-            } catch (IOException e) {
-                LogManager.getLogger().error("", e);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), e.getMessage());
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), ex.getMessage());
             }
         }
     }
-
 
     /**
      * Saves the current settings to the cfg file.
      */
     void saveSettings() {
-        // save frame location
+        // Frame location
         GUIPreferences.getInstance().setWindowPosX(frame.getLocation().x);
         GUIPreferences.getInstance().setWindowPosY(frame.getLocation().y);
         GUIPreferences.getInstance().setWindowSizeWidth(frame.getSize().width);
         GUIPreferences.getInstance().setWindowSizeHeight(frame.getSize().height);
 
-        // also minimap
+        // Minimap
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
             GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
         }
 
-        // also mech display
-        var unitDetailWindow = this.unitDetailPane.getWindow();
-        if ((unitDetailWindow.getSize().width * unitDetailWindow.getSize().height) > 0) {
-            GUIPreferences.getInstance().setUnitDetailPosX(unitDetailWindow.getLocation().x);
-            GUIPreferences.getInstance().setUnitDetailPosY(unitDetailWindow.getLocation().y);
-            GUIPreferences.getInstance().setUnitDetailSizeWidth(unitDetailWindow.getSize().width);
-            GUIPreferences.getInstance().setUnitDetailSizeHeight(unitDetailWindow.getSize().height);
+        // Mek display
+        if ((getUnitDisplayDialog() != null)
+                && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
+            GUIPreferences.getInstance().setDisplayPosX(getUnitDisplayDialog().getLocation().x);
+            GUIPreferences.getInstance().setDisplayPosY(getUnitDisplayDialog().getLocation().y);
+            GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
+            GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
         }
 
-        // also ruler display
+        // Ruler display
         if ((ruler != null) && (ruler.getSize().width != 0) && (ruler.getSize().height != 0)) {
             GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
             GUIPreferences.getInstance().setRulerPosY(ruler.getLocation().y);
@@ -898,6 +924,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // cleanup our timers first
             bv.die();
         }
+
         for (String s : phaseComponents.keySet()) {
             JComponent component = phaseComponents.get(s);
             if (component instanceof ReportDisplay) {
@@ -909,7 +936,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             if (component instanceof Distractable) {
                 ((Distractable) component).removeAllListeners();
             }
-        } // Handle the next component
+        }
         phaseComponents.clear();
 
         frame.removeAll();
@@ -958,9 +985,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
         }
+
         if (curPanel instanceof ActionListener) {
             menuBar.removeActionListener((ActionListener) curPanel);
         }
+
         if (curPanel instanceof Distractable) {
             ((Distractable) curPanel).setIgnoringEvents(true);
         }
@@ -984,7 +1013,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
-                this.unitDetailPane.setVisible(false);
+                getUnitDisplayDialog().setVisible(false);
                 setMapVisible(false);
                 break;
             case POINTBLANK_SHOT:
@@ -992,8 +1021,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
             case TARGETING:
+            case PREMOVEMENT:
             case MOVEMENT:
             case OFFBOARD:
+            case PREFIRING:
             case FIRING:
             case PHYSICAL:
                 if (frame.isShowing()) {
@@ -1034,9 +1065,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (curPanel instanceof BoardViewListener) {
             bv.addBoardViewListener((BoardViewListener) curPanel);
         }
+
         if (curPanel instanceof ActionListener) {
             menuBar.addActionListener((ActionListener) curPanel);
         }
+
         if (curPanel instanceof Distractable) {
             ((Distractable) curPanel).setIgnoringEvents(false);
         }
@@ -1048,8 +1081,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     public void updateButtonPanel(GamePhase phase) {
-        if ((currPhaseDisplay != null)
-                && client.getGame().getPhase().equals(phase)) {
+        if ((currPhaseDisplay != null) && client.getGame().getPhase().equals(phase)) {
             currPhaseDisplay.setupButtonPanel();
         }
     }
@@ -1127,6 +1159,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 panSecondary.add(component, secondary);
                 offBoardOverlay.setTargetingPhaseDisplay((TargetingPhaseDisplay) component);
                 break;
+            case PREMOVEMENT:
+                component = new PrephaseDisplay(this, GamePhase.PREMOVEMENT);
+                ((PrephaseDisplay) component).initializeListeners();
+                main = "BoardView";
+                secondary = "PremovementDisplay";
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
+                break;
             case MOVEMENT:
                 component = new MovementDisplay(this);
                 main = "BoardView";
@@ -1143,6 +1187,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView";
                 secondary = "OffboardDisplay";
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
+                break;
+            case PREFIRING:
+                component = new PrephaseDisplay(this, GamePhase.PREFIRING);
+                ((PrephaseDisplay) component).initializeListeners();
+                main = "BoardView";
+                secondary = "Prefiring";
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -1199,7 +1255,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 // Try to reuse the ReportDisplay for other phases...
                 component = phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
                 if (component == null) {
-                    // no ReportDisplay to reuse -- get a new one
+                    // no ReportDisplay to reuse - get a new one
                     component = initializePanel(GamePhase.INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay";
@@ -1227,9 +1283,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     /** 
-     * Switches the Minimap and the MechDisplay an and off together.
-     * If the MechDisplay is active, both will be hidden, else
-     * both will be shown.
+     * Switches the Minimap and the UnitDisplay an and off together.
+     * If the UnitDisplay is active, both will be hidden, else both will be shown.
      */
     public void toggleMMUDDisplays() {
         GUIP.toggleUnitDisplay();
@@ -1283,17 +1338,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void setUnitDisplayVisible(boolean visible) {
         // If no unit displayed, select a unit so display can be safely shown
         // This can happen when using mouse button 4
-        if (visible && (mechD.getCurrentEntity() == null)
+        if (visible && (getUnitDisplay().getCurrentEntity() == null)
                 && (getClient() != null) && (getClient().getGame() != null)) {
             List<Entity> es = getClient().getGame().getEntitiesVector();
             if ((es != null) && !es.isEmpty()) {
-                mechD.displayEntity(es.get(0));
+                getUnitDisplay().displayEntity(es.get(0));
             }
         }
 
-        this.unitDetailPane.setVisible(visible);
+        getUnitDisplayDialog().setVisible(visible);
     }
-    
+
     private boolean fillPopup(Coords coords) {
         popup = new MapMenu(coords, client, curPanel, this);
         return popup.getHasMenu();
@@ -1309,13 +1364,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      *                 '\n' characters.
      * @param choices  the array of <code>String</code> choices that the player can
      *                 select from.
-     * @return The array of the <code>int</code> indexes of the from the input
-     *         array that match the selected choices. If no choices were
-     *         available, if the player did not select a choice, or if the
-     *         player canceled the choice, a <code>null</code> value is
-     *         returned.
+     * @return The array of the <code>int</code> indexes from the input array that match the
+     * selected choices. If no choices were available, if the player did not select a choice, or if
+     * the player canceled the choice, a <code>null</code> value is returned.
      */
-    public int[] doChoiceDialog(String title, String question, String[] choices) {
+    public @Nullable int[] doChoiceDialog(String title, String question, String... choices) {
         ChoiceDialog choice = new ChoiceDialog(frame, title, question, choices);
         choice.setVisible(true);
         return choice.getChoices();
@@ -1335,8 +1388,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension(
-                (int) (getSize().getWidth() / 1.5), (int) (getSize()
-                        .getHeight() / 1.5)));
+                (int) (getSize().getWidth() / 1.5), (int) (getSize().getHeight() / 1.5)));
         JOptionPane.showMessageDialog(frame, scrollPane, title,
                 JOptionPane.ERROR_MESSAGE);
     }
@@ -1574,11 +1626,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul");
-                } catch (IOException ignored) {
+                } catch (Exception ignored) {
                     // nothing needs to be done here
                     return;
                 }
             }
+
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, unitList);
@@ -1616,11 +1669,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     || unitFile.getName().toLowerCase().endsWith(".xml"))) {
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul");
-                } catch (IOException ignored) {
+                } catch (Exception ignored) {
                     // nothing needs to be done here
                     return;
                 }
             }
+
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, getClient());
@@ -1681,7 +1735,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
-        public void gamePlayerChange(GamePlayerChangeEvent e) {
+        public void gamePlayerChange(GamePlayerChangeEvent evt) {
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
@@ -1692,7 +1746,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         @Override
-        public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
+        public void gamePlayerDisconnected(GamePlayerDisconnectedEvent evt) {
             JOptionPane.showMessageDialog(frame,
                 Messages.getString("ClientGUI.Disconnected.message"),
                 Messages.getString("ClientGUI.Disconnected.title"),
@@ -1730,12 +1784,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-            System.err.println("gamePlayerConnected");
-            System.err.flush();
             if (curPanel instanceof ReportDisplay) {
                 ((ReportDisplay) curPanel).resetReadyButton();
-                System.err.println("resetReadyButton");
-                System.err.flush();
             }
         }
 
@@ -1770,7 +1820,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
         }
 
-
         @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
@@ -1795,10 +1844,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // Don't bother asking if none survived.
             if (!living.isEmpty() && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"),
                     Messages.getString("ClientGUI.SaveUnitsDialog.message"))) {
-
                 // Allow the player to save the units to a file.
                 saveVictoryList();
-            } // End user-wants-a-MUL
+            }
 
             // save all destroyed units in a separate "salvage MUL"
             ArrayList<Entity> destroyed = new ArrayList<>();
@@ -1809,7 +1857,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     destroyed.add(entity);
                 }
             }
-            if (destroyed.size() > 0) {
+
+            if (!destroyed.isEmpty()) {
                 String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
                 File logDir = new File(sLogDir);
                 if (!logDir.exists()) {
@@ -1832,11 +1881,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         @Override
-        public void gameSettingsChange(GameSettingsChangeEvent e) {
+        public void gameSettingsChange(GameSettingsChangeEvent evt) {
             if ((gameOptionsDialog != null) && gameOptionsDialog.isVisible() &&
-                    !e.isMapSettingsOnlyChange()) {
+                    !evt.isMapSettingsOnlyChange()) {
                 gameOptionsDialog.update(getClient().getGame().getOptions());
             }
+
             if (curPanel instanceof ChatLounge) {
                 ChatLounge cl = (ChatLounge) curPanel;
                 cl.updateMapSettings(getClient().getMapSettings());
@@ -1844,7 +1894,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         @Override
-        public void gameMapQuery(GameMapQueryEvent e) {
+        public void gameMapQuery(GameMapQueryEvent evt) {
 
         }
         
@@ -1853,7 +1903,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             Entity e = client.getGame().getEntity(evt.getEntityId());
             Object result;
             switch (evt.getCFRType()) {
-                case Packet.COMMAND_CFR_DOMINO_EFFECT:                    
+                case CFR_DOMINO_EFFECT:
                     // If the client connects to a game as a bot, it's possible
                     // to have the bot respond AND have the client ask the
                     // player. This is bad, ignore this if the client is a bot
@@ -1910,7 +1960,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     }
                     client.sendDominoCFRResponse(paths[choice]);
                     break;
-                case Packet.COMMAND_CFR_AMS_ASSIGN:
+                case CFR_AMS_ASSIGN:
                     ArrayList<String> amsOptions = new ArrayList<>();
                     amsOptions.add("None");
                     for (WeaponAttackAction waa : evt.getWAAs()) {
@@ -1942,7 +1992,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                                 amsOptions.indexOf(result) - 1);                 
                     }
                     break;
-                case Packet.COMMAND_CFR_APDS_ASSIGN:
+                case CFR_APDS_ASSIGN:
                     ArrayList<String> apdsOptions = new ArrayList<>();
                     apdsOptions.add("None");
                     Iterator<Integer> distIt = evt.getApdsDists().iterator();
@@ -1977,7 +2027,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                                 apdsOptions.indexOf(result) - 1);
                     }
                     break;
-                case Packet.COMMAND_CFR_HIDDEN_PBS:
+                case CFR_HIDDEN_PBS:
                     Entity attacker = client.getGame().getEntity(
                             evt.getEntityId());
                     Entity target = client.getGame().getEntity(
@@ -2023,7 +2073,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         client.sendHiddenPBSCFRResponse(null);
                     }
                     break;
-                case Packet.COMMAND_CFR_TELEGUIDED_TARGET:
+                case CFR_TELEGUIDED_TARGET:
                     List<Integer> targetIds = evt.getTelemissileTargetIds();
                     List<Integer> toHitValues = evt.getTmToHitValues();
                     List<String> targetDescriptions = new ArrayList<>();
@@ -2035,7 +2085,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             targetDescriptions.add(String.format(Messages.getString("TeleMissileTargetDialog.target"), tgt.getDisplayName(), th));
                         }
                     }
-                    //Set up the selection pane
+                    // Set up the selection pane
                     String i18nString = "TeleMissileTargetDialog.message";
                     msg = Messages.getString(i18nString);
                     i18nString = "TeleMissileTargetDialog.title";
@@ -2051,11 +2101,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                             }
                         }
                     } else {
-                        //If input IS null, as in the case of pressing the close or cancel buttons...
-                        //Just pick the first target in the list, or server will be left waiting indefinitely.
+                        // If input is null, as in the case of pressing the close or cancel buttons...
+                        // Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTelemissileTargetCFRResponse(0);
                     }
-                case Packet.COMMAND_CFR_TAG_TARGET:
+                    break;
+                case CFR_TAG_TARGET:
                     List<Integer> TAGTargets = evt.getTAGTargets();
                     List<Integer> TAGTargetTypes = evt.getTAGTargetTypes();
                     List<String> TAGTargetDescriptions = new ArrayList<>();
@@ -2087,6 +2138,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         //Just pick the first target in the list, or server will be left waiting indefinitely.
                         client.sendTAGTargetCFRResponse(0);
                     }
+                    break;
+                default:
+                    break;
             }
         }
     };
@@ -2132,6 +2186,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             return;
         }
         // save!
+
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
         } catch (IOException e) {
@@ -2292,22 +2347,22 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     @Override
-    public void componentHidden(ComponentEvent arg0) {
+    public void componentHidden(ComponentEvent evt) {
 
     }
 
     @Override
-    public void componentMoved(ComponentEvent arg0) {
+    public void componentMoved(ComponentEvent evt) {
 
     }
 
     @Override
-    public void componentResized(ComponentEvent arg0) {
+    public void componentResized(ComponentEvent evt) {
         bv.setPreferredSize(getSize());        
     }
 
     @Override
-    public void componentShown(ComponentEvent arg0) {
+    public void componentShown(ComponentEvent evt) {
 
     }
 
@@ -2334,7 +2389,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     client.getGame(), client.getHost(), client.getPort(), message);
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
-            // can be configured and it will faithfully press Done when the local player does.
+            // can be configured, and it will faithfully press Done when the local player does.
             if ((princess != null) && client.getGame().getPhase() == GamePhase.LOUNGE) {
                 getBots().put(player, princess);   
             } 
@@ -2342,12 +2397,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
     
     /**
-     * Returns the panel for the current phase.  The ClientGUI is split into
-     * the main panel (view) at the top, which takes up the majority of the view
-     * and the the "current panel" which has different controls  based on the
-     * phase.
+     * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
+     * the view and the "current panel" which has different controls based on the phase.
      * 
-     * @return
+     * @return the panel for the current phase
      */
     public JComponent getCurrentPanel() {
         return curPanel;

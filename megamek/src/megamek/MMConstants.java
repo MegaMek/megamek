@@ -47,6 +47,7 @@ public final class MMConstants extends SuiteConstants {
     public static final String USER_HISTORICAL_ETHNICITY_FILE = "userdata/data/names/historicalEthnicity.csv";
     public static final String USER_GIVEN_NAME_MALE_FILE = "userdata/data/names/maleGivenNames.csv";
     public static final String USER_SURNAME_FILE = "userdata/data/names/surnames.csv";
+    public static final String SERIALKILLER_CONFIG_FILE = "mmconf/serialkiller.xml";
     //endregion File Paths
 
     //region ClientServer
@@ -72,4 +73,11 @@ public final class MMConstants extends SuiteConstants {
     public static final int DIVE_BOMB_MAX_ALTITUDE = 5;
     public static final double INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP = 0.6;
     //endregion Unsorted Constants
+
+    //region Magic Numbers That Should Be Enums
+    // FIXME : TSEMP Constants
+    public static final int TSEMP_EFFECT_NONE = 0;
+    public static final int TSEMP_EFFECT_INTERFERENCE = 1;
+    public static final int TSEMP_EFFECT_SHUTDOWN = 2;
+    //endregion Magic Numbers That Should Be Enums
 }

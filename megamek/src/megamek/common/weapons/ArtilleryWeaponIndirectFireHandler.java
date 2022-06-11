@@ -20,6 +20,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
+import megamek.server.GameManager;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
@@ -36,20 +37,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     private int shootingBA = -1;
 
     /**
-     * This constructor may only be used for deserialization.
+     * This constructor can only be used for deserialization.
      */
     protected ArtilleryWeaponIndirectFireHandler() {
         super();
     }
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
-    public ArtilleryWeaponIndirectFireHandler(ToHitData t,
-            WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public ArtilleryWeaponIndirectFireHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
         if (w.getEntity(g) instanceof BattleArmor) {
             shootingBA = ((BattleArmor) w.getEntity(g)).getNumberActiverTroopers();
         }
@@ -129,7 +124,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         boolean asfFlak = target.isAirborne();
         Entity bestSpotter = null;
         if (ae == null) {
-            System.err.println("Artillery Entity is null!");
+            LogManager.getLogger().error("Artillery Entity is null!");
             return true;
         }
         
@@ -310,7 +305,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         
         if (atype.getMunitionType() == AmmoType.M_FAE) {
             AreaEffectHelper.processFuelAirDamage(targetPos, 
-                    atype, aaa.getEntity(game), vPhaseReport, server);
+                    atype, aaa.getEntity(game), vPhaseReport, gameManager);
                         
             return false;
         }
@@ -326,39 +321,39 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             } else {
                 radius = 1;
             }
-            server.deliverArtilleryFlare(targetPos, radius);
+            gameManager.deliverArtilleryFlare(targetPos, radius);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
             // The appropriate term here is "Bwahahahahaha..."
             if (target.isOffBoard()) {
-                AreaEffectHelper.doNuclearExplosion((Entity) aaa.getTarget(game), targetPos, 1, vPhaseReport, server);
+                AreaEffectHelper.doNuclearExplosion((Entity) aaa.getTarget(game), targetPos, 1, vPhaseReport, gameManager);
             } else {
-                server.doNuclearExplosion(targetPos, 1, vPhaseReport);
+                gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
             }
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {
             // Arrow IVs deliver fixed 30-point minefields.
             int rackSize = (atype.getAmmoType() == AmmoType.T_ARROW_IV) ? 30 : atype.getRackSize();
-            server.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), rackSize, ae.getId());
+            gameManager.deliverFASCAMMinefield(targetPos, ae.getOwner().getId(), rackSize, ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
-            server.deliverArtilleryInferno(targetPos, ae, subjectId, vPhaseReport);
+            gameManager.deliverArtilleryInferno(targetPos, ae, subjectId, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
-            server.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(), 30,
+            gameManager.deliverThunderVibraMinefield(targetPos, ae.getOwner().getId(), 30,
                     waa.getOtherAttackInfo(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {
-            server.deliverArtillerySmoke(targetPos, vPhaseReport);
+            gameManager.deliverArtillerySmoke(targetPos, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_LASER_INHIB) {
-            server.deliverLIsmoke(targetPos, vPhaseReport);
+            gameManager.deliverLIsmoke(targetPos, vPhaseReport);
             return false;
         }
         
@@ -377,7 +372,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
 
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, server);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON, ae, vPhaseReport, game, gameManager);
         }
 
         Targetable updatedTarget = aaa.getTarget(game);
@@ -397,17 +392,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 AreaEffectHelper.artilleryDamageEntity((Entity) updatedTarget, actualDamage, null,
                         0, false, asfFlak, isFlak, altitude,
                         effectiveTargetPos, atype, targetPos, false, ae, null, altitude,
-                        vPhaseReport, server);
+                        vPhaseReport, gameManager);
             }
         } else {
-            server.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
+            gameManager.artilleryDamageArea(targetPos, aaa.getCoords(), atype,
                     subjectId, ae, isFlak, altitude, mineClear, vPhaseReport,
                     asfFlak, shootingBA);
         }
 
         // artillery may unintentionally clear minefields, but only if it wasn't trying to
         if (!mineClear) {
-            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, server);
+            AreaEffectHelper.clearMineFields(targetPos, Minefield.CLEAR_NUMBER_WEAPON_ACCIDENT, ae, vPhaseReport, game, gameManager);
         }
 
         return false;

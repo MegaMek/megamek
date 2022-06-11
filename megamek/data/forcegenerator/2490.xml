@@ -91,7 +91,7 @@
 	<faction key='FWL.DA'/>
 	<faction key='DC.DR'/>
 	<faction key='LA.DG'>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>TH:7,FWL:2</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FWL.FWG'/>
@@ -137,7 +137,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:6,FWL:4,FS:2,TC:1</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='6'></salvage>
@@ -477,7 +477,7 @@
 			<availability>TH:4</availability>
 		</model>
 		<model name='(2470)'>
-			<availability>General:8</availability>
+			<availability>TH:8</availability>
 		</model>
 	</chassis>
 	<chassis name='DroST IIb Transport' unitType='Dropship'>
@@ -491,10 +491,6 @@
 	</chassis>
 	<chassis name='DroST Light Bulk Transport' unitType='Dropship'>
 		<availability>TH:4</availability>
-		<model name='IIA'>
-			<roles>cargo</roles>
-			<availability>TH:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Du Shi Wang Battleship' unitType='Warship'>
 		<availability>CC:6</availability>
@@ -1492,7 +1488,7 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Von Rohrs (Hebis)' unitType='Mek'>
+	<chassis name='Von Rohrs (Hebi)' unitType='Mek'>
 		<availability>PoR:2,DC:5</availability>
 		<model name='VON 4RH-5'>
 			<availability>General:8</availability>
@@ -1524,6 +1520,12 @@
 		<model name='WSP-1A'>
 			<roles>recon</roles>
 			<availability>General:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>TH:2-,IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>TH:2-,IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Winchester Cruiser' unitType='Warship'>

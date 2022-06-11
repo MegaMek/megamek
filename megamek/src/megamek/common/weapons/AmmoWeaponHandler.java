@@ -24,6 +24,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -45,8 +46,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
      * @param g
      */
     public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            Server s) {
-        super(t, w, g, s);
+            GameManager m) {
+        super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_BALLISTIC;
     }
 
@@ -172,6 +173,6 @@ public class AmmoWeaponHandler extends WeaponHandler {
         }
         
         // if we're here, the weapon is going to explode whether it's flagged as explosive or not 
-        vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon, true));
+        vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon, true));
     }
 }

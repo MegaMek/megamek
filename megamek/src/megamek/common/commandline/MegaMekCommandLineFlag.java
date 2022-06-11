@@ -15,7 +15,6 @@ package megamek.common.commandline;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
 import megamek.common.Configuration;
 import org.apache.logging.log4j.LogManager;
 
@@ -50,7 +49,7 @@ public enum MegaMekCommandLineFlag {
         try {
             return valueOf(text.toUpperCase(Locale.ROOT));
         } catch (Exception ex) {
-            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text '%s'", text);
+            LogManager.getLogger().error("Failed to parse the MegaMekCommandLineFlag from text " + text);
             throw(ex);
         }
     }

@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2004-2005 - Ben Mazur (bmazur@sev.org).
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the Free 
@@ -40,7 +40,8 @@ public class NAC40Weapon extends NavalACWeapon {
         this.medAV = 40;
         this.maxRange = RANGE_MED;
         rulesRefs = "331, TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement
+                .setTechBase(TECH_BASE_ALL)
                 .setIntroLevel(false)
                 .setUnofficial(false)
                 .setTechRating(RATING_D)
@@ -50,6 +51,6 @@ public class NAC40Weapon extends NavalACWeapon {
                 .setClanAdvancement(DATE_ES, 2201, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, true, false, false, false)
                 .setProductionFactions(F_TA)
-                .setReintroductionFactions(F_FS,F_LC);
+                .setReintroductionFactions(F_FS, F_LC);
     }
 }

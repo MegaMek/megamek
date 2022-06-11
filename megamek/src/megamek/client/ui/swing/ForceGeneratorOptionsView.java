@@ -1,25 +1,20 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ratgenerator.*;
+import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,8 +26,6 @@ import java.util.stream.Collectors;
  * @author Neoancient
  */
 public class ForceGeneratorOptionsView extends JPanel implements FocusListener, ActionListener {
-    private static final long serialVersionUID = 5269823128861856001L;
-
     private int currentYear;
     private Consumer<ForceDescriptor> onGenerate;
 
@@ -989,12 +982,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     @Override
-    public void focusGained(FocusEvent arg0) {
+    public void focusGained(FocusEvent evt) {
         // Do nothing
     }
 
     @Override
-    public void focusLost(FocusEvent arg0) {
+    public void focusLost(FocusEvent evt) {
         try {
             currentYear = Integer.parseInt(txtYear.getText());
             if (currentYear < RATGenerator.getInstance().getEraSet().first()) {
@@ -1002,14 +995,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } else if (currentYear > RATGenerator.getInstance().getEraSet().last()) {
                 currentYear = RATGenerator.getInstance().getEraSet().last();
             }
-        } catch (NumberFormatException ex) {
-            //ignore and restore to previous value
+        } catch (NumberFormatException ignored) {
+
         }
         yearUpdated();
     }
 
     static class CBRenderer<T> extends DefaultListCellRenderer {
-
         private static final long serialVersionUID = 4895258839502183158L;
 
         private String nullVal = Messages.getString("ForceGeneratorDialog.default");
@@ -1021,17 +1013,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         public CBRenderer(String nullVal, Function<T,String> strConverter) {
             this.nullVal = nullVal;
-            if (strConverter == null) {
-                toString = Object::toString;
-            } else {
-                toString = strConverter;
-            }
+            toString = Objects.requireNonNullElseGet(strConverter, () -> Object::toString);
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings(value = "unchecked")
         @Override
-        public Component getListCellRendererComponent(JList<? extends Object> list, Object entry,
-                int position, boolean arg3, boolean arg4) {
+        public Component getListCellRendererComponent(JList<?> list, Object entry, int position,
+                                                      boolean arg3, boolean arg4) {
             if (entry == null) {
                 setText(nullVal);
             } else {
@@ -1041,131 +1029,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
     }
 
-    static class ForceTreeModel implements TreeModel {
-
-        private ForceDescriptor root;
-        private ArrayList<TreeModelListener> listeners;
-
-        public ForceTreeModel(ForceDescriptor root) {
-            this.root = root;
-            listeners = new ArrayList<>();
-        }
-
-        @Override
-        public void addTreeModelListener(TreeModelListener listener) {
-            if (null != listener && !listeners.contains(listener)) {
-                listeners.add(listener);
-            }
-        }
-
-        @Override
-        public Object getChild(Object parent, int index) {
-            if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor) parent).getAllChildren().get(index);
-            }
-            return null;
-        }
-
-        @Override
-        public int getChildCount(Object parent) {
-            if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor) parent).getAllChildren().size();
-            }
-            return 0;
-        }
-
-        @Override
-        public int getIndexOfChild(Object parent, Object child) {
-            if (parent instanceof ForceDescriptor) {
-                return ((ForceDescriptor) parent).getAllChildren().indexOf(child);
-            }
-            return 0;
-        }
-
-        @Override
-        public Object getRoot() {
-            return root;
-        }
-
-        @Override
-        public boolean isLeaf(Object node) {
-            return (node instanceof ForceDescriptor) && (((ForceDescriptor) node).getEschelon() == 0)
-                    || (getChildCount(node) == 0);
-        }
-
-        @Override
-        public void removeTreeModelListener(TreeModelListener listener) {
-            if (null != listener) {
-                listeners.remove(listener);
-            }
-        }
-
-        @Override
-        public void valueForPathChanged(TreePath arg0, Object arg1) {
-            // TODO Auto-generated method stub
-
-        }
-
-    }
-
-    static class UnitRenderer extends DefaultTreeCellRenderer {
-        private static final long serialVersionUID = -5915350078441133119L;
-
-        public UnitRenderer() {
-
-        }
-
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value,
-                boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-
-            super.getTreeCellRendererComponent(
-                    tree, value, sel,
-                    expanded, leaf, row,
-                    hasFocus);
-            setBackground(UIManager.getColor("Tree.textBackground"));
-            setForeground(UIManager.getColor("Tree.textForeground"));
-            if (sel) {
-                setBackground(UIManager.getColor("Tree.selectionBackground"));
-                setForeground(UIManager.getColor("Tree.selectionForeground"));
-            }
-
-            ForceDescriptor fd = (ForceDescriptor) value;
-            if (fd.isElement()) {
-                StringBuilder name = new StringBuilder();
-                String uname;
-                if (fd.getCo() == null) {
-                    name.append("<font color='red'>")
-                    .append(Messages.getString("ForceGeneratorDialog.noCrew"))
-                    .append("</font>");
-                } else {
-                    name.append(fd.getCo().getName());
-                    name.append(" (").append(fd.getCo().getGunnery()).append("/").append(fd.getCo().getPiloting()).append(")");
-                }
-                uname = "<i>" + fd.getModelName() + "</i>";
-                if (fd.getFluffName() != null) {
-                    uname += "<br /><i>" + fd.getFluffName() + "</i>";
-                }
-                setText("<html>" + name + ", " + uname + "</html>");
-            } else {
-                StringBuilder desc = new StringBuilder("<html>");
-                desc.append(fd.parseName()).append("<br />").append(fd.getDescription());
-                if (fd.getCo() != null) {
-                    desc.append("<br />").append(fd.getCo().getTitle() == null?"CO":fd.getCo().getTitle());
-                    desc.append(fd.getCo().getName());
-                }
-                if (fd.getXo() != null) {
-                    desc.append("<br />").append(fd.getXo().getTitle() == null?"XO":fd.getXo().getTitle());
-                    desc.append(fd.getXo().getName());
-                }
-                setText(desc.append("</html>").toString());
-            }
-            return this;
-        }
-    }
-
-    private class GenerateTask extends SwingWorker<ForceDescriptor,Double> implements Ruleset.ProgressListener {
-
+    private class GenerateTask extends SwingWorker<ForceDescriptor, Double> implements ProgressListener {
         private ForceDescriptor fd;
 
         private final Object progressLock = new Object();
@@ -1190,10 +1054,10 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 if (onGenerate != null) {
                     onGenerate.accept(forceDesc);
                 }
-            } catch (InterruptedException ex) {
-                //Ignore
-            } catch (ExecutionException e) {
-                e.getCause().printStackTrace();
+            } catch (InterruptedException ignored) {
+
+            } catch (ExecutionException ex) {
+                LogManager.getLogger().error("", ex);
             } finally {
                 btnGenerate.setEnabled(true);
             }

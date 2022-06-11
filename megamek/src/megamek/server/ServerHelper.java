@@ -18,9 +18,9 @@
  */
 package megamek.server;
 
+import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.other.TSEMPWeapon;
 
 import java.util.*;
 
@@ -69,7 +69,7 @@ public class ServerHelper {
      * Worker function that handles heat as applied to aerospace fighter
      */
     public static void resolveAeroHeat(Game game, Entity entity, Vector<Report> vPhaseReport, Vector<Report> rhsReports, 
-            int radicalHSBonus, int hotDogMod, Server s) {
+            int radicalHSBonus, int hotDogMod, GameManager s) {
         Report r;
         
         // If this aero is part of a squadron, we will deal with its
@@ -210,7 +210,7 @@ public class ServerHelper {
         if ((entity.heat < autoShutDownHeat) && entity.isShutDown()) {
             // only start up if not shut down by taser or a TSEMP
             if ((entity.getTaserShutdownRounds() == 0)
-                    && (entity.getTsempEffect() != TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN)) {
+                    && (entity.getTsempEffect() != MMConstants.TSEMP_EFFECT_SHUTDOWN)) {
                 if ((entity.heat < 14) && !entity.isManualShutdown()) {
                     // automatically starts up again
                     entity.setShutDown(false);
@@ -426,7 +426,7 @@ public class ServerHelper {
     }
     
     public static void checkAndApplyMagmaCrust(Hex hex, int elevation, Entity entity, Coords curPos,
-            boolean jumpLanding, Vector<Report> vPhaseReport, Server server) {
+            boolean jumpLanding, Vector<Report> vPhaseReport, GameManager gameManager) {
         
         if ((hex.terrainLevel(Terrains.MAGMA) == 1) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
             int reportID = jumpLanding ? 2396 : 2395;
@@ -443,9 +443,9 @@ public class ServerHelper {
             if (roll >= rollTarget) {
                 hex.removeTerrain(Terrains.MAGMA);
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
-                server.sendChangedHex(curPos);
+                gameManager.sendChangedHex(curPos);
                 for (Entity en : entity.getGame().getEntitiesVector(curPos)) {
-                    server.doMagmaDamage(en, false);
+                    gameManager.doMagmaDamage(en, false);
                 }
             }
         }
@@ -454,7 +454,7 @@ public class ServerHelper {
     /**
      * Loops through all active entities in the game and performs mine detection
      */
-    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, Server server) {
+    public static void detectMinefields(Game game, Vector<Report> vPhaseReport, GameManager gameManager) {
         boolean tacOpsBap = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP);
         
         // if the entity is on the board
@@ -465,7 +465,7 @@ public class ServerHelper {
         for (Entity entity : game.getEntitiesVector()) {
             if (!entity.isOffBoard() && entity.isDeployed() &&
                     ((entity.delta_distance == 0) || !tacOpsBap)) {
-                detectMinefields(game, entity, entity.getPosition(), vPhaseReport, server);
+                detectMinefields(game, entity, entity.getPosition(), vPhaseReport, gameManager);
             }
         }
     }
@@ -475,7 +475,7 @@ public class ServerHelper {
      * @return True if any minefields have been detected.
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords, 
-            Vector<Report> vPhaseReport, Server server) {
+            Vector<Report> vPhaseReport, GameManager gameManager) {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             return false;
         }
@@ -521,7 +521,7 @@ public class ServerHelper {
                         r.add(potentialMineCoords.toFriendlyString());
                         vPhaseReport.add(r);
                         
-                        server.revealMinefield(entity.getOwner(), minefield);
+                        gameManager.revealMinefield(entity.getOwner(), minefield);
                     }
                 }
             }
@@ -534,7 +534,7 @@ public class ServerHelper {
      * Checks to see if any units can detected hidden units.
      */
     public static boolean detectHiddenUnits(Game game, Entity detector, Coords detectorCoords,
-            Vector<Report> vPhaseReport, Server server) {
+            Vector<Report> vPhaseReport, GameManager gameManager) {
         // If hidden units aren't on, nothing to do
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return false;
@@ -608,7 +608,7 @@ public class ServerHelper {
             LosEffects los = LosEffects.calculateLOS(game, detector, detected, detectorCoords, detected.getPosition(), false);
             if (los.canSee() || !beyondPointBlankRange) {
                 detected.setHidden(false);
-                server.entityUpdate(detected.getId());
+                gameManager.entityUpdate(detected.getId());
                 Report r = new Report(9960);
                 r.addDesc(detector);
                 r.subject = detector.getId();
@@ -625,7 +625,7 @@ public class ServerHelper {
         if (!vPhaseReport.isEmpty() && game.getPhase().isMovement()
                 && ((game.getTurnIndex() + 1) < game.getTurnVector().size())) {
             for (Integer playerId : reportPlayers) {
-                server.send(playerId, server.createSpecialReportPacket());
+                gameManager.send(playerId, gameManager.createSpecialReportPacket());
             }
         }
         
@@ -636,11 +636,11 @@ public class ServerHelper {
      * Loop through the game and clear 'blood stalker' flag for
      * any entities that have the given unit as the blood stalker target.
      */
-    public static void clearBloodStalkers(Game game, int stalkeeID, Server server) {
+    public static void clearBloodStalkers(Game game, int stalkeeID, GameManager gameManager) {
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getBloodStalkerTarget() == stalkeeID) {
                 entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);
-                server.entityUpdate(entity.getId());
+                gameManager.entityUpdate(entity.getId());
             }
         }
     }

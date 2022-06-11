@@ -1,4 +1,10 @@
 size 34 34
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Water (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
 hex 0101 1 "" ""
 hex 0201 1 "woods:1;foliage_elev:2" ""
 hex 0301 1 "" ""

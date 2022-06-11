@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -23,67 +24,28 @@ Phalanx Battle Armor
 4814
 </mul id:>
 
-<chassis>
-biped
-</chassis>
+<year>
+3065
+</year>
 
-<weightclass>
-3
-</weightclass>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<cruiseMP>
-2
-</cruiseMP>
-
-<Armor>
-7
-</Armor>
-
-<Squad Equipment>
-ISBASRM4:Body
-BA-SRM4 Ammo:Body
-BA-SRM4 Ammo:Body
-BABattleClaw:LA
-BAArmoredGlove:RA
-InfantryAssaultRifle:RA:APM
-IS BA Stealth (Improved):Body
-IS BA Stealth (Improved):Body
-IS BA Stealth (Improved):LA
-IS BA Stealth (Improved):LA
-IS BA Stealth (Improved):LA
-</Squad Equipment>
-<Trooper 1 Equipment>
-ISBATaser:RA
-</Trooper 1 Equipment>
-<Trooper 2 Equipment>
-ISBATaser:RA
-</Trooper 2 Equipment>
-<Trooper 3 Equipment>
-ISBATaser:RA
-</Trooper 3 Equipment>
-<Trooper 4 Equipment>
-ISBATaser:RA
-</Trooper 4 Equipment>
+<originalBuildYear>
+3065
+</originalBuildYear>
 
 <type>
 IS Level 3
 </type>
 
-<year>
-3065
-</year>
-
 <motion_type>
 Leg
 </motion_type>
 
-<source>
-TRO 3075 - Civil War
-</source>
+<transporters>
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
 
 <armor_type>
 33
@@ -92,3 +54,58 @@ TRO 3075 - Civil War
 <armor_tech>
 3
 </armor_tech>
+
+<Squad Equipment>
+ISBASRM4:Body
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BABattleClaw:LA
+BAArmoredGlove:RA
+InfantryAssaultRifle:APM:RA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+ISBATaser:RA
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+ISBATaser:RA
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+ISBATaser:RA
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+ISBATaser:RA
+</Trooper 4 Equipment>
+
+<source>
+TRO 3075 - Civil War
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+

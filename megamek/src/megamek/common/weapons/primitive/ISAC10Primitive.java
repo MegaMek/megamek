@@ -22,7 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrimitiveACWeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -76,7 +76,7 @@ public class ISAC10Primitive extends ACWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new PrimitiveACWeaponHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new PrimitiveACWeaponHandler(toHit, waa, game, manager);
     }
 }

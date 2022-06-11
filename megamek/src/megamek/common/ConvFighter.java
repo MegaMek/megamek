@@ -15,8 +15,11 @@ package megamek.common;
 import java.util.Map;
 
 import megamek.common.alphaStrike.BattleForceSPA;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.ConvFighterCostCalculator;
 import megamek.common.options.OptionsConstants;
-import megamek.common.verifier.TestEntity;
+
+import java.util.Map;
 
 /**
  * @author Jay Lawson
@@ -60,7 +63,7 @@ public class ConvFighter extends Aero {
         if (!hasEngine()) {
             return 0;
         }
-        int overThrust =  Math.max(thrust - getWalkMP(), 0);
+        int overThrust = Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
         int used = safeThrust + (2 * overThrust);
         if (!getEngine().isFusion()) {
@@ -87,55 +90,8 @@ public class ConvFighter extends Aero {
     }
 
     @Override
-    public double getCost(boolean ignoreAmmo) {
-        double cost = 0;
-
-        // add in cockpit
-        double avionicsWeight = Math.ceil(weight / 5) / 2;
-        cost += 4000 * avionicsWeight;
-
-        // add VSTOL gear if applicable
-        if (isVSTOL()) {
-            double vstolWeight = Math.ceil(weight / 10) / 2;
-            cost += 5000 * vstolWeight;
-        }
-
-        // Structural integrity
-        cost += 4000 * getSI();
-
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * getWeight());
-
-        // engine
-        if (hasEngine()) {
-            cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-        }
-        
-        // fuel tanks
-        cost += (200 * getFuel()) / 160.0;
-
-        // armor
-        if (hasPatchworkArmor()) {
-            for (int loc = 0; loc < locations(); loc++) {
-                cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
-            }
-
-        } else {
-            cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
-        }
-        // heat sinks
-        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
-        // 2000;
-        cost += sinkCost * TestEntity.calcHeatNeutralHSRequirement(this);
-
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // power amplifiers, if any
-        cost += 20000 * getPowerAmplifierWeight();
-
-        return Math.round(cost * getPriceMultiplier());
-
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return ConvFighterCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override

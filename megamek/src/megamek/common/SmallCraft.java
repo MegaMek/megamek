@@ -11,6 +11,10 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.cost.SmallCraftCostCalculator;
+import megamek.common.options.OptionsConstants;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -765,62 +769,9 @@ public class SmallCraft extends Aero {
         return base * EquipmentType.getArmorPointMultiplier(at, isClan);
     }
 
-    /**
-     * There is a mistake in some of the AT2r costs for some reason they added
-     * ammo twice for a lot of the level 2 designs, leading to costs that are
-     * too high
-     */
     @Override
-    public double getCost(boolean ignoreAmmo) {
-
-        double cost = 0;
-
-        // add in controls
-        // bridge
-        cost += 200000 + (10 * weight);
-        // computer
-        cost += 200000;
-        // life support
-        cost += 5000 * (getNCrew() + getNPassenger());
-        // sensors
-        cost += 80000;
-        // fcs
-        cost += 100000;
-        // gunnery/control systems
-        cost += 10000 * getArcswGuns();
-
-        // structural integrity
-        cost += 100000 * getSI();
-
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * getWeight());
-
-        // engine
-        double engineMultiplier = 0.065;
-        if (isClan()) {
-            engineMultiplier = 0.061;
-        }
-        double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
-        cost += engineWeight * 1000;
-        // drive unit
-        cost += (500 * getOriginalWalkMP() * weight) / 100.0;
-
-        // fuel tanks
-        cost += (200 * getFuel()) / 80.0 * 1.02;
-
-        // armor
-        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
-
-        // heat sinks
-        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
-        // 2000;
-        cost += sinkCost * getHeatSinks();
-
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        return Math.round(cost * getPriceMultiplier());
-
+    public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
+        return SmallCraftCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
 
     @Override

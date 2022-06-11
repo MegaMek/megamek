@@ -19,7 +19,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FireExtinguisherHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Sebastian Brocks
@@ -53,7 +53,7 @@ public class ISFireExtinguisher extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new FireExtinguisherHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new FireExtinguisherHandler(toHit, waa, game, manager);
     }
 }

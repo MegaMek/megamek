@@ -13,47 +13,32 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.BattleArmor;
-import megamek.common.Building;
-import megamek.common.Compute;
-import megamek.common.ComputeECM;
-import megamek.common.Entity;
-import megamek.common.Game;
-import megamek.common.Infantry;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
+import org.apache.logging.log4j.LogManager;
+
+import javax.swing.*;
+import java.util.Vector;
 
 /**
  * @author Sebastian Brocks
  */
 public class StreakHandler extends MissileWeaponHandler {
     private static final long serialVersionUID = 4122111574368642492L;
-    boolean isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae,
-            ae.getPosition(), target.getPosition());
+    boolean isAngelECMAffected = ComputeECM.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
 
     /**
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public StreakHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
@@ -66,21 +51,11 @@ public class StreakHandler extends MissileWeaponHandler {
         return 2;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
-     */
     @Override
     protected int calcnCluster() {
         return 1;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
     @Override
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
@@ -108,7 +83,7 @@ public class StreakHandler extends MissileWeaponHandler {
                 amsMod = (int) -getAeroSanityAMSHitsMod();
             }
         }
-        
+
         if (amsMod == 0 && allShotsHit()) {
             missilesHit = wtype.getRackSize();
         } else {
@@ -127,6 +102,7 @@ public class StreakHandler extends MissileWeaponHandler {
                 vPhaseReport.addElement(r);
             }
         }
+
         if (missilesHit > 0) {
             Report r = new Report(3325);
             r.subject = subjectId;
@@ -143,22 +119,21 @@ public class StreakHandler extends MissileWeaponHandler {
         return missilesHit;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#UseAmmo()
-     */
     @Override
     protected void useAmmo() {
         checkAmmo();
-        if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
-            // *shouldn't* fire.
-            System.out.println("Handler can't find any ammo!  Oh no!");
+        if (ammo == null) {
+            final String message = "Handler can't find any ammo! This should be impossible!";
+            LogManager.getLogger().error(message, new Exception());
+            JOptionPane.showMessageDialog(null, message, "Unknown Ammo Exception",
+                    JOptionPane.ERROR_MESSAGE);
         }
+
         if (ammo.getUsableShotsLeft() <= 0) {
             ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
+
         if (roll >= toHit.getValue()) {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - 1);
             if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
@@ -168,62 +143,28 @@ public class StreakHandler extends MissileWeaponHandler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
-     */
     @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
-        // if (!isAngelECMAffected) {
-        // no lock
         Report r = new Report(3215);
         r.subject = subjectId;
         vPhaseReport.addElement(r);
-        /*
-         * } else { super.reportMiss(vPhaseReport); }
-         */
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#addHeat()
-     */
     @Override
     protected void addHeat() {
-        if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)
-                && (roll >= toHit.getValue())) {
+        if ((toHit.getValue() != TargetRoll.IMPOSSIBLE) && (roll >= toHit.getValue())) {
             super.addHeat();
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#allShotsHit()
-     */
     @Override
     protected boolean allShotsHit() {
         return super.allShotsHit() || !isAngelECMAffected;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.MissileWeaponHandler#handleSpecialMiss(megamek
-     * .common.Entity, boolean, megamek.common.Building, java.util.Vector)
-     */
     @Override
-    protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean bldgDamagedOnMiss, Building bldg,
-            Vector<Report> vPhaseReport) {
-        return false;
-    }
-
-    @Override
-    protected boolean canDoDirectBlowDamage() {
+    protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
+                                        Building bldg, Vector<Report> vPhaseReport) {
         return false;
     }
 }

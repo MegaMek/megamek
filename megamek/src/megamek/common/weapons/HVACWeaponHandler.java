@@ -25,7 +25,7 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
-import megamek.server.Server;
+import megamek.server.GameManager;
 import megamek.server.SmokeCloud;
 
 /**
@@ -38,10 +38,10 @@ public class HVACWeaponHandler extends ACWeaponHandler {
      * @param t
      * @param w
      * @param g
-     * @param s
+     * @param m
      */
-    public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public HVACWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
     /*
@@ -72,7 +72,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
                 rearCoords = src;
             }
 
-            server.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
+            gameManager.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
         }
         return super.handle(phase, vPhaseReport);
     }
@@ -106,7 +106,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
                     break;
                 }
             }
-            vPhaseReport.addAll(server.explodeEquipment(ae, wloc, weapon));
+            vPhaseReport.addAll(gameManager.explodeEquipment(ae, wloc, weapon));
             r.choose(false);
             vPhaseReport.addElement(r);
             return true;

@@ -26,13 +26,13 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
     private Game game;
     Vector<Report> vPhaseReport;
 
-    public SmokeProcessor(Server server) {
-        super(server);
+    public SmokeProcessor(GameManager gameManager) {
+        super(gameManager);
     }
 
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = server.getGame();
+        game = gameManager.getGame();
 
         this.vPhaseReport = vPhaseReport;
         resolveSmoke();
@@ -50,15 +50,15 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
      */
     public void removeEmptyClouds() {
         List<SmokeCloud> cloudsToRemove = new ArrayList<>();
-        for (SmokeCloud cloud: server.getSmokeCloudList()) {
+        for (SmokeCloud cloud: gameManager.getSmokeCloudList()) {
             if (cloud.getCoordsList().size() < 1) {
                 cloudsToRemove.add(cloud);
             } else if (cloud.getSmokeLevel() < 1) {
-                server.removeSmokeTerrain(cloud);
+                gameManager.removeSmokeTerrain(cloud);
                 cloudsToRemove.add(cloud);
             }
         }
-        server.getGame().removeSmokeClouds(cloudsToRemove);
+        gameManager.getGame().removeSmokeClouds(cloudsToRemove);
     }
 
     /**
@@ -73,11 +73,11 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
                     if (smokeHex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT) {
                         smokeHex.removeTerrain(Terrains.SMOKE);
                         smokeHex.addTerrain(new Terrain(Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
-                        server.getHexUpdateSet().add(coords);
+                        gameManager.getHexUpdateSet().add(coords);
                     }
                 } else if (cloud.getSmokeLevel() > SmokeCloud.SMOKE_NONE) {
                     smokeHex.addTerrain(new Terrain(Terrains.SMOKE, cloud.getSmokeLevel()));
-                    server.getHexUpdateSet().add(coords);
+                    gameManager.getHexUpdateSet().add(coords);
                 }
             }
         }
@@ -88,8 +88,8 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
      */
     public void updateSmoke() {
         //Have to remove all smoke at once before creating new ones.
-        for (SmokeCloud cloud : server.getSmokeCloudList()) {
-            server.removeSmokeTerrain(cloud);
+        for (SmokeCloud cloud : gameManager.getSmokeCloudList()) {
+            gameManager.removeSmokeTerrain(cloud);
             // Dissipate the cloud, this gets handled in FireProcessor if 
             //  TO start fires is on
             if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
@@ -106,7 +106,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
         //Remove any smoke clouds that no longer exist
         removeEmptyClouds();
         //Create new Smoke Clouds.
-        for (SmokeCloud cloud : server.getSmokeCloudList()) {
+        for (SmokeCloud cloud : gameManager.getSmokeCloudList()) {
             if (!cloud.getCoordsList().isEmpty() && (cloud.getSmokeLevel() > 0)) {
                 createSmokeTerrain(cloud);
             }

@@ -87,13 +87,13 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.AD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:1,TH:10,LA:4,SL:5</salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.BR'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>OA:1,TH:2,LA:5,SL:5,FS:4</salvage>
 	</faction>
 	<faction key='FWL.BD'>
 		<salvage pct='5'></salvage>
@@ -123,7 +123,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.DG'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:7,SL:5,FWL:2,RWR:2,DC:3</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DL'>
@@ -133,7 +133,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.FO'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:1,TH:10,LA:4,SL:5</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<salvage pct='5'></salvage>
@@ -199,7 +199,7 @@
 	</faction>
 	<faction key='MERC.pm'/>
 	<faction key='CC.SD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:6,SL:5,FWL:1,FS:2,TC:1</salvage>
 	</faction>
 	<faction key='LA.SR'>
 		<salvage pct='5'></salvage>
@@ -279,6 +279,15 @@
 		</model>
 		<model name='Mk VI'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Alfar' unitType='Mek'>
+		<availability>LA:1+</availability>
+		<model name='AL-A1'>
+			<availability>LA:2+</availability>
+		</model>
+		<model name='AL-D1 &apos;Dokkalfar&apos;'>
+			<availability>LA:1+</availability>
 		</model>
 	</chassis>
 	<chassis name='Aquarius Escort' unitType='Small Craft'>
@@ -782,7 +791,7 @@
 	<chassis name='DroST IIa Transport' unitType='Dropship'>
 		<availability>TH:1</availability>
 		<model name='(2470)'>
-			<availability>General:8</availability>
+			<availability>TH:8</availability>
 		</model>
 	</chassis>
 	<chassis name='DroST IIb Transport' unitType='Dropship'>
@@ -793,10 +802,6 @@
 	</chassis>
 	<chassis name='DroST Light Bulk Transport' unitType='Dropship'>
 		<availability>TH:1</availability>
-		<model name='IIA'>
-			<roles>cargo</roles>
-			<availability>TH:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Dromedary Water Transport' unitType='Tank'>
 		<availability>TC:3,Periphery:2</availability>
@@ -1441,7 +1446,7 @@
 		</model>
 	</chassis>
 	<chassis name='Lancelot' unitType='Mek'>
-		<availability>CC:2,LA:2,SL:5,IS:2,MERC:2,DC:2</availability>
+		<availability>CC:2,LA:2,SL:5,IS:2,SL.R:5,MERC:2,DC:2</availability>
 		<model name='LNC25-01'>
 			<roles>anti_aircraft</roles>
 			<availability>SL:8,IS:8,DC:8</availability>
@@ -1532,9 +1537,15 @@
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='LGB-0W2'>
+			<availability>FWL:6,MERC:6+,Periphery:5+,DC:6</availability>
+		</model>
 		<model name='LGB-7Q'>
 			<roles>fire_support</roles>
 			<availability>General:6</availability>
+		</model>
+		<model name='LGB-8C'>
+			<availability>MOC:3,OA:3,TH:4,LA:3,SL:4,FWL:3,RWR:2,FS:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Lucifer' unitType='Aero'>
@@ -2144,6 +2155,12 @@
 			<availability>LA:8,General:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>CC:2-,TH:2-,LA:2-,FWL:2-,FS:2-,DC:2-</availability>
+		<model name='(Standard)'>
+			<availability>CC:2,TH:2,LA:2,FWL:2,FS:2,DC:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Seydlitz' unitType='Aero'>
 		<availability>MOC:3,Periphery.R:3,OA:3,LA:4,FWL:3,FS:3,MERC:3,DC:3,Periphery:3,TC:2</availability>
 		<model name='SYD-21'>
@@ -2505,6 +2522,12 @@
 			<availability>SL:8,IS:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>TH:2-,IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>TH:2-,IS:2-,Periphery:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Winchester Cruiser' unitType='Warship'>
 		<availability>TC:2</availability>
 		<model name='(2364)'>
@@ -2514,13 +2537,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:3,LA:3,SL:6,FWL:3,IS:3,RWR:2,FS:3,DC:3</availability>
+		<model name='WVR-1R'>
+			<availability>FS:3</availability>
+		</model>
+		<model name='WVR-3R'>
+			<availability>FS:3</availability>
+		</model>
 		<model name='WVR-6K'>
 			<roles>recon</roles>
 			<availability>DC:6</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>General:3,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='XCT Marine' unitType='Infantry'>

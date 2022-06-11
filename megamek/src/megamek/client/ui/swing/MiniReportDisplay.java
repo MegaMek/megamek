@@ -13,31 +13,22 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
+import megamek.client.Client;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.BASE64ToolKit;
+
+import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
-import javax.swing.text.html.HTMLEditorKit;
-
-import megamek.client.Client;
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.util.BASE64ToolKit;
-
 /**
  * Shows reports, with an Okay JButton
  */
 public class MiniReportDisplay extends JDialog implements ActionListener {
-    private static final long serialVersionUID = -703103629596703945L;
     private JButton butOkay;
 
     public MiniReportDisplay(JFrame parent, Client client) {
@@ -77,17 +68,16 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
             GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
             GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
             GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
-
             setVisible(false);
         }
     }
-    
+
     private void setupReportTabs(Client c) {
         JTabbedPane tabs = new JTabbedPane();
-        
+
         int numRounds = c.getGame().getRoundCount();
         for (int round = 1; round < numRounds; round++) {
-            String text =  c.receiveReport(c.getGame().getReports(round));
+            String text = c.receiveReport(c.getGame().getReports(round));
             JTextPane ta = new JTextPane();
             setupStylesheet(ta);
             BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -113,7 +103,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         
         getContentPane().add(BorderLayout.CENTER, tabs);
     }
-    
+
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
         Font font = UIManager.getFont("Label.font");

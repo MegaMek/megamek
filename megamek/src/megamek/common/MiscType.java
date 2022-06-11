@@ -794,9 +794,9 @@ public class MiscType extends EquipmentType {
                 } else if (getSubType() == S_ELITE) { // only shielded
                     pct += 0.03;
                 }
-                //Jumpship is based on non-drive weight and rounded to ton
+                // JumpShip is based on non-drive weight and rounded to ton
                 if (entity.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
-                    RoundWeight.nextTon((entity.getWeight() - ((Jumpship) entity).getJumpDriveWeight()) * pct);
+                    return RoundWeight.nextTon((entity.getWeight() - ((Jumpship) entity).getJumpDriveWeight()) * pct);
                 }
                 return defaultRounding.round(entity.getWeight() * pct, entity);
             } else if (subType == S_IMPROVED) {
@@ -1777,6 +1777,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createHarJelIII());
         EquipmentType.addType(MiscType.createRadicalHeatSinkSystem());
         EquipmentType.addType(MiscType.createLAMBombBay());
+        EquipmentType.addType(MiscType.createLAMAdditionalFuel());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystemMech());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
         EquipmentType.addType(MiscType.createFluidSuctionSystem());
@@ -2783,7 +2784,7 @@ public class MiscType extends EquipmentType {
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS   
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setClanAdvancement(DATE_NONE, 3070, 3109, DATE_NONE, DATE_NONE)
+                .setClanAdvancement(3070, 3109, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CSR)
                 .setProductionFactions(F_CSR).setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
@@ -3822,7 +3823,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createClothingLightInfArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Clothing, Light/Naked ;)";
+        misc.name = "Clothing, Light (e.g. Summer Wear/None)";
         misc.setInternalName(misc.name);
         misc.addLookupName("ClothingLightNone");
         misc.damageDivisor = 0.5;
@@ -4121,7 +4122,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createSnowSuitInfArmor() {
         MiscType misc = new MiscType();
-        misc.name = "Snow suit";
+        misc.name = "Snowsuit";
         misc.setInternalName(misc.name);
         misc.addLookupName("SnowSuit");
         misc.damageDivisor = 1.0;
@@ -4217,7 +4218,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createComstarInfArmor() {
         MiscType misc = new MiscType();
 
-        misc.name = "Comstar Infantry Kit";
+        misc.name = "ComStar Infantry Kit";
         misc.setInternalName(misc.name);
         misc.addLookupName("CSInfKit");
         misc.addLookupName("ComstarKit");
@@ -6787,8 +6788,9 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "238, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-                .setISAdvancement(3052, 3062, 3067, DATE_NONE, DATE_NONE)
-                .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+                .setISAdvancement(3052, 3061, 3067, DATE_NONE, DATE_NONE)
+                .setISApproximate(true, false, true, false, false)
+                .setPrototypeFactions(F_FS, F_LC)
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
@@ -6830,7 +6832,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Sprayer (Mech)";
-        misc.setInternalName("MechSprayer");
+        misc.setInternalName(EquipmentTypeLookup.SPRAYER_MEK);
         misc.addLookupName("Sprayer [Mech]");
         misc.tonnage = 0.5;
         misc.criticals = 1;
@@ -6852,7 +6854,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Sprayer (Vehicular)";
-        misc.setInternalName("Tank Sprayer");
+        misc.setInternalName(EquipmentTypeLookup.SPRAYER_VEE);
         misc.addLookupName("Sprayer [Vehicular]");
         misc.shortName = "Sprayer";
         misc.tonnage = 0.015;
@@ -7069,7 +7071,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Backhoe";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.BACKHOE);
         misc.tonnage = 5;
         misc.criticals = 6;
         misc.svslots = 1;
@@ -7096,7 +7098,7 @@ public class MiscType extends EquipmentType {
         misc.svslots = 1;
         misc.bv = 5;
         misc.name = "Bridge Layer (Light)";
-        misc.setInternalName("LightBridgeLayer");
+        misc.setInternalName(EquipmentTypeLookup.LIGHT_BRIDGE_LAYER);
         misc.sortingName = "Bridge B";
         misc.flags = misc.flags.or(F_LIGHT_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
@@ -7119,7 +7121,7 @@ public class MiscType extends EquipmentType {
         misc.svslots = 1;
         misc.bv = 10;
         misc.name = "Bridge Layer (Medium)";
-        misc.setInternalName("MediumBridgeLayer");
+        misc.setInternalName(EquipmentTypeLookup.MEDIUM_BRIDGE_LAYER);
         misc.sortingName = "Bridge C";
         misc.flags = misc.flags.or(F_MEDIUM_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
@@ -7142,7 +7144,7 @@ public class MiscType extends EquipmentType {
         misc.svslots = 1;
         misc.bv = 20;
         misc.name = "Bridge Layer (Heavy)";
-        misc.setInternalName("HeavyBridgeLayer");
+        misc.setInternalName(EquipmentTypeLookup.HEAVY_BRIDGE_LAYER);
         misc.sortingName = "Bridge D";
         misc.flags = misc.flags.or(F_HEAVY_BRIDGE_LAYER).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
@@ -7163,7 +7165,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 50000;
         misc.name = "Bulldozer";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.BULLDOZER);
         misc.bv = 10;
         misc.flags = misc.flags.or(F_BULLDOZER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.industrial = true;
@@ -7181,7 +7183,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Chainsaw";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.CHAINSAW);
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.svslots = 1;
@@ -7204,7 +7206,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Combine";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.COMBINE);
         misc.tonnage = 2.5f;
         misc.criticals = 4;
         misc.svslots = 1;
@@ -7227,7 +7229,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Dual Saw";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.DUAL_SAW);
         misc.tonnage = 7;
         misc.criticals = 7;
         misc.svslots = 1;
@@ -7275,7 +7277,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Dumper (Front)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.DUMPER_FRONT);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
@@ -7295,7 +7297,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Dumper (Rear)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.DUMPER_REAR);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
@@ -7315,7 +7317,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Dumper (Right)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.DUMPER_RIGHT);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
@@ -7335,7 +7337,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Dumper (Left)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.DUMPER_LEFT);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 5000;
@@ -7354,7 +7356,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createLightFluidSuctionSystemMech() {
         MiscType misc = new MiscType();
         misc.name = "Fluid Suction System (Light - Mech)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.FLUID_SUCTION_LIGHT_MEK);
         misc.addLookupName("Light Fluid Suction System (Mech)");
         misc.criticals = 1;
         misc.tonnage = .5;
@@ -7374,7 +7376,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createLightFluidSuctionSystem() {
         MiscType misc = new MiscType();
         misc.name = "Fluid Suction System (Light - Vehicle)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.FLUID_SUCTION_LIGHT_VEE);
         misc.addLookupName("Light Fluid Suction System (Vehicle)");
         misc.criticals = 1;
         misc.tankslots = 1;
@@ -7396,7 +7398,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createFluidSuctionSystem() {
         MiscType misc = new MiscType();
         misc.name = "Fluid Suction System (Standard)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.FLUID_SUCTION);
         misc.addLookupName("Fluid Suction System");
         misc.addLookupName("Fluid Suction System[Standard]");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -7421,7 +7423,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Heavy-Duty Pile Driver";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.PILE_DRIVER);
         misc.addLookupName("PileDriver");
         misc.addLookupName("Pile Driver");
         misc.tonnage = 10;
@@ -7445,7 +7447,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createLadder() {
         MiscType misc = new MiscType();
         misc.name = "Ladder";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.LADDER);
         misc.addLookupName("Ladder (20m)");
         misc.addLookupName("Ladder (40m)");
         misc.addLookupName("Ladder (60m)");
@@ -7471,7 +7473,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Lift Hoist/Arresting Hoist";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.LIFT_HOIST);
         misc.addLookupName("Lift Hoist");
         misc.tonnage = 3;
         misc.criticals = 3;
@@ -7494,7 +7496,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Manipulator (Non-Mech/Non-Battle Armor)";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.MANIPULATOR_INDUSTRIAL);
         misc.addLookupName("Manipulator");
         misc.addLookupName("Manipulator [Non-Mech/Non-Battle Armor]");
         misc.shortName = "Manipulator";
@@ -7518,7 +7520,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Mining Drill";
-        misc.setInternalName("MiningDrill");
+        misc.setInternalName(EquipmentTypeLookup.MINING_DRILL);
         misc.cost = 10000;
         misc.tonnage = 3.0;
         misc.criticals = 4;
@@ -7545,7 +7547,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.cost = 25000;
         misc.name = "Refueling Drogue/Fluid Suction System (Aero)";
-        misc.setInternalName("RefuelingDrogue");
+        misc.setInternalName(EquipmentTypeLookup.REFUELING_DROGUE);
         misc.flags = misc.flags.or(F_REFUELING_DROGUE).or(F_FIGHTER_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_SC_EQUIPMENT);
         misc.industrial = true;
@@ -7563,7 +7565,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Rock Cutter";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.ROCK_CUTTER);
         misc.tonnage = 5;
         misc.criticals = 5;
         misc.svslots = 1;
@@ -7586,7 +7588,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Salvage Arm";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.SALVAGE_ARM);
         misc.addLookupName("SalvageArm");
         misc.tonnage = 3;
         misc.criticals = 2;
@@ -7608,7 +7610,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Spot Welder";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.SPOT_WELDER);
         misc.tonnage = 2;
         misc.criticals = 1;
         misc.cost = 75000;
@@ -7630,7 +7632,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Wrecking Ball";
-        misc.setInternalName("IS Wrecking Ball");
+        misc.setInternalName(EquipmentTypeLookup.WRECKING_BALL);
         misc.addLookupName("WreckingBall");
         misc.addLookupName("Clan Wrecking Ball");
         misc.addLookupName("CLWrecking Ball");
@@ -7893,12 +7895,12 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLSpaceMineDispenser");
         misc.cost = 15000;
         misc.tonnage = 10;
-        // TODO: implement game rules for this, analog to the mine for BAs
+        // TODO : implement game rules for this, analog to the mine for BAs
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_FIGHTER_EQUIPMENT)
                 .or(F_SC_EQUIPMENT).or(F_DS_EQUIPMENT).or(F_JS_EQUIPMENT).or(F_WS_EQUIPMENT).or(F_SS_EQUIPMENT)
                 .or(F_SPACE_MINE_DISPENSER);
         misc.bv = 200; // because it includes 2 mines. 100 for each mine,
-                       // becaues it deals a max potential damage of 100
+                       // because it deals a max potential damage of 100
         misc.rulesRefs = "325, TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_D).setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
@@ -8209,7 +8211,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = "Extended Fuel Tank";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.EXTENDED_FUEL_TANK);
         misc.addLookupName("Extended Fuel Tank (1 ton)");
         misc.addLookupName("Extended Fuel Tank (0.5 tons)");
         misc.addLookupName("Extended Fuel Tank (1.5 tons)");
@@ -9288,8 +9290,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISCVDuneBuggyChassis() {
         MiscType misc = new MiscType();
-        // TODO this is Combat Vee, and SV combined chassis. Their really needs
-        // to be two different chassis types. 
         misc.name = "Combat Vehicle Chassis Mod [Dune Buggy]";
         misc.setInternalName("ISCVDuneBuggyChassis");
         misc.addLookupName("ISCVDuneBuggy");
@@ -9299,7 +9299,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.tankslots = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
-        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.rulesRefs = "303, TO";
@@ -9431,8 +9431,6 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISSVDuneBuggyChassis() {
         MiscType misc = new MiscType();
-        // TODO this is Combat Vee, and SV combined chassis. Their really needs
-        // to be two different chassis types. 
         misc.name = "SV Chassis Mod [Dune Buggy]";
         misc.shortName = "Dune Buggy";
         misc.setInternalName("ISSVDuneBuggyChassis");
@@ -11157,39 +11155,39 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    // Unofficial or Made up Equipment
-    // No clue what this no unit is using this
-
-    /*
-     * public static MiscType createCoolantSystem() { MiscType misc = new
-     * MiscType();
-     * 
-     * misc.name = "Coolant System"; misc.setInternalName(misc.name); misc.tonnage =
-     * 9; misc.criticals = 2; misc.cost = 90000; misc.flags =
-     * misc.flags.or(F_COOLANT_SYSTEM).or(F_MECH_EQUIPMENT); misc.bv = 15;
-     * misc.techAdvancement.setTechBase(TECH_BASE_IS);
-     * misc.techAdvancement.setISAdvancement(DATE_NONE, 3049, DATE_NONE);
-     * misc.techAdvancement.setTechRating(RATING_C);
-     * misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X,
-     * RATING_E, RATING_X }); return misc; }
-     */
-
     public static MiscType createLAMBombBay() {
         MiscType misc = new MiscType();
         misc.name = "Bomb Bay";
-        misc.setInternalName(misc.name);
+        misc.setInternalName(EquipmentTypeLookup.LAM_BOMB_BAY);
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BOMB_BAY).or(F_MECH_EQUIPMENT);
         misc.explosive = true;
+        misc.cost = 5000;
         misc.rulesRefs = "110, IO";
+        // IO, p.220/221 (LAMs can be constructed in all later eras so Bomb Bays must not go extinct)
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684)
+                .setClanAdvancement(DATE_NONE, 2684)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+                .setTechRating(RATING_D).setAvailability(RATING_B, RATING_E, RATING_E, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
 
-        // Not listed in IO; this an amalgam of bimodal and standard LAM values.
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 3085)
-            .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2825)
-            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-            .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    public static MiscType createLAMAdditionalFuel() {
+        MiscType misc = new MiscType();
+        misc.name = "Fuel Tank";
+        misc.setInternalName(EquipmentTypeLookup.LAM_FUEL_TANK);
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 200;
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT);
+        misc.explosive = true; // Assumed. Game effects not implemented. Might follow rules for Bomb Bay Fuel, IO p.111
+        misc.rulesRefs = "114, IO";
+        // IO, p.220/221
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(DATE_ES, DATE_ES)
+                .setTechRating(RATING_B).setAvailability(RATING_B, RATING_A, RATING_A, RATING_A)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 

@@ -32,7 +32,7 @@ import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.RapidfireACWeaponHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * N.B. This class is overridden for AC/2, AC/5, AC/10, AC/10, NOT ultras/LB/RAC.
@@ -63,40 +63,40 @@ public abstract class ACWeapon extends AmmoWeapon {
      * megamek.server.Server)
      */
     @Override
-    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, Server server) {
+    protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, GameManager gameManager) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinked().getType();
 
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 
         if (weapon.curMode().equals("Rapid")) {
-            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, server);
+            RapidfireACWeaponHandler ah = new RapidfireACWeaponHandler(toHit, waa, game, gameManager);
             return ah;
         }
         if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
-            return new ACAPHandler(toHit, waa, game, server);
+            return new ACAPHandler(toHit, waa, game, gameManager);
         }
 
         if (atype.getMunitionType() == AmmoType.M_FLECHETTE) {
-            return new ACFlechetteHandler(toHit, waa, game, server);
+            return new ACFlechetteHandler(toHit, waa, game, gameManager);
         }
 
         if (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) {
-            return new ACIncendiaryHandler(toHit, waa, game, server);
+            return new ACIncendiaryHandler(toHit, waa, game, gameManager);
         }
 
         if (atype.getMunitionType() == AmmoType.M_TRACER) {
-            return new ACTracerHandler(toHit, waa, game, server);
+            return new ACTracerHandler(toHit, waa, game, gameManager);
         }
 
         if (atype.getMunitionType() == AmmoType.M_FLAK) {
-            return new ACFlakHandler(toHit, waa, game, server);
+            return new ACFlakHandler(toHit, waa, game, gameManager);
         }
         
         if (atype.getMunitionType() == AmmoType.M_CASELESS) {
-            return new ACCaselessHandler (toHit, waa, game, server);
+            return new ACCaselessHandler (toHit, waa, game, gameManager);
         }
 
-        return new ACWeaponHandler(toHit, waa, game, server);
+        return new ACWeaponHandler(toHit, waa, game, gameManager);
 
     }
 

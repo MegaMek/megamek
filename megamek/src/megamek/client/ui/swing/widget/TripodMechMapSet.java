@@ -1,6 +1,7 @@
 /*
- * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2000-2002 - Ben Mazur (bmazur@sev.org).
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk).
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -56,8 +57,7 @@ public class TripodMechMapSet implements DisplayMapSet {
     // Reference to Component class (need to manage images and fonts)
     private JComponent comp;
 
-    // Points for build hot areas (may be too heavy, think of to load from
-    // exteranl file)
+    // Points for build hot areas (maybe too heavy, think of to load from external file)
     // Mek armor - Front
     // Right hand
     private Polygon rightArm = new Polygon(new int[] { 106, 105, 110, 114, 111,

@@ -1,31 +1,39 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2013 - Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This file is part of MegaMek.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.preference;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Locale;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- *
  * @author nderwin
  */
 public class PreferenceManagerTest {
@@ -38,30 +46,31 @@ public class PreferenceManagerTest {
 
     private PreferenceManager testMe;
 
-    @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    @TempDir
+    private Path tempDirectory;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    public void beforeEach() {
         testMe = new PreferenceManager();
     }
 
     @Test
     public void testSaveAndLoad() throws IOException {
-        File f = tmpFolder.newFile("test-client-settings.xml");
+        assertTrue(Files.isDirectory(tempDirectory));
+        final Path createdFilePath = Files.createFile(tempDirectory.resolve("test-client-settings.xml"));
+        final File file = createdFilePath.toFile();
 
         testMe.getPreferenceStore(PreferenceManager.CLIENT_SETTINGS_STORE_NAME).setValue(LOCALE_KEY, Locale.GERMAN.getLanguage());
         testMe.getPreferenceStore(GUI_PREFERENCES_STORE).setValue(DAMAGE_LEVEL_KEY, true);
 
-        testMe.save(f);
+        testMe.save(file);
 
-        assertTrue(f.exists());
-        assertTrue(f.length() > 0);
+        assertTrue(file.exists());
+        assertTrue(file.length() > 0);
 
-        testMe.load(f.toString());
+        testMe.load(file.toString());
 
         assertEquals(Locale.GERMAN.getLanguage(), testMe.getPreferenceStore(PreferenceManager.CLIENT_SETTINGS_STORE_NAME).getString(LOCALE_KEY));
         assertTrue(testMe.getPreferenceStore(GUI_PREFERENCES_STORE).getBoolean(DAMAGE_LEVEL_KEY));
     }
-
 }

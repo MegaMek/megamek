@@ -22,6 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.EnergyWeaponHandler;
 import megamek.common.weapons.InsulatedLaserWeaponHandler;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -49,12 +50,12 @@ public abstract class LaserWeapon extends EnergyWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
+                                              GameManager manager) {
         Mounted linkedBy = waa.getEntity(game).getEquipment(waa.getWeaponId()).getLinkedBy();
         if ((linkedBy != null) && !linkedBy.isInoperable()
                 && linkedBy.getType().hasFlag(MiscType.F_LASER_INSULATOR)) {
-            return new InsulatedLaserWeaponHandler(toHit, waa, game, server);
+            return new InsulatedLaserWeaponHandler(toHit, waa, game, manager);
         }
-        return new EnergyWeaponHandler(toHit, waa, game, server);
+        return new EnergyWeaponHandler(toHit, waa, game, manager);
     }
 }

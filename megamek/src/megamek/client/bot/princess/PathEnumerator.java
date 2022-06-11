@@ -23,7 +23,6 @@ import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
 import megamek.common.util.BoardUtilities;
-import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -231,7 +230,7 @@ public class PathEnumerator {
                 // generate long-range paths appropriate to the bot's current state
                 updateLongRangePaths(mover);
             // this handles situations where a unit is high up in the air, but is not an aircraft
-            // such as an ejected pilot or a unit hot dropping from a dropship, as these cannot move
+            // such as an ejected pilot or a unit hot dropping from a DropShip, as these cannot move
             } else if (!mover.isAero() && mover.isAirborne()) {
                 paths.add(new MovePath(game, mover));
             } else { // Non-Aero movement
@@ -257,12 +256,10 @@ public class PathEnumerator {
                 
                 // add jumping moves
                 if (mover.getJumpMP() > 0) {
-                    ShortestPathFinder spf = ShortestPathFinder
-                            .newInstanceOfOneToAll(mover.getJumpMP(),
-                                    MoveStepType.FORWARDS, getGame());
+                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getJumpMP(),
+                            MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run((new MovePath(game, mover))
-                            .addStep(MoveStepType.START_JUMP));
+                    spf.run((new MovePath(game, mover)).addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 

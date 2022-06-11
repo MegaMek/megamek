@@ -35,6 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 
 /**
@@ -46,6 +47,10 @@ class EntitySprite extends Sprite {
 
     // Statics
     private static final int SMALL = 0;
+    private static final int STATUS_BAR_LENGTH = 24;
+    private static final int STATUS_BAR_X = 55;
+    private static final int MAX_TMM_PIPS = 6;
+    private static final int TMM_PIP_SIZE = STATUS_BAR_LENGTH / MAX_TMM_PIPS;
     private static final boolean DIRECT = true;
     private static final Color LABEL_TEXT_COLOR = Color.WHITE;
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
@@ -215,8 +220,9 @@ class EntitySprite extends Sprite {
 
     private void updateLabel() {
         Rectangle oldRect = new Rectangle();
-        if (labelRect != null)
+        if (labelRect != null) {
             oldRect = new Rectangle(labelRect);
+        }
         
         int face = (entity.isCommander() && !onlyDetectedBySensors()) ? Font.ITALIC : Font.PLAIN;
         labelFont = new Font("SansSerif", face, (int) (10 * Math.max(bv.scale, 0.9)));
@@ -233,7 +239,7 @@ class EntitySprite extends Sprite {
             labelRect.setLocation((int) (bv.hex_size.width * 0.55), (int) (0.75 * bv.hex_size.height));
             labelPos = Positioning.RIGHT;
         } else if (bv.game.getEntitiesVector(position.translated("NW"), true).isEmpty()) {
-            labelRect.setLocation((int) (bv.hex_size.width * 0.45)-labelRect.width, 
+            labelRect.setLocation((int) (bv.hex_size.width * 0.45) - labelRect.width,
                     (int) (0.25 * bv.hex_size.height) - labelRect.height);
             labelPos = Positioning.LEFT;
         } else if (bv.game.getEntitiesVector(position.translated("NE"), true).isEmpty()) {
@@ -275,23 +281,29 @@ class EntitySprite extends Sprite {
 
         Status(Color c, String s) {
             color = c;
-            status = Messages.getString("BoardView1."+s);
+            status = Messages.getString("BoardView1." + s);
             small = false;
-            if (color.equals(Color.RED)) criticalStatus = true;
+            if (color.equals(Color.RED)) {
+                criticalStatus = true;
+            }
         }
 
-        Status(Color c, String s, Object[] objs) {
+        Status(Color c, String s, Object... objs) {
             color = c;
-            status = Messages.getString("BoardView1."+s, objs);
+            status = Messages.getString("BoardView1." + s, objs);
             small = false;
-            if (color.equals(Color.RED)) criticalStatus = true;
+            if (color.equals(Color.RED)) {
+                criticalStatus = true;
+            }
         }
 
         Status(Color c, String s, boolean direct) {
             color = c;
             status = s;
             small = false;
-            if (color.equals(Color.RED)) criticalStatus = true;
+            if (color.equals(Color.RED)) {
+                criticalStatus = true;
+            }
         }
 
         Status(Color c, String s, int t) {
@@ -305,11 +317,12 @@ class EntitySprite extends Sprite {
             status = null;
             small = true;
         }
-
     }
     
     private void drawStatusStrings(Graphics2D g, ArrayList<Status> statusStrings) {
-        if (statusStrings.isEmpty()) return;
+        if (statusStrings.isEmpty()) {
+            return;
+        }
         
         // The small info blobs
         g.setFont(labelFont);
@@ -431,8 +444,7 @@ class EntitySprite extends Sprite {
                 
                 graph.drawImage(bv.getScaledImage(bv.tileManager.imageFor(entity, secondaryPos), true),
                         0, 0, this);
-                graph.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1.0f));
+                graph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             }
         }
 
@@ -442,14 +454,12 @@ class EntitySprite extends Sprite {
         boolean isInfantry = (entity instanceof Infantry);
         boolean isAero = entity.isAero();
         
-        if ((isAero && ((IAero) entity).isSpheroid() && !board.inSpace())
-                && (secondaryPos == 1)) {
+        if ((isAero && ((IAero) entity).isSpheroid() && !board.inSpace()) && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
             graph.draw(bv.facingPolys[entity.getFacing()]);
         }
 
         if ((secondaryPos == -1) || (secondaryPos == 6)) {
-            
             // Gather unit conditions
             ArrayList<Status> stStr = new ArrayList<>();
             criticalStatus = false;
@@ -460,8 +470,7 @@ class EntitySprite extends Sprite {
             int crewStunned = 0;
             boolean ge = false;
             if (entity instanceof Tank) {
-                turretLocked = !((Tank) entity).hasNoTurret()
-                        && !entity.canChangeSecondaryFacing();
+                turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
                 crewStunned = ((Tank) entity).getStunnedTurns();
                 ge = entity instanceof GunEmplacement;
             }
@@ -484,27 +493,46 @@ class EntitySprite extends Sprite {
             }
             
             // Prone, Hulldown, Stuck, Immobile, Jammed
-            if (entity.isProne()) 
+            if (entity.isProne()) {
                 stStr.add(new Status(Color.RED, "PRONE"));
-            if (!entity.getHiddenActivationPhase().isUnknown())
+            }
+
+            if (!entity.getHiddenActivationPhase().isUnknown()) {
                 stStr.add(new Status(Color.RED, "ACTIVATING"));
-            if (entity.isHidden())
+            }
+
+            if (entity.isHidden()) {
                 stStr.add(new Status(Color.RED, "HIDDEN"));
-            if (entity.isGyroDestroyed())
+            }
+
+            if (entity.isGyroDestroyed()) {
                 stStr.add(new Status(Color.RED, "NO_GYRO"));
-            if (entity.isHullDown())
+            }
+
+            if (entity.isHullDown()) {
                 stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
-            if ((entity.isStuck()))
+            }
+
+            if (entity.isStuck()) {
                 stStr.add(new Status(Color.ORANGE, "STUCK"));
-            if (!ge && entity.isImmobile())
+            }
+
+            if (!ge && entity.isImmobile()) {
                 stStr.add(new Status(Color.RED, "IMMOBILE"));
-            if (entity.isBracing()) 
+            }
+
+            if (entity.isBracing()) {
                 stStr.add(new Status(Color.ORANGE, "BRACING"));
-            if (isAffectedByECM())
+            }
+
+            if (isAffectedByECM()) {
                 stStr.add(new Status(Color.YELLOW, "Jammed"));
+            }
             
             // Turret Lock 
-            if (turretLocked) stStr.add(new Status(Color.YELLOW, "LOCKED"));
+            if (turretLocked) {
+                stStr.add(new Status(Color.YELLOW, "LOCKED"));
+            }
             
             // Grappling & Swarming
             if (entity.getGrappled() != Entity.NONE) {
@@ -519,11 +547,11 @@ class EntitySprite extends Sprite {
             }
 
             // Transporting
-            if (entity.getLoadedUnits().size() > 0) {
+            if (!entity.getLoadedUnits().isEmpty()) {
                 stStr.add(new Status(Color.YELLOW, "T", SMALL));
             }
             
-            if (entity.getAllTowedUnits().size() > 0) {
+            if (!entity.getAllTowedUnits().isEmpty()) {
                 stStr.add(new Status(Color.YELLOW, "TOWING"));
             }
 
@@ -548,7 +576,10 @@ class EntitySprite extends Sprite {
             }
 
             // Crew
-            if (entity.getCrew().isDead()) stStr.add(new Status(Color.RED, "CrewDead"));
+            if (entity.getCrew().isDead()) {
+                stStr.add(new Status(Color.RED, "CrewDead"));
+            }
+
             if (crewStunned > 0)  {
                 stStr.add(new Status(Color.YELLOW, "STUNNED", new Object[] { crewStunned }));
             }
@@ -575,9 +606,17 @@ class EntitySprite extends Sprite {
             // Aero
             if (isAero) {
                 IAero a = (IAero) entity;
-                if (a.isRolled()) stStr.add(new Status(Color.YELLOW, "ROLLED"));
-                if (a.getCurrentFuel() <= 0) stStr.add(new Status(Color.RED, "FUEL"));
-                if (entity.isEvading()) stStr.add(new Status(Color.GREEN, "EVADE"));
+                if (a.isRolled()) {
+                    stStr.add(new Status(Color.YELLOW, "ROLLED"));
+                }
+
+                if (a.getCurrentFuel() <= 0) {
+                    stStr.add(new Status(Color.RED, "FUEL"));
+                }
+
+                if (entity.isEvading()) {
+                    stStr.add(new Status(Color.GREEN, "EVADE"));
+                }
                 
                 if (a.isOutControlTotal() & a.isRandomMove()) {
                     stStr.add(new Status(Color.RED, "RANDOM"));
@@ -593,7 +632,6 @@ class EntitySprite extends Sprite {
                 }
             }
 
-            
             // Unit Label
             // no scaling for the label, its size is changed by varying
             // the font size directly => better control
@@ -664,14 +702,13 @@ class EntitySprite extends Sprite {
             if ((entity.getFacing() != -1)
                     && !(isInfantry && !((Infantry) entity).hasFieldGun()
                             && !((Infantry) entity).isTakingCover())
-                    && !(isAero && ((IAero) entity).isSpheroid() && !board
-                            .inSpace())) {
+                    && !(isAero && ((IAero) entity).isSpheroid() && !board.inSpace())) {
                 // Indicate a stacked unit with the same facing that can still move
                 if (shouldIndicateNotDone() && (bv.game.getPhase() == GamePhase.MOVEMENT)) {
                     var tr = graph.getTransform();
                     // rotate the arrow slightly
                     graph.scale(1 / bv.scale, 1 / bv.scale);
-                    graph.rotate(Math.PI / 24, bv.hex_size.width/2, bv.hex_size.height/2);
+                    graph.rotate(Math.PI / 24, bv.hex_size.width / 2, bv.hex_size.height / 2);
                     graph.scale(bv.scale, bv.scale);
                     graph.setColor(GUIPreferences.getInstance().getWarningColor());
                     graph.fill(bv.facingPolys[entity.getFacing()]);
@@ -713,32 +750,57 @@ class EntitySprite extends Sprite {
                 }
             }
 
-            // armor and internal status bars
-            int baseBarLength = 23;
+            // armor, internal and TMM status bars
             int barLength = 0;
             double percentRemaining = 0.00;
 
             percentRemaining = entity.getArmorRemainingPercent();
-            barLength = (int) (baseBarLength * percentRemaining);
+            barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
             graph.setColor(Color.darkGray);
-            graph.fillRect(56, 7, 23, 3);
+            graph.fillRect(STATUS_BAR_X + 1, 7, STATUS_BAR_LENGTH, 3);
             graph.setColor(Color.lightGray);
-            graph.fillRect(55, 6, 23, 3);
+            graph.fillRect(STATUS_BAR_X, 6, STATUS_BAR_LENGTH, 3);
             graph.setColor(getStatusBarColor(percentRemaining));
-            graph.fillRect(55, 6, barLength, 3);
+            graph.fillRect(STATUS_BAR_X, 6, barLength, 3);
 
             if (!ge) {
                 // Gun emplacements don't have internal structure
                 percentRemaining = entity.getInternalRemainingPercent();
-                barLength = (int) (baseBarLength * percentRemaining);
+                barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
                 graph.setColor(Color.darkGray);
-                graph.fillRect(56, 11, 23, 3);
+                graph.fillRect(STATUS_BAR_X + 1, 11, STATUS_BAR_LENGTH, 3);
                 graph.setColor(Color.lightGray);
-                graph.fillRect(55, 10, 23, 3);
+                graph.fillRect(STATUS_BAR_X, 10, STATUS_BAR_LENGTH, 3);
                 graph.setColor(getStatusBarColor(percentRemaining));
-                graph.fillRect(55, 10, barLength, 3);
+                graph.fillRect(STATUS_BAR_X, 10, barLength, 3);
+            }
+
+            // TMM pips show if done in movement, or on all units during firing
+            int pipOption = guip.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
+            if ((pipOption != 0) && !ge
+                    && ((entity.isDone() && bv.game.getPhase().isMovement())
+                    || bv.game.getPhase().isFiring())) {
+                int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
+                Color tmmColor = (pipOption == 1) ? Color.WHITE : guip.getColorForMovement(entity.moved);
+                graph.setColor(Color.darkGray);
+                graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
+                if (tmm >= 0) {
+                    // draw left to right for positive TMM
+                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                        graph.setColor(Color.DARK_GRAY);
+                        graph.setColor(i < tmm ? tmmColor : Color.BLACK);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                    }
+                } else {
+                    // draw pips right to left for negative TMM
+                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                        graph.setColor(Color.DARK_GRAY);
+                        graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                    }
+                }
             }
         }
 
@@ -757,7 +819,7 @@ class EntitySprite extends Sprite {
                 .anyMatch(e -> !e.isDone());
     }
 
-    private Color getDamageColor() {
+    private @Nullable Color getDamageColor() {
         switch (entity.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
                 return Color.black;
@@ -767,8 +829,9 @@ class EntitySprite extends Sprite {
                 return Color.yellow;
             case Entity.DMG_LIGHT:
                 return Color.green;
+            default:
+                return null;
         }
-        return null;
     }
 
     /**

@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -147,10 +147,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false);
-        addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); 
-        
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); 
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false);
@@ -332,7 +328,7 @@ public class GameOptions extends AbstractOptions {
             
             Unmarshaller um = jc.createUnmarshaller();
             InputStream is = new FileInputStream(file);
-            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MegaMekXmlUtil.createSafeXmlSource(is));
+            GameOptionsXML opts = (GameOptionsXML) um.unmarshal(MMXMLUtility.createSafeXmlSource(is));
 
             for (IBasicOption bo : opts.getOptions()) {
                 changedOptions.add(parseOptionNode(bo, print));
@@ -475,18 +471,18 @@ public class GameOptions extends AbstractOptions {
      * @param indent the indent to write at
      */
     public void writeToXML(final PrintWriter pw, int indent) {
-        MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOptions");
+        MMXMLUtility.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOptions");
         for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
             final IOptionGroup group = groups.nextElement();
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
-                MegaMekXmlUtil.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOption");
-                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "name", option.getName());
-                MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
-                MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOption");
+                MMXMLUtility.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOption");
+                MMXMLUtility.writeSimpleXMLTag(pw, indent, "name", option.getName());
+                MMXMLUtility.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
+                MMXMLUtility.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOption");
             }
         }
-        MegaMekXmlUtil.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
+        MMXMLUtility.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
     }
 
     /**

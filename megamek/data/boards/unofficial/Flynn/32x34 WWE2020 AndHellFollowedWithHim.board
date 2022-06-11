@@ -1,4 +1,9 @@
 size 32 34
+tag "Water (Auto)"
+tag "MarsTheme (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 2 "" "mars"
 hex 0201 2 "" "mars"
 hex 0301 2 "" "mars"

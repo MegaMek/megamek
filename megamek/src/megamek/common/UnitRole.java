@@ -3,6 +3,8 @@ package megamek.common;
 import megamek.common.alphaStrike.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSPA;
+import org.apache.logging.log4j.LogManager;
+
 /**
  * Unit roles as defined by Alpha Strike Companion, used in formation building rules
  * in ASC and Campaign Operations
@@ -73,7 +75,7 @@ public enum UnitRole {
             case "transport":
                 return TRANSPORT;
             default:
-                System.err.println("Could not parse AS Role " + role);
+                LogManager.getLogger().error("Could not parse AS Role " + role);
                 return UNDETERMINED;
         }
     }

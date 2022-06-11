@@ -97,7 +97,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem boardRemoveBuildings = new JMenuItem(getString("CommonMenuBar.boardRemoveBuildings"));
 
     // The View menu
-    private JCheckBoxMenuItem viewMiniMap = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMiniMap"));
+    private JCheckBoxMenuItem viewMinimap = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMinimap"));
     private JCheckBoxMenuItem viewMekDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMekDisplay"));
     private JMenuItem viewAccessibilityWindow = new JMenuItem(getString("CommonMenuBar.viewAccessibilityWindow"));
     private JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewKeyboardShortcuts"));
@@ -258,8 +258,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         
         initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
         viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
-        initMenuItem(viewMiniMap, menu, VIEW_MINI_MAP, VK_M);
-        viewMiniMap.setSelected(GUIP.getMinimapEnabled());
+        initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M);
+        viewMinimap.setSelected(GUIP.getMinimapEnabled());
         menu.addSeparator();
         
         initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN);
@@ -302,7 +302,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFieldOfFire.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FIELD_FIRE));
         toggleIsometric.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TOGGLE_ISO));
         viewMovementEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOVE_ENVELOPE));
-        viewMiniMap.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MINIMAP));
+        viewMinimap.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MINIMAP));
         viewLabels.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.DRAW_LABELS));
         toggleHexCoords.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.HEX_COORDS));
         viewMovModEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOD_ENVELOPE));
@@ -436,7 +436,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         gameGameOptions.setEnabled(isInGame || isLobby);
         gamePlayerSettings.setEnabled(isInGame);
         
-        viewMiniMap.setEnabled(isBoardView);
+        viewMinimap.setEnabled(isBoardView);
         viewZoomIn.setEnabled(isBoardView);
         viewZoomOut.setEnabled(isBoardView);
         toggleIsometric.setEnabled(isBoardView);
@@ -488,7 +488,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
-            viewMiniMap.setSelected(GUIP.getMinimapEnabled());
+            viewMinimap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
             toggleHexCoords.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_COORDS));
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {

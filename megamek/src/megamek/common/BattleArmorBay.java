@@ -1,7 +1,6 @@
 /*
-* MegaMek -
-* Copyright (C) 2003, 2004 Ben Mazur (bmazur@sev.org)
-* Copyright (C) 2018 The MegaMek Team
+* Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
+* Copyright (c) 2018-2022 - The MegaMek Team. All Rights Reserved.
 *
 * This program is free software; you can redistribute it and/or modify it under
 * the terms of the GNU General Public License as published by the Free Software
@@ -13,19 +12,13 @@
 * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 * details.
 */
-
 package megamek.common;
 
 /**
- * Represents a volume of space set aside for carrying Battle Armor squads
- * aboard large spacecraft and mobile structures
+ * Represents a volume of space set aside for carrying Battle Armor squads aboard large spacecraft
+ * and mobile structures
  */
-
 public final class BattleArmorBay extends Bay {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 7091227399812361916L;
 
     private boolean isClan = false;
@@ -34,20 +27,17 @@ public final class BattleArmorBay extends Bay {
     /**
      * The default constructor is only for serialization.
      */
-    protected BattleArmorBay() {
+    private BattleArmorBay() {
         totalSpace = 0;
         currentSpace = 0;
     }
-
-    // Public constructors and methods.
 
     /**
      * Create a space for the given tonnage of troops. For this class, only the
      * weight of the troops (and their equipment) are considered; if you'd like
      * to think that they are stacked like lumber, be my guest.
      *
-     * @param space
-     *            - The weight of troops (in tons) this space can carry.
+     * @param space The weight of troops (in tons) this space can carry.
      * @param doors
      * @param bayNumber
      * @param isClan
@@ -68,10 +58,8 @@ public final class BattleArmorBay extends Bay {
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
      *
-     * @param unit
-     *            - the <code>Entity</code> to be loaded.
-     * @return <code>true</code> if the unit can be loaded, <code>false</code>
-     *         otherwise.
+     * @param unit the <code>Entity</code> to be loaded.
+     * @return <code>true</code> if the unit can be loaded, <code>false</code> otherwise.
      */
     @Override
     public boolean canLoad(Entity unit) {
@@ -99,7 +87,7 @@ public final class BattleArmorBay extends Bay {
     }
 
     @Override
-    public String getUnusedString(boolean showrecovery) {
+    public String getUnusedString(boolean showRecovery) {
         return "Battle Armor Bay " + numDoorsString() + " - "
                 + String.format("%1$,.0f", getUnused())
                 + (getUnused() > 1 ? isClan ? " Points"
@@ -152,5 +140,4 @@ public final class BattleArmorBay extends Bay {
         // Based on the weight of the equipment (not capacity), rounded up to the whole ton
         return 15000L * (long) Math.ceil(getWeight());
     }
-
 }

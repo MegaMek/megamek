@@ -267,17 +267,14 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         resetButtons();
         rerolled = false;
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                int phaseTab = tabs.indexOfTab("Phase");
-                if (phaseTab > 0) {
-                    JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport();
-                    vp.setViewPosition(new Point());
-                }
-                JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport();
+        SwingUtilities.invokeLater(() -> {
+            int phaseTab = tabs.indexOfTab("Phase");
+            if (phaseTab > 0) {
+                JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport();
                 vp.setViewPosition(new Point());
             }
+            JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport();
+            vp.setViewPosition(new Point());
         });
     }
     
@@ -312,7 +309,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 }
                 Entity ent = clientgui.getClient().getGame().getEntity(id);
                 if (ent != null) {
-                    clientgui.mechD.displayEntity(ent);
+                    clientgui.getUnitDisplay().displayEntity(ent);
                     clientgui.setUnitDisplayVisible(true);
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {

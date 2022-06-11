@@ -1,5 +1,13 @@
 size 50 50
 option exit_roads_to_pavement false
+tag "Rough (Auto)"
+tag "GrassTheme (Auto)"
+tag "Cliffs (Auto)"
+tag "Roads (Auto)"
+tag "HighHills (Auto)"
+tag "Woods (Auto)"
+tag "SnowTerrain (Auto)"
+tag "DenseForest (Auto)"
 hex 0101 16 "snow:2" ""
 hex 0201 16 "snow:2" ""
 hex 0301 16 "snow:2" ""

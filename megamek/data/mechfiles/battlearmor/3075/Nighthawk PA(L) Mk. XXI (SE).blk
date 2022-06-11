@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Nighthawk PA(L)
+</Name>
+
+<Model>
+Mk. XXI (SE)
+</Model>
+
+<year>
+3055
+</year>
+
+<originalBuildYear>
+3055
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+IS BA ECM:Body
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+Laser Rifle (Mauser 960):APM
+BAExtendedLifeSupport:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Standard):LA
+IS BA Stealth (Standard):RA
+IS BA Stealth (Standard):RA
+IS BA Stealth (Standard):LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO 3075 - Star League
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+

@@ -1,29 +1,18 @@
-/**
+/*
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.widget;
-
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Polygon;
-import java.util.Vector;
-
-import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
@@ -34,13 +23,15 @@ import megamek.common.Mech;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
+
 /**
- * Very cumbersome class that handles set of polygonal areas and labels for
- * PicMap component to represent single mech unit in MechDisplay
+ * Very cumbersome class that handles set of polygonal areas and labels for PicMap component to
+ * represent single mech unit in MechDisplay
  */
-
 public class MechMapSet implements DisplayMapSet {
-
     // Because of keeping all areas of single type in one array
     // some index offset values required
     private static final int REAR_AREA_OFFSET = 7;
@@ -64,8 +55,7 @@ public class MechMapSet implements DisplayMapSet {
     // Reference to Component class (need to manage images and fonts)
     private JComponent comp;
 
-    // Points for build hot areas (may be too heavy, think of to load from
-    // exteranl file)
+    // Points for build hot areas (maybe too heavy, think of to load from external file)
     // Mek armor - Front
     // Right hand
     private Polygon rightArm = new Polygon(new int[] { 106, 105, 110, 114, 111,
@@ -181,11 +171,8 @@ public class MechMapSet implements DisplayMapSet {
     @Override
     public void setEntity(Entity e) {
         Mech m = (Mech) e;
-        boolean mtHeat = false;
-        if ((e.getGame() != null)
-                && e.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
-            mtHeat = true;
-        }
+        boolean mtHeat = (e.getGame() != null)
+                && e.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
         int a = 1;
         int a0 = 1;
         for (int i = 0; i < m.locations(); i++) {
@@ -197,8 +184,7 @@ public class MechMapSet implements DisplayMapSet {
             if (m.hasRearArmor(i)) {
                 a = m.getArmor(i, true);
                 a0 = m.getOArmor(i, true);
-                vLabels[i + REAR_AREA_OFFSET].setValue(m
-                        .getArmorString(i, true));
+                vLabels[i + REAR_AREA_OFFSET].setValue(m.getArmorString(i, true));
                 WidgetUtils.setAreaColor(areas[i + REAR_AREA_OFFSET], vLabels[i
                         + REAR_AREA_OFFSET], (double) a / (double) a0);
             }
@@ -212,8 +198,7 @@ public class MechMapSet implements DisplayMapSet {
         // heat
         vLabels[19].setValue(Integer.toString(m.heat));
         drawHeatControl(m.heat, mtHeat);
-        //TODO: this messes up the layout a bit, but only for industrial
-        // mechs FIXME
+        // FIXME : this messes up the layout a bit, but only for industrial meks
         if (!m.hasPatchworkArmor() && m.hasBARArmor(1)) {
             content.addArea(labels[19]);
             content.addArea(vLabels[20]);
@@ -225,44 +210,25 @@ public class MechMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay,
-                Mech.LOC_HEAD);
-        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay,
-                Mech.LOC_CT);
-        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay,
-                Mech.LOC_RT);
-        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay,
-                Mech.LOC_LT);
-        areas[Mech.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay,
-                Mech.LOC_RARM);
-        areas[Mech.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay,
-                Mech.LOC_LARM);
-        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay,
-                Mech.LOC_RLEG);
-        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay,
-                Mech.LOC_LLEG);
-        areas[REAR_AREA_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
-                rearCentralTorso, unitDisplay, Mech.LOC_CT);
-        areas[REAR_AREA_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
-                rearRightTorso, unitDisplay, Mech.LOC_RT);
-        areas[REAR_AREA_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(
-                rearLeftTorso, unitDisplay, Mech.LOC_LT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = new PMSimplePolygonArea(
-                intStHead, unitDisplay, Mech.LOC_HEAD);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
-                inStCentralTorso, unitDisplay, Mech.LOC_CT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
-                inStRightTorso, unitDisplay, Mech.LOC_RT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(
-                inStLeftTorso, unitDisplay, Mech.LOC_LT);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = new PMSimplePolygonArea(
-                inStRightArm, unitDisplay, Mech.LOC_RARM);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = new PMSimplePolygonArea(
-                inStLeftArm, unitDisplay, Mech.LOC_LARM);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = new PMSimplePolygonArea(
-                inStRightLeg, unitDisplay, Mech.LOC_RLEG);
-        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = new PMSimplePolygonArea(
-                inStLeftLeg, unitDisplay, Mech.LOC_LLEG);
+        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay, Mech.LOC_HEAD);
+        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay, Mech.LOC_CT);
+        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay, Mech.LOC_RT);
+        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay, Mech.LOC_LT);
+        areas[Mech.LOC_RARM] = new PMSimplePolygonArea(rightArm, unitDisplay, Mech.LOC_RARM);
+        areas[Mech.LOC_LARM] = new PMSimplePolygonArea(leftArm, unitDisplay, Mech.LOC_LARM);
+        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay, Mech.LOC_RLEG);
+        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay, Mech.LOC_LLEG);
+        areas[REAR_AREA_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(rearCentralTorso, unitDisplay, Mech.LOC_CT);
+        areas[REAR_AREA_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(rearRightTorso, unitDisplay, Mech.LOC_RT);
+        areas[REAR_AREA_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(rearLeftTorso, unitDisplay, Mech.LOC_LT);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = new PMSimplePolygonArea(intStHead, unitDisplay, Mech.LOC_HEAD);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(inStCentralTorso, unitDisplay, Mech.LOC_CT);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(inStRightTorso, unitDisplay, Mech.LOC_RT);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(inStLeftTorso, unitDisplay, Mech.LOC_LT);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RARM] = new PMSimplePolygonArea(inStRightArm, unitDisplay, Mech.LOC_RARM);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LARM] = new PMSimplePolygonArea(inStLeftArm, unitDisplay, Mech.LOC_LARM);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = new PMSimplePolygonArea(inStRightLeg, unitDisplay, Mech.LOC_RLEG);
+        areas[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = new PMSimplePolygonArea(inStLeftLeg, unitDisplay, Mech.LOC_LLEG);
         heatImage = comp.createImage(10, 120);
         drawHeatControl(0);
         heatHotArea = new PMPicPolygonalArea(heatControl, heatImage);
@@ -392,22 +358,17 @@ public class MechMapSet implements DisplayMapSet {
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
-        Image tile = comp.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+        Image tile = comp.getToolkit().getImage(
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
         tile = comp.getToolkit().getImage(
-                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline())
-                        .toString());
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getMechOutline()).toString());
         PMUtil.setImage(tile, comp);
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER
-                | BackGroundDrawer.HALIGN_CENTER;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER | BackGroundDrawer.HALIGN_CENTER;
         BackGroundDrawer bgd = new BackGroundDrawer(tile, b);
         bgDrawers.addElement(bgd);
     }
@@ -439,5 +400,4 @@ public class MechMapSet implements DisplayMapSet {
             g.drawRect(0, y, 10, steps);
         }
     }
-
 }

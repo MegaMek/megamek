@@ -22,14 +22,14 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
 
     private Game game;
     Vector<Report> vPhaseReport;
-    
-    public ScreenProcessor(Server server) {
-        super(server);
+
+    public ScreenProcessor(GameManager gameManager) {
+        super(gameManager);
     }
 
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
-        game = server.getGame();
+        game = gameManager.getGame();
         this.vPhaseReport = vPhaseReport;
         resolveScreen();
         this.vPhaseReport = null;
@@ -58,7 +58,7 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
                         vPhaseReport.addElement(r);
 
                         currentHex.removeTerrain(Terrains.SCREEN);
-                        server.getHexUpdateSet().add(currentCoords);
+                        gameManager.getHexUpdateSet().add(currentCoords);
                     }
                 }
             }

@@ -24,6 +24,7 @@ import megamek.common.IBomber;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -62,7 +63,7 @@ public class DiveBombAttack extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new BombAttackHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new BombAttackHandler(toHit, waa, game, manager);
     }
 }

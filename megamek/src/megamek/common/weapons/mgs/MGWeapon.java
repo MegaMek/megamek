@@ -20,6 +20,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.MGHandler;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -48,8 +49,8 @@ public abstract class MGWeapon extends AmmoWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
-        return new MGHandler(toHit, waa, game, server);
+            WeaponAttackAction waa, Game game, GameManager manager) {
+        return new MGHandler(toHit, waa, game, manager);
     }
     
     @Override

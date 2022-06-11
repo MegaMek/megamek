@@ -49,8 +49,10 @@ jobs:
 
     # Include --stacktrace to make some build failures easier to figure out.
     - name: Build with Gradle
-      working-directory: megamek
-      run: ./gradlew -I .github/build-scan-init.gradle build -x test --continue --stacktrace --scan
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: clean build -x test --continue --stacktrace --scan
+        build-root-directory: megamek
 
     - name: Upload Test Logs on Failure
       uses: actions/upload-artifact@v2.2.4
@@ -66,7 +68,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       if: always() && matrix.os == 'ubuntu-latest'
       with:
-        name: release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: megamek/megamek/build/distributions/*.tar
 
     # Put the Windows Release in an artifact
@@ -76,5 +78,5 @@ jobs:
       uses: actions/upload-artifact@v2.2.4
       if: always() && matrix.os == 'windows-latest'
       with:
-        name: release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        name: mm-release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: megamek/megamek/build/distributions/*.zip

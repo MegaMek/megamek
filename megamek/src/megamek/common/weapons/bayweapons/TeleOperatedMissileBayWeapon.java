@@ -20,7 +20,7 @@ import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.common.weapons.CapitalMissileBearingsOnlyHandler;
 import megamek.common.weapons.TeleMissileHandler;
 import megamek.common.weapons.Weapon;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Jay Lawson
@@ -60,17 +60,17 @@ public class TeleOperatedMissileBayWeapon extends CapitalMissileBayWeapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, Game game, Server server) {
+            WeaponAttackAction waa, Game game, GameManager manager) {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
         Entity attacker = game.getEntity(waa.getEntityId());
         int rangeToTarget = attacker.getPosition().distance(waa.getTarget(game).getPosition());
         if (weapon.isInBearingsOnlyMode()
                 && rangeToTarget >= RangeType.RANGE_BEARINGS_ONLY_MINIMUM) {
-            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, server);
+            return new CapitalMissileBearingsOnlyHandler(toHit, waa, game, manager);
         } else if (weapon.curMode().equals(Weapon.MODE_CAP_MISSILE_TELE_OPERATED)) {
-            return new TeleMissileHandler(toHit, waa, game, server);
+            return new TeleMissileHandler(toHit, waa, game, manager);
         } else {    
-            return new CapitalMissileBayHandler(toHit, waa, game, server);
+            return new CapitalMissileBayHandler(toHit, waa, game, manager);
         }
     }
     

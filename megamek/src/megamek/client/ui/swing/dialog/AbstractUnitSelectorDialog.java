@@ -419,7 +419,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         if (selectedIndices.length == 0) {
             String option = preferences.getMechSelectorRulesLevels().replaceAll("[\\[\\]]", "");
-            if (option.length() > 0) {
+            if (!option.isBlank()) {
                 String[] strSelections = option.split("[,]");
                 selectedIndices = new int[strSelections.length];
                 for (int i = 0; i < strSelections.length; i++) {
@@ -546,7 +546,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                                             || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit))))
                                     /* Advanced Search */
                                     && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))) {
-                        if (textFilter.getText().length() > 0) {
+                        if (!textFilter.getText().isBlank()) {
                             String text = textFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());
                         }
@@ -715,7 +715,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         } else if (ev.getSource().equals(buttonShowBV)) {
             final Entity entity = getSelectedEntity();
             if (entity != null) {
-                entity.calculateBattleValue();
                 new BVDisplayDialog(frame, true, entity).setVisible(true);
             }
         } else if (ev.getSource().equals(buttonAdvancedSearch)) {
@@ -835,19 +834,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                 }
                 return ms.getTons();
             } else if (col == COL_BV) {
-                if ((gameOptions != null)
-                        && gameOptions.booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV)) {
-                    if (gameOptions.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
-                        return ms.getRHGMBV();
-                    } else {
-                        return ms.getGMBV();
-                    }
-                } else if ((gameOptions != null)
-                        && gameOptions.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
-                    return ms.getRHBV();
-                } else {
-                    return ms.getBV();
-                }
+                return ms.getBV();
             } else if (col == COL_YEAR) {
                 return ms.getYear();
             } else if (col == COL_COST) {

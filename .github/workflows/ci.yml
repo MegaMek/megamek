@@ -55,9 +55,10 @@ jobs:
     # Output Variables:
     #    - buildScanUri
     - name: Build with Gradle
-      id: gradle_build
-      working-directory: megamek
-      run: ./gradlew -I .github/build-scan-init.gradle build --stacktrace --scan
+      uses: gradle/gradle-build-action@v2
+      with:
+        arguments: build --stacktrace --scan
+        build-root-directory: megamek
 
     # If the build step fails, try to upload any test logs in case it was a unit test failure.
     # The logs will be relative to the ./megamek directory.
@@ -93,12 +94,12 @@ jobs:
     - name: Upload Windows Release
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        name: mm-release-win-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: ./megamek/megamek/build/distributions/*.zip
 
     # Put the non-Windows release in an artifact
     - name: Upload Nix/Mac Release
       uses: actions/upload-artifact@v2.2.4
       with:
-        name: release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
+        name: mm-release-nix-mac-${{ matrix.java-distribution }}-jdk${{ matrix.java-version }}
         path: ./megamek/megamek/build/distributions/*.tar

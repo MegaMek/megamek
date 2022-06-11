@@ -88,13 +88,13 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.AD'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:4,LA:6,SL:10</salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.BR'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>OA:1,TH:10,LA:9,SL:10,FS:8</salvage>
 	</faction>
 	<faction key='FWL.BD'>
 		<salvage pct='5'></salvage>
@@ -123,7 +123,7 @@
 		<salvage pct='5'>TH:10,SL:10,FWL:4,FS:7,TC:1</salvage>
 	</faction>
 	<faction key='FS.CrMM'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>CC:10,OA:3,TH:3,SL:10,TC:6,DC:8</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<salvage pct='5'></salvage>
@@ -136,7 +136,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.DG'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>TH:10,SL:10,FWL:4,RWR:2,DC:5</salvage>
 	</faction>
 	<faction key='Periphery.DD'/>
 	<faction key='FS.DMM'>
@@ -149,7 +149,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.FO'>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:1,CC:4,LA:6,SL:10</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<salvage pct='5'></salvage>
@@ -310,6 +310,15 @@
 		</model>
 		<model name='Mk VI'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Alfar' unitType='Mek'>
+		<availability>LA:1</availability>
+		<model name='AL-A1'>
+			<availability>LA:2</availability>
+		</model>
+		<model name='AL-D1 &apos;Dokkalfar&apos;'>
+			<availability>LA:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Alliance Space Station' unitType='Space Station'>
@@ -1849,7 +1858,7 @@
 		</model>
 	</chassis>
 	<chassis name='Lancelot' unitType='Mek'>
-		<availability>CC:5,MOC:3,OA:3,LA:5,SL:7,IS:5,RWR:3,MERC:5,DC:5,TC:3</availability>
+		<availability>CC:5,MOC:3,OA:3,LA:5,SL:7,IS:5,SL.R:7,RWR:3,MERC:5,DC:5,TC:3</availability>
 		<model name='LNC25-01'>
 			<roles>anti_aircraft</roles>
 			<availability>SL:8,IS:8,DC:8</availability>
@@ -1980,9 +1989,15 @@
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
 		</model>
+		<model name='LGB-0W2'>
+			<availability>FWL:6,MERC:6+,Periphery:5+,DC:6</availability>
+		</model>
 		<model name='LGB-7Q'>
 			<roles>fire_support</roles>
 			<availability>General:6</availability>
+		</model>
+		<model name='LGB-8C'>
+			<availability>MOC:4,OA:4,TH:8,LA:6,SL:8,FWL:6,RWR:3,FS:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Lucifer' unitType='Aero'>
@@ -2871,6 +2886,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
+		<availability>CC:2-,TH:2-,LA:2-,FWL:2-,FS:2-,DC:2-</availability>
+		<model name='(Standard)'>
+			<availability>CC:2,TH:2,LA:2,FWL:2,FS:2,DC:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
 		<availability>CC:2,LA:7,SL:5,FWL:2,RWR:3,FS:2,DC:2</availability>
 		<model name='STN-1S'>
@@ -3463,6 +3484,12 @@
 			<availability>SL:8,IS:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Whitestreak Speedboat' unitType='Naval'>
+		<availability>TH:3-,IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>TH:3-,IS:2-,Periphery:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Whitworth' unitType='Mek'>
 		<availability>MOC:1,OA:1,FS.CMM:4,SL:5,SL.R:2,RWR:1,MERC:3,DC:6</availability>
 		<model name='WTH-0'>
@@ -3479,13 +3506,19 @@
 	</chassis>
 	<chassis name='Wolverine' unitType='Mek'>
 		<availability>CC:6,LA:6,SL:7,FWL:7,IS:6,Periphery.Deep:5,RWR:5,FS:6,DC:6,TC:4</availability>
+		<model name='WVR-1R'>
+			<availability>FS:2</availability>
+		</model>
+		<model name='WVR-3R'>
+			<availability>FS:3</availability>
+		</model>
 		<model name='WVR-6K'>
 			<roles>recon</roles>
 			<availability>DC:6</availability>
 		</model>
 		<model name='WVR-6R'>
 			<roles>recon</roles>
-			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>General:5,Periphery:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Wyvern' unitType='Mek'>

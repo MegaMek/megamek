@@ -1,67 +1,42 @@
-/**
+/*
  * MegaMek - Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
-
-import megamek.common.AmmoType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
+import megamek.server.GameManager;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
+
+import java.util.Vector;
 
 /**
  * @author arlith
  */
 public class MekMortarSmokeHandler extends AmmoWeaponHandler {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = -2073773899108954657L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     * @param s
-     */
-    public MekMortarSmokeHandler(ToHitData t, WeaponAttackAction w, Game g, Server s) {
-        super(t, w, g, s);
+    public MekMortarSmokeHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
+        super(t, w, g, m);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
     @Override
     protected int calcDamagePerHit() {
         return 0;
     }
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
-     */
+
     @Override
     public boolean handle(GamePhase phase, Vector<Report> vPhaseReport) {
         if (!cares(phase)) {
@@ -71,15 +46,12 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
         Coords targetPos = target.getPosition();
 
         Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
+        final AmmoType ammoType = (ammoUsed == null) ? null : (AmmoType) ammoUsed.getType();
         
-        if ((atype == null) 
-                || (atype.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
-            System.err.println("MekMortarFlareHandler: not using smoke ammo!");
+        if ((ammoType == null) || (ammoType.getMunitionType() != AmmoType.M_SMOKE_WARHEAD)) {
+            LogManager.getLogger().error("Not using smoke ammo!");
             return true;
         }
-
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3120);
@@ -87,7 +59,7 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         if (wtype != null) {
-            r.add(wtype.getName() + " " + atype.getSubMunitionName());
+            r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
         } else {
             r.add("Error: From Nowhwere");
         }
@@ -157,7 +129,7 @@ public class MekMortarSmokeHandler extends AmmoWeaponHandler {
             }
         }
 
-        server.deliverSmokeMortar(targetPos, vPhaseReport, duration);
+        gameManager.deliverSmokeMortar(targetPos, vPhaseReport, duration);
         return false;
     }
 

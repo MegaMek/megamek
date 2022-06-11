@@ -21,6 +21,7 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.PMUtil;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -29,14 +30,13 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
+import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -709,7 +709,6 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     @Override
     public void keyPressed(KeyEvent ke) {
-
         if (!bv.getChatterBoxActive()) {
             return;
         }
@@ -722,14 +721,13 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             if (hasTransferableText) {
                 try {
                     addChatMessage((String) content.getTransferData(DataFlavor.stringFlavor));
-                  } catch (UnsupportedFlavorException | IOException ex) {
-                    System.out.println(ex);
-                    ex.printStackTrace();
-                  }
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
+                }
             }            
             return;
         }
-        
+
         if (ke.isAltDown() || ke.isControlDown()) {
             return;
         }
@@ -788,7 +786,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         setIdleTime(0, false);
         switch (ke.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                if ((message != null) && (message.length() > 0)) {
+                if (!StringUtility.isNullOrBlank(message)) {
                     cb.history.addFirst(message);
                     cb.historyBookmark = -1;
 
@@ -891,5 +889,4 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         message = "";
         visibleMessage ="";
     }
-
 }

@@ -1,8 +1,10 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.HeatEffects;
 import megamek.client.ui.swing.Slider;
 import megamek.client.ui.swing.widget.*;
@@ -10,7 +12,6 @@ import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.common.weapons.other.TSEMPWeapon;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +25,6 @@ import java.util.Enumeration;
  * This class shows information about a unit that doesn't belong elsewhere.
  */
 class ExtraPanel extends PicMap implements ActionListener, ItemListener {
-    private static final long serialVersionUID = -4907296187995261075L;
-
     private final UnitDisplay unitDisplay;
 
     private JLabel lblLastTarget;
@@ -416,7 +415,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             }
 
             // suffering from TSEMP Interference?
-            if (en.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
+            if (en.getTsempEffect() == MMConstants.TSEMP_EFFECT_INTERFERENCE) {
                 ((DefaultListModel<String>) narcList.getModel())
                         .addElement(Messages.getString("MechDisplay.TSEMPInterference"));
             }
@@ -512,6 +511,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                             .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 mtHeat = true;
             }
+            heatR.setForeground(GUIPreferences.getInstance().getColorForHeat(en.heat));
             heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));
         } else {
             // Non-Mechs cannot configure their heat sinks

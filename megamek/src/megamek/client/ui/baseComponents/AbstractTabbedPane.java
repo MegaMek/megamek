@@ -22,6 +22,7 @@ import megamek.MegaMek;
 import megamek.common.util.EncodeControl;
 import megamek.client.ui.preferences.JTabbedPanePreference;
 import megamek.client.ui.preferences.PreferencesNode;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.util.ResourceBundle;
@@ -91,8 +92,12 @@ public abstract class AbstractTabbedPane extends JTabbedPane {
      * This sets the base preferences for this class, and calls the custom preferences method
      */
     protected void setPreferences(final PreferencesNode preferences) {
-        preferences.manage(new JTabbedPanePreference(this));
-        setCustomPreferences(preferences);
+        try {
+            preferences.manage(new JTabbedPanePreference(this));
+            setCustomPreferences(preferences);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to set preferences", ex);
+        }
     }
 
     /**
@@ -101,8 +106,10 @@ public abstract class AbstractTabbedPane extends JTabbedPane {
      * By default, this pane will track preferences related to the previously selected tab.
      * Other preferences can be added by overriding this method.
      * @param preferences the preference node for this pane
+     * @throws Exception if there's an issue initializing the preferences. Normally this means
+     * a component has <strong>not</strong> had its name value set.
      */
-    protected void setCustomPreferences(final PreferencesNode preferences) {
+    protected void setCustomPreferences(final PreferencesNode preferences) throws Exception {
 
     }
     //endregion Initialization

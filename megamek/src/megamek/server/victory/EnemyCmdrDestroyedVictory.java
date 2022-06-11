@@ -42,15 +42,17 @@ public class EnemyCmdrDestroyedVictory implements IVictoryConditions, Serializab
             boolean killedAll = true;
             int team = player.getTeam();
             if (team != Player.TEAM_NONE) {
-                if (doneTeams.contains(team))
-                    continue; 
+                if (doneTeams.contains(team)) {
+                    continue;
+                }
                 // skip if already dealt with this team
                 doneTeams.add(team);
             }
             for (Player enemyPlayer : game.getPlayersVector()) {
                 if (enemyPlayer.equals(player) ||
-                        (team != Player.TEAM_NONE && team == enemyPlayer.getTeam()))
+                        (team != Player.TEAM_NONE && team == enemyPlayer.getTeam())) {
                     continue;
+                }
                 if (game.getLiveCommandersOwnedBy(enemyPlayer) > 0) {
                     killedAll = false;
                 }

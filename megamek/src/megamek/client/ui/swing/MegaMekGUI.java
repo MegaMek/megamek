@@ -32,8 +32,10 @@ import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -47,6 +49,7 @@ import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.server.GameManager;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
@@ -80,6 +83,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private JFrame frame;
     private Client client;
     private Server server;
+    private GameManager gameManager;
     private CommonAboutDialog about;
     private CommonSettingsDialog settingsDialog;
 
@@ -103,9 +107,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         // TODO : SuiteOptions
         try {
             UIManager.setLookAndFeel(GUIPreferences.getInstance().getUITheme());
-        } catch (Exception e) {
-            System.err.println("Error setting look and feel!");
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Failed to set look and feel!", ex);
         }
 
         // TODO : Move ToolTip setup to MegaMek::initializeSuiteSetups as part of implementing them
@@ -201,57 +204,49 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * Display the main menu.
      */
     private void showMainMenu() {
-        SkinSpecification skinSpec = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.MainMenuBorder.getComp(),
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(UIComponents.MainMenuBorder.getComp(),
                 true);
         frame.getContentPane().removeAll();
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         frame.setResizable(false);
 
-        MegamekButton hostB;
-        MegamekButton connectB;
-        MegamekButton botB;
-        MegamekButton editB;
-        MegamekButton skinEditB;
-        MegamekButton scenB;
-        MegamekButton loadB;
-        MegamekButton quitB;
         JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MMConstants.VERSION,
                 JLabel.CENTER);
         labVersion.setPreferredSize(new Dimension(250, 15));
-        if (skinSpec.fontColors.size() > 0) {
+        if (!skinSpec.fontColors.isEmpty()) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
-        hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand(ClientGUI.FILE_GAME_NEW);
         hostB.addActionListener(actionListener);
-        scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand(ClientGUI.FILE_GAME_SCENARIO);
         scenB.addActionListener(actionListener);
-        loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         loadB.setActionCommand(ClientGUI.FILE_GAME_LOAD);
         loadB.addActionListener(actionListener);
-        connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand(ClientGUI.FILE_GAME_CONNECT);
         connectB.addActionListener(actionListener);
-        botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand(ClientGUI.FILE_GAME_CONNECT_BOT);
         botB.addActionListener(actionListener);
-        editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         editB.setActionCommand(ClientGUI.BOARD_NEW);
         editB.addActionListener(actionListener);
-        skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         skinEditB.setActionCommand(ClientGUI.MAIN_SKIN_NEW);
         skinEditB.addActionListener(actionListener);
-        quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"),
-                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
+        MegamekButton quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"),
+                UIComponents.MainMenuButton.getComp(), true);
         quitB.setActionCommand(ClientGUI.MAIN_QUIT);
         quitB.addActionListener(actionListener);
 
@@ -270,40 +265,20 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             backgroundIcon = null;
         }
 
-        // Use the current monitor so we don't "overflow" computers whose primary
+        // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.
-        DisplayMode currentMonitor = frame.getGraphicsConfiguration().getDevice().getDisplayMode();
-        int monitorW = currentMonitor.getWidth();
-        int monitorH = currentMonitor.getHeight();
-
-        int pixelPerInch= Toolkit.getDefaultToolkit().getScreenResolution();
-        int scaledMonitorW = (DEFAULT_DISPLAY_DPI * monitorW / pixelPerInch);
-        int scaledMonitorH = (DEFAULT_DISPLAY_DPI * monitorH / pixelPerInch);
-
-        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorW, scaledMonitorH);
-        JLabel panTitle;
-        if (imgSplash != null) {
-            Icon icon = new ImageIcon(imgSplash);
-             panTitle = new JLabel(icon);
-        } else {
-            panTitle = new JLabel();
-        }
-        int splashW = imgSplash == null ? (int) (scaledMonitorW * 0.75) : imgSplash.getWidth(frame);
-        int splashH = imgSplash == null ? (int) (scaledMonitorH * 0.75) : imgSplash.getHeight(frame);
-
-        Dimension splashDim =  new Dimension((int) splashW, (int) splashH);
-        panTitle.setMaximumSize(splashDim);
-        panTitle.setMinimumSize(splashDim);
-        panTitle.setPreferredSize(splashDim);
+        Dimension scaledMonitorSize = UIUtil.getScaledScreenSize(frame);
+        Image imgSplash = getSplashScreen(skinSpec.backgrounds, scaledMonitorSize.width, scaledMonitorSize.height);
+        JLabel splash = UIUtil.createSplashComponent(imgSplash, frame, scaledMonitorSize);
 
         FontMetrics metrics = hostB.getFontMetrics(loadB.getFont());
         int width = metrics.stringWidth(hostB.getText());
         int height = metrics.getHeight();
-        Dimension textDim =  new Dimension(width+50, height+10);
+        Dimension textDim = new Dimension(width + 50, height + 10);
 
         // Strive for no more than ~90% of the screen and use golden ratio to make
         // the button width "look" reasonable.
-        int maximumWidth = (int) (0.9 * scaledMonitorW) - splashW;
+        int maximumWidth = (int) (0.9 * scaledMonitorSize.width) - splash.getPreferredSize().width;
 
         Dimension minButtonDim = new Dimension((int) (maximumWidth / 1.618), 25);
         if (textDim.getWidth() > minButtonDim.getWidth()) {
@@ -341,7 +316,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         c.weightx = 0.0; c.weighty = 0.0;
         c.gridwidth = 1;
         c.gridheight = 9;
-        addBag(panTitle, gridbag, c);
+        addBag(splash, gridbag, c);
         // Right Column
         c.insets = new Insets(4, 4, 1, 12);
         c.fill = GridBagConstraints.BOTH;
@@ -369,6 +344,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         addBag(quitB, gridbag, c);
         frame.validate();
         frame.pack();
+        // center window in screen
+        frame.setLocationRelativeTo(null);
     }
 
     /**
@@ -465,7 +442,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         d6();
         // start server
         try {
-            server = new Server( serverPassword, port, isRegister, metaServer, mailer, false);
+            gameManager = new GameManager();
+            server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
             MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
@@ -747,14 +725,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         server.setGame(g);
         
         // apply any scenario damage
-        sl.applyDamage(server);
+        sl.applyDamage(gameManager);
 
         if (!localName.isBlank()) {
             startClient(playerName, MMConstants.LOCALHOST, port);
         }
 
         // calculate initial BV
-        server.calculatePlayerInitialCounts();
+        gameManager.calculatePlayerInitialCounts();
         
         // setup any bots
         for (int x = 0; x < pa.length; x++) {
@@ -977,14 +955,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     };
 
     @Override
-    public void preferenceChange(PreferenceChangeEvent e) {
+    public void preferenceChange(PreferenceChangeEvent evt) {
         // Update to reflect new skin
-        if (e.getName().equals(GUIPreferences.SKIN_FILE)) {
+        if (evt.getName().equals(GUIPreferences.SKIN_FILE)) {
             showMainMenu();
             frame.repaint();
-        } else if (e.getName().equals(GUIPreferences.UI_THEME)) {
+        } else if (evt.getName().equals(GUIPreferences.UI_THEME)) {
             try {
-                UIManager.setLookAndFeel((String) e.getNewValue());
+                UIManager.setLookAndFeel((String) evt.getNewValue());
                 // We went all Oprah and gave everybody frames...
                 // so now we have to let everybody who got a frame
                 // under their chair know that we updated our look
@@ -1001,7 +979,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         }
     }
-    
+
     /**
      * Method used to determine the appropriate splash screen to use. This method looks 
      * at both the height and the width of the main monitor.
@@ -1013,18 +991,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      */
     private String determineSplashScreen(final List<String> splashScreens,
                                          final int screenWidth, final int screenHeight) {
-        // Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash
-        // screens.
+        // Ensure that the list is of appropriate size to contain HD, FHD, and UHD splash screens.
         if (splashScreens.size() > 3) {
             // Default to the HD splash screen.
             String splashFileName = splashScreens.get(3);
-            // If both height and width is greater than 1080p use the UHD splash screen.
-            if (screenWidth > 1920 && screenHeight > 1080) {
+            if ((screenWidth > 1920) && (screenHeight > 1080)) {
+                // If both height and width is greater than 1080p use the UHD splash screen.
                 splashFileName = splashScreens.get(2);
-            }
-            // If both height and width is greater than 720p then use the FHD splash screen.
-            else if (screenWidth > 1280 && screenHeight > 720)
-            {
+            } else if ((screenWidth > 1280) && (screenHeight > 720)) {
+                // If both height and width is greater than 720p then use the FHD splash screen.
                 splashFileName = splashScreens.get(0);
             }
             return splashFileName;
@@ -1047,15 +1022,16 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return null;
         }
 
-        BufferedImage img = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+        Image img = ImageUtil.loadImageFromFile(file.toString());
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
         tracker.addImage(img, 0);
         try {
             tracker.waitForID(0);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             // really should never come here
         }
+
         return img;
     }
 
@@ -1066,8 +1042,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      * @return
      */
     private BaseMultiResolutionImage getMultiResolutionSplashScreen(final List<String> splashScreens) {
-
-        List<String> filenames = new ArrayList<String>();
+        List<String> filenames = new ArrayList<>();
         if (splashScreens.size() > 3) {
             filenames.add(splashScreens.get(0));
             filenames.add(splashScreens.get(2));
@@ -1076,7 +1051,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             filenames.add(splashScreens.get(0));
         }
 
-        List<Image> images = new ArrayList<Image>();
+        List<Image> images = new ArrayList<>();
 
         for (String filename : filenames) {
             File file = new MegaMekFile(Configuration.widgetsDir(), filename).getFile();
@@ -1090,7 +1065,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 tracker.addImage(img, 0);
                 try {
                     tracker.waitForID(0);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     // really should never come here
                 }
             }

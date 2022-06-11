@@ -24,7 +24,8 @@ import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
-import megamek.common.net.Packet;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -189,7 +190,7 @@ class ServerLobbyHelper {
      * Only valid in the lobby.
      */
     static Packet createMultiEntityPacket(Collection<Entity> entities) {
-        return new Packet(Packet.COMMAND_ENTITY_MULTIUPDATE, entities);
+        return new Packet(PacketCommand.ENTITY_MULTIUPDATE, entities);
     }
     
     /**
@@ -197,7 +198,7 @@ class ServerLobbyHelper {
      * Only valid in the lobby.
      */
     static Packet createForcesDeletePacket(Collection<Integer> forces) {
-        return new Packet(Packet.COMMAND_FORCE_DELETE, forces);
+        return new Packet(PacketCommand.FORCE_DELETE, forces);
     }
 
     /** 
@@ -205,7 +206,7 @@ class ServerLobbyHelper {
      * making the sent forces top-level. 
      * This method is intended for use in the lobby!
      */
-    static void receiveForceParent(Packet c, int connId, Game game, Server server) {
+    static void receiveForceParent(Packet c, int connId, Game game, GameManager gameManager) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         int newParentId = (int) c.getObject(1);
@@ -225,7 +226,7 @@ class ServerLobbyHelper {
         }
         
         if (!changedForces.isEmpty()) {
-            server.send(createForceUpdatePacket(changedForces));
+            gameManager.send(createForceUpdatePacket(changedForces));
         }
     }
     
@@ -233,7 +234,7 @@ class ServerLobbyHelper {
      * Handles a force assign full packet, changing the owner of forces and everything in them.
      * This method is intended for use in the lobby!
      */
-    static void receiveEntitiesAssign(Packet c, int connId, Game game, Server server) {
+    static void receiveEntitiesAssign(Packet c, int connId, Game game, GameManager gameManager) {
         @SuppressWarnings("unchecked")
         var entityList = (Collection<Entity>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
@@ -252,14 +253,14 @@ class ServerLobbyHelper {
         game.getForces().correct();
         correctLoading(game);
         correctC3Connections(game);
-        server.send(server.createFullEntitiesPacket());
+        gameManager.send(gameManager.createFullEntitiesPacket());
     }
     
     /** 
      * Handles a force assign full packet, changing the owner of forces and everything in them.
      * This method is intended for use in the lobby!
      */
-    static void receiveForceAssignFull(Packet c, int connId, Game game, Server server) {
+    static void receiveForceAssignFull(Packet c, int connId, Game game, GameManager gameManager) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         int newOwnerId = (int) c.getObject(1);
@@ -288,18 +289,18 @@ class ServerLobbyHelper {
         forces.correct();
         correctLoading(game);
         correctC3Connections(game);
-        server.send(server.createFullEntitiesPacket());
+        gameManager.send(gameManager.createFullEntitiesPacket());
     }
     
     /** 
      * Handles a force update packet, forwarding a client-side change that 
      * only affects forces, not entities:
      * - rename
-     * - move subforce/entity up/down (this does not change the entitiy, only the force)
+     * - move subforce/entity up/down (this does not change the entity, only the force)
      * - owner change of only the force (not the entities, only within a team) 
      * This method is intended for use in the lobby!
      */
-    static void receiveForceUpdate(Packet c, int connId, Game game, Server server) {
+    static void receiveForceUpdate(Packet c, int connId, Game game, GameManager gameManager) {
         @SuppressWarnings("unchecked")
         var forceList = (Collection<Force>) c.getObject(0);
         
@@ -310,10 +311,10 @@ class ServerLobbyHelper {
         }
         if (forcesClone.isValid()) {
             game.setForces(forcesClone);
-            server.send(createForceUpdatePacket(forceList));
+            gameManager.send(createForceUpdatePacket(forceList));
         } else {
             LogManager.getLogger().warn("Invalid forces update received.");
-            server.send(server.createFullEntitiesPacket());
+            gameManager.send(gameManager.createFullEntitiesPacket());
         }
     }
     
@@ -321,7 +322,7 @@ class ServerLobbyHelper {
      * Handles a team change, updating units and forces as necessary.
      * This method is intended for use in the lobby!
      */
-    static void receiveLobbyTeamChange(Packet c, int connId, Game game, Server server) {
+    static void receiveLobbyTeamChange(Packet c, int connId, Game game, GameManager gameManager) {
         @SuppressWarnings("unchecked")
         var players = (Collection<Player>) c.getObject(0);
         var newTeam = (int) c.getObject(1);
@@ -345,9 +346,9 @@ class ServerLobbyHelper {
         correctLoading(game);
         correctC3Connections(game);
         
-        server.send(server.createFullEntitiesPacket());
+        gameManager.send(gameManager.createFullEntitiesPacket());
         for (Player player: serverPlayers) {
-            server.transmitPlayerUpdate(player);
+            gameManager.transmitPlayerUpdate(player);
         }
     }
 
@@ -379,12 +380,13 @@ class ServerLobbyHelper {
                     if (game.getEntity(id).getOwner().isEnemyOf(entity.getOwner())) {
                         entity.setC3NetIdSelf();
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else if (entity.hasAnyC3System()) {
-                if (entity.getC3Master() != null 
-                        && entity.getC3Master().getOwner().isEnemyOf(entity.getOwner()))
-                entity.setC3Master(null, true);
+                if ((entity.getC3Master() != null)
+                        && entity.getC3Master().getOwner().isEnemyOf(entity.getOwner())) {
+                    entity.setC3Master(null, true);
+                }
             }
         }
     }
@@ -394,7 +396,7 @@ class ServerLobbyHelper {
      * sent entities to a force or removing them from any force. 
      * This method is intended for use in the lobby!
      */
-    static void receiveAddEntititesToForce(Packet c, int connId, Game game, Server server) {
+    static void receiveAddEntititesToForce(Packet c, int connId, Game game, GameManager gameManager) {
         @SuppressWarnings("unchecked")
         var entityList = (Collection<Entity>) c.getObject(0);
         var forceId = (int) c.getObject(1);
@@ -422,13 +424,13 @@ class ServerLobbyHelper {
             changedForces.addAll(game.getForces().removeEntityFromForces(entities));
             changedEntities.addAll(entities);
         }
-        server.send(createForceUpdatePacket(changedForces, changedEntities));
+        gameManager.send(createForceUpdatePacket(changedForces, changedEntities));
     }
     
     /**
      * Adds a force with the info from the client. Only valid during the lobby phase.
      */
-    static void receiveForceAdd(Packet c, int connId, Game game, Server server) {
+    static void receiveForceAdd(Packet c, int connId, Game game, GameManager gameManager) {
         var force = (Force) c.getObject(0);
         @SuppressWarnings("unchecked")
         var entities = (Collection<Entity>) c.getObject(1);
@@ -443,32 +445,26 @@ class ServerLobbyHelper {
         for (var entity: entities) {
             game.getForces().addEntity(game.getEntity(entity.getId()), newId);
         }
-        server.send(server.createFullEntitiesPacket());
+        gameManager.send(gameManager.createFullEntitiesPacket());
     }
-    
+
+    /**
+     * Creates a packet detailing a force update. Force updates must contain all
+     * affected forces and all affected entities.
+     */
+    static Packet createForceUpdatePacket(Collection<Force> changedForces) {
+        return createForceUpdatePacket(changedForces, new ArrayList<>());
+    }
+
     /**
      * Creates a packet detailing a force update. Force updates must contain all
      * affected forces and all affected entities. Entities are only affected if their
      * forceId changed.
      */
     static Packet createForceUpdatePacket(Collection<Force> changedForces, Collection<Entity> entities) {
-        final Object[] data = new Object[2];
-        data[0] = changedForces;
-        data[1] = entities;
-        return new Packet(Packet.COMMAND_FORCE_UPDATE, data);
+        return new Packet(PacketCommand.FORCE_UPDATE, changedForces, entities);
     }
-    
-    /**
-     * Creates a packet detailing a force update. Force updates must contain all
-     * affected forces and all affected entities.
-     */
-    static Packet createForceUpdatePacket(Collection<Force> changedForces) {
-        final Object[] data = new Object[2];
-        data[0] = changedForces;
-        data[1] = new ArrayList<Entity>();
-        return new Packet(Packet.COMMAND_FORCE_UPDATE, data);
-    }
-    
+
     /**
      * A force is editable to the sender of a command if any forces in its force chain
      * (this includes the force itself) is owned by the sender. This allows editing 
@@ -479,5 +475,4 @@ class ServerLobbyHelper {
         List<Force> chain = game.getForces().forceChain(force);
         return chain.stream().map(f -> game.getForces().getOwner(f)).anyMatch(p -> p.equals(sender));
     }
-
 }

@@ -40,14 +40,7 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         bv = 3.12;
         tonnage = .006;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
-        /* Errata
-         * https://bg.battletech.com/forums/index.php?topic=60038.msg1377699#msg1377699
-         * No Primary Infantry Weapon may have a Damage Value greater than 0.60.
-         * If the weapon selected has a Damage Value greater than 0.60, then reduce it's Damage Value to 0.60
-         * when determining final damage values (pg.152). Platoons that have their primary weapon damage reduced
-         * in this way automatically gain the Heavy Burst Weapon special feature
-        */
-        infantryDamage = .6; // was 1.02;
+          infantryDamage = 1.02;
         infantryRange = 1;
         ammoWeight = 0.00024;
         ammoCost = 12;

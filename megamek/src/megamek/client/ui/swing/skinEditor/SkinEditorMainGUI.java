@@ -26,7 +26,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.icons.Camouflage;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -34,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -61,7 +59,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     private SkinSpecEditor skinSpecEditor;
 
     private UnitDisplay unitDisplay;
-    private UnitDetailPane unitDetailPane;
+    public JDialog mechW;
 
     protected JComponent curPanel;
 
@@ -144,21 +142,33 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame = new JFrame(Messages.getString("ClientGUI.title"));
         frame.setJMenuBar(menuBar);
 
-        var prefs = GUIPreferences.getInstance();
-        if (prefs.getWindowSizeHeight() != 0) {
-            frame.setLocation(
-                prefs.getWindowPosX(),
-                prefs.getWindowPosY()
-            );
-            frame.setSize(
-                prefs.getWindowSizeWidth(),
-                prefs.getWindowSizeHeight()
-            );
+        Rectangle virtualBounds = UIUtil.getVirtualBounds();
+        int x, y, w, h;
+        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
+            x = GUIPreferences.getInstance().getWindowPosX();
+            y = GUIPreferences.getInstance().getWindowPosY();
+            w = GUIPreferences.getInstance().getWindowSizeWidth();
+            h = GUIPreferences.getInstance().getWindowSizeHeight();
+            if ((x < virtualBounds.getMinX())
+                    || ((x + w) > virtualBounds.getMaxX())) {
+                x = 0;
+            }
+            if ((y < virtualBounds.getMinY())
+                    || ((y + h) > virtualBounds.getMaxY())) {
+                y = 0;
+            }
+            if (w > virtualBounds.getWidth()) {
+                w = (int) virtualBounds.getWidth();
+            }
+            if (h > virtualBounds.getHeight()) {
+                h = (int) virtualBounds.getHeight();
+            }
+            frame.setLocation(x, y);
+            frame.setSize(w, h);
         } else {
             frame.setSize(800, 600);
         }
         frame.setMinimumSize(new Dimension(640, 480));
-        UIUtil.updateWindowBounds(frame);
 
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
@@ -177,12 +187,13 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
                         .toString()));
         frame.setIconImages(iconList);
 
-        this.unitDisplay = new UnitDisplay(null);
+        unitDisplay = new UnitDisplay(null);
 
-        this.unitDetailPane = new UnitDetailPane(this.unitDisplay);
-        add(this.unitDetailPane, BorderLayout.EAST);
-
-        this.unitDisplay.displayEntity(testEntity);
+        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
+        mechW.setResizable(true);
+        mechW.add(unitDisplay);
+        mechW.setVisible(true);
+        unitDisplay.displayEntity(testEntity);
     }
 
     /**
@@ -204,11 +215,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         mainNames.clear();
         secondaryNames.clear();
 
-        var game = new Game();
-        testEntity.setGame(game);
+        final Game testGame = new Game();
+        testEntity.setGame(testGame);
 
         try {
-            bv = new BoardView(game, null, null);
+            bv = new BoardView(testGame, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -221,7 +232,28 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         switchPanel(GamePhase.MOVEMENT);
         frame.validate();
 
-        this.unitDisplay.displayEntity(this.testEntity);
+        // This is a horrible hack
+        // Essentially, UnitDisplay (I think specifically ArmorPanel), relies
+        // upon addNotify being called, so I need to way to set the
+        // isDisplayable state to true.  However, if I create a new JDialog, or
+        // called JDialog.setVisible(true), focus will get stolen from the
+        // Skin Spec Editor, which causes undesirable behavior, particularly
+        // with the path JTextFields
+        Dimension sz = mechW.getSize();
+        mechW.remove(unitDisplay);
+        // UnitDisplay has no way to update the skin without being recreated
+        unitDisplay = new UnitDisplay(null);
+        mechW.add(unitDisplay);
+        if (mechW.isVisible()) {
+            // This will cause the isDisplayable state to be true, in effect
+            // ensuring addNotify has been called.
+            mechW.pack();
+        } else {
+            mechW.setVisible(true);
+        }
+        // Packing is going to change the dimensions, so we'll restore old sz
+        mechW.setSize(sz);
+        unitDisplay.displayEntity(testEntity);
     }
 
     /**
@@ -241,21 +273,21 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         secondaryNames.clear();
         menuBar = new CommonMenuBar();
 
-        var game = new Game();
-        testEntity.setGame(game);
+        final Game testGame = new Game();
+        testEntity.setGame(testGame);
 
         initializeFrame();
 
         try {
             // Create the board viewer.
-            bv = new BoardView(game, null, null);
+            bv = new BoardView(testGame, null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
-        } catch (Exception e) {
-            LogManager.getLogger().error("", e);
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),
-                    Messages.getString("ClientGUI.FatalError.message") + e);
+                    Messages.getString("ClientGUI.FatalError.message") + ex);
             die();
         }
 
@@ -263,7 +295,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         menuBar.addActionListener(this);
         frame.addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent evt) {
                 frame.setVisible(false);
                 saveSettings();
                 die();
@@ -274,15 +306,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
 
         skinSpecEditorD = new JDialog(frame,
                 Messages.getString("SkinEditor.SkinEditorDialog.Title"), false);
-
-        var prefs = GUIPreferences.getInstance();
-        skinSpecEditorD.setLocation(
-            prefs.getUnitDetailPosX(),
-            prefs.getUnitDetailPosY()
-        );
         skinSpecEditorD.setSize(640, 480);
         skinSpecEditorD.setResizable(true);
-        UIUtil.updateWindowBounds(skinSpecEditorD);
 
         skinSpecEditorD.addWindowListener(this);
         skinSpecEditorD.add(skinSpecEditor);
@@ -350,8 +375,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         frame.setVisible(false);
         try {
             frame.dispose();
-        } catch (Throwable error) {
-            error.printStackTrace();
+        } catch (Throwable t) {
+            LogManager.getLogger().error("", t);
         }
 
         TimerSingleton.getInstance().killTimer();
@@ -706,51 +731,51 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
     // WindowListener
     //
     @Override
-    public void windowActivated(WindowEvent windowEvent) {
+    public void windowActivated(WindowEvent evt) {
         // TODO: this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI
-        // window doesn't deiconify.  This fix doesn't allow me to iconify the
+        // window doesn't deiconify. This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
         frame.setState(Frame.NORMAL);
     }
 
     @Override
-    public void windowClosed(WindowEvent windowEvent) {
-        // ignored
+    public void windowClosed(WindowEvent evt) {
+
     }
 
     @Override
-    public void windowClosing(WindowEvent windowEvent) {
-        if (windowEvent.getWindow().equals(skinSpecEditorD)) {
+    public void windowClosing(WindowEvent evt) {
+        if (evt.getWindow().equals(skinSpecEditorD)) {
             setDisplayVisible(false);
             die();
         }
     }
 
     @Override
-    public void windowDeactivated(WindowEvent windowEvent) {
-        // ignored
+    public void windowDeactivated(WindowEvent evt) {
+
     }
 
     @Override
-    public void windowDeiconified(WindowEvent windowEvent) {
-        // TODO: this is a kludge to fix a window iconify issue
+    public void windowDeiconified(WindowEvent evt) {
+        // TODO : this is a kludge to fix a window iconify issue
         // For some reason when I click on the window button, the main UI
-        // window doesn't deiconify.  This fix doesn't allow me to iconify the
+        // window doesn't deiconify. This fix doesn't allow me to iconify the
         // window by clicking the window button, but it's better than the
         // alternative
         frame.setState(Frame.NORMAL);
     }
 
     @Override
-    public void windowIconified(WindowEvent windowEvent) {
-        // ignored
+    public void windowIconified(WindowEvent evt) {
+
     }
 
     @Override
-    public void windowOpened(WindowEvent windowEvent) {
-        // ignored
+    public void windowOpened(WindowEvent evt) {
+
     }
 
     /**
@@ -765,75 +790,73 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener, BoardVi
         bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camouflage, bp)));
     }
 
-   
     @Override
-    public void hexMoused(BoardViewEvent b) {
-        if (b.getType() == BoardViewEvent.BOARD_HEX_POPUP) {
-            
-        }
+    public void hexMoused(BoardViewEvent evt) {
+
     }
 
     @Override
-    public void hexCursor(BoardViewEvent b) {
-        // ignored
+    public void hexCursor(BoardViewEvent evt) {
+
     }
 
     @Override
-    public void boardHexHighlighted(BoardViewEvent b) {
-        // ignored
+    public void boardHexHighlighted(BoardViewEvent evt) {
+
     }
 
     @Override
-    public void hexSelected(BoardViewEvent b) {
-        // ignored
+    public void hexSelected(BoardViewEvent evt) {
+
     }
 
     @Override
-    public void firstLOSHex(BoardViewEvent b) {
-        // ignored
+    public void firstLOSHex(BoardViewEvent evt) {
+
     }
 
     @Override
-    public void secondLOSHex(BoardViewEvent b, Coords c) {
-        // ignored
+    public void secondLOSHex(BoardViewEvent evt, Coords c) {
+
     }
 
     @Override
-    public void finishedMovingUnits(BoardViewEvent b) {
-        // ignored
+    public void finishedMovingUnits(BoardViewEvent evt) {
+
     }
 
     @Override
-    public void unitSelected(BoardViewEvent b) {
-        // ignored
+    public void unitSelected(BoardViewEvent evt) {
+
     }
 
     @Override
-    public void componentHidden(ComponentEvent arg0) {
+    public void componentHidden(ComponentEvent evt) {
+
     }
 
     @Override
-    public void componentMoved(ComponentEvent arg0) {
+    public void componentMoved(ComponentEvent evt) {
+
     }
 
     @Override
-    public void componentResized(ComponentEvent arg0) {
+    public void componentResized(ComponentEvent evt) {
         bv.setPreferredSize(getSize());
     }
 
     @Override
-    public void componentShown(ComponentEvent arg0) {
+    public void componentShown(ComponentEvent evt) {
+
     }
 
     /**
-     * Returns the panel for the current phase. The ClientGUI is split into the
-     * main panel (view) at the top, which takes up the majority of the view and
-     * the the "current panel" which has different controls based on the phase.
-     * 
-     * @return
+     * The ClientGUI is split into the main panel (view) at the top, which takes up the majority of
+     * the view and the "current panel" which has different controls based on the phase.
+     *
+     * @return the panel for the current phase
      */
     public JComponent getCurrentPanel() {
         return curPanel;
     }
-
 }

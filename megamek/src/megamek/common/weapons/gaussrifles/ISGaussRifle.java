@@ -21,7 +21,7 @@ import megamek.common.alphaStrike.ASRange;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.GRHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 import java.math.BigDecimal;
 
@@ -72,8 +72,8 @@ public class ISGaussRifle extends GaussWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new GRHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new GRHandler(toHit, waa, game, manager);
     }
 
     @Override

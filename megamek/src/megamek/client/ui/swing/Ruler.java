@@ -19,6 +19,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.common.*;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -81,10 +82,9 @@ public class Ruler extends JDialog implements BoardViewListener {
 
         try {
             jbInit();
-            //getContentPane().add(panel1);
             pack();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LogManager.getLogger().error("", ex);
         }
     }
 

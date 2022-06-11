@@ -21,7 +21,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.HGRHandler;
-import megamek.server.Server;
+import megamek.server.GameManager;
 
 /**
  * @author Andrew Hunter
@@ -84,8 +84,8 @@ public class ISHGaussRifle extends GaussWeapon {
 
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
-                                              Server server) {
-        return new HGRHandler(toHit, waa, game, server);
+                                              GameManager manager) {
+        return new HGRHandler(toHit, waa, game, manager);
     }
 
     @Override

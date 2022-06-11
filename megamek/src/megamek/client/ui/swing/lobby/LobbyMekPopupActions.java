@@ -64,6 +64,7 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_SWAP:
             case LMP_DAMAGE:
             case LMP_BV:
+            case LMP_COST:
             case LMP_VIEW:
             case LMP_INDI_CAMO:
             case LMP_CONFIGURE_ALL:
@@ -268,6 +269,10 @@ public class LobbyMekPopupActions implements ActionListener {
 
             case LMP_BV:
                 lobby.mechBVAction(entities);
+                break;
+
+            case LMP_COST:
+                lobby.mechCostAction(entities);
                 break;
 
             case LMP_DAMAGE:

@@ -171,7 +171,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         // we don't care about the failed loads.
         if (mscInstance.isInitialized()) {
             final Map<String, String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
-            if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
+            if ((hFailedFiles != null) && !hFailedFiles.isEmpty()) {
                 // self-showing dialog
                 new UnitFailureDialog(frame, hFailedFiles);
             }
@@ -180,7 +180,7 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
 
     @Override
     public void setVisible(boolean visible) {
-        // Set the cursor in the text filter and mark the content so it can be directly replaced
+        // Set the cursor in the text filter and mark the content, so it can be directly replaced
         textFilter.grabFocus();
         textFilter.select(0, textFilter.getText().length());
         updatePlayerChoice();

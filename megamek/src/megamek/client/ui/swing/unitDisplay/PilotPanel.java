@@ -1,15 +1,5 @@
 package megamek.client.ui.swing.unitDisplay;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.util.Enumeration;
-
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JToggleButton;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.PicMap;
@@ -17,15 +7,14 @@ import megamek.client.ui.swing.widget.PilotMapSet;
 import megamek.common.CrewType;
 import megamek.common.Entity;
 
+import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
+
 /**
- * The pilot panel contains all the information about the pilot/crew of this
- * unit.
+ * The pilot panel contains all the information about the pilot/crew of this unit.
  */
 class PilotPanel extends PicMap {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 8284603003897415518L;
 
     private PilotMapSet pi;
@@ -35,7 +24,7 @@ class PilotPanel extends PicMap {
     private final JComboBox<String> cbCrewSlot = new JComboBox<>();
     private final JToggleButton btnSwapRoles = new JToggleButton();
     
-    //We need to hold onto the entity in case the crew slot changes.
+    // We need to hold onto the entity in case the crew slot changes.
     private Entity entity;
 
     PilotPanel(final UnitDisplay unitDisplay) {
@@ -60,16 +49,15 @@ class PilotPanel extends PicMap {
             }
         });
         
-        //Hack to keep controls at the top of the screen when the bottom one is not always visible.
-        //There is probably a better way to do this.
+        // Hack to keep controls at the top of the screen when the bottom one is not always visible.
+        // There is probably a better way to do this.
         gbc.gridy = 2;
         gbc.weighty = 1.0;
         add(new JLabel(), gbc);
         
         pi = new PilotMapSet(this);
         addElement(pi.getContentGroup());
-        Enumeration<BackGroundDrawer> iter = pi.getBackgroundDrawers()
-                                               .elements();
+        Enumeration<BackGroundDrawer> iter = pi.getBackgroundDrawers().elements();
         while (iter.hasMoreElements()) {
             addBgDrawer(iter.nextElement());
         }
@@ -137,5 +125,4 @@ class PilotPanel extends PicMap {
             btnSwapRoles.setText(Messages.getString("PilotMapSet.swapRoles.text"));
         }        
     }
-    
 }

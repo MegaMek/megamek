@@ -20,7 +20,7 @@ package megamek;
 
 import megamek.codeUtilities.StringUtility;
 import megamek.common.annotations.Nullable;
-import megamek.utils.MegaMekXmlUtil;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -194,11 +194,11 @@ public final class Version implements Comparable<Version>, Serializable {
 
     //region File I/O
     public void writeToXML(final PrintWriter pw, final int indent) {
-        MegaMekXmlUtil.writeSimpleXMLTag(pw, indent, "version", toString());
+        MMXMLUtility.writeSimpleXMLTag(pw, indent, "version", toString());
     }
 
     public void fillFromText(final @Nullable String text) {
-        if (StringUtility.isNullOrEmpty(text)) {
+        if (StringUtility.isNullOrBlank(text)) {
             final String message = String.format(
                     "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.",
                     ((text == null) ? "a null string" : text));

@@ -176,6 +176,7 @@ public class AmmoType extends EquipmentType {
     public static final BigInteger F_CAP_MISSILE = BigInteger.valueOf(1).shiftLeft(11); // Other Capital-Missile
     public static final BigInteger F_SPACE_BOMB = BigInteger.valueOf(1).shiftLeft(12); // can be used to space bomb
     public static final BigInteger F_GROUND_BOMB = BigInteger.valueOf(1).shiftLeft(13); // can be used to ground bomb
+    public static final BigInteger F_MML_SRM = BigInteger.valueOf(1).shiftLeft(14); // SRM type
 
     // Numbers 14-15 out of order. See nuclear missiles, above
 
@@ -7839,6 +7840,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MML;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_SRM);
         ammo.shots = 33;
         ammo.bv = 4;
         ammo.cost = 27000;
@@ -7892,6 +7894,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 6;
         ammo.cost = 27000;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_SRM);
         ammo.rulesRefs = "229, TM";
         // March 2022 - CGL (Greekfire) requested MML adjustments to Tech Progression.
         ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
@@ -7939,6 +7942,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_MML;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_SRM);
         ammo.shots = 14;
         ammo.bv = 8;
         ammo.cost = 27000;
@@ -7989,6 +7993,7 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 2;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_MML;
+        ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_SRM);
         ammo.shots = 11;
         ammo.bv = 11;
         ammo.cost = 27000;
@@ -13432,6 +13437,7 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType() == AmmoType.M_AX_HEAD)) {
                 cost *= 0.5;
+                bv *= 1;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -13439,6 +13445,7 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType() == AmmoType.M_SMOKE_WARHEAD)) {
                 cost *= 0.5;
+                bv *= 1;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -13457,12 +13464,14 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 cost *= 3;
+                bv *= 1;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && (munition.getMunitionType() == AmmoType.M_SWARM)) {
                 cost *= 2;
+                bv *= 1;
             }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
@@ -13551,9 +13560,16 @@ public class AmmoType extends EquipmentType {
                     || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
                     || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
                     && ((munition.getMunitionType() == AmmoType.M_ANTI_TSM)
-                            || (munition.getMunitionType() == AmmoType.M_DEAD_FIRE)
                             || (munition.getMunitionType() == AmmoType.M_FRAGMENTATION))) {
                 cost *= 2;
+            }
+
+            if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_LRM_IMP)
+                    || (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)
+                    || (munition.getAmmoType() == AmmoType.T_SRM_IMP) || (munition.getAmmoType() == AmmoType.T_NLRM))
+                    && ((munition.getMunitionType() == AmmoType.M_DEAD_FIRE))) {
+                cost *= .6;
+                //TODO - DEAD-FIRE AMMO needs BV which is not a constant but launcher Ammo. 
             }
 
             if (((munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM)

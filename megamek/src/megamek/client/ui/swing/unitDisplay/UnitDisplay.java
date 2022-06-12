@@ -41,7 +41,10 @@ public class UnitDisplay extends JPanel {
     private MechPanelTabStrip tabStrip;
 
     private JPanel displayP;
-    private MovementPanel mPan;
+
+    private SummaryPanel mPan;
+    private MovementPanel dPan;
+
     private PilotPanel pPan;
     private ArmorPanel aPan;
     public WeaponPanel wPan;
@@ -72,7 +75,8 @@ public class UnitDisplay extends JPanel {
         tabStrip = new MechPanelTabStrip(this);
 
         displayP = new JPanel(new CardLayout());
-        mPan = new MovementPanel();
+
+        mPan = new SummaryPanel(this);
         displayP.add("movement", mPan);
         pPan = new PilotPanel(this);
         displayP.add("pilot", pPan);
@@ -84,6 +88,8 @@ public class UnitDisplay extends JPanel {
         displayP.add("systems", sPan);
         ePan = new ExtraPanel(this);
         displayP.add("extras", ePan);
+        dPan = new MovementPanel();
+        displayP.add("details", dPan);
 
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
@@ -99,8 +105,9 @@ public class UnitDisplay extends JPanel {
         c.weighty = 1.0;
         addBag(displayP, c);
 
-        ((CardLayout) displayP.getLayout()).show(displayP, "movement");
-        
+//        ((CardLayout) displayP.getLayout()).show(displayP, "movement");
+        ((CardLayout) displayP.getLayout()).show(displayP, "summary");
+
         if (controller != null) {
             registerKeyboardCommands(this, controller);
         }
@@ -294,6 +301,7 @@ public class UnitDisplay extends JPanel {
 
         currentlyDisplaying = en;
 
+//        tPan.displayMech(en);
         mPan.displayMech(en);
         pPan.displayMech(en);
         aPan.displayMech(en);

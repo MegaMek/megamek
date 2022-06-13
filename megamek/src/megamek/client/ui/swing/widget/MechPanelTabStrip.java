@@ -16,7 +16,7 @@ import java.awt.*;
 public class MechPanelTabStrip extends PicMap {
     private static final long serialVersionUID = -1282343469769007184L;
     protected static final int NUM_TABS = 7;
-    public static final String SUMMARY = "movement";
+    public static final String SUMMARY = "summary";
     public static final String PILOT = "pilot";
     public static final String ARMOR = "armor";
     public static final String WEAPONS = "weapons";

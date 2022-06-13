@@ -48,19 +48,24 @@ public final class UnitToolTip {
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
-        return getEntityTip(entity, localPlayer, true, mapSettings);
+        return getEntityTip(entity, localPlayer, true, false, mapSettings);
     }
     
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
-        return getEntityTip(entity, localPlayer, false, null);
+        return getEntityTip(entity, localPlayer, false, false, null);
+    }
+
+    /** Returns the unit tooltip with values that are relevant in-game and a bit more detail. */
+    public static StringBuilder getEntityTipGameDetailed(Entity entity, Player localPlayer) {
+        return getEntityTip(entity, localPlayer, false, true, null);
     }
 
     // PRIVATE
     
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTip(Entity entity, Player localPlayer,
-            boolean inLobby, @Nullable MapSettings mapSettings) {
+            boolean inLobby, boolean detailed, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -76,6 +81,7 @@ public final class UnitToolTip {
         result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " [Clan] " : "";
         result.append(entity.getChassis()).append(clanStr);
+        result.append(" (").append(entity.getWeight()).append("t)");
         result.append("<BR>").append(owner.getName());
         result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
         result.append(MessageFormat.format(" [ID: {0}] </FONT>", entity.getId()));
@@ -635,11 +641,11 @@ public final class UnitToolTip {
             }
         }
 
-        // Velocity, Altitude, Elevation
+        // Velocity, Altitude, Elevation, Fuel
         if (entity.isAero()) {
             result.append(guiScaledFontHTML(uiLightViolet()));
             IAero aero = (IAero) entity;
-            result.append(addToTT("AeroVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude()));
+            result.append(addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getFuel()));
             result.append("</FONT>");
         } else if (entity.getElevation() != 0) {
             result.append(guiScaledFontHTML(uiLightViolet()));
@@ -712,7 +718,26 @@ public final class UnitToolTip {
         // If sensors, display what sensors this unit is using
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-            result.append(addToTT("Sensors", BR, entity.getSensorDesc()));
+            // NOTE: I copied visual range from GeneralInfoMapSet and have not verified its correctness
+            int autoVisualRange;
+            if (entity.isSpaceborne() && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+                autoVisualRange = 0;
+                //For squadrons. Default to the passive thermal/optical value used by component fighters
+                if (entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
+                    autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+                }
+                if (entity.getActiveSensor() != null) {
+                    if (entity.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                        // required because the return on this from the method below is for ground maps
+                        autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+                    } else {
+                        autoVisualRange = (int) Math.ceil(entity.getActiveSensor().getRangeByBracket() / 10.0);
+                    }
+                }
+            } else {
+                autoVisualRange =  game.getPlanetaryConditions().getVisualRange(entity, false);
+            }
+            result.append(addToTT("Sensors", BR, entity.getSensorDesc(), autoVisualRange));
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {

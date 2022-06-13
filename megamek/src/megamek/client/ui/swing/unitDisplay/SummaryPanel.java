@@ -15,21 +15,11 @@ public class SummaryPanel extends JPanel {
     private JLabel tooltip;
 
     SummaryPanel(UnitDisplay unitDisplay) {
-
         this.unitDisplay = unitDisplay;
-        setLayout(new GridBagLayout());
-
-        int gridy = 0;
-        tooltip = new JLabel("TOOLTIP");
-
-        tooltip = new JLabel();
-        add(tooltip);
+        setLayout(new BorderLayout());
+        tooltip = new JLabel("<html>TOOLTIP</html>", SwingConstants.LEFT );
+        add(tooltip, BorderLayout.NORTH);
     }
-
-//    @Override
-//    public void onResize() {
-//
-//    }
 
     public void displayMech(Entity en) {
         tooltip.setText("<html>" + UnitToolTip.getEntityTipGame(en,

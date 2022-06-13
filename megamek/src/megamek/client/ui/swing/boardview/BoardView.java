@@ -5421,29 +5421,36 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         if (!game.getBoard().contains(mcoords)) {
             return null;
-        } 
+        }
         Hex mhex = game.getBoard().getHex(mcoords);
+        return getHexTooltip(mhex, point);
+    }
 
+    /**
+     * The text to be displayed when the mouse is at a certain point.
+     */
+    public String getHexTooltip(Hex mhex, Point point) {
+        Coords mcoords = mhex.getCoords();
         StringBuffer txt = new StringBuffer("<HTML>");
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
-
             txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD><FONT color=\"black\">");
-
-            txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
-            txt.append("<br>"); 
-
-            // cycle through the terrains and report types found
-            for (int terType: mhex.getTerrainTypes()) {
-                int tf = mhex.getTerrain(terType).getTerrainFactor();
-                int ttl = mhex.getTerrain(terType).getLevel();
-                String name = Terrains.getDisplayName(terType, ttl);
-                if (name != null) {
-                    name += (tf > 0) ? " (TF: " + tf + ")" : "";
-                    txt.append(name + "<BR>");
-                }
-            }
+            appendTerrainTooltip(txt, mhex);
             txt.append("</FONT></TD></TR></TABLE>");
+//
+//            txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
+//            txt.append("<br>");
+//
+//            // cycle through the terrains and report types found
+//            for (int terType: mhex.getTerrainTypes()) {
+//                int tf = mhex.getTerrain(terType).getTerrainFactor();
+//                int ttl = mhex.getTerrain(terType).getLevel();
+//                String name = Terrains.getDisplayName(terType, ttl);
+//                if (name != null) {
+//                    name += (tf > 0) ? " (TF: " + tf + ")" : "";
+//                    txt.append(name + "<BR>");
+//                }
+//            }
 
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
@@ -5796,6 +5803,24 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         return txt.toString();
+    }
+
+    public void appendTerrainTooltip(StringBuffer txt, Hex mhex) {
+        Coords mcoords = mhex.getCoords();
+
+        txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
+        txt.append("<br>");
+
+        // cycle through the terrains and report types found
+        for (int terType: mhex.getTerrainTypes()) {
+            int tf = mhex.getTerrain(terType).getTerrainFactor();
+            int ttl = mhex.getTerrain(terType).getLevel();
+            String name = Terrains.getDisplayName(terType, ttl);
+            if (name != null) {
+                name += (tf > 0) ? " (TF: " + tf + ")" : "";
+                txt.append(name + "<BR>");
+            }
+        }
     }
 
     private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {

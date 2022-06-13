@@ -81,7 +81,7 @@ public final class UnitToolTip {
         result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " [Clan] " : "";
         result.append(entity.getChassis()).append(clanStr);
-        result.append(" (").append(entity.getWeight()).append("t)");
+        result.append(" (").append((int)entity.getWeight()).append("t)");
         result.append("<BR>").append(owner.getName());
         result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
         result.append(MessageFormat.format(" [ID: {0}] </FONT>", entity.getId()));

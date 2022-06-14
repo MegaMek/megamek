@@ -41,32 +41,33 @@ public final class PilotToolTip {
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
 
-    public static StringBuilder getPilotTipDetailed(Entity entity) {
-        return getPilotTip(entity, true);
+    public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
+        return getPilotTip(entity, true, showPortrait);
     }
     
-    public static StringBuilder getPilotTipShort(Entity entity) {
-        return getPilotTip(entity, false);
+    public static StringBuilder getPilotTipShort(Entity entity, boolean showPortrait) {
+        return getPilotTip(entity, false, showPortrait);
     }
-    
+
     // PRIVATE
 
-    private static StringBuilder getPilotTip(final Entity entity, boolean detailed) {
+    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait) {
         StringBuilder result = new StringBuilder();
         
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
-        result.append(TABLE_BEGIN);
+            result.append(TABLE_BEGIN);
         result.append(crewInfo(entity));
-        
-        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)) {
+
+//        if ()) {
+        if (showPortrait) {
             // Add a spacer cell
             int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
             result.append("<TD WIDTH=" + dist + "></TD>");
             result.append(crewPortraits(entity));
         }
         result.append(TABLE_END);
-        
+
         // The crew advantages and MD
         result.append(scaledHTMLSpacer(3));
         result.append(crewAdvs(entity, detailed));

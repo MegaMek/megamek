@@ -53,19 +53,19 @@ public final class UnitToolTip {
     
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
-        return getEntityTip(entity, localPlayer, false, false, null);
+        return getEntityTip(entity, localPlayer, false, true, null);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game and a bit more detail. */
-    public static StringBuilder getEntityTipGameDetailed(Entity entity, Player localPlayer) {
-        return getEntityTip(entity, localPlayer, false, true, null);
+    public static StringBuilder getEntityTipUnitDisplay(Entity entity, Player localPlayer) {
+        return getEntityTip(entity, localPlayer, false, false, null);
     }
 
     // PRIVATE
     
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTip(Entity entity, Player localPlayer,
-            boolean inLobby, boolean detailed, @Nullable MapSettings mapSettings) {
+            boolean inLobby, boolean pilotInfo, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -92,9 +92,16 @@ public final class UnitToolTip {
             result.append(deploymentWarnings(entity, localPlayer, mapSettings));
             result.append("<BR>");
         } else {
-            result.append(forceEntry(entity, localPlayer));
+            if (pilotInfo) {
+                result.append(forceEntry(entity, localPlayer));
+            }
             result.append(inGameValues(entity, localPlayer));
-            result.append(PilotToolTip.getPilotTipShort(entity));
+            if (pilotInfo) {
+                result.append(PilotToolTip.getPilotTipShort(entity,
+                        GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)));
+            } else {
+                result.append("<BR>");
+            }
         }
         
         // An empty squadron should not show any info
@@ -162,7 +169,7 @@ public final class UnitToolTip {
         }
         return result;
     }
-    
+
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
         GUIPreferences guip = GUIPreferences.getInstance();
@@ -611,6 +618,7 @@ public final class UnitToolTip {
             // "Has not yet moved" only during movement phase
             if (!entity.isDone() && game.getPhase() == GamePhase.MOVEMENT) {
                 result.append(addToTT("NotYetMoved", BR));
+                result.append("<BR>");
             } else if ((entity.isDone() && game.getPhase() == GamePhase.MOVEMENT)
                     || game.getPhase() == GamePhase.FIRING) {
                 result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForMovement(entity.moved)));
@@ -852,11 +860,11 @@ public final class UnitToolTip {
         result.append("</FONT>");
         return result;
     }
-    
+
     /** Returns the full force chain the entity is in as one text line. */
     private static StringBuilder forceEntry(Entity entity, Player localPlayer) {
         StringBuilder result = new StringBuilder();
-        
+
         if (entity.partOfForce()) {
             // Get the my / ally / enemy color and desaturate it
             Color color = GUIPreferences.getInstance().getEnemyUnitColor();

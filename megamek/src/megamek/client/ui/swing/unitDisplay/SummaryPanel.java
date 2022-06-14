@@ -4,7 +4,9 @@ import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.common.Entity;
+import megamek.common.EntityVisibilityUtils;
 import megamek.common.Hex;
+import megamek.common.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,62 +14,59 @@ import java.awt.*;
 public class SummaryPanel extends JPanel {
 
     private UnitDisplay unitDisplay;
-    private JLabel unitInfo, pilotInfo;
+    private JLabel pilotInfo, unitInfo, hexInfo;
 
     SummaryPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
-//        this.setLayout(new BorderLayout());
-//        JPanel panel = new JPanel();
-//        this.add(panel, BorderLayout.PAGE_START);
+
         JPanel panel = this;
+        panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS ));
 
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+        pilotInfo = new JLabel("<html>UnitInfo</html>", SwingConstants.LEFT );
+        panel.add(pilotInfo);
 
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        pilotInfo = new JLabel("<html>UnitInfo</html>", SwingConstants.CENTER );
-        panel.add(pilotInfo, c);
-
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.gridheight = 1;
         unitInfo = new JLabel("<html>HexInfo</html>", SwingConstants.LEFT );
-        panel.add(unitInfo, c);
+        panel.add(unitInfo);
+
+        hexInfo = new JLabel("<html>HexInfo</html>", SwingConstants.LEFT );
+        panel.add(hexInfo);
     }
 
     public void displayMech(Entity entity) {
-        Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
-        BoardView bv = unitDisplay.getClientGUI().getBoardView();
-        StringBuffer txt = new StringBuffer("<HTML>");
+        Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
 
-        int slot = 0;
-        pilotInfo.setIcon(new ImageIcon(entity.getCrew().getPortrait(slot).getImage()));
-        pilotInfo.setText("<html>"+PilotToolTip.getPilotTipDetailed(entity).toString()+"</html>");
-        if (bv != null) {
-            if (entity != null) {
-                bv.appendEntityTooltip(txt, entity);
-            } else {
-                txt.append("<br>No unit");
-            }
-
-            if (mhex != null) {
-                bv.appendTerrainTooltip(txt, mhex);
-                bv.appendBuildingsTooltip(txt, mhex);
-            } else {
-                txt.append("<br>No hex");
-            }
-        } else {
-            txt.append(UnitToolTip.getEntityTipGame(entity,
-                    unitDisplay.getClientGUI().getClient().getLocalPlayer()));
+        if (entity == null) {
+            pilotInfo.setIcon(null);
+            pilotInfo.setText("<html>No Pilot</html>");
+            unitInfo.setText("<html>No Unit</html>");
+            hexInfo.setText("<html>No Hex</html>");
+            return;
         }
-        txt.append("</HTML>");
-        unitInfo.setText(txt.toString());
 
+        if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
+            pilotInfo.setIcon(null);
+            pilotInfo.setText("<html>Sensor Return</html>");
+            unitInfo.setText("<html>?</html>");
+        } else {
+            int slot = 0;
+            pilotInfo.setIcon(new ImageIcon(entity.getCrew().getPortrait(slot).getImage()));
+            //TODO add Force label
+            pilotInfo.setText("<html>" + PilotToolTip.getPilotTipDetailed(entity, false) + "</html>");
+
+            StringBuffer unitTxt = new StringBuffer("<HTML>");
+            unitTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
+            unitTxt.append("</HTML>");
+            unitInfo.setText(unitTxt.toString());
+        }
+
+        BoardView bv = unitDisplay.getClientGUI().getBoardView();
+        Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
+        if (bv != null && mhex != null) {
+            StringBuffer hexTxt = new StringBuffer("<HTML>");
+            bv.appendTerrainTooltip(hexTxt, mhex, "#999999");
+            bv.appendBuildingsTooltip(hexTxt, mhex, "#999999");
+            hexTxt.append("</HTML>");
+            hexInfo.setText(hexTxt.toString());
+        }
     }
-
-
 }

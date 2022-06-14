@@ -5434,7 +5434,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         StringBuffer txt = new StringBuffer("<HTML>");
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
-            appendTerrainTooltip(txt, mhex);
+            appendTerrainTooltip(txt, mhex, "#DDFFDD");
 
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
@@ -5478,103 +5478,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
                 txt.append("</FONT></TD></TR></TABLE>");
             }
-            appendBuildingsTooltip(txt, mhex);
-//            // Fuel Tank
-//            if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
-//                // In the BoardEditor, buildings have no entry in the
-//                // buildings list of the board, so get the info from the hex
-//                if (clientgui == null) {
-//                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
-//                    txt.append(Messages.getString("BoardView1.Tooltip.FuelTank",
-//                            mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
-//                            Terrains.getEditorName(Terrains.FUEL_TANK),
-//                            mhex.terrainLevel(Terrains.FUEL_TANK_CF),
-//                            mhex.terrainLevel(Terrains.FUEL_TANK_MAGN)));
-//                } else {
-//                    FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
-//                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
-//                    txt.append(Messages.getString("BoardView1.Tooltip.FuelTank",
-//                            mhex.terrainLevel(Terrains.FUEL_TANK_ELEV), bldg.toString(),
-//                            bldg.getCurrentCF(mcoords), bldg.getMagnitude()));
-//                }
-//                txt.append("</FONT></TD></TR></TABLE>");
-//            }
-//
-//            // Building
-//            if (mhex.containsTerrain(Terrains.BUILDING)) {
-//                // In the BoardEditor, buildings have no entry in the
-//                // buildings list of the board, so get the info from the hex
-//                if (clientgui == null) {
-//                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
-//                    txt.append(Messages.getString("BoardView1.Tooltip.Building",
-//                            mhex.terrainLevel(Terrains.BLDG_ELEV), Terrains.getEditorName(Terrains.BUILDING),
-//                            mhex.terrainLevel(Terrains.BLDG_CF), Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
-//                            BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString()));
-//                } else {
-//                    Building bldg = game.getBoard().getBuildingAt(mcoords);
-//                    txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD><FONT color=\"black\">");
-//                    txt.append(Messages.getString("BoardView1.Tooltip.Building",
-//                            mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(),
-//                            bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords),
-//                            bldg.getBasement(mcoords).toString()));
-//
-//                    if (bldg.getBasementCollapsed(mcoords)) {
-//                        txt.append(Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed"));
-//                    }
-//                }
-//                txt.append("</FONT></TD></TR></TABLE>");
-//            }
-//
-//            // Bridge
-//            if (mhex.containsTerrain(Terrains.BRIDGE)) {
-//                // In the BoardEditor, buildings have no entry in the
-//                // buildings list of the board, so get the info from the hex
-//                if (clientgui == null) {
-//                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
-//                    txt.append(Messages.getString("BoardView1.Tooltip.Bridge",
-//                            mhex.terrainLevel(Terrains.BRIDGE_ELEV), Terrains.getEditorName(Terrains.BRIDGE),
-//                            mhex.terrainLevel(Terrains.BRIDGE_CF)));
-//                } else {
-//                    Building bldg = game.getBoard().getBuildingAt(mcoords);
-//                    txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
-//                    txt.append(Messages.getString("BoardView1.Tooltip.Bridge",
-//                            mhex.terrainLevel(Terrains.BRIDGE_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords)));
-//                }
-//                txt.append("</FONT></TD></TR></TABLE>");
-//            }
-//
-//            if (game.containsMinefield(mcoords)) {
-//                Vector<Minefield> minefields = game.getMinefields(mcoords);
-//                for (int i = 0; i < minefields.size(); i++) {
-//                    Minefield mf = minefields.elementAt(i);
-//                    String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")";
-//
-//                    switch (mf.getType()) {
-//                        case Minefield.TYPE_CONVENTIONAL:
-//                        case Minefield.TYPE_COMMAND_DETONATED:
-//                            txt.append(mf.getName()).append(Messages.getString("BoardView1.minefield")).append("(").append(mf.getDensity()).append(")").append(" ").append(owner);
-//                            break;
-//                        case Minefield.TYPE_VIBRABOMB:
-//                            if (mf.getPlayerId() == localPlayer.getId()) {
-//                                txt.append(mf.getName()).append(Messages.getString("BoardView1.minefield"))
-//                                        .append("(").append(mf.getDensity()).append(")").append("(")
-//                                        .append(mf.getSetting()).append(") ").append(owner);
-//                            } else {
-//                                txt.append(mf.getName()).append(Messages.getString("BoardView1.minefield")).append("(").append(mf.getDensity()).append(")").append(" ").append(owner);
-//                            }
-//                            break;
-//                        case Minefield.TYPE_ACTIVE:
-//                        case Minefield.TYPE_INFERNO:
-//                            txt.append(mf.getName()).append(Messages.getString("BoardView1.minefield"))
-//                                    .append("(").append(mf.getDensity()).append(")").append(owner);
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//
-//                    txt.append("<br>");
-//                }
-//            }
+
+            appendBuildingsTooltip(txt, mhex, "#999999");
 
             if (displayInvalidHexInfo) {
                 StringBuffer errBuff = new StringBuffer();
@@ -5790,9 +5695,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         return txt.toString();
     }
 
-    public void appendTerrainTooltip(StringBuffer txt, Hex mhex) {
+    public void appendTerrainTooltip(StringBuffer txt, Hex mhex, String bgColor) {
         Coords mcoords = mhex.getCoords();
-        txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD><FONT color=\"black\">");
+//        txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD><FONT color=\"black\">");
+        txt.append("<TABLE BORDER=0 BGCOLOR="+bgColor+" width=100%><TR><TD><FONT color=\"black\">");
 
         txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
         txt.append("<br>");
@@ -5811,7 +5717,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     }
 
-    public void appendBuildingsTooltip(StringBuffer txt, Hex mhex) {
+    public void appendBuildingsTooltip(StringBuffer txt, Hex mhex, String bgColor) {
         Coords mcoords = mhex.getCoords();
 
         // Fuel Tank
@@ -5819,7 +5725,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR="+bgColor+" width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.FuelTank",
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                         Terrains.getEditorName(Terrains.FUEL_TANK),

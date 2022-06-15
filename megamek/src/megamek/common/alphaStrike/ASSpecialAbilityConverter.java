@@ -168,7 +168,6 @@ final class ASSpecialAbilityConverter {
             } else if (m.getType().hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)) {
                 element.addSPA(HJ);
             } else if (m.getType().hasFlag(MiscType.F_CARGO)) {
-                //System.out.println("Tonnage: "+ m.getTonnage());
                 element.addSPA(CT, m.getTonnage());
             }
 
@@ -503,8 +502,8 @@ final class ASSpecialAbilityConverter {
         }
 
         if (element.getMovementModes().contains("j") && element.getMovementModes().contains("")) {
-            int jumpTMM = ASConverter.tmmForMovement(element.getMovement("j"), conversionData);
-            int walkTMM = ASConverter.tmmForMovement(element.getMovement(""), conversionData);
+            int jumpTMM = ASConverter.tmmForMovement(element.getMovement("j"));
+            int walkTMM = ASConverter.tmmForMovement(element.getMovement(""));
             if (jumpTMM > walkTMM) {
                 element.addSPA(JMPS, jumpTMM - walkTMM);
             } else if (jumpTMM < walkTMM) {
@@ -513,8 +512,8 @@ final class ASSpecialAbilityConverter {
         }
 
         if (element.getMovementModes().contains("s") && element.getMovementModes().contains("")) {
-            int umuTMM = ASConverter.tmmForMovement(element.getMovement("s"), conversionData);
-            int walkTMM = ASConverter.tmmForMovement(element.getMovement(""), conversionData);
+            int umuTMM = ASConverter.tmmForMovement(element.getMovement("s"));
+            int walkTMM = ASConverter.tmmForMovement(element.getMovement(""));
             if (umuTMM > walkTMM) {
                 element.addSPA(SUBS, umuTMM - walkTMM);
             } else if (umuTMM < walkTMM) {

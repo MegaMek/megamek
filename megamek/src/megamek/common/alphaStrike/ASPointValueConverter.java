@@ -19,12 +19,9 @@
 package megamek.common.alphaStrike;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.Aero;
-import megamek.common.Entity;
 
 import java.util.Locale;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSPA.*;
@@ -33,8 +30,8 @@ public class ASPointValueConverter {
 
     static int getPointValue(ASConverter.ConversionData conversionData) {
         AlphaStrikeElement element = conversionData.element;
-        Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
+        report.addEmptyLine();
         report.addSubHeader("Point Value:");
 
         if (element.isGround()) {
@@ -43,7 +40,7 @@ public class ASPointValueConverter {
             double dmgM = getPointValueMDamage(element);
             double dmgL = getPointValueLDamage(element);
             double offensiveValue = dmgS + dmgM * 2 + dmgL;
-            report.addLine("Damage", dmgS + " + 2 x " + dmgM + " + " + dmgL, "= ", offensiveValue);
+            report.addLine("Damage", dmgS + " + 2 x " + dmgM + " + " + dmgL, "", offensiveValue);
 
             if (element.isAnyTypeOf(BM, PM)) {
                 offensiveValue += 0.5 * element.getSize();
@@ -51,8 +48,10 @@ public class ASPointValueConverter {
             }
 
             if (element.getOverheat() >= 1) {
-                offensiveValue += 1 + 0.5 * (element.getOverheat() - 1);
-                report.addLine("Overheat", "+ " + (1 + 0.5 * (element.getOverheat() - 1)), "= ", offensiveValue);
+                double overheatFactor = 1 + 0.5 * (element.getOverheat() - 1);
+                overheatFactor /= (dmgM + dmgL == 0) ? 2 : 1;
+                offensiveValue += overheatFactor;
+                report.addLine("Overheat", "+ " + overheatFactor, "= ", offensiveValue);
             }
 
             // Offensive SPA and Blanket Modifier
@@ -91,55 +90,77 @@ public class ASPointValueConverter {
             subTotal += bonus;
 
             // Force Bonus
-            subTotal = addForceBonus(conversionData, subTotal);
+            subTotal += addForceBonus(conversionData);
 
             int pointValue = Math.max(1, (int) Math.round(subTotal));
             report.addLine("Final Point Value", "round normal", "= " + pointValue);
             return pointValue;
 
-        } else if (element.isAnyTypeOf(AF, CF)
-                || (element.isType(SV) && (entity instanceof Aero))) {
-            int dmgS = element.getStandardDamage().S.damage;
-            int dmgM = element.getStandardDamage().M.damage;
-            int dmgL = element.getStandardDamage().L.damage;
-            double offensiveValue = dmgS + dmgM + dmgM + dmgL;
+        } else if (element.isAnyTypeOf(AF, CF) || element.isAerospaceSV()) {
+            double dmgS = getPointValueSDamage(element);
+            double dmgM = getPointValueMDamage(element);
+            double dmgL = getPointValueLDamage(element);
+            double offensiveValue = dmgS + dmgM * 2 + dmgL;
+            report.addLine("Damage", dmgS + " + 2 x " + dmgM + " + " + dmgL, "" + offensiveValue);
 
             if (element.getOverheat() >= 1) {
                 double overheatFactor = 1 + 0.5 * (element.getOverheat() - 1);
                 overheatFactor /= (dmgM + dmgL == 0) ? 2 : 1;
                 offensiveValue += overheatFactor;
+                report.addLine("Overheat", "", "+ " + overheatFactor);
             }
 
             offensiveValue += getAeroOffensiveSPAMod(conversionData);
-            offensiveValue *= getAeroOffensiveBlanketMod(element);
+            double blanketModifier = getAeroOffensiveBlanketMod(conversionData);
+            String calculation = offensiveValue + " x " + blanketModifier + ", round up to half";
+            offensiveValue *= blanketModifier;
             offensiveValue = ASConverter.roundUpToHalf(offensiveValue);
+            report.addResultLine("Offensive Value", calculation, "= " + offensiveValue);
+            report.addEmptyLine();
 
             double defensiveValue = 0.25 * getHighestMove(element);
-            defensiveValue += getHighestMove(element) >= 10 ? 1 : 0;
-            defensiveValue += getAeroDefensiveSPAMod(element);
-            defensiveValue += getAeroDefensiveFactors(element);
+            report.addLine("Movement", getHighestMove(element) + " / 4", "" + defensiveValue);
+            if (getHighestMove(element) >= 10) {
+                defensiveValue += 1;
+                report.addLine("High Thrust", "", "+ " + 1);
+            }
+            defensiveValue += getAeroDefensiveSPAMod(conversionData);
+            defensiveValue += getAeroDefensiveFactors(conversionData);
+            report.addResultLine("Defensive Value", "", "= " + defensiveValue);
+            report.addEmptyLine();
 
             double subTotal = offensiveValue + defensiveValue;
-            subTotal = addForceBonus(conversionData, subTotal);
+            report.addLine("Subtotal", offensiveValue + " + " + defensiveValue, "" + subTotal);
+            subTotal += addForceBonus(conversionData);
 
-            return Math.max(1, (int)Math.round(subTotal));
+            int pointValue = Math.max(1, (int)Math.round(subTotal));
+            report.addEmptyLine();
+            report.addResultLine("Base Point Value", "round normal", "" + pointValue);
+            return pointValue;
         }
         return 0;
     }
 
-    static void adjustPVforSkill(AlphaStrikeElement element) {
+    static void adjustPVforSkill(AlphaStrikeElement element, CalculationReport report) {
+        if (element.getSkill() == 4) {
+            return;
+        }
+
         int multiplier = 1;
+        int newPointValue = element.getPointValue();
         if (element.getSkill() > 4) {
             if (element.getPointValue() > 14) {
                 multiplier += (element.getPointValue() - 5) / 10;
             }
-            element.setPointValue(element.getPointValue() - (element.getSkill() - 4) * multiplier);
+            newPointValue = element.getPointValue() - (element.getSkill() - 4) * multiplier;
         } else if (element.getSkill() < 4) {
             if (element.getPointValue() > 7) {
                 multiplier += (element.getPointValue() - 3) / 5;
             }
-            element.setPointValue(element.getPointValue() + (4 - element.getSkill()) * multiplier);
+            newPointValue = element.getPointValue() + (4 - element.getSkill()) * multiplier;
         }
+        element.setPointValue(newPointValue);
+        report.addLine("Skill-adjusted Point Value", "", "" + newPointValue);
     }
 
     /** Returns the Ground Offensive SPA modifier, ASC p.139. */
@@ -240,7 +261,7 @@ public class ASPointValueConverter {
         result += processSPAMod("Blanket Modifier", conversionData, SHLD, e -> -0.1);
         if (element.isAnyTypeOf(SV, IM)) {
             if (!element.hasAnySPAOf(AFC, BFC)) {
-                result += -0.2;
+                result -= 0.2;
                 report.addLine("", "No AFC/BFC", "- 0.2");
             }
         } else {
@@ -252,31 +273,40 @@ public class ASPointValueConverter {
 
     private static double getAeroOffensiveSPAMod(ASConverter.ConversionData conversionData) {
         AlphaStrikeElement element = conversionData.element;
-        Entity entity = conversionData.entity;
-        CalculationReport report = conversionData.conversionReport;
 
-        double result = element.hasSPA(SNARC) ? 1 : 0;
-        result += element.hasSPA(INARC) ? 1 : 0;
-        result += element.hasSPA(CNARC) ? 0.5 : 0;
-        result += element.hasSPA(BT) ? 0.5 * getHighestMove(element) * element.getSize() : 0;
-        result += element.hasSPA(OVL) ? 0.25 * element.getOverheat() : 0;
-        if (element.hasSPA(HT)) {
+        double result = 0;
+        result += processSPAMod("Offensive SPA", conversionData, SNARC, e -> 1.0);
+        result += processSPAMod("Offensive SPA", conversionData, INARC, e -> 1.0);
+        result += processSPAMod("Offensive SPA", conversionData, CNARC, e -> 0.5);
+        result += processSPAMod("Offensive SPA", conversionData, BT, e -> 0.5 * getHighestMove(element) * element.getSize());
+        result += processSPAMod("Offensive SPA", conversionData, OVL, e -> 0.25 * element.getOverheat());
+        result += processSPAMod("Offensive SPA", conversionData, HT, e -> {
             ASDamageVector ht = (ASDamageVector) element.getSPA(HT);
-            result += Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage));
-            result += ht.M.damage > 0 ? 0.5 : 0;
-        }
+            return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
+        });
         result += getArtyOffensiveSPAMod(conversionData);
         return result;
     }
 
-    private static double getAeroOffensiveBlanketMod(AlphaStrikeElement element) {
+    private static double getAeroOffensiveBlanketMod(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
+
         double result = 1;
+        String calculation = "1";
         result += element.hasSPA(ATAC) ? 0.1 : 0;
+        calculation += element.hasSPA(ATAC) ? " + 0.1 (ATAC)" : "";
         result += element.hasSPA(VRT) ? 0.1 : 0;
+        calculation += element.hasSPA(VRT) ? " + 0.1 (VRT)" : "";
         result -= element.hasSPA(BFC) ? 0.1 : 0;
-        result -= element.hasSPA(SHLD) ? 0.1 : 0; // So says the AS Companion
+        calculation += element.hasSPA(BFC) ? " - 0.1 (BFC)" : "";
+        result -= element.hasSPA(SHLD) ? 0.1 : 0; // So sayeth the AS Companion
+        calculation += element.hasSPA(SHLD) ? " - 0.1 (SHLD)" : "";
         result -= element.hasSPA(DRO) ? 0.1 : 0;
+        calculation += element.hasSPA(DRO) ? " - 0.1 (DRO)" : "";
         result -= (element.isType(SV) && !element.hasAnySPAOf(AFC, BFC)) ? 0.2 : 0;
+        calculation += (element.isType(SV) && !element.hasAnySPAOf(AFC, BFC)) ? " - 0.2 (SV w/o AFC/BFC)" : "";
+        report.addLine("Blanket Modifier", calculation, "");
         return result;
     }
 
@@ -309,14 +339,17 @@ public class ASPointValueConverter {
         return result;
     }
 
-    private static double getAeroDefensiveSPAMod(AlphaStrikeElement element) {
-        double result = element.hasSPA(PNT) ? (int)element.getSPA(PNT) : 0;
-        result += element.hasSPA(STL) ? 2 : 0;
-        if (element.hasSPA(RCA)) {
+    private static double getAeroDefensiveSPAMod(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+
+        double result = 0;
+        result += processSPAMod("Defensive SPA", conversionData, PNT, e -> (double) (int) element.getSPA(PNT));
+        result += processSPAMod("Defensive SPA", conversionData, STL, e -> 2.0);
+        result += processSPAMod("Defensive SPA", conversionData, RCA, e -> {
             double armorThird = Math.floor((double)element.getArmor() / 3);
             double barFactor = element.hasSPA(BAR) ? 0.5 : 1;
-            result += armorThird * barFactor;
-        }
+            return armorThird * barFactor;
+        });
         return result;
     }
 
@@ -385,11 +418,17 @@ public class ASPointValueConverter {
         }
     }
 
-    private static double getAeroDefensiveFactors(AlphaStrikeElement element) {
+    private static double getAeroDefensiveFactors(ASConverter.ConversionData conversionData) {
+        CalculationReport report = conversionData.conversionReport;
+        AlphaStrikeElement element = conversionData.element;
+
         double barFactor = element.hasSPA(BAR) ? 0.5 : 1;
         double thresholdMultiplier = Math.min(1.3 + 0.1 * element.getThreshold(), 1.9);
         double result = thresholdMultiplier * barFactor * element.getArmor();
+        report.addLine("Armor", element.getArmor() + " x " + thresholdMultiplier + " x " + barFactor,
+                "+ ", result);
         result += element.getStructure();
+        report.addLine("Structure", "", "+ " + element.getStructure());
         return result;
     }
 
@@ -422,7 +461,7 @@ public class ASPointValueConverter {
             report.addLine("STL", "+ 1", "");
         }
         if (element.hasAnySPAOf(LG, SLG, VLG)) {
-            result += -1;
+            result -= 1;
             report.addLine("LG, SLG or VLG", "- 1", "");
         }
         double defFactor = 1 + (result <= 2 ? 0.1 : 0.25) * Math.max(result, 0);
@@ -443,7 +482,7 @@ public class ASPointValueConverter {
         int highestNonJumpMod = -1;
         int highestJumpMod = -1;
         for (String mode : element.getMovementModes()) {
-            int mod = ASConverter.tmmForMovement(element.getMovement(mode), conversionData);
+            int mod = ASConverter.tmmForMovement(element.getMovement(mode), report);
             if (mode.equals("j")) {
                 highestJumpMod = mod;
             } else {
@@ -511,11 +550,9 @@ public class ASPointValueConverter {
                 result = (element.getTMM() - 2) * dmgS;
             }
         }
-//        double bonus = roundToHalf(subTotal * 0.05);
         if (result != 0) {
             report.addLine("Agile", "+ " + result, "");
         }
-//        return roundToHalf(subTotal * 0.05);
         return roundToHalf(result);
     }
 
@@ -533,71 +570,75 @@ public class ASPointValueConverter {
     }
 
     /** Adds the force bonus to the current subTotal and returns the new subTotal. */
-    private static double addForceBonus(ASConverter.ConversionData conversionData, double subTotal) {
+    private static double addForceBonus(ASConverter.ConversionData conversionData) {
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
 
+        double result = 0;
         String calculation = "";
         if (element.hasSPA(AECM)) {
-            subTotal += 3;
+            result += 3;
             calculation += "+ 3 (AECM) ";
         }
         if (element.hasSPA(BH)) {
-            subTotal += 2;
+            result += 2;
             calculation += "+ 2 (BH) ";
         }
         if (element.hasSPA(C3RS)) {
-            subTotal += 2;
+            result += 2;
             calculation += "+ 2 (C3RS) ";
         }
         if (element.hasSPA(ECM)) {
-            subTotal += 2;
+            result += 2;
             calculation += "+ 2 (ECM) ";
         }
         if (element.hasSPA(RCN)) {
-            subTotal += 2;
+            result += 2;
             calculation += "+ 2 (RCN) ";
         }
         if (element.hasSPA(TRN)) {
-            subTotal += 2;
+            result += 2;
             calculation += "+ 2 (TRN) ";
         }
         if (element.hasSPA(LPRB)) {
-            subTotal += 1;
+            result += 1;
             calculation += "+ 1 (LPRB) ";
         }
         if (element.hasSPA(PRB)) {
-            subTotal += 1;
+            result += 1;
             calculation += "+ 1 (PRB) ";
         }
         if (element.hasSPA(LECM)) {
-            subTotal += 0.5;
+            result += 0.5;
             calculation += "+ 0.5 (LECM) ";
         }
         if (element.hasSPA(MHQ)) {
             int mhqValue = (int) element.getSPA(MHQ);
-            subTotal += mhqValue;
+            result += mhqValue;
             calculation += "+ " + mhqValue + " (MHQ) ";
         }
-        report.addLine("Force Bonus", calculation, "= ", subTotal);
-        return subTotal;
+        if (result > 0) {
+            report.addLine("Force Bonus", calculation, "+ ", result);
+        }
+        return result;
     }
 
+    /** @return The Short Range damage value with minimal damage represented as 0.5. */
     private static double getPointValueSDamage(AlphaStrikeElement element) {
         return element.getStandardDamage().S.minimal ? 0.5 : element.getStandardDamage().S.damage;
-//        return element.isMinimalDmgS() ? 0.5 : element.getDmgS();
     }
 
+    /** @return The Medium Range damage value with minimal damage represented as 0.5. */
     private static double getPointValueMDamage(AlphaStrikeElement element) {
         return element.getStandardDamage().M.minimal ? 0.5 : element.getStandardDamage().M.damage;
-//        return element.isMinimalDmgM() ? 0.5 : element.getDmgM();
     }
 
+    /** @return The Long Range damage value with minimal damage represented as 0.5. */
     private static double getPointValueLDamage(AlphaStrikeElement element) {
         return element.getStandardDamage().L.minimal ? 0.5 : element.getStandardDamage().L.damage;
-//        return element.isMinimalDmgL() ? 0.5 : element.getDmgL();
     }
 
+    /** @return The highest movement capability of any of the element's movement modes. */
     private static int getHighestMove(AlphaStrikeElement element) {
         return element.getMovement().values().stream().mapToInt(m -> m).max().orElse(0);
     }

@@ -19,12 +19,9 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.alphaStrike.ASConverter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -36,10 +33,12 @@ import java.util.Objects;
 public class ASConversionInfoDialog extends AbstractDialog {
 
     private final FlexibleCalculationReport report;
+    private final Entity entity;
 
-    public ASConversionInfoDialog(final JFrame frame, FlexibleCalculationReport report) {
+    public ASConversionInfoDialog(final JFrame frame, FlexibleCalculationReport report, Entity entity) {
         super(frame, false, "BVDisplayDialog", "BVDisplayDialog.title");
         this.report = Objects.requireNonNull(report);
+        this.entity = entity;
         initialize();
     }
 
@@ -47,6 +46,7 @@ public class ASConversionInfoDialog extends AbstractDialog {
     protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
         UIUtil.adjustDialog(getContentPane());
+        setTitle(getTitle() + " (" + entity.getShortName() + ")");
         pack();
         Dimension screenSize = UIUtil.getScaledScreenSize(this);
         setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));

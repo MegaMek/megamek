@@ -394,11 +394,11 @@ public final class UIUtil {
                 adjustDialog(panel);
             } else if (comp instanceof JTabbedPane) {
                 comp.setFont(scaledFont);
-                JTabbedPane tpane = (JTabbedPane) comp;
-                for (int i=0; i<tpane.getTabCount();i++) {
-                    Component sc = tpane.getTabComponentAt(i);
-                    if (sc instanceof JPanel) {
-                        adjustDialog((JPanel) sc);
+                JTabbedPane tabbedPane = (JTabbedPane) comp;
+                for (int i=0; i < tabbedPane.getTabCount();i++) {
+                    Component subComp = tabbedPane.getTabComponentAt(i);
+                    if (subComp instanceof JPanel) {
+                        adjustDialog((JPanel) subComp);
                     }
                 }
                 adjustDialog((JTabbedPane) comp);

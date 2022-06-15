@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class TextCalculationReport implements CalculationReport {
 
-    private final static int COL_SPACER = 3;
+    private final static int LINE_START_SPACER = 3;
 
     private enum LineType {
         LINE, HEADER, SUBHEADER, RESULT_LINE
@@ -52,7 +52,7 @@ public class TextCalculationReport implements CalculationReport {
 
         int getWidth() {
             if (lineType == LineType.LINE) {
-                return content1.length() + content2.length() + content3.length() + 3 * COL_SPACER;
+                return content1.length() + content2.length() + content3.length() + 3 * LINE_START_SPACER;
             } else if ((lineType == LineType.HEADER) || (lineType == LineType.SUBHEADER)) {
                 return content1.length();
             } else {
@@ -119,11 +119,10 @@ public class TextCalculationReport implements CalculationReport {
         int calcBegin = calculationBeginColumn();
         for (ReportLine line : reportLines) {
             if (line.lineType == LineType.LINE) {
-                result.append(" ".repeat(COL_SPACER)).append(line.content1);
-                result.append(" ".repeat(calcBegin - line.content1.length() - COL_SPACER)).append(line.content2);
+                result.append(" ".repeat(LINE_START_SPACER)).append(line.content1);
+                result.append(" ".repeat(calcBegin - line.content1.length() - LINE_START_SPACER)).append(line.content2);
                 result.append(" ".repeat(width - line.content3.length() - calcBegin - line.content2.length())).append(line.content3);
             } else if (line.lineType == LineType.SUBHEADER) {
-                result.append(System.lineSeparator());
                 result.append(line.content1);
             } else if (line.lineType == LineType.HEADER) {
                 result.append(line.content1).append(System.lineSeparator());
@@ -145,7 +144,7 @@ public class TextCalculationReport implements CalculationReport {
     }
 
     private int requiredColumns() {
-        int lineMaxWidth = maxWidth(1) + maxWidth(2) + maxWidth(3) + 3 * COL_SPACER;
+        int lineMaxWidth = maxWidth(1) + maxWidth(2) + maxWidth(3) + 3 * LINE_START_SPACER;
         int headerMaxWidth = reportLines.stream()
                 .filter(l -> (l.lineType == LineType.HEADER) || (l.lineType == LineType.SUBHEADER))
                 .mapToInt(ReportLine::getWidth)
@@ -154,7 +153,7 @@ public class TextCalculationReport implements CalculationReport {
     }
 
     private int calculationBeginColumn() {
-        return 2 * COL_SPACER + reportLines.stream()
+        return 2 * LINE_START_SPACER + reportLines.stream()
                 .filter(l -> l.lineType == LineType.LINE)
                 .map(l -> l.content1)
                 .mapToInt(String::length)

@@ -35,15 +35,16 @@ public class HTMLCalculationReport implements CalculationReport {
     private final static String ROW_END = "</TR>";
     private final static String COL_START = "<TD>";
     private final static String COL_RESULT_START = "<TD ALIGN=RIGHT>";
-    private final static String COL_HEADER_START = "<TD COLSPAN=6 ALIGN=CENTER>";
+    private final static String COL_HEADER_START = "<TD COLSPAN=6>";
     private final static String COL_END = "</TD>";
     private final static String COLSPAN_START = "<TD COLSPAN=6>";
     private final static String COL_SPACER = "<TD>&nbsp;&nbsp;&nbsp;&nbsp;</TD>";
+    private final static String LINE_START_SPACER = "<TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>";
 
-    private final static String HEADER_START = "<H2>";
-    private final static String HEADER_END = "</H2>";
-    private final static String SUBHEADER_START = "<U>";
-    private final static String SUBHEADER_END = "</U>";
+    private final static String HEADER_START = "<FONT SIZE=+2><U>";
+    private final static String HEADER_END = "</U></FONT>";
+    private final static String SUBHEADER_START = "";
+    private final static String SUBHEADER_END = "";
 
     private final StringBuilder report = new StringBuilder();
 
@@ -67,6 +68,7 @@ public class HTMLCalculationReport implements CalculationReport {
         report.append(COL_START).append(COL_END);
         report.append(COL_START).append(COL_END);
         report.append(COL_START).append(COL_END);
+        report.append(COL_START).append(COL_END);
         report.append(COL_RESULT_START).append("<HR>").append(COL_END);
         report.append(ROW_END);
         return addLine(type, calculation, result);
@@ -75,7 +77,7 @@ public class HTMLCalculationReport implements CalculationReport {
     @Override
     public CalculationReport addLine(String type, String calculation, String result) {
         report.append(ROW_START);
-        report.append(COL_START).append("&nbsp;&nbsp;").append(COL_END);
+        report.append(COL_START).append(LINE_START_SPACER).append(COL_END);
         report.append(COL_START).append(type).append(COL_END);
         report.append(COL_SPACER);
         report.append(COL_START).append(calculation).append(COL_END);
@@ -98,7 +100,6 @@ public class HTMLCalculationReport implements CalculationReport {
         report.append(ROW_START);
         report.append(COL_HEADER_START).append(HEADER_START).append(text).append(HEADER_END).append(COL_END);
         report.append(ROW_END);
-        addEmptyLine();
         return this;
     }
 

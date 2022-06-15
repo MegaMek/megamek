@@ -684,13 +684,22 @@ public class AlphaStrikeElement {
 
     /**
      * Returns true if this AS element is an aerospace unit, i.e. a fighter, a capital aerospace
-     * element or an aerospace SV (SV with a movement mode of "a", "k", "i", and "p" count as aerospace).
+     * element or an aerospace SV. See {@link #isAerospaceSV()}.
      *
      * @return True if this AS element is an aerospace unit (including aero SV units).
      */
     public boolean isAerospace() {
-        return isAnyTypeOf(AF, CF, SC, DS, DA, JS, WS, SS)
-                || (isType(SV) && hasMovementMode("a") || hasMovementMode("k")
+        return isAnyTypeOf(AF, CF, SC, DS, DA, JS, WS, SS) || isAerospaceSV();
+    }
+
+    /**
+     * Returns true if this AS element is an aerospace SV, i.e. an SV with a movement mode of
+     * "a", "k", "i", and "p".
+     *
+     * @return True if this AS element is an aerospace SV.
+     */
+    public boolean isAerospaceSV() {
+        return isType(SV) && (hasMovementMode("a") || hasMovementMode("k")
                 || hasMovementMode("i") || hasMovementMode("p"));
     }
 
@@ -717,7 +726,7 @@ public class AlphaStrikeElement {
         return movement.values().iterator().next();
     }
 
-    /** @return The primary movement type String, such as "" for ground units or "s" for submarines. */
+    /** @return The primary (= first) movement type String, such as "" for ground units or "s" for submarines. */
     public String getPrimaryMovementType() {
         return movement.keySet().iterator().next();
     }

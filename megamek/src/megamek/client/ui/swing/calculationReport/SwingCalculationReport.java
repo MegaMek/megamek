@@ -27,14 +27,14 @@ import java.awt.*;
 /**
  * This is a Calculation Report that builds its output as an assembly of JLabels in a JPanel.
  * This is best suited to being displayed in a dialog as it knows how wide and high it needs to be
- * (better than an HTML report does). Note that its toString() method does not yield a readable report..
+ * (better than an HTML report does). Its toString() method yields the HTML-coded report.
  */
 public class SwingCalculationReport implements CalculationReport {
 
     private final JPanel report = new JPanel(new GridBagLayout());
     private final GridBagConstraints gbc = new GridBagConstraints();
-    private final String COL_SPACER = "   ";
-    private final static int PADDING = 15;
+    private final String LINE_START_SPACER = "        ";
+    private final static int COL_SPACER = 35;
 
     @Override
     public JComponent toJComponent() {
@@ -49,8 +49,9 @@ public class SwingCalculationReport implements CalculationReport {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         JLabel resultLabel = new JLabel();
         Color color = UIManager.getColor("Label.foreground");
-        resultLabel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, PADDING),
+        resultLabel.setBorder(new CompoundBorder(new EmptyBorder(0, 0, 0, COL_SPACER),
                 new MatteBorder(1, 0, 0, 0, color)));
+        gbc.weightx = 0;
         report.add(resultLabel, gbc);
         return addLine(type, calculation, result);
     }
@@ -59,14 +60,15 @@ public class SwingCalculationReport implements CalculationReport {
     public CalculationReport addLine(String type, String calculation, String result) {
         newLine();
         gbc.ipadx = 0;
-        report.add(new JLabel(COL_SPACER), gbc);
+        report.add(new JLabel(LINE_START_SPACER), gbc);
         gbc.gridx++;
-        gbc.ipadx = PADDING;
+        gbc.ipadx = COL_SPACER;
         report.add(new JLabel(type), gbc);
         gbc.gridx++;
         report.add(new JLabel(calculation), gbc);
         gbc.gridx++;
         gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.weightx = 0;
         report.add(new JLabel(result), gbc);
         return this;
     }
@@ -83,14 +85,9 @@ public class SwingCalculationReport implements CalculationReport {
     @Override
     public CalculationReport addHeader(String text) {
         newLine();
-        gbc.anchor = GridBagConstraints.CENTER;
         gbc.gridwidth = 4;
-        JLabel header = new JLabel(text);
-        Font font = header.getFont();
-        int size = font.getSize() + 4;
-        header.setFont(new Font(font.getName(), Font.PLAIN, size));
+        JLabel header = new JLabel("<HTML><U><FONT SIZE=+2>" + text);
         report.add(header, gbc);
-        addEmptyLine();
         return this;
     }
 
@@ -106,7 +103,8 @@ public class SwingCalculationReport implements CalculationReport {
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.gridx = 0;
         gbc.gridwidth = 1;
-        gbc.ipadx = PADDING;
+        gbc.ipadx = COL_SPACER;
+        gbc.weightx = 1;
         gbc.fill = GridBagConstraints.NONE;
         gbc.gridy++;
     }

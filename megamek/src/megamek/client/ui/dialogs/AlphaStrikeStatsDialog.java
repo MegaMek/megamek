@@ -73,7 +73,8 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     
     private void setupTable() {
         centerPanel.remove(scrollPane);
-        scrollPane = new JScrollPane(new AlphaStrikeViewPanel(entities, moveToggle.isSelected(), pilotToggle.isSelected()));
+        var asPanel = new AlphaStrikeViewPanel(entities, moveToggle.isSelected(), pilotToggle.isSelected(), getFrame());
+        scrollPane = new JScrollPane(asPanel);
         centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
     }

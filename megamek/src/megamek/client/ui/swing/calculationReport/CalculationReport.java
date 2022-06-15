@@ -25,13 +25,17 @@ import java.util.Locale;
 
 /**
  * This represents a report for any typical MegaMek suite calculation such as BV, cost or AS conversion.
- * It assumes that each line will have at most three entries, a sort of header text ("Damage:"), a calculation
- * ("5 + 5 + 7 * 0.2") and a result on the right side ("11.4").
- *
+ * It assumes that each line will have at most three entries, a sort of header text (Damage:), a calculation
+ * (5 + 5 + 7 * 0.2) and a result on the right side (11.4).
+ * <BR><BR>
  * The result can be given as a String or as a double value with a prefix String. When a double value is
  * given, it will be rounded to one decimal digit. Since the second entry (the calculation text) can
  * be more complicated than a single number, it can only be passed as a String and rounding must be
  * performed by the caller if needed.
+ * <BR><BR>
+ * Classes that implement this interface ideally provide a runtime representation of the resulting report when
+ * overriding toJComponent(). This should be displayable in a Swing Panel and not be null. At the worst,
+ * a text explaining that the report is not available in this format should be given.
  *
  * @author Simon (Juliez)
  */
@@ -202,5 +206,22 @@ public interface CalculationReport {
     private String getRoundedResultString(String resultPrefix, double result) {
         return ((resultPrefix != null) ? resultPrefix : "")
                 + String.format(Locale.US, "%1$,.1f", result);
+    }
+
+    /**
+     * Formats the given double with only the necessary digits and at most three digits. Uses the fixed Locale.US
+     * as the Java way of converting "" + value seems to use Locale.US by default as well.
+     */
+    static String fmtDouble(double d) {
+        long timesThousand = Math.round(1000 * d);
+        if (timesThousand % 1000 == 0) {
+            return String.format(Locale.US, "%1$,.0f", d);
+        } else if (timesThousand % 100 == 0) {
+            return String.format(Locale.US, "%1$,.1f", d);
+        } else if (timesThousand % 10 == 0) {
+            return String.format(Locale.US, "%1$,.2f", d);
+        } else {
+            return String.format(Locale.US, "%1$,.3f", d);
+        }
     }
 }

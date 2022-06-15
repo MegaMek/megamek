@@ -18,26 +18,26 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.util.Collection;
-
-import javax.swing.*;
-
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
-import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.UnitRoleHandler;
 import megamek.common.alphaStrike.ASConverter;
+import megamek.common.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Collection;
 
 public class AlphaStrikeViewPanel extends JPanel {
     
     public static final int DEFAULT_HEIGHT = 600;
     public static final int COLS = 14;
 
-    public AlphaStrikeViewPanel(Collection<Entity> entities, boolean hexMovement, boolean includePilot) {
+    public AlphaStrikeViewPanel(Collection<Entity> entities, boolean hexMovement,
+                                boolean includePilot, @Nullable JFrame frame) {
         setLayout(new SpringLayout());
         addHeader(" Unit", JComponent.LEFT_ALIGNMENT);
         addHeader("Type");
@@ -56,39 +56,45 @@ public class AlphaStrikeViewPanel extends JPanel {
         
         int row = 1;
         for (Entity entity : entities) {
-            boolean oddRow = (row++ % 2) == 1;
+            if (!ASConverter.canConvert(entity)) {
+                continue;
+            }
             FlexibleCalculationReport conversionReport = new FlexibleCalculationReport();
             var element2 = ASConverter.convert(entity, includePilot, conversionReport);
-            addGridElement(entity.getShortName(), oddRow, JComponent.LEFT_ALIGNMENT);
-            addGridElement(element2.getType().toString(), oddRow);
-            addGridElement(element2.getSize() + "", oddRow);
-            addGridElement(element2.getTMM() + "", oddRow);
-            if (hexMovement) {
-                addGridElement(element2.getPrimaryMovementValue() / 2 + "", oddRow);
-            } else {
-                addGridElement(element2.getMovementAsString(), oddRow);
+            if (element2 != null) {
+                boolean oddRow = (row++ % 2) == 1;
+                addGridElementLeftAlign(entity.getShortName(), oddRow);
+                addGridElement(element2.getType() + "", oddRow);
+                addGridElement(element2.getSize() + "", oddRow);
+                addGridElement(element2.getTMM() + "", oddRow);
+                if (hexMovement) {
+                    addGridElement(element2.getPrimaryMovementValue() / 2 + "", oddRow);
+                } else {
+                    addGridElement(element2.getMovementAsString(), oddRow);
+                }
+                addGridElement(UnitRoleHandler.getRoleFor(entity).toString(), oddRow);
+                addGridElement(element2.getStandardDamage() + "", oddRow);
+                addGridElement(element2.getOverheat() + "", oddRow);
+                addGridElement(element2.getArmor() + " / " + element2.getStructure(), oddRow);
+                addGridElement(element2.usesThreshold() ? element2.getThreshold() + "" : " ", oddRow);
+                addGridElement(element2.getSkill() + "", oddRow);
+                addGridElement(element2.getPointValue() + "", oddRow);
+                addGridElementLeftAlign(element2.getSpecialsString(), oddRow);
+                addConversionInfo(oddRow, conversionReport, entity, frame);
             }
-            addGridElement(UnitRoleHandler.getRoleFor(entity).toString(), oddRow);
-            addGridElement(element2.getStandardDamage() + "", oddRow);
-            addGridElement(element2.getOverheat() + "", oddRow);
-            addGridElement(element2.getArmor() + " / " + element2.getStructure(), oddRow);
-            addGridElement(element2.usesThreshold() ? element2.getThreshold() + "" : " ", oddRow);
-            addGridElement(element2.getSkill() + "", oddRow);
-            addGridElement(element2.getPointValue() + "", oddRow);
-            addGridElement(element2.getSpecialsString(), oddRow, JComponent.LEFT_ALIGNMENT);
-            addConversionInfo(oddRow, conversionReport);
         }
 
         SpringUtilities.makeCompactGrid(this, row, COLS, 5, 5, 1, 5);
     }
 
-    private void addConversionInfo(boolean coloredBG, FlexibleCalculationReport conversionReport) {
+    private void addConversionInfo(boolean coloredBG, FlexibleCalculationReport conversionReport,
+                                   Entity entity, JFrame frame) {
         var panel = new UIUtil.FixedYPanel();
         if (coloredBG) {
             panel.setBackground(UIUtil.alternateTableBGColor());
         }
         JButton button = new JButton("?");
-        button.addActionListener(e -> new ASConversionInfoDialog(null, conversionReport).setVisible(true));
+        button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport, entity).setVisible(true));
         panel.add(button);
         add(panel);
     }
@@ -102,7 +108,7 @@ public class AlphaStrikeViewPanel extends JPanel {
         add(panel);
     }
     
-    private void addGridElement(String text, boolean coloredBG, float alignment) {
+    private void addGridElementLeftAlign(String text, boolean coloredBG) {
         var panel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         if (coloredBG) {
             panel.setBackground(UIUtil.alternateTableBGColor());

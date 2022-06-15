@@ -32,6 +32,7 @@ final class ASMovementConverter {
     static Map<String, Integer> convertMovement(ASConverter.ConversionData conversionData) {
         Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
+        report.addEmptyLine();
         report.addSubHeader("Movement:");
 
         if (entity instanceof Infantry) {
@@ -280,7 +281,6 @@ final class ASMovementConverter {
     static int convertTMM(ASConverter.ConversionData conversionData) {
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
-        report.addSubHeader("TMM:");
 
         int base = element.getPrimaryMovementValue();
         if (element.isInfantry()) {
@@ -291,8 +291,7 @@ final class ASMovementConverter {
                 }
             }
         }
-        report.addLine("Primary Movement", "of " + element.getMovementAsString(), "= " + base);
-        return ASConverter.tmmForMovement(base, conversionData);
+        return ASConverter.tmmForMovement(base, report);
     }
 
     // Make non-instantiable

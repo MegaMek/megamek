@@ -20,7 +20,6 @@ package megamek.common.alphaStrike;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
 
@@ -72,11 +71,13 @@ public final class ASConverter {
         element.setRole(UnitRoleHandler.getRoleFor(undamagedEntity));
 
         conversionReport.addHeader("AlphaStrike Conversion for " + undamagedEntity.getShortName());
+        conversionReport.addEmptyLine();
+
         conversionReport.addSubHeader("Basic Info:");
-        conversionReport.addLine("Model:", element.getModel());
-        conversionReport.addLine("Chassis:", element.getChassis());
-        conversionReport.addLine("MUL ID:", Integer.toString(element.getMulId()));
-        conversionReport.addLine("Unit Role:", element.getRole().toString());
+        conversionReport.addLine("Chassis:", element.getChassis(), "");
+        conversionReport.addLine("Model:", element.getModel(), "");
+        conversionReport.addLine("MUL ID:", Integer.toString(element.getMulId()), "");
+        conversionReport.addLine("Unit Role:", element.getRole().toString(), "");
 
         // Type
         element.setType(ASUnitType.getUnitType(undamagedEntity));
@@ -103,10 +104,10 @@ public final class ASConverter {
         ASSpecialAbilityConverter.convertSpecialUnitAbilities(conversionData);
         initWeaponLocations(undamagedEntity, element);
         element.heat = new int[element.getRangeBands()];
-        ASDamageConverter.convertDamage(undamagedEntity, element);
+        ASDamageConverter.convertDamage(conversionData);
         ASSpecialAbilityConverter.finalizeSpecials(element);
         element.setPointValue(ASPointValueConverter.getPointValue(conversionData));
-        ASPointValueConverter.adjustPVforSkill(element);
+        ASPointValueConverter.adjustPVforSkill(element, conversionReport);
         return element;
     }
 
@@ -134,11 +135,10 @@ public final class ASConverter {
     }
 
     /**
-     * Returns the TMM for the given movement value in inches.
+     * Returns the TMM for the given movement value in inches. Writes report entries.
      * AlphaStrike Companion Errata v1.4, p.8
      */
-    static int tmmForMovement(int movement, ConversionData conversionData) {
-        CalculationReport report = conversionData.conversionReport;
+    static int tmmForMovement(int movement, CalculationReport report) {
         if (movement > 34) {
             report.addLine("TMM", "of " + movement, "5");
             return 5;
@@ -158,6 +158,14 @@ public final class ASConverter {
             report.addLine("TMM", "of " + movement, "0");
             return 0;
         }
+    }
+
+    /**
+     * Returns the TMM for the given movement value in inches.
+     * AlphaStrike Companion Errata v1.4, p.8
+     */
+    static int tmmForMovement(int movement) {
+        return tmmForMovement(movement, new DummyCalculationReport());
     }
 
     /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */

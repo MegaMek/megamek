@@ -18,6 +18,7 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.weapons.InfantryAttack;
@@ -25,6 +26,8 @@ import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.common.weapons.other.CLFussilade;
+
+import static megamek.client.ui.swing.calculationReport.CalculationReport.fmtDouble;
 
 import java.util.*;
 
@@ -41,7 +44,13 @@ final class ASDamageConverter {
             13, 14, 15, 16, 16, 17, 17, 17, 18, 18
     };
 
-    static void convertDamage(Entity entity, AlphaStrikeElement result) {
+    static void convertDamage(ASConverter.ConversionData conversionData) {
+        Entity entity = conversionData.entity;
+        AlphaStrikeElement result = conversionData.element;
+        CalculationReport report = conversionData.conversionReport;
+        report.addEmptyLine();
+        report.addSubHeader("Damage:");
+
         double[] baseDamage = new double[result.getRangeBands()];
         boolean hasTC = entity.hasTargComp();
         int[] ranges;
@@ -295,7 +304,7 @@ final class ASDamageConverter {
                 }
                 for (int r = 0; r < result.getRangeBands(); r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
-                    System.out.println(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": " + dam + " Mul: " + damageModifier);
+                    report.addLine(result.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": ", " Mul: " + damageModifier, "", dam);
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
                         // Standard Damage
                         result.weaponLocations[loc].addDamage(r, dam);
@@ -324,20 +333,19 @@ final class ASDamageConverter {
                 pointDefense += baseDamage[RANGE_BAND_SHORT] * damageModifier * locationMultiplier(entity, 0, mount);
             }
         }
-        System.out.println("END\n");
 
         if (entity.getEntityType() == Entity.ETYPE_INFANTRY) {
+            Infantry infantry = (Infantry) entity;
             int baseRange = 0;
-            if (((Infantry)entity).getSecondaryWeapon() != null && ((Infantry)entity).getSecondaryN() >= 2) {
-                baseRange = ((Infantry)entity).getSecondaryWeapon().getInfantryRange();
-            } else if (((Infantry)entity).getPrimaryWeapon() != null){
-                baseRange = ((Infantry)entity).getPrimaryWeapon().getInfantryRange();
+            if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryN() >= 2)) {
+                baseRange = infantry.getSecondaryWeapon().getInfantryRange();
+            } else if (infantry.getPrimaryWeapon() != null) {
+                baseRange = infantry.getPrimaryWeapon().getInfantryRange();
             }
             int range = baseRange * 3;
             for (int r = 0; r < STANDARD_RANGES.length; r++) {
                 if (range >= STANDARD_RANGES[r]) {
-                    result.weaponLocations[0].addDamage(r, getConvInfantryStandardDamage(
-                            (Infantry)entity));
+                    result.weaponLocations[0].addDamage(r, getConvInfantryStandardDamage(infantry));
                 } else {
                     break;
                 }
@@ -359,7 +367,7 @@ final class ASDamageConverter {
             result.addSPA(PNT, ASConverter.roundUp(pointDefense));
         }
 
-        adjustForHeat(entity, result);
+        adjustForHeat(conversionData);
 
         // Big Aero (using Arcs)
         if (result.usesArcs()) {
@@ -407,8 +415,6 @@ final class ASDamageConverter {
         }
 
         // Standard damage
-
-//        result.weaponLocations[0].standardDamage.forEach(System.out::println);
         result.setStandardDamage(ASDamageVector.createUpRndDmg(
                 result.weaponLocations[0].standardDamage, result.getRangeBands()));
 
@@ -568,18 +574,23 @@ final class ASDamageConverter {
      * the prerequisites for OVL are fulfilled.
      * Also assigns OVL where applicable.
      */
-    private static void adjustForHeat(Entity entity, AlphaStrikeElement element) {
+    private static void adjustForHeat(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+        Entity entity = conversionData.entity;
+        CalculationReport report = conversionData.conversionReport;
         if (!entity.tracksHeat()) {
             return;
         }
-        double totalFrontHeat = getHeatGeneration(entity, element,false, false);
+        int totalFrontHeat = getHeatGeneration(entity, element,false, false);
         int heatCapacity = getHeatCapacity(entity, element);
-//        System.out.println("Total Heat Medium Range: "+totalFrontHeat);
-//        System.out.println("Heat Capacity: "+heatCapacity);
+        report.addEmptyLine();
+        report.addSubHeader("Heat Adjustment:");
+        report.addLine("Heat Capacity: ", "", heatCapacity);
+        report.addLine("Total Heat M: ", "", totalFrontHeat);
         if (totalFrontHeat - 4 <= heatCapacity) {
+            report.addLine("", "No adjustment needed", "");
             return;
         }
-
 
         // Determine OV from the medium range damage
         //TODO: this should not be necessary:
@@ -587,18 +598,23 @@ final class ASDamageConverter {
             element.weaponLocations[0].standardDamage.add(0.0);
         }
         double nonRounded = element.weaponLocations[0].standardDamage.get(RANGE_BAND_MEDIUM);
-//        System.out.println("Total M damage before heat adjust: " + nonRounded);
         element.setOverheat(Math.min(heatDelta(nonRounded, heatCapacity, totalFrontHeat), 4));
-//        System.out.println("Total M damage before heat adjust: " + nonRounded);
+
+        report.addLine("Total Raw Dmg M: ", "", fmtDouble(nonRounded));
+        report.addLine("Total Adjusted Dmg M: ",
+                fmtDouble(nonRounded) + " x " + heatCapacity + " / (" + totalFrontHeat + " - 4)",
+                fmtDouble(nonRounded * heatCapacity / (totalFrontHeat - 4)));
+        report.addLine("Resulting Overheat", "OV " + element.getOverheat());
 
         // Determine OVL from long range damage and heat
         if (element.getOverheat() > 0 && element.usesOVL()) {
             double heatLong = getHeatGeneration(entity, element, false, true);
-//            System.out.println("Long Range Heat: " + heatLong);
+            report.addLine("Total Heat L:", "", heatLong);
             if (heatLong - 4 > heatCapacity) {
                 double nonRoundedL = element.weaponLocations[0].standardDamage.get(RANGE_BAND_LONG);
-//                System.out.println("Long Range Damage: " + nonRoundedL);
+                report.addLine("Total Damage L before Adjustment: ", "", nonRoundedL);
                 if (heatDelta(nonRoundedL, heatCapacity, heatLong) >= 1) {
+                    report.addLine("Resulting SPA", "OVL", "");
                     element.addSPA(OVL);
                 }
             }

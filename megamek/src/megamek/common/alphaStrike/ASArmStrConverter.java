@@ -22,6 +22,8 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import org.apache.logging.log4j.LogManager;
 
+import java.util.Locale;
+
 final class ASArmStrConverter {
 
     /** Mech Structure, AlphaStrike Companion, p.98 */
@@ -40,6 +42,7 @@ final class ASArmStrConverter {
     static int convertArmor(ASConverter.ConversionData conversionData) {
         Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
+        report.addEmptyLine();
         report.addSubHeader("Armor:");
 
         if (entity instanceof Infantry) {
@@ -85,7 +88,6 @@ final class ASArmStrConverter {
             report.addLine(entity.getLocationAbbr(loc),
                     calculation.isBlank() ? "" : calculation + entity.getArmor(loc),
                     "", + armorMod * entity.getArmor(loc));
-
             }
             if (entity.hasRearArmor(loc) && (entity.getArmor(loc, true) > 0)) {
                 armorPoints += armorMod * entity.getArmor(loc, true);
@@ -105,7 +107,7 @@ final class ASArmStrConverter {
             report.addLine("Modular Armor", "10 x " + count, "+ " + 10 * count);
         }
 
-        int displayArmorPoints = (int) Math.round(armorPoints * 10) / 10;
+        String displayArmorPoints = fmt(armorPoints);
 
         if (entity.isCapitalScale()) {
             int finalArmor = (int) Math.round(armorPoints * 0.33);
@@ -120,6 +122,14 @@ final class ASArmStrConverter {
         }
     }
 
+    public static String fmt(double d) {
+        if (d == (long) d) {
+            return String.format(Locale.US, "%1$,.0f", d);
+        } else {
+            return String.format(Locale.US, "%1$,.1f", d);
+        }
+    }
+
     /**
      * Determines the Aerospace Armor Threshold, AlphaStrike Companion p.95
      */
@@ -127,17 +137,18 @@ final class ASArmStrConverter {
         Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
-        report.addSubHeader("Threshold:");
 
         if (entity instanceof Aero) {
             int arcs = entity.isFighter() ? 1 : 4;
             int threshold = ASConverter.roundUp((double) element.getArmor() / 3 / arcs);
+            report.addEmptyLine();
+            report.addSubHeader("Threshold:");
+
             report.addLine("Threshold",
-                    "Armor " + element.getArmor() + " / 3 / " + arcs + " (#Arcs), round up",
-                    "= ", threshold);
+                    element.getArmor() + " / 3" + (element.usesArcs() ? " / " + arcs : "") + ", round up",
+                    "= " + threshold);
             return threshold;
         } else {
-            report.addLine("", "Not an Aero", "No Threshold");
             return -1;
         }
     }
@@ -148,6 +159,7 @@ final class ASArmStrConverter {
     static int convertStructure(ASConverter.ConversionData conversionData) {
         Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
+        report.addEmptyLine();
         report.addSubHeader("Structure:");
 
         int structure;
@@ -201,6 +213,7 @@ final class ASArmStrConverter {
             }
             return (int) Math.ceil(struct / divisor);
         } else if (entity instanceof Aero) {
+            report.addLine("Aero", ((Aero) entity).getSI() + " x 0.5, round up", "= " + (int) Math.ceil(0.5 * ((Aero) entity).getSI()));
             return (int) Math.ceil(0.5 * ((Aero) entity).getSI());
         }
 

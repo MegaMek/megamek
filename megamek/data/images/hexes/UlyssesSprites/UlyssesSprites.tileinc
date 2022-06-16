@@ -1,0 +1,32 @@
+# format is:
+# base/super <elevation> <terrains> <theme> <image>
+#
+# <elevation> can be * (any elevation), or a specific hex level.  The closest match will
+#   be used if there isn't an exact elevation match.
+# <terrains> can be a list separated by ; character. In this case, all the
+#   terrains must match.
+# <theme> is either an empty string (for the default terrain image), or the name of the
+#   theme for which this image is used instead.  E.G. "snow"
+# <image> can be a list separated by ; character. In this case, they are shuffled
+#   for each hex painted.
+#   Each image can be just a cut-out part of a larger image. The syntax for this is:
+#   "imagefile(X,Y-W,H)", with X and Y being the pixel positions of the upper left corner
+#   and W and H the width and height, respectively (typically 84 and 72).
+#
+# Image Size:
+#   Hexes in MegaMek are drawn to be 84x72 pixels.  In general, hex textures follow this size.
+#   The data/images/misc directory contains an example image that shows hex borders to add in creating hex textures.
+#   Textures larger than 84x72 are also supported and can be specified exactly like regular 84x72 images.
+#
+# Important:
+#   when multiple "super" images are used in a hex, the first one in this file is drawn first.
+#   Themed "super" images must appear before the default ones
+
+#ROUGH
+super * "rough:1;fluff:1" "" "UlyssesSprites/Rough/Rough-Fluff-DragonsTeeth.png"
+super * "rough:2;fluff:1" "" "UlyssesSprites/Rough/Rough-Fluff-DragonsTeeth.png"
+super * "rough:*;fluff:1" "" "UlyssesSprites/Rough/Rough-Fluff-DragonsTeeth.png"
+
+super * "rough:1;fluff:2" "" "UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods1.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods2.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods3.png;"
+super * "rough:2;fluff:2" "" "UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods1.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods2.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods3.png;"
+super * "rough:*;fluff:2" "" "UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods1.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods2.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods3.png;"

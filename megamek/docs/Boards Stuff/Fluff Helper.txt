@@ -18,6 +18,7 @@ fluff:93:1-14 - Gardens
 Rough ---------------
 
 rough:1,2,*,fluff:1 - Dragon's Teeth
+rough:1,2,*,fluff:2 - Burned/felled woods
 
 Roads ---------------
 

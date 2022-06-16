@@ -26,3 +26,7 @@
 super * "rough:1;fluff:1" "" "UlyssesSprites/Rough/Rough-Fluff-DragonsTeeth.png"
 super * "rough:2;fluff:1" "" "UlyssesSprites/Rough/Rough-Fluff-DragonsTeeth.png"
 super * "rough:*;fluff:1" "" "UlyssesSprites/Rough/Rough-Fluff-DragonsTeeth.png"
+
+super * "rough:1;fluff:2" "" "UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods1.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods2.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods3.png;"
+super * "rough:2;fluff:2" "" "UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods1.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods2.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods3.png;"
+super * "rough:*;fluff:2" "" "UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods1.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods2.png;UlyssesSprites/Rough/Rough-Fluff-BurnedFelledWoods3.png;"

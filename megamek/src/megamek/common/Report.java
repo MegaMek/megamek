@@ -341,12 +341,12 @@ public class Report implements Serializable {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
 
-            Color ownerColor = entity.getOwner().getColour().getColour();;
+            Color ownerColor = entity.getOwner().getColour().getColour();
             String unitName =
                     href(ENTITY_LINK + entity.getId(), entity.getShortName());
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
-                unitName += fgColor(ownerColor, ' '+ entity.getCrew().getNickname().toUpperCase());
+                unitName += fgColor(ownerColor, ' ' :wq+ entity.getCrew().getNickname().toUpperCase());
             }
 
             add(unitName, true);

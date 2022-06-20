@@ -401,7 +401,6 @@ final class ASDamageConverter {
                 } else if ((spa == LRM) || (spa == AC) || (spa == IATM)) {
                     result.addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, result.getRangeBands()));
                 } else if ((spa == FLK) || (spa == TOR)) {
-//                    System.out.println(spa.toString() + ": " + dmg);
                     result.addSPA(spa, ASDamageVector.createNormRndDmg(dmg, result.getRangeBands()));
                 } else if (spa == REL) {
                     result.addSPA(spa);
@@ -622,7 +621,7 @@ final class ASDamageConverter {
 
         // Adjust all weapon damages (L/E depending on OVL)
         int maxAdjustmentRange = 1 + (element.hasSPA(OVL) ? RANGE_BAND_EXTREME : RANGE_BAND_MEDIUM);
-        double frontadjustment = heatCapacity / (totalFrontHeat - 4);
+        double frontadjustment = (double) heatCapacity / (totalFrontHeat - 4);
         double rearHeat = getHeatGeneration(entity, element,true, false);
         double rearAdjustment = rearHeat - 4 > heatCapacity ? heatCapacity / (rearHeat - 4) : 1;
         for (int loc = 0; loc < element.weaponLocations.length; loc++) {

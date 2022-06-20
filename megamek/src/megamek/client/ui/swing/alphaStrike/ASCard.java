@@ -49,13 +49,15 @@ public class ASCard extends JComponent {
     private AlphaStrikeElement element;
 
     Font baseFont = new Font("Exo", Font.PLAIN, 14);
+    Font boldFont = baseFont.deriveFont(Font.BOLD);
     Font modelFont = baseFont.deriveFont(30f);
-    Font chassisFont = baseFont.deriveFont(70f).deriveFont(Font.BOLD);
-    Font headerFont = baseFont.deriveFont(32f).deriveFont(Font.BOLD);
-    Font font = baseFont.deriveFont(35f).deriveFont(Font.BOLD);
+    Font chassisFont = boldFont.deriveFont(70f);
+    Font headerFont = boldFont.deriveFont(32f);
+    Font font = boldFont.deriveFont(35f);
     Font specialsFont = baseFont.deriveFont(20f);
     Font pointValueHeaderFont = headerFont.deriveFont(40f);
     Font pointValueFont = font.deriveFont(50f);
+    Font smallerFont = boldFont.deriveFont(16f);
 
     StringDrawer.StringDrawerConfig valueConfig = new StringDrawer.StringDrawerConfig().centerY()
             .color(Color.BLACK).font(font).outline(Color.WHITE, 1f);
@@ -126,8 +128,8 @@ public class ASCard extends JComponent {
         // Border
         g2D.setColor(Color.BLACK);
         g2D.fillRect(0, 0, WIDTH, BORDER_WIDTH);
-        g2D.fillRect(WIDTH - BORDER_WIDTH, 0, WIDTH, HEIGHT);
-        g2D.fillRect(0, HEIGHT - BORDER_WIDTH, WIDTH, HEIGHT);
+        g2D.fillRect(WIDTH - BORDER_WIDTH, 0, BORDER_WIDTH, HEIGHT);
+        g2D.fillRect(0, HEIGHT - BORDER_WIDTH, WIDTH, BORDER_WIDTH);
         g2D.fillRect(0, 0, BORDER_WIDTH, HEIGHT);
 
         if (element == null) {
@@ -214,8 +216,7 @@ public class ASCard extends JComponent {
         g.setColor(Color.BLACK);
         g.drawRoundRect(x, y, BOX_WIDTH_MEK_WIDE, 88, BOX_CORNER, BOX_CORNER);
 
-        new StringDrawer("DAMAGE").at(x + 15, y + 44).center().rotate(-Math.PI / 2)
-                .font(new Font(Font.SANS_SERIF, Font.BOLD, 16)).draw(g);
+        new StringDrawer("DAMAGE").at(x + 15, y + 44).center().rotate(-Math.PI / 2).font(smallerFont).draw(g);
 
         if (element != null) {
             if (!element.usesArcs()) {
@@ -384,7 +385,7 @@ public class ASCard extends JComponent {
 
             int linedelta = g.getFontMetrics(specialsFont).getHeight();
             int line = 1;
-            String[] tokens = element.getSpecialsString().split(",");
+            String[] tokens = element.getSpecialsString().split(", ");
             int index = 0;
             String fittingLine = "SPECIAL: ";
 
@@ -427,6 +428,40 @@ public class ASCard extends JComponent {
         g.drawRoundRect(591, 442, 422, 180, BOX_CORNER, BOX_CORNER);
 
         if (element != null) {
+            new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).draw(g);
+
+            new StringDrawer("ENGINE").at(722, 509).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("+1 Heat/Firing Weapons").at(754, 509).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 509);
+
+            new StringDrawer("FIRE CONTROL").at(722, 538).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("+2 To-Hit Each").at(834, 538).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 538);
+            drawDamagePip(g, 755, 538);
+            drawDamagePip(g, 782, 538);
+            drawDamagePip(g, 809, 538);
+
+            new StringDrawer("MP").at(722, 565).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("1/2 MV Each").at(834, 565).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 565);
+            drawDamagePip(g, 755, 565);
+            drawDamagePip(g, 782, 565);
+            drawDamagePip(g, 809, 565);
+
+            new StringDrawer("WEAPONS").at(722, 593).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("-1 Damage Each").at(834, 593).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 593);
+            drawDamagePip(g, 755, 593);
+            drawDamagePip(g, 782, 593);
+            drawDamagePip(g, 809, 593);
         }
+    }
+
+    private void drawDamagePip(Graphics2D g, int x, int y) {
+        int d = 20;
+        g.setColor(Color.WHITE);
+        g.fillOval(x, y - d / 2, d, d);
+        g.setColor(Color.BLACK);
+        g.drawOval(x, y - d / 2, d, d);
     }
 }

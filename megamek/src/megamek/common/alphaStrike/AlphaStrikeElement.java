@@ -487,16 +487,25 @@ public class AlphaStrikeElement {
 
     /**
      * Returns a formatted SPA string for this AS element. The string is formatted in the way SPAs are
-     * printed on an AS element's card or summary.
+     * printed on an AS element's card or summary with a ', ' between SPAs.
      *
      * @return A formatted Special Unit Ability string for this AS element
      */
     public String getSpecialsString() {
+        return getSpecialsString(", ");
+    }
+
+    /**
+     * Returns a formatted SPA string for this AS element. The given delimiter is inserted between SPAs.
+     *
+     * @return A formatted Special Unit Ability string for this AS element
+     */
+    public String getSpecialsString(String delimiter) {
         return specialUnitAbilities.keySet().stream()
                 .filter(this::showSpecial)
                 .map(spa -> formatSPAString(spa, getSPA(spa)))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining(delimiter));
     }
 
     /**

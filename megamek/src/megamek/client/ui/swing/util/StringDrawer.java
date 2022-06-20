@@ -36,6 +36,7 @@ public class StringDrawer {
     private float outlineWidth = 0;
     private boolean centerX = false;
     private boolean centerY = false;
+    private boolean rightAlign = false;
     private Font font = null;
     private double angle = 0;
 
@@ -60,11 +61,18 @@ public class StringDrawer {
 
     public StringDrawer centerX() {
         centerX = true;
+        rightAlign = false;
         return this;
     }
 
     public StringDrawer centerY() {
         centerY = true;
+        return this;
+    }
+
+    public StringDrawer rightAlign() {
+        rightAlign = true;
+        centerX = false;
         return this;
     }
 
@@ -132,6 +140,9 @@ public class StringDrawer {
 
         int posX = centerX ? x - bounds.width / 2 - bounds.x : x;
         int posY = centerY ? y + boundsUpperCase.height / 2 : y;
+        if (rightAlign) {
+            posX = x - bounds.width - bounds.x;
+        }
         if (angle != 0) {
             g2D.translate(posX + bounds.width / 2, posY - bounds.height / 2);
             g2D.rotate(angle);

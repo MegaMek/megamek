@@ -129,7 +129,7 @@ public final class ASConverter {
      * false for entities of some special types such as TeleMissile or GunEmplacement. 
      */
     public static boolean canConvert(Entity entity) {
-        return !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
+        return !(entity == null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
                 || (entity instanceof EscapePods) || (entity instanceof EjectedCrew)
                 || (entity instanceof ArmlessMech) || (entity instanceof GunEmplacement));
     }

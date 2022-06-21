@@ -192,7 +192,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions")); 
     private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); 
     ArrayList<MapPreviewButton> mapButtons = new ArrayList<>(20);
-    MapSettings mapSettings;
+    private MapSettings mapSettings;
     private JPanel panGroundMap;
     @SuppressWarnings("rawtypes")
     private JComboBox<Comparable> comMapSizes;
@@ -581,7 +581,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     private void setupMapPanel() {
-        mapSettings = MapSettings.getInstance(clientgui.getClient().getMapSettings());
+        setMapSettings(MapSettings.getInstance(clientgui.getClient().getMapSettings()));
         setupMapAssembly();
         refreshMapUI();
 
@@ -795,9 +795,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     protected List<String> getSearchedItems(String searchString) {
         String lowerCaseSearchString = searchString.toLowerCase();
         String[] searchStrings = lowerCaseSearchString.split(";");
-        List<String> result = mapSettings.getBoardsAvailableVector();
+        List<String> result = getMapSettings().getBoardsAvailableVector();
         for (String token : searchStrings) {
-            List<String> byFilename = mapSettings.getBoardsAvailableVector().stream()
+            List<String> byFilename = getMapSettings().getBoardsAvailableVector().stream()
                     .filter(b -> b.toLowerCase().contains(token) && isBoardFile(b))
                     .collect(Collectors.toList());
             List<String> byTags = boardTags.entrySet().stream()
@@ -818,8 +818,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private double getDividerLocation() {
         double base = 0.3;
-        int width = mapSettings.getBoardWidth() * mapSettings.getMapWidth();
-        int height = mapSettings.getBoardHeight() * mapSettings.getMapHeight();
+        int width = getMapSettings().getBoardWidth() * getMapSettings().getMapWidth();
+        int height = getMapSettings().getBoardHeight() * getMapSettings().getMapHeight();
         int wAspect = Math.max(1, width / height + 1);
         return Math.min(base + wAspect * 0.05, 0.5);
     }
@@ -828,9 +828,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void refreshMapChoice() {
         // refresh UI possibly from a server update
         JToggleButton button = butGroundMap;
-        if (mapSettings.getMedium() == MapSettings.MEDIUM_ATMOSPHERE) {
+        if (getMapSettings().getMedium() == MapSettings.MEDIUM_ATMOSPHERE) {
             button = butLowAtmoMap;
-        } else if (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+        } else if (getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE) {
             button = butSpaceMap;
         }
         
@@ -860,8 +860,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * changes or result in packets to the server. 
      */
     private void refreshMapUI() {
-        boolean inSpace = mapSettings.getMedium() == MapSettings.MEDIUM_SPACE;
-        boolean onGround = mapSettings.getMedium() == MapSettings.MEDIUM_GROUND;
+        boolean inSpace = getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE;
+        boolean onGround = getMapSettings().getMedium() == MapSettings.MEDIUM_GROUND;
         boolean customSize = comMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"));
         lisBoardsAvailable.setEnabled(!inSpace);
         mapIcons.clear();
@@ -877,8 +877,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         lblBoardSize.setEnabled(!inSpace);
         butSaveMapSetup.setEnabled(!inSpace);
         butLoadMapSetup.setEnabled(!inSpace);
-        butMapShrinkW.setEnabled(mapSettings.getMapWidth() > 1);
-        butMapShrinkH.setEnabled(mapSettings.getMapHeight() > 1);
+        butMapShrinkW.setEnabled(getMapSettings().getMapWidth() > 1);
+        butMapShrinkH.setEnabled(getMapSettings().getMapHeight() > 1);
         
         butGroundMap.removeActionListener(lobbyListener);
         butLowAtmoMap.removeActionListener(lobbyListener);
@@ -900,10 +900,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         fldMapHeight.removeActionListener(lobbyListener);
         fldSpaceBoardWidth.removeActionListener(lobbyListener);
         fldSpaceBoardHeight.removeActionListener(lobbyListener);
-        fldMapWidth.setText(Integer.toString(mapSettings.getMapWidth()));
-        fldMapHeight.setText(Integer.toString(mapSettings.getMapHeight()));
-        fldSpaceBoardWidth.setText(Integer.toString(mapSettings.getBoardWidth()));
-        fldSpaceBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
+        fldMapWidth.setText(Integer.toString(getMapSettings().getMapWidth()));
+        fldMapHeight.setText(Integer.toString(getMapSettings().getMapHeight()));
+        fldSpaceBoardWidth.setText(Integer.toString(getMapSettings().getBoardWidth()));
+        fldSpaceBoardHeight.setText(Integer.toString(getMapSettings().getBoardHeight()));
         fldMapWidth.addActionListener(lobbyListener);
         fldMapHeight.addActionListener(lobbyListener);
         fldSpaceBoardWidth.addActionListener(lobbyListener);
@@ -923,14 +923,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         lisBoardsAvailable.setFixedCellWidth(-1);
         List<String> availBoards = new ArrayList<>(); 
         availBoards.add(MapSettings.BOARD_GENERATED);
-        availBoards.addAll(mapSettings.getBoardsAvailableVector());
+        availBoards.addAll(getMapSettings().getBoardsAvailableVector());
         refreshBoardTags();
         refreshBoardsAvailable(availBoards);
     }
     
     private void refreshBoardTags() {
         boardTags.clear();
-        for (String boardName : mapSettings.getBoardsAvailableVector()) {
+        for (String boardName : getMapSettings().getBoardsAvailableVector()) {
             File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
             Set<String> tags = Board.getTags(boardFile);
             boardTags.put(boardName, String.join("||", tags).toLowerCase());
@@ -954,7 +954,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
     
     public boolean isMultipleBoards() {
-        return mapSettings.getMapHeight() * mapSettings.getMapWidth() > 1;
+        return getMapSettings().getMapHeight() * getMapSettings().getMapWidth() > 1;
     }
     
     MapSettings oldMapSettings = MapSettings.getInstance();
@@ -970,41 +970,41 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         Dimension buttonSize = null;
 
         // If buttons are unused, remove their image so that they update when they're used once more
-        if (mapSettings.getMapHeight() * mapSettings.getMapWidth() < mapButtons.size()) {
-            for (MapPreviewButton button: mapButtons.subList(mapSettings.getMapHeight() * mapSettings.getMapWidth(), mapButtons.size())) {
+        if (getMapSettings().getMapHeight() * getMapSettings().getMapWidth() < mapButtons.size()) {
+            for (MapPreviewButton button: mapButtons.subList(getMapSettings().getMapHeight() * getMapSettings().getMapWidth(), mapButtons.size())) {
                 button.reset();
             }
         }
 
         // Add new map preview buttons if the map has grown
-        while (mapSettings.getMapHeight() * mapSettings.getMapWidth() > mapButtons.size()) {
+        while (getMapSettings().getMapHeight() * getMapSettings().getMapWidth() > mapButtons.size()) {
             mapButtons.add(new MapPreviewButton(this));
         }
 
         // Re-add the buttons to the panel and update them as necessary
-        for (int i = 0; i < mapSettings.getMapHeight(); i++) {
+        for (int i = 0; i < getMapSettings().getMapHeight(); i++) {
             JPanel row = new FixedYPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
             panMapButtons.add(row);
-            for (int j = 0; j < mapSettings.getMapWidth(); j++) {
-                int index = i * mapSettings.getMapWidth() + j;
+            for (int j = 0; j < getMapSettings().getMapWidth(); j++) {
+                int index = i * getMapSettings().getMapWidth() + j;
                 MapPreviewButton button = mapButtons.get(index);
                 button.setIndex(index);
                 row.add(button);
 
                 // Update the board base image if it's generated and the settings have changed
                 // or the board name has changed
-                String boardName = mapSettings.getBoardsSelectedVector().get(index);
+                String boardName = getMapSettings().getBoardsSelectedVector().get(index);
                 if (!button.getBoard().equals(boardName) 
-                        || oldMapSettings.getMedium() != mapSettings.getMedium()
-                        || (!mapSettings.equalMapGenParameters(oldMapSettings) 
-                                && mapSettings.getMapWidth() == oldMapSettings.getMapWidth()
-                                && mapSettings.getMapHeight() == oldMapSettings.getMapHeight())) {
+                        || oldMapSettings.getMedium() != getMapSettings().getMedium()
+                        || (!getMapSettings().equalMapGenParameters(oldMapSettings)
+                                && getMapSettings().getMapWidth() == oldMapSettings.getMapWidth()
+                                && getMapSettings().getMapHeight() == oldMapSettings.getMapHeight())) {
                     Board buttonBoard;
                     Image image;
                     // Generated and space boards use a generated example
                     if (boardName.startsWith(MapSettings.BOARD_GENERATED) 
-                            || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
-                        buttonBoard = BoardUtilities.generateRandom(mapSettings);
+                            || (getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE)) {
+                        buttonBoard = BoardUtilities.generateRandom(getMapSettings());
                         image = Minimap.getMinimapImageMaxZoom(buttonBoard);
                     } else { 
                         String boardForImage = boardName;
@@ -1017,7 +1017,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                         // for a rotation board, set a flag (when appropriate) and fix the name
                         if (boardForImage.startsWith(Board.BOARD_REQUEST_ROTATION)) {
                             // only rotate boards with an even width
-                            if ((mapSettings.getBoardWidth() % 2) == 0) {
+                            if ((getMapSettings().getBoardWidth() % 2) == 0) {
                                 rotateBoard = true;
                             }
                             
@@ -1033,11 +1033,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                                 buttonBoard.load(is, errs, true);
                                 BoardUtilities.flip(buttonBoard, rotateBoard, rotateBoard);
                             } catch (IOException ex) {
-                                buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+                                buttonBoard = Board.createEmptyBoard(getMapSettings().getBoardWidth(), getMapSettings().getBoardHeight());
                             }
                             image = Minimap.getMinimapImageMaxZoom(buttonBoard);
                         } else {
-                            buttonBoard = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+                            buttonBoard = Board.createEmptyBoard(getMapSettings().getBoardWidth(), getMapSettings().getBoardHeight());
                             BufferedImage emptyBoardMap = Minimap.getMinimapImageMaxZoom(buttonBoard);
                             markServerSideBoard(emptyBoardMap);
                             image = emptyBoardMap;
@@ -1049,7 +1049,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 button.scheduleRescale();
             }
         }
-        oldMapSettings = MapSettings.getInstance(mapSettings);
+        oldMapSettings = MapSettings.getInstance(getMapSettings());
         
         if (buttonSize != null) {
             for (MapPreviewButton button: mapButtons) {
@@ -1061,7 +1061,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panMapButtons.add(Box.createVerticalGlue());
         panMapButtons.setVisible(true);
 
-        lblBoardsAvailable.setText(mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " "
+        lblBoardsAvailable.setText(getMapSettings().getBoardWidth() + "x" + getMapSettings().getBoardHeight() + " "
                 + Messages.getString("BoardSelectionDialog.mapsAvailable"));
         comMapSizes.removeActionListener(lobbyListener);
         int items = comMapSizes.getItemCount();
@@ -1070,7 +1070,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         for (int i = 0; i < (items - 1); i++) {
             BoardDimensions size = (BoardDimensions) comMapSizes.getItemAt(i);
 
-            if ((size.width() == mapSettings.getBoardWidth()) && (size.height() == mapSettings.getBoardHeight())) {
+            if ((size.width() == getMapSettings().getBoardWidth()) && (size.height() == getMapSettings().getBoardHeight())) {
                 comMapSizes.setSelectedIndex(i);
                 mapSizeSelected = true;
             }
@@ -1112,19 +1112,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * a choice of the surprise maps.
      */
     public Board getPossibleGameBoard(boolean onlyFixedBoards) {
-        mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-        Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
+        getMapSettings().replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
+        Board[] sheetBoards = new Board[getMapSettings().getMapWidth() * getMapSettings().getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
-        for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings.getMapHeight()); i++) {
+        for (int i = 0; i < (getMapSettings().getMapWidth() * getMapSettings().getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             
-            String name = mapSettings.getBoardsSelectedVector().get(i);
+            String name = getMapSettings().getBoardsSelectedVector().get(i);
             if ((name.startsWith(MapSettings.BOARD_GENERATED) || name.startsWith(MapSettings.BOARD_SURPRISE))
                     && onlyFixedBoards) {
-                sheetBoards[i] = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+                sheetBoards[i] = Board.createEmptyBoard(getMapSettings().getBoardWidth(), getMapSettings().getBoardHeight());
             } else if (name.startsWith(MapSettings.BOARD_GENERATED) 
-                    || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
-                sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
+                    || (getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE)) {
+                sheetBoards[i] = BoardUtilities.generateRandom(getMapSettings());
             } else {
                 boolean flipBoard = false;
                 
@@ -1134,7 +1134,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     name = boardList.get(rnd);
                 } else if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
                     // only rotate boards with an even width
-                    if ((mapSettings.getBoardWidth() % 2) == 0) {
+                    if ((getMapSettings().getBoardWidth() % 2) == 0) {
                         flipBoard = true;
                     }
                     name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
@@ -1145,9 +1145,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
 
-        return BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
-                mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards, rotateBoard,
-                mapSettings.getMedium());
+        return BoardUtilities.combine(getMapSettings().getBoardWidth(), getMapSettings().getBoardHeight(),
+                getMapSettings().getMapWidth(), getMapSettings().getMapHeight(), sheetBoards, rotateBoard,
+                getMapSettings().getMedium());
     }
 
     /**
@@ -1609,8 +1609,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         if (board.contains("\n")) {
             board = MapSettings.BOARD_SURPRISE + board;
         }
-        mapSettings.getBoardsSelectedVector().set(mapButtons.indexOf(button), board);
-        clientgui.getClient().sendMapSettings(mapSettings);
+        getMapSettings().getBoardsSelectedVector().set(mapButtons.indexOf(button), board);
+        clientgui.getClient().sendMapSettings(getMapSettings());
         if (boardPreviewW.isVisible()) {
             previewGameBoard();
         }
@@ -1758,7 +1758,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 }
                 
             } else if (ev.getSource() == butRandomMap) {
-                RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, ChatLounge.this, clientgui.getClient(), mapSettings);
+                RandomMapDialog rmd = new RandomMapDialog(clientgui.frame, ChatLounge.this, clientgui.getClient(), getMapSettings());
                 rmd.activateDialog(clientgui.getBoardView().getTilesetManager().getThemes());
                 
             } else if (ev.getSource().equals(butBoardPreview)) {
@@ -1769,38 +1769,38 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     refreshMapUI();
                 } else if (comMapSizes.getSelectedItem() != null) {
                     BoardDimensions size = (BoardDimensions) comMapSizes.getSelectedItem();
-                    mapSettings.setBoardSize(size.width(), size.height());
+                    getMapSettings().setBoardSize(size.width(), size.height());
                     resetAvailBoardSelection = true;
                     resetSelectedBoards = true;
-                    clientgui.getClient().sendMapSettings(mapSettings);
+                    clientgui.getClient().sendMapSettings(getMapSettings());
                 } 
                 
             } else if (ev.getSource() == butGroundMap) {
-                mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
+                getMapSettings().setMedium(MapSettings.MEDIUM_GROUND);
                 refreshMapUI();
-                clientgui.getClient().sendMapSettings(mapSettings);
+                clientgui.getClient().sendMapSettings(getMapSettings());
                 
             } else if (ev.getSource() == butSpaceMap) {
-                mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
-                mapSettings.setBoardSize(50, 50);
-                mapSettings.setMapSize(1, 1);
+                getMapSettings().setMedium(MapSettings.MEDIUM_SPACE);
+                getMapSettings().setBoardSize(50, 50);
+                getMapSettings().setMapSize(1, 1);
                 refreshMapUI();
-                clientgui.getClient().sendMapDimensions(mapSettings);
+                clientgui.getClient().sendMapDimensions(getMapSettings());
                 
             } else if (ev.getSource() == butLowAtmoMap) {
-                mapSettings.setMedium(MapSettings.MEDIUM_ATMOSPHERE);
+                getMapSettings().setMedium(MapSettings.MEDIUM_ATMOSPHERE);
                 refreshMapUI();
-                clientgui.getClient().sendMapSettings(mapSettings);
+                clientgui.getClient().sendMapSettings(getMapSettings());
                 
             } else if (ev.getSource() == butAddX || ev.getSource() == butMapGrowW) {
-                int newMapWidth = mapSettings.getMapWidth() + 1;
-                mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
-                clientgui.getClient().sendMapDimensions(mapSettings);
+                int newMapWidth = getMapSettings().getMapWidth() + 1;
+                getMapSettings().setMapSize(newMapWidth, getMapSettings().getMapHeight());
+                clientgui.getClient().sendMapDimensions(getMapSettings());
                 
             } else if (ev.getSource() == butAddY || ev.getSource() == butMapGrowH) {
-                int newMapHeight = mapSettings.getMapHeight() + 1;
-                mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
-                clientgui.getClient().sendMapDimensions(mapSettings);
+                int newMapHeight = getMapSettings().getMapHeight() + 1;
+                getMapSettings().setMapSize(getMapSettings().getMapWidth(), newMapHeight);
+                clientgui.getClient().sendMapDimensions(getMapSettings());
                 
             } else if (ev.getSource() == butSaveMapSetup) {
                 saveMapSetup();
@@ -1821,17 +1821,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 setManualBoardHeight();
                 
             } else if (ev.getSource() == butMapShrinkW) {
-                if (mapSettings.getMapWidth() > 1) {
-                    int newMapWidth = mapSettings.getMapWidth() - 1;
-                    mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
-                    clientgui.getClient().sendMapDimensions(mapSettings);
+                if (getMapSettings().getMapWidth() > 1) {
+                    int newMapWidth = getMapSettings().getMapWidth() - 1;
+                    getMapSettings().setMapSize(newMapWidth, getMapSettings().getMapHeight());
+                    clientgui.getClient().sendMapDimensions(getMapSettings());
                 }
                 
             } else if (ev.getSource() == butMapShrinkH) {
-                if (mapSettings.getMapHeight() > 1) {
-                    int newMapHeight = mapSettings.getMapHeight() - 1;
-                    mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
-                    clientgui.getClient().sendMapDimensions(mapSettings);
+                if (getMapSettings().getMapHeight() > 1) {
+                    int newMapHeight = getMapSettings().getMapHeight() - 1;
+                    getMapSettings().setMapSize(getMapSettings().getMapWidth(), newMapHeight);
+                    clientgui.getClient().sendMapDimensions(getMapSettings());
                 }
                 
             } else if (ev.getSource() == butDetach) {
@@ -1966,7 +1966,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
         try (OutputStream os = new FileOutputStream(selectedFile)) {
-            MapSetup.save(os, mapSettings);
+            MapSetup.save(os, getMapSettings());
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame, 
                     "There was a problem while saving the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -1996,10 +1996,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         try (InputStream os = new FileInputStream(fc.getSelectedFile())) {
             MapSetup setup = MapSetup.load(os);
-            mapSettings.setMapSize(setup.getMapWidth(), setup.getMapHeight());
-            mapSettings.setBoardSize(setup.getBoardWidth(), setup.getBoardHeight());
-            mapSettings.setBoardsSelectedVector(setup.getBoards());
-            clientgui.getClient().sendMapSettings(mapSettings);
+            getMapSettings().setMapSize(setup.getMapWidth(), setup.getMapHeight());
+            getMapSettings().setBoardSize(setup.getBoardWidth(), setup.getBoardHeight());
+            getMapSettings().setBoardsSelectedVector(setup.getBoards());
+            clientgui.getClient().sendMapSettings(getMapSettings());
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame, 
                     "There was a problem while loading the map setup!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -2046,8 +2046,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         try {
             int newMapWidth = Integer.parseInt(fldMapWidth.getText());
             if (newMapWidth >= 1 && newMapWidth <= 20) {
-                mapSettings.setMapSize(newMapWidth, mapSettings.getMapHeight());
-                clientgui.getClient().sendMapDimensions(mapSettings);
+                getMapSettings().setMapSize(newMapWidth, getMapSettings().getMapHeight());
+                clientgui.getClient().sendMapDimensions(getMapSettings());
             }
         } catch (NumberFormatException e) {
             // no number, no new map width
@@ -2058,8 +2058,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         try {
             int newMapHeight = Integer.parseInt(fldMapHeight.getText());
             if (newMapHeight >= 1 && newMapHeight <= 20) {
-                mapSettings.setMapSize(mapSettings.getMapWidth(), newMapHeight);
-                clientgui.getClient().sendMapDimensions(mapSettings);
+                getMapSettings().setMapSize(getMapSettings().getMapWidth(), newMapHeight);
+                clientgui.getClient().sendMapDimensions(getMapSettings());
             }
         } catch (NumberFormatException e) {
             // no number, no new map height
@@ -2070,8 +2070,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         try {
             int newBoardWidth = Integer.parseInt(fldSpaceBoardWidth.getText());
             if (newBoardWidth >= 5 && newBoardWidth <= 200) {
-                mapSettings.setBoardSize(newBoardWidth, mapSettings.getBoardHeight());
-                clientgui.getClient().sendMapSettings(mapSettings);
+                getMapSettings().setBoardSize(newBoardWidth, getMapSettings().getBoardHeight());
+                clientgui.getClient().sendMapSettings(getMapSettings());
             }
         } catch (NumberFormatException e) {
             // no number, no new board width
@@ -2082,8 +2082,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         try {
             int newBoardHeight = Integer.parseInt(fldSpaceBoardHeight.getText());
             if (newBoardHeight >= 5 && newBoardHeight <= 200) {
-                mapSettings.setBoardSize(mapSettings.getBoardWidth(), newBoardHeight);
-                clientgui.getClient().sendMapSettings(mapSettings);
+                getMapSettings().setBoardSize(getMapSettings().getBoardWidth(), newBoardHeight);
+                clientgui.getClient().sendMapSettings(getMapSettings());
             }
         } catch (NumberFormatException e) {
             // no number, no new board height
@@ -2096,7 +2096,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     @Override
     public void updateMapSettings(MapSettings newSettings) {
-        mapSettings = MapSettings.getInstance(newSettings);
+        setMapSettings(MapSettings.getInstance(newSettings));
         refreshMapButtons();
         refreshMapChoice();
         refreshMapUI();
@@ -2127,8 +2127,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         lblTechLevel.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear")));
         
         txt = Messages.getString("ChatLounge.MapSummary"); 
-        txt += (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) + " x " 
-                + (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
+        txt += (getMapSettings().getBoardWidth() * getMapSettings().getMapWidth()) + " x "
+                + (getMapSettings().getBoardHeight() * getMapSettings().getMapHeight());
         if (butGroundMap.isSelected()) {
             txt += " Ground Map";
         } else if (butLowAtmoMap.isSelected()) {
@@ -2141,7 +2141,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         StringBuilder selectedMaps = new StringBuilder();
         selectedMaps.append(Messages.getString("ChatLounge.MapSummarySelectedMaps"));
-        for (String map: mapSettings.getBoardsSelectedVector()) {
+        for (String map: getMapSettings().getBoardsSelectedVector()) {
             selectedMaps.append("&nbsp;&nbsp;");
             if (map.startsWith(MapSettings.BOARD_SURPRISE)) {
                 selectedMaps.append(MapSettings.BOARD_SURPRISE);
@@ -2400,6 +2400,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         boolean isBlindDrop = opts.booleanOption(OptionsConstants.BASE_BLIND_DROP)
                 || opts.booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
         return !player.isEnemyOf(localPlayer()) || !isBlindDrop;
+    }
+
+    public MapSettings getMapSettings() {
+//        return mapSettings;
+        return game().getMapSettings();
+    }
+
+    public void setMapSettings(MapSettings mapSettings) {
+        //this.mapSettings = mapSettings;
+        game().setMapSettings(mapSettings);
     }
 
     public class PlayerTableMouseAdapter extends MouseInputAdapter {
@@ -2721,8 +2731,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 return;
             }
             List<String> boards = lisBoardsAvailable.getSelectedValuesList();
-            int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
-            boolean enableRotation = (mapSettings.getBoardWidth() % 2) == 0;
+            int activeButtons = getMapSettings().getMapWidth() * getMapSettings().getMapHeight();
+            boolean enableRotation = (getMapSettings().getBoardWidth() % 2) == 0;
             ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
@@ -3305,10 +3315,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 try (InputStream is = new FileInputStream(boardFile)) {
                     board.load(is, errs, true);
                 } catch (IOException ex) {
-                    board = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+                    board = Board.createEmptyBoard(getMapSettings().getBoardWidth(), getMapSettings().getBoardHeight());
                 }
             } else {
-                board = Board.createEmptyBoard(mapSettings.getBoardWidth(), mapSettings.getBoardHeight());
+                board = Board.createEmptyBoard(getMapSettings().getBoardWidth(), getMapSettings().getBoardHeight());
             }
 
             // Determine a minimap zoom from the board size and gui scale.
@@ -3341,7 +3351,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             BufferedImage bufImage = Minimap.getMinimapImage(board, zoom);
 
             // Add the board name label and the server-side board label if necessary
-            String text = LobbyUtility.cleanBoardName(boardName, mapSettings);
+            String text = LobbyUtility.cleanBoardName(boardName, getMapSettings());
             Graphics g = bufImage.getGraphics();
             if (errs.length() != 0) {
                 invalidBoards.add(boardName);
@@ -3391,7 +3401,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String board = (String) value;
             // For generated boards, add the size to have different images for different sizes
             if (board.startsWith(MapSettings.BOARD_GENERATED)) {
-                board += mapSettings.getBoardSize().toString();
+                board += getMapSettings().getBoardSize().toString();
             }
             
             // If the gui scaling has changed, clear out all images, triggering a reload
@@ -3504,8 +3514,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     Dimension maxMapButtonSize() {
         // minus 1 to ensure that the images actually fit in the frame
-        double pw = (double) panMapButtons.getWidth() / mapSettings.getMapWidth() - 1;
-        double ph = (double) panMapButtons.getHeight() / mapSettings.getMapHeight() - 1;
+        double pw = (double) panMapButtons.getWidth() / getMapSettings().getMapWidth() - 1;
+        double ph = (double) panMapButtons.getHeight() / getMapSettings().getMapHeight() - 1;
         return new Dimension((int) pw, (int) ph);
     }
 

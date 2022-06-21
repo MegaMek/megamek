@@ -116,7 +116,7 @@ public class Game implements IGame, Serializable {
     private Vector<PilotingRollData> extremeGravityRolls = new Vector<>();
     private Vector<PilotingRollData> controlRolls = new Vector<>();
     private Vector<Team> initiativeRerollRequests = new Vector<>();
-
+    private MapSettings mapSettings;
     // reports
     private GameReports gameReports = new GameReports();
 
@@ -3475,5 +3475,13 @@ public class Game implements IGame, Serializable {
         setForceVictory(false);
         setVictoryPlayerId(Player.PLAYER_NONE);
         setVictoryTeam(Player.TEAM_NONE);
+    }
+
+    public MapSettings getMapSettings() {
+        return mapSettings;
+    }
+
+    public void setMapSettings(MapSettings mapSettings) {
+        this.mapSettings = mapSettings;
     }
 }

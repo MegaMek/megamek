@@ -610,6 +610,7 @@ public final class UnitToolTip {
             } else { 
                 result.append(addToTT("Heat", BR, heat));
             }
+            result.append("/"+entity.getHeatCapacity());
             result.append("</FONT>");
         }
 

@@ -12,6 +12,7 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class MechPanelTabStrip extends PicMap {
     private static final long serialVersionUID = -1282343469769007184L;
@@ -147,37 +148,37 @@ public class MechPanelTabStrip extends PicMap {
 
     private void setListeners() {
         tabs[0].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(SUMMARY);
             }
         });
         tabs[1].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(PILOT);
             }
         });
         tabs[2].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(ARMOR);
             }
         });
         tabs[3].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(SYSTEMS);
             }
         });
         tabs[4].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(WEAPONS);
             }
         });
         tabs[5].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(EXTRAS);
             }
         });
         tabs[6].addActionListener(e -> {
-            if (e.getActionCommand() == PMHotArea.MOUSE_DOWN) {
+            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(DETAILS);
             }
         });

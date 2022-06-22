@@ -5429,7 +5429,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * The text to be displayed when the mouse is at a certain point.
      */
-    public String getHexTooltip(Hex mhex, Point point) {
+    public String getHexTooltip(@Nullable Hex mhex, Point point) {
         Coords mcoords = mhex.getCoords();
         StringBuffer txt = new StringBuffer("<HTML>");
         // Hex Terrain

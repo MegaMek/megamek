@@ -3319,7 +3319,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         
         private Image prepareImage(String boardName) {
-            File boardFile = new MegaMekFile(Configuration.boardsDir(), :q!:q! + ".board").getFile();
+            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
             Board board;
             StringBuffer errs = new StringBuffer();
             if (boardFile.exists()) {

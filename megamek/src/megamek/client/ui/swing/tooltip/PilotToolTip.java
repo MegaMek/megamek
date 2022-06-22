@@ -56,10 +56,9 @@ public final class PilotToolTip {
         
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
-            result.append(TABLE_BEGIN);
+        result.append(TABLE_BEGIN);
         result.append(crewInfo(entity));
 
-//        if ()) {
         if (showPortrait) {
             // Add a spacer cell
             int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);

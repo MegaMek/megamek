@@ -39,19 +39,15 @@ public class UnitDisplay extends JPanel {
     private static final long serialVersionUID = -2060993542227677984L;
 
     private MechPanelTabStrip tabStrip;
-
     private JPanel displayP;
-
     private SummaryPanel mPan;
     private MovementPanel dPan;
-
     private PilotPanel pPan;
     private ArmorPanel aPan;
     public WeaponPanel wPan;
     private SystemPanel sPan;
     private ExtraPanel ePan;
     private ClientGUI clientgui;
-
     private Entity currentlyDisplaying;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
 

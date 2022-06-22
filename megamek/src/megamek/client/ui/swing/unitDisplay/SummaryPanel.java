@@ -9,7 +9,6 @@ import megamek.common.Hex;
 import megamek.common.Player;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class SummaryPanel extends JPanel {
 
@@ -54,7 +53,7 @@ public class SummaryPanel extends JPanel {
             pilotInfo.setText("<html>" + PilotToolTip.getPilotTipDetailed(entity, false) + "</html>");
 
             StringBuffer unitTxt = new StringBuffer("<HTML>");
-            unitTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
+            unitTxt.append(UnitToolTip.getEntityTipNoPilot(entity, localPlayer));
             unitTxt.append("</HTML>");
             unitInfo.setText(unitTxt.toString());
         }

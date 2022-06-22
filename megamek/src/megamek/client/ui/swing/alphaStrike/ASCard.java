@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.alphaStrike;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -26,6 +27,8 @@ import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Path2D;
 
 import static megamek.common.alphaStrike.ASUnitType.*;
 
@@ -33,7 +36,7 @@ public class ASCard extends JComponent {
 
     private final static int WIDTH = 1050;
     private final static int HEIGHT = 750;
-    private final static int BORDER_WIDTH = 21;
+    private final static int BORDER = 21;
     private final static int PADDING = 15;
     private final static int BOX_INSET = 8;
     private final static float BOX_STROKE = 2.5f;
@@ -48,7 +51,7 @@ public class ASCard extends JComponent {
 
     private AlphaStrikeElement element;
 
-    Font baseFont = new Font("Exo", Font.PLAIN, 14);
+    Font baseFont = new Font("Eurosti", Font.PLAIN, 14);
     Font boldFont = baseFont.deriveFont(Font.BOLD);
     Font modelFont = baseFont.deriveFont(30f);
     Font chassisFont = boldFont.deriveFont(70f);
@@ -56,8 +59,18 @@ public class ASCard extends JComponent {
     Font font = boldFont.deriveFont(35f);
     Font specialsFont = baseFont.deriveFont(20f);
     Font pointValueHeaderFont = headerFont.deriveFont(40f);
-    Font pointValueFont = font.deriveFont(50f);
+    Font pointValueFont = font.deriveFont(54f);
     Font smallerFont = boldFont.deriveFont(16f);
+
+    private int baseInfoBoxHeight;
+    private int damageBoxY;
+    private int damageBoxHeight;
+    private int armorBoxY;
+    private int armorBoxHeight;
+    private int armorBoxWidth;
+    private int specialBoxY;
+    private int specialBoxWidth;
+    private int specialBoxHeight;
 
     StringDrawer.StringDrawerConfig valueConfig = new StringDrawer.StringDrawerConfig().centerY()
             .color(Color.BLACK).font(font).outline(Color.WHITE, 1f);
@@ -66,16 +79,50 @@ public class ASCard extends JComponent {
 
     public ASCard(@Nullable AlphaStrikeElement element) {
         this.element = element;
+        initializeDimensions();
     }
 
     public void setASElement(@Nullable AlphaStrikeElement element) {
         this.element = element;
+        initializeDimensions();
         repaint();
     }
 
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(WIDTH, HEIGHT);
+    }
+
+    private void initializeDimensions() {
+        baseInfoBoxHeight = 84;
+        damageBoxY = 268;
+        damageBoxHeight = 88;
+        armorBoxY = 442;
+        armorBoxHeight = 79;
+        armorBoxWidth = 531;
+        specialBoxY = 537;
+        specialBoxWidth = armorBoxWidth;
+        specialBoxHeight = 84;
+
+        if (element != null) {
+            if (!element.tracksHeat()) {
+                baseInfoBoxHeight = 99;
+                damageBoxY = 287;
+                damageBoxHeight = 104;
+                armorBoxY = 410;
+                armorBoxHeight = 94;
+                specialBoxY = 522;
+                specialBoxHeight = 99;
+            }
+
+            if (element.usesThreshold() || element.isInfantry()) {
+                armorBoxWidth = BOX_WIDTH_MEK_WIDE;
+            }
+
+            if (element.isInfantry()) {
+                specialBoxWidth = BOX_WIDTH_MEK_WIDE;
+            }
+        }
     }
 
     @Override
@@ -127,50 +174,67 @@ public class ASCard extends JComponent {
 
         // Border
         g2D.setColor(Color.BLACK);
-        g2D.fillRect(0, 0, WIDTH, BORDER_WIDTH);
-        g2D.fillRect(WIDTH - BORDER_WIDTH, 0, BORDER_WIDTH, HEIGHT);
-        g2D.fillRect(0, HEIGHT - BORDER_WIDTH, WIDTH, BORDER_WIDTH);
-        g2D.fillRect(0, 0, BORDER_WIDTH, HEIGHT);
+        g2D.fillRect(0, 0, WIDTH, BORDER);
+        g2D.fillRect(WIDTH - BORDER, 0, BORDER, HEIGHT);
+        g2D.fillRect(0, HEIGHT - BORDER, WIDTH, BORDER);
+        g2D.fillRect(0, 0, BORDER, HEIGHT);
 
+        // Copyright
+        new StringDrawer("(C) 2018 The Topps Company. All rights reserved.").at(1014, 293).rotate(-Math.PI / 2)
+                .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
+
+        // No unit or unsupported?
         if (element == null) {
-            new StringDrawer("No Unit").at(50, 80).font(pointValueHeaderFont).draw(g);
+            new StringDrawer("No unit or unit type not supported").at(50, 80).font(pointValueHeaderFont).draw(g);
             return;
         }
 
-        paintBaseInfo(g2D, BORDER_WIDTH + PADDING, 170);
-        paintDamage(g2D, BORDER_WIDTH + PADDING, 268);
-        if (element.isAnyTypeOf(BM, IM, AF)) {
-            paintHeat(g2D, BORDER_WIDTH + PADDING, 372);
+        // Data blocks
+        paintBaseInfo(g2D, BORDER + PADDING, 170);
+        paintDamage(g2D, BORDER + PADDING);
+        if (element.tracksHeat()) {
+            paintHeat(g2D, BORDER + PADDING, 372);
         }
         if (element.isAerospace()) {
-            paintAeroArmor(g2D, BORDER_WIDTH + PADDING, 442);
+            paintAeroArmor(g2D, BORDER + PADDING);
         } else {
-            paintArmor(g2D, BORDER_WIDTH + PADDING, 442);
+            paintArmor(g2D, BORDER + PADDING);
         }
-        paintSpecial(g2D, BORDER_WIDTH + PADDING, 537, 531);
+        paintSpecial(g2D);
         paintPointValue(g2D);
         if (element.isAnyTypeOf(BM, IM)) {
             paintMekDamage(g2D);
+        } else if (element.isFighter()) {
+            paintAeroDamage(g2D);
+        } else if (element.isType(PM)) {
+            paintProtoMekDamage(g2D);
+        } else if (element.isGround() && !element.isInfantry()) {
+            paintCombatVeeDamage(g2D);
         }
-
+        paintFluffImage(g2D);
 
         // Model
-        new StringDrawer(element.getModel()).at(BORDER_WIDTH + PADDING, 44).font(modelFont).centerY().draw(g);
+        new StringDrawer(element.getModel()).at(BORDER + PADDING, 44).font(modelFont).centerY().draw(g);
 
         // Chassis
-        new StringDrawer(element.getChassis()).at(BORDER_WIDTH + PADDING, 89).font(chassisFont).centerY().draw(g);
+        new StringDrawer(element.getChassis()).at(BORDER + PADDING, 89).font(chassisFont).centerY().draw(g);
+
+        // BA Squad Size
+        if (element.isType(BA)) {
+            new StringDrawer("Squad " + element.getSquadSize()).at(BORDER + PADDING, 137).font(modelFont).centerY().draw(g);
+        }
     }
 
     private void paintBaseInfo(Graphics2D g, int x, int y) {
         g.setStroke(new BasicStroke(BOX_STROKE));
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRoundRect(x, y, BOX_WIDTH_MEK_WIDE, 84, BOX_CORNER, BOX_CORNER);
+        g.fillRoundRect(x, y, BOX_WIDTH_MEK_WIDE, baseInfoBoxHeight, BOX_CORNER, BOX_CORNER);
         g.setColor(Color.BLACK);
-        g.drawRoundRect(x, y, BOX_WIDTH_MEK_WIDE, 84, BOX_CORNER, BOX_CORNER);
+        g.drawRoundRect(x, y, BOX_WIDTH_MEK_WIDE, baseInfoBoxHeight, BOX_CORNER, BOX_CORNER);
 
         if (element != null) {
-            int upperY = y + 21;
-            int lowerY = y + 63;
+            int upperY = y + baseInfoBoxHeight / 2 - 20;
+            int lowerY = y + baseInfoBoxHeight / 2 + 20;
 
             // Type
             int width = new StringDrawer("TP: ").at(x + BOX_INSET, upperY).centerY().font(headerFont).draw(g).width;
@@ -209,19 +273,20 @@ public class ASCard extends JComponent {
         }
     }
 
-    private void paintDamage(Graphics2D g, int x, int y) {
+    private void paintDamage(Graphics2D g, int x) {
         g.setStroke(new BasicStroke(BOX_STROKE));
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRoundRect(x, y, BOX_WIDTH_MEK_WIDE, 88, BOX_CORNER, BOX_CORNER);
+        g.fillRoundRect(BORDER + PADDING, damageBoxY, BOX_WIDTH_MEK_WIDE, damageBoxHeight, BOX_CORNER, BOX_CORNER);
         g.setColor(Color.BLACK);
-        g.drawRoundRect(x, y, BOX_WIDTH_MEK_WIDE, 88, BOX_CORNER, BOX_CORNER);
+        g.drawRoundRect(BORDER + PADDING, damageBoxY, BOX_WIDTH_MEK_WIDE, damageBoxHeight, BOX_CORNER, BOX_CORNER);
 
-        new StringDrawer("DAMAGE").at(x + 15, y + 44).center().rotate(-Math.PI / 2).font(smallerFont).draw(g);
+        new StringDrawer("DAMAGE").at(BORDER + PADDING + 19, damageBoxY + damageBoxHeight / 2).center()
+                .rotate(-Math.PI / 2).font(smallerFont).draw(g);
 
         if (element != null) {
             if (!element.usesArcs()) {
-                int upperY = y + 24;
-                int lowerY = y + 64;
+                int upperY = damageBoxY + damageBoxHeight / 2 - 22;
+                int lowerY = damageBoxY + damageBoxHeight / 2 + 22;
                 if (element.usesSML()) {
                     int delta = 195;
                     int posS = 150;
@@ -285,17 +350,17 @@ public class ASCard extends JComponent {
         }
     }
 
-    private void paintArmor(Graphics2D g, int x, int y) {
+    private void paintArmor(Graphics2D g, int x) {
         g.setStroke(new BasicStroke(BOX_STROKE));
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRoundRect(x, y, 531, 79, BOX_CORNER, BOX_CORNER);
+        g.fillRoundRect(x, armorBoxY, armorBoxWidth, armorBoxHeight, BOX_CORNER, BOX_CORNER);
         g.setColor(Color.BLACK);
-        g.drawRoundRect(x, y, 531, 79, BOX_CORNER, BOX_CORNER);
+        g.drawRoundRect(x, armorBoxY, armorBoxWidth, armorBoxHeight, BOX_CORNER, BOX_CORNER);
 
         if (element != null) {
             // Headers A, S
-            int upperY = y + 22;
-            int lowerY = y + 58;
+            int upperY = armorBoxY + armorBoxHeight / 2 - 18;
+            int lowerY = armorBoxY + armorBoxHeight / 2 + 18;
             g.setFont(headerFont);
             int headerWidth = new StringDrawer("A:").at(x + BOX_INSET, upperY).centerY().draw(g).width + 12;
             new StringDrawer("S:").at(x + BOX_INSET, lowerY).centerY().draw(g);
@@ -323,17 +388,17 @@ public class ASCard extends JComponent {
         }
     }
 
-    private void paintAeroArmor(Graphics2D g, int x, int y) {
+    private void paintAeroArmor(Graphics2D g, int x) {
         g.setStroke(new BasicStroke(BOX_STROKE));
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRoundRect(x, y, BOX_WIDTH_MEK_WIDE, 79, BOX_CORNER, BOX_CORNER);
+        g.fillRoundRect(x, armorBoxY, armorBoxWidth, armorBoxHeight, BOX_CORNER, BOX_CORNER);
         g.setColor(Color.BLACK);
-        g.drawRoundRect(x, y, BOX_WIDTH_MEK_WIDE, 79, BOX_CORNER, BOX_CORNER);
+        g.drawRoundRect(x, armorBoxY, armorBoxWidth, armorBoxHeight, BOX_CORNER, BOX_CORNER);
 
         if (element != null) {
             // Headers A, S
-            int upperY = y + 22;
-            int lowerY = y + 58;
+            int upperY = armorBoxY + armorBoxHeight / 2 - 18;
+            int lowerY = armorBoxY + armorBoxHeight / 2 + 18;
             g.setFont(headerFont);
             int headerWidth = new StringDrawer("A:").at(x + BOX_INSET, upperY).centerY().draw(g).width + 12;
             new StringDrawer("S:").at(x + BOX_INSET, lowerY).centerY().draw(g);
@@ -364,22 +429,22 @@ public class ASCard extends JComponent {
         }
     }
 
-    private void paintSpecial(Graphics2D g, int x, int y, int width) {
+    private void paintSpecial(Graphics2D g) {
         g.setStroke(new BasicStroke(BOX_STROKE));
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRoundRect(x, y, width, 84, BOX_CORNER, BOX_CORNER);
+        g.fillRoundRect(BORDER + PADDING, specialBoxY, specialBoxWidth, specialBoxHeight, BOX_CORNER, BOX_CORNER);
         g.setColor(Color.BLACK);
-        g.drawRoundRect(x, y, width, 84, BOX_CORNER, BOX_CORNER);
+        g.drawRoundRect(BORDER + PADDING, specialBoxY, specialBoxWidth, specialBoxHeight, BOX_CORNER, BOX_CORNER);
 
         if (element != null) {
-            y += 2;
+            int y = specialBoxY + 2;
             String specials = "SPECIAL: " + element.getSpecialsString();
             g.setFont(specialsFont);
             int ascent = g.getFontMetrics(specialsFont).getAscent();
 
             if (element.getSpecialsString().isBlank() ||
-                    (g.getFontMetrics(specialsFont).stringWidth(specials) < width - 2 * BOX_INSET)) {
-                g.drawString(specials, x + BOX_INSET, y + ascent);
+                    (g.getFontMetrics(specialsFont).stringWidth(specials) < specialBoxWidth - 2 * BOX_INSET)) {
+                g.drawString(specials, BORDER + PADDING + BOX_INSET, y + ascent);
                 return;
             }
 
@@ -392,7 +457,7 @@ public class ASCard extends JComponent {
             while (line <= 3) {
                 while (index < tokens.length) {
                     String nextItem = tokens[index] + (index == tokens.length - 1 ? "" : ", ");
-                    if ((g.getFontMetrics(specialsFont).stringWidth(fittingLine + nextItem) < width - 2 * BOX_INSET)
+                    if ((g.getFontMetrics(specialsFont).stringWidth(fittingLine + nextItem) < specialBoxWidth - 2 * BOX_INSET)
                             || fittingLine.isBlank()) {
                         fittingLine += nextItem;
                         index++;
@@ -401,7 +466,7 @@ public class ASCard extends JComponent {
                     }
                 }
 
-                g.drawString(fittingLine, x + BOX_INSET, y + ascent + (line - 1) * linedelta);
+                g.drawString(fittingLine, BORDER + PADDING + BOX_INSET, y + ascent + (line - 1) * linedelta);
                 fittingLine = "";
                 line++;
                 if (index == tokens.length) {
@@ -457,11 +522,147 @@ public class ASCard extends JComponent {
         }
     }
 
+    private void paintProtoMekDamage(Graphics2D g) {
+        g.setStroke(new BasicStroke(BOX_STROKE));
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRoundRect(591, 442, 422, 180, BOX_CORNER, BOX_CORNER);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(591, 442, 422, 180, BOX_CORNER, BOX_CORNER);
+
+        if (element != null) {
+            new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).draw(g);
+
+            new StringDrawer("FIRE CONTROL").at(722, 510).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("+2 To-Hit Each").at(834, 510).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 510);
+            drawDamagePip(g, 755, 510);
+            drawDamagePip(g, 782, 510);
+            drawDamagePip(g, 809, 510);
+
+            new StringDrawer("MP").at(722, 552).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("1/2 MV Each").at(834, 552).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 552);
+            drawDamagePip(g, 755, 552);
+            drawDamagePip(g, 782, 552);
+            drawDamagePip(g, 809, 552);
+
+            new StringDrawer("WEAPONS").at(722, 593).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("-1 Damage Each").at(834, 593).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 593);
+            drawDamagePip(g, 755, 593);
+            drawDamagePip(g, 782, 593);
+            drawDamagePip(g, 809, 593);
+        }
+    }
+
+    private void paintCombatVeeDamage(Graphics2D g) {
+        g.setStroke(new BasicStroke(BOX_STROKE));
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRoundRect(591, 442, 422, 180, BOX_CORNER, BOX_CORNER);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(591, 442, 422, 180, BOX_CORNER, BOX_CORNER);
+
+        if (element != null) {
+            new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).draw(g);
+
+            new StringDrawer("ENGINE").at(722, 509).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("1/2 MV and Damage").at(754, 509).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 509);
+
+            new StringDrawer("FIRE CONTROL").at(722, 538).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("+2 To-Hit Each").at(834, 538).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 538);
+            drawDamagePip(g, 755, 538);
+            drawDamagePip(g, 782, 538);
+            drawDamagePip(g, 809, 538);
+
+            new StringDrawer("WEAPONS").at(722, 565).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("-1 Damage Each").at(834, 565).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 728, 565);
+            drawDamagePip(g, 755, 565);
+            drawDamagePip(g, 782, 565);
+            drawDamagePip(g, 809, 565);
+
+            new StringDrawer("MOTIVE").at(598, 593).centerY().font(smallerFont).draw(g);
+            drawDamagePip(g, 673, 593);
+            drawDamagePip(g, 700, 593);
+            new StringDrawer("-2 MV").at(724, 593).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 793, 593);
+            drawDamagePip(g, 820, 593);
+            new StringDrawer("1/2 MV").at(846, 593).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 919, 593);
+            new StringDrawer("0 MV").at(949, 593).centerY().font(specialsFont).draw(g);
+        }
+    }
+
+    private void paintAeroDamage(Graphics2D g) {
+        Path2D.Double box = new Path2D.Double();
+        box.moveTo(847, 442);
+        box.lineTo(994, 442);
+        Arc2D.Double arc = new Arc2D.Double(982, 442, 30, 30, 90, -90, Arc2D.OPEN);
+        box.append(arc, true);
+        box.lineTo(1012, 604);
+        arc = new Arc2D.Double(982, 590, 30, 30, 0, -90, Arc2D.OPEN);
+        box.append(arc, true);
+        box.lineTo(606, 620);
+        arc = new Arc2D.Double(591, 590, 30, 30, 270, -90, Arc2D.OPEN);
+        box.append(arc, true);
+        box.lineTo(591, 552);
+        arc = new Arc2D.Double(591, 537, 30, 30, 180, -90, Arc2D.OPEN);
+        box.append(arc, true);
+        box.lineTo(645, 537);
+        arc = new Arc2D.Double(630, 507, 30, 30, 270, 90, Arc2D.OPEN);
+        box.append(arc, true);
+        box.lineTo(660, 458);
+        arc = new Arc2D.Double(660, 442, 30, 30, 180, -90, Arc2D.OPEN);
+        box.append(arc, true);
+        box.closePath();
+
+        g.setStroke(new BasicStroke(BOX_STROKE));
+        g.setColor(Color.LIGHT_GRAY);
+        g.fill(box);
+        g.setColor(Color.BLACK);
+        g.draw(box);
+
+        if (element != null) {
+            new StringDrawer("CRITICAL HITS").at(836, 470).center().font(headerFont).draw(g);
+
+            new StringDrawer("ENGINE").at(736, 515).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("1/4 MV (Minimum 1)").at(796, 515).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 741, 515);
+            drawDamagePip(g, 768, 515);
+
+            new StringDrawer("FIRE CONTROL").at(736, 553).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("+2 To-Hit Each").at(849, 553).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 741, 553);
+            drawDamagePip(g, 768, 553);
+            drawDamagePip(g, 795, 553);
+            drawDamagePip(g, 822, 553);
+
+            new StringDrawer("WEAPONS").at(736, 593).centerY().rightAlign().font(smallerFont).draw(g);
+            new StringDrawer("-1 Damage Each").at(849, 593).centerY().font(specialsFont).draw(g);
+            drawDamagePip(g, 741, 593);
+            drawDamagePip(g, 768, 593);
+            drawDamagePip(g, 795, 593);
+            drawDamagePip(g, 822, 593);
+        }
+    }
+
     private void drawDamagePip(Graphics2D g, int x, int y) {
         int d = 20;
+        g.setStroke(new BasicStroke(3f));
         g.setColor(Color.WHITE);
         g.fillOval(x, y - d / 2, d, d);
         g.setColor(Color.BLACK);
         g.drawOval(x, y - d / 2, d, d);
     }
+
+    private void paintFluffImage(Graphics2D g) {
+        Image image = FluffImageHelper.loadFluffImageHeuristic(element);
+        if (image != null) {
+            Image image2 = image.getScaledInstance(50, -1, Image.SCALE_AREA_AVERAGING);
+            g.drawImage(image2, 660, 110, this);
+        }
+    }
+
 }

@@ -15,6 +15,8 @@
 package megamek.client.ui.swing.util;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -95,15 +97,63 @@ public class FluffImageHelper {
     }
 
     /**
-     * Find a fluff image file for the unit.
-     * 
-     * @param directory
-     *            Directory to search.
-     * @param unit
-     *            The unit.
-     * @return Path to an appropriate file or {@code null} if none is found.
+     * Attempt to load a fluff image by combining elements of type and name.
+     *
+     * @param element The AlphaStrike element
+     * @return An image or null
+     */
+    public static Image loadFluffImageHeuristic(final AlphaStrikeElement element) {
+        Image fluff = null;
+
+        String dir = DIR_NAME_MECH;
+        if (element.isAerospace()) {
+            dir = DIR_NAME_AERO;
+        } else if (element.isType(ASUnitType.BA)) {
+            dir = DIR_NAME_BA;
+        } else if (element.isType(ASUnitType.CV)) {
+            dir = DIR_NAME_VEHICLE;
+        }
+
+        File fluff_image_file = findFluffImage(
+                new MegaMekFile(Configuration.fluffImagesDir(), dir).getFile(), element);
+        if (fluff_image_file != null) {
+            fluff = new ImageIcon(fluff_image_file.toString()).getImage();
+        }
+
+        return fluff;
+    }
+
+    /**
+     * Find a fluff image file for the given AlphaStrike element
+     *
+     * @param directory Directory to search
+     * @param element The AlphaStrike element
+     * @return Path to an appropriate file or {@code null} if none is found
+     */
+    protected static File findFluffImage(final File directory, final AlphaStrikeElement element) {
+        return findFluffImage(directory, element.getModel(), element.getChassis());
+    }
+
+    /**
+     * Find a fluff image file for the unit
+     *
+     * @param directory Directory to search
+     * @param unit The unit
+     * @return Path to an appropriate file or {@code null} if none is found
      */
     protected static File findFluffImage(final File directory, final Entity unit) {
+        return findFluffImage(directory, unit.getModel(), unit.getChassis());
+    }
+
+    /**
+     * Find a fluff image file for the unit.
+     * 
+     * @param directory Directory to search.
+     * @param origModel The model name of the unit
+     * @param origChassis The chassis name of the unit
+     * @return Path to an appropriate file or {@code null} if none is found
+     */
+    protected static File findFluffImage(final File directory, String origModel, String origChassis) {
         // Search for a file in the specified directory.
         // Searches for each supported extension on each of the following
         // combinations:
@@ -114,13 +164,10 @@ public class FluffImageHelper {
         // in the filename.
         File fluff_file = null;
         // Remove characters that will cause path problems
-        String sanitizedChassis = unit.getChassis().replace("\"", "")
-                .replace("/", "");
-        String sanitizedModel = unit.getModel().replace("\"", "")
-                .replace("/", "");
+        String sanitizedChassis = origChassis.replace("\"", "").replace("/", "");
+        String sanitizedModel = origModel.replace("\"", "").replace("/", "");
         String[] basenames = {
-                new MegaMekFile(directory, sanitizedChassis + " " + sanitizedModel)
-                        .toString(),
+                new MegaMekFile(directory, sanitizedChassis + " " + sanitizedModel).toString(),
                 new MegaMekFile(directory, sanitizedModel).toString(),
                 new MegaMekFile(directory, sanitizedChassis).toString(), };
 
@@ -136,9 +183,9 @@ public class FluffImageHelper {
                 break;
             }
         }
-        final String model = unit.getModel().replace("\"", "");
-        final String chassisModel = unit.getChassis() + " " + model;
-         
+        final String model = origModel.replace("\"", "");
+        final String chassisModel = origChassis + " " + model;
+
         // If the previous checks failed, we're going to try to discount the
         //  CSO author name, which will make the file look like:
         //   Chassis + model + [ <author> ] + extension
@@ -155,7 +202,7 @@ public class FluffImageHelper {
                 fluff_file = files[0];
             }
         }
-        
+
         // If we still haven't found a file, see if ignoring the model helps
         if (fluff_file == null) {
             File[] files = directory.listFiles((direc, name) -> {
@@ -164,14 +211,14 @@ public class FluffImageHelper {
                     extMatch |= name.endsWith(ext);
                 }
                 String chassis = name.split("\\[")[0].trim();
-                return chassis.equalsIgnoreCase(unit.getChassis()) && extMatch;
+                return chassis.equalsIgnoreCase(origChassis) && extMatch;
             });
 
             if ((files != null) && (files.length > 0)) {
                 fluff_file = files[0];
             }
         }
-        
+
         return fluff_file;
     }
 }

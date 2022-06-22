@@ -94,6 +94,9 @@ public class AlphaStrikeElement {
     private int structure;
     private int threshold = -1;
 
+    /** Battle Armor squad size. */
+    private int squadSize;
+
     /**
      * This covers all SpAs, including the damage values such as SRM2/2.
      * SpAs not associated with a number, e.g. RCN, have null assigned as Object.
@@ -209,6 +212,10 @@ public class AlphaStrikeElement {
         return usesSML() ? RANGEBANDS_SML : RANGEBANDS_SMLE;
     }
 
+    public int getSquadSize() {
+        return squadSize;
+    }
+
     public void setQuirks(Quirks quirks) {
         this.quirks = quirks;
     }
@@ -291,6 +298,11 @@ public class AlphaStrikeElement {
     /** Sets the AS element's standard damage (SML or SMLE, but not arc damage). */
     public void setStandardDamage(ASDamageVector newDamage) {
         standardDamage = newDamage;
+    }
+
+    /** Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA. */
+    public void setSquadSize(int newSquadSize) {
+        squadSize = newSquadSize;
     }
 
     public AlphaStrikeElement() {
@@ -750,4 +762,13 @@ public class AlphaStrikeElement {
         return movement.keySet().contains(mode);
     }
 
+    /** @return True if this AS element tracks heat (BM, IM, CF, AF and Aerospace SV). */
+    public boolean tracksHeat() {
+        return isAnyTypeOf(BM, IM, AF, CF) || isAerospaceSV();
+    }
+
+    /** @return True if this AS element is a fighter (AF, CF and Aerospace SV). */
+    public boolean isFighter() {
+        return isAnyTypeOf(AF, CF) || isAerospaceSV();
+    }
 }

@@ -167,7 +167,7 @@ public abstract class AbstractIcon implements Serializable {
      * @return a square BufferedImage of the given size. Scales the given image to fit into the
      * square and centers it on a transparent background.
      */
-    private static BufferedImage scaleAndCenter(Image image, final int size) {
+    public static BufferedImage scaleAndCenter(Image image, final int size) {
         final BufferedImage result = ImageUtil.createAcceleratedImage(size, size);
         final Graphics graphics = result.getGraphics();
         if (image.getWidth(null) > image.getHeight(null)) {

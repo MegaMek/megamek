@@ -760,6 +760,7 @@ public class Game implements IGame, Serializable {
         // Handle phase-specific items.
         switch (phase) {
             case LOUNGE:
+//                resetGame();
                 reset();
                 break;
             case TARGETING:
@@ -1428,10 +1429,8 @@ public class Game implements IGame, Serializable {
         }
     }
 
-    /**
-     * Resets this game.
-     */
-    public synchronized void reset() {
+    /** Resets the game play while retaining planetary and map settings */
+    public synchronized void resetGame() {
         uuid = UUID.randomUUID();
 
         roundCount = 0;
@@ -1463,6 +1462,15 @@ public class Game implements IGame, Serializable {
         victoryPlayerId = Player.PLAYER_NONE;
         victoryTeam = Player.TEAM_NONE;
         lastEntityId = 0;
+    }
+
+    /**
+     * Resets this game.
+     */
+    public synchronized void reset() {
+        resetGame();
+        // This was getting called on the host's client after load and was resetting it to defaults
+        // is it that the ui is updated after this, but then not updated after getting the game from the server?
         planetaryConditions = new PlanetaryConditions();
     }
 

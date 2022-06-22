@@ -60,6 +60,7 @@ import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardsTagger;
+import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -286,6 +287,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         lisBoardsAvailable.addListSelectionListener(this);
         lisBoardsAvailable.addMouseListener(mapListMouseListener);
+        lisBoardsAvailable.addMouseMotionListener(mapListMouseListener);
         
         teamOverviewWindow.addWindowListener(teamOverviewWindowListener);
         
@@ -2237,7 +2239,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         lisBoardsAvailable.removeListSelectionListener(this);
         lisBoardsAvailable.removeMouseListener(mapListMouseListener);
-        
+        lisBoardsAvailable.removeMouseMotionListener(mapListMouseListener);
+
         teamOverviewWindow.removeWindowListener(teamOverviewWindowListener);
         
         mekTable.removeMouseListener(mekTableMouseAdapter);
@@ -2681,7 +2684,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
 
     public class MapListMouseAdapter extends MouseInputAdapter implements ActionListener {
-        
+        ScalingPopup popup;
+
         @Override
         public void actionPerformed(ActionEvent action) {
             String[] command = action.getActionCommand().split(":");
@@ -2702,9 +2706,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() && lisBoardsAvailable.isEnabled()) {
-                // If the right mouse button is pressed over an unselected map,
-                // clear the selection and select that entity instead
+            if (lisBoardsAvailable.isEnabled()) {
+                // If a mouse button is pressed over an unselected map,
+                // show the board selection popup
                 int index = lisBoardsAvailable.locationToIndex(e.getPoint());
                 if (index != -1 && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
                     if (!lisBoardsAvailable.isSelectedIndex(index)) {
@@ -2715,7 +2719,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
 
-        /** Shows the right-click menu on the mek table */
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if (popup == null) return;
+           Component c = e.getComponent();
+           Point p = e.getLocationOnScreen();
+           if (!popup.contains(p))
+           {
+               closePopup(e);
+           }
+        }
+
+        private void closePopup(MouseEvent e)
+        {
+            if (popup == null) return;;
+            popup.setVisible(false);
+            popup = null;
+        }
+
+        /** Shows the map selection menu on the map table */
         private void showPopup(MouseEvent e) {
             if (lisBoardsAvailable.isSelectionEmpty()) {
                 return;
@@ -2723,8 +2745,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             List<String> boards = lisBoardsAvailable.getSelectedValuesList();
             int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
             boolean enableRotation = (mapSettings.getBoardWidth() % 2) == 0;
-            ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
-            popup.show(e.getComponent(), e.getX(), e.getY());
+            popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
+            popup.show(e.getComponent(), e.getX()-2, e.getY()-2);
         }
     }
     
@@ -3297,7 +3319,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         
         private Image prepareImage(String boardName) {
-            File boardFile = new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile();
+            File boardFile = new MegaMekFile(Configuration.boardsDir(), :q!:q! + ".board").getFile();
             Board board;
             StringBuffer errs = new StringBuffer();
             if (boardFile.exists()) {

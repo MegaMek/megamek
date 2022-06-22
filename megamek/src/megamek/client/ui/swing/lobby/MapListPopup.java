@@ -20,6 +20,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import megamek.client.ui.swing.util.ScalingPopup;
+import org.apache.logging.log4j.core.util.FileUtils;
 
 class MapListPopup {
     
@@ -36,10 +37,22 @@ class MapListPopup {
         boolean oneSelected = boards.size() == 1;
 
         ScalingPopup popup = new ScalingPopup();
-        popup.add(singleBoardMenu(oneSelected, false, listener, numButtons, boards));
-        
-        if (enableRotation) {
-            popup.add(singleBoardMenu(oneSelected, true, listener, numButtons, boards));
+        if (numButtons == 1) {
+            String name = boards.get(0);
+
+//            name = name.substring(name.lastIndexOf('/'));
+            JMenuItem mi = menuItem("Set " + name, MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false, true, listener);
+            popup.add(mi);
+            mi.setEnabled(oneSelected);
+            mi = menuItem("Set Rotated " + name, MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true, true, listener);
+            popup.add(mi);
+            mi.setEnabled(oneSelected);
+        } else {
+            popup.add(singleBoardMenu(oneSelected, false, listener, numButtons, boards));
+
+            if (enableRotation) {
+                popup.add(singleBoardMenu(oneSelected, true, listener, numButtons, boards));
+            }
         }
         
         popup.add(multiBoardRandomMenu(!oneSelected, listener, numButtons, boards));

@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ */
 package megamek.client.ui.swing.unitDisplay;
 
 import megamek.client.ui.swing.boardview.BoardView;
@@ -10,11 +28,18 @@ import megamek.common.Player;
 
 import javax.swing.*;
 
+/**
+ * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
+ * It is intended to be a tab in the UnitDisplay panel.
+ */
 public class SummaryPanel extends JPanel {
 
     private UnitDisplay unitDisplay;
     private JLabel pilotInfo, unitInfo, hexInfo;
 
+    /**
+     * @param unitDisplay the UnitDisplay UI to attach to
+     */
     SummaryPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
 
@@ -31,6 +56,9 @@ public class SummaryPanel extends JPanel {
         panel.add(hexInfo);
     }
 
+    /**
+     * @param entity The Entity to display info for
+     */
     public void displayMech(Entity entity) {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
 
@@ -49,7 +77,6 @@ public class SummaryPanel extends JPanel {
         } else {
             int slot = 0;
             pilotInfo.setIcon(new ImageIcon(entity.getCrew().getPortrait(slot).getImage()));
-            //TODO add Force label
             pilotInfo.setText("<html>" + PilotToolTip.getPilotTipDetailed(entity, false) + "</html>");
 
             StringBuffer unitTxt = new StringBuffer("<HTML>");

@@ -5413,7 +5413,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
 
     /**
-     * The text to be displayed when the mouse is at a certain point.
+     * @return HTML summarizing the terrain, units and deployment of the hex under the mouse
      */
     public String getHexTooltip(MouseEvent e) {
         final Point point = e.getPoint();
@@ -5423,14 +5423,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return null;
         }
         Hex mhex = game.getBoard().getHex(mcoords);
-        return getHexTooltip(mhex, point);
-    }
 
-    /**
-     * The text to be displayed when the mouse is at a certain point.
-     */
-    public String getHexTooltip(@Nullable Hex mhex, Point point) {
-        Coords mcoords = mhex.getCoords();
         StringBuffer txt = new StringBuffer("<HTML>");
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
@@ -5570,20 +5563,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // List only the first four units
             if (entityCount <= maxShown) {
                 appendEntityTooltip(txt, entity);
-//                // Table to add a bar to the left of an entity in
-//                // the player's color
-//                txt.append("<hr style=width:90%>");
-//                txt.append("<TABLE><TR><TD bgcolor=#");
-//                String color = "C0C0C0";
-//                if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-//                    color = entity.getOwner().getColour().getHexString();
-//                }
-//                txt.append(color);
-//                txt.append(" width=6></TD><TD>");
-//
-//                // Entity tooltip
-//                txt.append(UnitToolTip.getEntityTipGame(entity, getLocalPlayer()));
-//                txt.append("</TD></TR></TABLE>");
             }
         }
         // Info block if there are more than 4 units in that hex
@@ -5695,9 +5674,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         return txt.toString();
     }
 
-    public void appendTerrainTooltip(StringBuffer txt, Hex mhex, String bgColor) {
+    /**
+     * Appends HTML describing the terrain of a given hex
+     */
+    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, String bgColor) {
+        if (mhex == null) {
+            return;
+        }
+
         Coords mcoords = mhex.getCoords();
-//        txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD><FONT color=\"black\">");
         txt.append("<TABLE BORDER=0 BGCOLOR="+bgColor+" width=100%><TR><TD><FONT color=\"black\">");
 
         txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
@@ -5717,7 +5702,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     }
 
-    public void appendBuildingsTooltip(StringBuffer txt, Hex mhex, String bgColor) {
+    /**
+     * Appends HTML describing the buildings and minefields in a given hex
+     */
+    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex, String bgColor) {
+        if (mhex == null) {
+            return;
+        }
         Coords mcoords = mhex.getCoords();
 
         // Fuel Tank
@@ -5817,8 +5808,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
     }
-
-    public void appendEntityTooltip(StringBuffer txt, Entity entity) {
+    /**
+     * Appends HTML describing a given Entity aka Unit
+     */
+    public void appendEntityTooltip(StringBuffer txt, @Nullable Entity entity) {
+        if (entity == null) {
+            return;
+        }
         // Table to add a bar to the left of an entity in
         // the player's color
         txt.append("<hr style=width:90%>");

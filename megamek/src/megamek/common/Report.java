@@ -19,7 +19,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
-import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.io.Serializable;
@@ -219,8 +218,7 @@ public class Report implements Serializable {
         tagTranslate = r.tagTranslate;
         type = r.type;
         subject = r.subject;
-        obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes
-                .clone();
+        obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes.clone();
         obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
         tagCounter = r.tagCounter;
     }
@@ -342,11 +340,10 @@ public class Report implements Serializable {
             }
 
             Color ownerColor = entity.getOwner().getColour().getColour();
-            String unitName =
-                    href(ENTITY_LINK + entity.getId(), entity.getShortName());
+            String unitName = href(ENTITY_LINK + entity.getId(), entity.getShortName());
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
-                unitName += fgColor(ownerColor, ' ' :wq+ entity.getCrew().getNickname().toUpperCase());
+                unitName += fgColor(ownerColor, ' ' + entity.getCrew().getNickname().toUpperCase());
             }
 
             add(unitName, true);

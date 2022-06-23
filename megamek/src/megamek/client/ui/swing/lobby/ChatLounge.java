@@ -60,7 +60,6 @@ import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.utilities.BoardsTagger;
-import org.apache.commons.logging.Log;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -110,6 +109,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     static final int MEKTABLE_ROWHEIGHT_FULL = 65;
     static final int MEKTREE_ROWHEIGHT_FULL = 40;
     private final static int TEAMOVERVIEW_BORDER = 45;
+    private final static int MAP_POPUP_OFFSET = -2; // a slight offset so cursor sits inside popup
     
     private JTabbedPane panTabs = new JTabbedPane();
     private JPanel panUnits = new JPanel();
@@ -2721,17 +2721,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            if (popup == null) return;
-           Point p = e.getLocationOnScreen();
-           if (!popup.contains(p))
-           {
-               closePopup();
-           }
+            if (popup == null) {
+                return;
+            }
+            Point p = e.getLocationOnScreen();
+            if (!popup.contains(p)) {
+                closePopup();
+            }
         }
 
-        private void closePopup()
-        {
-            if (popup == null) return;;
+        private void closePopup() {
+            if (popup == null) {
+                return;
+            }
             popup.setVisible(false);
             popup = null;
         }
@@ -2745,7 +2747,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
             boolean enableRotation = (mapSettings.getBoardWidth() % 2) == 0;
             popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
-            popup.show(e.getComponent(), e.getX()-2, e.getY()-2);
+            popup.show(e.getComponent(), e.getX() + MAP_POPUP_OFFSET, e.getY() + MAP_POPUP_OFFSET);
         }
     }
     

@@ -14,8 +14,14 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import org.apache.logging.log4j.LogManager;
 
+import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
+import java.awt.*;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -334,16 +340,17 @@ public class Report implements Serializable {
             if ((indentation <= Report.DEFAULT_INDENTATION) || showImage) {
                 imageCode = "<span id='" + entity.getId() + "'></span>";
             }
-            String name = "<font color='0xffffff'><a href=\"" + ENTITY_LINK + entity.getId()
-                    + "\">" + entity.getShortName() + "</a></font>";
-            String color = entity.getOwner().getColour().getHexString(0x00F0F0F0);
+
+            Color ownerColor = entity.getOwner().getColour().getColour();
+            String unitName =
+                    href(ENTITY_LINK + entity.getId(), entity.getShortName());
 
             if ((entity.getCrew().getSize() >= 1) && !entity.getCrew().getNickname().isBlank()) {
-                // pilot nickname, also known as callsign
-                name += " <font color='"+color+"'>\"" + entity.getCrew().getNickname().toUpperCase() + "\"</font>";
+                unitName += fgColor(ownerColor, ' ' :wq+ entity.getCrew().getNickname().toUpperCase());
             }
-            add(name, true);
-            add("<B><font color='" + color + "'>" + entity.getOwner().getName() + "</font></B>");
+
+            add(unitName, true);
+            add(bold(fgColor(ownerColor, entity.getOwner().getName())));
         }
     }
 
@@ -555,6 +562,53 @@ public class Report implements Serializable {
         } catch (Exception ex) {
             LogManager.getLogger().error("Cannot add a new line", ex);
         }
+    }
+
+    public static void setupStylesheet(StyleSheet styleSheet) {
+        Font font = UIManager.getFont("Label.font");
+        int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
+
+        GUIPreferences guip = GUIPreferences.getInstance();
+        styleSheet.addRule(
+                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
+        styleSheet.addRule("a {color: #565656 }");
+        styleSheet.addRule("span.warning { color: "+ hexColor(guip.getWarningColor())+" }");
+    }
+
+    public String span(String name, String text) {
+        return "<span class='" + name + "'>" + text + "</span>";
+    }
+
+    public String warning(String text) {
+        return span("warning", text);
+    }
+
+    private static String hexColor(Color color) {
+        return String.format("#%06x", Integer.valueOf(color.getRGB() & 0x00FFFFFF));
+    }
+
+    public String fgColor(Color color, String str) {
+        return fgColor(hexColor(color), str);
+    }
+
+    public String fgColor(String hexColor, String str) {
+        return "<span style='color:" + hexColor + "'>" + str + "</span>";
+    }
+
+    public String bgColor(Color color, String str) {
+        return bgColor(hexColor(color), str);
+    }
+
+    public String bgColor(String hexColor, String str) {
+        return "<span style='background-color:"+ hexColor +"'>" + str + "</span>";
+    }
+
+    public static String bold(String str) {
+        return "<B>" + str + "</B>";
+    }
+
+    public String href(String href, String str) {
+        return "<a href='" + href + "'>" + str + "</a>";
     }
 
     /**

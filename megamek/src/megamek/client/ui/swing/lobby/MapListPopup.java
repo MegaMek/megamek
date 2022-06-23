@@ -44,10 +44,11 @@ class MapListPopup {
             JMenuItem mi = menuItem("Set \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false, true, listener);
             popup.add(mi);
             mi.setEnabled(oneSelected);
-
-            mi = menuItem("Set Rotated \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true, true, listener);
-            popup.add(mi);
-            mi.setEnabled(oneSelected);
+            if (enableRotation) {
+                mi = menuItem("Set Rotated \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true, true, listener);
+                popup.add(mi);
+                mi.setEnabled(oneSelected);
+            }
         } else {
             popup.add(singleBoardMenu(oneSelected, false, listener, numButtons, boards));
 

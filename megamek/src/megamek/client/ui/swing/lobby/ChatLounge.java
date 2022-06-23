@@ -2707,7 +2707,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         @Override
         public void mouseReleased(MouseEvent e) {
             if (lisBoardsAvailable.isEnabled()) {
-                // If a mouse button is pressed over an unselected map,
+                // If a mouse button is pressed over a map,
                 // show the board selection popup
                 int index = lisBoardsAvailable.locationToIndex(e.getPoint());
                 if (index != -1 && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
@@ -2722,15 +2722,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         @Override
         public void mouseMoved(MouseEvent e) {
             if (popup == null) return;
-           Component c = e.getComponent();
            Point p = e.getLocationOnScreen();
            if (!popup.contains(p))
            {
-               closePopup(e);
+               closePopup();
            }
         }
 
-        private void closePopup(MouseEvent e)
+        private void closePopup()
         {
             if (popup == null) return;;
             popup.setVisible(false);

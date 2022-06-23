@@ -14,7 +14,9 @@
 package megamek.client.ui.swing.lobby;
 
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -38,13 +40,12 @@ class MapListPopup {
 
         ScalingPopup popup = new ScalingPopup();
         if (numButtons == 1) {
-            String name = boards.get(0);
-
-//            name = name.substring(name.lastIndexOf('/'));
-            JMenuItem mi = menuItem("Set " + name, MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false, true, listener);
+            String name = mapShortName(boards.get(0));
+            JMenuItem mi = menuItem("Set \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false, true, listener);
             popup.add(mi);
             mi.setEnabled(oneSelected);
-            mi = menuItem("Set Rotated " + name, MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true, true, listener);
+
+            mi = menuItem("Set Rotated \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true, true, listener);
             popup.add(mi);
             mi.setEnabled(oneSelected);
         } else {
@@ -60,13 +61,21 @@ class MapListPopup {
         return popup;
     }
 
+    /** @return the short map name given the long path */
+    private static String mapShortName(String mapPath) {
+        // File is the most robust way to split
+        File f = new File(mapPath);
+        return f.getName();
+    }
+
     /**
      * Returns the "set as board" submenu.
      */
     private static JMenu singleBoardMenu(boolean enabled, boolean rotated, ActionListener listener, 
             int numB, List<String> boards) {
+        String name = mapShortName(boards.get(0));
 
-        JMenu menu = new JMenu(!rotated ? "Set as Board..." : "Set as Board (rotated)...");
+        JMenu menu = new JMenu(!rotated ? "Set \"" + name + "\" as Board..." : " Set \"" + name + "\" as Board (rotated)...");
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {

@@ -945,20 +945,23 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
-        Color borderColor = new Color(255, 255, 255, 150);
+        Color borderColor = new Color(255, 255, 255, 200);
+        Color fontColor = new Color(0, 0, 0, 255);
         if (entity.moved != EntityMovementType.MOVE_NONE) {
-            borderColor = borderColor.darker();
-            iconColor = iconColor.darker();
+            Color tmp = borderColor;
+            borderColor = iconColor;
+            fontColor = iconColor;
+            iconColor = tmp;
         }
 
         if (stratOpsSymbols) {
             // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+            g2.setStroke(new BasicStroke(35f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
             g2.setColor(borderColor);
             g2.draw(STRAT_BASERECT);
 
             // Black background to fill forms like the DropShip
-            g2.setColor(Color.BLACK);
+            g2.setColor(fontColor);
             g2.fill(STRAT_BASERECT);
 
             // Rectangle border for all units
@@ -976,7 +979,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(form);
 
             // Add the weight class or other lettering for certain units
-            g.setColor(Color.BLACK);
+            g.setColor(fontColor);
             if ((entity instanceof Protomech) || (entity instanceof Mech) || (entity instanceof Aero)) {
                 String s = "";
                 if (entity instanceof Protomech) {
@@ -996,7 +999,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                             (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
                 }
             } else if (entity instanceof MechWarrior) {
-                g2.setColor(Color.black);
+                g2.setColor(fontColor);
                 g2.fillOval(-25, -25, 50, 50);
             }
             // Draw the unit icon in black
@@ -1005,7 +1008,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         } else {
             // Standard symbols
             // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+            g2.setStroke(new BasicStroke(35f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
             g2.setColor(borderColor);
             g2.draw(form);
 
@@ -1014,7 +1017,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(form);
             
             // Black border
-            g2.setColor(Color.BLACK);
+            g2.setColor(fontColor);
             g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2.draw(form);
         }

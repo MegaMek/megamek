@@ -17,6 +17,7 @@ import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -47,10 +48,12 @@ import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
@@ -18612,7 +18615,8 @@ public class GameManager implements IGameManager {
             r.addDesc(entity);
             r.add(entity.heatBuildup);
             r.add(toSink);
-            r.add(entity.heat);
+            Color color = GUIPreferences.getInstance().getColorForHeat(entity.heat, Color.BLACK);
+            r.add(r.bold(r.fgColor(color, String.valueOf(entity.heat))));
             addReport(r);
             entity.heatBuildup = 0;
             vPhaseReport.addAll(rhsReports);
@@ -31211,9 +31215,11 @@ public class GameManager implements IGameManager {
 
                 r = new Report(6436, Report.PUBLIC);
                 r.indent(1);
-                String fontColorOpen = curCF <= 0 ? "<font color='C00000'>" : "";
-                String fontColorClose = curCF <= 0 ? "</font>" : "";
-                r.add(String.format("%s%s%s", fontColorOpen, curCF, fontColorClose));
+                if (curCF <= 0) {
+                    r.add(r.warning(String.valueOf(curCF)));
+                } else {
+                    r.add(curCF);
+                }
                 vPhaseReport.add(r);
 
                 final int damageThresh = (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);

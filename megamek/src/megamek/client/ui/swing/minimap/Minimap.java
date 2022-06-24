@@ -945,10 +945,16 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
+        Color borderColor = new Color(255, 255, 255, 150);
+        if (entity.moved != EntityMovementType.MOVE_NONE) {
+            borderColor = borderColor.darker();
+            iconColor = iconColor.darker();
+        }
+
         if (stratOpsSymbols) {
             // White border to set off the icon from the background
             g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-            g2.setColor(new Color(255, 255, 255, 150));
+            g2.setColor(borderColor);
             g2.draw(STRAT_BASERECT);
 
             // Black background to fill forms like the DropShip
@@ -1000,7 +1006,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             // Standard symbols
             // White border to set off the icon from the background
             g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-            g2.setColor(new Color(255, 255, 255, 150));
+            g2.setColor(borderColor);
             g2.draw(form);
 
             // Fill the form in player color / team color

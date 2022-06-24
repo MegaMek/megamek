@@ -945,19 +945,19 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
-        Color borderColor = new Color(255, 255, 255, 200);
-        Color fontColor = new Color(0, 0, 0, 255);
+        Color borderColor = Color.WHITE;
+        Color fontColor = Color.BLACK;
         if (entity.moved != EntityMovementType.MOVE_NONE) {
-            Color tmp = borderColor;
-            borderColor = iconColor;
-            fontColor = iconColor;
-            iconColor = tmp;
+            borderColor = Color.BLACK;
         }
+
+        float outerBorderWidth = 30f;
+        float innerBorderWidth = 20f;
 
         if (stratOpsSymbols) {
             // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(35f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+            g2.setColor(Color.BLACK);
             g2.draw(STRAT_BASERECT);
 
             // Black background to fill forms like the DropShip
@@ -965,7 +965,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(STRAT_BASERECT);
 
             // Rectangle border for all units
-            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             g2.draw(STRAT_BASERECT);
 
             // Set a thin brush for filled areas (leave a thick brush for line symbols
@@ -1008,8 +1009,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         } else {
             // Standard symbols
             // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(35f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+            g2.setColor(Color.BLACK);
             g2.draw(form);
 
             // Fill the form in player color / team color
@@ -1017,8 +1018,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(form);
             
             // Black border
-            g2.setColor(fontColor);
-            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(innerBorderWidth/2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2.draw(form);
         }
         

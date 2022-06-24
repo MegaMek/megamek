@@ -15,6 +15,7 @@ VERSION HISTORY:
 + PR #3721: Adding Dragon's Teeth and Burned/Felled Woods Rough Terrain Fluff Sprites
 + Issue #3688: Adding Colour to Heat Reports
 + Issue #3722: Princess will do a better job not targeting ignored units with artillery
++ Issue #3729: Any button click on map now brings up menu, improving usability on single-button machines
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

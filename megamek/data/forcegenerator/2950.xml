@@ -3402,7 +3402,7 @@
 		</model>
 	</chassis>
 	<chassis name='Lupus' unitType='Mek' omni='Clan'>
-		<availability>CC:2-,MOC:2-,CDS:2-,CBS:4-,CSV:4-,CLAN:2-,FWL:2-,MERC:2-,CCO:7,CGS:4-,BAN:3,TC:2-</availability>
+		<availability>CDS:2-,CBS:4-,CSV:4-,CLAN:2-,CCO:7,CGS:4-,BAN:3</availability>
 		<model name='A'>
 			<availability>CLAN:6</availability>
 		</model>

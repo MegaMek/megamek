@@ -42,29 +42,31 @@ public final class PilotToolTip {
     private final static int PORTRAIT_BASESIZE = 72;
 
     public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
-        return getPilotTip(entity, true, showPortrait);
+        return getPilotTip(entity, true, showPortrait, true);
     }
     
     public static StringBuilder getPilotTipShort(Entity entity, boolean showPortrait) {
-        return getPilotTip(entity, false, showPortrait);
+        return getPilotTip(entity, false, showPortrait, false);
     }
 
     // PRIVATE
 
-    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait) {
+    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait) {
         StringBuilder result = new StringBuilder();
         
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
         result.append(TABLE_BEGIN);
-        result.append(crewInfo(entity));
 
         if (showPortrait) {
+            result.append(crewPortraits(entity, showDefaultPortrait));
             // Add a spacer cell
             int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
             result.append("<TD WIDTH=" + dist + "></TD>");
-            result.append(crewPortraits(entity));
         }
+
+        result.append(crewInfo(entity));
+
         result.append(TABLE_END);
 
         // The crew advantages and MD
@@ -115,11 +117,11 @@ public final class PilotToolTip {
     }
     
     /** Returns a tooltip part with crew portraits. */
-    private static StringBuilder crewPortraits(final Entity entity) {
+    private static StringBuilder crewPortraits(final Entity entity, boolean showDefaultPortrait) {
         Crew crew = entity.getCrew();
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < crew.getSlotCount(); i++) {
-            if (crew.getPortrait(i).isDefault()) {
+            if ((!showDefaultPortrait) && crew.getPortrait(i).isDefault()) {
                 continue;
             }
 

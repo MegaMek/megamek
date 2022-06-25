@@ -29,8 +29,8 @@ public final class TipUtil {
     
     final static boolean BR = true;
     final static boolean NOBR = false;
-    final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=0><TBODY><TR><TD VALIGN=TOP>"; 
-    final static String TABLE_END = "</TR></TBODY></TABLE>";
+    public final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=0><TBODY><TR><TD VALIGN=TOP>";
+    public final static String TABLE_END = "</TR></TBODY></TABLE>";
     
     /** 
      * Returns a List wherein each element consists of an option group of the given 

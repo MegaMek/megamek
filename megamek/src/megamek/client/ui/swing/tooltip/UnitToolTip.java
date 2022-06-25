@@ -601,25 +601,11 @@ public final class UnitToolTip {
             result.append(addToTT("BV", BR, currentBV, initialBV, percentage));
         }
 
-        // Heat, not shown for units with 999 heat sinks (vehicles)
-        if (entity.getHeatCapacity() != 999) {
-            int heat = entity.heat;
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForHeat(heat)));
-            if (heat == 0) {
-                result.append(addToTT("Heat0", BR));
-            } else { 
-                result.append(addToTT("Heat", BR, heat));
-            }
-            result.append("/"+entity.getHeatCapacity());
-            result.append("</FONT>");
-        }
-
         // Actual Movement
         if (!isGunEmplacement) {
             // "Has not yet moved" only during movement phase
             if (!entity.isDone() && game.getPhase() == GamePhase.MOVEMENT) {
                 result.append(addToTT("NotYetMoved", BR));
-                result.append("<BR>");
             } else if ((entity.isDone() && game.getPhase() == GamePhase.MOVEMENT)
                     || game.getPhase() == GamePhase.FIRING) {
                 result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForMovement(entity.moved)));
@@ -646,19 +632,32 @@ public final class UnitToolTip {
                 if (entity.isMakingDfa()) { 
                     result.append(addToTT("DFA", NOBR));
                 }
-
             }
         }
 
-        // Velocity, Altitude, Elevation, Fuel
         if (entity.isAero()) {
+            // Velocity, Altitude, Elevation, Fuel
             result.append(guiScaledFontHTML(uiLightViolet()));
             IAero aero = (IAero) entity;
             result.append(addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getFuel()));
             result.append("</FONT>");
         } else if (entity.getElevation() != 0) {
+            // Elevation only
             result.append(guiScaledFontHTML(uiLightViolet()));
             result.append(addToTT("Elev", BR, entity.getElevation()));
+            result.append("</FONT>");
+        }
+
+        // Heat, not shown for units with 999 heat sinks (vehicles)
+        if (entity.getHeatCapacity() != 999) {
+            int heat = entity.heat;
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForHeat(heat)));
+            if (heat == 0) {
+                result.append(addToTT("Heat0", BR));
+            } else {
+                result.append(addToTT("Heat", BR, heat));
+            }
+            result.append(" / "+entity.getHeatCapacity());
             result.append("</FONT>");
         }
 
@@ -678,6 +677,14 @@ public final class UnitToolTip {
             result.append(addToTT("Immobile", BR));
             result.append("</FONT>");
         }
+
+        // Unit Prone
+        if (!isGunEmplacement && entity.isProne()) {
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(addToTT("Prone", BR));
+            result.append("</FONT>");
+        }
+
 
         if (!entity.getHiddenActivationPhase().isUnknown()) {
             result.append(addToTT("HiddenActivating", BR, entity.getHiddenActivationPhase().toString()));
@@ -727,26 +734,7 @@ public final class UnitToolTip {
         // If sensors, display what sensors this unit is using
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-            // NOTE: I copied visual range from GeneralInfoMapSet and have not verified its correctness
-            int autoVisualRange;
-            if (entity.isSpaceborne() && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-                autoVisualRange = 0;
-                //For squadrons. Default to the passive thermal/optical value used by component fighters
-                if (entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
-                    autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
-                }
-                if (entity.getActiveSensor() != null) {
-                    if (entity.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                        // required because the return on this from the method below is for ground maps
-                        autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-                    } else {
-                        autoVisualRange = (int) Math.ceil(entity.getActiveSensor().getRangeByBracket() / 10.0);
-                    }
-                }
-            } else {
-                autoVisualRange =  game.getPlanetaryConditions().getVisualRange(entity, false);
-            }
-            result.append(addToTT("Sensors", BR, entity.getSensorDesc(), autoVisualRange));
+            result.append(addToTT("Sensors", BR, entity.getSensorDesc(), Compute.getMaxVisualRange(entity, false)));
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {

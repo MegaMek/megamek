@@ -21,18 +21,20 @@ package megamek.client.ui.swing.unitDisplay;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
-import megamek.common.Entity;
-import megamek.common.EntityVisibilityUtils;
-import megamek.common.Hex;
-import megamek.common.Player;
+import megamek.client.ui.swing.widget.*;
+import megamek.common.*;
+import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
  * It is intended to be a tab in the UnitDisplay panel.
  */
-public class SummaryPanel extends JPanel {
+public class SummaryPanel extends PicMap {
 
     private UnitDisplay unitDisplay;
     private JLabel pilotInfo, unitInfo, hexInfo;
@@ -43,7 +45,9 @@ public class SummaryPanel extends JPanel {
     SummaryPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
 
-        JPanel panel = this;
+        setBackGround();
+
+        PicMap panel = this;
         panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS ));
 
         pilotInfo = new JLabel("<html>UnitInfo</html>", SwingConstants.LEFT );
@@ -54,6 +58,69 @@ public class SummaryPanel extends JPanel {
 
         hexInfo = new JLabel("<html>HexInfo</html>", SwingConstants.LEFT );
         panel.add(hexInfo);
+    }
+
+
+    private void setBackGround() {
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
+
+        Image tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBackgroundTile()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        int b = BackGroundDrawer.TILING_BOTH;
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getTopLine()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBottomLine()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getLeftLine()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getRightLine()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
+                | BackGroundDrawer.HALIGN_LEFT;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getTopLeftCorner()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
+                | BackGroundDrawer.HALIGN_LEFT;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBottomLeftCorner()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
+                | BackGroundDrawer.HALIGN_RIGHT;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getTopRightCorner()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
+                | BackGroundDrawer.HALIGN_RIGHT;
+        tile = unitDisplay.getToolkit().getImage(new MegaMekFile(Configuration.widgetsDir(),
+                udSpec.getBottomRightCorner()).toString());
+        PMUtil.setImage(tile, unitDisplay);
+        addBgDrawer(new BackGroundDrawer(tile, b));
     }
 
     /**
@@ -94,5 +161,10 @@ public class SummaryPanel extends JPanel {
             hexTxt.append("</HTML>");
             hexInfo.setText(hexTxt.toString());
         }
+    }
+
+    @Override
+    public void onResize() {
+
     }
 }

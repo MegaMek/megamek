@@ -13,26 +13,14 @@
  */
 package megamek.common.weapons;
 
-import java.util.List;
-import java.util.Vector;
-
-import megamek.common.BombType;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.EquipmentType;
-import megamek.common.HitData;
-import megamek.common.Game;
-import megamek.common.Mounted;
-import megamek.common.Report;
-import megamek.common.TagInfo;
-import megamek.common.TargetRoll;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
-import megamek.server.Server;
+
+import java.util.List;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson
@@ -133,7 +121,7 @@ public class BombAttackHandler extends WeaponHandler {
                 if (wtype != null) {
                     r.add(wtype.getName());
                 } else {
-                    r.add("Error: From Nowhwere");
+                    r.add("Error: From Nowhere");
                 }
 
                 r.add(target.getDisplayName(), true);

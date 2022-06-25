@@ -21,7 +21,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AreaEffectHelper.DamageFalloff;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.server.GameManager;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Iterator;
@@ -236,7 +235,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (wtype != null) {
             r.add(wtype.getName());
         } else {
-            r.add("Error: From Nowhwere");
+            r.add("Error: From Nowhere");
         }
 
         r.add(target.getDisplayName(), true);

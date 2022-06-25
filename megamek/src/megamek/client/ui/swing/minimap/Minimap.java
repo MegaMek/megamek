@@ -1019,7 +1019,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             
             // Black border
             g2.setColor(borderColor);
-            g2.setStroke(new BasicStroke(innerBorderWidth/2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g2.setStroke(new BasicStroke(innerBorderWidth / 2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2.draw(form);
         }
         

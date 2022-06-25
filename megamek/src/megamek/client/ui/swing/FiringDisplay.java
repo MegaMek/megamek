@@ -1937,6 +1937,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         updateSearchlight();
         updateActivateSPA();
+        updateClearWeaponJam();
+        updateClearTurret();
 
         // Hidden units can only spot
         if ((ce() != null) && ce().isHidden()) {

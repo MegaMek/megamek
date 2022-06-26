@@ -32863,7 +32863,7 @@ public class GameManager implements IGameManager {
                     }
                     if (pe instanceof MechWarrior) {
                         // MWs have a beer together
-                        r = new Report(6415, Report.PUBLIC);
+                        r = new Report(6416, Report.PUBLIC);
                         r.add(pe.getDisplayName());
                         addReport(r);
                         continue;
@@ -32892,7 +32892,7 @@ public class GameManager implements IGameManager {
                     }
                     if (pe instanceof MechWarrior) {
                         // MWs have a beer together
-                        r = new Report(6415, Report.PUBLIC);
+                        r = new Report(6417, Report.PUBLIC);
                         r.add(pe.getDisplayName());
                         addReport(r);
                         continue;

@@ -19,6 +19,7 @@ VERSION HISTORY:
 + PR #3734: Fixing Nowhwere Typos
 + PR #3733: Change border colors on the minimap for moved units
 + Issue #3599: Unjam/clear turret buttons update properly after canceling pending firing orders
++ Issue #3711: Female mechwarriors are now able to have a beer after ejecting from their mech
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

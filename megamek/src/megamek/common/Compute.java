@@ -93,7 +93,9 @@ public class Compute {
     public static final int ARC_AFT_WPL = 47;
     public static final int ARC_LEFT_BROADSIDE_WPL = 48;
     public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
-    
+
+    public static int DEFAULT_MAX_VISUAL_RANGE = 1;
+
     /** Lookup table for vehicular grenade launcher firing arc from facing */
     private static final int[] VGL_FIRING_ARCS = { ARC_VGL_FRONT, ARC_VGL_RF, ARC_VGL_RR,
             ARC_VGL_REAR, ARC_VGL_LR, ARC_VGL_LF
@@ -4638,11 +4640,44 @@ public class Compute {
         return roll >= tn;
     }
 
-    public static int getVisualRange(Game game, Entity ae, LosEffects los, boolean teIlluminated) {
-        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teIlluminated);
+    /**
+     * @return visual range in hexes along a specific line of sight
+     */
+    public static int getVisualRange(Game game, Entity ae, LosEffects los, boolean targetIlluminated) {
+        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, targetIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
         visualRange = Math.max(1, visualRange);
+        return visualRange;
+    }
+
+    /**
+     * @return visual range in hexes given current planetary conditions and no los obstruction
+     */
+    public static int getMaxVisualRange(Entity entity, boolean targetIlluminated ) {
+        Game game = entity.getGame();
+        if (game == null) {
+            return DEFAULT_MAX_VISUAL_RANGE;
+        }
+
+        int visualRange;
+        if (entity.isSpaceborne() && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+            visualRange = 0;
+            //For squadrons. Default to the passive thermal/optical value used by component fighters
+            if (entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
+                visualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+            }
+            if (entity.getActiveSensor() != null) {
+                if (entity.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                    // required because the return on this from the method below is for ground maps
+                    visualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+                } else {
+                    visualRange = (int) Math.ceil(entity.getActiveSensor().getRangeByBracket() / 10.0);
+                }
+            }
+        } else {
+            visualRange =  game.getPlanetaryConditions().getVisualRange(entity, targetIlluminated);
+        }
         return visualRange;
     }
 

@@ -22,6 +22,7 @@ VERSION HISTORY:
 + Issue #3711: Female mechwarriors are now able to have a beer after ejecting from their mech
 + Data: New Sprites including the return of 'Royal' sprites (Thanks to UlyssesSockdrawer)
 + Data: Battle Armor moving to new MUL conventions (4,5,6 unit squads). 
++ Issue #3695: Increased amount and usefulness of data displayed in the General tab of the unit display.
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

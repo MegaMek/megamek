@@ -13,11 +13,11 @@ ConvFighter
 </UnitType>
 
 <Name>
-Medium Strike Fighter Steinadler
+Medium Strike Fighter 
 </Name>
 
 <Model>
-(Golden Eagle)
+Steinadler (Golden Eagle)
 </Model>
 
 <mul id:>

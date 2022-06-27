@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,7 +17,7 @@ Lee
 </Name>
 
 <Model>
-(2756 Carrier)
+(Aerospace Carrier)
 </Model>
 
 <mul id:>
@@ -44,11 +44,11 @@ Spheroid
 asfbay:20.0:3:1
 asfbay:20.0:3:2
 smallcraftbay:6.0:1:3
-cargobay:1050.5:1:4
 steeragequarters:150.0:0
 1stclassquarters:80.0:0
-crewquarters:161.0:0
 2ndclassquarters:140.0:0
+crewquarters:154.0:0
+cargobay:1057.5:1:4
 </transporters>
 
 <SafeThrust>
@@ -209,6 +209,30 @@ ISArtemisIV
 25
 </structural_integrity>
 
+<capabilities>
+The design carries 90 tons of Ferro-Aluminum armor. It has been fitted out with 3 First-Class passenger quarters and 20 Second-Class Passenger quarters.
+</capabilities>
+
+<overview>
+Produced a few decades before the Amaris Coup, the Lee-class DropShip was one of the last major military transports to be produced for the SLDF prior to its conquest by Stefan Amaris
+</overview>
+
+<deployment>
+This variant was designed to carry 40 AeroSpace Fighters and a single Squadron of Small Craft. This version of the Lee would lead to the creation of the Vengeance-class Aerospace Carrier DropShip.
+</deployment>
+
+<history>
+Pitched by three major naval yards in the Terran Hegemony, the Lee proposal was presented to SLDF Commanding General Aleksandr Kerensky in 2749. The design was part of his vision to streamline the number of DropShip Military Classes. His effort were focused in the creation of a heavily armed and armored vessel that could carry a large payload of SLDF troops into battle quicker than any current design currently in service. Twice the size of the SLDF's standard Overlord, the Lee's primary design was configured to carry a reinforced battalion worth of BattleMechs, while supported by a single squadron of AeroSpace Fighters. Kerensky's efforts to get the Lee into production was not easy, due to various boondoggles and political entanglements associated with the creation and development of previous vessels, such as the Colossus Class DropShip. However, the unpopular Star Lord Richard Cameron's efforts to prevent the design from entering production proved to be beneficial in having it approved by his Star League Council. The Lee entered production in 2756. The Lee saw its first major action during the Periphery Uprising, where its ability to move large numbers of troops quickly proved to be a boon for the SLDF. However, the ship's large carry capacity became a liability during the invasion of the occupied Hegemony. Space Defense System's Casper fleet of drones effectively destroyed a large number of these ships, causing a number of troops to be lost. Shortly after, these ships would be left in the SLDF's reserves until the landings on Terra where they were deployed in large numbers. Few of these ships survived to join the Exodus Fleet to deep Periphery with General Kerensky and those remaining ships would be later lost in fighting during the Pentagon Civil War.
+</history>
+
+<manufacturer>
+Mitchell Vehicles, Boeing Interstellar, Di Tron Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Graham IV, New Earth, Terra
+</primaryFactory>
+
 <source>
 H:Liberation of Terra II - Star League
 </source>
@@ -222,7 +246,7 @@ H:Liberation of Terra II - Star League
 </designtype>
 
 <crew>
-133
+137
 </crew>
 
 <officers>
@@ -256,3 +280,4 @@ H:Liberation of Terra II - Star League
 <escape_pod>
 10
 </escape_pod>
+

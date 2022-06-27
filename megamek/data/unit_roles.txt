@@ -1,4 +1,4 @@
-# Unit Roles taken from http://masterunitlist.info, Updated March 2022
+# Unit Roles taken from http://masterunitlist.info, Updated June 2022
 
 AA Jump Infantry 292nd League Regulars:AMBUSHER
 AA Mechanized Infantry Mechanized AA Infantry:AMBUSHER
@@ -5772,9 +5772,10 @@ Vanquisher VQR-7V:JUGGERNAUT
 Vanquisher VQR-7V (Pravuil):JUGGERNAUT
 Vargr APC Tank (LRM):SKIRMISHER
 Vargr APC Tank (Standard):BRAWLER
-Vector (Attack):STRIKER
-Vector (EW):STRIKER
-Vector (Transport):STRIKER
+Vector Combat Support VTOL (Scout):STRIKER
+Vector Combat Support VTOL (Standard):STRIKER
+Vector Combat Support VTOL (Attack):STRIKER
+Vector Combat Support VTOL (EW):STRIKER
 Vedette Medium Tank (AC2):BRAWLER
 Vedette Medium Tank (Cell):SNIPER
 Vedette Medium Tank (LB-X):SNIPER
@@ -5863,6 +5864,8 @@ Void Medium Battle Armor (Minelayer):AMBUSHER
 Void Medium Battle Armor (Nova Cat):SCOUT
 Void Medium Battle Armor (Standard):SCOUT
 Void Medium Battle Armor Caltrop:AMBUSHER
+Voidseeker Mk 39-004 Interceptor:DOGFIGHTER
+Voidseeker Mk 39-007 Striker:FIRE_SUPPORT
 Volkh VKH-1:SKIRMISHER
 Volkh VKH-68:STRIKER
 Volkh VKH-7:SKIRMISHER

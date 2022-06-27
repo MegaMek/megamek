@@ -13,11 +13,11 @@ ConvFighter
 </UnitType>
 
 <Name>
-Medium Strike Fighter Crane
+Medium Strike Fighter
 </Name>
 
 <Model>
-
+Crane
 </Model>
 
 <mul id:>

@@ -13,11 +13,11 @@ Dropship
 </UnitType>
 
 <Name>
-Model 96C 'Howdah'
+Model 96C
 </Name>
 
 <Model>
-
+“Howdah” SDS Command Ship
 </Model>
 
 <mul id:>
@@ -45,7 +45,7 @@ smallcraftbay:2.0:2:2
 artsasfbay:6.0:4:5
 steeragequarters:235.0:0
 2ndclassquarters:63.0:0
-cargobay:1283.0:2:1
+cargobay:1283.0:2:4
 </transporters>
 
 <SafeThrust>

@@ -1,0 +1,84 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Aerie PA(L)
+</Name>
+
+<Model>
+(Salvage)(Sqd5)
+</Model>
+
+<mul id:>
+8600
+</mul id:>
+
+<year>
+3069
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+BASalvageArm:RA
+BAArmoredGlove:LA
+CLBASpaceOperationsAdaptation:Body
+Laser Rifle (Mauser IIC IAS):APM:RA
+Clan BA Stealth (Standard):Body
+Clan BA Stealth (Standard):RA
+Clan BA Stealth (Standard):LA
+Clan BA Stealth (Standard):RA
+</Point Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>

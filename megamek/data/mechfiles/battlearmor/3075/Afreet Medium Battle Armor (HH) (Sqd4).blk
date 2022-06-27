@@ -1,0 +1,80 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Afreet Medium Battle Armor
+</Name>
+
+<Model>
+(Hell's Horses)(Sqd4)
+</Model>
+
+<mul id:>
+3677
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+2
+</weightclass>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<Armor>
+5
+</Armor>
+
+<Point Equipment>
+CLBearhunter Superheavy AC:RA
+CLBASRM3OS:Body
+CLBAJumpBooster:Body
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+</Point Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+3072
+</year>
+
+<motion_type>
+Jump
+</motion_type>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>

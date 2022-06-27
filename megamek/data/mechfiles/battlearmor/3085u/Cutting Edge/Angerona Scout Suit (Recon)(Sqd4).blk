@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Angerona Scout Suit
+</Name>
+
+<Model>
+(Recon)(Sqd4)
+</Model>
+
+<mul id:>
+31
+</mul id:>
+
+<year>
+3085
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+ISBALightMachineGun:LA
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+ISImprovedSensors:Body
+Camo System:Body
+Auto-Rifle (Modern, Generic):APM:RA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
+ISBARemoteSensorDispenser:Body
+</Squad Equipment>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>

@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Clan Medium Battle Armor
+</Name>
+
+<Model>
+ (Naval) "Bär" (Sqd5)
+</Model>
+
+<mul id:>
+8610
+</mul id:>
+
+<year>
+3070
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBAMicroPulseLaser:RA
+CLBAJumpBooster:Body
+BASearchlight:LA
+BAHeavyBattleClawVibro:LA
+BABasicManipulator:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+CLBAExtendedLifeSupport:Body
+</Point Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<capabilities>
+Instead of the modular weapon ports of the Elemental Battle Armor, Clan Battle Armor mounts a fixed Flamer. Similarly, the SRM-2 pod is no longer detachable, though the new model uses a pair of One-Shot SRM-2 launchers. Interestingly, Clan Battle Armor also incorporates a standard searchlight that can be useful in and out of combat, though the design lacks an anti-personnel weapon. Like all Clan battle armor, Clan Battle Armor employs HarJel. The use of Basic Manipulators allow it to ride OmniMechs and also to make anti-'Mech attacks.
+</capabilities>
+
+<overview>
+Following their Abjuration from the Clan Homeworlds, Clan Nova Cat needed to rebuild. In so doing, Khan Santin West directed his scientist caste to create a new battle armor that could stand up to the newer designs coming out of Clan space.
+</overview>
+
+<deployment>
+Clan Ghost Bear's "Special Naval Version" is intended for use by WarShip-based marines. This variant's only ranged weapon is a Micro Pulse Laser. It also has a Vibro Battle Claw for use in melee combat. Extended Life Support enables the suit to operate for long periods.
+</deployment>
+
+<history>
+Based on the Elemental suit, the result was the Clan Battle Armor, whose visual aesthetic shows that the Clan's contact with the Draconis Combine was already rubbing off on them. Though the design has a slow ground speed, the designers used the jump booster pioneered on the Gray Death Scout armor to rocket it up to one hundred twenty meters at a time. This necessitated a slight reduction in armor and a reworking of the weaponry. Clan Elementals have nicknamed these battle armor Rabids.
+</history>
+
+<manufacturer>
+Sea Fox Y3
+</manufacturer>
+
+<primaryFactory>
+Trondheim
+</primaryFactory>

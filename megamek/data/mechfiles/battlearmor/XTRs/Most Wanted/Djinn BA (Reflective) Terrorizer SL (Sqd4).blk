@@ -1,0 +1,114 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Djinn Battle Armor
+</Name>
+
+<Model>
+(Reflective) 'Terrorizer' [Laser] (Sqd4)
+</Model>
+
+<mul id:>
+5794
+</mul id:>
+
+<year>
+3079
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<Squad Equipment>
+BABattleClaw:LA
+BABattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Reflective:RA
+IS BA Reflective:LA
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:Body
+IS BA Reflective:Body
+IS BA Reflective:Body
+ISBASmallLaser:RA
+</Squad Equipment>
+
+<source>
+XTRO Most Wanted - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+The Djinn is the first known example of the so-called Demon Series of battle armor designs produced by Word of Blake for their Manei Domini. 
+</overview>
+
+<history>
+The Djinn was created by the same Doctor Cortland who created the Celestial line of OmniMechs and is named after the wicked spirits of Islamic mythology. The Djinn were utilised in battle for the first time in 3070, although it would be another year before a sizable number of them were observed taking part in big fights. Since then, especially in regards to Galatea and Gibson, they have come to represent Blakist persecution.
+</history>
+
+<capabilities>
+The Djinn has been expertly created to frighten its adversaries. Due to the Manei Domini troopers' employment of cybernetic upgrades to compensate for the physical heft that "frail" Elementals and their Inner Sphere counterparts need to operate battle armour, it is clear from its slender appearance that it was specifically created for them. Its armour, which weighs 200 kg and is state-of-the-art, can stop a Medium Laser, and its superior mobility allow it to get to and from danger regions rapidly. Its firepower is designed to clear urban areas of unarmored soldiers.
+</capabilities>
+
+<deployment>
+This variant of the Djinn was first observed in 3079, following Terra's capture by Devlin Stone's Coalition, and it was devoid of both the Battle Armor TAG system and regular armour. Instead, 330 kg of reflective armour were mounted on the chassis. The Djinn Terrorizer can be fitted with a Machine Gun, Small Laser, or Flamer in addition to carrying a single Battle Claw in each arm. The Terrorizer lacks the conventional Djinn's half wing, giving it a jump radius of 30 metres.
+</deployment>
+
+<manufacturer>
+Gibson Federated BattleMechs (A Division of Free Worlds Defense Industries)
+</manufacturer>
+
+<primaryFactory>
+Gibson
+</primaryFactory>

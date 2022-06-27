@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Asura Medium Battle Armor
+</Name>
+
+<Model>
+(Standard)(Sqd5)
+</Model>
+
+<mul id:>
+8608
+</mul id:>
+
+<year>
+3072
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+11
+</armor_tech>
+
+<Squad Equipment>
+ISBAMediumRecoillessRifle:RA
+BABattleClaw:LA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Advanced:LA
+IS BA Advanced:Body
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:LA
+ISBARL4:Body
+</Squad Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>

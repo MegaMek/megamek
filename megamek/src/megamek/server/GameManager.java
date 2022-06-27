@@ -419,7 +419,9 @@ public class GameManager implements IGameManager {
         try (OutputStream os = new FileOutputStream(sFinalFile + ".gz");
              OutputStream gzo = new GZIPOutputStream(os);
              Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
-
+            if (getGame().getMapSettings() == null)  {
+                getGame().setMapSettings(new MapSettings(8, 8, 1, 1));
+            }
             xstream.toXML(getGame(), writer);
         } catch (Exception e) {
             LogManager.getLogger().error("Unable to save file: " + sFinalFile, e);
@@ -836,6 +838,7 @@ public class GameManager implements IGameManager {
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
+                    game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createMapSettingsPacket());
@@ -851,6 +854,7 @@ public class GameManager implements IGameManager {
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
+                    game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createMapSettingsPacket());

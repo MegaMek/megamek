@@ -390,7 +390,7 @@ public class MapSettings implements Serializable {
     }
 
     /** Create new MapSettings with all size settings specified */
-    private MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
+    public MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
     }

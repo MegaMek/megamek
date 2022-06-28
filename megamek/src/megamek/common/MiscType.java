@@ -3972,7 +3972,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("HeatSuit");
         misc.damageDivisor = 1.0;
-        misc.subType = S_COLD_WEATHER;
+        misc.subType = S_HOT_WEATHER;
         misc.cost = 100;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";

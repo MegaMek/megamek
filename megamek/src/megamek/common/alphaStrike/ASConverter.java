@@ -86,6 +86,9 @@ public final class ASConverter {
             unitType += " / Industrial";
         }
         conversionReport.addLine("Unit Type:", unitType, element.getType().toString());
+        if (undamagedEntity instanceof BattleArmor) {
+            element.setSquadSize(((BattleArmor) undamagedEntity).getSquadSize());
+        }
 
         // Size
         element.setSize(ASSizeConverter.convertSize(conversionData));

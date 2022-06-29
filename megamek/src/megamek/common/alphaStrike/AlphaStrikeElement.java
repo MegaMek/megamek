@@ -771,4 +771,29 @@ public class AlphaStrikeElement {
     public boolean isFighter() {
         return isAnyTypeOf(AF, CF) || isAerospaceSV();
     }
+
+    /** @return True if this AS element is a BattleMek or Industrial Mek (BM, IM). */
+    public boolean isMek() {
+        return isAnyTypeOf(BM, IM);
+    }
+
+    /** @return True if this AS element is a BattleMek (BM). */
+    public boolean isBattleMek() {
+        return isType(BM);
+    }
+
+    /** @return True if this AS element is a ProtoMek (PM). */
+    public boolean isProtoMek() {
+        return isType(PM);
+    }
+
+    /** @return True if this AS element is a large Aerospace unit, i.e. SC, DS, DA, SC, SS, JS, WS. */
+    public boolean isLargeAerospace() {
+        return isAnyTypeOf(SC, DS, DA, SC, SS, JS, WS);
+    }
+
+    /** @return True if this AS element is a BattleArmor unit, i.e. BA. */
+    public boolean isBattleArmor() {
+        return isType(BA);
+    }
 }

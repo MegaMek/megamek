@@ -20,7 +20,8 @@ package megamek.client.ui.panes;
 
 import megamek.client.ui.baseComponents.AbstractTabbedPane;
 import megamek.client.ui.swing.MechViewPanel;
-import megamek.client.ui.swing.alphaStrike.ASCard;
+import megamek.client.ui.swing.alphaStrike.ASCardPanel;
+import megamek.client.ui.swing.alphaStrike.ConfigurableASCardPanel;
 import megamek.common.Entity;
 import megamek.common.alphaStrike.ASConverter;
 import megamek.common.annotations.Nullable;
@@ -35,7 +36,7 @@ public class EntityViewPane extends AbstractTabbedPane {
     //region Variable Declarations
     private MechViewPanel entityPanel;
     private MechViewPanel troPanel;
-    private ASCard asCard = new ASCard();
+    private ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel();
     //endregion Variable Declarations
 
     //region Constructors
@@ -80,7 +81,7 @@ public class EntityViewPane extends AbstractTabbedPane {
         getTROPanel().setName("troPanel");
         addTab(resources.getString("TRO.title"), getTROPanel());
 
-        addTab("AS Card", asCard);
+        addTab("AS Card", cardPanel);
     }
     //endregion Initialization
 
@@ -98,9 +99,9 @@ public class EntityViewPane extends AbstractTabbedPane {
             getTROPanel().setMech(entity, TROView.createView(entity, true));
         }
         if (ASConverter.canConvert(entity)) {
-            asCard.setASElement(ASConverter.convert(entity));
+            cardPanel.setASElement(ASConverter.convert(entity));
         } else {
-            asCard.setASElement(null);
+            cardPanel.setASElement(null);
         }
     }
 }

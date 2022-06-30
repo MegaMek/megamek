@@ -100,8 +100,6 @@ public class GameManager implements IGameManager {
         return vPhaseReport;
     }
 
-//    private MapSettings mapSettings = MapSettings.getInstance();
-
     // Track buildings that are affected by an entity's movement.
     private Hashtable<Building, Boolean> affectedBldgs = new Hashtable<>();
 
@@ -420,9 +418,6 @@ public class GameManager implements IGameManager {
         try (OutputStream os = new FileOutputStream(sFinalFile + ".gz");
              OutputStream gzo = new GZIPOutputStream(os);
              Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
-            if (getGame().getMapSettings() == null)  {
-                getGame().setMapSettings(new MapSettings(8, 8, 1, 1));
-            }
             xstream.toXML(getGame(), writer);
         } catch (Exception e) {
             LogManager.getLogger().error("Unable to save file: " + sFinalFile, e);
@@ -862,7 +857,6 @@ public class GameManager implements IGameManager {
                 }
                 break;
             case SENDING_PLANETARY_CONDITIONS:
-                // MapSettings newSettings = (MapSettings) packet.getObject(0);
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
                     sendServerChat("Player " + player.getName() + " changed planetary conditions");

@@ -1160,7 +1160,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void refreshGameSettings() {
         refreshTeams();
-//        refreshMapSettings();
+        refreshMapSettings();
         refreshDoneButton();
     }
     
@@ -1292,7 +1292,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /** Updates the map settings from the Game */
     private void refreshMapSettings() {
         mapSettings = game().getMapSettings();
-        //refreshMapUI();
     }
 
     /**

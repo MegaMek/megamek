@@ -87,7 +87,6 @@ public class Client implements IClientCommandHandler {
     protected Game game = new Game();
 
     // here's some game phase stuff
-//    private MapSettings mapSettings;
     public String phaseReport;
     public String roundReport;
 
@@ -405,7 +404,6 @@ public class Client implements IClientCommandHandler {
 
     public MapSettings getMapSettings() {
         return game.getMapSettings();
-//        return mapSettings;
     }
 
     /**

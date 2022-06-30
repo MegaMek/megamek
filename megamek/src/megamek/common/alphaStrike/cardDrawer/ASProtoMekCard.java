@@ -23,9 +23,9 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import java.awt.*;
 
-public class ASMekCard extends ASHeatTrackingCard {
+public class ASProtoMekCard extends ASCard {
 
-    public ASMekCard(AlphaStrikeElement element) {
+    public ASProtoMekCard(AlphaStrikeElement element) {
         super(element);
     }
 
@@ -44,23 +44,19 @@ public class ASMekCard extends ASHeatTrackingCard {
         if (element != null) {
             new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).maxWidth(380).draw(g);
 
-            new StringDrawer("ENGINE").at(722, 509).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("+1 Heat/Firing Weapons").at(754, 509).centerY().font(specialsFont).maxWidth(248).draw(g);
-            drawDamagePip(g, 728, 509);
+            new StringDrawer("FIRE CONTROL").at(722, 510).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
+            new StringDrawer("+2 To-Hit Each").at(834, 510).centerY().font(specialsFont).maxWidth(168).draw(g);
+            drawDamagePip(g, 728, 510);
+            drawDamagePip(g, 755, 510);
+            drawDamagePip(g, 782, 510);
+            drawDamagePip(g, 809, 510);
 
-            new StringDrawer("FIRE CONTROL").at(722, 538).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("+2 To-Hit Each").at(834, 538).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 538);
-            drawDamagePip(g, 755, 538);
-            drawDamagePip(g, 782, 538);
-            drawDamagePip(g, 809, 538);
-
-            new StringDrawer("MP").at(722, 565).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("1/2 MV Each").at(834, 565).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 565);
-            drawDamagePip(g, 755, 565);
-            drawDamagePip(g, 782, 565);
-            drawDamagePip(g, 809, 565);
+            new StringDrawer("MP").at(722, 552).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
+            new StringDrawer("1/2 MV Each").at(834, 552).centerY().font(specialsFont).maxWidth(168).draw(g);
+            drawDamagePip(g, 728, 552);
+            drawDamagePip(g, 755, 552);
+            drawDamagePip(g, 782, 552);
+            drawDamagePip(g, 809, 552);
 
             new StringDrawer("WEAPONS").at(722, 593).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
             new StringDrawer("-1 Damage Each").at(834, 593).centerY().font(specialsFont).maxWidth(168).draw(g);

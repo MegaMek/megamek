@@ -49,7 +49,6 @@ public class ASCard {
     protected final static int WIDTH = 1050;
     protected final static int HEIGHT = 750;
     protected final static int BORDER = 21;
-    protected final static int BOX_INSET = 8;
     protected final static int ARMOR_PIP_SIZE = 22;
     protected final static int DAMAGE_PIP_SIZE = 18;
     protected final static int BOX_WIDTH_WIDE = 608;
@@ -86,11 +85,15 @@ public class ASCard {
     protected int damageBoxHeight = 104;
     protected int armorBoxY = 410;
     protected int armorBoxHeight = 94;
-    protected int armorBoxWidth = 531;
+    protected int armorBoxWidth = BOX_WIDTH_WIDE;
     protected int specialBoxX = 36;
     protected int specialBoxY = 522;
     protected int specialBoxWidth = armorBoxWidth;
     protected int specialBoxHeight = 99;
+    protected int fluffXCenter = 823;
+    protected int fluffYCenter = 277;
+    protected int fluffWidth = 338;
+    protected int fluffHeight = 318;
 
     /**
      * Creates an ASCard for the given element whih can be used to display a typical AlphaStrike
@@ -111,9 +114,27 @@ public class ASCard {
                 return new ASAeroCard(element);
             } else if (element.isMek()) {
                 return new ASMekCard(element);
+            } else if (element.isProtoMek()) {
+                return new ASProtoMekCard(element);
+            } else if (element.isGround() && !element.isInfantry()) {
+                return new ASVehicleCard(element);
             }
         }
         return new ASCard(element);
+    }
+
+    /**
+     * Creates and returns an image of the AlphaStrike element's unit card.
+     * The card is drawn in grayscale standard MUL style.
+     * The card is scaled with the given scale, values smaller than 1 making the card smaller.
+     * This method always fully draws the card so it always reflects the current state of the
+     * AlphaStrike element.
+     *
+     * @param scale The scaling to apply to the card
+     * @return The unit card image
+     */
+    public BufferedImage getCardImage(float scale) {
+        return getCardImage((int) (WIDTH * scale));
     }
 
     /**
@@ -163,44 +184,12 @@ public class ASCard {
      */
     protected ASCard(AlphaStrikeElement element) {
         this.element = element;
-        Image image = getFluffImage(element);
-        if (image != null) {
-            if (image.getWidth(null) > image.getHeight(null)) {
-                image = image.getScaledInstance(290, -1, Image.SCALE_SMOOTH);
-            } else {
-                image = image.getScaledInstance(-1, 290, Image.SCALE_SMOOTH);
-            }
-//            var ii = new ImageIcon(image);
-            fluffImage = new ImageIcon(image).getImage();
-        } else
-            fluffImage = null;
+        fluffImage = getFluffImage(element);
         initialize();
     }
 
-    /**
-     * Initializes some values for the card and sets standard fonts. Overrides should call super.
-     */
-    protected void initialize() {
-        if (element != null) {
-            if (element.isInfantry()) {
-                armorBoxWidth = BOX_WIDTH_WIDE;
-                specialBoxWidth = BOX_WIDTH_WIDE;
-            }
-            if (element.tracksHeat()) {
-                setHeatTrackingLayout();
-            }
-        }
-    }
-
-    protected void setHeatTrackingLayout() {
-        baseInfoBoxHeight = 84;
-        damageBoxY = 268;
-        damageBoxHeight = 88;
-        armorBoxY = 442;
-        armorBoxHeight = 79;
-        specialBoxY = 537;
-        specialBoxHeight = 84;
-    }
+    /** Initializes some values for the card and sets standard fonts. Overridden for some card types. */
+    protected void initialize() { }
 
     protected void initializeFonts(Font lightFont, Font boldFont, Font blackFont) {
         modelFont = lightFont.deriveFont(30f);
@@ -241,35 +230,43 @@ public class ASCard {
     }
 
     protected void drawCardContent(Graphics2D g2D) {
-        // Fluff Image
-        if (fluffImage != null) {
-            int posX = 825 - fluffImage.getWidth(null) / 2;
-            int posY = 285 - fluffImage.getHeight(null) / 2;
-            g2D.drawImage(fluffImage, posX, posY, null);
-        }
-
-        // Data blocks
+        drawFluffImage(g2D);
         paintBaseInfo(g2D);
         paintDamage(g2D);
-
-        if (element.tracksHeat()) {
-            paintHeat(g2D);
-        }
-
+        paintHeat(g2D);
         paintArmor(g2D);
         paintSpecial(g2D);
         paintPointValue(g2D);
         paintHits(g2D);
+        drawModelChassis(g2D);
+    }
 
-        // Model and Chassis
+    protected void drawFluffImage(Graphics2D g) {
+        if (fluffImage != null) {
+            int width = fluffWidth;
+            int height = fluffHeight;
+            if ((float) fluffImage.getWidth(null) / fluffWidth >
+                    (float) fluffImage.getHeight(null) / fluffHeight) {
+                height = fluffImage.getHeight(null) * fluffWidth / fluffImage.getWidth(null);
+            } else {
+                width = fluffImage.getWidth(null) * fluffHeight / fluffImage.getHeight(null);
+            }
+            int posX = fluffXCenter - width / 2;
+            int posY = fluffYCenter - height / 2;
+            ImageIcon icon = new ImageIcon(fluffImage.getScaledInstance(width, height, Image.SCALE_AREA_AVERAGING));
+            g.drawImage(icon.getImage(), posX, posY, null);
+        }
+    }
+
+    protected void drawModelChassis(Graphics2D g) {
         new StringDrawer(element.getModel()).at(36, 44).font(modelFont).centerY()
-                .maxWidth(750).scaleX(1.3f).draw(g2D);
+                .maxWidth(750).scaleX(1.3f).draw(g);
         new StringDrawer(element.getChassis().toUpperCase(Locale.ROOT)).at(36, 89)
-                .font(chassisFont).centerY().maxWidth(770).scaleX(0.8f).draw(g2D);
+                .font(chassisFont).centerY().maxWidth(770).scaleX(0.8f).draw(g);
 
         // BA Squad Size
         if (element.isBattleArmor()) {
-            new StringDrawer("Squad " + element.getSquadSize()).at(36, 137).font(modelFont).centerY().draw(g2D);
+            new StringDrawer("Squad " + element.getSquadSize()).at(36, 137).font(modelFont).centerY().draw(g);
         }
     }
 
@@ -294,7 +291,7 @@ public class ASCard {
         new StringDrawer("ROLE: ").at(44, lowerY).centerY().font(headerFont).maxWidth(85).draw(g);
         new StringDrawer(element.getRole().toString()).at(138, lowerY).useConfig(valueConfig).maxWidth(250).draw(g);
 
-        new StringDrawer("SKILL: ").at(402, lowerY).centerY().font(headerFont).maxWidth(98).draw(g);
+        new StringDrawer("SKILL: ").at(402, lowerY).centerY().font(headerFont).maxWidth(90).draw(g);
         new StringDrawer(element.getSkill() + "").at(506, lowerY).useConfig(valueConfig).maxWidth(120).draw(g);
     }
 
@@ -319,34 +316,7 @@ public class ASCard {
         new StringDrawer(damage.L.toStringWithZero()).at(posS + 2 * delta, lowerY).useConfig(valueConfig).center().draw(g);
     }
 
-    private void paintHeat(Graphics2D g) {
-        int height = 54;
-        drawBox(g, 36, 372, BOX_WIDTH_WIDE, height, Color.LIGHT_GRAY, BOX_STROKE);
-
-        g.drawLine(36 + 141, 372 + 12, 36 + 141, 372 + height - 12);
-        // Heat Scale Box
-        g.setColor(Color.DARK_GRAY);
-        g.fillRoundRect(36 + 377, 372 + 6, 210, height - 12, BOX_CORNER / 2, BOX_CORNER / 2);
-        g.setColor(Color.BLACK);
-        g.drawRoundRect(36 + 377, 372 + 6, 210, height - 12, BOX_CORNER / 2, BOX_CORNER / 2);
-        g.drawLine(36 + 429, 372 + 7, 36 + 429, 372 + height - 7);
-        g.drawLine(36 + 482, 372 + 7, 36 + 482, 372 + height - 7);
-        g.drawLine(36 + 535, 372 + 7, 36 + 535, 372 + height - 7);
-        int ym = 372 + height / 2;
-        g.setFont(headerFont);
-        g.setColor(Color.WHITE);
-        new StringDrawer("1").at(36 + 403, ym).center().draw(g);
-        new StringDrawer("2").at(36 + 455, ym).center().draw(g);
-        new StringDrawer("3").at(36 + 508, ym).center().draw(g);
-        new StringDrawer("S").at(36 + 561, ym).center().draw(g);
-        g.setColor(Color.BLACK);
-
-        if (element != null) {
-            new StringDrawer("OV:").at(49, ym).centerY().font(headerFont).maxWidth(45).draw(g);
-            new StringDrawer(element.getOverheat() + "").at(111, ym).useConfig(valueConfig).maxWidth(54).draw(g);
-            new StringDrawer("HEAT SCALE").at(193, ym).centerY().font(headerFont).maxWidth(208).draw(g);
-        }
-    }
+    protected void paintHeat(Graphics2D g) { }
 
     protected void paintArmor(Graphics2D g) {
         drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
@@ -382,10 +352,10 @@ public class ASCard {
         }
     }
 
-    private void paintSpecial(Graphics2D g) {
+    protected void paintSpecial(Graphics2D g) {
         drawBox(g, specialBoxX, specialBoxY, specialBoxWidth, specialBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
-        paintSpecialTextLines(g, element, specialsFont, specialBoxX + BOX_INSET, specialBoxY + 2,
-                specialBoxWidth - 2 * BOX_INSET);
+        paintSpecialTextLines(g, element, specialsFont, specialBoxX + 8, specialBoxY + 2,
+                specialBoxWidth - 16);
     }
 
     void paintSpecialTextLines(Graphics2D g, AlphaStrikeElement element, Font font, int x, int y, int width) {
@@ -428,7 +398,7 @@ public class ASCard {
         }
     }
 
-    private void paintPointValue(Graphics2D g) {
+    protected void paintPointValue(Graphics2D g) {
         if (element != null) {
             new StringDrawer("PV: ").at(861, 53).centerY().font(pointValueHeaderFont).maxWidth(72).draw(g);
             new StringDrawer(element.getPointValue() + "").at(941, 53).
@@ -436,78 +406,7 @@ public class ASCard {
         }
     }
 
-    protected void paintHits(Graphics2D g) {
-        if (element.isProtoMek()) {
-            paintProtoMekHits(g);
-        } else if (element.isGround() && !element.isInfantry()) {
-            paintCombatVeeHits(g);
-        }
-    }
-
-    private void paintProtoMekHits(Graphics2D g) {
-        drawBox(g, 591, 442, 422, 180, Color.LIGHT_GRAY, BOX_STROKE);
-
-        if (element != null) {
-            new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).maxWidth(380).draw(g);
-
-            new StringDrawer("FIRE CONTROL").at(722, 510).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("+2 To-Hit Each").at(834, 510).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 510);
-            drawDamagePip(g, 755, 510);
-            drawDamagePip(g, 782, 510);
-            drawDamagePip(g, 809, 510);
-
-            new StringDrawer("MP").at(722, 552).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("1/2 MV Each").at(834, 552).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 552);
-            drawDamagePip(g, 755, 552);
-            drawDamagePip(g, 782, 552);
-            drawDamagePip(g, 809, 552);
-
-            new StringDrawer("WEAPONS").at(722, 593).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("-1 Damage Each").at(834, 593).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 593);
-            drawDamagePip(g, 755, 593);
-            drawDamagePip(g, 782, 593);
-            drawDamagePip(g, 809, 593);
-        }
-    }
-
-    private void paintCombatVeeHits(Graphics2D g) {
-        drawBox(g, 591, 442, 422, 180, Color.LIGHT_GRAY, BOX_STROKE);
-
-        if (element != null) {
-            new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).maxWidth(380).draw(g);
-
-            new StringDrawer("ENGINE").at(722, 509).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("1/2 MV and Damage").at(754, 509).centerY().font(specialsFont).maxWidth(248).draw(g);
-            drawDamagePip(g, 728, 509);
-
-            new StringDrawer("FIRE CONTROL").at(722, 538).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("+2 To-Hit Each").at(834, 538).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 538);
-            drawDamagePip(g, 755, 538);
-            drawDamagePip(g, 782, 538);
-            drawDamagePip(g, 809, 538);
-
-            new StringDrawer("WEAPONS").at(722, 565).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("-1 Damage Each").at(834, 565).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 565);
-            drawDamagePip(g, 755, 565);
-            drawDamagePip(g, 782, 565);
-            drawDamagePip(g, 809, 565);
-
-            new StringDrawer("MOTIVE").at(663, 593).useConfig(hitsTitleConfig).maxWidth(64).draw(g);
-            drawDamagePip(g, 673, 593);
-            drawDamagePip(g, 700, 593);
-            new StringDrawer("-2 MV").at(724, 593).centerY().font(specialsFont).maxWidth(62).draw(g);
-            drawDamagePip(g, 793, 593);
-            drawDamagePip(g, 820, 593);
-            new StringDrawer("1/2 MV").at(841, 593).centerY().font(specialsFont).maxWidth(64).draw(g);
-            drawDamagePip(g, 919, 593);
-            new StringDrawer("0 MV").at(944, 593).centerY().font(specialsFont).maxWidth(57).draw(g);
-        }
-    }
+    protected void paintHits(Graphics2D g) { }
 
     protected void drawDamagePip(Graphics2D g, int x, int y) {
         g.setStroke(new BasicStroke(3f));
@@ -568,7 +467,10 @@ public class ASCard {
         new StringDrawer("(C) 2022 The Topps Company. All rights reserved.").at(1014, 293).rotate(-Math.PI / 2)
                 .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
 
-        g.drawImage(btLogo, 568, 646, 445, 77, null);
+        // Logo
+        ImageIcon icon = new ImageIcon(btLogo.getScaledInstance(445, 77, Image.SCALE_AREA_AVERAGING));
+        g.drawImage(icon.getImage(), 568, 646, null);
+//        g.drawImage(btLogo, 568, 646, 445, 77, null);
     }
 
     static void drawBox(Graphics2D g, int x, int y, int width, int height, Color fillColor, float borderWidth) {

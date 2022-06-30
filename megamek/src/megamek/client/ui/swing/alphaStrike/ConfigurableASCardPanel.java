@@ -26,16 +26,27 @@ import java.awt.*;
 
 public class ConfigurableASCardPanel extends JPanel {
 
-    private final JComboBox<String> cbFont = new JComboBox<>();
+    private final JComboBox<String> fontChooser = new JComboBox<>();
+    private final JComboBox<String> sizeChooser = new JComboBox<>();
     ASCardPanel cardPanel = new ASCardPanel();
 
     public ConfigurableASCardPanel() {
+
         setLayout(new FlowLayout());
         for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            cbFont.addItem(family);
+            fontChooser.addItem(family);
         }
-        cbFont.addActionListener(ev -> updateFont());
-        add(cbFont);
+        fontChooser.addActionListener(ev -> updateFont());
+        sizeChooser.addItem("2");
+        sizeChooser.addItem("1.5");
+        sizeChooser.addItem("1");
+        sizeChooser.addItem("0.75");
+        sizeChooser.addItem("0.5");
+        sizeChooser.addItem("0.33");
+        sizeChooser.setSelectedItem("1");
+        sizeChooser.addActionListener(ev -> updateSize());
+        add(fontChooser);
+        add(sizeChooser);
         add(cardPanel);
     }
 
@@ -44,7 +55,12 @@ public class ConfigurableASCardPanel extends JPanel {
     }
 
     private void updateFont() {
-        Font font = Font.decode((String) cbFont.getSelectedItem());
+        Font font = Font.decode((String) fontChooser.getSelectedItem());
         cardPanel.setCardFont(font);
     }
+
+    private void updateSize() {
+        cardPanel.setScale(Float.parseFloat((String)sizeChooser.getSelectedItem()));
+    }
+
 }

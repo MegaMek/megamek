@@ -28,6 +28,7 @@ import java.awt.*;
 public class ASCardPanel extends JComponent {
 
     private ASCard card;
+    private float scale = 1;
     private Font cardFont;
     private Image cardImage;
     private AlphaStrikeElement element;
@@ -50,6 +51,12 @@ public class ASCardPanel extends JComponent {
         repaint();
     }
 
+    public void setScale(float scale) {
+        this.scale = scale;
+        initialize();
+        repaint();
+    }
+
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(cardImage.getWidth(this), cardImage.getHeight(this));
@@ -60,7 +67,7 @@ public class ASCardPanel extends JComponent {
         if (cardFont != null) {
             card.setFont(cardFont);
         }
-        cardImage = card.getCardImage();
+        cardImage = card.getCardImage(scale);
     }
 
     @Override

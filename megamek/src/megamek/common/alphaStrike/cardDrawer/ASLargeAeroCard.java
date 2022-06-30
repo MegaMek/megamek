@@ -28,15 +28,15 @@ import java.awt.geom.Path2D;
 
 public class ASLargeAeroCard extends ASCard {
 
-    private final static int PADDING = 15;
     private final static float BOX_STROKE = 3f;
 
-    private static Font largeAeroChassisFont;
-    private static Font largeAeroHeaderFont;
-    private static Font pointValueHeaderFont;
-    private static Font pointValueFont ;
-    private static Font largeAeroValueFont;
-    private static Font largeAeroSpecialFont;
+    private Font largeAeroChassisFont;
+    private Font largeAeroModelFont;
+    private Font largeAeroHeaderFont;
+    private Font pointValueHeaderFont;
+    private Font pointValueFont ;
+    private Font largeAeroValueFont;
+    private Font largeAeroSpecialFont;
 
     public ASLargeAeroCard(AlphaStrikeElement element) {
         super(element);
@@ -46,30 +46,44 @@ public class ASLargeAeroCard extends ASCard {
     protected void initializeFonts(Font lightFont, Font boldFont, Font blackFont) {
         super.initializeFonts(lightFont, boldFont, blackFont);
         largeAeroChassisFont = boldFont.deriveFont(44f);
+        largeAeroModelFont = lightFont.deriveFont(32f);
         largeAeroHeaderFont = boldFont.deriveFont(30f);
         pointValueHeaderFont = headerFont.deriveFont(40f);
         pointValueFont = valueFont.deriveFont(54f);
         largeAeroValueFont = blackFont.deriveFont(42f);
         largeAeroSpecialFont = lightFont.deriveFont(31f);
 
-        valueConfig = new StringDrawer.StringDrawerConfig().centerY()
-                .color(Color.BLACK).font(largeAeroValueFont);
+        valueConfig = new StringDrawer.StringDrawerConfig().centerY().scaleX(0.9f)
+                .color(Color.BLACK).font(largeAeroValueFont).outline(Color.BLACK, 0.5f);
+    }
+
+//    @Override
+//    protected void drawCardContent(Graphics2D g2D) {
+//        // Data blocks
+//        paintBaseInfo(g2D);
+//        paintArmor(g2D);
+//        paintSpecial(g2D, element);
+//        paintPointValue(g2D, element);
+//        paintHits(g2D, element);
+//
+//        // Fluff Image
+//        g2D.drawImage(fluffImage, 660, 110, null);
+//
+//        // Model and Chassis
+////        int width = new StringDrawer(element.getChassis()).at(36, 77).font(largeAeroChassisFont).scaleX(0.8f).maxWidth(600).draw(g2D).width;
+////        new StringDrawer(element.getModel()).at(56 + width, 77).font(largeAeroModelFont).maxWidth(750 - width).draw(g2D);
+//    }
+
+    @Override
+    protected void drawFluffImage(Graphics2D g) {
+        //TODO
+        super.drawFluffImage(g);
     }
 
     @Override
-    protected void drawCardContent(Graphics2D g2D) {
-        // Data blocks
-        paintBaseInfo(g2D);
-        paintArmor(g2D);
-        paintSpecial(g2D, element);
-        paintPointValue(g2D, element);
-        paintHits(g2D, element);
-
-        // Fluff Image
-        g2D.drawImage(fluffImage, 660, 110, null);
-
-        // Model and Chassis
-        new StringDrawer(element.getChassis()).at(BORDER + PADDING, 68).font(largeAeroChassisFont).centerY().draw(g2D);
+    protected void drawModelChassis(Graphics2D g) {
+        int width = new StringDrawer(element.getChassis()).at(36, 77).font(largeAeroChassisFont).scaleX(0.8f).maxWidth(600).draw(g).width;
+        new StringDrawer(element.getModel()).at(56 + width, 77).font(largeAeroModelFont).maxWidth(750 - width).draw(g);
     }
 
     @Override
@@ -77,17 +91,17 @@ public class ASLargeAeroCard extends ASCard {
         ASCard.drawBox(g, 36, 97, 624, 63, Color.LIGHT_GRAY, BOX_STROKE);
 
         int centerY = 129;
-        int width = new StringDrawer("TP: ").at(44, centerY).centerY().font(headerFont).draw(g).width;
-        new StringDrawer(element.getType().toString()).at(44 + width, centerY).useConfig(valueConfig).draw(g);
+        new StringDrawer("TP: ").at(44, centerY).centerY().font(headerFont).maxWidth(47).draw(g);
+        new StringDrawer(element.getType().toString()).at(130, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
 
-        width = new StringDrawer("SZ: ").at(185, centerY).centerY().font(headerFont).draw(g).width;
-        new StringDrawer(element.getSize() + "").at(185 + width, centerY).useConfig(valueConfig).draw(g);
+        new StringDrawer("SZ: ").at(185, centerY).centerY().font(headerFont).maxWidth(51).draw(g);
+        new StringDrawer(element.getSize() + "").at(272, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
 
-        width = new StringDrawer("THR: ").at(323, centerY).centerY().font(headerFont).draw(g).width;
-        new StringDrawer(element.getMovementAsString()).at(323 + width, centerY).useConfig(valueConfig).draw(g);
+        new StringDrawer("THR: ").at(323, centerY).centerY().font(headerFont).maxWidth(74).draw(g);
+        new StringDrawer(element.getMovementAsString()).at(444, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
 
-        width = new StringDrawer("SKILL: ").at(485, centerY).centerY().font(headerFont).draw(g).width;
-        new StringDrawer(element.getSkill() + "").at(485 + width, centerY).useConfig(valueConfig).draw(g);
+        new StringDrawer("SKILL: ").at(485, centerY).centerY().font(headerFont).maxWidth(87).draw(g);
+        new StringDrawer(element.getSkill() + "").at(610, centerY - 2).useConfig(valueConfig).centerX().maxWidth(70).draw(g);
     }
 
     @Override
@@ -130,15 +144,17 @@ public class ASLargeAeroCard extends ASCard {
 
         int thresholdY = 206;
         new StringDrawer("DAMAGE THRESHOLD").at(628, thresholdY).font(largeAeroHeaderFont).centerY().maxWidth(310).draw(g);
-        new StringDrawer(element.getThreshold() + "").at(580, thresholdY).useConfig(valueConfig).center().draw(g);
+        new StringDrawer(element.getThreshold() + "").at(580, thresholdY).useConfig(valueConfig).center().maxWidth(79).draw(g);
     }
 
-    private void paintSpecial(Graphics2D g, AlphaStrikeElement element) {
+    @Override
+    protected void paintSpecial(Graphics2D g) {
         ASCard.drawBox(g, 536, 485, 477, 152, Color.LIGHT_GRAY, BOX_STROKE);
         paintSpecialTextLines(g, element, largeAeroSpecialFont, 551, 497, 447);
     }
 
-    private void paintPointValue(Graphics2D g, AlphaStrikeElement element) {
+    @Override
+    protected void paintPointValue(Graphics2D g) {
         if (element != null) {
             new StringDrawer("PV: ").at(861, 53).centerY().font(pointValueHeaderFont).draw(g);
             new StringDrawer(element.getPointValue() + "").at(941, 53).
@@ -146,45 +162,46 @@ public class ASLargeAeroCard extends ASCard {
         }
     }
 
-    private void paintHits(Graphics2D g, AlphaStrikeElement element) {
+    @Override
+    protected void paintHits(Graphics2D g) {
         ASCard.drawBox(g, 36, 410, 490, 227, Color.LIGHT_GRAY, BOX_STROKE);
 
-        new StringDrawer("CRITICAL HITS").at(281, 429).center().font(headerFont).draw(g);
+        new StringDrawer("CRITICAL HITS").at(281, 429).center().font(headerFont).maxWidth(450).draw(g);
 
-        new StringDrawer("CREW").at(168, 463).useConfig(hitsTitleConfig).draw(g);
+        new StringDrawer("CREW").at(168, 463).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
         new StringDrawer("{").at(227, 463).centerY().font(specialsFont).draw(g);
-        new StringDrawer("+2 Weapon To-Hit Each").at(235, 453).centerY().font(specialsFont).draw(g);
-        new StringDrawer("+2 Controll Roll Each").at(235, 473).centerY().font(specialsFont).draw(g);
+        new StringDrawer("+2 Weapon To-Hit Each").at(235, 453).centerY().font(specialsFont).maxWidth(274).draw(g);
+        new StringDrawer("+2 Controll Roll Each").at(235, 473).centerY().font(specialsFont).maxWidth(274).draw(g);
         drawDamagePip(g, 173, 463);
         drawDamagePip(g, 200, 463);
 
-        new StringDrawer("ENGINE").at(168, 494).useConfig(hitsTitleConfig).draw(g);
-        new StringDrawer("-25%/-50%/-100% THR").at(253, 494).centerY().font(specialsFont).draw(g);
+        new StringDrawer("ENGINE").at(168, 494).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+        new StringDrawer("-25%/-50%/-100% THR").at(253, 494).centerY().font(specialsFont).maxWidth(260).draw(g);
         drawDamagePip(g, 173, 494);
         drawDamagePip(g, 200, 494);
         drawDamagePip(g, 227, 494);
 
-        new StringDrawer("FIRE CONTROL").at(168, 520).useConfig(hitsTitleConfig).draw(g);
-        new StringDrawer("+2 To-Hit Each").at(279, 520).centerY().font(specialsFont).draw(g);
+        new StringDrawer("FIRE CONTROL").at(168, 520).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+        new StringDrawer("+2 To-Hit Each").at(279, 520).centerY().font(specialsFont).maxWidth(233).draw(g);
         drawDamagePip(g, 173, 520);
         drawDamagePip(g, 200, 520);
         drawDamagePip(g, 227, 520);
         drawDamagePip(g, 254, 520);
 
-        new StringDrawer("KF BOOM").at(168, 547).useConfig(hitsTitleConfig).draw(g);
-        new StringDrawer("Cannot transport via JumpShip").at(199, 547).centerY().font(specialsFont).draw(g);
+        new StringDrawer("KF BOOM").at(168, 547).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+        new StringDrawer("Cannot transport via JumpShip").at(199, 547).centerY().font(specialsFont).maxWidth(313).draw(g);
         drawDamagePip(g, 173, 547);
 
-        new StringDrawer("DOCK COLLAR").at(168, 572).useConfig(hitsTitleConfig).draw(g);
-        new StringDrawer("DropShip only; cannot dock").at(199, 572).centerY().font(specialsFont).draw(g);
+        new StringDrawer("DOCK COLLAR").at(168, 572).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+        new StringDrawer("DropShip only; cannot dock").at(199, 572).centerY().font(specialsFont).maxWidth(313).draw(g);
         drawDamagePip(g, 173, 572);
 
-        new StringDrawer("THRUSTER").at(168, 598).useConfig(hitsTitleConfig).draw(g);
-        new StringDrawer("-1 Thrust (THR)").at(199, 598).centerY().font(specialsFont).draw(g);
+        new StringDrawer("THRUSTER").at(168, 598).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+        new StringDrawer("-1 Thrust (THR)").at(199, 598).centerY().font(specialsFont).maxWidth(313).draw(g);
         drawDamagePip(g, 173, 598);
 
-        new StringDrawer("WEAPONS").at(168, 624).useConfig(hitsTitleConfig).draw(g);
-        new StringDrawer("See Back").at(281, 624).centerY().font(specialsFont).draw(g);
+        new StringDrawer("WEAPONS").at(168, 624).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+        new StringDrawer("See Back").at(281, 624).centerY().font(specialsFont).maxWidth(313).draw(g);
 
         for (int x = 180; x <= 270; x += 4) {
             g.fillRect(x, 623, 2, 2);

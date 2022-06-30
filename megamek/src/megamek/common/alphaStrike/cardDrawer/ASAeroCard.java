@@ -26,7 +26,7 @@ import java.awt.*;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 
-public class ASAeroCard extends ASCard {
+public class ASAeroCard extends ASHeatTrackingCard {
 
     public ASAeroCard(AlphaStrikeElement element) {
         super(element);
@@ -35,7 +35,8 @@ public class ASAeroCard extends ASCard {
     @Override
     protected void initialize() {
         super.initialize();
-        armorBoxWidth = BOX_WIDTH_WIDE;
+//        armorBoxWidth = BOX_WIDTH_WIDE;
+        specialBoxWidth = 531;
     }
 
     @Override

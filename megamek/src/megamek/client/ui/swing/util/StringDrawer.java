@@ -66,7 +66,6 @@ public class StringDrawer {
     private double angle = 0;
     private int maxWidth = Integer.MAX_VALUE;
     private float scaleX = 1;
-    private float scaleY = 1;
 
     /**
      * Returns a new StringDrawer with the given text to draw. Note that the StringDrawer can be used
@@ -251,6 +250,7 @@ public class StringDrawer {
         outlineWidth = style.outlineWidth;
         dualOutlineColor = style.dualOutlineColor;
         dualOutlineWidth = style.dualOutlineWidth;
+        scaleX = style.scaleX;
         centerX = style.centerX;
         rightAlign = style.rightAlign;
         centerY = style.centerY;
@@ -273,10 +273,11 @@ public class StringDrawer {
      * Draws the String with applied settings to the given Graphics g (obtained from a
      * BufferedImage, JComponent, SVG context or other source). Note that when the
      * text is empty or null, no action at all is taken. The settings of
-     * the Graphics context (brush, color, transform, font) are preserved.
+     * the Graphics context (brush, color, transform, font) are preserved. The returned
+     * Rectangle gives the size of the drawn string including leading and trailing white space.
      *
      * @param g The Graphics context to draw to.
-     * @return The StringDrawer itself
+     * @return A Rectangle containing the size of the drawn string
      */
     public Rectangle draw(Graphics g) {
         if ((text == null) || text.isBlank()) {
@@ -317,15 +318,19 @@ public class StringDrawer {
             posX = x - bounds.width - bounds.x;
         }
 
-        g2D.translate(posX, posY);
-        g2D.scale(scaleX, scaleY);
-        g2D.translate(-posX, -posY);
-
         if (angle != 0) {
             g2D.translate(posX + bounds.width / 2, posY - bounds.height / 2);
             g2D.rotate(angle);
             g2D.translate(-posX - bounds.width / 2, -posY + bounds.height / 2);
         }
+
+        AffineTransform scaling = AffineTransform.getTranslateInstance(posX, posY);
+        scaling.scale(scaleX, 1);
+        scaling.translate(-posX, -posY);
+        g2D.transform(scaling);
+
+        // Get the real (transformed) bounds of the text for returning
+        bounds = scaling.createTransformedShape(bounds).getBounds();
 
         if (dualOutlineWidth > 0) {
             g.setColor(dualOutlineColor);
@@ -342,9 +347,6 @@ public class StringDrawer {
         g.setColor(fillColor);
         g2D.fill(gv.getOutline(posX, posY));
 
-        // replace the width, as the glyphvector width doesn't include trailing or leading spaces
-        bounds.width = g.getFontMetrics(g.getFont()).stringWidth(text);
-
         g2D.setTransform(oldTransform);
         g.setColor(oldColor);
         g2D.setStroke(oldStroke);
@@ -359,6 +361,7 @@ public class StringDrawer {
         private float outlineWidth = 0;
         private Color dualOutlineColor = null;
         private float dualOutlineWidth = 0;
+        private float scaleX = 1;
         private boolean centerX = false;
         private boolean rightAlign = false;
         private boolean centerY = false;
@@ -392,6 +395,18 @@ public class StringDrawer {
 
         public StringDrawerConfig font(Font font) {
             this.font = font;
+            return this;
+        }
+
+        /**
+         * Sets the Configuration to scale the text horizontally by the given scaleX value. Values bigger than
+         * 1 stretch the text, values smaller than 1 compress it.
+         *
+         * @param scaleX the horizontal stretch or compression factor to apply to the text
+         * @return The StringDrawerConfig itself
+         */
+        public StringDrawerConfig scaleX(float scaleX) {
+            this.scaleX = scaleX;
             return this;
         }
 

@@ -23,9 +23,9 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import java.awt.*;
 
-public class ASMekCard extends ASHeatTrackingCard {
+public class ASVehicleCard extends ASCard {
 
-    public ASMekCard(AlphaStrikeElement element) {
+    public ASVehicleCard(AlphaStrikeElement element) {
         super(element);
     }
 
@@ -45,7 +45,7 @@ public class ASMekCard extends ASHeatTrackingCard {
             new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).maxWidth(380).draw(g);
 
             new StringDrawer("ENGINE").at(722, 509).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("+1 Heat/Firing Weapons").at(754, 509).centerY().font(specialsFont).maxWidth(248).draw(g);
+            new StringDrawer("1/2 MV and Damage").at(754, 509).centerY().font(specialsFont).maxWidth(248).draw(g);
             drawDamagePip(g, 728, 509);
 
             new StringDrawer("FIRE CONTROL").at(722, 538).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
@@ -55,19 +55,22 @@ public class ASMekCard extends ASHeatTrackingCard {
             drawDamagePip(g, 782, 538);
             drawDamagePip(g, 809, 538);
 
-            new StringDrawer("MP").at(722, 565).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("1/2 MV Each").at(834, 565).centerY().font(specialsFont).maxWidth(168).draw(g);
+            new StringDrawer("WEAPONS").at(722, 565).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
+            new StringDrawer("-1 Damage Each").at(834, 565).centerY().font(specialsFont).maxWidth(168).draw(g);
             drawDamagePip(g, 728, 565);
             drawDamagePip(g, 755, 565);
             drawDamagePip(g, 782, 565);
             drawDamagePip(g, 809, 565);
 
-            new StringDrawer("WEAPONS").at(722, 593).useConfig(hitsTitleConfig).maxWidth(120).draw(g);
-            new StringDrawer("-1 Damage Each").at(834, 593).centerY().font(specialsFont).maxWidth(168).draw(g);
-            drawDamagePip(g, 728, 593);
-            drawDamagePip(g, 755, 593);
-            drawDamagePip(g, 782, 593);
-            drawDamagePip(g, 809, 593);
+            new StringDrawer("MOTIVE").at(663, 593).useConfig(hitsTitleConfig).maxWidth(64).draw(g);
+            drawDamagePip(g, 673, 593);
+            drawDamagePip(g, 700, 593);
+            new StringDrawer("-2 MV").at(724, 593).centerY().font(specialsFont).maxWidth(62).draw(g);
+            drawDamagePip(g, 793, 593);
+            drawDamagePip(g, 820, 593);
+            new StringDrawer("1/2 MV").at(841, 593).centerY().font(specialsFont).maxWidth(64).draw(g);
+            drawDamagePip(g, 919, 593);
+            new StringDrawer("0 MV").at(944, 593).centerY().font(specialsFont).maxWidth(57).draw(g);
         }
     }
 }

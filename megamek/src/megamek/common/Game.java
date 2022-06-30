@@ -3480,6 +3480,10 @@ public class Game implements IGame, Serializable {
     }
 
     public MapSettings getMapSettings() {
+        if (mapSettings == null)
+        {
+            mapSettings = MapSettings.getInstance();
+        }
         return mapSettings;
     }
 

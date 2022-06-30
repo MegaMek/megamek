@@ -100,7 +100,7 @@ public class GameManager implements IGameManager {
         return vPhaseReport;
     }
 
-    private MapSettings mapSettings = MapSettings.getInstance();
+//    private MapSettings mapSettings = MapSettings.getInstance();
 
     // Track buildings that are affected by an entity's movement.
     private Hashtable<Building, Boolean> affectedBldgs = new Hashtable<>();
@@ -148,6 +148,7 @@ public class GameManager implements IGameManager {
         game.getOptions().loadOptions();
 
         game.setPhase(GamePhase.LOUNGE);
+        MapSettings mapSettings = game.getMapSettings();
         mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
         mapSettings.setNullBoards(DEFAULT_BOARD);
 
@@ -831,10 +832,10 @@ public class GameManager implements IGameManager {
             case SENDING_MAP_SETTINGS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!mapSettings.equalMapGenParameters(newSettings)) {
+                    if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
                         sendServerChat("Player " + player.getName() + " changed map settings");
                     }
-                    mapSettings = newSettings;
+                    MapSettings mapSettings = newSettings;
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
@@ -847,10 +848,10 @@ public class GameManager implements IGameManager {
             case SENDING_MAP_DIMENSIONS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!mapSettings.equalMapGenParameters(newSettings)) {
+                    if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
                         sendServerChat("Player " + player.getName() + " changed map dimensions");
                     }
-                    mapSettings = newSettings;
+                    MapSettings mapSettings = newSettings;
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
@@ -1580,6 +1581,7 @@ public class GameManager implements IGameManager {
         switch (phase) {
             case LOUNGE:
                 clearReports();
+                MapSettings mapSettings = game.getMapSettings();
                 mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
@@ -2608,6 +2610,7 @@ public class GameManager implements IGameManager {
      * specified into one mega-board and sets that board as current.
      */
     public void applyBoardSettings() {
+        MapSettings mapSettings = game.getMapSettings();
         mapSettings.chooseSurpriseBoards();
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
@@ -29725,6 +29728,7 @@ public class GameManager implements IGameManager {
      * @param connId the id for connection that received the packet.
      */
     private void receiveGameOptionsAux(Packet packet, int connId) {
+        MapSettings mapSettings = game.getMapSettings();
         for (Enumeration<?> i = ((Vector<?>) packet.getObject(1)).elements(); i.hasMoreElements(); ) {
             IBasicOption option = (IBasicOption) i.nextElement();
             IOption originalOption = game.getOptions().getOption(option.getName());
@@ -29772,6 +29776,7 @@ public class GameManager implements IGameManager {
      * Creates a packet containing the map settings
      */
     private Packet createMapSettingsPacket() {
+        MapSettings mapSettings = game.getMapSettings();
         return new Packet(PacketCommand.SENDING_MAP_SETTINGS, mapSettings);
     }
 

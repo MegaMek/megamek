@@ -87,7 +87,7 @@ public class Client implements IClientCommandHandler {
     protected Game game = new Game();
 
     // here's some game phase stuff
-    private MapSettings mapSettings;
+//    private MapSettings mapSettings;
     public String phaseReport;
     public String roundReport;
 
@@ -404,7 +404,8 @@ public class Client implements IClientCommandHandler {
     }
 
     public MapSettings getMapSettings() {
-        return mapSettings;
+        return game.getMapSettings();
+//        return mapSettings;
     }
 
     /**
@@ -1531,8 +1532,9 @@ public class Client implements IClientCommandHandler {
                     game.setOptions((GameOptions) c.getObject(0));
                     break;
                 case SENDING_MAP_SETTINGS:
-                    mapSettings = (MapSettings) c.getObject(0);
+                    MapSettings mapSettings = (MapSettings) c.getObject(0);
                     mapSettings.adjustPathSeparator();
+                    game.setMapSettings(mapSettings);
                     GameSettingsChangeEvent evt = new GameSettingsChangeEvent(this);
                     evt.setMapSettingsOnlyChange(true);
                     game.processGameEvent(evt);

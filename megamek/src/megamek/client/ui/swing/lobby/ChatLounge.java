@@ -996,6 +996,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // Update the board base image if it's generated and the settings have changed
                 // or the board name has changed
                 String boardName = mapSettings.getBoardsSelectedVector().get(index);
+                if (boardName == null) {
+                    continue;
+                }
                 if (!button.getBoard().equals(boardName) 
                         || oldMapSettings.getMedium() != mapSettings.getMedium()
                         || (!mapSettings.equalMapGenParameters(oldMapSettings) 

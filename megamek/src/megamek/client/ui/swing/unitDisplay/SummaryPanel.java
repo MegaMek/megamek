@@ -163,9 +163,11 @@ public class SummaryPanel extends PicMap {
         hexInfo.setOpaque(false);
     }
 
+    public final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=5 width=100%><TBODY><TR><TD VALIGN=TOP>";
+
     private String padLeft(String html) {
         int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
-        return TipUtil.TABLE_BEGIN + "<td width=" + dist + "></td><td>"+html+"</td>"+TipUtil.TABLE_END;
+        return TABLE_BEGIN + "<td width=" + dist + "></td><td>"+html+"</td>"+"<td width=" + dist + ">" +TipUtil.TABLE_END;
     }
 
     @Override

@@ -44,7 +44,9 @@ public final class UnitToolTip {
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
-    
+    final static String BG_COLOR = "#313131";
+
+
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
@@ -73,6 +75,7 @@ public final class UnitToolTip {
         }
 
         StringBuilder result = new StringBuilder();
+        result.append("<TABLE BORDER=0 BGCOLOR="+BG_COLOR+" width=100%><TR><TD>");
         Game game = entity.getGame();
         GUIPreferences guip = GUIPreferences.getInstance();
 
@@ -167,6 +170,8 @@ public final class UnitToolTip {
             result.append(scaledHTMLSpacer(3));
             result.append(c3Info(entity));
         }
+        result.append("</TD></TR></TABLE>");
+
         return result;
     }
 

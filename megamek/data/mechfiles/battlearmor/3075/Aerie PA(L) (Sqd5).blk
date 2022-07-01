@@ -87,3 +87,27 @@ biped
 <weightclass>
 0
 </weightclass>
+
+<overview>
+With their expansion into the Deep Periphery in the 3060s, Clan Snow Raven designed a new battle armor for space operations. 
+</overview>
+
+<history>
+The Aerie is the result of the partnership between the Ravens and the Outworlds Alliance: a power armor suit that can fight in space and on the ground. It is best suited to marine actions, as it has only the barest minimum of armor. It has a respectable ground speed that enables it to move nimbly aboard a vessel, but it can also leap up to ninety meters at a time. It also features an Extended Life Support module that allows it to operate for longer periods
+</history>
+
+<capabilities>
+Generally, marines arm themselves with Laser Rifles in order to avoid dealing with recoil in space. Sometimes they do use ballistic weapons, but generally with add-ons to suppress the recoil. The Aerie can engage in anti-'Mech combat, as well as travel mechanized aboard an OmniMech.
+</capabilities>
+
+<deployment>
+The Aerie has no weapons on the suit, but it can use standard infantry weapons. 
+</deployment>
+
+<manufacturer>
+CSR Battle Armor Facility Alpha 
+</manufacturer>
+
+<primaryFactory>
+Ramora
+</primaryFactory>

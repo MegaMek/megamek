@@ -32,7 +32,6 @@ public class ASMekCard extends ASHeatTrackingCard {
     @Override
     protected void initialize() {
         super.initialize();
-//        armorBoxWidth = BOX_WIDTH_WIDE;
         armorBoxWidth = 531;
         specialBoxWidth = 531;
     }

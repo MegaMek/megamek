@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.alphaStrike;
 
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 
@@ -31,8 +32,9 @@ public class ConfigurableASCardPanel extends JPanel {
     ASCardPanel cardPanel = new ASCardPanel();
 
     public ConfigurableASCardPanel() {
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
-        setLayout(new FlowLayout());
+
         for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             fontChooser.addItem(family);
         }
@@ -45,9 +47,18 @@ public class ConfigurableASCardPanel extends JPanel {
         sizeChooser.addItem("0.33");
         sizeChooser.setSelectedItem("1");
         sizeChooser.addActionListener(ev -> updateSize());
-        add(fontChooser);
-        add(sizeChooser);
-        add(cardPanel);
+
+        var chooserLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        chooserLine.add(new JLabel("Font: "));
+        chooserLine.add(fontChooser);
+        chooserLine.add(new JLabel("      Card Size: "));
+        chooserLine.add(sizeChooser);
+
+        var cardLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        cardLine.add(cardPanel);
+
+        add(chooserLine);
+        add(cardLine);
     }
 
     public void setASElement(@Nullable AlphaStrikeElement element) {

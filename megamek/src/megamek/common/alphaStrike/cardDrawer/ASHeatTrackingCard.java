@@ -37,6 +37,8 @@ public class ASHeatTrackingCard extends ASCard {
     protected void initialize() {
         super.initialize();
         setHeatTrackingLayout();
+        fluffYCenter = 277;
+        fluffHeight = 318;
     }
 
     private void setHeatTrackingLayout() {

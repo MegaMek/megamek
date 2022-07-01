@@ -32,14 +32,15 @@ public class ASVehicleCard extends ASCard {
     @Override
     protected void initialize() {
         super.initialize();
-//        armorBoxWidth = BOX_WIDTH_WIDE;
         armorBoxWidth = 531;
         specialBoxWidth = 531;
+        fluffYCenter = 277;
+        fluffHeight = 318;
     }
 
     @Override
     protected void paintHits(Graphics2D g) {
-        drawBox(g, 591, 442, 422, 180, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 591, 442, 422, 180, BACKGROUND_GRAY, BOX_STROKE);
 
         if (element != null) {
             new StringDrawer("CRITICAL HITS").at(802, 470).center().font(headerFont).maxWidth(380).draw(g);

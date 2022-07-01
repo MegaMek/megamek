@@ -55,6 +55,7 @@ public class ASCard {
     protected final static int BOX_CORNER = 35;
     protected final static float BOX_STROKE = 2.5f;
     protected final static Color DARKGRAY = new Color(128, 128, 128);
+    protected final static Color BACKGROUND_GRAY = new Color(209, 211, 212);
 
     private static final String FILENAME_BT_LOGO = "BT_Logo_BW.png";
     private static final Image btLogo = ImageUtil.loadImageFromFile(
@@ -91,9 +92,9 @@ public class ASCard {
     protected int specialBoxWidth = armorBoxWidth;
     protected int specialBoxHeight = 99;
     protected int fluffXCenter = 823;
-    protected int fluffYCenter = 277;
+    protected int fluffYCenter = 378; // 277
     protected int fluffWidth = 338;
-    protected int fluffHeight = 318;
+    protected int fluffHeight = 512; //318;
 
     /**
      * Creates an ASCard for the given element whih can be used to display a typical AlphaStrike
@@ -209,7 +210,7 @@ public class ASCard {
                 .color(Color.BLACK).font(hitsTitleFont).outline(Color.BLACK, 0.4f);
     }
 
-    private void drawCard(Graphics g) {
+    protected final void drawCard(Graphics g) {
         initializeFonts(lightFont, boldFont, blackFont);
         Graphics2D g2D = (Graphics2D) g;
         GUIPreferences.AntiAliasifSet(g);
@@ -218,7 +219,7 @@ public class ASCard {
         g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
-        paintCardBackground(g2D);
+        paintCardBackground(g2D, false);
 
         // No unit or unsupported?
         if (element == null) {
@@ -271,7 +272,7 @@ public class ASCard {
     }
 
     protected void paintBaseInfo(Graphics2D g) {
-        drawBox(g, 36, 170, BOX_WIDTH_WIDE, baseInfoBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 36, 170, BOX_WIDTH_WIDE, baseInfoBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
         int upperY = 170 + baseInfoBoxHeight / 2 - 20;
         int lowerY = 170 + baseInfoBoxHeight / 2 + 20;
@@ -296,7 +297,7 @@ public class ASCard {
     }
 
     protected void paintDamage(Graphics2D g) {
-        drawBox(g, 36, damageBoxY, BOX_WIDTH_WIDE, damageBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 36, damageBoxY, BOX_WIDTH_WIDE, damageBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
         new StringDrawer("DAMAGE").at(36 + 19, damageBoxY + damageBoxHeight / 2).center()
                 .rotate(-Math.PI / 2).font(hitsTitleFont).maxWidth(70).draw(g);
@@ -319,7 +320,7 @@ public class ASCard {
     protected void paintHeat(Graphics2D g) { }
 
     protected void paintArmor(Graphics2D g) {
-        drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
         if (element != null) {
             // Headers A, S
@@ -353,7 +354,7 @@ public class ASCard {
     }
 
     protected void paintSpecial(Graphics2D g) {
-        drawBox(g, specialBoxX, specialBoxY, specialBoxWidth, specialBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, specialBoxX, specialBoxY, specialBoxWidth, specialBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
         paintSpecialTextLines(g, element, specialsFont, specialBoxX + 8, specialBoxY + 2,
                 specialBoxWidth - 16);
     }
@@ -416,28 +417,14 @@ public class ASCard {
         g.drawOval(x, y - DAMAGE_PIP_SIZE / 2, DAMAGE_PIP_SIZE, DAMAGE_PIP_SIZE);
     }
 
-    protected void paintCardBackground(Graphics2D g) {
+    protected void paintCardBackground(Graphics2D g, boolean onlyAlphaStrikeStats) {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        // Point Value box
-        g.setStroke(new BasicStroke(4f));
-        g.setColor(Color.LIGHT_GRAY);
-        int[] pointsX = new int[] { 930, 889, 983, 1024 };
-        int[] pointsY = new int[] { 18, 86, 86, 18 };
-        g.fillPolygon(pointsX, pointsY, 4);
-        g.setColor(Color.BLACK);
-        pointsX = new int[] { 797, 847, 1033 };
-        pointsY = new int[] { 18, 99, 99 };
-        g.drawPolyline(pointsX, pointsY, 3);
-        pointsX = new int[] { 814, 855, 1033 };
-        pointsY = new int[] { 18, 86, 86 };
-        g.drawPolyline(pointsX, pointsY, 3);
-
         // Alpha Strike Stats box
-        g.setColor(Color.LIGHT_GRAY);
-        pointsX = new int[] { 19, 39, 19 };
-        pointsY = new int[] { 699, 730, 730 };
+        g.setColor(BACKGROUND_GRAY);
+        int[] pointsX = new int[] { 19, 39, 19 };
+        int[] pointsY = new int[] { 699, 730, 730 };
         g.fillPolygon(pointsX, pointsY, 3);
         pointsX = new int[] { 112, 153, 247, 206 };
         pointsY = new int[] { 664, 732, 732, 664 };
@@ -456,6 +443,26 @@ public class ASCard {
         new StringDrawer("ALPHA STRIKE STATS").at(38, 712).font(alphaStrikeStatsFont)
                 .outline(Color.BLACK, 0.5f).scaleX(1.05f).maxWidth(451).draw(g);
 
+        if (!onlyAlphaStrikeStats) {
+            // Point Value box
+            g.setStroke(new BasicStroke(4f));
+            g.setColor(BACKGROUND_GRAY);
+            pointsX = new int[]{930, 889, 983, 1024};
+            pointsY = new int[]{18, 86, 86, 18};
+            g.fillPolygon(pointsX, pointsY, 4);
+            g.setColor(Color.BLACK);
+            pointsX = new int[]{797, 847, 1033};
+            pointsY = new int[]{18, 99, 99};
+            g.drawPolyline(pointsX, pointsY, 3);
+            pointsX = new int[]{814, 855, 1033};
+            pointsY = new int[]{18, 86, 86};
+            g.drawPolyline(pointsX, pointsY, 3);
+
+            // Logo
+            ImageIcon icon = new ImageIcon(btLogo.getScaledInstance(445, 77, Image.SCALE_AREA_AVERAGING));
+            g.drawImage(icon.getImage(), 568, 646, null);
+        }
+
         // Border
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, WIDTH, BORDER);
@@ -466,11 +473,6 @@ public class ASCard {
         // Copyright
         new StringDrawer("(C) 2022 The Topps Company. All rights reserved.").at(1014, 293).rotate(-Math.PI / 2)
                 .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
-
-        // Logo
-        ImageIcon icon = new ImageIcon(btLogo.getScaledInstance(445, 77, Image.SCALE_AREA_AVERAGING));
-        g.drawImage(icon.getImage(), 568, 646, null);
-//        g.drawImage(btLogo, 568, 646, 445, 77, null);
     }
 
     static void drawBox(Graphics2D g, int x, int y, int width, int height, Color fillColor, float borderWidth) {

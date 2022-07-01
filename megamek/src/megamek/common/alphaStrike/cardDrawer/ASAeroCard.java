@@ -35,13 +35,12 @@ public class ASAeroCard extends ASHeatTrackingCard {
     @Override
     protected void initialize() {
         super.initialize();
-//        armorBoxWidth = BOX_WIDTH_WIDE;
         specialBoxWidth = 531;
     }
 
     @Override
     protected void paintBaseInfo(Graphics2D g) {
-        drawBox(g, 36, 170, BOX_WIDTH_WIDE, baseInfoBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 36, 170, BOX_WIDTH_WIDE, baseInfoBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
         if (element != null) {
             int upperY = 170 + baseInfoBoxHeight / 2 - 20;
@@ -77,7 +76,7 @@ public class ASAeroCard extends ASHeatTrackingCard {
         box.closePath();
 
         g.setStroke(new BasicStroke(BOX_STROKE));
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(BACKGROUND_GRAY);
         g.fill(box);
         g.setColor(Color.BLACK);
         g.draw(box);
@@ -108,7 +107,7 @@ public class ASAeroCard extends ASHeatTrackingCard {
 
     @Override
     protected void paintArmor(Graphics2D g) {
-        drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
         if (element != null) {
             // Headers A, S
@@ -145,7 +144,7 @@ public class ASAeroCard extends ASHeatTrackingCard {
     }
 
     protected void paintDamage(Graphics2D g) {
-        drawBox(g, 36, damageBoxY, BOX_WIDTH_WIDE, damageBoxHeight, Color.LIGHT_GRAY, BOX_STROKE);
+        drawBox(g, 36, damageBoxY, BOX_WIDTH_WIDE, damageBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
         new StringDrawer("DAMAGE").at(36 + 19, damageBoxY + damageBoxHeight / 2).center()
                 .rotate(-Math.PI / 2).font(hitsTitleFont).maxWidth(70).draw(g);

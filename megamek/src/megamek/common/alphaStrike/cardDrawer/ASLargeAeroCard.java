@@ -20,26 +20,51 @@ package megamek.common.alphaStrike.cardDrawer;
 
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.util.ImageUtil;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+
+import static megamek.common.alphaStrike.ASUnitType.*;
 
 
 public class ASLargeAeroCard extends ASCard {
 
     private final static float BOX_STROKE = 3f;
+    private final static Color VERY_LIGHT_GRAY = new Color(235, 235, 235);
+
 
     private Font largeAeroChassisFont;
     private Font largeAeroModelFont;
     private Font largeAeroHeaderFont;
     private Font pointValueHeaderFont;
-    private Font pointValueFont ;
+    private Font pointValueFont;
     private Font largeAeroValueFont;
     private Font largeAeroSpecialFont;
+    private Font damageFont;
+
+    private StringDrawer.StringDrawerConfig damageValueConfig = new StringDrawer.StringDrawerConfig().centerX()
+            .scaleX(0.9f).color(Color.BLACK).font(damageFont);
 
     public ASLargeAeroCard(AlphaStrikeElement element) {
         super(element);
+    }
+
+    @Override
+    public BufferedImage getCardImage(int width) {
+        int height = 2 * HEIGHT * width / WIDTH;
+        final BufferedImage result = ImageUtil.createAcceleratedImage(width, height);
+        Graphics graphics = result.getGraphics();
+        Graphics2D g2D = (Graphics2D) graphics;
+        g2D.scale((float) width / WIDTH, (float) width / WIDTH);
+        drawCard(graphics);
+        g2D.translate(0, HEIGHT);
+        drawFlipside(g2D);
+        graphics.dispose();
+        return result;
     }
 
     @Override
@@ -52,32 +77,169 @@ public class ASLargeAeroCard extends ASCard {
         pointValueFont = valueFont.deriveFont(54f);
         largeAeroValueFont = blackFont.deriveFont(42f);
         largeAeroSpecialFont = lightFont.deriveFont(31f);
+        damageFont = lightFont.deriveFont(32f);
 
         valueConfig = new StringDrawer.StringDrawerConfig().centerY().scaleX(0.9f)
                 .color(Color.BLACK).font(largeAeroValueFont).outline(Color.BLACK, 0.5f);
     }
 
-//    @Override
-//    protected void drawCardContent(Graphics2D g2D) {
-//        // Data blocks
-//        paintBaseInfo(g2D);
-//        paintArmor(g2D);
-//        paintSpecial(g2D, element);
-//        paintPointValue(g2D, element);
-//        paintHits(g2D, element);
-//
-//        // Fluff Image
-//        g2D.drawImage(fluffImage, 660, 110, null);
-//
-//        // Model and Chassis
-////        int width = new StringDrawer(element.getChassis()).at(36, 77).font(largeAeroChassisFont).scaleX(0.8f).maxWidth(600).draw(g2D).width;
-////        new StringDrawer(element.getModel()).at(56 + width, 77).font(largeAeroModelFont).maxWidth(750 - width).draw(g2D);
-//    }
-
     @Override
-    protected void drawFluffImage(Graphics2D g) {
-        //TODO
-        super.drawFluffImage(g);
+    protected void initialize() {
+        fluffWidth = 456;
+        fluffHeight = 224;
+        fluffXCenter = 767;
+        fluffYCenter = 366;
+    }
+
+    private void drawFlipside(Graphics2D g) {
+        paintCardBackground(g, true);
+        new StringDrawer("WEAPON CRITICALS").at(33, 629).font(largeAeroHeaderFont).centerY().draw(g);
+        AffineTransform baseTransform = g.getTransform();
+        g.translate(0, -7);
+        drawModelChassis(g);
+        g.setTransform(baseTransform);
+
+        g.translate(38, 88);
+        paintArcBox(g, getFrontArcName() + " DAMAGE");
+        g.setTransform(baseTransform);
+
+        g.translate(522, 88);
+        paintArcBox(g, getRearArcName() + " DAMAGE");
+        g.setTransform(baseTransform);
+
+        g.translate(38, 353);
+        paintArcBox(g, "LEFT " + getSideArcName() + " DAMAGE");
+        g.setTransform(baseTransform);
+
+        g.translate(522, 353);
+        paintArcBox(g, "RIGHT " + getSideArcName() + " DAMAGE");
+        g.setTransform(baseTransform);
+    }
+
+    private String getFrontArcName() {
+        return element.isAnyTypeOf(SC, DA, DS) ? "NOSE ARC" : "FRONT ARC";
+    }
+
+    private String getSideArcName() {
+        if (element.isAnyTypeOf(SC, DA)) {
+            return "WING";
+        } else if (element.isType(DS)) {
+            return "SIDE";
+        } else {
+            return "ARC";
+        }
+    }
+
+    private String getRearArcName() {
+        return element.isAnyTypeOf(SC, DA, DS) ? "AFT ARC" : "REAR ARC";
+    }
+
+    private void paintArcBox(Graphics2D g, String name) {
+        drawBox(g, 0, 0, 477, 259, BACKGROUND_GRAY, BOX_STROKE);
+        new StringDrawer(name).at(19, 130).maxWidth(234).useConfig(hitsTitleConfig).rotate(-Math.PI/2).center().draw(g);
+
+        int titleY = 32;
+        int lineDelta = 35;
+        int lineS = 68;
+        int lineM = lineS + lineDelta;
+        int lineL = lineM + lineDelta;
+        int lineE = lineL + lineDelta;
+        int lineSPE = lineE + lineDelta;
+
+        g.setColor(VERY_LIGHT_GRAY);
+        g.fillRect(35, lineS - 27, 431, 34);
+        g.fillRect(35, lineL - 27, 431, 34);
+        g.fillRect(35, lineSPE - 27, 431, 34);
+        g.setColor(Color.BLACK);
+
+        new StringDrawer("S").at(44, lineS).maxWidth(29).font(headerFont).draw(g);
+        new StringDrawer("M").at(44, lineM).maxWidth(29).font(headerFont).draw(g);
+        new StringDrawer("L").at(44, lineL).maxWidth(29).font(headerFont).draw(g);
+        new StringDrawer("E").at(44, lineE).maxWidth(29).font(headerFont).draw(g);
+        new StringDrawer("(+0)").at(77, lineS).maxWidth(64).font(headerFont).draw(g);
+        new StringDrawer("(+2)").at(77, lineM).maxWidth(64).font(headerFont).draw(g);
+        new StringDrawer("(+4)").at(77, lineL).maxWidth(64).font(headerFont).draw(g);
+        new StringDrawer("(+6)").at(77, lineE).maxWidth(64).font(headerFont).draw(g);
+        new StringDrawer("SPE").at(44, 210).maxWidth(64).font(headerFont).draw(g);
+        new StringDrawer("CRIT").at(44, 245).maxWidth(64).font(headerFont).draw(g);
+        if (element.isAnyTypeOf(SC, DS, DA)) {
+            int stdX = 177;
+            int delta = 122;
+            new StringDrawer("STD").at(stdX, titleY).maxWidth(93).centerX().font(headerFont).draw(g);
+            new StringDrawer("SCAP").at(stdX + delta, titleY).maxWidth(delta - 10).centerX().font(headerFont).draw(g);
+            new StringDrawer("MSL").at(stdX + 2 * delta, titleY).maxWidth(delta - 10).centerX().font(headerFont).draw(g);
+
+            new StringDrawer("1").at(stdX, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + 2 * delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            new StringDrawer("--").at(stdX, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("5").at(stdX + delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + 2 * delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            new StringDrawer("--").at(stdX, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("12").at(stdX + delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + 2 * delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            new StringDrawer("--").at(stdX, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + 2 * delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            for (int i = 0; i < 4; i++) {
+                drawDamagePip(g, stdX + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
+            }
+            for (int i = 0; i < 4; i++) {
+                drawDamagePip(g, stdX + delta + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
+            }
+            for (int i = 0; i < 4; i++) {
+                drawDamagePip(g, stdX + 2 * delta + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
+            }
+            g.drawLine(stdX + delta / 2, 221, stdX + delta / 2, 251);
+            g.drawLine(stdX + 3 * delta / 2, 221, stdX + 3 * delta / 2, 251);
+        } else {
+            int stdX = 177;
+            int delta = 82;
+            new StringDrawer("STD").at(stdX, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
+            new StringDrawer("CAP").at(stdX + delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
+            new StringDrawer("SCAP").at(stdX + 2 * delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
+            new StringDrawer("MSL").at(stdX + 3 * delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
+
+            new StringDrawer("979").at(stdX, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("622").at(stdX + delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("134").at(stdX + 2 * delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("72").at(stdX + 3 * delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            new StringDrawer("--").at(stdX, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("12").at(stdX + 2 * delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + 3 * delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            new StringDrawer("--").at(stdX, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("4").at(stdX + 2 * delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("4").at(stdX + 3 * delta, lineL).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            new StringDrawer("--").at(stdX, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + 2 * delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("--").at(stdX + 3 * delta, lineE).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+
+            for (int i = 0; i < 4; i++) {
+                drawDamagePip(g, stdX + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
+            }
+            for (int i = 0; i < 4; i++) {
+                drawDamagePip(g, stdX + delta + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
+            }
+            for (int i = 0; i < 4; i++) {
+                drawDamagePip(g, stdX + 2 * delta + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
+            }
+            for (int i = 0; i < 4; i++) {
+                drawDamagePip(g, stdX + 3 * delta + (i - 2) * (DAMAGE_PIP_SIZE + 2) + 1, 236);
+            }
+            g.drawLine(stdX + delta / 2, 221, stdX + delta / 2, 251);
+            g.drawLine(stdX + 3 * delta / 2, 221, stdX + 3 * delta / 2, 251);
+            g.drawLine(stdX + 5 * delta / 2, 221, stdX + 5 * delta / 2, 251);
+        }
     }
 
     @Override

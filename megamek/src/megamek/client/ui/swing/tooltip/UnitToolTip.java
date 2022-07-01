@@ -44,30 +44,30 @@ public final class UnitToolTip {
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
-    final static String BG_COLOR = "#313131";
+    final static String BGCOLOR = "#313131";
 
 
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
-        return getEntityTip(entity, localPlayer, true, false, mapSettings);
+        return getEntityTipTable(entity, localPlayer, true, false, mapSettings);
     }
     
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
-        return getEntityTip(entity, localPlayer, false, true, null);
+        return getEntityTipTable(entity, localPlayer, false, true, null);
     }
 
     /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
     public static StringBuilder getEntityTipNoPilot(Entity entity, Player localPlayer) {
-        return getEntityTip(entity, localPlayer, false, false, null);
+        return getEntityTipTable(entity, localPlayer, false, false, null);
     }
 
     // PRIVATE
     
     /** Assembles the whole unit tooltip. */
-    private static StringBuilder getEntityTip(Entity entity, Player localPlayer,
-            boolean inLobby, boolean pilotInfo, @Nullable MapSettings mapSettings) {
+    private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
+                                                   boolean inLobby, boolean pilotInfo, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -75,7 +75,7 @@ public final class UnitToolTip {
         }
 
         StringBuilder result = new StringBuilder();
-        result.append("<TABLE BORDER=0 BGCOLOR="+BG_COLOR+" width=100%><TR><TD>");
+        result.append("<TABLE BORDER=0 BGCOLOR="+ BGCOLOR +" width=100%><TR><TD>");
         Game game = entity.getGame();
         GUIPreferences guip = GUIPreferences.getInstance();
 

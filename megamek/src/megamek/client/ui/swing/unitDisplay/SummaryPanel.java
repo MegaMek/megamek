@@ -39,7 +39,7 @@ import java.util.Vector;
 public class SummaryPanel extends PicMap {
 
     private UnitDisplay unitDisplay;
-    private JLabel pilotInfo, unitInfo, hexInfo;
+    private JLabel unitInfo;
 
     /**
      * @param unitDisplay the UnitDisplay UI to attach to
@@ -52,14 +52,8 @@ public class SummaryPanel extends PicMap {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS ));
         panel.add(Box.createRigidArea(new Dimension(0,10)));
 
-        pilotInfo = new JLabel("<html>UnitInfo</html>", SwingConstants.LEFT );
-        panel.add(pilotInfo);
-
-        unitInfo = new JLabel("<html>HexInfo</html>", SwingConstants.LEFT );
+        unitInfo = new JLabel("<html>UnitInfo</html>", SwingConstants.LEFT );
         panel.add(unitInfo);
-
-        hexInfo = new JLabel("<html>HexInfo</html>", SwingConstants.LEFT );
-        panel.add(hexInfo);
     }
 
 
@@ -133,41 +127,34 @@ public class SummaryPanel extends PicMap {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
 
         if (entity == null) {
-            pilotInfo.setIcon(null);
-            pilotInfo.setText("<html>No Pilot</html>");
             unitInfo.setText("<html>No Unit</html>");
-            hexInfo.setText("<html>No Hex</html>");
             return;
         }
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            pilotInfo.setIcon(null);
-            pilotInfo.setText("<html>Sensor Return</html>");
             unitInfo.setText("<html>?</html>");
         } else {
-            pilotInfo.setText( "<html> " + padLeft(PilotToolTip.getPilotTipDetailed(entity, true).toString()) + "</html>");
-            unitInfo.setText("<html>" + padLeft(UnitToolTip.getEntityTipNoPilot(entity, localPlayer).toString()) + "</html>");
+            // This is html tables inside tables to maintain transparency to the bg image but
+            // also allow cells do have bg colors
+            StringBuffer hexTxt = new StringBuffer("");
+            hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
+            hexTxt.append(UnitToolTip.getEntityTipNoPilot(entity, localPlayer));
+            BoardView bv = unitDisplay.getClientGUI().getBoardView();
+            Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
+            if (bv != null && mhex != null) {
+                bv.appendTerrainTooltip(hexTxt, mhex);
+                bv.appendBuildingsTooltip(hexTxt, mhex);
+            }
+            unitInfo.setText("<html> " + padLeft(hexTxt.toString()) + "</html>");
         }
-
-        BoardView bv = unitDisplay.getClientGUI().getBoardView();
-        Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
-        if (bv != null && mhex != null) {
-            StringBuffer hexTxt = new StringBuffer("");//<HTML>");
-            bv.appendTerrainTooltip(hexTxt, mhex, "#999999");
-            bv.appendBuildingsTooltip(hexTxt, mhex, "#999999");
-            hexInfo.setText("<html>" + padLeft(hexTxt.toString()) + "</html>");
-        }
-
-        pilotInfo.setOpaque(false);
         unitInfo.setOpaque(false);
-        hexInfo.setOpaque(false);
     }
 
-    public final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=5 width=100%><TBODY><TR><TD VALIGN=TOP>";
-
     private String padLeft(String html) {
-        int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
-        return TABLE_BEGIN + "<td width=" + dist + "></td><td>"+html+"</td>"+"<td width=" + dist + ">" +TipUtil.TABLE_END;
+        int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 5);
+        return "<TABLE CELLSPACING=" + dist +" CELLPADDING=" + dist + " width=100%><TBODY><TR>"//<TD VALIGN=TOP>"
+                + "<td>"+html+"</td>"
+                +  "</TR></TBODY></TABLE>";
     }
 
     @Override

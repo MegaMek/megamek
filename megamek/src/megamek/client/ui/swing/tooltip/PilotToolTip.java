@@ -40,6 +40,7 @@ public final class PilotToolTip {
     
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
+    final static String BG_COLOR = "#313131";
 
     public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
         return getPilotTip(entity, true, showPortrait, true);
@@ -56,7 +57,7 @@ public final class PilotToolTip {
         
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
-        result.append(TABLE_BEGIN);
+        result.append("<TABLE BORDER=0 BGCOLOR="+BG_COLOR+" width=100%><TR><TD>");
 
         if (showPortrait) {
             result.append(crewPortraits(entity, showDefaultPortrait));
@@ -65,7 +66,7 @@ public final class PilotToolTip {
             result.append("<TD WIDTH=" + dist + "></TD>");
         }
 
-        result.append(crewInfo(entity));
+        result.append(crewInfoCell(entity));
 
         result.append(TABLE_END);
 
@@ -76,7 +77,7 @@ public final class PilotToolTip {
     }
     
     /** Returns a tooltip part with names and skills of the crew. */
-    private static StringBuilder crewInfo(final Entity entity) {
+    private static StringBuilder crewInfoCell(final Entity entity) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
         StringBuilder result = new StringBuilder();

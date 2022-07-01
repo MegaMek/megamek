@@ -3489,5 +3489,8 @@ public class Game implements IGame, Serializable {
 
     public void setMapSettings(MapSettings mapSettings) {
         this.mapSettings = mapSettings;
+        // clean up linux/macOS/Windows paths
+        this.mapSettings.adjustPathSeparator();
+
     }
 }

@@ -1531,7 +1531,6 @@ public class Client implements IClientCommandHandler {
                     break;
                 case SENDING_MAP_SETTINGS:
                     MapSettings mapSettings = (MapSettings) c.getObject(0);
-                    mapSettings.adjustPathSeparator();
                     game.setMapSettings(mapSettings);
                     GameSettingsChangeEvent evt = new GameSettingsChangeEvent(this);
                     evt.setMapSettingsOnlyChange(true);

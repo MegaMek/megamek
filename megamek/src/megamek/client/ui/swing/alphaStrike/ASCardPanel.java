@@ -18,14 +18,19 @@
  */
 package megamek.client.ui.swing.alphaStrike;
 
-import megamek.common.alphaStrike.cardDrawer.ASCard;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.cardDrawer.ASCard;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ASCardPanel extends JComponent {
+/**
+ * This is a JComponent that displays only an AlphaStrike unit card. It supports setting a font and scale
+ * for the card to use. The AlphaStrike element to display can be changed after construction and it may be
+ * null.
+ */
+public final class ASCardPanel extends JComponent {
 
     private ASCard card;
     private float scale = 1;
@@ -33,42 +38,76 @@ public class ASCardPanel extends JComponent {
     private Image cardImage;
     private AlphaStrikeElement element;
 
+    /**
+     * Construct a card panel without an AlphaStrike element to display. The created card will show
+     * that there is no element to display but will still be a normal card.
+     */
     public ASCardPanel() { }
 
+    /**
+     * Construct a card panel with the given AlphaStrike element to display.
+     *
+     * @param element The AlphaStrike element to display
+     */
     public ASCardPanel(@Nullable AlphaStrikeElement element) {
         setASElement(element);
     }
 
+    /**
+     * Set the panel to display the given element.
+     *
+     * @param element The AlphaStrike element to display
+     */
     public void setASElement(@Nullable AlphaStrikeElement element) {
         this.element = element;
         initialize();
-        repaint();
     }
 
+    /**
+     * Set the card to use the given Font.
+     *
+     * @param font The Font to use for writing the contents of the card.
+     */
     public void setCardFont(Font font) {
         this.cardFont = font;
         initialize();
-        repaint();
     }
 
+    /**
+     * Set the card to be scaled with the given scale. Values smaller than 1 result in a smaller card
+     * while values larger than 1 in a greater than normal card. At scale = 1, the card will be the
+     * standard size of 1050 x 750 (1050 x 1500 for Large Aerospace in portrait arrangement).
+     *
+     * @param scale The scale to use for drawing the card
+     */
     public void setScale(float scale) {
         this.scale = scale;
         initialize();
-        repaint();
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(cardImage.getWidth(this), cardImage.getHeight(this));
+    /**
+     * Returns the image of the card. If a scale other than 1 has been set before, the image will
+     * be sized accordingly.
+     *
+     * @return The (scaled) card image.
+     */
+    public Image getCardImage() {
+        return cardImage;
     }
 
+    /** Create the card, add settings and draw it to the card image cache. */
     private void initialize() {
         card = ASCard.createCard(element);
         if (cardFont != null) {
             card.setFont(cardFont);
         }
         cardImage = card.getCardImage(scale);
-        invalidate();
+        repaint();
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(cardImage.getWidth(this), cardImage.getHeight(this));
     }
 
     @Override

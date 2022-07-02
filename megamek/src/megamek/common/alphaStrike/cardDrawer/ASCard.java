@@ -27,7 +27,6 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
-import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,8 +40,10 @@ import java.util.Locale;
  * the card is calling the card's {@link #getCardImage()} method. Other methods can be used to configure the
  * resulting card image.
  *
- * Subclasses of ASCard represent the unit cards for some AlphaStrike unit types such as Large Aerospace units.
- * It is not necessary to pay any attention to this when obtaining the card.
+ * This class is responsible for painting Infantry cards. Subclasses of ASCard represent the unit cards for
+ * other AlphaStrike unit types. It is not necessary to pay any attention to this when obtaining the card but
+ * for Large Aerospace units the specific class can be used to have additional functionality for the two
+ * card faces of these cards.
  */
 public class ASCard {
 
@@ -189,9 +190,10 @@ public class ASCard {
         initialize();
     }
 
-    /** Initializes some values for the card and sets standard fonts. Overridden for some card types. */
+    /** Initializes some values for the card. Overridden for some card types. */
     protected void initialize() { }
 
+    /** Initializes fonts and configs. Overridden for some card types. */
     protected void initializeFonts(Font lightFont, Font boldFont, Font blackFont) {
         modelFont = lightFont.deriveFont(30f);
         chassisFont = blackFont.deriveFont(70f);
@@ -210,6 +212,7 @@ public class ASCard {
                 .color(Color.BLACK).font(hitsTitleFont).outline(Color.BLACK, 0.4f);
     }
 
+    /** This method controls drawing the card. */
     protected final void drawCard(Graphics g) {
         initializeFonts(lightFont, boldFont, blackFont);
         Graphics2D g2D = (Graphics2D) g;
@@ -227,10 +230,6 @@ public class ASCard {
             return;
         }
 
-        drawCardContent(g2D);
-    }
-
-    protected void drawCardContent(Graphics2D g2D) {
         drawFluffImage(g2D);
         paintBaseInfo(g2D);
         paintDamage(g2D);
@@ -242,7 +241,8 @@ public class ASCard {
         drawModelChassis(g2D);
     }
 
-    protected void drawFluffImage(Graphics2D g) {
+    /** Scales the fluff image according to control variables which may be set in overriden initialize(). */
+    private void drawFluffImage(Graphics2D g) {
         if (fluffImage != null) {
             int width = fluffWidth;
             int height = fluffHeight;
@@ -259,6 +259,7 @@ public class ASCard {
         }
     }
 
+    /** Write model, chassis and squad size. Overridden for some card types. */
     protected void drawModelChassis(Graphics2D g) {
         new StringDrawer(element.getModel()).at(36, 44).font(modelFont).centerY()
                 .maxWidth(750).scaleX(1.3f).draw(g);
@@ -271,6 +272,7 @@ public class ASCard {
         }
     }
 
+    /** Write base info. Overridden for some card types. */
     protected void paintBaseInfo(Graphics2D g) {
         drawBox(g, 36, 170, BOX_WIDTH_WIDE, baseInfoBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
@@ -296,6 +298,7 @@ public class ASCard {
         new StringDrawer(element.getSkill() + "").at(506, lowerY).useConfig(valueConfig).maxWidth(120).draw(g);
     }
 
+    /** Write the ground unit damage block. Overridden for some card types. */
     protected void paintDamage(Graphics2D g) {
         drawBox(g, 36, damageBoxY, BOX_WIDTH_WIDE, damageBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
@@ -317,8 +320,10 @@ public class ASCard {
         new StringDrawer(damage.L.toStringWithZero()).at(posS + 2 * delta, lowerY).useConfig(valueConfig).center().draw(g);
     }
 
+    /** Write the heat block. The subclass for heat tracking cards overrides this to paint content. */
     protected void paintHeat(Graphics2D g) { }
 
+    /** Write the armor block. Overridden for some card types. */
     protected void paintArmor(Graphics2D g) {
         drawBox(g, 36, armorBoxY, armorBoxWidth, armorBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 
@@ -353,13 +358,15 @@ public class ASCard {
         }
     }
 
+    /** Write the special ability block. Overridden for some card types. */
     protected void paintSpecial(Graphics2D g) {
         drawBox(g, specialBoxX, specialBoxY, specialBoxWidth, specialBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
         paintSpecialTextLines(g, element, specialsFont, specialBoxX + 8, specialBoxY + 2,
                 specialBoxWidth - 16);
     }
 
-    void paintSpecialTextLines(Graphics2D g, AlphaStrikeElement element, Font font, int x, int y, int width) {
+    /** Helper method that writes the actual special ability text lines. */
+    protected void paintSpecialTextLines(Graphics2D g, AlphaStrikeElement element, Font font, int x, int y, int width) {
         if (element != null) {
             String specials = "SPECIAL: " + element.getSpecialsString(",").replace(",", ", ");
             g.setFont(font);
@@ -399,6 +406,7 @@ public class ASCard {
         }
     }
 
+    /** Write the point value. Overridden in Large Aero cards. */
     protected void paintPointValue(Graphics2D g) {
         if (element != null) {
             new StringDrawer("PV: ").at(861, 53).centerY().font(pointValueHeaderFont).maxWidth(72).draw(g);
@@ -407,8 +415,16 @@ public class ASCard {
         }
     }
 
+    /** Write the critical hits block. Subclasses override to provide content. */
     protected void paintHits(Graphics2D g) { }
 
+    /**
+     * Draws a crit damage pip at the provided coordinates (x is left-aligned, y centered).
+     *
+     * @param g The Graphics2D to draw to
+     * @param x the horizontal position (left edge of the damage pip!)
+     * @param y the vertical position (center of the damage pip!)
+     */
     protected void drawDamagePip(Graphics2D g, int x, int y) {
         g.setStroke(new BasicStroke(3f));
         g.setColor(Color.WHITE);
@@ -417,6 +433,14 @@ public class ASCard {
         g.drawOval(x, y - DAMAGE_PIP_SIZE / 2, DAMAGE_PIP_SIZE, DAMAGE_PIP_SIZE);
     }
 
+    /**
+     * Draws the card background including the AlphaStrike Stats block. When isFlipSide is true,
+     * the point value box and logo are omitted and the copyright notice is positioned
+     * differently.
+     *
+     * @param g The Graphics2D to draw to
+     * @param isFlipSide True for the card backside (Large Aerospace units)
+     */
     protected void paintCardBackground(Graphics2D g, boolean isFlipSide) {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
@@ -479,6 +503,17 @@ public class ASCard {
         g.fillRect(0, 0, BORDER, HEIGHT);
     }
 
+    /**
+     * Draws a rounded edge and filled box. The corner radius is fixed to the BOX_CORNER value.
+     *
+     * @param g The Graphics2D to draw to
+     * @param x The left edge of the box
+     * @param y The top edge of the box
+     * @param width The width of the box
+     * @param height The height of the box
+     * @param fillColor The color to fill the box width
+     * @param borderWidth The width of the black border of the box
+     */
     static void drawBox(Graphics2D g, int x, int y, int width, int height, Color fillColor, float borderWidth) {
         g.setStroke(new BasicStroke(borderWidth));
         g.setColor(fillColor);
@@ -487,24 +522,13 @@ public class ASCard {
         g.drawRoundRect(x, y, width, height, BOX_CORNER, BOX_CORNER);
     }
 
-    /**
-     * Get the fluff image for the given element.
-     */
+    /** Get the fluff image for the given element. */
     private Image getFluffImage(AlphaStrikeElement element) {
-        if (element == null) {
+        if (element != null) {
+            return FluffImageHelper.loadFluffImageHeuristic(element);
+        } else {
             return null;
         }
-        Image image = FluffImageHelper.loadFluffImageHeuristic(element);
-        if (image != null) {
-            MediaTracker tracker = new MediaTracker(null);
-            tracker.addImage(image, 0);
-            try {
-                tracker.waitForID(0);
-            } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
-            }
-        }
-        return image;
     }
 
 }

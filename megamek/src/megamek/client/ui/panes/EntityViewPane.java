@@ -20,7 +20,6 @@ package megamek.client.ui.panes;
 
 import megamek.client.ui.baseComponents.AbstractTabbedPane;
 import megamek.client.ui.swing.MechViewPanel;
-import megamek.client.ui.swing.alphaStrike.ASCardPanel;
 import megamek.client.ui.swing.alphaStrike.ConfigurableASCardPanel;
 import megamek.common.Entity;
 import megamek.common.alphaStrike.ASConverter;
@@ -36,7 +35,7 @@ public class EntityViewPane extends AbstractTabbedPane {
     //region Variable Declarations
     private MechViewPanel entityPanel;
     private MechViewPanel troPanel;
-    private ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel();
+    private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel();
     //endregion Variable Declarations
 
     //region Constructors

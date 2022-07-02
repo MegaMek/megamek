@@ -23,55 +23,124 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 
+/**
+ * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of
+ * the card and allow copying to clipboard. The AlphaStrike element to display can be changed after
+ * construction and it may be null.
+ */
 public class ConfigurableASCardPanel extends JPanel {
 
     private final JComboBox<String> fontChooser = new JComboBox<>();
-    private final JComboBox<String> sizeChooser = new JComboBox<>();
-    ASCardPanel cardPanel = new ASCardPanel();
+    private final JComboBox<Float> sizeChooser = new JComboBox<>();
+    private final JButton copyButton = new JButton("Copy to Clipboard");
+    private final ASCardPanel cardPanel = new ASCardPanel();
 
-    public ConfigurableASCardPanel() {
+    /**
+     * Constructs a panel with the given AlphaStrike element to display.
+     *
+     * @param element The AlphaStrike element to display
+     */
+    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element) {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-
 
         for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             fontChooser.addItem(family);
         }
         fontChooser.addActionListener(ev -> updateFont());
-        sizeChooser.addItem("2");
-        sizeChooser.addItem("1.5");
-        sizeChooser.addItem("1");
-        sizeChooser.addItem("0.75");
-        sizeChooser.addItem("0.5");
-        sizeChooser.addItem("0.33");
-        sizeChooser.setSelectedItem("1");
+
+        sizeChooser.addItem(2f);
+        sizeChooser.addItem(1.5f);
+        sizeChooser.addItem(1f);
+        sizeChooser.addItem(0.75f);
+        sizeChooser.addItem(0.5f);
+        sizeChooser.addItem(0.33f);
+        sizeChooser.setSelectedItem(0.75f);
         sizeChooser.addActionListener(ev -> updateSize());
+        sizeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> new JLabel(Float.toString(value)));
+
+        copyButton.addActionListener(ev -> copyCardToClipboard());
 
         var chooserLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
+        chooserLine.setBorder(new EmptyBorder(10, 0, 10, 0));
+        chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(new JLabel("Font: "));
         chooserLine.add(fontChooser);
-        chooserLine.add(new JLabel("      Card Size: "));
+        chooserLine.add(Box.createHorizontalStrut(25));
+        chooserLine.add(new JLabel("Card Size: "));
         chooserLine.add(sizeChooser);
+        chooserLine.add(Box.createHorizontalStrut(25));
+        chooserLine.add(copyButton);
 
-        var cardLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
-        cardLine.add(cardPanel);
+        var cardLine = new JScrollPane(cardPanel);
+        cardPanel.setBorder(new EmptyBorder(5, 65, 0, 0));
+        cardLine.getVerticalScrollBar().setUnitIncrement(16);
 
         add(chooserLine);
         add(cardLine);
+        setASElement(element);
     }
 
+    /** Construct a new panel without an AlphaStrike element to display. */
+    public ConfigurableASCardPanel() {
+        this(null);
+    }
+
+    /**
+     * Set the panel to display the given element.
+     *
+     * @param element The AlphaStrike element to display
+     */
     public void setASElement(@Nullable AlphaStrikeElement element) {
         cardPanel.setASElement(element);
     }
 
+    /** Set the card to use a newly selected font. */
     private void updateFont() {
         Font font = Font.decode((String) fontChooser.getSelectedItem());
         cardPanel.setCardFont(font);
     }
 
+    /** Set the card to use a newly selected scale. */
     private void updateSize() {
-        cardPanel.setScale(Float.parseFloat((String)sizeChooser.getSelectedItem()));
+        if (sizeChooser.getSelectedItem() != null) {
+            cardPanel.setScale((Float) sizeChooser.getSelectedItem());
+            invalidate();
+        }
     }
 
+    // Taken from https://alvinalexander.com/java/java-copy-image-to-clipboard-example/
+    private void copyCardToClipboard() {
+        ImageSelection imgSel = new ImageSelection(cardPanel.getCardImage());
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);
+    }
+
+    static class ImageSelection implements Transferable {
+
+        private final Image image;
+
+        public ImageSelection(Image image) {
+            this.image = image;
+        }
+
+        public DataFlavor[] getTransferDataFlavors() {
+            return new DataFlavor[] { DataFlavor.imageFlavor };
+        }
+
+        public boolean isDataFlavorSupported(DataFlavor flavor) {
+            return DataFlavor.imageFlavor.equals(flavor);
+        }
+
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
+            if (!DataFlavor.imageFlavor.equals(flavor)) {
+                throw new UnsupportedFlavorException(flavor);
+            }
+            return image;
+        }
+    }
 }

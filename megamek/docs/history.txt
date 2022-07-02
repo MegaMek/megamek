@@ -25,6 +25,7 @@ VERSION HISTORY:
 + Issue #3695: Increased amount and usefulness of data displayed in the General tab of the unit display.
 + Issue #3719: No kicking while bogged down
 + Issue #3742: Errata - Infantry Heat Suit environment type
++ PR #1134: Improvements to Fluff Image folders (see Wiki for specifics). 
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

@@ -35,7 +35,7 @@ public class FluffImageHelper {
     public static final String DIR_NAME_INFANTRY = "Infantry";
     public static final String DIR_NAME_JUMPSHIP = "Jumpship";
     public static final String DIR_NAME_MECH = "Mech";
-    public static final String DIR_NAME_PROTOMEK= "Protomek";
+    public static final String DIR_NAME_PROTOMEK = "Protomek";
     public static final String DIR_NAME_SMALLCRAFT = "Small Craft";
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";

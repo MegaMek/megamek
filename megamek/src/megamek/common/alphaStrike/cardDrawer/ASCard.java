@@ -201,7 +201,7 @@ public class ASCard {
         pointValueHeaderFont = headerFont.deriveFont(40f);
         pointValueFont = valueFont.deriveFont(54f);
         hitsTitleFont = boldFont.deriveFont(16f);
-        alphaStrikeStatsFont = blackFont.deriveFont(40f);
+        alphaStrikeStatsFont = blackFont.deriveFont(44f);
 
         valueConfig = new StringDrawer.StringDrawerConfig().centerY().color(Color.BLACK).font(valueFont)
                 .outline(Color.BLACK, 0.95f).dualOutline(Color.WHITE, 3.5f);
@@ -375,22 +375,22 @@ public class ASCard {
             int line = 1;
             String[] tokens = element.getSpecialsString(",").split(",");
             int index = 0;
-            String fittingLine = "SPECIAL: ";
+            StringBuilder fittingLine = new StringBuilder("SPECIAL: ");
 
             while (line <= 3) {
                 while (index < tokens.length) {
                     String nextItem = tokens[index] + (index == tokens.length - 1 ? "" : ", ");
                     if ((g.getFontMetrics(font).stringWidth(fittingLine + nextItem) < width)
-                            || fittingLine.isBlank()) {
-                        fittingLine += nextItem;
+                            || fittingLine.toString().isBlank()) {
+                        fittingLine.append(nextItem);
                         index++;
                     } else {
                         break;
                     }
                 }
 
-                g.drawString(fittingLine, x, y + ascent + (line - 1) * linedelta);
-                fittingLine = "";
+                g.drawString(fittingLine.toString(), x, y + ascent + (line - 1) * linedelta);
+                fittingLine = new StringBuilder();
                 line++;
                 if (index == tokens.length) {
                     break;
@@ -417,7 +417,7 @@ public class ASCard {
         g.drawOval(x, y - DAMAGE_PIP_SIZE / 2, DAMAGE_PIP_SIZE, DAMAGE_PIP_SIZE);
     }
 
-    protected void paintCardBackground(Graphics2D g, boolean onlyAlphaStrikeStats) {
+    protected void paintCardBackground(Graphics2D g, boolean isFlipSide) {
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
@@ -441,9 +441,9 @@ public class ASCard {
         pointsY = new int[] { 664, 664, 729 };
         g.drawPolyline(pointsX, pointsY, 3);
         new StringDrawer("ALPHA STRIKE STATS").at(38, 712).font(alphaStrikeStatsFont)
-                .outline(Color.BLACK, 0.5f).scaleX(1.05f).maxWidth(451).draw(g);
+                .outline(Color.BLACK, 0.7f).scaleX(1.05f).maxWidth(451).draw(g);
 
-        if (!onlyAlphaStrikeStats) {
+        if (!isFlipSide) {
             // Point Value box
             g.setStroke(new BasicStroke(4f));
             g.setColor(BACKGROUND_GRAY);
@@ -461,6 +461,14 @@ public class ASCard {
             // Logo
             ImageIcon icon = new ImageIcon(btLogo.getScaledInstance(445, 77, Image.SCALE_AREA_AVERAGING));
             g.drawImage(icon.getImage(), 568, 646, null);
+
+            // Copyright (off-center)
+            new StringDrawer("(C) 2022 The Topps Company. All rights reserved.").at(1014, 293).rotate(-Math.PI / 2)
+                    .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
+        } else {
+            // Copyright (centered)
+            new StringDrawer("(C) 2022 The Topps Company. All rights reserved.").at(1014, 375).rotate(-Math.PI / 2)
+                    .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
         }
 
         // Border
@@ -469,10 +477,6 @@ public class ASCard {
         g.fillRect(WIDTH - BORDER, 0, BORDER, HEIGHT);
         g.fillRect(0, HEIGHT - BORDER, WIDTH, BORDER);
         g.fillRect(0, 0, BORDER, HEIGHT);
-
-        // Copyright
-        new StringDrawer("(C) 2022 The Topps Company. All rights reserved.").at(1014, 293).rotate(-Math.PI / 2)
-                .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
     }
 
     static void drawBox(Graphics2D g, int x, int y, int width, int height, Color fillColor, float borderWidth) {

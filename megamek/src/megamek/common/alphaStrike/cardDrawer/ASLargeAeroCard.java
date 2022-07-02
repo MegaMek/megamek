@@ -45,8 +45,10 @@ public class ASLargeAeroCard extends ASCard {
     private Font largeAeroValueFont;
     private Font largeAeroSpecialFont;
     private Font damageFont;
+    private Font arcTitleFont;
+    private Font critTextFont;
 
-    private StringDrawer.StringDrawerConfig damageValueConfig = new StringDrawer.StringDrawerConfig().centerX()
+    private final StringDrawer.StringDrawerConfig damageValueConfig = new StringDrawer.StringDrawerConfig().centerX()
             .scaleX(0.9f).color(Color.BLACK).font(damageFont);
 
     public ASLargeAeroCard(AlphaStrikeElement element) {
@@ -78,6 +80,8 @@ public class ASLargeAeroCard extends ASCard {
         largeAeroValueFont = blackFont.deriveFont(42f);
         largeAeroSpecialFont = lightFont.deriveFont(31f);
         damageFont = lightFont.deriveFont(32f);
+        arcTitleFont = blackFont.deriveFont(26f);
+        critTextFont = boldFont.deriveFont(20f);
 
         valueConfig = new StringDrawer.StringDrawerConfig().centerY().scaleX(0.9f)
                 .color(Color.BLACK).font(largeAeroValueFont).outline(Color.BLACK, 0.5f);
@@ -93,7 +97,13 @@ public class ASLargeAeroCard extends ASCard {
 
     private void drawFlipside(Graphics2D g) {
         paintCardBackground(g, true);
-        new StringDrawer("WEAPON CRITICALS").at(33, 629).font(largeAeroHeaderFont).centerY().draw(g);
+        new StringDrawer("WEAPON CRITICALS").at(33, 629).font(arcTitleFont).maxWidth(220)
+                .outline(Color.BLACK, 0.4f).centerY().draw(g);
+        new StringDrawer("Damage Value Reduced by 25% per hit. -- Randomly determine an appropriate")
+                .at(260, 629).font(critTextFont).maxWidth(750).centerY().draw(g);
+        String columns = element.isAnyTypeOf(SC, DS, DA) ? "STD/SCAP/MSL" : "STD/CAP/SCAP/MSL";
+        new StringDrawer(columns + " column.")
+                .at(697, 660).font(critTextFont).maxWidth(318).centerY().draw(g);
         AffineTransform baseTransform = g.getTransform();
         g.translate(0, -7);
         drawModelChassis(g);
@@ -134,9 +144,9 @@ public class ASLargeAeroCard extends ASCard {
         return element.isAnyTypeOf(SC, DA, DS) ? "AFT ARC" : "REAR ARC";
     }
 
-    private void paintArcBox(Graphics2D g, String name) {
+    private void paintArcBox(Graphics2D g, String arcTitle) {
         drawBox(g, 0, 0, 477, 259, BACKGROUND_GRAY, BOX_STROKE);
-        new StringDrawer(name).at(19, 130).maxWidth(234).useConfig(hitsTitleConfig).rotate(-Math.PI/2).center().draw(g);
+        new StringDrawer(arcTitle).at(19, 130).maxWidth(234).font(arcTitleFont).rotate(-Math.PI/2).center().draw(g);
 
         int titleY = 32;
         int lineDelta = 35;
@@ -156,12 +166,14 @@ public class ASLargeAeroCard extends ASCard {
         new StringDrawer("M").at(44, lineM).maxWidth(29).font(headerFont).draw(g);
         new StringDrawer("L").at(44, lineL).maxWidth(29).font(headerFont).draw(g);
         new StringDrawer("E").at(44, lineE).maxWidth(29).font(headerFont).draw(g);
-        new StringDrawer("(+0)").at(77, lineS).maxWidth(64).font(headerFont).draw(g);
-        new StringDrawer("(+2)").at(77, lineM).maxWidth(64).font(headerFont).draw(g);
-        new StringDrawer("(+4)").at(77, lineL).maxWidth(64).font(headerFont).draw(g);
-        new StringDrawer("(+6)").at(77, lineE).maxWidth(64).font(headerFont).draw(g);
-        new StringDrawer("SPE").at(44, 210).maxWidth(64).font(headerFont).draw(g);
-        new StringDrawer("CRIT").at(44, 245).maxWidth(64).font(headerFont).draw(g);
+        new StringDrawer("(+0)").at(77, lineS).maxWidth(60).font(headerFont).draw(g);
+        new StringDrawer("(+2)").at(77, lineM).maxWidth(60).font(headerFont).draw(g);
+        new StringDrawer("(+4)").at(77, lineL).maxWidth(60).font(headerFont).draw(g);
+        new StringDrawer("(+6)").at(77, lineE).maxWidth(60).font(headerFont).draw(g);
+        new StringDrawer("SPE").at(44, 210).maxWidth(90).font(headerFont).draw(g);
+        g.setStroke(new BasicStroke(1f));
+        g.drawLine(146, lineSPE + 7, 466, lineSPE + 7);
+        new StringDrawer("CRIT").at(44, 245).maxWidth(90).font(headerFont).draw(g);
         if (element.isAnyTypeOf(SC, DS, DA)) {
             int stdX = 177;
             int delta = 122;
@@ -204,10 +216,10 @@ public class ASLargeAeroCard extends ASCard {
             new StringDrawer("SCAP").at(stdX + 2 * delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
             new StringDrawer("MSL").at(stdX + 3 * delta, titleY).maxWidth(delta - 6).centerX().font(headerFont).draw(g);
 
-            new StringDrawer("979").at(stdX, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer("622").at(stdX + delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer("134").at(stdX + 2 * delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
-            new StringDrawer("72").at(stdX + 3 * delta, lineS).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("979").at(stdX, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("622").at(stdX + delta, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("134").at(stdX + 2 * delta, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
+            new StringDrawer("72").at(stdX + 3 * delta, lineS).maxWidth(delta - 16).useConfig(damageValueConfig).draw(g);
 
             new StringDrawer("--").at(stdX, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);
             new StringDrawer("--").at(stdX + delta, lineM).maxWidth(delta - 10).useConfig(damageValueConfig).draw(g);

@@ -84,3 +84,31 @@ TRO 3058U - Civil War
 <armor_tech>
 3
 </armor_tech>
+
+<overview>
+The Achileus was jointly designed by scientists from the Free Worlds League and Word of Blake with the goal of creating a light Battle Armor suit that could be mass produced.
+</overview>
+
+<history>
+Inspired by the Federated Commonwealth's ultimately flawed Infiltrator Mk. I, the research team used the Blakist Tornado PAL as the basis for the new suit while seeking to overcome some of its defects. Starting in October of 3054 the team labored over many months reworking the Tornado suit to add armoring, weaponry and integrated jump jets while still maintaining its stealth aspects. As prototypes became available in May of 3055 this task proved harder to implement without making too many sacrifices. A breakthrough came when, according to rumors at least, the Word of Blake ROM "acquired" patented information held by Defiance Industries and the New Avalon Institute of Science - likely through communication intercepts - regarding a new composite armor formula. Using this information the team was able to sheath the Achileus in armor which met the protection standards set by the Free Worlds League Military while maintaining an acceptable level of stealth. Both the FWLM and Word of Blake Militia began fielding the Achileus after its introduction in July 3057, with its first combat operation believed to be the Blakist conquest of Terra in 3058. Production of the original model was carried out by Irian Technologies on Irian while a few years later Free Worlds Defense Industries would start building a new variant specifically for the Blakists on Gibson. Although Defiance Industries would protest the theft of their intellectual property to the Economic Council of the Second Star League, their effort was delayed by the onset of the FedCom Civil War and ultimately ended with the collapse of the League. The Achileus saw prolific use by both the League and Blakists in the Jihad which followed.
+</history>
+
+<capabilities>
+On its left arm is an Anti-Personnel Weapon Mount, typically equipped with a submachine gun, just above the wrist. Both arms end in fully functional Basic Manipulators slaved directly to the operator's own hands, giving it superior flexibility in holding and manipulating objects than other battle armor suits. While this comes at the cost of armor protection and hand-to-hand combat (hand injuries being the most common type for Achileus operators), the capability is invaluable in supporting the battlefield infiltration mission. Integral jump jets in the Achileus allow it to make leaps of 90 meters at a time, giving it good maneuverability. Its 360kg of Improved Stealth armor, while allowing the wearer to survive a couple of shots from a Small Laser, are more notable for their stealth features. Combining the aspects of an electronic and infrared-suppressing Sneak Suit, this stealth system can run indefinitely and protect the suit from being detected by a number of sensors, including Beagle Active Probes.
+</capabilities>
+
+<deployment>
+The primary weapon of the Achileus is a Modular Weapon Mount mounted on the right arm. Although a wide range of weapons could be carried the most common were a Flamer, Small Laser or Machine Gun, with a Light TAG becoming available in 3059.
+</deployment>
+
+<manufacturer>
+Free Worlds Defence Industries,Irian BattleMechs Unlimited,Irian BattleMechs Unlimited
+</manufacturer>
+
+<primaryFactory>
+Gibson,Irian,Washburn
+</primaryFactory>
+
+<notes>
+
+</notes>

@@ -87,3 +87,27 @@ biped
 <weightclass>
 2
 </weightclass>
+
+<overview>
+The Angerona Scout Suit was developed by StarCorp Industries on Terra. The suit was designed for the needs of the newly formed Republic of the Sphere's Armed Forces, with the lessons learned from Stone's Coalition during the Jihad in mind.
+</overview>
+
+<history>
+During the early 3080s, the VIII Hastati Sentinels were given a squad of Angerona suits to test out. The 8th Hastati were called to the world of Shipka to handle Capellan backed militants who were terrorizing the planet's Foxborough continent. The Sentinels had sent in two battle armor squads into an area to scout for the enemy. The Capellans were equipped with Ying Long suits, and had ambushed one of the Hastati's squads of Purifier Battle Armor while investigating a town. The other Squad, equipped with Angeronas, watched its fellow soldiers get wiped out. Then they regrouped, stalked the militants in full stealth and cut down the two squads of Ying Longs. Only three of the militants managed to escape the Republic Angeronas. The suit's performance on Skipka helped to increase its popularity among Republic troops.
+</history>
+
+<capabilities>
+The Angerona drops the usual Jump Jets most suits its size usually employ in exchange for a higher rate of ground speed. It can also be transported by either BattleMech or Armored Personnel Carrier. As part of the efforts to improve on previous designs that use mimetic armor, the suit has been outfitted with Improved Stealth Armor and a Camo System. This combination of armor and electronics systems allows the Angerona to move while not being seen. The suit's weaponry includes a Light Recoilless Rifle, with 20 rounds in its right arm, while employing an Anti-Personnel Weapons mount on the left.
+</capabilities>
+
+<deployment>
+This is a more specialized configuration of the Angerona introduced in 3085. The suit retains its Camo System, but drops its other weapons for Improved Sensors, Remote Sensor Dispenser, and has a Light Machine Gun fitted to the left arm as its only mounted weapon. The suit has been given Armored Gloves in place of the Standard's basic manipulators. This allows the trooper to carry regular infantry weapons in its hands.
+</deployment>
+
+<manufacturer>
+StarCorps Industries
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>

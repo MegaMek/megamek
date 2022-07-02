@@ -52,7 +52,7 @@ public class SummaryPanel extends PicMap {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS ));
         panel.add(Box.createRigidArea(new Dimension(0,10)));
 
-        unitInfo = new JLabel("<html>UnitInfo</html>", SwingConstants.LEFT );
+        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT );
         panel.add(unitInfo);
     }
 
@@ -127,7 +127,7 @@ public class SummaryPanel extends PicMap {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
 
         if (entity == null) {
-            unitInfo.setText("<html>No Unit</html>");
+            unitInfo.setText(HTML_BEGIN + padLeft("No Unit") +HTML_END);
             return;
         }
 
@@ -152,9 +152,8 @@ public class SummaryPanel extends PicMap {
 
     private String padLeft(String html) {
         int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 5);
-        return "<TABLE CELLSPACING=" + dist +" CELLPADDING=" + dist + " width=100%><TBODY><TR>"
-                + "<td>"+html+"</td>"
-                +  "</TR></TBODY></TABLE>";
+        return "<TABLE CELLSPACING=" + dist +" CELLPADDING=" + dist + " WIDTH=100%><TBODY><TR>"
+                + "<TD>"+html+"</TD></TR></TBODY></TABLE>";
     }
 
     @Override

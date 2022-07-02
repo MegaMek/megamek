@@ -5433,7 +5433,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
                 int distance = selectedEntity.getPosition().distance(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR +" width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 if (distance == 1) {
                     txt.append(Messages.getString("BoardView1.Tooltip.Distance1"));
                 } else {
@@ -5595,7 +5595,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-            txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + "width=100%><TR><TD><FONT color=\"black\">");
+            txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
             if (aaa.getTurnsTilHit() == 1) {
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", wpName, ammoName));
             } else {

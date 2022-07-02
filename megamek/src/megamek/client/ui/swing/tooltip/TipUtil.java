@@ -40,12 +40,11 @@ public final class TipUtil {
     public static final String BLOCK_BGCOLOR = "#000060";
     public static final String TERRAIN_BGCOLOR = "#8DAF8D";
 
+    // HTML block begins and ends
     public final static String TABLE_BEGIN = "<TABLE CELLSPACING=0 CELLPADDING=0><TBODY><TR><TD VALIGN=TOP>";
     public final static String TABLE_END = "</TR></TBODY></TABLE>";
-
     public static final String HTML_BEGIN = "<HTML><BODY style=\"color: "+FGCOLOR + " background-color:"+BGCOLOR+";\">";
     public static final String HTML_END = "</BODY></HTML>";
-
 
     /** 
      * Returns a List wherein each element consists of an option group of the given 

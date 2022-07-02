@@ -45,7 +45,6 @@ public final class UnitToolTip {
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
 
-
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
@@ -66,7 +65,7 @@ public final class UnitToolTip {
     
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
-                                                   boolean inLobby, boolean pilotInfo, @Nullable MapSettings mapSettings) {
+           boolean inLobby, boolean pilotInfo, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -74,7 +73,7 @@ public final class UnitToolTip {
         }
 
         StringBuilder result = new StringBuilder();
-        result.append("<TABLE BORDER=0 BGCOLOR="+ BGCOLOR +" width=100%><TR><TD>");
+        result.append("<TABLE BORDER=0 BGCOLOR=" + BGCOLOR + " width=100%><TR><TD>");
         Game game = entity.getGame();
         GUIPreferences guip = GUIPreferences.getInstance();
 

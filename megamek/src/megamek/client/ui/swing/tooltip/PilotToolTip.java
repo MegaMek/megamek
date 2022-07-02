@@ -57,7 +57,7 @@ public final class PilotToolTip {
         
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
-        result.append("<TABLE BORDER=0 BGCOLOR="+BG_COLOR+" width=100%><TR><TD>");
+        result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%><TR><TD>");
 
         if (showPortrait) {
             result.append(crewPortraits(entity, showDefaultPortrait));

@@ -14,8 +14,13 @@
 package megamek.common.weapons.mortars;
 
 import megamek.common.AmmoType;
+import megamek.common.Coords;
+import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.HexTarget;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -74,5 +79,40 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               GameManager manager) {
         return new VGLWeaponHandler(toHit, waa, game, manager);
+    }
+    
+    public static Targetable getTargetHex(Mounted weapon, int weaponID) {
+        Entity owner = weapon.getEntity();
+        int facing;
+        
+        if (owner.isSecondaryArcWeapon(weaponID)) {
+            facing = owner.getSecondaryFacing();
+        } else {
+            facing = owner.getFacing();
+        }
+        
+        facing = (facing + weapon.getFacing()) % 6;
+        
+        // attempt to target first the "correct" automatic coordinates.
+        Coords c = owner.getPosition().translated(facing);
+        if (owner.getGame().getBoard().contains(c)) {
+            return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
+        }
+        
+        // then one hex clockwise
+        c = owner.getPosition().translated((facing + 1) % 6);
+        if (owner.getGame().getBoard().contains(c)) {
+            return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
+        }
+        
+        // then one hex counterclockwise
+        c = owner.getPosition().translated((facing - 1) % 6);
+        if (owner.getGame().getBoard().contains(c)) {
+            return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
+        }
+        
+        // default to the "correct" coordinates even though they're off board
+        c = owner.getPosition().translated(facing);
+        return new HexTarget(c, Targetable.TYPE_HEX_CLEAR);
     }
 }

@@ -80,6 +80,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.tooltip.TipUtil.*;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -139,15 +140,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10);
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12);
 
-    // Tooltip Colors - hardcoded to avoid unreadable text
-    // but could be moved to GUIPreferences Advance Options
-    private static final String LIGHT_BGCOLOR = "#999999";
-    private static final String BUILDING_BGCOLOR = "#CCCC99";
-    private static final String ALT_BGCOLOR = "#FFDDDD";
-    private static final String BLOCK_BGCOLOR = "#000060";
-    private static final String TERRAIN_BGCOLOR = "#8DAF8D";
-    private static String  HTML_OPEN = "<HTML><BODY BGCOLOR=#" + UnitToolTip.BGCOLOR + ">";
-    private static String  HTML_CLOSE = "</BODY></HTML>";
     Dimension hex_size;
 
     private Font font_note = FONT_10;
@@ -5433,7 +5425,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
         Hex mhex = game.getBoard().getHex(mcoords);
 
-        StringBuffer txt = new StringBuffer(HTML_OPEN);
+        StringBuffer txt = new StringBuffer(HTML_BEGIN);
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
             appendTerrainTooltip(txt, mhex);
@@ -5663,10 +5655,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        txt.append(HTML_CLOSE);
+        txt.append(HTML_END);
 
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals(HTML_OPEN+HTML_CLOSE)) {
+        if (txt.toString().equals(HTML_BEGIN +HTML_END)) {
             return "";
         }
 

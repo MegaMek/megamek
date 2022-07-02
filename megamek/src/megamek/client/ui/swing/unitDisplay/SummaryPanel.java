@@ -18,10 +18,10 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
-import megamek.client.ui.swing.tooltip.TipUtil;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
@@ -29,8 +29,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Enumeration;
-import java.util.Vector;
+
+import static megamek.client.ui.swing.tooltip.TipUtil.*;
 
 /**
  * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
@@ -132,7 +132,7 @@ public class SummaryPanel extends PicMap {
         }
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            unitInfo.setText("<html>?</html>");
+            unitInfo.setText( HTML_BEGIN + padLeft( Messages.getString("BoardView1.sensorReturn")) +HTML_END);
         } else {
             // This is html tables inside tables to maintain transparency to the bg image but
             // also allow cells do have bg colors
@@ -145,14 +145,14 @@ public class SummaryPanel extends PicMap {
                 bv.appendTerrainTooltip(hexTxt, mhex);
                 bv.appendBuildingsTooltip(hexTxt, mhex);
             }
-            unitInfo.setText("<html> " + padLeft(hexTxt.toString()) + "</html>");
+            unitInfo.setText(HTML_BEGIN + padLeft(hexTxt.toString()) + HTML_END);
         }
         unitInfo.setOpaque(false);
     }
 
     private String padLeft(String html) {
         int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 5);
-        return "<TABLE CELLSPACING=" + dist +" CELLPADDING=" + dist + " width=100%><TBODY><TR>"//<TD VALIGN=TOP>"
+        return "<TABLE CELLSPACING=" + dist +" CELLPADDING=" + dist + " width=100%><TBODY><TR>"
                 + "<td>"+html+"</td>"
                 +  "</TR></TBODY></TABLE>";
     }

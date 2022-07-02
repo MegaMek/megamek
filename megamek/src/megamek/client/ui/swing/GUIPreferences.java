@@ -1644,10 +1644,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
      * @return The color associated with a movement type
      */
     public Color getColorForMovement(EntityMovementType movementType, boolean isMASCOrSuperCharger, boolean isBackwards) {
-        if (isMASCOrSuperCharger) {
-            return getColor(ADVANCED_MOVE_MASC_COLOR);
-        } else if (isBackwards) {
-            return getColor(ADVANCED_MOVE_BACK_COLOR);
+        if (movementType != EntityMovementType.MOVE_ILLEGAL) {
+            if (isMASCOrSuperCharger) {
+                return getColor(ADVANCED_MOVE_MASC_COLOR);
+            } else if (isBackwards) {
+                return getColor(ADVANCED_MOVE_BACK_COLOR);
+            }
         }
         return getColorForMovement(movementType);
     }

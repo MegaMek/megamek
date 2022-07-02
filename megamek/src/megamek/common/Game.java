@@ -3480,8 +3480,7 @@ public class Game implements IGame, Serializable {
     }
 
     public MapSettings getMapSettings() {
-        if (mapSettings == null)
-        {
+        if (mapSettings == null) {
             mapSettings = MapSettings.getInstance();
         }
         return mapSettings;
@@ -3491,6 +3490,5 @@ public class Game implements IGame, Serializable {
         this.mapSettings = mapSettings;
         // clean up linux/macOS/Windows paths
         this.mapSettings.adjustPathSeparator();
-
     }
 }

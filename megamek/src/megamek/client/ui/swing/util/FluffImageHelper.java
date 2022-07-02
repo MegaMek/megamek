@@ -30,16 +30,16 @@ import java.io.File;
 public class FluffImageHelper {
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_CONVFIGHTER = "ConvFighter";
-    public static final String DIR_NAME_DROPSHIP = "Dropship";
+    public static final String DIR_NAME_DROPSHIP = "DropShip";
     public static final String DIR_NAME_FIGHTER = "Fighter";
     public static final String DIR_NAME_INFANTRY = "Infantry";
-    public static final String DIR_NAME_JUMPSHIP = "Jumpship";
+    public static final String DIR_NAME_JUMPSHIP = "JumpShip";
     public static final String DIR_NAME_MECH = "Mech";
-    public static final String DIR_NAME_PROTOMEK= "Protomek";
+    public static final String DIR_NAME_PROTOMEK= "ProtoMek";
     public static final String DIR_NAME_SMALLCRAFT = "Small Craft";
     public static final String DIR_NAME_SPACESTATION = "Space Station";
     public static final String DIR_NAME_VEHICLE = "Vehicle";
-    public static final String DIR_NAME_WARSHIP = "Warship";
+    public static final String DIR_NAME_WARSHIP = "WarShip";
     public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
 
     /**

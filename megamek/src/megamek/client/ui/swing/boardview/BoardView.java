@@ -140,12 +140,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12);
 
     // Tooltip Colors - hardcoded to avoid unreadable text
-    private static final String DEFAULT_BGCOLOR = "#999999";
+    // but could be moved to GUIPreferences Advance Options
+    private static final String LIGHT_BGCOLOR = "#999999";
     private static final String BUILDING_BGCOLOR = "#CCCC99";
     private static final String ALT_BGCOLOR = "#FFDDDD";
     private static final String BLOCK_BGCOLOR = "#000060";
     private static final String TERRAIN_BGCOLOR = "#8DAF8D";
-    private static String  HTML_OPEN = "<HTML><BODY BGCOLOR=#313131>";
+    private static String  HTML_OPEN = "<HTML><BODY BGCOLOR=#" + UnitToolTip.BGCOLOR + ">";
     private static String  HTML_CLOSE = "</BODY></HTML>";
     Dimension hex_size;
 
@@ -5724,7 +5725,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + DEFAULT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.FuelTank",
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                         Terrains.getEditorName(Terrains.FUEL_TANK),
@@ -5732,7 +5733,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         mhex.terrainLevel(Terrains.FUEL_TANK_MAGN)));
             } else {
                 FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + DEFAULT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.FuelTank",
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV), bldg.toString(),
                         bldg.getCurrentCF(mcoords), bldg.getMagnitude()));
@@ -5745,7 +5746,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + DEFAULT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.Building",
                         mhex.terrainLevel(Terrains.BLDG_ELEV), Terrains.getEditorName(Terrains.BUILDING),
                         mhex.terrainLevel(Terrains.BLDG_CF), Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
@@ -5770,13 +5771,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + DEFAULT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), Terrains.getEditorName(Terrains.BRIDGE),
                         mhex.terrainLevel(Terrains.BRIDGE_CF)));
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + DEFAULT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords)));
             }

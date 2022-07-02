@@ -44,7 +44,7 @@ public final class UnitToolTip {
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
-    final static String BGCOLOR = "#313131";
+    public final static String BGCOLOR = "#313131";
 
 
     /** Returns the unit tooltip with values that are relevant in the lobby. */

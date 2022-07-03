@@ -5026,8 +5026,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                File imgFile = new File(dir, "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + "_"
-                        + e.getOldPhase() + ".png");
+                File imgFile = new File(dir, "round_" +  String.format("%03d" , game.getRoundCount())
+                        + '_' +  String.format("%03d" , e.getOldPhase().ordinal()) + '_' + e.getOldPhase() + ".png");
                 try {
                     ImageIO.write(getEntireBoardImage(false, true), "png", imgFile);
                 } catch (Exception ex) {

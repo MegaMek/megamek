@@ -80,6 +80,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.tooltip.TipUtil.*;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -5424,15 +5425,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
         Hex mhex = game.getBoard().getHex(mcoords);
 
-        StringBuffer txt = new StringBuffer("<HTML>");
+        StringBuffer txt = new StringBuffer(HTML_BEGIN);
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
-            appendTerrainTooltip(txt, mhex, "#DDFFDD");
+            appendTerrainTooltip(txt, mhex);
 
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
                 int distance = selectedEntity.getPosition().distance(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 if (distance == 1) {
                     txt.append(Messages.getString("BoardView1.Tooltip.Distance1"));
                 } else {
@@ -5472,7 +5473,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 txt.append("</FONT></TD></TR></TABLE>");
             }
 
-            appendBuildingsTooltip(txt, mhex, "#999999");
+            appendBuildingsTooltip(txt, mhex);
 
             if (displayInvalidHexInfo) {
                 StringBuffer errBuff = new StringBuffer();
@@ -5534,7 +5535,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(aSprite.getTooltip().toString());
                 txt.append("</FONT></TD></TR></TABLE>");
             }
@@ -5567,7 +5568,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
         // Info block if there are more than 4 units in that hex
         if (entityCount > maxShown) {
-            txt.append("<TABLE BORDER=0 BGCOLOR=#000060 width=100%><TR><TD><FONT COLOR=WHITE>There ");
+            txt.append("<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%><TR><TD><FONT COLOR=WHITE>There ");
             if (entityCount-maxShown == 1) {
                 txt.append("is 1 more<BR>unit");
             } else {
@@ -5594,7 +5595,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
+            txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
             if (aaa.getTurnsTilHit() == 1) {
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", wpName, ammoName));
             } else {
@@ -5654,10 +5655,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        txt.append("</html>");
+        txt.append(HTML_END);
 
         // Check to see if the tool tip is completely empty
-        if (txt.toString().equals("<html></html>")) { 
+        if (txt.toString().equals(HTML_BEGIN +HTML_END)) {
             return "";
         }
 
@@ -5677,13 +5678,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * Appends HTML describing the terrain of a given hex
      */
-    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex, String bgColor) {
+    public void appendTerrainTooltip(StringBuffer txt, @Nullable Hex mhex) {
         if (mhex == null) {
             return;
         }
 
         Coords mcoords = mhex.getCoords();
-        txt.append("<TABLE BORDER=0 BGCOLOR="+bgColor+" width=100%><TR><TD><FONT color=\"black\">");
+        txt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
 
         txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
         txt.append("<br>");
@@ -5705,7 +5706,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     /**
      * Appends HTML describing the buildings and minefields in a given hex
      */
-    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex, String bgColor) {
+    public void appendBuildingsTooltip(StringBuffer txt, @Nullable Hex mhex) {
         if (mhex == null) {
             return;
         }
@@ -5716,7 +5717,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                txt.append("<TABLE BORDER=0 BGCOLOR="+bgColor+" width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.FuelTank",
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                         Terrains.getEditorName(Terrains.FUEL_TANK),
@@ -5724,7 +5725,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         mhex.terrainLevel(Terrains.FUEL_TANK_MAGN)));
             } else {
                 FuelTank bldg = (FuelTank) game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.FuelTank",
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV), bldg.toString(),
                         bldg.getCurrentCF(mcoords), bldg.getMagnitude()));
@@ -5737,14 +5738,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.Building",
                         mhex.terrainLevel(Terrains.BLDG_ELEV), Terrains.getEditorName(Terrains.BUILDING),
                         mhex.terrainLevel(Terrains.BLDG_CF), Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
                         BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString()));
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR +" width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.Building",
                         mhex.terrainLevel(Terrains.BLDG_ELEV), bldg.toString(),
                         bldg.getCurrentCF(mcoords), bldg.getArmor(mcoords),
@@ -5762,13 +5763,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // In the BoardEditor, buildings have no entry in the
             // buildings list of the board, so get the info from the hex
             if (clientgui == null) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), Terrains.getEditorName(Terrains.BRIDGE),
                         mhex.terrainLevel(Terrains.BRIDGE_CF)));
             } else {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
                 txt.append(Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords)));
             }
@@ -5818,7 +5819,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Table to add a bar to the left of an entity in
         // the player's color
         txt.append("<hr style=width:90%>");
-        txt.append("<TABLE><TR><TD bgcolor=#");
+        txt.append("<TABLE><TR><TD BGCOLOR=#");
         String color = "C0C0C0";
         if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             color = entity.getOwner().getColour().getHexString();

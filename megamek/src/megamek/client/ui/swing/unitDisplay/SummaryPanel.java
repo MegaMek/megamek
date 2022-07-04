@@ -18,10 +18,10 @@
  */
 package megamek.client.ui.swing.unitDisplay;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.tooltip.PilotToolTip;
-import megamek.client.ui.swing.tooltip.TipUtil;
 import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
@@ -29,8 +29,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Enumeration;
-import java.util.Vector;
+
+import static megamek.client.ui.swing.tooltip.TipUtil.*;
 
 /**
  * Displays a summary info for a unit, using the same html formatting as use by the board view map tooltips.
@@ -39,7 +39,7 @@ import java.util.Vector;
 public class SummaryPanel extends PicMap {
 
     private UnitDisplay unitDisplay;
-    private JLabel pilotInfo, unitInfo, hexInfo;
+    private JLabel unitInfo;
 
     /**
      * @param unitDisplay the UnitDisplay UI to attach to
@@ -52,14 +52,8 @@ public class SummaryPanel extends PicMap {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS ));
         panel.add(Box.createRigidArea(new Dimension(0,10)));
 
-        pilotInfo = new JLabel("<html>UnitInfo</html>", SwingConstants.LEFT );
-        panel.add(pilotInfo);
-
-        unitInfo = new JLabel("<html>HexInfo</html>", SwingConstants.LEFT );
+        unitInfo = new JLabel("<HTML>UnitInfo</HTML>", SwingConstants.LEFT );
         panel.add(unitInfo);
-
-        hexInfo = new JLabel("<html>HexInfo</html>", SwingConstants.LEFT );
-        panel.add(hexInfo);
     }
 
 
@@ -133,39 +127,33 @@ public class SummaryPanel extends PicMap {
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
 
         if (entity == null) {
-            pilotInfo.setIcon(null);
-            pilotInfo.setText("<html>No Pilot</html>");
-            unitInfo.setText("<html>No Unit</html>");
-            hexInfo.setText("<html>No Hex</html>");
+            unitInfo.setText(HTML_BEGIN + padLeft("No Unit") +HTML_END);
             return;
         }
 
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
-            pilotInfo.setIcon(null);
-            pilotInfo.setText("<html>Sensor Return</html>");
-            unitInfo.setText("<html>?</html>");
+            unitInfo.setText( HTML_BEGIN + padLeft( Messages.getString("BoardView1.sensorReturn")) +HTML_END);
         } else {
-            pilotInfo.setText( "<html> " + padLeft(PilotToolTip.getPilotTipDetailed(entity, true).toString()) + "</html>");
-            unitInfo.setText("<html>" + padLeft(UnitToolTip.getEntityTipNoPilot(entity, localPlayer).toString()) + "</html>");
+            // This is html tables inside tables to maintain transparency to the bg image but
+            // also allow cells do have bg colors
+            StringBuffer hexTxt = new StringBuffer("");
+            hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
+            hexTxt.append(UnitToolTip.getEntityTipNoPilot(entity, localPlayer));
+            BoardView bv = unitDisplay.getClientGUI().getBoardView();
+            Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
+            if (bv != null && mhex != null) {
+                bv.appendTerrainTooltip(hexTxt, mhex);
+                bv.appendBuildingsTooltip(hexTxt, mhex);
+            }
+            unitInfo.setText(HTML_BEGIN + padLeft(hexTxt.toString()) + HTML_END);
         }
-
-        BoardView bv = unitDisplay.getClientGUI().getBoardView();
-        Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
-        if (bv != null && mhex != null) {
-            StringBuffer hexTxt = new StringBuffer("");//<HTML>");
-            bv.appendTerrainTooltip(hexTxt, mhex, "#999999");
-            bv.appendBuildingsTooltip(hexTxt, mhex, "#999999");
-            hexInfo.setText("<html>" + padLeft(hexTxt.toString()) + "</html>");
-        }
-
-        pilotInfo.setOpaque(false);
         unitInfo.setOpaque(false);
-        hexInfo.setOpaque(false);
     }
 
     private String padLeft(String html) {
-        int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
-        return TipUtil.TABLE_BEGIN + "<td width=" + dist + "></td><td>"+html+"</td>"+TipUtil.TABLE_END;
+        int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 5);
+        return "<TABLE CELLSPACING=" + dist +" CELLPADDING=" + dist + " WIDTH=100%><TBODY><TR>"
+                + "<TD>"+html+"</TD></TR></TBODY></TABLE>";
     }
 
     @Override

@@ -27,6 +27,8 @@ VERSION HISTORY:
 + Issue #3742: Errata - Infantry Heat Suit environment type
 + PR #1134: Improvements to Fluff Image folders (see Wiki for specifics).
 + Issue #3715: Zero pad auto-board save image filenames
++ Issue #3743: Fixing ToolTip TMM Yellow Colours
++ Issue #3731: Save Lobby Map Settings during Save
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

@@ -13,11 +13,11 @@ ConvFighter
 </UnitType>
 
 <Name>
-Medium Strike Fighter 
+Medium Strike Fighter Kaiseradler
 </Name>
 
 <Model>
-Kaiseradler (Imperial Eagle)
+(Imperial Eagle)
 </Model>
 
 <mul id:>

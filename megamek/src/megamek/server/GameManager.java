@@ -174,6 +174,7 @@ public class GameManager implements IGameManager {
         commands.add(new SaveGameCommand(server));
         commands.add(new LoadGameCommand(server));
         commands.add(new SeeAllCommand(server, this));
+        commands.add(new SingleBlindCommand(server, this));
         commands.add(new SkipCommand(server, this));
         commands.add(new VictoryCommand(server, this));
         commands.add(new WhoCommand(server));
@@ -499,7 +500,21 @@ public class GameManager implements IGameManager {
             p.setObserver((getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
         }
     }
-    
+
+    //New SingleBlind - I dont think this is used.
+    /**
+     * Checks each player to see if they have entitites, and if true, sets the
+     * singleblindobserver flag for that player. An exception is that there are no
+     * observers during the lounge phase.
+     */
+    public void checkForSingleBlindObservers() {
+        for (Enumeration<Player> e = getGame().getPlayers(); e.hasMoreElements(); ) {
+            Player p = e.nextElement();
+            p.setSingleBlindObserver((getGame().getEntitiesOwnedBy(p) >= 1) && !getGame().getPhase().isLounge());
+        }
+    }
+
+
     @Override
     public void removeAllEntitiesOwnedBy(Player player) {
         int pid = player.getId();
@@ -12932,7 +12947,7 @@ public class GameManager implements IGameManager {
         if (getGame().getPhase().isSimultaneous(getGame())) {
             // Update attack only to player who declared it & observers
             for (Player player : game.getPlayersVector()) {
-                if (player.canSeeAll() || player.isObserver()
+                if (player.canSeeSingleBlind() || player.canSeeAll() || player.isObserver()
                         || (entity.getOwnerId() == player.getId())) {
                     send(player.getId(), p);
                 }
@@ -28372,7 +28387,7 @@ public class GameManager implements IGameManager {
         for (Enumeration<Player> p = game.getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
 
-            if (player.canSeeAll() && !vCanSee.contains(player)) {
+            if (player.canSeeSingleBlind() || player.canSeeAll() && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }
         }
@@ -28522,7 +28537,7 @@ public class GameManager implements IGameManager {
         boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
 
         // If they can see all, return the input list
-        if (pViewer.canSeeAll()) {
+        if (pViewer.canSeeSingleBlind() || pViewer.canSeeAll()) {
             return vEntities;
         }
 
@@ -30062,7 +30077,7 @@ public class GameManager implements IGameManager {
                 if ((aaa.getPlayerId() == p.getId())
                         || ((team != Player.TEAM_NONE)
                         && (team == game.getPlayer(aaa.getPlayerId()).getTeam()))
-                        || p.getSeeAll()) {
+                        || p.getSingleBlind() || p.getSeeAll()) {
                     v.addElement(aaa);
                 }
             }

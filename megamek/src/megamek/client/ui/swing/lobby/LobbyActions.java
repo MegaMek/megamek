@@ -1212,6 +1212,21 @@ public class LobbyActions {
         return entities.stream().noneMatch(this::isLocalEnemy);
     }
 
+    // New SingleBlind - I dont think this is used.
+    /**
+     * Returns true if the local player can see all of the given entities.
+     * This is true except when a blind drop option is active and one or more
+     * of the entities are not on his team.
+     */
+    boolean canSingleBlind(Collection<Entity> entities) {
+        if (!isBlindDrop(game()) && !isRealBlindDrop(game())) {
+            return true;
+        }
+        return entities.stream().noneMatch(this::isLocalEnemy);
+    }
+
+
+
     boolean entityInLocalTeam(Entity entity) {
         return !localPlayer().isEnemyOf(entity.getOwner());
     }

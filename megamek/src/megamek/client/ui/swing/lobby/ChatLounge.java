@@ -996,6 +996,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // Update the board base image if it's generated and the settings have changed
                 // or the board name has changed
                 String boardName = mapSettings.getBoardsSelectedVector().get(index);
+                if (boardName == null) {
+                    continue;
+                }
                 if (!button.getBoard().equals(boardName) 
                         || oldMapSettings.getMedium() != mapSettings.getMedium()
                         || (!mapSettings.equalMapGenParameters(oldMapSettings) 
@@ -1157,6 +1160,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void refreshGameSettings() {
         refreshTeams();
+        refreshMapSettings();
         refreshDoneButton();
     }
     
@@ -1283,6 +1287,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             comboTeam.setSelectedIndex(localPlayer().getTeam());
             comboTeam.addActionListener(lobbyListener);
         }
+    }
+
+    /** Updates the map settings from the Game */
+    private void refreshMapSettings() {
+        mapSettings = game().getMapSettings();
     }
 
     /**

@@ -61,6 +61,8 @@ public class Game implements IGame, Serializable {
 
     private Board board = new Board();
 
+    private MapSettings mapSettings = MapSettings.getInstance();
+
     private final List<Entity> entities = new CopyOnWriteArrayList<>();
     private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
 
@@ -3475,5 +3477,18 @@ public class Game implements IGame, Serializable {
         setForceVictory(false);
         setVictoryPlayerId(Player.PLAYER_NONE);
         setVictoryTeam(Player.TEAM_NONE);
+    }
+
+    public MapSettings getMapSettings() {
+        if (mapSettings == null) {
+            mapSettings = MapSettings.getInstance();
+        }
+        return mapSettings;
+    }
+
+    public void setMapSettings(MapSettings mapSettings) {
+        this.mapSettings = mapSettings;
+        // clean up linux/macOS/Windows paths
+        this.mapSettings.adjustPathSeparator();
     }
 }

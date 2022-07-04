@@ -3387,6 +3387,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         protected Void doInBackground() throws Exception {
             Image image;
             while (!isCancelled()) {
+                // Create thumbnails for the MapSettings boards
                 String boardName = boards.poll(1, TimeUnit.SECONDS);
                 if (boardName != null && !baseImages.containsKey(boardName)) {
                     image = prepareImage(boardName);

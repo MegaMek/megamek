@@ -470,12 +470,6 @@ public class WeaponType extends EquipmentType {
                 mRange = 10;
                 lRange = 15;
                 eRange = 20;
-            } else {
-                minRange = 6;
-                sRange = 7;
-                mRange = 14;
-                lRange = 21;
-                eRange = 28;
             }
         }
         if ((getAmmoType() == AmmoType.T_SRM) && hasLoadedAmmo) {
@@ -486,12 +480,6 @@ public class WeaponType extends EquipmentType {
                 mRange = 4;
                 lRange = 6;
                 eRange = 8;
-            } else {
-                minRange = 0;
-                sRange = 3;
-                mRange = 6;
-                lRange = 9;
-                eRange = 12;
             }
         }
         if (hasFlag(WeaponType.F_PDBAY)) {

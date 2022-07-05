@@ -134,7 +134,7 @@ public class Server implements Runnable {
 
     private final boolean dedicated;
 
-    private Vector<AbstractConnection> connectionsPending = new Vector<>(4);
+    private final List<AbstractConnection> connectionsPending = new CopyOnWriteArrayList<>();
 
     private Hashtable<Integer, AbstractConnection> connectionIds = new Hashtable<>();
 
@@ -192,7 +192,7 @@ public class Server implements Runnable {
 
             connections.remove(conn);
             synchronized (serverLock) {
-                connectionsPending.removeElement(conn);
+                connectionsPending.remove(conn);
                 connectionIds.remove(conn.getId());
                 ConnectionHandler ch = connectionHandlers.get(conn.getId());
                 if (ch != null) {
@@ -480,11 +480,8 @@ public class Server implements Runnable {
         }
 
         // kill pending connections
-        for (Enumeration<AbstractConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            conn.close();
-        }
-        connectionsPending.removeAllElements();
+        connectionsPending.forEach(AbstractConnection::close);
+        connectionsPending.clear();
 
         // Send "kill" commands to all connections
         // N.B. I may be starting a race here.
@@ -685,7 +682,7 @@ public class Server implements Runnable {
         }
 
         // right, switch the connection into the "active" bin
-        connectionsPending.removeElement(conn);
+        connectionsPending.remove(conn);
         connections.add(conn);
         connectionIds.put(conn.getId(), conn);
 
@@ -1281,7 +1278,7 @@ public class Server implements Runnable {
                     AbstractConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
                     c.addConnectionListener(connectionListener);
                     c.open();
-                    connectionsPending.addElement(c);
+                    connectionsPending.add(c);
                     ConnectionHandler ch = new ConnectionHandler(c);
                     Thread newConnThread = new Thread(ch, "Connection " + id);
                     newConnThread.start();

@@ -41,6 +41,7 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -123,12 +124,12 @@ public class Server implements Runnable {
     }
 
     // commands
-    private Hashtable<String, ServerCommand> commandsHash = new Hashtable<>();
+    private final Map<String, ServerCommand> commandsHash = new ConcurrentHashMap<>();
 
     // game info
     private final List<AbstractConnection> connections = new CopyOnWriteArrayList<>();
 
-    private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
+    private final Map<Integer, ConnectionHandler> connectionHandlers = new ConcurrentHashMap<>();
 
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
 
@@ -136,7 +137,7 @@ public class Server implements Runnable {
 
     private final List<AbstractConnection> connectionsPending = new CopyOnWriteArrayList<>();
 
-    private Hashtable<Integer, AbstractConnection> connectionIds = new Hashtable<>();
+    private final Map<Integer, AbstractConnection> connectionIds = new ConcurrentHashMap<>();
 
     private int connectionCounter;
 
@@ -511,8 +512,8 @@ public class Server implements Runnable {
     /**
      * Returns an enumeration of all the command names
      */
-    public Enumeration<String> getAllCommandNames() {
-        return commandsHash.keys();
+    public Collection<String> getAllCommandNames() {
+        return commandsHash.keySet();
     }
 
     /**

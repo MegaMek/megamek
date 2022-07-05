@@ -15,11 +15,9 @@ package megamek.server.commands;
 
 import megamek.MMConstants;
 import megamek.common.Player;
-import megamek.common.net.connections.AbstractConnection;
 import megamek.server.Server;
 
 import java.io.File;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 

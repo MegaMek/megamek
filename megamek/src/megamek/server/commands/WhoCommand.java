@@ -18,8 +18,6 @@ import megamek.common.net.connections.AbstractConnection;
 import megamek.common.preference.PreferenceManager;
 import megamek.server.Server;
 
-import java.util.Enumeration;
-
 /**
  * Lists all the players connected and some info about them.
  */

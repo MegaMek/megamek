@@ -437,50 +437,48 @@ public class TestTank extends TestEntity {
      */
     public static boolean legalForMotiveType(EquipmentType eq, EntityMovementMode mode, boolean supporVehicle) {
         // A couple broad categories for convenience
-        final boolean isNaval = mode.equals(EntityMovementMode.NAVAL)
-                || mode.equals(EntityMovementMode.HYDROFOIL)
-                || mode.equals(EntityMovementMode.SUBMARINE);
-        final boolean isAero = mode.equals(EntityMovementMode.AERODYNE)
-                || mode.equals(EntityMovementMode.AIRSHIP)
-                || mode.equals(EntityMovementMode.STATION_KEEPING);
+        final boolean isNaval = mode.isNaval()
+                || mode.isHydrofoil()
+                || mode.isSubmarine();
+        final boolean isAero = mode.isAerodyne()
+                || mode.isAirship()
+                || mode.isStationKeeping();
         if (eq instanceof MiscType) {
             if (eq.hasFlag(MiscType.F_FLOTATION_HULL)) {
                 // Per errata, WiGE vehicles automatically include flotation hull
-                return mode.equals(EntityMovementMode.HOVER) || mode.equals(EntityMovementMode.VTOL);
+                return mode.isHover() || mode.isVTOL();
             }
             if (eq.hasFlag(MiscType.F_FULLY_AMPHIBIOUS)
                     || eq.hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)
                     || eq.hasFlag(MiscType.F_BULLDOZER)
                     || (eq.hasFlag(MiscType.F_CLUB) && eq.hasSubType(MiscType.S_COMBINE))) {
-                return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED);
+                return mode.isTrackedOrWheeled();
             }
             if (eq.hasFlag(MiscType.F_DUNE_BUGGY)) {
-                return mode.equals(EntityMovementMode.WHEELED);
+                return mode.isWheeled();
             }
             // Submarines have environmental sealing as part of their base construction
             if (eq.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
-                return !mode.equals(EntityMovementMode.SUBMARINE);
+                return !mode.isSubmarine();
             }
             if (eq.hasFlag(MiscType.F_JUMP_JET)
                     || eq.hasFlag(MiscType.F_VEEDC)
                     || (eq.hasFlag(MiscType.F_CLUB)
                     && eq.hasSubType(MiscType.S_CHAINSAW | MiscType.S_DUAL_SAW | MiscType.S_MINING_DRILL))) {
-                return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED)
-                        || mode.equals(EntityMovementMode.HOVER) || mode.equals(EntityMovementMode.WIGE);
+                return mode.isTrackedWheeledOrHover() || mode.isWiGE();
             }
             if (eq.hasFlag(MiscType.F_MINESWEEPER) || eq.hasFlag(MiscType.F_CLUB)
                     && eq.hasSubType(MiscType.S_PILE_DRIVER)) {
-                return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED)
-                        || isNaval;
+                return mode.isTrackedOrWheeled() || isNaval;
             }
             if (eq.hasFlag(MiscType.F_HITCH)) {
-                return mode.equals(EntityMovementMode.WHEELED) || mode.equals(EntityMovementMode.TRACKED)
-                        || mode.equals(EntityMovementMode.RAIL) || mode.equals(EntityMovementMode.MAGLEV);
+                return mode.isTrackedOrWheeled()
+                        || mode.isRail() || mode.isMaglev();
             }
             if (eq.hasFlag(MiscType.F_LIFEBOAT)) {
                 if (eq.hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)) {
                     // Allowed for all naval units and support vehicles with an amphibious chassis mod
-                    return supporVehicle ? !mode.equals(EntityMovementMode.HOVER) : isNaval;
+                    return supporVehicle ? !mode.isHover() : isNaval;
                 } else {
                     return isAero;
                 }
@@ -492,19 +490,19 @@ public class TestTank extends TestEntity {
                     || (eq.hasFlag(MiscType.F_CLUB)
                     && eq.hasSubType(MiscType.S_BACKHOE | MiscType.S_ROCK_CUTTER
                     | MiscType.S_SPOT_WELDER | MiscType.S_WRECKING_BALL))) {
-                return !mode.equals(EntityMovementMode.VTOL) && !isAero;
+                return !mode.isVTOL() && !isAero;
             }
             if (eq.hasFlag(MiscType.F_AP_POD)) {
                 return !isNaval && !isAero;
             }
             if (eq.hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
                 return !isAero
-                        && !mode.equals(EntityMovementMode.VTOL)
-                        && !mode.equals(EntityMovementMode.RAIL)
-                        && !mode.equals(EntityMovementMode.MAGLEV);
+                        && !mode.isVTOL()
+                        && !mode.isRail()
+                        && !mode.isMaglev();
             }
             if (eq.hasFlag(MiscType.F_MASH)) {
-                return !mode.equals(EntityMovementMode.VTOL);
+                return !mode.isVTOL();
             }
             if (eq.hasFlag(MiscType.F_SPONSON_TURRET)
                     || eq.hasFlag(MiscType.F_LADDER)) {
@@ -512,29 +510,29 @@ public class TestTank extends TestEntity {
             }
             if (eq.hasFlag(MiscType.F_PINTLE_TURRET)) {
                 return !isNaval && !mode.equals(EntityMovementMode.AERODYNE)
-                        && !mode.equals(EntityMovementMode.STATION_KEEPING);
+                        && !mode.isStationKeeping();
             }
             if (eq.hasFlag(MiscType.F_LOOKDOWN_RADAR)
                     || eq.hasFlag(MiscType.F_INFRARED_IMAGER)
                     || eq.hasFlag(MiscType.F_HIRES_IMAGER)) {
-                return isAero || mode.equals(EntityMovementMode.VTOL);
+                return isAero || mode.isVTOL();
             }
             if (eq.hasFlag(MiscType.F_REFUELING_DROGUE)) {
-                return mode.equals(EntityMovementMode.VTOL)
-                        || mode.equals(EntityMovementMode.AERODYNE)
-                        || mode.equals(EntityMovementMode.AIRSHIP);
+                return mode.isVTOL()
+                        || mode.isAerodyne()
+                        || mode.isAirship();
             }
             if (eq.hasFlag(MiscType.F_SASRCS)
                     || eq.hasFlag(MiscType.F_LIGHT_SAIL)
                     || eq.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)
                     || eq.hasFlag(MiscType.F_SMALL_COMM_SCANNER_SUITE)) {
-                return mode.equals(EntityMovementMode.STATION_KEEPING);
+                return mode.isStationKeeping();
             }
             if (eq.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
-                return !mode.equals(EntityMovementMode.STATION_KEEPING);
+                return !mode.isStationKeeping();
             }
             if (eq.hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
-                return mode.equals(EntityMovementMode.AERODYNE);
+                return mode.isAerodyne();
             }
             if (eq.hasFlag(MiscType.F_MAST_MOUNT)
                 || (eq.hasFlag(MiscType.F_MASC) && eq.hasFlag(MiscType.F_VTOL_EQUIPMENT))) {
@@ -545,7 +543,7 @@ public class TestTank extends TestEntity {
                 return !isNaval;
             }
             if (((WeaponType) eq).getAmmoType() == AmmoType.T_NAIL_RIVET_GUN) {
-                return !mode.equals(EntityMovementMode.VTOL);
+                return !mode.isVTOL();
             }
         }
         return true;

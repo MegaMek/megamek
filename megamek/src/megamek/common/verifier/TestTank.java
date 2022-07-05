@@ -536,6 +536,10 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_EXTERNAL_STORES_HARDPOINT)) {
                 return mode.equals(EntityMovementMode.AERODYNE);
             }
+            if (eq.hasFlag(MiscType.F_MAST_MOUNT)
+                || (eq.hasFlag(MiscType.F_MASC) && eq.hasFlag(MiscType.F_VTOL_EQUIPMENT))) {
+                return mode.isVTOL();
+            }
         } else if (eq instanceof WeaponType) {
             if (((WeaponType) eq).getAmmoType() == AmmoType.T_BPOD) {
                 return !isNaval;

@@ -281,8 +281,7 @@ public class OptionsConstants {
     public static final String BASE_TEAM_INITIATIVE= "team_initiative";  
     public static final String BASE_AUTOSAVE_MSG= "autosave_msg";  
     public static final String BASE_PARANOID_AUTOSAVE= "paranoid_autosave";  
-    public static final String BASE_EXCLUSIVE_DB_DEPLOYMENT= "exclusive_db_deployment";  
-    public static final String BASE_DEEP_DEPLOYMENT= "deep_deployment";  
+    public static final String BASE_EXCLUSIVE_DB_DEPLOYMENT= "exclusive_db_deployment";
     public static final String BASE_BLIND_DROP= "blind_drop";  
     public static final String BASE_REAL_BLIND_DROP= "real_blind_drop";  
     public static final String BASE_LOBBY_AMMO_DUMP= "lobby_ammo_dump";  

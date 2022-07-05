@@ -12299,7 +12299,7 @@ public class GameManager implements IGameManager {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)
-                || !(game.getBoard().isLegalDeployment(coords, entity.getStartingPos())
+                || !(game.getBoard().isLegalDeployment(coords, entity)
                 || (assaultDrop && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
                 && entity.canAssaultDrop()))) {
             String msg = "server got invalid deployment packet from "

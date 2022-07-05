@@ -43,6 +43,7 @@ public class Board implements Serializable {
     public static final int START_W = 8;
     public static final int START_EDGE = 9;
     public static final int START_CENTER = 10;
+    public static final int NUM_ZONES = 11;
     
     // Board Dimensions
     // Used for things like artillery rules that reference the standard mapsheet dimensions
@@ -818,59 +819,61 @@ public class Board implements Serializable {
     }
 
     /**
-     * Can the player deploy an entity here? There are no canon rules for the
-     * deployment phase (?!). I'm using 3 hexes from map edge.
+     * Can the given player deploy at these coordinates?
      */
-    public boolean isLegalDeployment(Coords c, int nDir) {
+    public boolean isLegalDeployment(Coords c, Player p) {
+        return isLegalDeployment(c, p.getStartingPos(), p.getStartWidth(), p.getStartOffset());
+    }
+    
+    /**
+     * Can the given entity be deployed at these coordinates
+     */
+    public boolean isLegalDeployment(Coords c, Entity e) {
+        return isLegalDeployment(c, e.getStartingPos(), e.getStartingWidth(), e.getStartingOffset());
+    }
+    
+    /**
+     * Can an object be deployed at these coordinates, given a starting zone, width of starting zone and offset from edge of board?
+     */
+    public boolean isLegalDeployment(Coords c, int zoneType, int startingWidth, int startingOffset) {
         if ((c == null) || !contains(c)) {
             return false;
         }
 
-        int nLimit = 3;
-        // int nDir = en.getStartingPos();
-        int minx = 0;
-        int maxx = width;
-        int miny = 0;
-        int maxy = height;
-        if (nDir > 10) {
-            // Deep deployment, the board is effectively smaller
-            nDir -= 10;
-            minx = width / 5;
-            maxx -= width / 5;
-            miny = height / 5;
-            maxy -= height / 5;
-            if ((c.getX() < minx) || (c.getY() < miny) || (c.getX() >= maxx) || (c.getY() >= maxy)) {
-                return false;
-            }
-        }
-        switch (nDir) {
+        int nLimit = startingWidth;
+        int minx = startingOffset;
+        int maxx = width - startingOffset;
+        int miny = startingOffset;
+        int maxy = height - startingOffset;
+        
+        switch (zoneType) {
             case START_ANY:
                 return true;
             case START_NW:
-                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() < (height / 2)))
-                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() < (width / 2)));
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() >= miny) && (c.getY() < (height / 2)))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() >= minx) && (c.getX() < (width / 2)));
             case START_N:
                 return (c.getY() < (miny + nLimit)) && (c.getY() >= miny);
             case START_NE:
-                return ((c.getX() > (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() < (height / 2)))
-                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() > (width / 2)));
+                return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() >= miny) && (c.getY() < (height / 2)))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() < maxx) && (c.getX() > (width / 2)));
             case START_E:
                 return (c.getX() >= (maxx - nLimit)) && (c.getX() < maxx);
             case START_SE:
-                return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() > (height / 2)))
-                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() > (width / 2)));
+                return ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() < maxy) && (c.getY() > (height / 2)))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() < maxx) && (c.getX() > (width / 2)));
             case START_S:
                 return (c.getY() >= (maxy - nLimit)) && (c.getY() < maxy);
             case START_SW:
-                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() > (height / 2)))
-                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() < (width / 2)));
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() < maxy) && (c.getY() > (height / 2)))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() >= minx) && (c.getX() < (width / 2)));
             case START_W:
                 return (c.getX() < (minx + nLimit)) && (c.getX() >= minx);
             case START_EDGE:
-                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx))
-                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny))
-                        || ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx))
-                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy));
+                return ((c.getX() < (minx + nLimit)) && (c.getX() >= minx) && (c.getY() >= miny) && (c.getY() < maxy))
+                        || ((c.getY() < (miny + nLimit)) && (c.getY() >= miny) && (c.getX() >= minx) && (c.getX() < maxx))
+                        || ((c.getX() >= (maxx - nLimit)) && (c.getX() < maxx) && (c.getY() >= miny) && (c.getY() < maxy))
+                        || ((c.getY() >= (maxy - nLimit)) && (c.getY() < maxy) && (c.getX() >= minx) && (c.getX() < maxx));
             case START_CENTER:
                 return (c.getX() >= (width / 3)) && (c.getX() <= ((2 * width) / 3)) && (c.getY() >= (height / 3))
                         && (c.getY() <= ((2 * height) / 3));

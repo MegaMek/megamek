@@ -52,17 +52,17 @@ import java.util.zip.GZIPInputStream;
  */
 public class Server implements Runnable {
     // server setup
-    private String password;
+    private final String password;
 
     private final IGameManager gameManager;
 
     private final String metaServerUrl;
 
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
 
-    private String motd;
+    private final String motd;
 
-    private EmailService mailer;
+    private final EmailService mailer;
 
     public static class ReceivedPacket {
         private int connectionId;
@@ -144,10 +144,10 @@ public class Server implements Runnable {
     // listens for and connects players
     private Thread connector;
 
-    private PacketPump packetPump;
+    private final PacketPump packetPump;
     private Thread packetPumpThread;
 
-    private Timer watchdogTimer = new Timer("Watchdog Timer");
+    private final Timer watchdogTimer = new Timer("Watchdog Timer");
 
     private static Server serverInstance = null;
 
@@ -180,7 +180,7 @@ public class Server implements Runnable {
 
     private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
 
-    private ConnectionListener connectionListener = new ConnectionListener() {
+    private final ConnectionListener connectionListener = new ConnectionListener() {
         /**
          * Called when it is sensed that a connection has terminated.
          */

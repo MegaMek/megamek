@@ -8584,7 +8584,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.tankslots = 0;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "350, TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)

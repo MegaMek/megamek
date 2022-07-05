@@ -46,13 +46,11 @@ public class TeamCommand extends ServerCommand {
                 message.append(args[pos]);
             }
 
-            for (Enumeration<AbstractConnection> i = server.getConnections(); i.hasMoreElements();) {
-                AbstractConnection conn = i.nextElement();
-
+            server.forEachConnection(conn -> {
                 if (server.getPlayer(conn.getId()).getTeam() == team) {
                     server.sendChat(conn.getId(), origin, message.toString());
                 }
-            }
+            });
         }
     }
 }

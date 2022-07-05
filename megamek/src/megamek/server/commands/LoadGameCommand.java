@@ -75,11 +75,7 @@ public class LoadGameCommand extends ServerCommand {
         } else {
             server.remapConnIds(nameToIdMap, idToNameMap);
             // update all the clients with the new game info
-            Enumeration<AbstractConnection> connEnum = server.getConnections();
-            while (connEnum.hasMoreElements()) {
-                AbstractConnection conn = connEnum.nextElement();
-                server.sendCurrentInfo(conn.getId());
-            }
+            server.forEachConnection(conn -> server.sendCurrentInfo(conn.getId()));
         }
     }
 }

@@ -42,6 +42,8 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -124,7 +126,7 @@ public class Server implements Runnable {
     private Hashtable<String, ServerCommand> commandsHash = new Hashtable<>();
 
     // game info
-    private final Vector<AbstractConnection> connections = new Vector<>(4);
+    private final List<AbstractConnection> connections = new CopyOnWriteArrayList<>();
 
     private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
 
@@ -183,13 +185,13 @@ public class Server implements Runnable {
          */
         @Override
         public void disconnected(DisconnectedEvent e) {
+            AbstractConnection conn = e.getConnection();
+
+            // write something in the log
+            LogManager.getLogger().info("s: connection " + conn.getId() + " disconnected");
+
+            connections.remove(conn);
             synchronized (serverLock) {
-                AbstractConnection conn = e.getConnection();
-
-                // write something in the log
-                LogManager.getLogger().info("s: connection " + conn.getId() + " disconnected");
-
-                connections.removeElement(conn);
                 connectionsPending.removeElement(conn);
                 connectionIds.remove(conn.getId());
                 ConnectionHandler ch = connectionHandlers.get(conn.getId());
@@ -197,12 +199,11 @@ public class Server implements Runnable {
                     ch.signalStop();
                     connectionHandlers.remove(conn.getId());
                 }
-
-                // if there's a player for this connection, remove it too
-                Player player = getPlayer(conn.getId());
-                if (null != player) {
-                    Server.this.disconnected(player);
-                }
+            }
+            // if there's a player for this connection, remove it too
+            Player player = getPlayer(conn.getId());
+            if (null != player) {
+                Server.this.disconnected(player);
             }
         }
 
@@ -490,10 +491,8 @@ public class Server implements Runnable {
         send(new Packet(PacketCommand.CLOSE_CONNECTION));
 
         // kill active connections
-        synchronized (connections) {
-            connections.forEach(AbstractConnection::close);
-            connections.clear();
-        }
+        connections.forEach(AbstractConnection::close);
+        connections.clear();
 
         connectionIds.clear();
 
@@ -687,7 +686,7 @@ public class Server implements Runnable {
 
         // right, switch the connection into the "active" bin
         connectionsPending.removeElement(conn);
-        connections.addElement(conn);
+        connections.add(conn);
         connectionIds.put(conn.getId(), conn);
 
         // add and validate the player info
@@ -1012,10 +1011,11 @@ public class Server implements Runnable {
     }
 
     /**
-     * Returns a connection, indexed by id
+     * Executes the process on each active connection.
+     * @param process The process to execute.
      */
-    public Enumeration<AbstractConnection> getConnections() {
-        return connections.elements();
+    public void forEachConnection(Consumer<AbstractConnection> process) {
+        connections.forEach(process);
     }
 
     /**
@@ -1051,11 +1051,9 @@ public class Server implements Runnable {
      * Sends out player info to all connections
      */
     private void transmitPlayerConnect(Player player) {
-        synchronized (connections) {
-            for (var connection : connections) {
-                var playerId = player.getId();
-                connection.send(createPlayerConnectPacket(player, playerId != connection.getId()));
-            }
+        for (var connection : connections) {
+            var playerId = player.getId();
+            connection.send(createPlayerConnectPacket(player, playerId != connection.getId()));
         }
     }
 
@@ -1078,19 +1076,17 @@ public class Server implements Runnable {
      * Sends out player info updates for a player to all connections
      */
     void transmitPlayerUpdate(Player player) {
-        synchronized (connections) {
-            for (var connection : connections) {
-                var playerId = player.getId();
-                var destPlayer = player;
+        for (var connection : connections) {
+            var playerId = player.getId();
+            var destPlayer = player;
 
-                if (playerId != connection.getId()) {
-                    // Sending the player's data to another player's
-                    // connection, need to redact any private data
-                    destPlayer = player.copy();
-                    destPlayer.redactPrivateData();
-                }
-                connection.send(new Packet(PacketCommand.PLAYER_UPDATE, playerId, destPlayer));
+            if (playerId != connection.getId()) {
+                // Sending the player's data to another player's
+                // connection, need to redact any private data
+                destPlayer = player.copy();
+                destPlayer.redactPrivateData();
             }
+            connection.send(new Packet(PacketCommand.PLAYER_UPDATE, playerId, destPlayer));
         }
     }
 
@@ -1134,11 +1130,9 @@ public class Server implements Runnable {
     }
 
     void send(Packet packet) {
-        synchronized (connections) {
-            connections.stream()
-                    .filter(Objects::nonNull)
-                    .forEach(connection -> connection.send(packet));
-        }
+        connections.stream()
+                .filter(Objects::nonNull)
+                .forEach(connection -> connection.send(packet));
     }
 
     /**

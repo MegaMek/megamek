@@ -38,10 +38,8 @@ public class WhoCommand extends ServerCommand {
                 connId, "[id#] : [name], [address], [pending], [bytes sent], [bytes received]");
 
         final boolean includeIPAddress = PreferenceManager.getClientPreferences().getShowIPAddressesInChat();
-        for (Enumeration<AbstractConnection> i = server.getConnections(); i.hasMoreElements();) {
-            AbstractConnection conn = i.nextElement();
-            server.sendServerChat(connId, getConnectionDescription(conn, includeIPAddress));
-        }
+        server.forEachConnection(conn ->
+                server.sendServerChat(connId, getConnectionDescription(conn, includeIPAddress)));
 
         server.sendServerChat(connId, "end list");
     }

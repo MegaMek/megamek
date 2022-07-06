@@ -498,8 +498,7 @@ public class TestTank extends TestEntity {
             if (eq.hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
                 return !isAero
                         && !mode.isVTOL()
-                        && !mode.isRail()
-                        && !mode.isMaglev();
+                        && !mode.isTrain();
             }
             if (eq.hasFlag(MiscType.F_MASH)) {
                 return !mode.isVTOL();

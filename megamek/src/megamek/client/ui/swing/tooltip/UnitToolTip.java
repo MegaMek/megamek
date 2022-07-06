@@ -57,15 +57,15 @@ public final class UnitToolTip {
     }
 
     /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
-    public static StringBuilder getEntityTipNoPilot(Entity entity, Player localPlayer) {
-        return getEntityTipTable(entity, localPlayer, false, false, null);
+    public static StringBuilder getEntityTipUnitDisplay(Entity entity, Player localPlayer) {
+        return getEntityTipTable(entity, localPlayer, true, false, null);
     }
 
     // PRIVATE
     
     /** Assembles the whole unit tooltip. */
     private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
-           boolean inLobby, boolean pilotInfo, @Nullable MapSettings mapSettings) {
+           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -89,7 +89,7 @@ public final class UnitToolTip {
         result.append("</FONT>");
 
         // Pilot; in the lounge the pilot is separate so don't add it there
-        if (inLobby && (mapSettings != null)) {
+        if (details && (mapSettings != null)) {
             result.append(deploymentWarnings(entity, localPlayer, mapSettings));
             result.append("<BR>");
         } else {
@@ -134,13 +134,13 @@ public final class UnitToolTip {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             result.append(scaledHTMLSpacer(3));
             result.append(guiScaledFontHTML(uiQuirksColor(), TT_SMALLFONT_DELTA));
-            String quirksList = getOptionList(entity.getQuirks().getGroups(), entity::countQuirks, inLobby);
+            String quirksList = getOptionList(entity.getQuirks().getGroups(), entity::countQuirks, details);
             if (!quirksList.isEmpty()) {
                 result.append(quirksList);
             }
             for (Mounted weapon: entity.getWeaponList()) {
                 String wpQuirksList = getOptionList(weapon.getQuirks().getGroups(), 
-                        grp -> weapon.countQuirks(), (e) -> weapon.getDesc(), inLobby);
+                        grp -> weapon.countQuirks(), (e) -> weapon.getDesc(), details);
                 if (!wpQuirksList.isEmpty()) {
                     // Line break after weapon name not useful here
                     result.append(wpQuirksList.replace(":</I><BR>", ":</I>"));
@@ -151,7 +151,7 @@ public final class UnitToolTip {
 
         // Partial repairs
         String partialList = getOptionList(entity.getPartialRepairs().getGroups(), 
-                grp -> entity.countPartialRepairs(), inLobby);
+                grp -> entity.countPartialRepairs(), details);
         if (!partialList.isEmpty()) {
             result.append(scaledHTMLSpacer(3));
             result.append(guiScaledFontHTML(uiPartialRepairColor(), TT_SMALLFONT_DELTA));
@@ -164,7 +164,7 @@ public final class UnitToolTip {
             result.append(carriedUnits(entity));
         }
         
-        if (inLobby && entity.hasAnyC3System()) {
+        if (details && entity.hasAnyC3System()) {
             result.append(scaledHTMLSpacer(3));
             result.append(c3Info(entity));
         }

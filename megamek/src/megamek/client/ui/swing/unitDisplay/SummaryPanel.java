@@ -138,7 +138,7 @@ public class SummaryPanel extends PicMap {
             // also allow cells do have bg colors
             StringBuffer hexTxt = new StringBuffer("");
             hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
-            hexTxt.append(UnitToolTip.getEntityTipNoPilot(entity, localPlayer));
+            hexTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
             BoardView bv = unitDisplay.getClientGUI().getBoardView();
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
             if (bv != null && mhex != null) {

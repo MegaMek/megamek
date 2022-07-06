@@ -472,8 +472,7 @@ public class TestTank extends TestEntity {
                 return mode.isTrackedOrWheeled() || isNaval;
             }
             if (eq.hasFlag(MiscType.F_HITCH)) {
-                return mode.isTrackedOrWheeled()
-                        || mode.isRail() || mode.isMaglev();
+                return mode.isTrackedOrWheeled() || mode.isTrain();
             }
             if (eq.hasFlag(MiscType.F_LIFEBOAT)) {
                 if (eq.hasSubType(MiscType.S_MARITIME_ESCAPE_POD | MiscType.S_MARITIME_LIFEBOAT)) {

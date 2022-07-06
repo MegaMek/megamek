@@ -1,0 +1,127 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Golem Assault Armor
+</Name>
+
+<Model>
+(Standard)(Sqd6)
+</Model>
+
+<mul id:>
+8987
+</mul id:>
+
+<year>
+3067
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+12
+</armor_tech>
+
+<Point Equipment>
+CLBearhunter Superheavy AC:LA
+CLBearhunter Superheavy AC:RA
+CLAdvancedSRM5:Body
+BA-Advanced SRM-5 Ammo:Body:Shots2#
+BABasicManipulator:LA
+BABasicManipulator:RA
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+</Point Equipment>
+
+<source>
+TRO 3075 - Civil War
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+18
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Golem is a battle armor design that was created by Clan Ghost Bear. 
+</overview>
+
+<capabilities>
+In addition, this armor is fire resistant, so it is unaffected by Flamers and Inferno rounds. Though it cannot jump, the Golem is still speedier than the other assault-class designs. While that does not make this battlesuit fast, it does give it the ability to bring its strong weapons to bear on a target, even as it can withstand the punishment meted out by an enemy.
+</capabilities>
+
+<deployment>
+The main guns on the Golem are its twin Bearhunter Superheavy Autocannons, one mounted under each arm. Though these weapons have a short range, they can deal a lot of damage for their size and are quite effective against unarmored infantry. For backup, the Golem mounts an Advanced SRM 5 with a single reload. The advanced launcher is the closest thing battle armor has to a Streak missile system, including its range profile.
+</deployment>
+
+<history>
+Following their conflicts with first the Draconis Combine, then Clan Hell's Horses, the Bears decided they wanted something that could compete with the Kanazuchi and Gnome. The Golem is the result of that process and features enough armor to shrug off a Heavy Large Laser. 
+</history>
+
+
+<manufacturer>
+Bergan Industries BA Annex,Csesztreg Industriplex Gamma,Transitional Facility A-4
+</manufacturer>
+
+<primaryFactory>
+Alshain,Csesztreg,Nouveaux Paris
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+</notes>
+
+
+

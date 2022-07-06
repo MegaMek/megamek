@@ -3692,6 +3692,8 @@ Nexus II NXS2-B:SCOUT
 Nexus NXS1-A:STRIKER
 Nexus NXS1-B:SCOUT
 Nexus NXS1-C:STRIKER
+Night Chanter:SKIRMISHER
+Night Chanter A:SNIPER
 Night Gyr A:SKIRMISHER
 Night Gyr B:SNIPER
 Night Gyr C:SKIRMISHER
@@ -5072,6 +5074,8 @@ Spindrift Aquatic SecurityMech SDT-1:AMBUSHER
 Spindrift Aquatic SecurityMech SDT-1A:SCOUT
 Spirit (Standard):STRIKER
 Spirit 2:STRIKER
+Spirit Walker Prime:SNIPER
+Spirit Walker A:BRAWLER
 Sprint Scout Helicopter (C3):SCOUT
 Sprint Scout Helicopter (C3i):SCOUT
 Sprint Scout Helicopter (Interdictor):SCOUT

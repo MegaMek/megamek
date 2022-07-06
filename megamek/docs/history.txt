@@ -25,6 +25,13 @@ VERSION HISTORY:
 + Issue #3695: Increased amount and usefulness of data displayed in the General tab of the unit display.
 + Issue #3719: No kicking while bogged down
 + Issue #3742: Errata - Infantry Heat Suit environment type
++ PR #1134: Improvements to Fluff Image folders (see Wiki for specifics).
++ Issue #3715: Zero pad auto-board save image filenames
++ Issue #3743: Fixing ToolTip TMM Yellow Colours
++ Issue #3731: Save Lobby Map Settings during Save
++ Issue #3757: Minimum Range for Clan LRM
++ PR #3771: UnitDisplay: Lobby-style Quirk Text
++ Issue #1852: More flexible deployment zones; improvements to deployment zone rendering; defunct 'deep deployment zone' feature as it's now redundant
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

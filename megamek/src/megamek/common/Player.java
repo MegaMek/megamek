@@ -53,6 +53,8 @@ public final class Player extends TurnOrdered {
 
     // these are game-specific, and maybe should be separate from the player object
     private int startingPos = Board.START_ANY;
+    private int startOffset = 0;
+    private int startWidth = 3;
 
     // number of minefields
     private int numMfConv = 0;
@@ -289,6 +291,22 @@ public final class Player extends TurnOrdered {
 
     public void setStartingPos(int startingPos) {
         this.startingPos = startingPos;
+    }
+
+    public int getStartOffset() {
+        return startOffset;
+    }
+
+    public void setStartOffset(int startOffset) {
+        this.startOffset = startOffset;
+    }
+
+    public int getStartWidth() {
+        return startWidth;
+    }
+
+    public void setStartWidth(int startWidth) {
+        this.startWidth = startWidth;
     }
 
     /**

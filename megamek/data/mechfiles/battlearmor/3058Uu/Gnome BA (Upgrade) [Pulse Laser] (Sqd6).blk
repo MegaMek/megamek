@@ -1,0 +1,128 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gnome Battle Armor
+</Name>
+
+<Model>
+(Upgrade) [Pulse Laser](Sqd6)
+</Model>
+
+<mul id:>
+8885
+</mul id:>
+
+<year>
+3069
+</year>
+
+<originalBuildYear>
+3069
+</originalBuildYear>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBAMicroPulseLaser:RA
+CLBAMicroPulseLaser:LA
+CLAdvancedSRM2:Body
+BA-Advanced SRM-2 Ammo:Body:Shots2#
+BAHeavyBattleClaw:LA
+</Point Equipment>
+
+<source>
+TRO 3058U - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+14
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Gnome battle armor was created by Clan Hell's Horses in response to Inner Sphere responses to the ubiquitous Elemental battle armor.
+</overview>
+
+<capabilities>
+Unlike the Elemental armor, the Gnome's armament is fixed. It mounts an ER Small Laser in its right arm while carrying a fixed SRM-2 launcher with two rounds that mimics the Streak system. Its left arm ends in a Heavy Battle Claw, however while it is able to hold onto the handholds of an OmniMech it lacks the dexterity to make anti-'Mech swarming and leg attacks. The Gnome is equipped with jump jets although it is only able to leap 60 meters at a time. The 350kg of armor protecting the Gnome can't survive a direct hit from a Clan ER PPC like the Kanazuchi can, but it will stop two shots from a Clan ER Medium Laser and remain functional with the warrior inside alive
+</capabilities>
+
+<deployment>
+Based on the standard Upgraded Gnome, this version replaces the Bearhunter Autocannon with a pair of Micro Pulse Lasers. 
+</deployment>
+
+<history>
+Starting in 3054 rumors began spreading back to the Clan homeworlds that the Inner Sphere powers were not only developing battle suits of their own, but an incredible variety tailored to specific mission requirements. In particular news that the Draconis Combine had produced an assault-weight suit - the Kanazuchi - which could survive a direct hit from a Clan ER PPC was most troubling. Anything which threatened the Clans' supremacy in battle-armored troops went doubly so for the Horses, who themselves were longtime proponents of the use of infantry and held the edge over other Clans in their deployment. Horse Khan Malavai Fletcher ordered his scientists to create a Clan version of the assault battle armor, one which retained some mobility while boasting incredible firepower and survivability. Horses scientists fell back on the Rhino, a ponderous early design dating back to the beginning of battle armor development but which never made it out of the prototype stage owing to the sheer flexibility and balance of what became the standard Elemental. Applying the latest in technological advancement to the Rhino, including small-scale Ferro-Fibrous armor design, they ended up creating a battle armor twice as fast as the Kanazuchi and with heavier weapons, albeit one with slightly less armor protection. Like the other second-generation Clan battlesuits, the Gnome is named after an elemental spirit, in this case an earth spirit. Debuting in the spring of 3056 the Gnome was first assigned to the Hell's Horses Alpha Keshik, where it was first tested in combat during Alpha's annual sparring match with Omega Keshik. Although it was only a simulated battle, Alpha's Gnome-equipped troops caused such havoc for Omega's traditional Elemental suits that Khan Fletcher was sufficiently impressed to order an immediate increase in production. He also became an avid user of the Gnome suit and, during his Clan's ultimately disastrous intervention in the Combine-Ghost Bear War, personally racked up a kill count of twenty-nine 'Mechs and Elementals. Since its introduction the Gnome has been eclipsed in size by other assault-weight suits but still serves as the mainstay in most Hell's Horses' front-line Clusters and found its way into the toumans of other Clans through various Trials. It also served as an inspiration for other Clans to experiment with specialized battle suits, including the Sylph, Salamander and Undine.
+</history>
+
+
+<manufacturer>
+Unknown,Swedenborg Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Niles,Kirchbach
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+</notes>
+
+
+

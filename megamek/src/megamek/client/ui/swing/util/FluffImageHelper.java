@@ -28,10 +28,18 @@ import java.io.File;
  * @author Jay Lawson
  */
 public class FluffImageHelper {
-    public static final String DIR_NAME_MECH = "mech";
-    public static final String DIR_NAME_AERO = "aero";
     public static final String DIR_NAME_BA = "BattleArmor";
-    public static final String DIR_NAME_VEHICLE = "vehicle";
+    public static final String DIR_NAME_CONVFIGHTER = "ConvFighter";
+    public static final String DIR_NAME_DROPSHIP = "DropShip";
+    public static final String DIR_NAME_FIGHTER = "Fighter";
+    public static final String DIR_NAME_INFANTRY = "Infantry";
+    public static final String DIR_NAME_JUMPSHIP = "JumpShip";
+    public static final String DIR_NAME_MECH = "Mech";
+    public static final String DIR_NAME_PROTOMEK = "ProtoMek";
+    public static final String DIR_NAME_SMALLCRAFT = "Small Craft";
+    public static final String DIR_NAME_SPACESTATION = "Space Station";
+    public static final String DIR_NAME_VEHICLE = "Vehicle";
+    public static final String DIR_NAME_WARSHIP = "WarShip";
     public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
 
     /**
@@ -77,11 +85,28 @@ public class FluffImageHelper {
         Image fluff = null;
 
         String dir = DIR_NAME_MECH;
-        if (unit instanceof Aero) {
-            dir = DIR_NAME_AERO;
-        } else if (unit instanceof BattleArmor) {
-            dir = DIR_NAME_BA;
-        } else if (unit instanceof Tank) {
+        
+        if (unit instanceof Warship) {
+        	dir = DIR_NAME_WARSHIP;
+    	} else if (unit instanceof SpaceStation) {
+    		dir = DIR_NAME_SPACESTATION;
+    	} else if (unit instanceof Jumpship) {
+    		dir = DIR_NAME_JUMPSHIP;
+    	} else if (unit instanceof ConvFighter) {
+    		dir = DIR_NAME_CONVFIGHTER;          
+    	} else if (unit instanceof Dropship) {
+            dir = DIR_NAME_DROPSHIP;
+    	} else if (unit instanceof SmallCraft) {
+            dir = DIR_NAME_SMALLCRAFT;            
+    	} else if (unit instanceof Aero) {
+            dir = DIR_NAME_FIGHTER;
+    	} else if (unit instanceof BattleArmor) {
+    		dir = DIR_NAME_BA;           
+    	} else if (unit instanceof Infantry) {
+    		dir = DIR_NAME_INFANTRY;     
+    	} else if (unit instanceof Protomech) {
+    		dir = DIR_NAME_PROTOMEK;    
+          } else if (unit instanceof Tank) {
             dir = DIR_NAME_VEHICLE;
         }
 

@@ -257,12 +257,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static String RAT_PAD_BV = "RATPadBV";
     public static String RAT_SELECTED_RAT = "RATSelectedRAT";
 
-    private static final Color DEFAULT_WHITE = Color.WHITE;
-    private static final Color DEFAULT_BLACK = Color.BLACK;
+    // common colors
+    public static final Color DEFAULT_WHITE = Color.WHITE;
+    public static final Color DEFAULT_BLACK = Color.BLACK;
+    public static final Color DEFAULT_DARK_GRAY = new Color(64, 64, 64);
+    public static final Color DEFAULT_LIGHT_GRAY = new Color(196, 196, 196);
 
     // Text colors that read over light and dark backgrounds
-    private static final Color DEFAULT_DARK_GRAY = new Color(64, 64, 64);
-    private static final Color DEFAULT_LIGHT_GRAY = new Color(196, 196, 196);
     private static final Color DEFAULT_CYAN = new Color(0, 228, 228);
     private static final Color DEFAULT_MAGENTA = new Color(228, 0, 228);
     private static final Color DEFAULT_PINK = new Color(228, 20, 147);

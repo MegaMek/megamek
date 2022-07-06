@@ -393,6 +393,7 @@ public class MapSettings implements Serializable {
     private MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
+        adjustPathSeparator();
     }
 
     /** Creates new MapSettings that is a duplicate of another */
@@ -489,6 +490,7 @@ public class MapSettings implements Serializable {
         cityDensity = other.getCityDensity();
         boardBuildings = other.getBoardBuildings();
         townSize = other.getTownSize();
+        adjustPathSeparator();
     }
 
     /**
@@ -500,12 +502,11 @@ public class MapSettings implements Serializable {
      * 
      * While the available and selected boards should really be stored as lists
      * of Files, they have infrastructure built up around them and it's far
-     * easier to use this kludgy hack.
+     * easier to use this kludgy hack to always store in Linux style \ separator
      */
     public void adjustPathSeparator() {
         // Windows will happily accept a forward slash in the path, the only
-        // real issue is back-slashes (windows separators) in Linux
-        boolean isWindows = System.getProperty("os.name").contains("Windows");
+        // real issue is back-slashes (windows separators) in Linux and macOS
         boolean containsWindowsPathSeparator = false;
         for (String path : boardsAvailable) {
             if (path.contains("\\")) {
@@ -516,7 +517,7 @@ public class MapSettings implements Serializable {
             }
         }
 
-        if (!isWindows && containsWindowsPathSeparator) {
+        if (containsWindowsPathSeparator) {
             for (int i = 0; i < boardsAvailable.size(); i++) {
                 if (boardsAvailable.get(i) == null) {
                     continue;
@@ -749,6 +750,7 @@ public class MapSettings implements Serializable {
 
     public void setBoardsAvailableVector(ArrayList<String> boardsAvailable) {
         this.boardsAvailable = boardsAvailable;
+        adjustPathSeparator();
     }
 
     /**

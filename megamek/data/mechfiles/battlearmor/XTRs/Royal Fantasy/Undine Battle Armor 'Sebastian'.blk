@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,28 +13,35 @@ BattleArmor
 </UnitType>
 
 <Name>
-Gladiator Exoskeleton
+Undine Battle Armor
 </Name>
 
 <Model>
-(Standard) [BC/ID]
+'Sebastian'(Sqd4)
 </Model>
 
 <mul id:>
-7206
+8383
 </mul id:>
 
 <year>
-3056
+3145
 </year>
 
+<originalBuildYear>
+3145
+</originalBuildYear>
+
 <type>
-IS Level 2
+Clan Level 2
 </type>
 
 <motion_type>
-Leg
+UMU
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 1
@@ -45,15 +52,17 @@ Leg
 </armor_type>
 
 <armor_tech>
--1
+2
 </armor_tech>
 
-<Squad Equipment>
-BAMEA:LA
-BAMEA:RA
+<Point Equipment>
+BABattleClaw:RA
 BABattleClaw:LA
-BAIndustrialDrill:RA
-</Squad Equipment>
+CLBAERMicroLaser:RA
+CLBAERMicroLaser:LA
+CLBASRM1OS:Body
+CLBASRM1OS:Body
+</Point Equipment>
 
 <Trooper 1 Equipment>
 </Trooper 1 Equipment>
@@ -67,24 +76,24 @@ BAIndustrialDrill:RA
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
 
+<notes>
+Should be SRT1 but not coded in the MM at this time.
+</notes>
+
 <source>
-TRO Vehicle Annex (r) - Clan Invasion
+XTRO Royal Fantasy - Dark Age
 </source>
 
 <chassis>
 biped
 </chassis>
 
-<exoskeleton>
-true
-</exoskeleton>
-
 <jumpingMP>
-0
+3
 </jumpingMP>
 
 <armor>
-2
+9
 </armor>
 
 <Trooper Count>
@@ -92,5 +101,6 @@ true
 </Trooper Count>
 
 <weightclass>
-0
+3
 </weightclass>
+

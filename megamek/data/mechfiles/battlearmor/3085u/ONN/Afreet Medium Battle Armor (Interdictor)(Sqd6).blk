@@ -13,19 +13,19 @@ BattleArmor
 </UnitType>
 
 <Name>
-Golem Assault Armor
+Afreet Medium Battle Armor
 </Name>
 
 <Model>
-(Standard)
+(Interdictor)(Sqd6)
 </Model>
 
 <mul id:>
-4224
+8843
 </mul id:>
 
 <year>
-3067
+3076
 </year>
 
 <type>
@@ -33,11 +33,11 @@ Clan Level 2
 </type>
 
 <motion_type>
-Leg
+Jump
 </motion_type>
 
 <cruiseMP>
-2
+1
 </cruiseMP>
 
 <armor_type>
@@ -49,36 +49,24 @@ Leg
 </armor_tech>
 
 <Point Equipment>
-CLBearhunter Superheavy AC:LA
-CLBearhunter Superheavy AC:RA
-CLAdvancedSRM5:Body
-BA-Advanced SRM-5 Ammo:Body:Shots2#
-BABasicManipulator:LA
-BABasicManipulator:RA
+CLBAHeavyMG:RA
+CL BA ECM:Body
+CLBAJumpBooster:Body
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
 Clan BA Fire Resistant:Body
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:RA
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:RA
 </Point Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
 <source>
-TRO 3075 - Civil War
+TRO 3085 - Jihad
 </source>
 
 <chassis>
@@ -86,17 +74,17 @@ biped
 </chassis>
 
 <jumpingMP>
-0
+3
 </jumpingMP>
 
 <armor>
-18
+5
 </armor>
 
 <Trooper Count>
-5
+6
 </Trooper Count>
 
 <weightclass>
-4
+2
 </weightclass>

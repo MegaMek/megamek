@@ -13,15 +13,15 @@ BattleArmor
 </UnitType>
 
 <Name>
-Gladiator Exoskeleton
+Afreet Medium Battle Armor
 </Name>
 
 <Model>
-'The Spider'
+(Interdictor)(Sqd4)
 </Model>
 
 <mul id:>
-1212
+16
 </mul id:>
 
 <year>
@@ -29,7 +29,7 @@ Gladiator Exoskeleton
 </year>
 
 <type>
-IS Level 4
+Clan Level 2
 </type>
 
 <motion_type>
@@ -41,39 +41,32 @@ Jump
 </cruiseMP>
 
 <armor_type>
-28
+35
 </armor_type>
 
 <armor_tech>
-3
+12
 </armor_tech>
 
-<Squad Equipment>
-BA-Magnetic Clamp:Body
+<Point Equipment>
+CLBAHeavyMG:RA
+CL BA ECM:Body
+CLBAJumpBooster:Body
 BABattleClawVibro:LA
-BAArmoredGlove:RA
-ISMechanicalJumpBooster:Body
+BABattleClawVibro:RA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-Infantry Auto Rifle:APM
-</Squad Equipment>
-
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:Body
+</Point Equipment>
 
 <source>
-XTR Gladiators
+TRO 3085 - Jihad
 </source>
 
 <chassis>
@@ -81,11 +74,11 @@ biped
 </chassis>
 
 <jumpingMP>
-0
+3
 </jumpingMP>
 
 <armor>
-2
+5
 </armor>
 
 <Trooper Count>
@@ -93,5 +86,5 @@ biped
 </Trooper Count>
 
 <weightclass>
-0
+2
 </weightclass>

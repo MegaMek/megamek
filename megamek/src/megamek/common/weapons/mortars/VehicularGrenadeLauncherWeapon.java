@@ -85,12 +85,8 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         Entity owner = weapon.getEntity();
         int facing;
         
-        if (owner.isSecondaryArcWeapon(weaponID)) {
-            facing = owner.getSecondaryFacing();
-        } else {
-            facing = owner.getFacing();
-        }
-        
+        facing = owner.isSecondaryArcWeapon(weaponID) ? 
+                owner.getSecondaryFacing() : owner.getFacing();        
         facing = (facing + weapon.getFacing()) % 6;
         
         // attempt to target first the "correct" automatic coordinates.

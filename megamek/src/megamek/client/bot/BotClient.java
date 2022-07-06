@@ -630,7 +630,7 @@ public abstract class BotClient extends Client {
         for (int x = 0; x <= board.getWidth(); x++) {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
-                if (board.isLegalDeployment(c, deployed_ent.getStartingPos())
+                if (board.isLegalDeployment(c, deployed_ent)
                     && !deployed_ent.isLocationProhibited(c)) {
                     validCoords.add(new RankedCoords(c, 0));
                 }

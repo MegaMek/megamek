@@ -37,6 +37,9 @@ import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,6 +65,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (currentPlayerStartPos > 10) {
             currentPlayerStartPos -= 10;
         }
+        
+        numFormatter.setAllowsInvalid(false);
         initialize();
     }
 
@@ -94,6 +99,16 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     /** Returns the chosen vibrabombs. */
     public int getVibMines() {
         return parseField(fldVibrabomb);
+    }
+    
+    /** Returns the start location offset */
+    public int getStartOffset() {
+        return parseField(txtOffset);
+    }
+    
+    /** Returns the player start location width */
+    public int getStartWidth() {
+        return parseField(txtWidth);
     }
     
     /** Returns the chosen deployment position. */
@@ -142,6 +157,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     // Deployment Section
     private final JPanel panStartButtons = new JPanel();
     private final TipButton[] butStartPos = new TipButton[11];
+    // this might seem like kind of a dumb way to declare it, but JFormattedTextField doesn't have an overload that
+    // takes both a number formatter and a default value.
+    private final NumberFormatter numFormatter = new NumberFormatter();
+    private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
+    private final JFormattedTextField txtOffset = new JFormattedTextField(formatterFactory, 0);
+    private final JFormattedTextField txtWidth = new JFormattedTextField(formatterFactory, 3);
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
@@ -199,10 +220,27 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     
     private JPanel startSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.startPos");
-        Content panContent = new Content(new GridLayout(1, 1));
+        Content panContent = new Content(new GridLayout(2, 1));
         result.add(panContent);
         setupStartGrid();
         panContent.add(panStartButtons);
+        panContent.add(deploymentParametersPanel());
+        return result;
+    }
+    
+    private JPanel deploymentParametersPanel() {
+        JPanel result = new JPanel(new GridLayout(2, 2, 10, 5));
+       
+        JLabel lblOffset = new JLabel(Messages.getString("CustomMechDialog.labDeploymentOffset"));
+        lblOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
+        JLabel lblWidth = new JLabel(Messages.getString("CustomMechDialog.labDeploymentWidth"));
+        lblWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
+        
+        result.add(lblOffset);
+        result.add(txtOffset);
+        result.add(lblWidth);
+        result.add(txtWidth);
+        
         return result;
     }
     
@@ -261,6 +299,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
         fldEmail.setText(player.getEmail());
+        txtWidth.setText(Integer.toString(player.getStartWidth()));
+        txtOffset.setText(Integer.toString(player.getStartOffset()));
+        
     }
 
     private void setupStartGrid() {

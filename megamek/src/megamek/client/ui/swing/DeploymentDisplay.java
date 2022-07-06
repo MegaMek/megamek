@@ -463,7 +463,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             msg = Messages.getString("DeploymentDisplay.wrongMapType", ce().getShortName(), Board.getTypeName(board.getType())); 
             JOptionPane.showMessageDialog(clientgui, msg, title, JOptionPane.WARNING_MESSAGE);
             return;
-        } else if (!(board.isLegalDeployment(moveto, ce().getStartingPos()) || assaultDropPreference)
+        } else if (!(board.isLegalDeployment(moveto, ce()) || assaultDropPreference)
                 || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
             msg = Messages.getString("DeploymentDisplay.cantDeployInto", ce().getShortName(), moveto.getBoardNum());
             title = Messages.getString("DeploymentDisplay.alertDialog.title"); 

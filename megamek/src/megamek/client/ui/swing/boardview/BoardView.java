@@ -1805,7 +1805,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
-                if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
+                if (board.isLegalDeployment(c, en_Deployer) &&
+                        !en_Deployer.isLocationProhibited(c)) {
                     drawHexBorder(g, getHexLocation(c), Color.yellow);
                 }
             }
@@ -1836,7 +1837,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 // loop through all players
                 while (allP.hasMoreElements()) {
                     cp = allP.nextElement();
-                    if (board.isLegalDeployment(c, cp.getStartingPos())) {
+                    if (board.isLegalDeployment(c, cp)) {
                         Color bC = cp.getColour().getColour();
                         drawHexBorder(g, getHexLocation(c), bC, (bThickness + 2) * pCount, bThickness);
                         pCount++;
@@ -2284,7 +2285,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                             drawHexSpritesForHex(c, g, moveEnvSprites);
                             drawHexSpritesForHex(c, g, moveModEnvSprites);
                             if ((en_Deployer != null)
-                                    && board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
+                                    && board.isLegalDeployment(c, en_Deployer)) {
                                 drawHexBorder(g, getHexLocation(c), Color.YELLOW);
                             }
                             drawOrthograph(c, g);
@@ -5497,7 +5498,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // loop through all players
             while (allP.hasMoreElements()) {
                 Player cp = allP.nextElement();
-                if (game.getBoard().isLegalDeployment(mcoords, cp.getStartingPos())) {
+                if (game.getBoard().isLegalDeployment(mcoords, cp)) {
                     if (!foundPlayer) {
                         foundPlayer = true;
                         txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHeader"));

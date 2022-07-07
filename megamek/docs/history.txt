@@ -33,6 +33,7 @@ VERSION HISTORY:
 + PR #3771: UnitDisplay: Lobby-style Quirk Text
 + Issue #1852: More flexible deployment zones; improvements to deployment zone rendering; defunct 'deep deployment zone' feature as it's now redundant
 + Issue #3753: Vehicles with Vehicle Grenade Launchers no longer lock up the game during firing phase when VGL firing arc goes off board
++ Issue #470: Display weapon fields of fire during TAG phase
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Grenadier II Battle Armor
+</Name>
+
+<Model>
+B(Sqd4)
+</Model>
+
+<mul id:>
+7391
+</mul id:>
+
+<year>
+3137
+</year>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Squad Equipment>
+Clan BA Stealth:LA
+Clan BA Stealth:RA
+Clan BA Stealth:RA
+Clan BA Stealth:LA
+BattleArmorC3:LA
+CLBALRM4:Body
+BACL Ammo LRM-4:Body:Shots4#
+BACL Ammo LRM-4:Body:Shots4#
+</Squad Equipment>
+
+<source>
+XTRO Republic III - Dark Age
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+12
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Grenadier II battle armor suit is an evolution of the Grenadier suit already in use by the AFFS.
+</overview>
+
+<capabilities>
+The Grenadier II has a Modular Weapon Mount in the left arm and a second mounted in the body. The right arm has a single Basic Manipulator.
+</capabilities>
+
+<deployment>
+This variant carries a Battle Armor C3 System in the left arm and a Clan-spec LRM-4 with eight reloads on the body.
+</deployment>
+
+<history>
+It uses lighter Clan-spec Standard Stealth armor mated to an Inner Sphere chassis to save weight. This allows the Grenadier II to pack as much firepower and protection as a Grenadier, but at a lighter weight. In addition, the lighter weight of the Grenadier II means it can be transported by OmniMechs.
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Talcott
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

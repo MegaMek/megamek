@@ -2346,7 +2346,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 && !game().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
             return true;
         }
-        for (Entity entity: entities) {
+
+        for (Entity entity : entities) {
             if (!entityInLocalTeam(entity)) {
                 return false;
             }

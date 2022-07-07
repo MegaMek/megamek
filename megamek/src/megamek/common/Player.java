@@ -305,7 +305,8 @@ public final class Player extends TurnOrdered {
         if (!singleBlindObserver) {
             setSingleBlind(false);
         }
-        if (game != null && game.getTeamForPlayer(this) != null) {
+
+        if ((game != null) && (game.getTeamForPlayer(this) != null)) {
             game.getTeamForPlayer(this).cacheObserverStatus();
         }
     }

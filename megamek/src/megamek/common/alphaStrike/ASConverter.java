@@ -95,7 +95,13 @@ public final class ASConverter {
 
         // Skill
         if (includePilot) {
-            element.setSkill((entity.getCrew().getPiloting() + entity.getCrew().getGunnery()) / 2);
+            if ((undamagedEntity instanceof Infantry) && element.isConventionalInfantry()) {
+                // CI only use their Gunnery skill, as there is no piloting (only Anti-Mek at a base of 8)
+                element.setSkill(entity.getCrew().getGunnery());
+            } else {
+                //TODO: multi-crew units
+                element.setSkill((entity.getCrew().getPiloting() + entity.getCrew().getGunnery()) / 2);
+            }
         }
         conversionReport.addLine("Skill:", Integer.toString(element.getSkill()));
 
@@ -111,6 +117,7 @@ public final class ASConverter {
         ASSpecialAbilityConverter.finalizeSpecials(element);
         element.setPointValue(ASPointValueConverter.getPointValue(conversionData));
         ASPointValueConverter.adjustPVforSkill(element, conversionReport);
+        element.setConversionReport(conversionReport);
         return element;
     }
 

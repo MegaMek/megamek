@@ -1,0 +1,242 @@
+/*
+ *
+ *  * Copyright (c) 05.07.22, 22:56 - The MegaMek Team. All Rights Reserved.
+ *  *
+ *  * This file is part of MegaMek.
+ *  *
+ *  * MegaMek is free software: you can redistribute it and/or modify
+ *  * it under the terms of the GNU General Public License as published by
+ *  * the Free Software Foundation, either version 3 of the License, or
+ *  * (at your option) any later version.
+ *  *
+ *  * MegaMek is distributed in the hope that it will be useful,
+ *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  * GNU General Public License for more details.
+ *  *
+ *  * You should have received a copy of the GNU General Public License
+ *  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+package megamek.common.alphaStrike;
+
+import megamek.common.alphaStrike.*;
+import megamek.common.annotations.Nullable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static megamek.common.alphaStrike.BattleForceSPA.*;
+
+/**
+ * This class encapsulates a block of AlphaStrike or Battleforce or SBF special abilities. Most
+ * Alphastrike elements or BF or SBF formations have a single such block of special abilities which
+ * may be empty or contain one or many SPAs. AlphaStrike elements that use arcs have an additional special
+ * ability block per arc. Units with turret(s) have one or more such blocks as part of the ASArcSummaries
+ * representing the turret(s).
+ */
+public class ASSpecialAbilityCollection {
+
+    public static final String INCH = "\"";
+
+    /**
+     * This contains all the SPAs of this special ability block.
+     *
+     * This covers all SpAs, including the damage values such as SRM2/2.
+     * SpAs not associated with a number, e.g. RCN, have null assigned as Object.
+     * SpAs associated with a number, such as MHQ5 (but not IF2), have an Integer or Double as Object.
+     * SpAs assoicated with one or more damage numbers, such as IF2 or AC2/2/-,
+     * have an ASDamageVector or ASDamage as Object.
+     * TUR has a List<List<Object>> wherein each List<Object> contains a
+     * ASDamageVector as the first item and a Map<BattleForceSPA, ASDamageVector> as the second item.
+     * This represents multiple turrets, each with a standard damage value and SpA damage values.
+     * If TUR is present, none of the objects is null and the outer List must contain one item (one turret)
+     * with standard damage at least.
+     * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
+     */
+    private EnumMap<BattleForceSPA, Object> specialAbilities = new EnumMap<>(BattleForceSPA.class);
+
+    /** The AlphaStrike element this collection is part of. Used to format string output. */
+    private final AlphaStrikeElement element;
+
+    /** Construct a new special ability collection for the given AlphaStrike element. */
+    public ASSpecialAbilityCollection(AlphaStrikeElement element) {
+        this.element = Objects.requireNonNull(element);
+    }
+
+    public boolean isEmpty() {
+        return specialAbilities.isEmpty();
+    }
+
+    /**
+     * Returns a formatted SPA string for this AS element. The string is formatted in the way SPAs are
+     * printed on an AS element's card or summary with a ', ' between SPAs.
+     *
+     * @return A formatted Special Unit Ability string for this AS element
+     */
+    public String getSpecialsString() {
+        return getSpecialsString(", ");
+    }
+
+    @Override
+    public String toString() {
+        return getSpecialsString();
+    }
+
+    /**
+     * Returns a formatted SPA string for this AS element. The given delimiter is inserted between SPAs.
+     *
+     * @return A formatted Special Unit Ability string for this AS element
+     */
+    public String getSpecialsString(String delimiter) {
+        return specialAbilities.keySet().stream()
+                .filter(element::showSpecial)
+                .map(spa -> formatSPAString(spa, getSPA(spa)))
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .collect(Collectors.joining(delimiter));
+    }
+
+    /**
+     * @return The value associated with the given Special Unit Ability. Depending on the given spa, this
+     * value can be null or of different types.
+     */
+    public Object getSPA(BattleForceSPA spa) {
+        return specialAbilities.get(spa);
+    }
+
+    /**
+     * Creates the formatted SPA string for the given spa and SPA value (the object assigned
+     * to the SPA such as an ASDamageVector). For turrets this includes everything in that
+     * turret.
+     *
+     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-".
+     */
+    public String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
+        if (spa == TUR) {
+            return "TUR(" + spaObject + ")";
+        } else if (spa == BIM || spa == LAM) {
+            return lamString(spa, spaObject);
+        } else if ((spa == C3BSS) || (spa == C3M) || (spa == C3BSM) || (spa == C3EM)
+                || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
+            return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
+        } else if (spa.isTransport()) {
+            return spa + spaObject.toString() + "-D" + element.getSPA(spa.getDoor());
+        } else {
+            return spa.toString() + (spaObject != null ? spaObject : "");
+        }
+    }
+
+    /** @return The formatted LAM/BIM Special Ability string such as LAM(36"g/4a). */
+    private static String lamString(BattleForceSPA spa, Object spaObject) {
+        String result = spa.toString() + "(";
+        if (spa == LAM) {
+            result += ((Map<String, Integer>)spaObject).get("g") + INCH + "g/";
+        }
+        result += ((Map<String, Integer>)spaObject).get("a") + "a)";
+        return result;
+    }
+
+    /**
+     * NEW version - Adds a Special Unit Ability that is not associated with any
+     * additional information or number, e.g. RCN.
+     */
+    public void addSPA(BattleForceSPA spa) {
+        specialAbilities.put(spa, null);
+    }
+
+    /**
+     * NEW version - Adds a Special Unit Ability associated with an integer number such as C3M#. If
+     * that SPA is already present, the given number is added to the one already present. If the present
+     * number is a Double type value, that type is preserved.
+     */
+    public void addSPA(BattleForceSPA spa, int number) {
+        if (!specialAbilities.containsKey(spa)) {
+            specialAbilities.put(spa, number);
+        } else {
+            if (specialAbilities.get(spa) instanceof Integer) {
+                specialAbilities.put(spa, (int) specialAbilities.get(spa) + number);
+            } else if (specialAbilities.get(spa) instanceof Double) {
+                specialAbilities.put(spa, (double) specialAbilities.get(spa) + number);
+            }
+        }
+    }
+
+    /**
+     * NEW version - Adds a Special Unit Ability associated with a possibly non-integer number such
+     * as MHQ2. If that SPA is already present, the given number is added to the one already present.
+     * if the previosly present number was an integer, it will be converted to a Double type value.
+     */
+    public void addSPA(BattleForceSPA spa, double number) {
+        if (!specialAbilities.containsKey(spa)) {
+            specialAbilities.put(spa, number);
+        } else {
+            if (specialAbilities.get(spa) instanceof Integer) {
+                specialAbilities.put(spa, (int) specialAbilities.get(spa) + number);
+            } else if (specialAbilities.get(spa) instanceof Double) {
+                specialAbilities.put(spa, (double) specialAbilities.get(spa) + number);
+            }
+        }
+    }
+
+    /**
+     * NEW version - Replaces the value associated with a Special Unit Ability with the given Object.
+     * The previously present associated Object, if any, is discarded. If the ability was not present,
+     * it is added.
+     */
+    public void replaceSPA(BattleForceSPA spa, Object newValue) {
+        specialAbilities.put(spa, newValue);
+    }
+
+    /**
+     * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
+     * that SPA is already present, the new damage value replaces the former.
+     */
+    public void addSPA(BattleForceSPA spa, ASDamage damage) {
+        specialAbilities.put(spa, damage);
+    }
+
+    /**
+     * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
+     * that SPA is already present, the new damage value replaces the former.
+     */
+    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
+        specialAbilities.put(spa, damage);
+    }
+
+    /**
+     * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
+     * that SPA is already present, the new value replaces the former.
+     */
+    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
+        specialAbilities.put(spa, value);
+    }
+
+    /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
+    public void addTurSPA(List<List<Object>> turAbility) {
+        specialAbilities.put(TUR, turAbility);
+    }
+
+    /** NEW version - Adds the LAM Special Unit Ability with a LAM movement map. */
+    public void addLamSPA(Map<String, Integer> specialMoves) {
+        specialAbilities.put(LAM, specialMoves);
+    }
+
+    /** NEW version - Adds the BIM Special Unit Ability with a LAM movement map. */
+    public void addBimSPA(Map<String, Integer> specialMoves) {
+        specialAbilities.put(BIM, specialMoves);
+    }
+
+    /**
+     * @return True when this AS element has the given Special Unit Ability. When the element has
+     * the spa and the spa is associated with some value, this value can be assumed to be non-empty
+     * or greater than zero. E.g., if an element has the MHQ spa, then MHQ >= 1. If it has IF, then
+     * the IF value is at least 0*.
+     */
+    public boolean hasSPA(BattleForceSPA spa) {
+        return specialAbilities.containsKey(spa);
+    }
+
+    public void removeSPA(BattleForceSPA spa) {
+        specialAbilities.remove(spa);
+    }
+}

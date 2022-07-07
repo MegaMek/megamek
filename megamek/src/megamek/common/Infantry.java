@@ -1972,35 +1972,35 @@ public class Infantry extends Entity {
         return LOCATION_ABBRS[index];
     }
 
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        specialAbilities.put(BattleForceSPA.CAR, (int) Math.ceil(getWeight()));
-        if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
-            specialAbilities.put(BattleForceSPA.UMU, null);
-        }
-        if (hasSpecialization(FIRE_ENGINEERS)) {
-            specialAbilities.put(BattleForceSPA.FF, null);
-        }
-        if (hasSpecialization(MINE_ENGINEERS)) {
-            specialAbilities.put(BattleForceSPA.MSW, null);
-        }
-        if (hasSpecialization(MOUNTAIN_TROOPS)) {
-            specialAbilities.put(BattleForceSPA.MTN, null);
-        }
-        if (hasSpecialization(PARATROOPS)) {
-            specialAbilities.put(BattleForceSPA.PARA, null);
-        }
-        if (hasSpecialization(SCUBA)) {
-            specialAbilities.put(BattleForceSPA.UMU, null);
-        }
-        if (hasSpecialization(TRENCH_ENGINEERS)) {
-            specialAbilities.put(BattleForceSPA.TRN, null);
-        }
-        if (hasAbility("tsm_implant")) {
-            specialAbilities.put(BattleForceSPA.TSI, null);
-        }
-    }
+//    @Override
+//    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+//        super.addBattleForceSpecialAbilities(specialAbilities);
+//        specialAbilities.put(BattleForceSPA.CAR, (int) Math.ceil(getWeight()));
+//        if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
+//            specialAbilities.put(BattleForceSPA.UMU, null);
+//        }
+//        if (hasSpecialization(FIRE_ENGINEERS)) {
+//            specialAbilities.put(BattleForceSPA.FF, null);
+//        }
+//        if (hasSpecialization(MINE_ENGINEERS)) {
+//            specialAbilities.put(BattleForceSPA.MSW, null);
+//        }
+//        if (hasSpecialization(MOUNTAIN_TROOPS)) {
+//            specialAbilities.put(BattleForceSPA.MTN, null);
+//        }
+//        if (hasSpecialization(PARATROOPS)) {
+//            specialAbilities.put(BattleForceSPA.PARA, null);
+//        }
+//        if (hasSpecialization(SCUBA)) {
+//            specialAbilities.put(BattleForceSPA.UMU, null);
+//        }
+//        if (hasSpecialization(TRENCH_ENGINEERS)) {
+//            specialAbilities.put(BattleForceSPA.TRN, null);
+//        }
+//        if (hasAbility("tsm_implant")) {
+//            specialAbilities.put(BattleForceSPA.TSI, null);
+//        }
+//    }
 
     @Override
     public int getEngineHits() {

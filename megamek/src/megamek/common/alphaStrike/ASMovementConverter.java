@@ -118,8 +118,8 @@ final class ASMovementConverter {
         }
 
         if ((entity instanceof Protomech) && ((Protomech) entity).isGlider()) {
-            result.put("", entity.getWalkMP());
-            report.addLine("ProtoMek Glider Movement", entity.getWalkMP() + "\"");
+            result.put("", 2);
+            report.addLine("ProtoMek Glider Movement", "2\"");
         }
         addUMUMovement(result, conversionData);
         return result;
@@ -136,15 +136,18 @@ final class ASMovementConverter {
             walkingMP = ((BattleArmor)entity).getWalkMP(true, true, true, true, true);
             jumpingMP = ((BattleArmor)entity).getJumpMP(true, true, true);
         }
+
+        // ensure a minimum base movement of 2"
+        walkingMP = Math.max(walkingMP, 1);
         report.addLine("Walking MP:", Integer.toString(walkingMP));
         report.addLine("Jumping MP:", Integer.toString(jumpingMP));
         String movementCode = getMovementCode(conversionData);
 
-        if ((walkingMP > jumpingMP) || (jumpingMP == 0)) {
+        if (walkingMP > jumpingMP) {
             result.put(movementCode, walkingMP * 2);
             report.addLine("Walking MP > Jumping MP", walkingMP + " x 2", walkingMP * 2 + "\"" + movementCode);
         } else {
-            result.put("j", jumpingMP * 2);
+            result.put(movementCode.equals("v") ? movementCode : "j", jumpingMP * 2);
             report.addLine("Walking MP <= Jumping MP", jumpingMP + " x 2", jumpingMP * 2 + "\"j");
         }
 

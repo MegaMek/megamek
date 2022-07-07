@@ -15,6 +15,7 @@ package megamek.common.weapons.flamers;
 
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Sebastian Brocks
@@ -55,5 +56,14 @@ public class CLERFlamer extends FlamerWeapon {
                 .setPrototypeFactions(F_CJF)
                 .setProductionFactions(F_CJF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        if (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) {
+            return 2;
+        } else {
+            return 0;
+        }
     }
 }

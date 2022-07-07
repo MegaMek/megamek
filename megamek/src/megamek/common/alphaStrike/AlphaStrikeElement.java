@@ -18,20 +18,19 @@
  */
 package megamek.common.alphaStrike;
 
-import megamek.common.*;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.UnitRole;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.Quirks;
 
-import static megamek.common.alphaStrike.BattleForceSPA.*;
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static java.util.stream.Collectors.*;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
-import java.lang.String;
+import static java.util.stream.Collectors.joining;
+import static megamek.common.alphaStrike.ASUnitType.*;
+import static megamek.common.alphaStrike.BattleForceSPA.*;
 
 /**
  * This class represents an AlphaStrike Element which is a single unit such as a Mek with
@@ -52,7 +51,7 @@ public class AlphaStrikeElement {
     public static final int RANGE_BAND_EXTREME = 3;
 
     static final int[] STANDARD_RANGES = {0, 4, 16, 24};
-    static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
+    public static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
 
     public static final int SHORT_RANGE = STANDARD_RANGES[RANGE_BAND_SHORT];
     public static final int MEDIUM_RANGE = STANDARD_RANGES[RANGE_BAND_MEDIUM];
@@ -70,6 +69,9 @@ public class AlphaStrikeElement {
     private int mulId = -1;
     private int pointValue;
 
+    /** Contains the conversion report *if* this element was converted from a TW entity. */
+    private CalculationReport conversionReport;
+
     private ASUnitType asUnitType;
     private int size;
     private int tmm;
@@ -84,11 +86,40 @@ public class AlphaStrikeElement {
     private ASDamageVector standardDamage;
     private int overheat;
 
-    /**
-     * The multiple arced damage value groups and specials of spaceships, MSs and large SVs.
-     * Ground units and fighters use standardDamage instead.
-     */
-    private EnumMap<ASArcs, ASArcSummary> arcs = new EnumMap<>(ASArcs.class);
+    // The arcs of Large Aerospace units. Other units use standardDamage instead
+    private final ASArcSummary frontArc = ASArcSummary.createArcSummary(this);
+    private final ASArcSummary leftArc = ASArcSummary.createArcSummary(this);
+    private final ASArcSummary rightArc = ASArcSummary.createArcSummary(this);
+    private final ASArcSummary rearArc = ASArcSummary.createArcSummary(this);
+
+    public ASArcSummary getFrontArc() {
+        return frontArc;
+    }
+
+    public ASArcSummary getLeftArc() {
+        return leftArc;
+    }
+
+    public ASArcSummary getRightArc() {
+        return rightArc;
+    }
+
+    public ASArcSummary getRearArc() {
+        return rearArc;
+    }
+
+    public ASArcSummary getArc(ASArcs arc) {
+        switch (arc) {
+            case FRONT:
+                return frontArc;
+            case LEFT:
+                return leftArc;
+            case REAR:
+                return rearArc;
+            default:
+                return rightArc;
+        }
+    }
 
     private int armor;
     private int structure;
@@ -111,6 +142,8 @@ public class AlphaStrikeElement {
      * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
      */
     private EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
+
+    private ASSpecialAbilityCollection specialAbs = new ASSpecialAbilityCollection(this);
 
     protected int[] heat; //TODO: whats this?
 
@@ -216,6 +249,14 @@ public class AlphaStrikeElement {
         return squadSize;
     }
 
+    public CalculationReport getConversionReport() {
+        return conversionReport;
+    }
+
+    public ASSpecialAbilityCollection getSpecialAbs() {
+        return specialAbs;
+    }
+
     public void setQuirks(Quirks quirks) {
         this.quirks = quirks;
     }
@@ -305,6 +346,11 @@ public class AlphaStrikeElement {
         squadSize = newSquadSize;
     }
 
+    /** Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA. */
+    public void setConversionReport(CalculationReport report) {
+        conversionReport = report;
+    }
+
     public AlphaStrikeElement() {
         
     }
@@ -347,7 +393,7 @@ public class AlphaStrikeElement {
      * additional information or number, e.g. RCN.
      */
     public void addSPA(BattleForceSPA spa) {
-        specialUnitAbilities.put(spa, null);
+        specialAbs.addSPA(spa);
     }
 
     /** 
@@ -355,67 +401,67 @@ public class AlphaStrikeElement {
      * that SPA is already present, the given number is added to the one already present. If the present
      * number is a Double type value, that type is preserved.
      */
-    public void addSPA(BattleForceSPA spa, int number) {
-        if (!specialUnitAbilities.containsKey(spa)) {
-            specialUnitAbilities.put(spa, number);
-        } else {
-            if (specialUnitAbilities.get(spa) instanceof Integer) {
-                specialUnitAbilities.put(spa, (int) specialUnitAbilities.get(spa) + number);
-            } else if (specialUnitAbilities.get(spa) instanceof Double) {
-                specialUnitAbilities.put(spa, (double) specialUnitAbilities.get(spa) + number);
-            }
-        }
-    }
+//    public void addSPA(BattleForceSPA spa, int number) {
+//        if (!specialUnitAbilities.containsKey(spa)) {
+//            specialUnitAbilities.put(spa, number);
+//        } else {
+//            if (specialUnitAbilities.get(spa) instanceof Integer) {
+//                specialUnitAbilities.put(spa, (int) specialUnitAbilities.get(spa) + number);
+//            } else if (specialUnitAbilities.get(spa) instanceof Double) {
+//                specialUnitAbilities.put(spa, (double) specialUnitAbilities.get(spa) + number);
+//            }
+//        }
+//    }
     
     /** 
      * NEW version - Adds a Special Unit Ability associated with a possibly non-integer number such 
      * as MHQ2. If that SPA is already present, the given number is added to the one already present.
      * if the previosly present number was an integer, it will be converted to a Double type value.
      */
-    public void addSPA(BattleForceSPA spa, double number) {
-        if (!specialUnitAbilities.containsKey(spa)) {
-            specialUnitAbilities.put(spa, number);
-        } else {
-            if (specialUnitAbilities.get(spa) instanceof Integer) {
-                specialUnitAbilities.put(spa, (int)specialUnitAbilities.get(spa) + number);
-            } else if (specialUnitAbilities.get(spa) instanceof Double) {
-                specialUnitAbilities.put(spa, (double)specialUnitAbilities.get(spa) + number);
-            }
-        }
-    }
+//    public void addSPA(BattleForceSPA spa, double number) {
+//        if (!specialUnitAbilities.containsKey(spa)) {
+//            specialUnitAbilities.put(spa, number);
+//        } else {
+//            if (specialUnitAbilities.get(spa) instanceof Integer) {
+//                specialUnitAbilities.put(spa, (int)specialUnitAbilities.get(spa) + number);
+//            } else if (specialUnitAbilities.get(spa) instanceof Double) {
+//                specialUnitAbilities.put(spa, (double)specialUnitAbilities.get(spa) + number);
+//            }
+//        }
+//    }
     
     /** 
      * NEW version - Replaces the value associated with a Special Unit Ability with the given Object.
      * The previously present associated Object, if any, is discarded. If the ability was not present, 
      * it is added.  
      */
-    public void replaceSPA(BattleForceSPA spa, Object newValue) {
-        specialUnitAbilities.put(spa, newValue);
-    }
+//    public void replaceSPA(BattleForceSPA spa, Object newValue) {
+//        specialUnitAbilities.put(spa, newValue);
+//    }
     
     /** 
      * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamage damage) {
-        specialUnitAbilities.put(spa, damage);
-    }
+//    public void addSPA(BattleForceSPA spa, ASDamage damage) {
+//        specialUnitAbilities.put(spa, damage);
+//    }
     
     /** 
      * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
-        specialUnitAbilities.put(spa, damage);
-    }
+//    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
+//        specialUnitAbilities.put(spa, damage);
+//    }
 
     /**
      * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
      * that SPA is already present, the new value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
-        specialUnitAbilities.put(spa, value);
-    }
+//    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
+//        specialUnitAbilities.put(spa, value);
+//    }
     
     /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
     public void addTurSPA(List<List<Object>> turAbility) {
@@ -457,16 +503,7 @@ public class AlphaStrikeElement {
      * the IF value is at least 0*.
      */
     public boolean hasSPA(BattleForceSPA spa) {
-        return specialUnitAbilities.containsKey(spa);
-    }
-
-    /**
-     * Removes the given Special Unit Ability from the element.
-     *
-     * @param spa The SPA to remove
-     */
-    public void removeSPA(BattleForceSPA spa) {
-        specialUnitAbilities.remove(spa);
+        return specialAbs.hasSPA(spa);
     }
 
     /** @return True when this AS element has at least one of the given Special Unit Abilities. */
@@ -513,11 +550,7 @@ public class AlphaStrikeElement {
      * @return A formatted Special Unit Ability string for this AS element
      */
     public String getSpecialsString(String delimiter) {
-        return specialUnitAbilities.keySet().stream()
-                .filter(this::showSpecial)
-                .map(spa -> formatSPAString(spa, getSPA(spa)))
-                .sorted(String.CASE_INSENSITIVE_ORDER)
-                .collect(Collectors.joining(delimiter));
+        return specialAbs.getSpecialsString(delimiter);
     }
 
     /**
@@ -549,6 +582,9 @@ public class AlphaStrikeElement {
      * @return True when the given Special Unit Ability should be listed on the element's card
      */
     public boolean showSpecial(BattleForceSPA spa) {
+        if (spa.isDoor()) {
+            return false;
+        }
         if (isAnyTypeOf(BM, PM) && (spa == SOA)) {
             return false;
         }
@@ -643,7 +679,7 @@ public class AlphaStrikeElement {
      * value can be null or of different types.
      */
     public Object getSPA(BattleForceSPA spa) {
-        return specialUnitAbilities.get(spa);
+        return specialAbs.getSPA(spa);
     }
 
     /** @return True when this AS element is of a type that can have the OVL ability (BM and AF). */
@@ -759,7 +795,7 @@ public class AlphaStrikeElement {
 
     /** @return True if this AS element has the given movement mode. */
     public boolean hasMovementMode(String mode) {
-        return movement.keySet().contains(mode);
+        return movement.containsKey(mode);
     }
 
     /** @return True if this AS element tracks heat (BM, IM, CF, AF and Aerospace SV). */
@@ -795,5 +831,15 @@ public class AlphaStrikeElement {
     /** @return True if this AS element is a BattleArmor unit, i.e. BA. */
     public boolean isBattleArmor() {
         return isType(BA);
+    }
+
+    /** @return True if this AS element is a Conventional Infantry unit, i.e. CI. */
+    public boolean isConventionalInfantry() {
+        return isType(CI);
+    }
+
+    /** @return True if this AS element uses CAP weapons in its arcs, i.e. WS, SS or JS. */
+    public boolean usesCapitalWeapons() {
+        return isAnyTypeOf(WS, SS, JS);
     }
 }

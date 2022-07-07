@@ -33,7 +33,7 @@ public enum BattleForceSPA {
     PRB, AC, AFC, AT, ATxD, AMP, AECM, AM, AMS, ARTAIS, ARTAC, ARTBA,
     ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT, ARTTC, ARTSC, ARTLTC, ARM, ARS, ATMO,
     BAR, BFC, BHJ, SHLD, BH, BOMB, BT, BRID, C3BSS, C3BSM, C3EM, C3M, C3RS, C3S, C3I, CAR,
-    CK, CT, CTxD, CASE, CASEII, D, DRO, DCC, DT, ES, ECM, ENE, ENG, FLK,
+    CK, CKxD, CT, CTxD, CASE, CASEII, D, DRO, DCC, DT, ES, ECM, ENE, ENG, FLK,
     SEAL, XMEC, FR, FD, HT, HELI, HPG, IATM, INARC, IF, ITSM, IT,
     KF, LG, LEAD, LPRB, LECM, LRM, LTAG, LF, MAG, MT, MTxD, MEC, MEL, MAS, LMAS, MDS, MSW,
     MASH, MFB, MHQ, SNARC, CNARC, NC3, ORO, OMNI, PNT,
@@ -50,11 +50,12 @@ public enum BattleForceSPA {
     AC3, CAP, COM, SCAP, FUEL, MSL, SDCS
     ;
     
-    static EnumMap<BattleForceSPA, BattleForceSPA> transportBayDoors;
+    static EnumMap<BattleForceSPA, BattleForceSPA> transportBayDoors = new EnumMap<>(BattleForceSPA.class);
+
     static {
-        transportBayDoors = new EnumMap<>(BattleForceSPA.class);
         transportBayDoors.put(AT, ATxD);
         transportBayDoors.put(CT, CTxD);
+        transportBayDoors.put(CK, CKxD);
         transportBayDoors.put(MT, MTxD);
         transportBayDoors.put(PT, PTxD);
         transportBayDoors.put(ST, STxD);
@@ -70,9 +71,13 @@ public enum BattleForceSPA {
     public boolean usedByAlphaStrike() {
         return ordinal() < ATAC.ordinal() || ordinal() >= CRW.ordinal();
     }
+
+    public boolean isTransport() {
+        return isAnyOf(AT, CT, CK, MT, PT, ST, VTM, VTH, VTS);
+    }
     
     public boolean isDoor() {
-        return name().endsWith("xD");
+        return isAnyOf(ATxD, CTxD, CKxD, MTxD, PTxD, STxD, VTMxD, VTHxD, VTSxD);
     }
     
     public BattleForceSPA getDoor() {

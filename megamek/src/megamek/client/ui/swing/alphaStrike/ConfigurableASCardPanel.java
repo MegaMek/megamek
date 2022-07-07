@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.swing.alphaStrike;
 
+import megamek.client.ui.dialogs.ASConversionInfoDialog;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
@@ -39,14 +41,18 @@ public class ConfigurableASCardPanel extends JPanel {
     private final JComboBox<String> fontChooser = new JComboBox<>();
     private final JComboBox<Float> sizeChooser = new JComboBox<>();
     private final JButton copyButton = new JButton("Copy to Clipboard");
+    private final JButton reportButton = new JButton("Show Conversion Report");
     private final ASCardPanel cardPanel = new ASCardPanel();
+    private CalculationReport report;
+    private final JFrame parentFrame;
 
     /**
      * Constructs a panel with the given AlphaStrike element to display.
      *
      * @param element The AlphaStrike element to display
      */
-    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element) {
+    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element, JFrame frame) {
+        parentFrame = frame;
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
@@ -65,6 +71,7 @@ public class ConfigurableASCardPanel extends JPanel {
         sizeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> new JLabel(Float.toString(value)));
 
         copyButton.addActionListener(ev -> copyCardToClipboard());
+        reportButton.addActionListener(e -> showConversionReport());
 
         var chooserLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         chooserLine.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -76,6 +83,8 @@ public class ConfigurableASCardPanel extends JPanel {
         chooserLine.add(sizeChooser);
         chooserLine.add(Box.createHorizontalStrut(25));
         chooserLine.add(copyButton);
+        chooserLine.add(Box.createHorizontalStrut(25));
+        chooserLine.add(reportButton);
 
         var cardLine = new JScrollPane(cardPanel);
         cardPanel.setBorder(new EmptyBorder(5, 65, 0, 0));
@@ -83,12 +92,13 @@ public class ConfigurableASCardPanel extends JPanel {
 
         add(chooserLine);
         add(cardLine);
+        updateSize();
         setASElement(element);
     }
 
     /** Construct a new panel without an AlphaStrike element to display. */
-    public ConfigurableASCardPanel() {
-        this(null);
+    public ConfigurableASCardPanel(JFrame frame) {
+        this(null, frame);
     }
 
     /**
@@ -97,6 +107,7 @@ public class ConfigurableASCardPanel extends JPanel {
      * @param element The AlphaStrike element to display
      */
     public void setASElement(@Nullable AlphaStrikeElement element) {
+        report = (element != null) ? element.getConversionReport() : null;
         cardPanel.setASElement(element);
     }
 
@@ -104,6 +115,13 @@ public class ConfigurableASCardPanel extends JPanel {
     private void updateFont() {
         Font font = Font.decode((String) fontChooser.getSelectedItem());
         cardPanel.setCardFont(font);
+    }
+
+    /** Set the card to use a newly selected font. */
+    private void showConversionReport() {
+        if (report != null) {
+            new ASConversionInfoDialog(parentFrame, report, null, true).setVisible(true);
+        }
     }
 
     /** Set the card to use a newly selected scale. */

@@ -731,6 +731,11 @@ public class WeaponType extends EquipmentType {
         return getHeat();
     }
 
+    /** Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC p.124. */
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return 0;
+    }
+
     /**
      * Returns the AlphaStrike conversion damage value of the weapon for the given range.
      * See AlphaStrike Companion pp.104-114.

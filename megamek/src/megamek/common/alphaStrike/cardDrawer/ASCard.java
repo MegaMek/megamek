@@ -268,7 +268,8 @@ public class ASCard {
 
         // BA Squad Size
         if (element.isBattleArmor()) {
-            new StringDrawer("Squad " + element.getSquadSize()).at(36, 137).font(modelFont).centerY().draw(g);
+            new StringDrawer("Squad " + element.getSquadSize()).at(36, 137).maxWidth(500).scaleX(1.3f)
+                    .font(modelFont).centerY().draw(g);
         }
     }
 

@@ -13,6 +13,8 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Jay Lawson
@@ -60,5 +62,10 @@ public class AR10Weapon extends CapitalMissileWeapon {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_FS, F_LC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return 3;
     }
 }

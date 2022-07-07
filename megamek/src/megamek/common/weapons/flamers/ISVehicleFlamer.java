@@ -14,6 +14,7 @@
 package megamek.common.weapons.flamers;
 
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Sebastian Brocks
@@ -56,6 +57,15 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        if (rangeband <= AlphaStrikeElement.RANGE_BAND_SHORT) {
+            return 2;
+        } else {
+            return 0;
+        }
     }
 
     @Override

@@ -14,7 +14,9 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Jay Lawson
@@ -59,5 +61,10 @@ public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
                 .setPrototypeFactions(F_WB)
                 .setProductionFactions(F_WB)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return (range <= AlphaStrikeElement.CAPITAL_RANGES[0]) ? 5 : 0;
     }
 }

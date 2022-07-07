@@ -18,6 +18,8 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -41,5 +43,11 @@ public abstract class SubCapCannonWeapon extends AmmoWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_SUBCAPITAL;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        int maxRange = shortAV < 4 ? AlphaStrikeElement.CAPITAL_RANGES[2] : AlphaStrikeElement.CAPITAL_RANGES[1];
+        return (range <= maxRange) ? shortAV : 0;
     }
 }

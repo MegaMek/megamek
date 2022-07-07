@@ -21,6 +21,7 @@
 package megamek.common.alphaStrike;
 
 import megamek.client.ui.SharedUtility;
+import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -189,7 +190,10 @@ public class ASDamageVector {
      * (i.e. up or down depending on the tenth) the nearest integer. Minimal damage will be used.
      * When printed, the ASDamageVector will use - for zero values.
      */
-    public static ASDamageVector createNormRndDmg(List<Double> values, int ranges) {
+    public static ASDamageVector createNormRndDmg(@Nullable List<Double> values, int ranges) {
+        if (values == null) {
+            return ZERO;
+        }
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
             copy.add(0.0);
@@ -204,7 +208,10 @@ public class ASDamageVector {
      * (i.e. up or down depending on the tenth) the nearest integer. Minimal damage is not used.
      * When printed, the ASDamageVector will use - for zero values.
      */
-    public static ASDamageVector createNormRndDmgNoMin(List<Double> values, int ranges) {
+    public static ASDamageVector createNormRndDmgNoMin(@Nullable List<Double> values, int ranges) {
+        if (values == null) {
+            return ZERO;
+        }
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
             copy.add(0.0);
@@ -220,7 +227,10 @@ public class ASDamageVector {
      * end up as minimal damage.
      * When printed, the ASDamageVector will use 0 (not a dash) for zero values.
      */
-    public static ASDamageVector createUpRndDmg(List<Double> values, int ranges) {
+    public static ASDamageVector createUpRndDmg(@Nullable List<Double> values, int ranges) {
+        if (values == null) {
+            return ZERO;
+        }
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
             copy.add(0.0);
@@ -236,7 +246,10 @@ public class ASDamageVector {
      * end up as minimal damage.
      * When printed, the ASDamageVector will use "-" for zero values.
      */
-    public static ASDamageVector createUpRndDmgMinus(List<Double> values, int ranges) {
+    public static ASDamageVector createUpRndDmgMinus(@Nullable List<Double> values, int ranges) {
+        if (values == null) {
+            return ZERO;
+        }
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {
             copy.add(0.0);

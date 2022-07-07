@@ -45,7 +45,7 @@ final class ASArmStrConverter {
         report.addEmptyLine();
         report.addSubHeader("Armor:");
 
-        if (entity instanceof Infantry) {
+        if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)) {
             double divisor = ((Infantry) entity).calcDamageDivisor();
             report.addLine("Infantry Damage Divisor:", "", divisor);
             if (((Infantry) entity).isMechanized()) {
@@ -175,8 +175,8 @@ final class ASArmStrConverter {
             }
             return structure;
         } else if (entity instanceof Warship) {
-            structure = (int) Math.ceil(((Warship) entity).getSI() * 0.66);
-            report.addLine("WS", "0.66 x " + ((Warship) entity).getSI() + " (SI)", structure);
+            structure = ((Warship) entity).getSI();
+            report.addLine("WS", "(SI)", "", structure);
             return structure;
         } else if (entity instanceof BattleArmor) {
             report.addLine("BA", "2");

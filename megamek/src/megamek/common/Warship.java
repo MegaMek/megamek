@@ -303,14 +303,12 @@ public class Warship extends Jumpship {
 
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (index == location) {
-            return 1.0;
-        }
-        return 0;
+        return getAlphaStrikeLocationMultiplier(index, location, rearMounted);
     }
     
     @Override
     public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
+        // ASC p. 103
         switch (location) {
             case LOC_NOSE:
             case LOC_FLS:
@@ -320,18 +318,18 @@ public class Warship extends Jumpship {
                 }
                 break;
             case LOC_LBS:
+            case LOC_ALS:
                 if (index == 1) {
                     return 1.0;
                 }
                 break;
             case LOC_RBS:
+            case LOC_ARS:
                 if (index == 2) {
                     return 1.0;
                 }
                 break;
             case LOC_AFT:
-            case LOC_ALS:
-            case LOC_ARS:
                 if (index == 3) {
                     return 1.0;
                 }

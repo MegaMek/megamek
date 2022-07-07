@@ -44,11 +44,4 @@ public abstract class BAFlamerWeapon extends Weapon {
         return new FlamerHandler(toHit, waa, game, manager);
     }
 
-    @Override
-    public int getBattleForceHeatDamage(int range) {
-        if (range < AlphaStrikeElement.MEDIUM_RANGE) {
-            return getDamage();
-        }
-        return 0;
-    }
 }

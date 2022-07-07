@@ -137,6 +137,74 @@ public class ASPointValueConverter {
             report.addEmptyLine();
             report.addResultLine("Base Point Value", "round normal", "" + pointValue);
             return pointValue;
+        } else if (element.isLargeAerospace()) {
+            double offensiveValue = 0;
+            if (element.hasMovementMode("a")) {
+
+            } else {
+                ASDamageVector ftStd = element.getFrontArc().getStdDamage();
+                ASDamageVector ltStd = element.getLeftArc().getStdDamage();
+                ASDamageVector rtStd = element.getRightArc().getStdDamage();
+                ASDamageVector rrStd = element.getRearArc().getStdDamage();
+                ASDamageVector ftMSL = element.getFrontArc().getMSLDamage();
+                ASDamageVector ltMSL = element.getLeftArc().getMSLDamage();
+                ASDamageVector rtMSL = element.getRightArc().getMSLDamage();
+                ASDamageVector rrMSL = element.getRearArc().getMSLDamage();
+                double dmg = ftStd.S.damage + ftStd.M.damage + ftStd.L.damage;
+                dmg += ltStd.S.damage + ltStd.M.damage + ltStd.L.damage;
+                dmg += rtStd.S.damage + rtStd.M.damage + rtStd.L.damage;
+                dmg += rrStd.S.damage + rrStd.M.damage + rrStd.L.damage;
+                dmg += ftMSL.S.damage + ftMSL.M.damage + ftMSL.L.damage;
+                dmg += ltMSL.S.damage + ltMSL.M.damage + ltMSL.L.damage;
+                dmg += rtMSL.S.damage + rtMSL.M.damage + rtMSL.L.damage;
+                dmg += rrMSL.S.damage + rrMSL.M.damage + rrMSL.L.damage;
+                ASDamageVector ftCAP = element.getFrontArc().getCAPDamage();
+                ASDamageVector ltCAP = element.getLeftArc().getCAPDamage();
+                ASDamageVector rtCAP = element.getRightArc().getCAPDamage();
+                ASDamageVector rrCAP = element.getRearArc().getCAPDamage();
+                ASDamageVector ftSCP = element.getFrontArc().getSCAPDamage();
+                ASDamageVector ltSCP = element.getLeftArc().getSCAPDamage();
+                ASDamageVector rtSCP = element.getRightArc().getSCAPDamage();
+                ASDamageVector rrSCP = element.getRearArc().getSCAPDamage();
+                double capScapDmg = ftCAP.S.damage + ftCAP.M.damage + ftCAP.L.damage;
+                capScapDmg += ltCAP.S.damage + ltCAP.M.damage + ltCAP.L.damage;
+                capScapDmg += rtCAP.S.damage + rtCAP.M.damage + rtCAP.L.damage;
+                capScapDmg += rrCAP.S.damage + rrCAP.M.damage + rrCAP.L.damage;
+                capScapDmg += ftSCP.S.damage + ftSCP.M.damage + ftSCP.L.damage;
+                capScapDmg += ltSCP.S.damage + ltSCP.M.damage + ltSCP.L.damage;
+                capScapDmg += rtSCP.S.damage + rtSCP.M.damage + rtSCP.L.damage;
+                capScapDmg += rrSCP.S.damage + rrSCP.M.damage + rrSCP.L.damage;
+                dmg += capScapDmg / 5;
+                if (element.isAnyTypeOf(WS, DS, SC)) {
+                    dmg /= 4;
+                }
+                if (element.isAnyTypeOf(SS, JS, SV)) {
+                    dmg /= 3;
+                }
+                offensiveValue = dmg;
+            }
+
+            double defensiveValue = 0.25 * getHighestMove(element);
+            report.addLine("Movement", getHighestMove(element) + " / 4", "" + defensiveValue);
+            if (getHighestMove(element) >= 10) {
+                defensiveValue += 1;
+                report.addLine("High Thrust", "", "+ " + 1);
+            }
+            defensiveValue += getLargeAeroDefensiveSPAMod(conversionData);
+            defensiveValue += 1.5d * element.getArmor() / (element.hasSPA(BAR) ? 2 : 1);
+            defensiveValue += element.getStructure();
+            defensiveValue += 0.5 * element.getThreshold() * element.getSize();
+            report.addResultLine("Defensive Value", "", "= " + defensiveValue);
+            report.addEmptyLine();
+
+            double subTotal = offensiveValue + defensiveValue;
+            report.addLine("Subtotal", offensiveValue + " + " + defensiveValue, "" + subTotal);
+            subTotal += addForceBonus(conversionData);
+
+            int pointValue = Math.max(1, (int)Math.round(subTotal));
+            report.addEmptyLine();
+            report.addResultLine("Base Point Value", "round normal", "" + pointValue);
+            return pointValue;
         }
         return 0;
     }
@@ -159,6 +227,7 @@ public class ASPointValueConverter {
             }
             newPointValue = element.getPointValue() + (4 - element.getSkill()) * multiplier;
         }
+        newPointValue = Math.min(newPointValue, 1);
         element.setPointValue(newPointValue);
         report.addLine("Skill-adjusted Point Value", "", "" + newPointValue);
     }
@@ -353,6 +422,20 @@ public class ASPointValueConverter {
         return result;
     }
 
+    private static double getLargeAeroDefensiveSPAMod(ASConverter.ConversionData conversionData) {
+        AlphaStrikeElement element = conversionData.element;
+
+        double result = 0;
+        result += processSPAMod("Defensive SPA", conversionData, PNT, e -> (double) (int) element.getSPA(PNT));
+        result += processSPAMod("Defensive SPA", conversionData, STL, e -> 2.0);
+        result += processSPAMod("Defensive SPA", conversionData, RCA, e -> {
+            double armorThird = Math.floor((double)element.getArmor() / 3);
+            double barFactor = element.hasSPA(BAR) ? 0.5 : 1;
+            return armorThird * barFactor;
+        });
+        return result;
+    }
+
     private static double getDefensiveDIR(ASConverter.ConversionData conversionData) {
         AlphaStrikeElement element = conversionData.element;
         CalculationReport report = conversionData.conversionReport;
@@ -484,7 +567,7 @@ public class ASPointValueConverter {
         for (String mode : element.getMovementModes()) {
             int mod = ASConverter.tmmForMovement(element.getMovement(mode), report);
             if (mode.equals("j")) {
-                highestJumpMod = mod;
+                highestJumpMod = mod + 1;
             } else {
                 highestNonJumpMod = Math.max(highestNonJumpMod, mod);
             }
@@ -543,7 +626,7 @@ public class ASPointValueConverter {
         double result = 0;
         if (element.getTMM() >= 2) {
             double dmgS = element.getStandardDamage().S.minimal ? 0.5 : element.getStandardDamage().S.damage;
-            double dmgM = element.getStandardDamage().M.minimal ? 1 : element.getStandardDamage().M.damage;
+            double dmgM = element.getStandardDamage().M.minimal ? 0.5 : element.getStandardDamage().M.damage;
             if (dmgM > 0) {
                 result = (element.getTMM() - 1) * dmgM;
             } else if (element.getTMM() >= 3) {

@@ -16,26 +16,28 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.utils;
+package megamek.utilities;
 
-import java.awt.Toolkit;
+import megamek.common.*;
+import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.loaders.EntityLoadingException;
+
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.*;
-import megamek.common.alphaStrike.ASUnitType;
-import megamek.common.alphaStrike.ASConverter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.loaders.EntityLoadingException;
-
+/**
+ * This utility converts all units that can be converted to AlphaStrike elements and outputs the
+ * stats to the clipboard. This can be pasted to Excel (best use the Text Import Wizard to set the column
+ * spacer to TAB and set the format of the Damage column to "Text").
+ */
 public class AlphaStrikeMassConvert {
     
-    private static final ASUnitType typeFilter = ASUnitType.BM;
-
     public static void main(String[] args) throws EntityLoadingException {
-        System.out.println("Starting AlphaStrike conversion for the unit type " + typeFilter);
+        System.out.println("Starting AlphaStrike conversion.");
         StringBuilder table = new StringBuilder(clipboardHeaderString());
         MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
         for (MechSummary unit : units) {
@@ -47,9 +49,7 @@ public class AlphaStrikeMassConvert {
                     || entity instanceof Tank || entity instanceof Infantry || entity instanceof Protomech) {
                 System.out.println(entity.getShortName());
                 AlphaStrikeElement ase = ASConverter.convert(entity);
-//                if (ase.getUnitType() == typeFilter) {
-                    table.append(clipboardElementString(ase));
-//                }
+                table.append(clipboardElementString(ase));
             }
         }
         StringSelection stringSelection = new StringSelection(table.toString());
@@ -92,17 +92,12 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getArmor() + "");
         stats.add(element.getStructure() + "");
         stats.add(element.usesThreshold() ? element.getThreshold() + "" : " ");
-        if (element.usesSML()) {
-            stats.add(element.getStandardDamage() + "");
-        } else if (element.usesSMLE()) {
-            stats.add(element.getStandardDamage() + "");
-        }
+        stats.add(element.getStandardDamage() + "");
         stats.add(element.getOverheat() + "");
         stats.add(element.getPointValue()+"");
-        stats.add(element.getSpecialsString());
+        stats.add(element.getSpecialsString(","));
         stats.add(element.getMulId() + "");
         stats.add("\n");
         return new StringBuilder(String.join("\t", stats));
     }
-
 }

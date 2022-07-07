@@ -19,9 +19,11 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,11 +34,18 @@ import java.util.Objects;
 
 public class ASConversionInfoDialog extends AbstractDialog {
 
-    private final FlexibleCalculationReport report;
+    private final CalculationReport report;
     private final Entity entity;
 
-    public ASConversionInfoDialog(final JFrame frame, FlexibleCalculationReport report, Entity entity) {
+    public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable Entity entity) {
         super(frame, false, "BVDisplayDialog", "BVDisplayDialog.title");
+        this.report = Objects.requireNonNull(report);
+        this.entity = entity;
+        initialize();
+    }
+
+    public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable Entity entity, boolean modal) {
+        super(frame, modal, "BVDisplayDialog", "BVDisplayDialog.title");
         this.report = Objects.requireNonNull(report);
         this.entity = entity;
         initialize();
@@ -46,7 +55,9 @@ public class ASConversionInfoDialog extends AbstractDialog {
     protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
         UIUtil.adjustDialog(getContentPane());
-        setTitle(getTitle() + " (" + entity.getShortName() + ")");
+        if (entity != null) {
+            setTitle(getTitle() + " (" + entity.getShortName() + ")");
+        }
         pack();
         Dimension screenSize = UIUtil.getScaledScreenSize(this);
         setSize(new Dimension(getSize().width, Math.min(getHeight(), (int) (screenSize.getHeight() * 0.8))));
@@ -55,9 +66,16 @@ public class ASConversionInfoDialog extends AbstractDialog {
     @Override
     protected Container createCenterPane() {
         JButton exportText = new JButton("Copy as Text");
-        exportText.addActionListener(evt -> copyToClipboard(report.getTextReport().toString()));
         JButton exportHTML = new JButton("Copy as HTML");
-        exportHTML.addActionListener(evt -> copyToClipboard(report.getHtmlReport().toString()));
+
+        if (report instanceof FlexibleCalculationReport) {
+            FlexibleCalculationReport flexReport = (FlexibleCalculationReport) report;
+            exportText.addActionListener(evt -> copyToClipboard(flexReport.getTextReport().toString()));
+            exportHTML.addActionListener(evt -> copyToClipboard(flexReport.getHtmlReport().toString()));
+        } else {
+            exportText.setEnabled(false);
+            exportHTML.setEnabled(false);
+        }
 
         var scrollPane = new JScrollPane(report.toJComponent(), ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

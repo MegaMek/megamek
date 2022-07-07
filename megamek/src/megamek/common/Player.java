@@ -279,10 +279,8 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * Hopefully, creates new singleBlind command that works only on bots
+     * Creates singleBlind command that works only on bots
      */
-
-
     public void setSingleBlind(boolean singleBlind) {
         seeEntireBoardBot = singleBlind;
     }

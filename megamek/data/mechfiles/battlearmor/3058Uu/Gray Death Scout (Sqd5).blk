@@ -2,8 +2,7 @@
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
+#Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -16,102 +15,93 @@ BattleArmor
 Gray Death Scout Suit
 </Name>
 
-<Model>
-'The Willow Wisps'(Sqd6)
-</Model>
+<model>
+(Standard)(Sqd5)
+</model>
 
 <mul id:>
-8888
+8525
 </mul id:>
 
-<year>
-3076
-</year>
+<Trooper Count>
+5
+</Trooper Count>
 
-<originalBuildYear>
-3076
-</originalBuildYear>
+<chassis>
+biped
+</chassis>
 
-<type>
-Mixed (IS Chassis) Advanced
-</type>
-
-<motion_type>
-Jump
-</motion_type>
-
-<transporters>
-</transporters>
+<weightclass>
+1
+</weightclass>
 
 <cruiseMP>
 1
 </cruiseMP>
 
+<jumpingMP>
+3
+</jumpingMP>
+
+<Armor>
+4
+</Armor>
+
 <armor_type>
-33
+28
 </armor_type>
 
-<armor_tech>
-1
-</armor_tech>
-
 <Squad Equipment>
-CLBAMicroPulseLaser:Body
+ISBAActiveProbe:Body
+ISBAJumpBooster:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-InfantryAssaultRifle:APM
-BAJumpBooster:Body
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
-IS BA Stealth (Improved):Body
-IS BA Stealth (Improved):LA
-IS BA Stealth (Improved):RA
-IS BA Stealth (Improved):RA
-IS BA Stealth (Improved):LA
+InfantryAssaultRifle:RA:APM
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
+<type>
+IS Level 2
+</type>
 
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
+<year>
+3052
+</year>
 
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
+<motion_type>
+Jump
+</motion_type>
 
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
+<source>
+TRO 3058U - Clan Invasion
+</source>
 
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
+<armor_tech>
+3
+</armor_tech>
 
-<Trooper 6 Equipment>
-</Trooper 6 Equipment>
+<overview>
+Gray Death Scout is a radical take on battle armor, almost taking the "battle" out of battle armor. 
+</overview>
 
 <capabilities>
 Though Gray Death Scout armor has no integral weapons, its Armored Gloves allow soldiers to wield standard small arms and perform other functions as normal. While this does not allow for very much damage potential against hardened targets, a scout squad can be a serious threat to unarmored infantry. The armored gloves, in combination with the suit's strength enhancements, allows the trooper to ride on OmniMechs via their handholds or perform anti-'Mech attacks. That the trooper's natural dexterity is otherwise unaffected by the suit is an added bonus for placing Satchel Charges in exposed 'Mech joints
 </capabilities>
 
-<overview>
-Gray Death Scout is a radical take on battle armor, almost taking the "battle" out of battle armor.
-</overview>
-
 <deployment>
-In 3076 Fox Infantry Systems rebuilt the Gray Death Legion scout armor used by the Willow Wisps, a group of female gladiators who compete on the Magistracy of Canopus world of Hardcore. The standard armor has been replaced by 240kg of Improved Stealth armor which, while providing the same level of protection, made them nearly impossible to hit. The suit was also redesigned using new composite joint systems to make them even more flexible than the original. In addition, the Active Probes were removed from all but one suit and replaced by a Clan Micro Pulse Laser.
+The Gray Death Scout's intelligence-gathering capabilities are enhanced with the inclusion of long-range communication systems and a Light Active Probe; the suit's sensors mimic the capabilities of a portable radar and infrared remote sensor. The suit was also the first to incorporate a Jump Booster which pushed its maximum jump range to 120 meters. However it is only protected by 200kg of standard armor and a single blast from a medium laser can obliterate both the armor and trooper.
 </deployment>
 
 <history>
 When the New Avalon Institute of Science sent prototypes of its Inner Sphere Standard to the Gray Death Legion, the mercenaries were duly impressed with many of its features. They also had a number of criticisms, sending a long list of improvements back to NAIS while Legion technicians went about with their own tinkering. By late 3051 the Legion had created two distinct suits from the original prototype: a Gray Death Standard similar in form and function of the Inner Sphere Standard, and a light "scout armor" suit. By stripping off more than half of the prototype's armor and its integrated weaponry, the technicians were able to improve the Scout's jumping and sensor capabilities, creating a suit suitable for deep reconnaissance missions. The Gray Death Scout armor made its combat debut in 3052, fighting alongside the Gray Death Standard to defeat Clan Jade Falcon forces on Pandora. After the end of the Clan Invasion the Legion continued to build new Scout suits to replace their losses and sell a small number to other mercenary commands. They also sold small numbers of Scout suits to the Lyran Alliance, although the Legion would pay for this support when they were destroyed during the FedCom Civil War on Hesperus II in 3065. Afterwards, survivors of the Legion created Gray Death Technologies and used financial aide from Defiance Industries to start producing both the Scout and Standard suits on Glengarry, selling them to the Lyran Alliance Armed Forces and other mercenaries. Production of the Gray Death Scout halted in 3074 following the destruction of Gray Death Technologies by Word of Blake forces. The remnants of the company were then absorbed by Defiance Industries, which transferred production of all Gray Death suits to Furillo in the later years of the Jihad.
 </history>
 
+
 <manufacturer>
-Foxx Infantry Sytesms (Refit)
+Defiance Industries,Gray Death Technologies
 </manufacturer>
 
 <primaryFactory>
-Hardcore
+Furillo,Glengary
 </primaryFactory>
 
 <systemManufacturers>
@@ -122,28 +112,3 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
-
-<source>
-XTR Gladiators - Jihad
-</source>
-
-<chassis>
-biped
-</chassis>
-
-<jumpingMP>
-3
-</jumpingMP>
-
-<armor>
-4
-</armor>
-
-<Trooper Count>
-6
-</Trooper Count>
-
-<weightclass>
-1
-</weightclass>
-

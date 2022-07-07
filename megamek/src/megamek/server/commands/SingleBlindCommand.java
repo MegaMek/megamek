@@ -18,7 +18,7 @@ import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
- * Allows a bot to see all units via /singleblind command.  Toggle.  Does not work on human players.
+ * Allows a bot to see all units via /singleblind command. Toggle. Does not work on human players.
  * 
  * @author copied from seeall command by Dave Smith by Thom293
  * @since July 3, 2022, 9:00pm

@@ -1,0 +1,129 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gorilla Exoskeleton
+</Name>
+
+<Model>
+PEX-2B(Sqd4)
+</Model>
+
+<mul id:>
+4225
+</mul id:>
+
+<year>
+3056
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BASalvageArm:LA
+BABasicManipulator:RA
+BACuttingTorch:Body
+BASearchlight:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO Vehicle Annex (r) - Clan Invasion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<exoskeleton>
+true
+</exoskeleton>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The PEX-2B Gorilla is an Industrial Exoskeleton which was designed as a modest-cost civilian exoskeleton. 
+</overview>
+
+<capabilities>
+The exoskeleton has been equipped with both Standard and Salvage Arm manipulators. The suit has been fitted out with a searchlight and cutting torch mounted on the body. It is protected with only 50 kilograms of standard armor. With its at maximum speed of 10 km/h, the suit is unsuited for battlefield salvage jobs.
+</capabilities>
+
+<deployment>
+</deployment>
+
+<history>
+The suit was created during the mid thirty-first century when Star League technology became available again. With the introduction of the Battle Armor, StarCorps used newly regained Star League technology to produce the exoskeleton. Aimed at smaller companies which wouldn't normally to be able purchase high-end Exoskeletons, StarCorps' gambit paid off. Tens of thousands of the suit have been sold across the Inner Sphere and Periphery. It has been particularly popular with the construction trades. Between 3068 and 3069, sales of the Gorilla spiked in the Arc-Royal Theater. Later investigation found that the survivors of Wolf's Dragoons were buying large numbers of the Gorilla and using them on Outreach.
+</history>
+
+
+<manufacturer>
+StarCorps Industries,StarCorps Industries,StarCorps Industries,StarCorps Industries
+</manufacturer>
+
+<primaryFactory>
+Crofton,Emris IV,Loburg,St. Ives
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

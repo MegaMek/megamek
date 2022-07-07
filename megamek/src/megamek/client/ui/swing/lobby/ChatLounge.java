@@ -2336,7 +2336,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         return true;
     }
 
-    // New SingleBlind - I dont think this is used.
     /**
      * Returns true if the local player can see all the given entities.
      * This is true except when a blind drop option is active and one or more

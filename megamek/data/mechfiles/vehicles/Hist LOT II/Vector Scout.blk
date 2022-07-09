@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ Vector Combat Support VTOL
 2730
 </year>
 
+<originalBuildYear>
+2730
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -35,6 +39,9 @@ IS Level 2
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 12
@@ -62,13 +69,13 @@ VTOL
 
 <Body Equipment>
 BeagleActiveProbe
-ISTAG
 </Body Equipment>
 
 <Front Equipment>
 ISSmallPulseLaser
 Medium Laser
 Medium Laser
+ISTAG
 </Front Equipment>
 
 <Right Equipment>
@@ -83,14 +90,6 @@ Medium Laser
 <Rotor Equipment>
 ISMastMount
 </Rotor Equipment>
-
-<source>
-HIST LOT II
-</source>
-
-<tonnage>
-22.0
-</tonnage>
 
 <capabilities>
 The Scout Vector replaced the infantry seats in place for a Beagle Active Probe and added a Small Laser with Target Acquisition Gear in the nose.
@@ -115,3 +114,12 @@ General Motors
 <primaryFactory>
 Outreach
 </primaryFactory>
+
+<source>
+HIST LOT II
+</source>
+
+<tonnage>
+22.0
+</tonnage>
+

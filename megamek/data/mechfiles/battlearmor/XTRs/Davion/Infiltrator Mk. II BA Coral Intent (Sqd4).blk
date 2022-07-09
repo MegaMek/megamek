@@ -1,0 +1,138 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Infiltrator Mk. II Battle Armor
+</Name>
+
+<Model>
+Coral Intent(Sqd4)
+</Model>
+
+<mul id:>
+1617
+</mul id:>
+
+<year>
+3074
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+36
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BADavidLightGaussRifle:RA
+BattleArmorC3:Body
+BAAPMount:LA
+Infantry Auto Rifle:APM:LA
+BABasicManipulator:LA
+BABasicManipulator:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:Body
+IS BA Mimetic:RA
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+XTRO Davion - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Infiltrator Mk. II is a battle armor suit designed as a replacement for the earlier Infiltrator Mk. I. 
+</overview>
+
+<capabilities>
+Although the Puma has just a top ground speed of 10.8 km/h, the inclusion of integral Jump Jets allows it to jump 90 meters at a time. The 360kg of Standard Stealth armor the Mk. II caries not only allows it to withstand a full burst from an Inner Sphere Medium Pulse Laser and keep fighting, it also mimics the effect of a combination IR/ECM Sneak Suit, continually recharged by the suit to allow indefinite operation. Providing additional electronic protection is a personal-sized ECM Suite. Finally the suit includes an optional Parafoil attachment that aids in HALO drops.
+</capabilities>
+
+<deployment>
+Originally an experimental testbed for Mimetic Armor, the CORAL INTENT prototypes, designed under supervising technician Kel Senn, were shelved until the Federated Suns received several Battle Armor C3 Systems from the Draconis Combine. As the C3 system couldn't function with the standard Infiltrator Mk. II's ECM Suite, the CORAL INTENT prototypes received the system. To provide some ranged attack capability, Federated-Barrett created the "Thunderstick", a clone of the "David" Light Gauss Rifle. The role of the CORAL INTENT prototypes is to sneak up close to enemy forces and provide targeting data to friendly units.
+</deployment>
+
+<history>
+The original Infiltrator had long served the Armed Forces of the Federated Commonwealth (as well as DMI and MIIO) as a stealth suit that was a capable scout and could easily penetrate enemy lines. It did, however, have a number of drawbacks to its design and as one of the first generation of battle armor it no longer served the needs of the Federated Commonwealth's intelligence agencies sufficiently. Despite this need for a replacement, it took some time for the Commonwealth to respond as they had more units to equip with battle armor than any other nation and were still in the midst of rebuilding many units shattered during the Clan Invasion. Initial research and development on the new suit began in February 3056, when the Intelligence Secretariat directed the Office of Science and Technology to coordinate with the New Avalon Institute of Science on a replacement, but it wasn't until a year later when they received a startling breakthrough. The Gray Death Legion had located an ancient Star League vault on Karbala and retrieved several Nighthawk power armor suits from the hidden cache. Under orders from his liege Archon-Prince Victor Steiner-Davion, Grayson Carlyle was forced to hand the suits over to the NAIS in August 3057, where they were dismantled entirely. The destruction of the Nighthawk suits provided invaluable data to the NAIS scientists, who in January 3059 began producing prototype suits; full-scale production would finally start in March 3060. The Infiltrator Mk. II, nicknamed the "Puma" by many troopers, proved to be superior to the original Infiltrator in nearly every way except cost. This was especially true when performing "direct actions" as the Mk. II was far more combat-capable than the original. Demand for the new suit exceeded supply in the early years - both FedCom intelligence agencies bought up nearly half of all Mk. IIs produced - and this shortage was only exacerbated after casualties suffered during the FedCom Civil War. Despite this the Mk. II could be found in most Regimental Combat Teams and dedicated special forces units for years to come.
+</history>
+
+<manufacturer>
+Achernar BattleMechs (Refit)
+</manufacturer>
+
+<primaryFactory>
+New Avalon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

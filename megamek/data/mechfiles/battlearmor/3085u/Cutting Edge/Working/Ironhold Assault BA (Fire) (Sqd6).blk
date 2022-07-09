@@ -1,0 +1,106 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Ironhold Assault Battle Armor
+</Name>
+
+<Model>
+(Fire)(Sqd6)
+</Model>
+
+<mul id:>
+8902
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+4
+</weightclass>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Armor>
+16
+</Armor>
+
+<armor_type>
+35
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBAAPGaussRifle:RA
+CLBAAPGaussRifle:LA
+CLBAAPGaussRifle:Body
+CLBAAPGaussRifle:Body
+BABasicManipulator:LA
+BABasicManipulator:RA
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:LA
+</Point Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+3082
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<overview>
+The Ironhold Assault Battle Armor was developed by Clan Jade Falcon during the Jihad. 
+</overview>
+
+<capabilities>
+The Ironhold is noted for being more mobile than typical Clan Assault Armor, where it can employ its Jump Jets and give itself better tactical advantage over its opponents.
+</capabilities>
+
+<deployment>
+The Fire variant of the Ironhold is geared as a more traditional Assault Battle Armor developed in 3082. It firepower is doubled by the addition of second pair of AP Gauss Rifles mounted on the main body. Due to stability issues, the Armor's Jump Jets have been removed. The armor type has been changed from Standard to Fire-Resistant Armor.
+</deployment>
+
+<history>
+The roots of the Ironhold go back to development of the Anti-Personnel Gauss Rifle in 3069. After the success of that weapon, a new project codenamed Project Ferrum was started to develop a new suit of battle armor with the support of the Elemental Trinary of 3rd Falcon Talon Cluster. Once development was completed, the Ironhold was successfully and covertly tested in the Periphery. It was believed that Ironhold could replace the Clan's ProtoMechs against Inner Sphere forces based on combat results. It wasn't until 3077 when the factory on Sudeten could be brought online to mass produce the suit. The mass-produced Ironholds first saw combat in June of '77 when deployed by Talon's Elemental Trinary with Devlin Stone's Coalition efforts on Shiloh. 
+</history>
+
+<manufacturer>
+Olivetti Weaponry
+</manufacturer>
+
+<primaryFactory>
+Sudeten
+</primaryFactory>

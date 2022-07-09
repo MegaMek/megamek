@@ -17,11 +17,11 @@ Djinn Battle Armor
 </Name>
 
 <Model>
-(Reflective) 'Terrorizer' [MG] (Sqd5)
+(Reflective) 'Terrorizer' [MG] (Sqd6)
 </Model>
 
 <mul id:>
-8714
+9078
 </mul id:>
 
 <year>
@@ -65,6 +65,24 @@ IS BA Reflective:Body
 ISBAMG:RA
 </Squad Equipment>
 
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
 <source>
 XTRO Most Wanted - Jihad
 </source>
@@ -82,7 +100,7 @@ biped
 </armor>
 
 <Trooper Count>
-5
+6
 </Trooper Count>
 
 <weightclass>

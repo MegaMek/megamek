@@ -138,50 +138,49 @@ public class ASPointValueConverter {
             report.addResultLine("Base Point Value", "round normal", "" + pointValue);
             return pointValue;
         } else if (element.isLargeAerospace()) {
-            double offensiveValue = 0;
+            double offensiveValue;
+            ASDamageVector ftStd = element.getFrontArc().getStdDamage();
+            ASDamageVector ltStd = element.getLeftArc().getStdDamage();
+            ASDamageVector rtStd = element.getRightArc().getStdDamage();
+            ASDamageVector rrStd = element.getRearArc().getStdDamage();
+            ASDamageVector ftMSL = element.getFrontArc().getMSLDamage();
+            ASDamageVector ltMSL = element.getLeftArc().getMSLDamage();
+            ASDamageVector rtMSL = element.getRightArc().getMSLDamage();
+            ASDamageVector rrMSL = element.getRearArc().getMSLDamage();
+            ASDamageVector ftCAP = element.getFrontArc().getCAPDamage();
+            ASDamageVector ltCAP = element.getLeftArc().getCAPDamage();
+            ASDamageVector rtCAP = element.getRightArc().getCAPDamage();
+            ASDamageVector rrCAP = element.getRearArc().getCAPDamage();
+            ASDamageVector ftSCP = element.getFrontArc().getSCAPDamage();
+            ASDamageVector ltSCP = element.getLeftArc().getSCAPDamage();
+            ASDamageVector rtSCP = element.getRightArc().getSCAPDamage();
+            ASDamageVector rrSCP = element.getRearArc().getSCAPDamage();
+            double stdMslDamage = ftStd.S.damage + ftStd.M.damage + ftStd.L.damage;
+            stdMslDamage += ltStd.S.damage + ltStd.M.damage + ltStd.L.damage;
+            stdMslDamage += rtStd.S.damage + rtStd.M.damage + rtStd.L.damage;
+            stdMslDamage += ftMSL.S.damage + ftMSL.M.damage + ftMSL.L.damage;
+            stdMslDamage += ltMSL.S.damage + ltMSL.M.damage + ltMSL.L.damage;
+            stdMslDamage += rtMSL.S.damage + rtMSL.M.damage + rtMSL.L.damage;
+            double capScapDmg = ftCAP.S.damage + ftCAP.M.damage + ftCAP.L.damage;
+            capScapDmg += ltCAP.S.damage + ltCAP.M.damage + ltCAP.L.damage;
+            capScapDmg += rtCAP.S.damage + rtCAP.M.damage + rtCAP.L.damage;
+            capScapDmg += ftSCP.S.damage + ftSCP.M.damage + ftSCP.L.damage;
+            capScapDmg += ltSCP.S.damage + ltSCP.M.damage + ltSCP.L.damage;
+            capScapDmg += rtSCP.S.damage + rtSCP.M.damage + rtSCP.L.damage;
             if (element.hasMovementMode("a")) {
-
+                offensiveValue = stdMslDamage + capScapDmg / 4;
             } else {
-                ASDamageVector ftStd = element.getFrontArc().getStdDamage();
-                ASDamageVector ltStd = element.getLeftArc().getStdDamage();
-                ASDamageVector rtStd = element.getRightArc().getStdDamage();
-                ASDamageVector rrStd = element.getRearArc().getStdDamage();
-                ASDamageVector ftMSL = element.getFrontArc().getMSLDamage();
-                ASDamageVector ltMSL = element.getLeftArc().getMSLDamage();
-                ASDamageVector rtMSL = element.getRightArc().getMSLDamage();
-                ASDamageVector rrMSL = element.getRearArc().getMSLDamage();
-                double dmg = ftStd.S.damage + ftStd.M.damage + ftStd.L.damage;
-                dmg += ltStd.S.damage + ltStd.M.damage + ltStd.L.damage;
-                dmg += rtStd.S.damage + rtStd.M.damage + rtStd.L.damage;
-                dmg += rrStd.S.damage + rrStd.M.damage + rrStd.L.damage;
-                dmg += ftMSL.S.damage + ftMSL.M.damage + ftMSL.L.damage;
-                dmg += ltMSL.S.damage + ltMSL.M.damage + ltMSL.L.damage;
-                dmg += rtMSL.S.damage + rtMSL.M.damage + rtMSL.L.damage;
-                dmg += rrMSL.S.damage + rrMSL.M.damage + rrMSL.L.damage;
-                ASDamageVector ftCAP = element.getFrontArc().getCAPDamage();
-                ASDamageVector ltCAP = element.getLeftArc().getCAPDamage();
-                ASDamageVector rtCAP = element.getRightArc().getCAPDamage();
-                ASDamageVector rrCAP = element.getRearArc().getCAPDamage();
-                ASDamageVector ftSCP = element.getFrontArc().getSCAPDamage();
-                ASDamageVector ltSCP = element.getLeftArc().getSCAPDamage();
-                ASDamageVector rtSCP = element.getRightArc().getSCAPDamage();
-                ASDamageVector rrSCP = element.getRearArc().getSCAPDamage();
-                double capScapDmg = ftCAP.S.damage + ftCAP.M.damage + ftCAP.L.damage;
-                capScapDmg += ltCAP.S.damage + ltCAP.M.damage + ltCAP.L.damage;
-                capScapDmg += rtCAP.S.damage + rtCAP.M.damage + rtCAP.L.damage;
+                stdMslDamage += rrStd.S.damage + rrStd.M.damage + rrStd.L.damage;
+                stdMslDamage += rrMSL.S.damage + rrMSL.M.damage + rrMSL.L.damage;
                 capScapDmg += rrCAP.S.damage + rrCAP.M.damage + rrCAP.L.damage;
-                capScapDmg += ftSCP.S.damage + ftSCP.M.damage + ftSCP.L.damage;
-                capScapDmg += ltSCP.S.damage + ltSCP.M.damage + ltSCP.L.damage;
-                capScapDmg += rtSCP.S.damage + rtSCP.M.damage + rtSCP.L.damage;
                 capScapDmg += rrSCP.S.damage + rrSCP.M.damage + rrSCP.L.damage;
-                dmg += capScapDmg / 5;
+                offensiveValue = stdMslDamage + capScapDmg / 5;
                 if (element.isAnyTypeOf(WS, DS, SC)) {
-                    dmg /= 4;
+                    offensiveValue /= 4;
                 }
                 if (element.isAnyTypeOf(SS, JS, SV)) {
-                    dmg /= 3;
+                    offensiveValue /= 3;
                 }
-                offensiveValue = dmg;
             }
 
             double defensiveValue = 0.25 * getHighestMove(element);
@@ -227,7 +226,7 @@ public class ASPointValueConverter {
             }
             newPointValue = element.getPointValue() + (4 - element.getSkill()) * multiplier;
         }
-        newPointValue = Math.min(newPointValue, 1);
+        newPointValue = Math.max(newPointValue, 1);
         element.setPointValue(newPointValue);
         report.addLine("Skill-adjusted Point Value", "", "" + newPointValue);
     }
@@ -423,6 +422,7 @@ public class ASPointValueConverter {
     }
 
     private static double getLargeAeroDefensiveSPAMod(ASConverter.ConversionData conversionData) {
+        //TODO
         AlphaStrikeElement element = conversionData.element;
 
         double result = 0;

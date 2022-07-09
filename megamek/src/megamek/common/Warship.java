@@ -282,11 +282,6 @@ public class Warship extends Jumpship {
     }
 
     @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        moves.put("", getWalkMP());
-    }
-
-    @Override
     public int getBattleForceStructurePoints() {
         return (int) Math.ceil(this.getSI() * 0.66);
     }

@@ -19,32 +19,45 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
-import megamek.client.ui.swing.AlphaStrikeViewPanel;
+import megamek.client.ui.swing.AlphaStrikeStatsTablePanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Locale;
 
+/**
+ * This non-modal dialog shows stats of one or more AlphaStrike elements in the form of a table.
+ * It shows a toggle to include pilot stats when converting the units from TW to
+ * AS. It also allows export of the table data (optimized for import into Excel).
+ */
 public class AlphaStrikeStatsDialog extends AbstractDialog {
     
     private final Collection<Entity> entities;
-    private final MMToggleButton moveToggle = new MMToggleButton("Movement in Hexes");
     private final MMToggleButton pilotToggle = new MMToggleButton("Include Pilot");
     private final JButton clipBoardButton = new JButton("Copy to Clipboard");
     private JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
+    private static final String EXPORT_DELIMITER = "\t";
 
-    public AlphaStrikeStatsDialog(JFrame frame, Collection<Entity> en) {
+    /**
+     * Creates a non-modal dialog that shows AlphaStrike stats for the given entities. The
+     * collection may include entities that cannot be converted to AlphaStrike; those will
+     * be filtered out.
+     *
+     * @param frame The parent frame for this dialog
+     * @param entities The entities to convert and show.
+     */
+    public AlphaStrikeStatsDialog(JFrame frame, Collection<Entity> entities) {
         super(frame, "AlphaStrikeStatsDialog", "AlphaStrikeStatsDialog.title");
-        entities = en;
+        this.entities = new ArrayList<>(entities);
         initialize();
         UIUtil.adjustDialog(this);
     }
@@ -55,10 +68,8 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         
         var optionsPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         optionsPanel.add(Box.createVerticalStrut(25));
-        optionsPanel.add(moveToggle);
         optionsPanel.add(pilotToggle);
         optionsPanel.add(clipBoardButton);
-        moveToggle.addActionListener(e -> setupTable());
         pilotToggle.addActionListener(e -> setupTable());
         clipBoardButton.addActionListener(e -> copyToClipboard());
         
@@ -73,7 +84,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     
     private void setupTable() {
         centerPanel.remove(scrollPane);
-        var asPanel = new AlphaStrikeViewPanel(entities, moveToggle.isSelected(), pilotToggle.isSelected(), getFrame());
+        var asPanel = new AlphaStrikeStatsTablePanel(getFrame(), entities, pilotToggle.isSelected());
         scrollPane = new JScrollPane(asPanel);
         centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
@@ -88,47 +99,56 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     /** Returns a String representing the entities to export to the clipboard. */
     private String clipboardString(Collection<Entity> entities) {
         StringBuilder result = new StringBuilder();
-        result.append("Unit");
-        result.append("Type");
-        result.append("SZ");
-        result.append("TMM");
-        result.append("MV");
-        result.append("Role");
-        result.append("Dmg S/M/L");
-        result.append("OV");
-        result.append("Arm/Str");
-        result.append("PV");
-        result.append("Specials");
-        
-        for (Entity entity: entities) {
-            var element = ASConverter.convert(entity);
-//                result.append(entity.getShortName());
-//                result.append(element.getUnitType().toString());
-//                result.append(element.getSize() + "");
-//                result.append(element.getTargetMoveModifier()+"");
-//                if (moveToggle.isSelected()) {
-//                    result.append("" + element.getPrimaryMovementValue()/2);
-//                } else {
-//                    result.append(element.getMovementAsString());
-//                }
-//                result.append(UnitRoleHandler.getRoleFor(entity).toString());
-//                result.append(element.calcHeatCapacity(entity)+"");
-//                result.append(element.getFinalArmor() + "/" + element.getStructure());
-//                result.append(element.getFinalPoints()+"");
-//                result.append("?");
-            Locale cl = Locale.getDefault();
-            NumberFormat numberFormatter = NumberFormat.getNumberInstance(cl);
-//            result.append(numberFormatter.format(entity.getWeight())).append("\t");
-//            // Pilot name
-//            result.append(entity.getCrew().getName()).append("\t");
-//            // Crew Skill with text
-//            result.append(CrewSkillSummaryUtil.getSkillNames(entity)).append(": ")
-//                    .append(entity.getCrew().getSkillsAsString(false)).append("\t");
-//            // BV without C3 but with pilot (as that gets exported too)
-//            result.append(entity.calculateBattleValue(true, false)).append("\t");
-            result.append("\n");
-        }
+        result.append("Chassis").append(EXPORT_DELIMITER);
+        result.append("Model").append(EXPORT_DELIMITER);
+        result.append("Type").append(EXPORT_DELIMITER);
+        result.append("SZ").append(EXPORT_DELIMITER);
+        result.append("TMM").append(EXPORT_DELIMITER);
+        result.append("MV (THR)").append(EXPORT_DELIMITER);
+        result.append("Role").append(EXPORT_DELIMITER);
+        result.append("Dmg S/M/L").append(EXPORT_DELIMITER);
+        result.append("OV").append(EXPORT_DELIMITER);
+        result.append("Arm").append(EXPORT_DELIMITER);
+        result.append("Str").append(EXPORT_DELIMITER);
+        result.append("Th").append(EXPORT_DELIMITER);
+        result.append("Skill").append(EXPORT_DELIMITER);
+        result.append("PV").append(EXPORT_DELIMITER);
+        result.append("Specials").append(EXPORT_DELIMITER);
+        result.append("\n");
+        entities.stream().filter(ASConverter::canConvert)
+                .map(e -> ASConverter.convert(e, pilotToggle.isSelected()))
+                .forEach(e -> result.append(dataLine(e)));
         return result.toString();
+    }
+
+    /** Returns a StringBuilder containing the data for one AS element. */
+    private StringBuilder dataLine(AlphaStrikeElement element) {
+        StringBuilder dataLine = new StringBuilder();
+        dataLine.append("=\"").append(element.getChassis()).append("\"").append(EXPORT_DELIMITER);
+        dataLine.append("=\"").append(element.getModel()).append("\"").append(EXPORT_DELIMITER);
+        dataLine.append(element.getType()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getSize()).append(EXPORT_DELIMITER);
+        dataLine.append(element.isAerospace() ? "" : element.getTMM()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getMovementAsString()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getRole()).append(EXPORT_DELIMITER);
+        dataLine.append("=\"").append(element.usesArcs() ? "" : " " + element.getStandardDamage()).append("\"").append(EXPORT_DELIMITER);
+        dataLine.append(element.usesOV() ? element.getOverheat() : "").append(EXPORT_DELIMITER);
+        dataLine.append(element.getArmor()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getStructure()).append(EXPORT_DELIMITER);
+        dataLine.append(element.usesThreshold() ? element.getThreshold() : "").append(EXPORT_DELIMITER);
+        dataLine.append(element.getSkill()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getPointValue()).append(EXPORT_DELIMITER);
+        if (element.usesArcs()) {
+            dataLine.append(element.getSpecialsString()).append(EXPORT_DELIMITER);
+            dataLine.append("FRONT(").append(element.getFrontArc().toString()).append(")").append(EXPORT_DELIMITER);
+            dataLine.append("LEFT(").append(element.getLeftArc().toString()).append(")").append(EXPORT_DELIMITER);
+            dataLine.append("RIGHT(").append(element.getRightArc().toString()).append(")").append(EXPORT_DELIMITER);
+            dataLine.append("REAR(").append(element.getRearArc().toString()).append(")");
+        } else {
+            dataLine.append(element.getSpecialsString());
+        }
+        dataLine.append("\n");
+        return dataLine;
     }
 
 }

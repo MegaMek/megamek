@@ -120,7 +120,11 @@ public class ASSpecialAbilityCollection {
                 || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
             return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
         } else if (spa.isTransport()) {
-            return spa + spaObject.toString() + "-D" + element.getSPA(spa.getDoor());
+            String result = spa + spaObject.toString();
+            if (element.hasSPA(spa.getDoor()) && ((int) element.getSPA(spa.getDoor()) > 0)) {
+                result += "-D" + element.getSPA(spa.getDoor());
+            }
+            return result;
         } else {
             return spa.toString() + (spaObject != null ? spaObject : "");
         }

@@ -286,7 +286,7 @@ final class ASDamageConverter {
                             addSPAToArcs(MSL, m, entity, element);
                         }
 
-                        // MSL missile special ability for Large Aero
+                        // SCAP missile special ability for Large Aero
                         if (!element.usesCapitalWeapons() && element.isAerospace()
                                 && ((WeaponType) m.getType()).getBattleForceClass() == WeaponType.BFCLASS_SUBCAPITAL) {
                             addSPAToArcs(SCAP, m, entity, element);
@@ -472,65 +472,69 @@ final class ASDamageConverter {
 
         if (element.usesArcs()) {
             // Large Aero (using Arcs)
-            element.getFrontArc().setStdDamage(ASDamageVector.createUpRndDmg(
-                    element.weaponLocations[0].standardDamage, 4));
-            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-                element.getFrontArc().setSCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-            }
-            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-                element.getFrontArc().setCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-            }
-            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-                element.getFrontArc().setMSLDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-            }
-
-            element.getRearArc().setStdDamage(ASDamageVector.createUpRndDmg(
-                    element.weaponLocations[3].standardDamage, 4));
-            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-                element.getRearArc().setSCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-            }
-            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-                element.getRearArc().setCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-            }
-            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-                element.getRearArc().setMSLDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-            }
-
-            element.getLeftArc().setStdDamage(ASDamageVector.createUpRndDmg(
-                    element.weaponLocations[1].standardDamage, 4));
-            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-                element.getLeftArc().setSCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-            }
-            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-                element.getLeftArc().setCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-            }
-            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-                element.getLeftArc().setMSLDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-            }
-
-            element.getRightArc().setStdDamage(ASDamageVector.createUpRndDmg(
-                    element.weaponLocations[2].standardDamage, 4));
-            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-                element.getRightArc().setSCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-            }
-            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-                element.getRightArc().setCAPDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-            }
-            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-                element.getRightArc().setMSLDamage(ASDamageVector.createUpRndDmg(
-                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-            }
+            setArcDamage(element, 0, element.getFrontArc());
+            setArcDamage(element, 1, element.getLeftArc());
+            setArcDamage(element, 2, element.getRightArc());
+            setArcDamage(element, 3, element.getRearArc());
+//            element.getFrontArc().setStdDamage(ASDamageVector.createUpRndDmg(
+//                    element.weaponLocations[0].standardDamage, 4));
+//            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
+//                element.getFrontArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
+//            }
+//            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
+//                element.getFrontArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
+//            }
+//            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
+//                element.getFrontArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
+//            }
+//
+//            element.getRearArc().setStdDamage(ASDamageVector.createUpRndDmg(
+//                    element.weaponLocations[3].standardDamage, 4));
+//            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
+//                element.getRearArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
+//            }
+//            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
+//                element.getRearArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
+//            }
+//            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
+//                element.getRearArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
+//            }
+//
+//            element.getLeftArc().setStdDamage(ASDamageVector.createUpRndDmg(
+//                    element.weaponLocations[1].standardDamage, 4));
+//            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
+//                element.getLeftArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
+//            }
+//            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
+//                element.getLeftArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
+//            }
+//            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
+//                element.getLeftArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
+//            }
+//
+//            element.getRightArc().setStdDamage(ASDamageVector.createUpRndDmg(
+//                    element.weaponLocations[2].standardDamage, 4));
+//            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
+//                element.getRightArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
+//            }
+//            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
+//                element.getRightArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
+//            }
+//            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
+//                element.getRightArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
+//                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
+//            }
         } else {
             // Standard damage
             element.setStandardDamage(ASDamageVector.createUpRndDmg(
@@ -726,7 +730,7 @@ final class ASDamageConverter {
         report.addLine("Resulting Overheat", "OV " + element.getOverheat());
 
         // Determine OVL from long range damage and heat
-        if (element.getOverheat() > 0 && element.usesOVL()) {
+        if (element.getOverheat() > 0 && element.usesOV()) {
             double heatLong = getHeatGeneration(entity, element, false, true);
             report.addLine("Total Heat L:", "", heatLong);
             if (heatLong - 4 > heatCapacity) {
@@ -739,7 +743,7 @@ final class ASDamageConverter {
             }
         }
 
-        // Adjust all weapon damages (L/E depending on OVL)
+        // Adjust all weapon damages (E for units with OVL and arced units, M otherwise)
         int maxAdjustmentRange = 1 + ((element.hasSPA(OVL) || element.usesArcs()) ? RANGE_BAND_EXTREME : RANGE_BAND_MEDIUM);
         double frontadjustment = (double) heatCapacity / (totalFrontHeat - 4);
         double rearHeat = getHeatGeneration(entity, element,true, false);
@@ -975,6 +979,21 @@ final class ASDamageConverter {
         }
         if (entity.getBattleForceLocationMultiplier(3, mount.getLocation(), mount.isRearMounted()) != 0) {
             element.getRearArc().getSpecials().addSPA(spa);
+        }
+    }
+
+    private static void setArcDamage(AlphaStrikeElement element, int loc, ASArcSummary arc) {
+        ASConverter.WeaponLocation wpLoc = element.weaponLocations[loc];
+        Map<Integer, List<Double>> specialDmg = wpLoc.specialDamage;
+        arc.setStdDamage(ASDamageVector.createUpRndDmg(wpLoc.standardDamage, 4));
+        if (wpLoc.hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
+            arc.setSCAPDamage(ASDamageVector.createUpRndDmgMinus(specialDmg.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
+        }
+        if (wpLoc.hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
+            arc.setCAPDamage(ASDamageVector.createUpRndDmgMinus(specialDmg.get(WeaponType.BFCLASS_CAPITAL), 4));
+        }
+        if (wpLoc.hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
+            arc.setMSLDamage(ASDamageVector.createUpRndDmgMinus(specialDmg.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
         }
     }
 

@@ -57,7 +57,6 @@ public class AlphaStrikeMassConvert {
         clipboard.setContents(stringSelection, null);
         System.out.println("Finished.");
         System.exit(0);
-
     }
     
     private static String clipboardHeaderString() {

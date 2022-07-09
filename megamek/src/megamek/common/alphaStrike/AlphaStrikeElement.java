@@ -18,13 +18,10 @@
  */
 package megamek.common.alphaStrike;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.UnitRole;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.Quirks;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -69,9 +66,6 @@ public class AlphaStrikeElement {
     private int mulId = -1;
     private int pointValue;
 
-    /** Contains the conversion report *if* this element was converted from a TW entity. */
-    private CalculationReport conversionReport;
-
     private ASUnitType asUnitType;
     private int size;
     private int tmm;
@@ -83,7 +77,7 @@ public class AlphaStrikeElement {
      * The normal damage values of a ground unit (S/M/L) or fighter (S/M/L/E).
      * Large Aerospace and large SV use the arcs field instead.
      */
-    private ASDamageVector standardDamage;
+    private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat;
 
     // The arcs of Large Aerospace units. Other units use standardDamage instead
@@ -123,7 +117,7 @@ public class AlphaStrikeElement {
 
     private int armor;
     private int structure;
-    private int threshold = -1;
+    private int threshold = 0;
 
     /** Battle Armor squad size. */
     private int squadSize;
@@ -249,10 +243,6 @@ public class AlphaStrikeElement {
         return squadSize;
     }
 
-    public CalculationReport getConversionReport() {
-        return conversionReport;
-    }
-
     public ASSpecialAbilityCollection getSpecialAbs() {
         return specialAbs;
     }
@@ -346,11 +336,6 @@ public class AlphaStrikeElement {
         squadSize = newSquadSize;
     }
 
-    /** Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA. */
-    public void setConversionReport(CalculationReport report) {
-        conversionReport = report;
-    }
-
     public AlphaStrikeElement() {
         
     }
@@ -396,73 +381,6 @@ public class AlphaStrikeElement {
         specialAbs.addSPA(spa);
     }
 
-    /** 
-     * NEW version - Adds a Special Unit Ability associated with an integer number such as C3M#. If
-     * that SPA is already present, the given number is added to the one already present. If the present
-     * number is a Double type value, that type is preserved.
-     */
-//    public void addSPA(BattleForceSPA spa, int number) {
-//        if (!specialUnitAbilities.containsKey(spa)) {
-//            specialUnitAbilities.put(spa, number);
-//        } else {
-//            if (specialUnitAbilities.get(spa) instanceof Integer) {
-//                specialUnitAbilities.put(spa, (int) specialUnitAbilities.get(spa) + number);
-//            } else if (specialUnitAbilities.get(spa) instanceof Double) {
-//                specialUnitAbilities.put(spa, (double) specialUnitAbilities.get(spa) + number);
-//            }
-//        }
-//    }
-    
-    /** 
-     * NEW version - Adds a Special Unit Ability associated with a possibly non-integer number such 
-     * as MHQ2. If that SPA is already present, the given number is added to the one already present.
-     * if the previosly present number was an integer, it will be converted to a Double type value.
-     */
-//    public void addSPA(BattleForceSPA spa, double number) {
-//        if (!specialUnitAbilities.containsKey(spa)) {
-//            specialUnitAbilities.put(spa, number);
-//        } else {
-//            if (specialUnitAbilities.get(spa) instanceof Integer) {
-//                specialUnitAbilities.put(spa, (int)specialUnitAbilities.get(spa) + number);
-//            } else if (specialUnitAbilities.get(spa) instanceof Double) {
-//                specialUnitAbilities.put(spa, (double)specialUnitAbilities.get(spa) + number);
-//            }
-//        }
-//    }
-    
-    /** 
-     * NEW version - Replaces the value associated with a Special Unit Ability with the given Object.
-     * The previously present associated Object, if any, is discarded. If the ability was not present, 
-     * it is added.  
-     */
-//    public void replaceSPA(BattleForceSPA spa, Object newValue) {
-//        specialUnitAbilities.put(spa, newValue);
-//    }
-    
-    /** 
-     * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
-     * that SPA is already present, the new damage value replaces the former.
-     */
-//    public void addSPA(BattleForceSPA spa, ASDamage damage) {
-//        specialUnitAbilities.put(spa, damage);
-//    }
-    
-    /** 
-     * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
-     * that SPA is already present, the new damage value replaces the former.
-     */
-//    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
-//        specialUnitAbilities.put(spa, damage);
-//    }
-
-    /**
-     * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
-     * that SPA is already present, the new value replaces the former.
-     */
-//    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
-//        specialUnitAbilities.put(spa, value);
-//    }
-    
     /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
     public void addTurSPA(List<List<Object>> turAbility) {
         specialUnitAbilities.put(TUR, turAbility);
@@ -617,33 +535,6 @@ public class AlphaStrikeElement {
         return isType(CV) && getPrimaryMovementType().equals("s");
     }
 
-    public void writeCsv(BufferedWriter w) throws IOException {
-        w.write(getName());
-        w.write("\t");
-        w.write(getType() + "");
-        w.write("\t");
-        w.write(getSize() + "");
-        w.write("\t");
-        w.write(getMovementAsString());
-        w.write("\t");
-        w.write(getTMM() + "");
-        w.write("\t");
-        w.write(getArmor() + "");
-        w.write("\t");
-        w.write(getThreshold() + "");
-        w.write("\t");
-        w.write(getStructure() + "");
-        w.write("\t");
-        w.write(getStandardDamage() + "");
-        w.write("\t");
-        w.write(getOverheat() + "");
-        w.write("\t");
-        w.write(getPointValue() + "");
-        w.write("\t");
-        w.write(getSpecialsString());
-        w.newLine();
-    }
-
     /**
      * Creates the formatted SPA string for the given spa and SPA value (the object assigned
      * to the SPA such as an ASDamageVector). For turrets this includes everything in that
@@ -682,8 +573,8 @@ public class AlphaStrikeElement {
         return specialAbs.getSPA(spa);
     }
 
-    /** @return True when this AS element is of a type that can have the OVL ability (BM and AF). */
-    public boolean usesOVL() {
+    /** @return True when this AS element is of a type that can have the OV and OVL abilities (BM and AF). */
+    public boolean usesOV() {
         return isAnyTypeOf(BM, AF);
     }
 

@@ -18,11 +18,11 @@
  */
 package megamek.client.ui.swing.alphaStrike;
 
-import megamek.client.ui.dialogs.ASConversionInfoDialog;
-import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.MMConstants;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -30,6 +30,7 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.net.URL;
 
 /**
  * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of
@@ -41,20 +42,19 @@ public class ConfigurableASCardPanel extends JPanel {
     private final JComboBox<String> fontChooser = new JComboBox<>();
     private final JComboBox<Float> sizeChooser = new JComboBox<>();
     private final JButton copyButton = new JButton("Copy to Clipboard");
-    private final JButton reportButton = new JButton("Show Conversion Report");
+    private final JButton mulButton = new JButton("MUL");
     private final ASCardPanel cardPanel = new ASCardPanel();
-    private CalculationReport report;
-    private final JFrame parentFrame;
+    private int mulId;
 
     /**
      * Constructs a panel with the given AlphaStrike element to display.
      *
      * @param element The AlphaStrike element to display
      */
-    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element, JFrame frame) {
-        parentFrame = frame;
+    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element) {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
+        fontChooser.addItem("");
         for (String family : GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
             fontChooser.addItem(family);
         }
@@ -71,20 +71,22 @@ public class ConfigurableASCardPanel extends JPanel {
         sizeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> new JLabel(Float.toString(value)));
 
         copyButton.addActionListener(ev -> copyCardToClipboard());
-        reportButton.addActionListener(e -> showConversionReport());
+
+        mulButton.addActionListener(ev -> showMUL());
+        mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
 
         var chooserLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         chooserLine.setBorder(new EmptyBorder(10, 0, 10, 0));
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(new JLabel("Font: "));
         chooserLine.add(fontChooser);
-        chooserLine.add(Box.createHorizontalStrut(25));
+        chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(new JLabel("Card Size: "));
         chooserLine.add(sizeChooser);
-        chooserLine.add(Box.createHorizontalStrut(25));
+        chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(copyButton);
-        chooserLine.add(Box.createHorizontalStrut(25));
-        chooserLine.add(reportButton);
+        chooserLine.add(Box.createHorizontalStrut(15));
+        chooserLine.add(mulButton);
 
         var cardLine = new JScrollPane(cardPanel);
         cardPanel.setBorder(new EmptyBorder(5, 65, 0, 0));
@@ -97,8 +99,8 @@ public class ConfigurableASCardPanel extends JPanel {
     }
 
     /** Construct a new panel without an AlphaStrike element to display. */
-    public ConfigurableASCardPanel(JFrame frame) {
-        this(null, frame);
+    public ConfigurableASCardPanel() {
+        this(null);
     }
 
     /**
@@ -107,20 +109,18 @@ public class ConfigurableASCardPanel extends JPanel {
      * @param element The AlphaStrike element to display
      */
     public void setASElement(@Nullable AlphaStrikeElement element) {
-        report = (element != null) ? element.getConversionReport() : null;
         cardPanel.setASElement(element);
+        mulId = (element != null) ? element.getMulId() : -1;
+        mulButton.setEnabled(mulId > 0);
     }
 
     /** Set the card to use a newly selected font. */
     private void updateFont() {
-        Font font = Font.decode((String) fontChooser.getSelectedItem());
-        cardPanel.setCardFont(font);
-    }
-
-    /** Set the card to use a newly selected font. */
-    private void showConversionReport() {
-        if (report != null) {
-            new ASConversionInfoDialog(parentFrame, report, null, true).setVisible(true);
+        String selectedItem = (String) fontChooser.getSelectedItem();
+        if ((selectedItem == null) || selectedItem.isBlank()) {
+            cardPanel.setCardFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+        } else {
+            cardPanel.setCardFont(Font.decode(selectedItem));
         }
     }
 
@@ -129,6 +129,17 @@ public class ConfigurableASCardPanel extends JPanel {
         if (sizeChooser.getSelectedItem() != null) {
             cardPanel.setScale((Float) sizeChooser.getSelectedItem());
             invalidate();
+        }
+    }
+
+    private void showMUL() {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + mulId).toURI());
+            }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 

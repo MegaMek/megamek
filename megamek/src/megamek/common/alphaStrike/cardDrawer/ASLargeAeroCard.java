@@ -345,46 +345,82 @@ public class ASLargeAeroCard extends ASCard {
     @Override
     protected void paintHits(Graphics2D g) {
         ASCard.drawBox(g, 36, 410, 490, 227, Color.LIGHT_GRAY, BOX_STROKE);
+        if (element.isAnyTypeOf(WS, SS, JS)) {
+            new StringDrawer("CRITICAL HITS").at(281, 435).center().font(headerFont).maxWidth(450).draw(g);
 
-        new StringDrawer("CRITICAL HITS").at(281, 429).center().font(headerFont).maxWidth(450).draw(g);
+            new StringDrawer("CREW").at(168, 482).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("{").at(281, 482).centerY().font(specialsFont).draw(g);
+            new StringDrawer("+2 Weapon To-Hit Each").at(289, 472).centerY().font(specialsFont).maxWidth(225).draw(g);
+            new StringDrawer("+2 Controll Roll Each").at(289, 492).centerY().font(specialsFont).maxWidth(225).draw(g);
+            drawDamagePip(g, 173, 482);
+            drawDamagePip(g, 200, 482);
+            drawDamagePip(g, 227, 482);
+            drawDamagePip(g, 254, 482);
 
-        new StringDrawer("CREW").at(168, 463).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-        new StringDrawer("{").at(227, 463).centerY().font(specialsFont).draw(g);
-        new StringDrawer("+2 Weapon To-Hit Each").at(235, 453).centerY().font(specialsFont).maxWidth(274).draw(g);
-        new StringDrawer("+2 Controll Roll Each").at(235, 473).centerY().font(specialsFont).maxWidth(274).draw(g);
-        drawDamagePip(g, 173, 463);
-        drawDamagePip(g, 200, 463);
+            new StringDrawer("ENGINE").at(168, 516).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("-25%/-50%/-100% THR").at(253, 516).centerY().font(specialsFont).maxWidth(260).draw(g);
+            drawDamagePip(g, 173, 516);
+            drawDamagePip(g, 200, 516);
+            drawDamagePip(g, 227, 516);
 
-        new StringDrawer("ENGINE").at(168, 494).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-        new StringDrawer("-25%/-50%/-100% THR").at(253, 494).centerY().font(specialsFont).maxWidth(260).draw(g);
-        drawDamagePip(g, 173, 494);
-        drawDamagePip(g, 200, 494);
-        drawDamagePip(g, 227, 494);
+            new StringDrawer("FIRE CONTROL").at(168, 550).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("+2 To-Hit Each").at(279, 550).centerY().font(specialsFont).maxWidth(233).draw(g);
+            drawDamagePip(g, 173, 550);
+            drawDamagePip(g, 200, 550);
+            drawDamagePip(g, 227, 550);
+            drawDamagePip(g, 254, 550);
 
-        new StringDrawer("FIRE CONTROL").at(168, 520).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-        new StringDrawer("+2 To-Hit Each").at(279, 520).centerY().font(specialsFont).maxWidth(233).draw(g);
-        drawDamagePip(g, 173, 520);
-        drawDamagePip(g, 200, 520);
-        drawDamagePip(g, 227, 520);
-        drawDamagePip(g, 254, 520);
+            new StringDrawer("THRUSTER").at(168, 584).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("-1 Thrust (THR)").at(199, 584).centerY().font(specialsFont).maxWidth(313).draw(g);
+            drawDamagePip(g, 173, 584);
 
-        new StringDrawer("KF BOOM").at(168, 547).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-        new StringDrawer("Cannot transport via JumpShip").at(199, 547).centerY().font(specialsFont).maxWidth(313).draw(g);
-        drawDamagePip(g, 173, 547);
+            new StringDrawer("WEAPONS").at(168, 618).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("See Back").at(281, 618).centerY().font(specialsFont).maxWidth(313).draw(g);
 
-        new StringDrawer("DOCK COLLAR").at(168, 572).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-        new StringDrawer("DropShip only; cannot dock").at(199, 572).centerY().font(specialsFont).maxWidth(313).draw(g);
-        drawDamagePip(g, 173, 572);
+            for (int x = 180; x <= 270; x += 4) {
+                g.fillRect(x, 617, 2, 2);
+            }
+        } else {
+            new StringDrawer("CRITICAL HITS").at(281, 429).center().font(headerFont).maxWidth(450).draw(g);
 
-        new StringDrawer("THRUSTER").at(168, 598).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-        new StringDrawer("-1 Thrust (THR)").at(199, 598).centerY().font(specialsFont).maxWidth(313).draw(g);
-        drawDamagePip(g, 173, 598);
+            new StringDrawer("CREW").at(168, 463).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("{").at(227, 463).centerY().font(specialsFont).draw(g);
+            new StringDrawer("+2 Weapon To-Hit Each").at(235, 453).centerY().font(specialsFont).maxWidth(274).draw(g);
+            new StringDrawer("+2 Controll Roll Each").at(235, 473).centerY().font(specialsFont).maxWidth(274).draw(g);
+            drawDamagePip(g, 173, 463);
+            drawDamagePip(g, 200, 463);
 
-        new StringDrawer("WEAPONS").at(168, 624).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
-        new StringDrawer("See Back").at(281, 624).centerY().font(specialsFont).maxWidth(313).draw(g);
+            new StringDrawer("ENGINE").at(168, 494).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("-25%/-50%/-100% THR").at(253, 494).centerY().font(specialsFont).maxWidth(260).draw(g);
+            drawDamagePip(g, 173, 494);
+            drawDamagePip(g, 200, 494);
+            drawDamagePip(g, 227, 494);
 
-        for (int x = 180; x <= 270; x += 4) {
-            g.fillRect(x, 623, 2, 2);
+            new StringDrawer("FIRE CONTROL").at(168, 520).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("+2 To-Hit Each").at(279, 520).centerY().font(specialsFont).maxWidth(233).draw(g);
+            drawDamagePip(g, 173, 520);
+            drawDamagePip(g, 200, 520);
+            drawDamagePip(g, 227, 520);
+            drawDamagePip(g, 254, 520);
+
+            new StringDrawer("KF BOOM").at(168, 547).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("Cannot transport via JumpShip").at(199, 547).centerY().font(specialsFont).maxWidth(313).draw(g);
+            drawDamagePip(g, 173, 547);
+
+            new StringDrawer("DOCK COLLAR").at(168, 572).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("DropShip only; cannot dock").at(199, 572).centerY().font(specialsFont).maxWidth(313).draw(g);
+            drawDamagePip(g, 173, 572);
+
+            new StringDrawer("THRUSTER").at(168, 598).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("-1 Thrust (THR)").at(199, 598).centerY().font(specialsFont).maxWidth(313).draw(g);
+            drawDamagePip(g, 173, 598);
+
+            new StringDrawer("WEAPONS").at(168, 624).useConfig(hitsTitleConfig).maxWidth(125).draw(g);
+            new StringDrawer("See Back").at(281, 624).centerY().font(specialsFont).maxWidth(313).draw(g);
+
+            for (int x = 180; x <= 270; x += 4) {
+                g.fillRect(x, 623, 2, 2);
+            }
         }
     }
 

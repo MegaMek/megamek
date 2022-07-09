@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
@@ -35,19 +36,28 @@ import java.util.Objects;
 public class ASConversionInfoDialog extends AbstractDialog {
 
     private final CalculationReport report;
-    private final Entity entity;
+    private final String unitName;
+
+    public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable AlphaStrikeElement element) {
+        this(frame, report, element.getName(), false);
+    }
+
+    public ASConversionInfoDialog(final JFrame frame, CalculationReport report) {
+        this(frame, report, "", false);
+    }
 
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable Entity entity) {
-        super(frame, false, "BVDisplayDialog", "BVDisplayDialog.title");
-        this.report = Objects.requireNonNull(report);
-        this.entity = entity;
-        initialize();
+        this(frame, report, entity.getShortName(), false);
     }
 
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable Entity entity, boolean modal) {
+        this(frame, report, entity.getShortName(), modal);
+    }
+
+    private ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable String unitName, boolean modal) {
         super(frame, modal, "BVDisplayDialog", "BVDisplayDialog.title");
         this.report = Objects.requireNonNull(report);
-        this.entity = entity;
+        this.unitName = unitName;
         initialize();
     }
 
@@ -55,8 +65,8 @@ public class ASConversionInfoDialog extends AbstractDialog {
     protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
         UIUtil.adjustDialog(getContentPane());
-        if (entity != null) {
-            setTitle(getTitle() + " (" + entity.getShortName() + ")");
+        if (unitName != null && !unitName.isBlank()) {
+            setTitle(getTitle() + " (" + unitName + ")");
         }
         pack();
         Dimension screenSize = UIUtil.getScaledScreenSize(this);

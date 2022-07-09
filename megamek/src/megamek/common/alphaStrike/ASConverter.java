@@ -117,7 +117,6 @@ public final class ASConverter {
         ASSpecialAbilityConverter.finalizeSpecials(element);
         element.setPointValue(ASPointValueConverter.getPointValue(conversionData));
         ASPointValueConverter.adjustPVforSkill(element, conversionReport);
-        element.setConversionReport(conversionReport);
         return element;
     }
 

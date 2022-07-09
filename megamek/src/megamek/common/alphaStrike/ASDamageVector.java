@@ -43,9 +43,18 @@ import java.util.function.Function;
  */
 public class ASDamageVector {
 
-    /** A constant that represents zero damage. May be used as a return value instead of null. */
+    /**
+     * A constant that represents zero damage, written as 0/0/0/0 in toString(). May be used
+     * as a return value instead of null.
+     */
     public static final ASDamageVector ZERO = new ASDamageVector(ASDamage.ZERO, ASDamage.ZERO,
             ASDamage.ZERO, ASDamage.ZERO, 4, true);
+
+    /** A constant that represents zero damage as special damage, written as -/-/-/- in toString().
+     *  May be used as a return value instead of null.
+     */
+    public static final ASDamageVector ZEROSPECIAL = new ASDamageVector(ASDamage.ZERO, ASDamage.ZERO,
+            ASDamage.ZERO, ASDamage.ZERO, 4, false);
 
     /**
      * The number of damage values used by this damage vector. 2 indicates that only the S and M

@@ -330,7 +330,7 @@ final class ASSpecialAbilityConverter {
             }
         }
 
-        if (!element.isInfantry()) {
+        if (!element.isInfantry() && !element.usesArcs()) {
             if (!hasExplosiveComponent) {
                 element.getSpecialAbs().addSPA(ENE);
             } else if (entity.isClan() && element.isAnyTypeOf(BM, IM, SV, CV, MS)) {
@@ -357,13 +357,8 @@ final class ASSpecialAbilityConverter {
                 element.getSpecialAbs().addSPA(ATxD, ((ASFBay)t).getDoors());
                 element.getSpecialAbs().addSPA(MFB);
             } else if (t instanceof CargoBay) {
-                if (((CargoBay)t).getCapacity() >= 1000) {
-                    element.getSpecialAbs().addSPA(CK, ((CargoBay) t).getCapacity() / 1000);
-                    element.getSpecialAbs().addSPA(CKxD, ((CargoBay) t).getDoors());
-                } else {
-                    element.getSpecialAbs().addSPA(CT, ((CargoBay) t).getCapacity());
-                    element.getSpecialAbs().addSPA(CTxD, ((CargoBay) t).getDoors());
-                }
+                element.getSpecialAbs().addSPA(CT, ((CargoBay) t).getCapacity());
+                element.getSpecialAbs().addSPA(CTxD, ((CargoBay) t).getDoors());
             } else if (t instanceof DockingCollar) {
                 element.getSpecialAbs().addSPA(DT, 1);
             } else if (t instanceof InfantryBay) {
@@ -566,6 +561,12 @@ final class ASSpecialAbilityConverter {
             }
         }
 
+        if (entity instanceof Dropship) {
+            if (entity.getNCrew() >= 30) {
+                element.getSpecialAbs().addSPA(CRW, (int) Math.round(entity.getNCrew() / 60.0));
+            }
+        }
+
     }
 
     /** Returns true when the given Mounted blocks ENE. */
@@ -607,17 +608,31 @@ final class ASSpecialAbilityConverter {
             element.getSpecialAbs().addSPA(RCN);
         }
 
-        // CT/IT value may be decimal but replace it with an integer value if it is integer
-        if (element.hasSPA(CT) && (element.getSPA(CT) instanceof Double)) {
-            double ctValue = (double) element.getSPA(CT);
-            if ((int) ctValue == ctValue) {
-                element.getSpecialAbs().replaceSPA(CT, (int) ctValue);
-            }
-        }
+        // IT value may be decimal but replace it with an integer value if it is integer
         if (element.hasSPA(IT) && (element.getSPA(IT) instanceof Double)) {
             double ctValue = (double) element.getSPA(IT);
             if ((int) ctValue == ctValue) {
                 element.getSpecialAbs().replaceSPA(IT, (int) ctValue);
+            }
+        }
+
+        // High CT values get converted to CK
+
+        if (element.hasSPA(CT)) {
+            double ctValue = 0;
+            if (element.getSPA(CT) instanceof Double) {
+                ctValue = (double) element.getSPA(CT);
+            } else if (element.getSPA(CT) instanceof Integer) {
+                ctValue = (int) element.getSPA(CT);
+            }
+
+            if (ctValue > 1000) {
+                element.getSpecialAbs().addSPA(CK, (int) Math.round(ctValue / 1000));
+                element.getSpecialAbs().addSPA(CKxD, (int) element.getSPA(CTxD));
+                element.getSpecialAbs().removeSPA(CT);
+                element.getSpecialAbs().removeSPA(CTxD);
+            } else {
+                element.getSpecialAbs().replaceSPA(CT, (int) Math.round(ctValue));
             }
         }
 

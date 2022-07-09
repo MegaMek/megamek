@@ -31,6 +31,8 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -468,7 +470,9 @@ public class ASCard {
         new StringDrawer("ALPHA STRIKE STATS").at(38, 712).font(alphaStrikeStatsFont)
                 .outline(Color.BLACK, 0.7f).scaleX(1.05f).maxWidth(451).draw(g);
 
+        int copyrightY = 375;
         if (!isFlipSide) {
+            copyrightY = 293;
             // Point Value box
             g.setStroke(new BasicStroke(4f));
             g.setColor(BACKGROUND_GRAY);
@@ -486,15 +490,10 @@ public class ASCard {
             // Logo
             ImageIcon icon = new ImageIcon(btLogo.getScaledInstance(445, 77, Image.SCALE_AREA_AVERAGING));
             g.drawImage(icon.getImage(), 568, 646, null);
-
-            // Copyright (off-center)
-            new StringDrawer("(C) 2022 The Topps Company. All rights reserved.").at(1014, 293).rotate(-Math.PI / 2)
-                    .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
-        } else {
-            // Copyright (centered)
-            new StringDrawer("(C) 2022 The Topps Company. All rights reserved.").at(1014, 375).rotate(-Math.PI / 2)
-                    .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
         }
+
+        new StringDrawer("(C) " + LocalDate.now().getYear() + " The Topps Company. All rights reserved.").at(1014, copyrightY).rotate(-Math.PI / 2)
+                .font(new Font(Font.SANS_SERIF, Font.PLAIN, 12)).center().draw(g);
 
         // Border
         g.setColor(Color.BLACK);

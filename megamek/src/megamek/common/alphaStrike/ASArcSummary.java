@@ -34,16 +34,16 @@ public class ASArcSummary {
     private final boolean isTurret;
 
     /** Represents the standard-type, non-special damage of this arc or turret, including arc STD damage. */
-    private ASDamageVector stdDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
+    private ASDamageVector stdDamage = ASDamageVector.ZERO;
 
     /** Represents the Capital Weapon (CAP) damage of this arc on a multi-arc element. */
-    private ASDamageVector CAPDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
+    private ASDamageVector CAPDamage = ASDamageVector.ZEROSPECIAL;
 
     /** Represents the Subcapital Weapon (SCAP) damage of this arc on a multi-arc element. */
-    private ASDamageVector SCAPDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
+    private ASDamageVector SCAPDamage = ASDamageVector.ZEROSPECIAL;
 
     /** Represents the Capital Missile Weapon (MSL) damage of this arc on a multi-arc element. */
-    private ASDamageVector MSLDamage = ASDamageVector.createUpRndDmg(0,0,0,0);
+    private ASDamageVector MSLDamage = ASDamageVector.ZEROSPECIAL;
 
     /** Contains all Special Abilities such as PNT, TELE or LRM of this arc or turret. */
     private ASSpecialAbilityCollection arcSpecials;
@@ -120,14 +120,24 @@ public class ASArcSummary {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
-        if (!isTurret || stdDamage.hasDamage()) {
-            result.append(stdDamage);
-        }
-        if (!arcSpecials.isEmpty()) {
-            if (result.length() > 0) {
-                result.append(", ");
+        if (isTurret) {
+            if (stdDamage.hasDamage()) {
+                result.append(stdDamage);
             }
-            result.append(arcSpecials.getSpecialsString());
+            if (!arcSpecials.isEmpty()) {
+                if (result.length() > 0) {
+                    result.append(", ");
+                }
+                result.append(arcSpecials.getSpecialsString());
+            }
+        } else {
+            result.append(stdDamage).append(", ");
+            result.append("CAP").append(CAPDamage).append(", ");
+            result.append("SCAP").append(SCAPDamage).append(", ");
+            result.append("MSL").append(MSLDamage);
+            if (!arcSpecials.isEmpty()) {
+                result.append(", ").append(arcSpecials.getSpecialsString());
+            }
         }
         return result.toString();
     }

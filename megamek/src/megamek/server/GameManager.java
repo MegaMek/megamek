@@ -624,6 +624,13 @@ public class GameManager implements IGameManager {
                 player.setDone(getGame().getEntitiesOwnedBy(player) <= 0);
                 send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
             }
+
+            // LOUNGE triggers a Game.reset() on the client, which wipes out
+            // the PlanetaryCondition, so resend
+            if (game.getPhase() == GamePhase.LOUNGE) {
+                send(connId, createPlanetaryConditionsPacket());
+            }
+
             if ((game.getPhase() == GamePhase.FIRING)
                     || (game.getPhase() == GamePhase.TARGETING)
                     || (game.getPhase() == GamePhase.OFFBOARD)

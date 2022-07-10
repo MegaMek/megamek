@@ -279,10 +279,8 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * Hopefully, creates new singleBlind command that works only on bots
+     * Creates new singleBlind command that works only on bots
      */
-
-
     public void setSingleBlind(boolean singleBlind) {
         seeEntireBoardBot = singleBlind;
     }
@@ -310,9 +308,8 @@ public final class Player extends TurnOrdered {
         if (game != null && game.getTeamForPlayer(this) != null) {
             game.getTeamForPlayer(this).cacheObserverStatus();
         }
+
     }
-
-
     public PlayerColour getColour() {
         return colour;
     }

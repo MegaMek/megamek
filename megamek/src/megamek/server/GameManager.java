@@ -501,7 +501,6 @@ public class GameManager implements IGameManager {
         }
     }
 
-    //New SingleBlind - I dont think this is used.
     /**
      * Checks each player to see if they have entitites, and if true, sets the
      * singleblindobserver flag for that player. An exception is that there are no

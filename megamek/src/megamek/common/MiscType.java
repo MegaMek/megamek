@@ -2260,7 +2260,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLVTOLJetBooster");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
+        misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
         misc.subType |= S_JETBOOSTER;
         misc.criticals = 1;
         misc.omniFixedOnly = true;

@@ -1109,6 +1109,10 @@ public class Server implements Runnable {
         gameManager.requestTeamChange(teamId, player);
     }
 
+    public void requestGameMaster(Player player) {
+        gameManager.requestGameMaster(player);
+    }
+
     public static String formatChatMessage(String origin, String message) {
         return origin + ": " + message;
     }

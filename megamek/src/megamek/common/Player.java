@@ -48,6 +48,7 @@ public final class Player extends TurnOrdered {
     private boolean ghost = false; // disconnected player
     private boolean bot = false;
     private boolean observer = false;
+    private boolean gameMaster = false;
 
     private boolean seeEntireBoard = false; // Player can observe double blind games
 
@@ -87,6 +88,9 @@ public final class Player extends TurnOrdered {
      * player's request to change teams.
      */
     private boolean allowingTeamChange = false;
+
+    /** tracks if this player has voted to allow it or another player to become Game Master.*/
+    private boolean allowingGameMaster = false;
     //endregion Variable Declarations
 
     //region Constructors
@@ -241,11 +245,40 @@ public final class Player extends TurnOrdered {
         this.bot = bot;
     }
 
+    public boolean isGameMaster() {
+//        if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
+//            return false;
+//        }
+        return gameMaster;
+    }
+
+    public void setGameMaster(boolean gameMaster) {
+        this.gameMaster = gameMaster;
+        // If not an gamemaster, clear the set see all flag
+        if (!gameMaster) {
+            setSeeAll(false);
+        }
+        if (game != null && game.getTeamForPlayer(this) != null) {
+            game.getTeamForPlayer(this).cacheObserverStatus();
+        }
+    }
+
     public boolean isObserver() {
         if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
             return false;
         }
         return observer;
+    }
+
+    public void setObserver(boolean observer) {
+        this.observer = observer;
+        // If not an observer, clear the set see all flag
+        if (!observer) {
+            setSeeAll(false);
+        }
+        if (game != null && game.getTeamForPlayer(this) != null) {
+            game.getTeamForPlayer(this).cacheObserverStatus();
+        }
     }
 
     public void setSeeAll(boolean seeAll) {
@@ -264,17 +297,6 @@ public final class Player extends TurnOrdered {
      */
     public boolean canSeeAll() {
         return (observer && seeEntireBoard);
-    }
-
-    public void setObserver(boolean observer) {
-        this.observer = observer;
-        // If not an observer, clear the set see all flag
-        if (!observer) {
-            setSeeAll(false);
-        }
-        if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObserverStatus();
-        }
     }
 
     public PlayerColour getColour() {
@@ -344,6 +366,14 @@ public final class Player extends TurnOrdered {
 
     public boolean isAllowingTeamChange() {
         return allowingTeamChange;
+    }
+
+    public void setAllowGameMaster(boolean allowChange) {
+        allowingGameMaster = allowChange;
+    }
+
+    public boolean isAllowingGameMaster() {
+        return allowingGameMaster;
     }
 
     public void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes) {

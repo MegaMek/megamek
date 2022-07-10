@@ -86,6 +86,13 @@ public class PlayerListDialog extends JDialog {
             } else if (player.isDone()) {
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_done"));
             }
+
+            if (player.isGameMaster()) {
+                playerDisplay.append("[GM]");
+            } else {
+                playerDisplay.append("[Player]");
+            }
+
             ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());
         }
     }

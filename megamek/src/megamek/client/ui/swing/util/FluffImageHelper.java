@@ -105,10 +105,10 @@ public class FluffImageHelper {
     	} else if (unit instanceof BattleArmor) {
     		dir = DIR_NAME_BA;           
     	} else if (unit instanceof Infantry) {
-    		dir = DIR_NAME_INFANTRY;     
-    	} else if (unit instanceof Protomech) {
-    		dir = DIR_NAME_PROTOMEK;    
-          } else if (unit instanceof Tank) {
+            dir = DIR_NAME_INFANTRY;
+        } else if (unit instanceof Protomech) {
+            dir = DIR_NAME_PROTOMEK;
+        } else if (unit instanceof Tank) {
             dir = DIR_NAME_VEHICLE;
         }
 
@@ -131,11 +131,27 @@ public class FluffImageHelper {
         Image fluff = null;
 
         String dir = DIR_NAME_MECH;
-        if (element.isAerospace()) {
-            dir = DIR_NAME_AERO;
+        if (element.isType(ASUnitType.WS)) {
+            dir = DIR_NAME_WARSHIP;
+        } else if (element.isType(ASUnitType.SS)) {
+            dir = DIR_NAME_SPACESTATION;
+        } else if (element.isType(ASUnitType.JS)) {
+            dir = DIR_NAME_JUMPSHIP;
+        } else if (element.isType(ASUnitType.CF)) {
+            dir = DIR_NAME_CONVFIGHTER;
+        } else if (element.isType(ASUnitType.DS, ASUnitType.DA)) {
+            dir = DIR_NAME_DROPSHIP;
+        } else if (element.isType(ASUnitType.SC)) {
+            dir = DIR_NAME_SMALLCRAFT;
+        } else if (element.isAerospace()) {
+            dir = DIR_NAME_FIGHTER;
         } else if (element.isType(ASUnitType.BA)) {
             dir = DIR_NAME_BA;
-        } else if (element.isType(ASUnitType.CV)) {
+        } else if (element.isType(ASUnitType.CI)) {
+            dir = DIR_NAME_INFANTRY;
+        } else if (element.isType(ASUnitType.PM)) {
+            dir = DIR_NAME_PROTOMEK;
+        } else if (element.isType(ASUnitType.CV, ASUnitType.SV)) {
             dir = DIR_NAME_VEHICLE;
         }
 

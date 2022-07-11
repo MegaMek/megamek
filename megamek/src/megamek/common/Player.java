@@ -286,14 +286,14 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * This simply returns the value, without checking the observer flag
+     * This simply returns the value, without checking the bot flag
      */
     public boolean getSingleBlind() {
         return seeEntireBoardBot;
     }
 
     /**
-     * If bot is false, see_entire_board does nothing
+     * If bot is false, seeEntireBoardBot does nothing
      */
     public boolean canSeeSingleBlind() {
         return (bot && seeEntireBoardBot);

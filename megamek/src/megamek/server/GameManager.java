@@ -503,7 +503,7 @@ public class GameManager implements IGameManager {
 
     /**
      * Checks each player to see if they have entitites, and if true, sets the
-     * singleblindobserver flag for that player. An exception is that there are no
+     * singleblindobserver flag for that player if it is a bot. An exception is that there are no
      * observers during the lounge phase.
      */
     public void checkForSingleBlindObservers() {
@@ -512,7 +512,6 @@ public class GameManager implements IGameManager {
             p.setSingleBlindObserver((getGame().getEntitiesOwnedBy(p) >= 1) && !getGame().getPhase().isLounge());
         }
     }
-
 
     @Override
     public void removeAllEntitiesOwnedBy(Player player) {

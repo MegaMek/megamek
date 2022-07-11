@@ -59,7 +59,7 @@ public class SingleBlindCommand extends ServerCommand {
         } else {
             try {
                 int playerId;
-                String give_take;
+                String giveTake;
                 // No playerArg provided. Use connId as playerId
                 if (args.length <= playerArg) {
                     playerId = connId;
@@ -67,23 +67,31 @@ public class SingleBlindCommand extends ServerCommand {
                     playerId = Integer.parseInt(args[playerArg]);
                 }
 
-                boolean has_single_blind = server.getPlayer(playerId).getSingleBlind();
-                if (has_single_blind) {
-                    give_take = " no longer has";
+                // If cannot get singleblind because not a bot, send failure message and stop messages below.
+                boolean canObtainSingleBlind = server.getPlayer(playerId).isBot();
+                if (!canObtainSingleBlind) {
+                    server.sendServerChat(connId, "/singleblind : singleblind attempt failed. Is the player a Bot? Type /who for a list of players with id #s.");
+                    return;
+                }
+
+                boolean hasSingleBlind = server.getPlayer(playerId).canSeeSingleBlind();
+                if (hasSingleBlind) {
+                    giveTake = " no longer has";
                 } else {
-                    give_take = " has been granted";
+                    giveTake = " has been granted";
                 }
 
                 if (playerId == connId) {
                     server.sendServerChat(server.getPlayer(playerId).getName()
-                            + give_take + " vision of the entire map IF IT IS A BOT ");
+                            + giveTake + " vision of the entire map with /singleblind, by "
+                            + server.getPlayer(connId).getName());
                 } else {
                     server.sendServerChat(server.getPlayer(playerId).getName()
-                            + give_take + " vision of the entire map, IF IT IS A BOT, by "
+                            + giveTake + " vision of the entire map with /singleblind, by "
                             + server.getPlayer(connId).getName());
                 }
 
-                server.getPlayer(playerId).setSingleBlind(!has_single_blind);
+                server.getPlayer(playerId).setSingleBlind(!hasSingleBlind);
                 gameManager.sendEntities(playerId);
             } catch (Exception ex) {
                 server.sendServerChat("/singleblind : singleblind failed. Is the player a Bot? Type /who for a list of players with id #s.");

@@ -32,7 +32,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -341,7 +340,7 @@ public class ASCard {
             // Armor Pips
             int cx = 44 + headerWidth;
             g.setStroke(new BasicStroke(1.5f));
-            for (int i = 0; i < element.getArmor(); i++) {
+            for (int i = 0; i < element.getFullArmor(); i++) {
                 g.setColor(Color.WHITE);
                 g.fillOval(cx, upperY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
                 g.setColor(Color.BLACK);
@@ -351,7 +350,7 @@ public class ASCard {
 
             // Structure Pips
             cx = 44 + headerWidth;
-            for (int i = 0; i < element.getStructure(); i++) {
+            for (int i = 0; i < element.getFullStructure(); i++) {
                 g.setColor(DARKGRAY);
                 g.fillOval(cx, lowerY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
                 g.setColor(Color.BLACK);

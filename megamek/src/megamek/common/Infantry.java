@@ -20,7 +20,6 @@
 package megamek.common;
 
 import megamek.MMConstants;
-import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.InfantryBVCalculator;
 import megamek.common.cost.InfantryCostCalculator;
@@ -1935,72 +1934,6 @@ public class Infantry extends Entity {
     public boolean isUsingManAce() {
         return false;
     }
-
-//    @Override
-//    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-//        moves.put(getMovementModeAsBattleForceString(),
-//                Math.max(getWalkMP(), getJumpMP()) * 2);
-//    }
-
-    @Override
-    public int getBattleForceArmorPoints() {
-        // Infantry armor points is # of men / 15
-        return (int) Math.ceil(getInternal(0)/15.0);
-    }
-
-    @Override
-    public int getNumBattleForceWeaponsLocations() {
-        if (hasFieldGun()) {
-            return 2;
-        }
-        return 1;
-    }
-
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (index == location) {
-            return 1.0;
-        }
-        return 0;
-    }
-
-    @Override
-    public String getBattleForceLocationName(int index) {
-        if (index == 0) {
-            return "";
-        }
-        return LOCATION_ABBRS[index];
-    }
-
-//    @Override
-//    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-//        super.addBattleForceSpecialAbilities(specialAbilities);
-//        specialAbilities.put(BattleForceSPA.CAR, (int) Math.ceil(getWeight()));
-//        if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
-//            specialAbilities.put(BattleForceSPA.UMU, null);
-//        }
-//        if (hasSpecialization(FIRE_ENGINEERS)) {
-//            specialAbilities.put(BattleForceSPA.FF, null);
-//        }
-//        if (hasSpecialization(MINE_ENGINEERS)) {
-//            specialAbilities.put(BattleForceSPA.MSW, null);
-//        }
-//        if (hasSpecialization(MOUNTAIN_TROOPS)) {
-//            specialAbilities.put(BattleForceSPA.MTN, null);
-//        }
-//        if (hasSpecialization(PARATROOPS)) {
-//            specialAbilities.put(BattleForceSPA.PARA, null);
-//        }
-//        if (hasSpecialization(SCUBA)) {
-//            specialAbilities.put(BattleForceSPA.UMU, null);
-//        }
-//        if (hasSpecialization(TRENCH_ENGINEERS)) {
-//            specialAbilities.put(BattleForceSPA.TRN, null);
-//        }
-//        if (hasAbility("tsm_implant")) {
-//            specialAbilities.put(BattleForceSPA.TSI, null);
-//        }
-//    }
 
     @Override
     public int getEngineHits() {

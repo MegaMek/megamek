@@ -103,7 +103,7 @@ public class ASLargeAeroCard extends ASCard {
                 .outline(Color.BLACK, 0.4f).centerY().draw(g);
         new StringDrawer("Damage Value Reduced by 25% per hit. -- Randomly determine an appropriate")
                 .at(260, 629).font(critTextFont).maxWidth(750).centerY().draw(g);
-        String columns = element.isAnyTypeOf(SC, DS, DA) ? "STD/SCAP/MSL" : "STD/CAP/SCAP/MSL";
+        String columns = element.isType(SC, DS, DA) ? "STD/SCAP/MSL" : "STD/CAP/SCAP/MSL";
         new StringDrawer(columns + " column.")
                 .at(697, 660).font(critTextFont).maxWidth(318).centerY().draw(g);
         AffineTransform baseTransform = g.getTransform();
@@ -129,11 +129,11 @@ public class ASLargeAeroCard extends ASCard {
     }
 
     private String getFrontArcName() {
-        return element.isAnyTypeOf(SC, DA, DS) ? "NOSE ARC" : "FRONT ARC";
+        return element.isType(SC, DA, DS) ? "NOSE ARC" : "FRONT ARC";
     }
 
     private String getSideArcName() {
-        if (element.isAnyTypeOf(SC, DA)) {
+        if (element.isType(SC, DA)) {
             return "WING";
         } else if (element.isType(DS)) {
             return "SIDE";
@@ -143,7 +143,7 @@ public class ASLargeAeroCard extends ASCard {
     }
 
     private String getRearArcName() {
-        return element.isAnyTypeOf(SC, DA, DS) ? "AFT ARC" : "REAR ARC";
+        return element.isType(SC, DA, DS) ? "AFT ARC" : "REAR ARC";
     }
 
     private void paintArcBox(Graphics2D g, String arcTitle, ASArcs arc) {
@@ -176,7 +176,7 @@ public class ASLargeAeroCard extends ASCard {
         g.setStroke(new BasicStroke(1f));
         g.drawLine(146, lineSPE + 7, 466, lineSPE + 7);
         new StringDrawer("CRIT").at(44, 245).maxWidth(90).font(headerFont).draw(g);
-        if (element.isAnyTypeOf(SC, DS, DA)) {
+        if (element.isType(SC, DS, DA)) {
             int stdX = 177;
             int delta = 122;
             new StringDrawer("STD").at(stdX, titleY).maxWidth(93).centerX().font(headerFont).draw(g);
@@ -319,8 +319,8 @@ public class ASLargeAeroCard extends ASCard {
         new StringDrawer("STRUCTURE").at(128, structureY).center().maxWidth(170).draw(g);
         new StringDrawer("DAMAGE").at(363, structureY).center().maxWidth(290).draw(g);
 
-        new StringDrawer(element.getArmor() + "").at(128, 245).font(largeAeroValueFont).center().maxWidth(140).draw(g);
-        new StringDrawer(element.getStructure() + "").at(128, 354).font(largeAeroValueFont).center().maxWidth(140).draw(g);
+        new StringDrawer(element.getFullArmor() + "").at(128, 245).font(largeAeroValueFont).center().maxWidth(140).draw(g);
+        new StringDrawer(element.getFullStructure() + "").at(128, 354).font(largeAeroValueFont).center().maxWidth(140).draw(g);
 
         int thresholdY = 206;
         new StringDrawer("DAMAGE THRESHOLD").at(628, thresholdY).font(largeAeroHeaderFont).centerY().maxWidth(310).draw(g);
@@ -345,7 +345,7 @@ public class ASLargeAeroCard extends ASCard {
     @Override
     protected void paintHits(Graphics2D g) {
         ASCard.drawBox(g, 36, 410, 490, 227, Color.LIGHT_GRAY, BOX_STROKE);
-        if (element.isAnyTypeOf(WS, SS, JS)) {
+        if (element.isType(WS, SS, JS)) {
             new StringDrawer("CRITICAL HITS").at(281, 435).center().font(headerFont).maxWidth(450).draw(g);
 
             new StringDrawer("CREW").at(168, 482).useConfig(hitsTitleConfig).maxWidth(125).draw(g);

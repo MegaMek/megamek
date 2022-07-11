@@ -20,7 +20,6 @@
  */
 package megamek.common.alphaStrike;
 
-import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 
 import java.util.*;
@@ -121,8 +120,8 @@ public class ASSpecialAbilityCollection {
             return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
         } else if (spa.isTransport()) {
             String result = spa + spaObject.toString();
-            if (element.hasSPA(spa.getDoor()) && ((int) element.getSPA(spa.getDoor()) > 0)) {
-                result += "-D" + element.getSPA(spa.getDoor());
+            if (element.hasSUA(spa.getDoor()) && ((int) element.getSUA(spa.getDoor()) > 0)) {
+                result += "-D" + element.getSUA(spa.getDoor());
             }
             return result;
         } else {

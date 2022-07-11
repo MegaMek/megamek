@@ -12,14 +12,9 @@
  */
 package megamek.common;
 
-import java.util.Map;
-
-import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.ConvFighterCostCalculator;
 import megamek.common.options.OptionsConstants;
-
-import java.util.Map;
 
 /**
  * @author Jay Lawson
@@ -120,13 +115,7 @@ public class ConvFighter extends Aero {
         }
         return (getEngine().getRating() / (int) weight);
     }
-    
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        specialAbilities.put(BattleForceSPA.ATMO, null);
-    }
-    
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;

@@ -23,7 +23,7 @@ import megamek.client.ui.swing.MechViewPanel;
 import megamek.client.ui.swing.alphaStrike.ConfigurableASCardPanel;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
-import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.annotations.Nullable;
 import megamek.common.templates.TROView;
 

@@ -92,9 +92,9 @@ public class SBFUnitConverter {
         double dmgM = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> sbfDamage(d.M)).sum();
         double dmgL = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> sbfDamage(d.L)).sum();
         double dmgE = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> sbfDamage(d.E)).sum();
-        double artTC = elements.stream().filter(e -> e.hasSPA(ARTTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTTC);
-        double artLTC = elements.stream().filter(e -> e.hasSPA(ARTLTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTLTC);
-        double artSC = elements.stream().filter(e -> e.hasSPA(ARTSC)).count() * SBFFormation.getSbfArtilleryDamage(ARTSC);
+        double artTC = elements.stream().filter(e -> e.hasSUA(ARTTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTTC);
+        double artLTC = elements.stream().filter(e -> e.hasSUA(ARTLTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTLTC);
+        double artSC = elements.stream().filter(e -> e.hasSUA(ARTSC)).count() * SBFFormation.getSbfArtilleryDamage(ARTSC);
         dmgS += elements.stream().mapToDouble(AlphaStrikeElement::getOverheat).sum() / 2;
         dmgS += unit.isAnyTypeOf(BA, CI) && unit.hasSPA(AM) ? 1 : 0;
         dmgS += artTC + artLTC + artSC;
@@ -123,9 +123,9 @@ public class SBFUnitConverter {
         calcUnitMhq(elements, unit);
         calcUnitRcn(elements, unit);
 
-        double flkMSum = elements.stream().filter(e -> e.hasSPA(FLK)).map(e -> (ASDamageVector)e.getSPA(FLK)).mapToDouble(dv -> sbfDamage(dv.M)).sum();
+        double flkMSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> sbfDamage(dv.M)).sum();
         int flkM = (int) Math.round(flkMSum / 3);
-        double flkLSum = elements.stream().filter(e -> e.hasSPA(FLK)).map(e -> (ASDamageVector)e.getSPA(FLK)).mapToDouble(dv -> sbfDamage(dv.L)).sum();
+        double flkLSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> sbfDamage(dv.L)).sum();
         int flkL = (int) Math.round(flkLSum / 3);
         if (flkM + flkL > 0) {
             unit.addSPA(FLK, ASDamageVector.createNormRndDmgNoMin(0, flkM, flkL));
@@ -151,7 +151,7 @@ public class SBFUnitConverter {
      * associated objects)
      */
     private static int spaCount(Collection<AlphaStrikeElement> elements, BattleForceSPA spa) {
-        return (int)elements.stream().filter(e -> e.hasSPA(spa)).count();
+        return (int)elements.stream().filter(e -> e.hasSUA(spa)).count();
     }
 
     private static void addUnitSpasIfAny(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
@@ -178,16 +178,16 @@ public class SBFUnitConverter {
     private static void sumUnitSpas(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
         for (BattleForceSPA spa : spas) {
             for (AlphaStrikeElement element : elements) {
-                if (element.hasSPA(spa)) {
-                    if (element.getSPA(spa) == null) {
+                if (element.hasSUA(spa)) {
+                    if (element.getSUA(spa) == null) {
                         unit.addSPA(spa, 1);
-                    } else if (element.getSPA(spa) instanceof Integer) {
-                        unit.addSPA(spa, (Integer) element.getSPA(spa));
-                    } else if (element.getSPA(spa) instanceof Double) {
-                        unit.addSPA(spa, (Double) element.getSPA(spa));
-                    } else if (element.getSPA(spa) instanceof ASDamageVector
-                            && ((ASDamageVector)element.getSPA(spa)).rangeBands == 1) {
-                        unit.addSPA(spa, sbfDamage(((ASDamageVector) element.getSPA(spa)).S));
+                    } else if (element.getSUA(spa) instanceof Integer) {
+                        unit.addSPA(spa, (Integer) element.getSUA(spa));
+                    } else if (element.getSUA(spa) instanceof Double) {
+                        unit.addSPA(spa, (Double) element.getSUA(spa));
+                    } else if (element.getSUA(spa) instanceof ASDamageVector
+                            && ((ASDamageVector)element.getSUA(spa)).rangeBands == 1) {
+                        unit.addSPA(spa, sbfDamage(((ASDamageVector) element.getSUA(spa)).S));
                     }
                 }
             }
@@ -196,7 +196,7 @@ public class SBFUnitConverter {
 
     private static void sumUnitArtillery(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
         for (BattleForceSPA spa : spas) {
-            double artSum = elements.stream().filter(e -> e.hasSPA(spa)).count() * SBFFormation.getSbfArtilleryDamage(spa);
+            double artSum = elements.stream().filter(e -> e.hasSUA(spa)).count() * SBFFormation.getSbfArtilleryDamage(spa);
             int value = (int) Math.round(artSum / 3);
             if (value > 0) {
                 unit.addSPA(spa, value);
@@ -207,16 +207,16 @@ public class SBFUnitConverter {
     private static void sumUnitSpasDivideBy3(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
         for (BattleForceSPA spa : spas) {
             for (AlphaStrikeElement element : elements) {
-                if (element.hasSPA(spa)) {
-                    if (element.getSPA(spa) == null) {
+                if (element.hasSUA(spa)) {
+                    if (element.getSUA(spa) == null) {
                         unit.addSPA(spa, 1);
-                    } else if (element.getSPA(spa) instanceof Integer) {
-                        unit.addSPA(spa, (Integer) element.getSPA(spa));
-                    } else if (element.getSPA(spa) instanceof Double) {
-                        unit.addSPA(spa, (Double) element.getSPA(spa));
-                    } else if (element.getSPA(spa) instanceof ASDamageVector
-                            && ((ASDamageVector)element.getSPA(spa)).rangeBands == 1) {
-                        unit.addSPA(spa, sbfDamage(((ASDamageVector) element.getSPA(spa)).S));
+                    } else if (element.getSUA(spa) instanceof Integer) {
+                        unit.addSPA(spa, (Integer) element.getSUA(spa));
+                    } else if (element.getSUA(spa) instanceof Double) {
+                        unit.addSPA(spa, (Double) element.getSUA(spa));
+                    } else if (element.getSUA(spa) instanceof ASDamageVector
+                            && ((ASDamageVector)element.getSUA(spa)).rangeBands == 1) {
+                        unit.addSPA(spa, sbfDamage(((ASDamageVector) element.getSUA(spa)).S));
                     }
                 }
             }
@@ -232,7 +232,7 @@ public class SBFUnitConverter {
     }
 
     private static void calcUnitMhq(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        double mhq = elements.stream().filter(e -> e.hasSPA(MHQ)).mapToInt(e -> Math.max(0, (int) e.getSPA(MHQ) - 1)).sum();
+        double mhq = elements.stream().filter(e -> e.hasSUA(MHQ)).mapToInt(e -> Math.max(0, (int) e.getSUA(MHQ) - 1)).sum();
         int oneThird = (int) Math.round(mhq / 3);
         if (oneThird > 0) {
             unit.addSPA(MHQ, oneThird);
@@ -240,14 +240,14 @@ public class SBFUnitConverter {
     }
 
     private static void calcUnitRcn(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        if (elements.stream().filter(e -> e.hasSPA(RCN) || isConsideredRcn(e)).count() >= 2) {
+        if (elements.stream().filter(e -> e.hasSUA(RCN) || isConsideredRcn(e)).count() >= 2) {
             unit.addSPA(RCN);
         }
     }
 
     private static boolean isConsideredRcn(AlphaStrikeElement el) {
         return (el.isType(ASUnitType.BM) && el.getSize() <= 2 && el.getPrimaryMovementValue() >= 14)
-                || (el.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM) && el.getJumpMove() >= 12)
+                || (el.isType(ASUnitType.BM, ASUnitType.PM) && el.getJumpMove() >= 12)
                 || (el.isGround() && el.getSize() <= 2 && el.getPrimaryMovementValue() >= 18)
                 || el.getName().contains("Scout")
                 || el.getName().contains("Recon")
@@ -307,11 +307,11 @@ public class SBFUnitConverter {
 
     private static SBFMoveMode restrictionLevel(SBFUnit unit, AlphaStrikeElement element) {
         if (unit.isAerospace() && element.isGround()) {
-            if (element.hasSPA(BIM)) {
+            if (element.hasSUA(BIM)) {
                 return new SBFMoveMode("l", 50);
-            } else if (element.hasSPA(LAM)) {
+            } else if (element.hasSUA(LAM)) {
                 return new SBFMoveMode("l", 65);
-            } else if (element.hasSPA(SOA)) {
+            } else if (element.hasSUA(SOA)) {
                 return new SBFMoveMode("k", 10);
             } else {
                 return new SBFMoveMode("unknown", 0);
@@ -319,7 +319,7 @@ public class SBFUnitConverter {
         }
         switch (element.getPrimaryMovementType()) {
             case "":
-                if (element.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM, ASUnitType.IM)) {
+                if (element.isType(ASUnitType.BM, ASUnitType.PM, ASUnitType.IM)) {
                     return new SBFMoveMode("l", 60);
                 } else if (element.isType(ASUnitType.WS)) {
                     return new SBFMoveMode("aw", 31);
@@ -359,16 +359,16 @@ public class SBFUnitConverter {
             case "t":
                 return new SBFMoveMode("t", 40);
             case "s":
-                if (element.isAnyTypeOf(ASUnitType.CV, ASUnitType.SV)) {
+                if (element.isType(ASUnitType.CV, ASUnitType.SV)) {
                     return new SBFMoveMode("s", 0);
-                } else if (element.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM)) {
+                } else if (element.isType(ASUnitType.BM, ASUnitType.PM)) {
                     return new SBFMoveMode("s", 62);
                 } else if (element.isType(ASUnitType.BA)) {
                     return new SBFMoveMode("s", 51);
                 }
                 break;
             case "j":
-                if (element.isAnyTypeOf(ASUnitType.BM, ASUnitType.PM)) {
+                if (element.isType(ASUnitType.BM, ASUnitType.PM)) {
                     return new SBFMoveMode("j", 70);
                 } else if (element.isType(ASUnitType.BA)) {
                     return new SBFMoveMode("j", 61);
@@ -393,9 +393,9 @@ public class SBFUnitConverter {
     private static int calcUnitArmor(Collection<AlphaStrikeElement> elements) {
         double result = 0;
         for (AlphaStrikeElement element : elements) {
-            result += element.getArmor() + element.getStructure();
-            result += (element.getStructure() >= 3 || element.hasAnySPAOf(AMS, CASE)) ? 0.5 : 0;
-            result += (element.hasAnySPAOf(ENE, CASEII, CR, RAMS)) ? 1 : 0;
+            result += element.getFullArmor() + element.getFullStructure();
+            result += (element.getFullStructure() >= 3 || element.hasAnySUAOf(AMS, CASE)) ? 0.5 : 0;
+            result += (element.hasAnySUAOf(ENE, CASEII, CR, RAMS)) ? 1 : 0;
         }
         return (int)Math.round(result / 3);
     }

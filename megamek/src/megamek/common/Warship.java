@@ -12,11 +12,7 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-import java.util.Map;
-
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.cost.MekCostCalculator;
 import megamek.common.cost.WarShipCostCalculator;
 import megamek.common.options.OptionsConstants;
 
@@ -281,79 +277,6 @@ public class Warship extends Jumpship {
         return 0.8;
     }
 
-    @Override
-    public int getBattleForceStructurePoints() {
-        return (int) Math.ceil(this.getSI() * 0.66);
-    }
-
-    @Override
-    public int getNumBattleForceWeaponsLocations() {
-        return 8;
-    }
-
-    @Override
-    public int getNumAlphaStrikeWeaponsLocations() {
-        return 4;
-    }
-
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        return getAlphaStrikeLocationMultiplier(index, location, rearMounted);
-    }
-    
-    @Override
-    public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
-        // ASC p. 103
-        switch (location) {
-            case LOC_NOSE:
-            case LOC_FLS:
-            case LOC_FRS:
-                if (index == 0) {
-                    return 1.0;
-                }
-                break;
-            case LOC_LBS:
-            case LOC_ALS:
-                if (index == 1) {
-                    return 1.0;
-                }
-                break;
-            case LOC_RBS:
-            case LOC_ARS:
-                if (index == 2) {
-                    return 1.0;
-                }
-                break;
-            case LOC_AFT:
-                if (index == 3) {
-                    return 1.0;
-                }
-                break;
-        }
-        return 0;
-    }
-
-    @Override
-    public String getBattleForceLocationName(int index) {
-        return getLocationAbbrs()[index];
-    }
-    
-    @Override
-    public String getAlphaStrikeLocationName(int index) {
-        switch (index) {
-            case 0:
-                return getLocationAbbrs()[LOC_NOSE];
-            case 1:
-                return getLocationAbbrs()[LOC_LBS];
-            case 2:
-                return getLocationAbbrs()[LOC_RBS];
-            case 3:
-                return getLocationAbbrs()[LOC_AFT];
-            default:
-                return "";
-        }
-    }
-    
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;

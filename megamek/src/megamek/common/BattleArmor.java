@@ -17,7 +17,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.battlevalue.BattleArmorBVCalculator;
 import megamek.common.cost.BattleArmorCostCalculator;
-import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
@@ -26,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -1724,67 +1722,6 @@ public class BattleArmor extends Infantry {
     @Override
     public boolean hasPatchworkArmor() {
         return false;
-    }
-
-//    @Override
-//    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-//        if (getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
-//            moves.put("j", getJumpMP(true, true, true) * 2);
-//        } else if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
-//            moves.put("s", getActiveUMUCount() * 2);
-//        } else {
-//            moves.put(getMovementModeAsBattleForceString(), getOriginalWalkMP() * 2);
-//        }
-//    }
-    
-    @Override
-    public int getBattleForceArmorPoints() {
-        double armor = 0;
-        for (int i = 1; i < locations(); i++) {
-            if (armorType[i] == EquipmentType.T_ARMOR_BA_REACTIVE
-                    || armorType[i] == EquipmentType.T_ARMOR_BA_REFLECTIVE) {
-                armor += getArmor(i) * 0.75;
-            } else {
-                armor += getArmor(i);
-            }
-        }
-        return (int) Math.round(armor / 30.0);
-    }
-
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        for (Mounted m : getEquipment()) {
-            if (!(m.getType() instanceof MiscType)) {
-                continue;
-            }
-            if (m.getType().hasFlag(MiscType.F_VISUAL_CAMO)
-                    && !m.getType().getName().equals(MIMETIC_ARMOR)) {
-                specialAbilities.put(BattleForceSPA.LMAS, null);
-            } else if (m.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
-                specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
-            } else if (m.getType().hasFlag(MiscType.F_TOOLS)
-                    && (m.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER) {
-                specialAbilities.put(BattleForceSPA.MSW, null);
-            } else if (m.getType().hasFlag(MiscType.F_SPACE_ADAPTATION)) {
-                specialAbilities.put(BattleForceSPA.SOA, null);
-            } else if (m.getType().hasFlag(MiscType.F_PARAFOIL)) {
-                specialAbilities.put(BattleForceSPA.PARA, null);
-            } else if (m.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                specialAbilities.put(BattleForceSPA.XMEC, null);
-            }
-        }
-        if (canDoMechanizedBA()) {
-            specialAbilities.put(BattleForceSPA.MEC, null);
-        }
-        switch (getArmorType(0)) {
-            case EquipmentType.T_ARMOR_BA_MIMETIC:
-                specialAbilities.put(BattleForceSPA.MAS, null);
-                break;
-            case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
-                specialAbilities.put(BattleForceSPA.FR, null);
-                break;
-        }
     }
 
     public void setIsExoskeleton(boolean exoskeleton) {

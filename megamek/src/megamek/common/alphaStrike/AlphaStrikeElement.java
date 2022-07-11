@@ -19,7 +19,7 @@
 package megamek.common.alphaStrike;
 
 import megamek.common.UnitRole;
-import megamek.common.annotations.Nullable;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.options.Quirks;
 
 import java.util.*;
@@ -47,16 +47,13 @@ public class AlphaStrikeElement {
     public static final int RANGE_BAND_LONG = 2;
     public static final int RANGE_BAND_EXTREME = 3;
 
-    static final int[] STANDARD_RANGES = {0, 4, 16, 24};
+    public static final int[] STANDARD_RANGES = {0, 4, 16, 24};
     public static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
 
     public static final int SHORT_RANGE = STANDARD_RANGES[RANGE_BAND_SHORT];
     public static final int MEDIUM_RANGE = STANDARD_RANGES[RANGE_BAND_MEDIUM];
     public static final int LONG_RANGE = STANDARD_RANGES[RANGE_BAND_LONG];
     public static final int EXTREME_RANGE = STANDARD_RANGES[RANGE_BAND_EXTREME];
-
-    //TODO: When used for gameplay, original values are probably required for any values that can change
-    //TODO: Maybe add a copy of the original AS element instead of duplicated fields?
 
     /** The unit's display name; may include a duplicate unit marker such as "#2". */
     private String name;
@@ -102,22 +99,12 @@ public class AlphaStrikeElement {
         return rearArc;
     }
 
-    public ASArcSummary getArc(ASArcs arc) {
-        switch (arc) {
-            case FRONT:
-                return frontArc;
-            case LEFT:
-                return leftArc;
-            case REAR:
-                return rearArc;
-            default:
-                return rightArc;
-        }
-    }
-
-    private int armor;
-    private int structure;
+    private int currentArmor;
+    private int currentStructure;
     private int threshold = 0;
+
+    private int fullArmor;
+    private int fullStructure;
 
     /** Battle Armor squad size. */
     private int squadSize;
@@ -135,11 +122,7 @@ public class AlphaStrikeElement {
      * with standard damage at least.
      * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
      */
-    private EnumMap<BattleForceSPA, Object> specialUnitAbilities = new EnumMap<>(BattleForceSPA.class);
-
-    private ASSpecialAbilityCollection specialAbs = new ASSpecialAbilityCollection(this);
-
-    protected int[] heat; //TODO: whats this?
+    private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection(this);
 
     /**
      * AlphaStrike Quirks.
@@ -149,8 +132,9 @@ public class AlphaStrikeElement {
     private Quirks quirks = new Quirks();
 
     // The following are used during conversion from TW to AS
-    protected ASConverter.WeaponLocation[] weaponLocations;
-    protected String[] locationNames;
+    public ASConverter.WeaponLocation[] weaponLocations;
+    public String[] locationNames;
+    public int[] heat;
 
     /** @return The AS element's chassis, such as "Atlas". */
     public String getChassis() {
@@ -207,9 +191,14 @@ public class AlphaStrikeElement {
         return pointValue;
     }
 
+    /** @return The AS element's full (=undamaged) Armor (A).*/
+    public int getFullArmor() {
+        return fullArmor;
+    }
+
     /** @return The AS element's current Armor (A).*/
-    public int getArmor() {
-        return armor;
+    public int getCurrentArmor() {
+        return currentArmor;
     }
 
     /** @return The AS element's Threshold (TH). Returns -1 for elements that don't use Threshold. */
@@ -217,9 +206,14 @@ public class AlphaStrikeElement {
         return threshold;
     }
 
+    /** @return The AS element's full (=undamaged) Structure (S).*/
+    public int getFullStructure() {
+        return fullStructure;
+    }
+
     /** @return The AS element's current Structure (S).*/
-    public int getStructure() {
-        return structure;
+    public int getCurrentStructure() {
+        return currentStructure;
     }
 
     /** @return The AS element's entire movement capability (MV). */
@@ -243,8 +237,21 @@ public class AlphaStrikeElement {
         return squadSize;
     }
 
-    public ASSpecialAbilityCollection getSpecialAbs() {
-        return specialAbs;
+    public ASSpecialAbilityCollection getSpecialAbilities() {
+        return specialAbilities;
+    }
+
+    public ASArcSummary getArc(ASArcs arc) {
+        switch (arc) {
+            case FRONT:
+                return frontArc;
+            case LEFT:
+                return leftArc;
+            case REAR:
+                return rearArc;
+            default:
+                return rightArc;
+        }
     }
 
     public void setQuirks(Quirks quirks) {
@@ -307,8 +314,14 @@ public class AlphaStrikeElement {
     }
 
     /** Sets the AS element's current Armor (A).*/
-    public void setArmor(int newArmor) {
-        armor = newArmor;
+    public void setCurrentArmor(int newArmor) {
+        currentArmor = newArmor;
+    }
+
+    /** Sets the AS element's full (=undamaged) Armor (A). Also sets the current armor to the same value. */
+    public void setFullArmor(int newArmor) {
+        currentArmor = newArmor;
+        fullArmor = newArmor;
     }
 
     /** Sets the AS element's Threshold (TH). */
@@ -317,8 +330,14 @@ public class AlphaStrikeElement {
     }
 
     /** Sets the AS element's current Structure (S). */
-    public void setStructure(int newStructure) {
-        structure = newStructure;
+    public void setCurrentStructure(int newStructure) {
+        currentStructure = newStructure;
+    }
+
+    /** Sets the AS element's full (=undamaged) Structure (S). Also sets the current structure to the same value. */
+    public void setFullStructure(int newStructure) {
+        currentStructure = newStructure;
+        fullStructure = newStructure;
     }
 
     /** Sets the AS element's movement (MV). */
@@ -374,26 +393,13 @@ public class AlphaStrikeElement {
 //    }
     
     /** 
-     * NEW version - Adds a Special Unit Ability that is not associated with any
-     * additional information or number, e.g. RCN.
+     * Adds a Special Unit Ability that is not associated with any additional information or number, e.g. RCN.
+     * This is a convenience method for calling {@link #getSpecialAbilities()} and adding the SUA.
+     *
+     * @param sua The Special Unit Ability to add
      */
-    public void addSPA(BattleForceSPA spa) {
-        specialAbs.addSPA(spa);
-    }
-
-    /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
-    public void addTurSPA(List<List<Object>> turAbility) {
-        specialUnitAbilities.put(TUR, turAbility);
-    }
-    
-    /** NEW version - Adds the LAM Special Unit Ability with a LAM movement map. */
-    public void addLamSPA(Map<String, Integer> specialMoves) {
-        specialUnitAbilities.put(LAM, specialMoves);
-    }
-    
-    /** NEW version - Adds the BIM Special Unit Ability with a LAM movement map. */
-    public void addBimSPA(Map<String, Integer> specialMoves) {
-        specialUnitAbilities.put(BIM, specialMoves);
+    public void addSPA(BattleForceSPA sua) {
+        specialAbilities.addSPA(sua);
     }
 
     /** @return True if this AS element uses three range bands S, M and L (equivalent to {@link #isGround()}). */
@@ -415,18 +421,40 @@ public class AlphaStrikeElement {
     }
 
     /**
-     * @return True when this AS element has the given Special Unit Ability. When the element has
-     * the spa and the spa is associated with some value, this value can be assumed to be non-empty
-     * or greater than zero. E.g., if an element has the MHQ spa, then MHQ >= 1. If it has IF, then
+     * Returns true when this AS element has the given Special Unit Ability. When the element has
+     * the SUA and the SUA is associated with some value, this value can be assumed to be non-empty
+     * or greater than zero. For example, if an element has MHQ, then MHQ >= 1. If it has IF, then
      * the IF value is at least 0*.
+     * This is a convenience method for calling hasSpA() on {@link #getSpecialAbilities()}.
+     *
+     * @param sua The Special Unit Ability to check
+     * @return True when this AS element has the given Special Unit Ability
      */
-    public boolean hasSPA(BattleForceSPA spa) {
-        return specialAbs.hasSPA(spa);
+    public boolean hasSUA(BattleForceSPA sua) {
+        return specialAbilities.hasSPA(sua);
     }
 
-    /** @return True when this AS element has at least one of the given Special Unit Abilities. */
-    public boolean hasAnySPAOf(BattleForceSPA spa, BattleForceSPA... furtherSPAs) {
-        return hasSPA(spa) || Arrays.stream(furtherSPAs).anyMatch(this::hasSPA);
+    /**
+     * Returns true when this AS element has any of the given Special Unit Abilities.
+     * See {@link #hasSUA(BattleForceSPA)}
+     *
+     * @param sua The Special Unit Ability to check
+     * @return True when this AS element has the given Special Unit Ability
+     */
+    public boolean hasAnySUAOf(BattleForceSPA sua, BattleForceSPA... furtherSuas) {
+        return hasSUA(sua) || Arrays.stream(furtherSuas).anyMatch(this::hasSUA);
+    }
+
+    /**
+     * @return The value associated with the given Special Unit Ability. Depending on the given sua, this
+     * value can be null or of different types. Note that this does not get SUAs from the arcs of large
+     * aerospace units.
+     * This is a convenience method for calling getSpA() on {@link #getSpecialAbilities()}.
+     *
+     * @param sua The Special Unit Ability to get the ability value for
+     */
+    public Object getSUA(BattleForceSPA sua) {
+        return specialAbilities.getSPA(sua);
     }
 
     /**
@@ -445,7 +473,7 @@ public class AlphaStrikeElement {
             return moveMode.getValue() + "a";
         } else if (moveMode.getKey().equals("p")) {
             return moveMode.getValue() + "p";
-        } else if (isAnyTypeOf(DS, WS, DA, JS, SS) && moveMode.getKey().isBlank()) {
+        } else if (isType(DS, WS, DA, JS, SS) && moveMode.getKey().isBlank()) {
             return moveMode.getValue() + "";
         } else {
             return moveMode.getValue() + INCH + moveMode.getKey();
@@ -453,8 +481,9 @@ public class AlphaStrikeElement {
     }
 
     /**
-     * Returns a formatted SPA string for this AS element. The string is formatted in the way SPAs are
-     * printed on an AS element's card or summary with a ', ' between SPAs.
+     * Returns a formatted SUA string for this AS element. The string is formatted in the way SUAs are
+     * printed on an AS element's card or summary with a ', ' between SUAs. This does not access
+     * arc SUAs of large aerospace units, only the unit SUAs.
      *
      * @return A formatted Special Unit Ability string for this AS element
      */
@@ -463,22 +492,23 @@ public class AlphaStrikeElement {
     }
 
     /**
-     * Returns a formatted SPA string for this AS element. The given delimiter is inserted between SPAs.
+     * Returns a formatted SUA string for this AS element. The given delimiter is inserted between SUAs.
+     * This does not access arc SUAs of large aerospace units, only the unit SUAs.
      *
      * @return A formatted Special Unit Ability string for this AS element
      */
     public String getSpecialsString(String delimiter) {
-        return specialAbs.getSpecialsString(delimiter);
+        return specialAbilities.getSpecialsString(delimiter);
     }
 
     /**
      * Convenience method to obtain the element's IF damage.
      *
      * @return The ASDamage that represents the element's IF value. If the element does not
-     * have IF, this will return ASDamage.ZERO.
+     * have IF, this will return {@link ASDamageVector#ZERO}.
      */
     public ASDamage getIF() {
-        return hasSPA(IF) ? (ASDamage) getSPA(IF) : ASDamage.ZERO;
+        return hasSUA(IF) ? (ASDamage) getSUA(IF) : ASDamage.ZERO;
     }
 
     /**
@@ -488,7 +518,7 @@ public class AlphaStrikeElement {
      * have LRM, this will return {@link ASDamageVector#ZERO}.
      */
     public ASDamageVector getLRM() {
-        return hasSPA(LRM) ? (ASDamageVector) getSPA(LRM) : ASDamageVector.ZERO;
+        return hasSUA(LRM) ? (ASDamageVector) getSUA(LRM) : ASDamageVector.ZERO;
     }
     
     /**
@@ -500,28 +530,17 @@ public class AlphaStrikeElement {
      * @return True when the given Special Unit Ability should be listed on the element's card
      */
     public boolean showSpecial(BattleForceSPA spa) {
-        if (spa.isDoor()) {
-            return false;
-        }
-        if (isAnyTypeOf(BM, PM) && (spa == SOA)) {
-            return false;
-        }
-        if (isAnyTypeOf(CV, BM) && (spa == SRCH)) {
-            return false;
-        }
-        if (!isAnyTypeOf(JS, WS, SC, DA, DS) && spa.isDoor()) {
-            return false;
-        }
-        if (hasAutoSeal() && (spa == SEAL)) {
-            return false;
-        }
-        return true;
+        return !(spa.isDoor()
+                || (isType(BM, PM) && (spa == SOA))
+                || (isType(CV, BM) && (spa == SRCH))
+                || (!isLargeAerospace() && spa.isDoor())
+                || (hasAutoSeal() && (spa == SEAL)));
     }
 
-    /** @return True when this AS element has the Auto-Seal Special Unit Ability. */
+    /** @return True when this AS element automatically gets the SEAL Special Unit Ability. */
     public boolean hasAutoSeal() {
         return isSubmarine()
-                || isAnyTypeOf(BM, AF, SC, DS, JS, WS, SS, DA);
+                || isType(BM, AF, SC, DS, JS, WS, SS, DA);
                 // TODO               || isType(BA) Exoskeleton??
     }
 
@@ -535,47 +554,9 @@ public class AlphaStrikeElement {
         return isType(CV) && getPrimaryMovementType().equals("s");
     }
 
-    /**
-     * Creates the formatted SPA string for the given spa and SPA value (the object assigned
-     * to the SPA such as an ASDamageVector). For turrets this includes everything in that
-     * turret.
-     *
-     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-".
-     */
-    public static String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
-        if (spa == TUR) {
-            return "TUR(" + spaObject + ")";
-        } else if (spa == BIM || spa == LAM) {
-            return lamString(spa, spaObject);
-        } else if ((spa == C3BSS) || (spa == C3M) || (spa == C3BSM) || (spa == C3EM)
-                || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
-            return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
-        } else {
-            return spa.toString() + (spaObject != null ? spaObject : "");
-        }
-    }
-    
-    /** @return The formatted LAM/BIM Special Ability string such as LAM(36"g/4a). */
-    private static String lamString(BattleForceSPA spa, Object spaObject) {
-        String result = spa.toString() + "(";
-        if (spa == LAM) {
-            result += ((Map<String, Integer>)spaObject).get("g") + INCH + "g/";
-        }
-        result += ((Map<String, Integer>)spaObject).get("a") + "a)";
-        return result;
-    }
-
-    /**
-     * @return The value associated with the given Special Unit Ability. Depending on the given spa, this
-     * value can be null or of different types.
-     */
-    public Object getSPA(BattleForceSPA spa) {
-        return specialAbs.getSPA(spa);
-    }
-
     /** @return True when this AS element is of a type that can have the OV and OVL abilities (BM and AF). */
     public boolean usesOV() {
-        return isAnyTypeOf(BM, AF);
+        return isType(BM, AF);
     }
 
     /**
@@ -591,14 +572,9 @@ public class AlphaStrikeElement {
         return getMovement("j");
     }
 
-    /** @return True if this AS element is of the given type. */
-    public boolean isType(ASUnitType type) {
-        return asUnitType == type;
-    }
-
     /** @return True if this AS element is any of the given types. */
-    public boolean isAnyTypeOf(ASUnitType type, ASUnitType... furtherTypes) {
-        return isType(type) || Arrays.stream(furtherTypes).anyMatch(this::isType);
+    public boolean isType(ASUnitType type, ASUnitType... furtherTypes) {
+        return asUnitType == type || Arrays.stream(furtherTypes).anyMatch(this::isType);
     }
 
     /** @return True if this AS element uses the Threshold value (equivalent to {@link #isAerospace()}). */
@@ -614,12 +590,12 @@ public class AlphaStrikeElement {
      * @return True if this unit uses firing arcs
      */
     public boolean usesArcs() {
-        return isAnyTypeOf(JS, WS, DA, DS, SS, SC) || (isType(SV) && hasAnySPAOf(LG, SLG, VLG));
+        return isType(JS, WS, DA, DS, SS, SC) || (isType(SV) && hasAnySUAOf(LG, SLG, VLG));
     }
 
     /** @return True if this AS element is Infantry (BA or CI). */
     public boolean isInfantry() {
-        return isAnyTypeOf(BA, CI);
+        return isType(BA, CI);
     }
 
     /**
@@ -637,7 +613,7 @@ public class AlphaStrikeElement {
      * @return True if this AS element is an aerospace unit (including aero SV units).
      */
     public boolean isAerospace() {
-        return isAnyTypeOf(AF, CF, SC, DS, DA, JS, WS, SS) || isAerospaceSV();
+        return isType(AF, CF, SC, DS, DA, JS, WS, SS) || isAerospaceSV();
     }
 
     /**
@@ -689,19 +665,20 @@ public class AlphaStrikeElement {
         return movement.containsKey(mode);
     }
 
-    /** @return True if this AS element tracks heat (BM, IM, CF, AF and Aerospace SV). */
+    //TODO: check if Aero SV can track heat (are they all CF or can they be AF)
+    /** @return True if this AS element tracks heat (BM, IM, AF and Aerospace SV). */
     public boolean tracksHeat() {
-        return isAnyTypeOf(BM, IM, AF, CF) || isAerospaceSV();
+        return isType(BM, IM, AF) || isAerospaceSV();
     }
 
-    /** @return True if this AS element is a fighter (AF, CF and Aerospace SV). */
+    /** @return True if this AS element is a fighter (AF, CF). */
     public boolean isFighter() {
-        return isAnyTypeOf(AF, CF) || isAerospaceSV();
+        return isType(AF, CF);
     }
 
     /** @return True if this AS element is a BattleMek or Industrial Mek (BM, IM). */
     public boolean isMek() {
-        return isAnyTypeOf(BM, IM);
+        return isType(BM, IM);
     }
 
     /** @return True if this AS element is a BattleMek (BM). */
@@ -714,9 +691,9 @@ public class AlphaStrikeElement {
         return isType(PM);
     }
 
-    /** @return True if this AS element is a large Aerospace unit, i.e. SC, DS, DA, SC, SS, JS, WS. */
+    /** @return True if this AS element is a large Aerospace unit, i.e. SC, DS, DA, SS, JS, WS. */
     public boolean isLargeAerospace() {
-        return isAnyTypeOf(SC, DS, DA, SC, SS, JS, WS);
+        return isType(SC, DS, DA, SS, JS, WS);
     }
 
     /** @return True if this AS element is a BattleArmor unit, i.e. BA. */
@@ -731,6 +708,6 @@ public class AlphaStrikeElement {
 
     /** @return True if this AS element uses CAP weapons in its arcs, i.e. WS, SS or JS. */
     public boolean usesCapitalWeapons() {
-        return isAnyTypeOf(WS, SS, JS);
+        return isType(WS, SS, JS);
     }
 }

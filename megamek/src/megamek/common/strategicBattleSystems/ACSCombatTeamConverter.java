@@ -20,7 +20,7 @@ package megamek.common.strategicBattleSystems;
 
 import megamek.common.*;
 import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;

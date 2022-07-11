@@ -19,7 +19,7 @@
 package megamek.utilities;
 
 import megamek.common.*;
-import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.loaders.EntityLoadingException;
 
@@ -88,8 +88,8 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getType().toString());
         stats.add(element.getSize() + "");
         stats.add(element.getMovementAsString());
-        stats.add(element.getArmor() + "");
-        stats.add(element.getStructure() + "");
+        stats.add(element.getFullArmor() + "");
+        stats.add(element.getFullStructure() + "");
         stats.add(element.usesThreshold() ? element.getThreshold() + "" : " ");
         stats.add(element.getStandardDamage() + "");
         stats.add(element.getOverheat() + "");

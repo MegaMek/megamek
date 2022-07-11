@@ -23,7 +23,7 @@ import megamek.client.ui.swing.AlphaStrikeStatsTablePanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import javax.swing.*;
@@ -133,8 +133,8 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         dataLine.append(element.getRole()).append(EXPORT_DELIMITER);
         dataLine.append("=\"").append(element.usesArcs() ? "" : " " + element.getStandardDamage()).append("\"").append(EXPORT_DELIMITER);
         dataLine.append(element.usesOV() ? element.getOverheat() : "").append(EXPORT_DELIMITER);
-        dataLine.append(element.getArmor()).append(EXPORT_DELIMITER);
-        dataLine.append(element.getStructure()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getFullArmor()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getFullStructure()).append(EXPORT_DELIMITER);
         dataLine.append(element.usesThreshold() ? element.getThreshold() : "").append(EXPORT_DELIMITER);
         dataLine.append(element.getSkill()).append(EXPORT_DELIMITER);
         dataLine.append(element.getPointValue()).append(EXPORT_DELIMITER);

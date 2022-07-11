@@ -474,19 +474,6 @@ public class SuperHeavyTank extends Tank {
         return false;
     }
     
-    /** This looks the same as the overridden Tank method but the LOC_ values are different!! */
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if ((index == 0) && (location != LOC_REAR)) {
-            return 1;
-        } else if ((index == 1) && (location == LOC_REAR)) {
-            return 1;
-        } else if ((index == 2) && ((location == LOC_TURRET) || (location == LOC_TURRET_2))) {
-            return 1;
-        }
-        return 0;
-    }
-
     @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;

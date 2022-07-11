@@ -20,11 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-
-import megamek.common.alphaStrike.BattleForceSPA;
-import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
@@ -1451,71 +1446,6 @@ public class Jumpship extends Aero {
         return true;
     }
 
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        moves.put("k", (int) (getStationKeepingThrust() * 10));
-    }
-
-    @Override
-    public int getNumBattleForceWeaponsLocations() {
-        return 4;
-    }
-    
-    @Override
-    public String getBattleForceLocationName(int index) {
-        // Remove leading F from FLS and FRS
-        String retVal = getLocationAbbrs()[index];
-        if (retVal.substring(0, 1).equals("F")) {
-            return retVal.substring(1);
-        }
-        return retVal;
-    }
-
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        switch (index) {
-            case LOC_NOSE:
-                if (location == LOC_NOSE) {
-                    return 1.0;
-                }
-                if (isSpheroid() && (location == LOC_FLS || location == LOC_FRS)
-                        && !rearMounted) {
-                    return 0.5;
-                }
-                break;
-            case LOC_FRS:
-                if (location == LOC_FRS || location == LOC_ARS) {
-                    return 0.5;
-                }
-                break;
-            case LOC_FLS:
-                if (location == LOC_FLS || location == LOC_ALS) {
-                    return 0.5;
-                }
-                break;
-            case LOC_AFT:
-                if (location == LOC_AFT) {
-                    return 1.0;
-                }
-                if (location == LOC_ALS || location == LOC_ARS) {
-                    return 0.5;
-                }
-                break;
-        }
-        return 0;
-    }
-    
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        specialAbilities.put(BattleForceSPA.KF, null);
-        if (hasLF()) {
-            specialAbilities.put(BattleForceSPA.LF, null);
-        }        
-        if (getNCrew() >= 60) {
-            specialAbilities.put(BattleForceSPA.CRW, (int) Math.round(getNCrew() / 120.0));
-        }
-    }
-    
     @Override
     public boolean isFighter() {
         return false;

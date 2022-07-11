@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.alphaStrike;
+package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
@@ -27,14 +28,13 @@ import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.common.weapons.other.CLFussilade;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.fmtDouble;
-
 import java.util.*;
 
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.fmtDouble;
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
+import static megamek.common.alphaStrike.BattleForceSPA.*;
 
-final class ASDamageConverter {
+public final class ASDamageConverter {
 
     // AP weapon mounts have a set damage value.
     static final double AP_MOUNT_DAMAGE = 0.05;
@@ -58,7 +58,7 @@ final class ASDamageConverter {
         int bombRacks = 0;
         double baseIFDamage = 0;
         //TODO: multiple turrets
-        var turretsArcs = new HashMap<String,ASArcSummary>();
+        var turretsArcs = new HashMap<String, ASArcSummary>();
         if (!element.usesArcs()) {
             for (int loc = 0; loc < element.weaponLocations.length; loc++) {
                 if (element.locationNames[loc].startsWith("TUR")) {
@@ -85,21 +85,21 @@ final class ASDamageConverter {
             ranges = weapon.isCapital() ? CAPITAL_RANGES : STANDARD_RANGES;
 
             if (weapon.getAmmoType() == AmmoType.T_INARC) {
-                element.getSpecialAbs().addSPA(INARC, 1);
+                element.getSpecialAbilities().addSPA(INARC, 1);
                 findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(INARC, 1));
                 continue;
             } else if (weapon.getAmmoType() == AmmoType.T_NARC) {
                 if (weapon.hasFlag(WeaponType.F_BA_WEAPON)) {
-                    element.getSpecialAbs().addSPA(CNARC, 1);
+                    element.getSpecialAbilities().addSPA(CNARC, 1);
                 } else {
-                    element.getSpecialAbs().addSPA(SNARC, 1);
+                    element.getSpecialAbilities().addSPA(SNARC, 1);
                     findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(SNARC, 1));
                 }
                 continue;
             }
 
             if (weapon.getAtClass() == WeaponType.CLASS_SCREEN) {
-                element.getSpecialAbs().addSPA(SCR, 1);
+                element.getSpecialAbilities().addSPA(SCR, 1);
                 continue;
             }
 
@@ -124,11 +124,11 @@ final class ASDamageConverter {
 
             if (weapon.hasFlag(WeaponType.F_TAG)) {
                 if (weapon.hasFlag(WeaponType.F_C3MBS)) {
-                    element.getSpecialAbs().addSPA(C3BSM, 1);
-                    element.getSpecialAbs().addSPA(MHQ, 6);
+                    element.getSpecialAbilities().addSPA(C3BSM, 1);
+                    element.getSpecialAbilities().addSPA(MHQ, 6);
                 } else if (weapon.hasFlag(WeaponType.F_C3M)) {
-                    element.getSpecialAbs().addSPA(C3M, 1);
-                    element.getSpecialAbs().addSPA(MHQ, 5);
+                    element.getSpecialAbilities().addSPA(C3M, 1);
+                    element.getSpecialAbilities().addSPA(MHQ, 5);
                 }
                 if (weapon.getShortRange() < 5) {
                     element.addSPA(LTAG);
@@ -142,12 +142,12 @@ final class ASDamageConverter {
 
             if (weapon.hasFlag(WeaponType.F_FLAMER) || weapon.hasFlag(WeaponType.F_PLASMA)) {
                 // For CI, add a placeholder heat value to be replaced later by the S damage value, ASC p.124
-                element.getSpecialAbs().addSPA(HT, ASDamageVector.createNormRndDmg(0));
+                element.getSpecialAbilities().addSPA(HT, ASDamageVector.createNormRndDmg(0));
             }
 
             if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
                 if (!((entity instanceof Aero) && isArtilleryCannon(weapon))) {
-                    element.getSpecialAbs().addSPA(getArtilleryType(weapon), 1);
+                    element.getSpecialAbilities().addSPA(getArtilleryType(weapon), 1);
                     findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(getArtilleryType(weapon), 1));
                     continue;
                 }
@@ -157,7 +157,7 @@ final class ASDamageConverter {
                 for (int index : mount.getBayWeapons()) {
                     Mounted m = entity.getEquipment(index);
                     if (m.getType() instanceof WeaponType) {
-                        element.getSpecialAbs().addSPA(getArtilleryType((WeaponType)m.getType()), 1);
+                        element.getSpecialAbilities().addSPA(getArtilleryType((WeaponType)m.getType()), 1);
                         findArcTurret(element, entity, mount, turretsArcs)
                                 .forEach(a -> a.getSpecials().addSPA(getArtilleryType((WeaponType)m.getType()), 1));
                     }
@@ -171,15 +171,15 @@ final class ASDamageConverter {
 
             if (weapon.getAmmoType() == AmmoType.T_TASER) {
                 if (entity instanceof BattleArmor) {
-                    element.getSpecialAbs().addSPA(BTAS, 1);
+                    element.getSpecialAbilities().addSPA(BTAS, 1);
                 } else {
-                    element.getSpecialAbs().addSPA(MTAS, 1);
+                    element.getSpecialAbilities().addSPA(MTAS, 1);
                 }
             }
 
             if (weapon.hasFlag(WeaponType.F_TSEMP)) {
                 BattleForceSPA spa = weapon.hasFlag(WeaponType.F_ONESHOT) ? TSEMPO : TSEMP;
-                element.getSpecialAbs().addSPA(spa, 1);
+                element.getSpecialAbilities().addSPA(spa, 1);
                 findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(spa, 1));
                 continue;
             }
@@ -244,33 +244,33 @@ final class ASDamageConverter {
                     Mounted m = entity.getEquipment(index);
                     if (m.getType() instanceof WeaponType) {
                         if (m.getType().hasFlag(WeaponType.F_AMS)) {
-                            if (entity.getBattleForceLocationMultiplier(0, m.getLocation(), m.isRearMounted()) != 0) {
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 0, m) != 0) {
                                 element.getFrontArc().getSpecials().addSPA(PNT, 0.3d);
                             }
-                            if (entity.getBattleForceLocationMultiplier(1, m.getLocation(), m.isRearMounted()) != 0) {
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 1, m) != 0) {
                                 element.getLeftArc().getSpecials().addSPA(PNT, 0.3d);
                             }
-                            if (entity.getBattleForceLocationMultiplier(2, m.getLocation(), m.isRearMounted()) != 0) {
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 2, m) != 0) {
                                 element.getRightArc().getSpecials().addSPA(PNT, 0.3d);
                             }
-                            if (entity.getBattleForceLocationMultiplier(3, m.getLocation(), m.isRearMounted()) != 0) {
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 3, m) != 0) {
                                 element.getRearArc().getSpecials().addSPA(PNT, 0.3d);
                             }
                             continue;
                         }
 
                         if (((WeaponType) m.getType()).isAlphaStrikePointDefense()) {
-                            double sDmg = ((WeaponType)m.getType()).getBattleForceDamage(ranges[0], m.getLinkedBy());
-                            if (entity.getBattleForceLocationMultiplier(0, m.getLocation(), m.isRearMounted()) != 0) {
+                            double sDmg = ((WeaponType) m.getType()).getBattleForceDamage(ranges[0], m.getLinkedBy());
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 0, m) != 0) {
                                 element.getFrontArc().getSpecials().addSPA(PNT, sDmg);
                             }
-                            if (entity.getBattleForceLocationMultiplier(1, m.getLocation(), m.isRearMounted()) != 0) {
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 1, m) != 0) {
                                 element.getLeftArc().getSpecials().addSPA(PNT, sDmg);
                             }
-                            if (entity.getBattleForceLocationMultiplier(2, m.getLocation(), m.isRearMounted()) != 0) {
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 2, m) != 0) {
                                 element.getRightArc().getSpecials().addSPA(PNT, sDmg);
                             }
-                            if (entity.getBattleForceLocationMultiplier(3, m.getLocation(), m.isRearMounted()) != 0) {
+                            if (ASLocationMapper.damageLocationMultiplier(entity, 3, m) != 0) {
                                 element.getRearArc().getSpecials().addSPA(PNT, sDmg);
                             }
                         }
@@ -399,12 +399,12 @@ final class ASDamageConverter {
                 element.weaponLocations[0].addDamage(WeaponType.BFCLASS_STANDARD, 0, vibroClaws);
             }
             if (bombRacks > 0) {
-                element.getSpecialAbs().addSPA(BOMB, (bombRacks * ((BattleArmor)entity).getShootingStrength()) / 5);
+                element.getSpecialAbilities().addSPA(BOMB, (bombRacks * ((BattleArmor)entity).getShootingStrength()) / 5);
             }
         }
 
         if (entity instanceof Aero && ASConverter.roundUp(pointDefense) > 0) {
-            element.getSpecialAbs().addSPA(PNT, ASConverter.roundUp(pointDefense));
+            element.getSpecialAbilities().addSPA(PNT, ASConverter.roundUp(pointDefense));
         }
 
         adjustForHeat(conversionData);
@@ -416,13 +416,13 @@ final class ASDamageConverter {
             int htM = resultingHTValue(element.weaponLocations[0].heatDamage.get(1));
             int htL = resultingHTValue(element.weaponLocations[0].heatDamage.get(2));
             if (htS + htM + htL > 0) {
-                element.getSpecialAbs().addSPA(HT, ASDamageVector.createNormRndDmg(htS, htM, htL));
+                element.getSpecialAbilities().addSPA(HT, ASDamageVector.createNormRndDmg(htS, htM, htL));
             }
         }
 
         // IF (uses an ASDamage as value)
         if (element.weaponLocations[0].getIF() > 0) {
-            element.getSpecialAbs().addSPA(IF, ASDamageVector.createNormRndDmg(element.weaponLocations[0].getIF()).S);
+            element.getSpecialAbilities().addSPA(IF, ASDamageVector.createNormRndDmg(element.weaponLocations[0].getIF()).S);
         }
 
         // LRM ... IATM specials
@@ -454,11 +454,11 @@ final class ASDamageConverter {
             List<Double> dmg = element.weaponLocations[0].specialDamage.get(i);
             if ((dmg != null) && qualifiesForSpecial(dmg, spa)) {
                 if (spa == SRM) {
-                    element.getSpecialAbs().addSPA(SRM, ASDamageVector.createNormRndDmgNoMin(dmg, 2));
+                    element.getSpecialAbilities().addSPA(SRM, ASDamageVector.createNormRndDmgNoMin(dmg, 2));
                 } else if ((spa == LRM) || (spa == AC) || (spa == IATM)) {
-                    element.getSpecialAbs().addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, element.getRangeBands()));
+                    element.getSpecialAbilities().addSPA(spa, ASDamageVector.createNormRndDmgNoMin(dmg, element.getRangeBands()));
                 } else if ((spa == FLK) || (spa == TOR)) {
-                    element.getSpecialAbs().addSPA(spa, ASDamageVector.createNormRndDmg(dmg, element.getRangeBands()));
+                    element.getSpecialAbilities().addSPA(spa, ASDamageVector.createNormRndDmg(dmg, element.getRangeBands()));
                 } else if (spa == REL) {
                     element.addSPA(spa);
                 }
@@ -476,65 +476,6 @@ final class ASDamageConverter {
             setArcDamage(element, 1, element.getLeftArc());
             setArcDamage(element, 2, element.getRightArc());
             setArcDamage(element, 3, element.getRearArc());
-//            element.getFrontArc().setStdDamage(ASDamageVector.createUpRndDmg(
-//                    element.weaponLocations[0].standardDamage, 4));
-//            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-//                element.getFrontArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-//            }
-//            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-//                element.getFrontArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-//            }
-//            if (element.weaponLocations[0].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-//                element.getFrontArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[0].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-//            }
-//
-//            element.getRearArc().setStdDamage(ASDamageVector.createUpRndDmg(
-//                    element.weaponLocations[3].standardDamage, 4));
-//            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-//                element.getRearArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-//            }
-//            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-//                element.getRearArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-//            }
-//            if (element.weaponLocations[3].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-//                element.getRearArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[3].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-//            }
-//
-//            element.getLeftArc().setStdDamage(ASDamageVector.createUpRndDmg(
-//                    element.weaponLocations[1].standardDamage, 4));
-//            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-//                element.getLeftArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-//            }
-//            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-//                element.getLeftArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-//            }
-//            if (element.weaponLocations[1].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-//                element.getLeftArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[1].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-//            }
-//
-//            element.getRightArc().setStdDamage(ASDamageVector.createUpRndDmg(
-//                    element.weaponLocations[2].standardDamage, 4));
-//            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_SUBCAPITAL)) {
-//                element.getRightArc().setSCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_SUBCAPITAL), 4));
-//            }
-//            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_CAPITAL)) {
-//                element.getRightArc().setCAPDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_CAPITAL), 4));
-//            }
-//            if (element.weaponLocations[2].hasDamageClass(WeaponType.BFCLASS_CAPITAL_MISSILE)) {
-//                element.getRightArc().setMSLDamage(ASDamageVector.createUpRndDmgMinus(
-//                        element.weaponLocations[2].specialDamage.get(WeaponType.BFCLASS_CAPITAL_MISSILE), 4));
-//            }
         } else {
             // Standard damage
             element.setStandardDamage(ASDamageVector.createUpRndDmg(
@@ -548,7 +489,7 @@ final class ASDamageConverter {
             ASDamageVector rearDmg = ASDamageVector.createNormRndDmg(
                     element.weaponLocations[rearLoc].standardDamage, element.getRangeBands());
             if (rearDmg.hasDamage()) {
-                element.getSpecialAbs().addSPA(REAR, rearDmg);
+                element.getSpecialAbilities().addSPA(REAR, rearDmg);
             }
 
         }
@@ -586,7 +527,7 @@ final class ASDamageConverter {
                 }
                 if (!arcTurret.isEmpty()) {
                     //TODO: If this is an arc??
-                    element.getSpecialAbs().addSPA(TUR, arcTurret);
+                    element.getSpecialAbilities().addSPA(TUR, arcTurret);
                 }
             }
         }
@@ -605,13 +546,13 @@ final class ASDamageConverter {
     }
 
     private static double locationMultiplier(Entity en, int loc, Mounted mount) {
-        if (en.getBattleForceLocationName(loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
+        if (ASLocationMapper.locationName(en, loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
             return 1;
-        } else if (en.getBattleForceLocationName(loc).startsWith("TUR") && (en instanceof Tank)
+        } else if (ASLocationMapper.locationName(en, loc).startsWith("TUR") && (en instanceof Tank)
                 && (mount.isPintleTurretMounted() || mount.isSponsonTurretMounted())) {
             return 1;
         } else {
-            return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+            return ASLocationMapper.damageLocationMultiplier(en, loc, mount);
         }
     }
 
@@ -744,7 +685,7 @@ final class ASDamageConverter {
         }
 
         // Adjust all weapon damages (E for units with OVL and arced units, M otherwise)
-        int maxAdjustmentRange = 1 + ((element.hasSPA(OVL) || element.usesArcs()) ? RANGE_BAND_EXTREME : RANGE_BAND_MEDIUM);
+        int maxAdjustmentRange = 1 + ((element.hasSUA(OVL) || element.usesArcs()) ? RANGE_BAND_EXTREME : RANGE_BAND_MEDIUM);
         double frontadjustment = (double) heatCapacity / (totalFrontHeat - 4);
         double rearHeat = getHeatGeneration(entity, element,true, false);
         double rearAdjustment = rearHeat - 4 > heatCapacity ? heatCapacity / (rearHeat - 4) : 1;
@@ -764,7 +705,7 @@ final class ASDamageConverter {
                 }
             }
             // IF is long-range fire; only adjust when the unit can overheat even in long range
-            if (element.hasSPA(OVL)) {
+            if (element.hasSUA(OVL)) {
                 //TODO: really adjust this with round up to tenth?
                 wloc.indirect = heatAdjust(wloc.indirect, adjustment);
             }
@@ -962,22 +903,22 @@ final class ASDamageConverter {
         }
         result += entity.getEquipment().stream().filter(Mounted::isCoolantPod).count();
         result += entity.hasWorkingMisc(MiscType.F_PARTIAL_WING) ? 3 : 0;
-        result += element.hasSPA(RHS) ? 1 : 0;
-        result += element.hasSPA(ECS) ? 1 : 0;
+        result += element.hasSUA(RHS) ? 1 : 0;
+        result += element.hasSUA(ECS) ? 1 : 0;
         return result;
     }
 
     private static void addSPAToArcs(BattleForceSPA spa, Mounted mount, Entity entity, AlphaStrikeElement element) {
-        if (entity.getBattleForceLocationMultiplier(0, mount.getLocation(), mount.isRearMounted()) != 0) {
+        if (ASLocationMapper.damageLocationMultiplier(entity, 0, mount) != 0) {
             element.getFrontArc().getSpecials().addSPA(spa);
         }
-        if (entity.getBattleForceLocationMultiplier(1, mount.getLocation(), mount.isRearMounted()) != 0) {
+        if (ASLocationMapper.damageLocationMultiplier(entity, 1, mount) != 0) {
             element.getLeftArc().getSpecials().addSPA(spa);
         }
-        if (entity.getBattleForceLocationMultiplier(2, mount.getLocation(), mount.isRearMounted()) != 0) {
+        if (ASLocationMapper.damageLocationMultiplier(entity, 2, mount) != 0) {
             element.getRightArc().getSpecials().addSPA(spa);
         }
-        if (entity.getBattleForceLocationMultiplier(3, mount.getLocation(), mount.isRearMounted()) != 0) {
+        if (ASLocationMapper.damageLocationMultiplier(entity, 3, mount) != 0) {
             element.getRearArc().getSpecials().addSPA(spa);
         }
     }

@@ -13,10 +13,6 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.BattleForceSPA;
-
-import java.util.Map;
-
 /**
  * This is a support vehicle
  *
@@ -470,55 +466,6 @@ public class SupportTank extends Tank {
     }
 
     @Override
-    /*
-     * returns the battle force structure points for a mech
-     */
-    public int getBattleForceStructurePoints() {
-        switch (movementMode) {
-            case NAVAL:
-            case HYDROFOIL:
-            case SUBMARINE:
-                if (getWeight() <= 300) {
-                    return 10;
-                }
-                if (getWeight() <= 500) {
-                    return 15;
-                }
-                if (getWeight() <= 6000) {
-                    return 20;
-                }
-                if (getWeight() <= 12000) {
-                    return 25;
-                }
-                if (getWeight() <= 30000) {
-                    return 30;
-                }
-                if (getWeight() <= 100000) {
-                    return 35;
-                }
-            default:
-                //TODO add rail in here when ready
-                return super.getBattleForceStructurePoints();
-        }
-    }
-    
-//    @Override
-//    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-//        super.addBattleForceSpecialAbilities(specialAbilities);
-//        switch (getBattleForceSize()) {
-//            case 3:
-//                specialAbilities.put(BattleForceSPA.LG, null);
-//                break;
-//            case 4:
-//                specialAbilities.put(BattleForceSPA.VLG, null);
-//                break;
-//            case 5:
-//                specialAbilities.put(BattleForceSPA.SLG, null);
-//                break;
-//        }
-//    }
-    
-    @Override
     public boolean isSupportVehicle() {
         return true;
     }
@@ -532,55 +479,4 @@ public class SupportTank extends Tank {
     public boolean isTrailer() {
         return hasWorkingMisc(MiscType.F_TRAILER_MODIFICATION);
     }
-
-    /**
-     * Separate turret weapons from body-mounted
-     */
-    @Override
-    public int getNumBattleForceWeaponsLocations() {
-        if (m_bHasNoTurret) {
-            return 2;
-        } else if  (m_bHasNoDualTurret) {
-            return 3;
-        } else {
-            return 4;
-        }
-    }
-
-    @Override
-    public String getBattleForceLocationName(int index) {
-        if (index == 1) {
-            return "REAR";
-        }
-        if (index > 1) {
-            if (m_bHasNoDualTurret) {
-                return "TUR";
-            } else {
-                return "TUR" + index;
-            }
-        } else {
-            return "";
-        }
-    }
-
-    /**
-     * index 0 (Front, Left, Right)
-     * index 1+ (Turret(s))
-     */
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if ((index == 0) && ((location == LOC_FRONT) || (location == LOC_LEFT)
-                 || (location == LOC_RIGHT)
-                 || (location == LOC_TURRET) || (location == LOC_TURRET_2))) {
-            return 1;
-        } else if (index == 1 && (location == LOC_REAR)) {
-            return 1;
-        } else if ((index == 2) && (location == LOC_TURRET)) {
-            return 1;
-        } else if ((index == 3) && (location == LOC_TURRET_2)) {
-            return 1;
-        }
-        return 0;
-    }
-
 }

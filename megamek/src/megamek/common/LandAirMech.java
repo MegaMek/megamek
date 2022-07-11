@@ -13,7 +13,6 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.enums.MPBoosters;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
@@ -1910,34 +1909,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
         }
         applyDamage();
-    }
-
-//    @Override
-//    public void setBattleForceMovement(Map<String, Integer> movement) {
-//        super.setBattleForceMovement(movement);
-//        movement.put("g", getAirMechCruiseMP(true, false));
-//        movement.put("a", getFighterModeWalkMP(true, false));
-//    }
-//
-//    @Override
-//    public void setAlphaStrikeMovement(Map<String, Integer> movement) {
-//        super.setBattleForceMovement(movement);
-//        movement.put("g", getAirMechCruiseMP(true, false) * 2);
-//        movement.put("a", getFighterModeWalkMP(true, false));
-//    }
-
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA, Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        int bombs = (int) getEquipment().stream().filter(m -> m.getType().hasFlag(MiscType.F_BOMB_BAY)).count();
-        if (bombs > 0) {
-            specialAbilities.put(BattleForceSPA.BOMB, bombs / 5);
-        }
-        if (lamType == LAM_BIMODAL) {
-            specialAbilities.put(BattleForceSPA.BIM, null);
-        } else {
-            specialAbilities.put(BattleForceSPA.LAM, null);
-        }
     }
 
     @Override

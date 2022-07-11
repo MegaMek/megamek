@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, 2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -16,11 +16,13 @@
  * You should have received a copy of the GNU General Public License
  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
-package megamek.common.alphaStrike;
+package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -35,7 +37,7 @@ import java.util.*;
  */
 public final class ASConverter {
 
-    public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
+        public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
         return convert(entity, true, conversionReport);
     }
 
@@ -107,8 +109,8 @@ public final class ASConverter {
 
         element.setMovement(ASMovementConverter.convertMovement(conversionData));
         element.setTMM(ASMovementConverter.convertTMM(conversionData));
-        element.setArmor(ASArmStrConverter.convertArmor(conversionData));
-        element.setStructure(ASArmStrConverter.convertStructure(conversionData));
+        element.setFullArmor(ASArmStrConverter.convertArmor(conversionData));
+        element.setFullStructure(ASArmStrConverter.convertStructure(conversionData));
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         ASSpecialAbilityConverter.convertSpecialUnitAbilities(conversionData);
         initWeaponLocations(undamagedEntity, element);
@@ -189,11 +191,11 @@ public final class ASConverter {
     }
 
     private static void initWeaponLocations(Entity entity, AlphaStrikeElement result) {
-        result.weaponLocations = new WeaponLocation[entity.getNumBattleForceWeaponsLocations()];
+        result.weaponLocations = new WeaponLocation[ASLocationMapper.damageLocationsCount(entity)];
         result.locationNames = new String[result.weaponLocations.length];
         for (int loc = 0; loc < result.locationNames.length; loc++) {
             result.weaponLocations[loc] = new WeaponLocation();
-            result.locationNames[loc] = entity.getBattleForceLocationName(loc);
+            result.locationNames[loc] = ASLocationMapper.locationName(entity, loc);
         }
     }
 
@@ -203,7 +205,7 @@ public final class ASConverter {
     }
 
     /** Returns the given number, rounded up to the nearest integer, based on the first decimal only. */
-    static int roundUp(double number) {
+    public static int roundUp(double number) {
         return (int) Math.round(number + 0.4); 
     }
 
@@ -271,5 +273,7 @@ public final class ASConverter {
         }
 
     }
+
+    private ASConverter() { }
 
 }

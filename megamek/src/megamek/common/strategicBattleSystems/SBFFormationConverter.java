@@ -21,7 +21,7 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.common.*;
-import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.common.force.Force;
@@ -100,11 +100,11 @@ public final class SBFFormationConverter {
         for (Force subforce : subforces) {
             var elementsList = new ArrayList<AlphaStrikeElement>();
             forces.getFullEntities(subforce).stream().map(ASConverter::convert).forEach(elementsList::add);
-            invalid |= elementsList.stream().anyMatch(a -> a.hasSPA(LG)) && elementsList.size() > 2;
-            invalid |= elementsList.stream().anyMatch(a -> a.hasAnySPAOf(VLG, SLG)) && elementsList.size() > 1;
+            invalid |= elementsList.stream().anyMatch(a -> a.hasSUA(LG)) && elementsList.size() > 2;
+            invalid |= elementsList.stream().anyMatch(a -> a.hasAnySUAOf(VLG, SLG)) && elementsList.size() > 1;
             SBFUnit unit = SBFUnitConverter.createSbfUnit(elementsList, "temporary", elementsList);
             invalid |= unit.isGround() && elementsList.stream().anyMatch(AlphaStrikeElement::isAerospace);
-            invalid |= unit.isAerospace() && elementsList.stream().anyMatch(a -> !a.hasAnySPAOf(SOA, LAM, BIM));
+            invalid |= unit.isAerospace() && elementsList.stream().anyMatch(a -> !a.hasAnySUAOf(SOA, LAM, BIM));
         }
         return !invalid;
     }

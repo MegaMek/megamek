@@ -1,6 +1,6 @@
 package megamek.common;
 
-import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSPA;
 import org.apache.logging.log4j.LogManager;
@@ -149,15 +149,15 @@ public enum UnitRole {
             case AMBUSHER:
                 /* Slow, light armor, preference for short range */
                 score -= Math.max(0, speed - 6) * 0.5;
-                score -= Math.max(0, unit.getArmor() - 5);
-                if (unit.hasSPA(BattleForceSPA.ECM)
-                        || unit.hasSPA(BattleForceSPA.LECM)
-                        || unit.hasSPA(BattleForceSPA.WAT)) {
+                score -= Math.max(0, unit.getFullArmor() - 5);
+                if (unit.hasSUA(BattleForceSPA.ECM)
+                        || unit.hasSUA(BattleForceSPA.LECM)
+                        || unit.hasSUA(BattleForceSPA.WAT)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.STL)
-                        || unit.hasSPA(BattleForceSPA.MAS)
-                        || unit.hasSPA(BattleForceSPA.LMAS)) {
+                if (unit.hasSUA(BattleForceSPA.STL)
+                        || unit.hasSUA(BattleForceSPA.MAS)
+                        || unit.hasSUA(BattleForceSPA.LMAS)) {
                     score++;
                 }
                 if (unit.getStandardDamage().S.damage >
@@ -185,9 +185,9 @@ public enum UnitRole {
                 score -= Math.max(0, speed - 6) * 0.5;
                 /* Per ASC, a Juggernaut should have an armor value of 7, but there are a large number
                  * of smaller units with lower armor values that have an official role of juggernaut.*/
-                score += Math.min(0,  unit.getArmor() - (unit.getSize() + 4));
+                score += Math.min(0,  unit.getFullArmor() - (unit.getSize() + 4));
                 if (Math.max(unit.getStandardDamage().S.damage,
-                            unit.getStandardDamage().M.damage)* 2 >= unit.getArmor()) {
+                            unit.getStandardDamage().M.damage)* 2 >= unit.getFullArmor()) {
                     score++;
                 }
                 if (unit.getStandardDamage().S.damage >
@@ -197,54 +197,54 @@ public enum UnitRole {
                         unit.getStandardDamage().L.damage) {
                     score += 0.5;
                 }
-                if (unit.hasSPA(BattleForceSPA.MEL)
-                        || unit.hasSPA(BattleForceSPA.TSM)) {
+                if (unit.hasSUA(BattleForceSPA.MEL)
+                        || unit.hasSUA(BattleForceSPA.TSM)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.CR)
-                        || unit.hasSPA(BattleForceSPA.RCA)
-                        || unit.hasSPA(BattleForceSPA.RFA)) {
+                if (unit.hasSUA(BattleForceSPA.CR)
+                        || unit.hasSUA(BattleForceSPA.RCA)
+                        || unit.hasSUA(BattleForceSPA.RFA)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.AMS)
-                        || unit.hasSPA(BattleForceSPA.RAMS)) {
+                if (unit.hasSUA(BattleForceSPA.AMS)
+                        || unit.hasSUA(BattleForceSPA.RAMS)) {
                     score++;
                 }
                 break;
             case MISSILE_BOAT:
                 /* Any artillery piece or can do damage by indirect fire at long range */
-                return (unit.getStandardDamage().L.damage > 0 && unit.hasSPA(BattleForceSPA.IF))
-                        || unit.hasSPA(BattleForceSPA.ARTAIS)
-                        || unit.hasSPA(BattleForceSPA.ARTAC)
-                        || unit.hasSPA(BattleForceSPA.ARTBA)
-                        || unit.hasSPA(BattleForceSPA.ARTCM5)
-                        || unit.hasSPA(BattleForceSPA.ARTCM7)
-                        || unit.hasSPA(BattleForceSPA.ARTCM9)
-                        || unit.hasSPA(BattleForceSPA.ARTCM12)
-                        || unit.hasSPA(BattleForceSPA.ARTT)
-                        || unit.hasSPA(BattleForceSPA.ARTS)
-                        || unit.hasSPA(BattleForceSPA.ARTLT)
-                        || unit.hasSPA(BattleForceSPA.ARTTC)
-                        || unit.hasSPA(BattleForceSPA.ARTSC)
-                        || unit.hasSPA(BattleForceSPA.ARTLTC);
+                return (unit.getStandardDamage().L.damage > 0 && unit.hasSUA(BattleForceSPA.IF))
+                        || unit.hasSUA(BattleForceSPA.ARTAIS)
+                        || unit.hasSUA(BattleForceSPA.ARTAC)
+                        || unit.hasSUA(BattleForceSPA.ARTBA)
+                        || unit.hasSUA(BattleForceSPA.ARTCM5)
+                        || unit.hasSUA(BattleForceSPA.ARTCM7)
+                        || unit.hasSUA(BattleForceSPA.ARTCM9)
+                        || unit.hasSUA(BattleForceSPA.ARTCM12)
+                        || unit.hasSUA(BattleForceSPA.ARTT)
+                        || unit.hasSUA(BattleForceSPA.ARTS)
+                        || unit.hasSUA(BattleForceSPA.ARTLT)
+                        || unit.hasSUA(BattleForceSPA.ARTTC)
+                        || unit.hasSUA(BattleForceSPA.ARTSC)
+                        || unit.hasSUA(BattleForceSPA.ARTLTC);
             case SCOUT:
                 /* Fast (jump, WiGE, or VTOL helpful but not required), lightly armored, preference for short range */
                 score += Math.min(0, speed - 8) * 0.5;
-                score -= Math.max(0, unit.getArmor() - 4);
+                score -= Math.max(0, unit.getFullArmor() - 4);
                 if (unit.getMovementModes().contains("j") || unit.getMovementModes().contains("g")
                         || unit.getMovementModes().contains("v")) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.RCN)) {
+                if (unit.hasSUA(BattleForceSPA.RCN)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.BH)
-                        || unit.hasSPA(BattleForceSPA.PRB)
-                        || unit.hasSPA(BattleForceSPA.LPRB)
-                        || unit.hasSPA(BattleForceSPA.WAT)) {
+                if (unit.hasSUA(BattleForceSPA.BH)
+                        || unit.hasSUA(BattleForceSPA.PRB)
+                        || unit.hasSUA(BattleForceSPA.LPRB)
+                        || unit.hasSUA(BattleForceSPA.WAT)) {
                     score++;
                 }
-                if (unit.hasSPA(BattleForceSPA.ECM)) {
+                if (unit.hasSUA(BattleForceSPA.ECM)) {
                     score++;
                 }
                 if (unit.getStandardDamage().S.damage >
@@ -262,7 +262,7 @@ public enum UnitRole {
                 } else {
                     score += Math.min(0, speed - 9) * 0.5;
                 }
-                score += Math.min(0, unit.getArmor() - 4) + Math.min(0, 8 - unit.getArmor());
+                score += Math.min(0, unit.getFullArmor() - 4) + Math.min(0, 8 - unit.getFullArmor());
                 if (unit.getStandardDamage().M.damage >=
                         unit.getStandardDamage().S.damage) {
                     score += 0.5;
@@ -278,7 +278,7 @@ public enum UnitRole {
             case STRIKER:
                 /* Fast and light-medium armor, preference for short range */
                 score += Math.min(0, speed - 9) * 0.5;
-                score -= Math.max(0, unit.getArmor() - 5);
+                score -= Math.max(0, unit.getFullArmor() - 5);
                 if (unit.getStandardDamage().S.damage >
                         unit.getStandardDamage().M.damage) {
                     score++;
@@ -343,16 +343,16 @@ public enum UnitRole {
                 break;
             case TRANSPORT:
                 /* Has transport capacity */
-                return unit.hasSPA(BattleForceSPA.CK)
-                        || unit.hasSPA(BattleForceSPA.IT)
-                        || unit.hasSPA(BattleForceSPA.AT)
-                        || unit.hasSPA(BattleForceSPA.PT)
-                        || unit.hasSPA(BattleForceSPA.VTM)
-                        || unit.hasSPA(BattleForceSPA.VTH)
-                        || unit.hasSPA(BattleForceSPA.VTS)
-                        || unit.hasSPA(BattleForceSPA.MT)
-                        || unit.hasSPA(BattleForceSPA.CT)
-                        || unit.hasSPA(BattleForceSPA.ST);
+                return unit.hasSUA(BattleForceSPA.CK)
+                        || unit.hasSUA(BattleForceSPA.IT)
+                        || unit.hasSUA(BattleForceSPA.AT)
+                        || unit.hasSUA(BattleForceSPA.PT)
+                        || unit.hasSUA(BattleForceSPA.VTM)
+                        || unit.hasSUA(BattleForceSPA.VTH)
+                        || unit.hasSUA(BattleForceSPA.VTS)
+                        || unit.hasSUA(BattleForceSPA.MT)
+                        || unit.hasSUA(BattleForceSPA.CT)
+                        || unit.hasSUA(BattleForceSPA.ST);
             default:
                 break;
         }

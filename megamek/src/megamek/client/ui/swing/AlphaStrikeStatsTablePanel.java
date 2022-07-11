@@ -23,7 +23,7 @@ import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
-import megamek.common.alphaStrike.ASConverter;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import javax.swing.*;
@@ -107,8 +107,8 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
                 addGridElement(element.getRole() + "", oddRow);
                 addGridElement(element.usesArcs() ? "" : element.getStandardDamage() + "", oddRow);
                 addGridElement(element.usesOV() ? element.getOverheat() + "" : "", oddRow);
-                addGridElement(element.getArmor() + "", oddRow);
-                addGridElement(element.getStructure() + "", oddRow);
+                addGridElement(element.getFullArmor() + "", oddRow);
+                addGridElement(element.getFullStructure() + "", oddRow);
                 addGridElement(element.usesThreshold() ? element.getThreshold() + "" : " ", oddRow);
                 addGridElement(element.getSkill() + "", oddRow);
                 addGridElement(element.getPointValue() + "", oddRow);

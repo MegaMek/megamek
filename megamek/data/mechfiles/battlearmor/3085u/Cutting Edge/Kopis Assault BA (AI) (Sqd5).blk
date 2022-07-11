@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kopis Assault Battle Armor
+</Name>
+
+<Model>
+(Anti-Infantry)(Sqd5)
+</Model>
+
+<mul id:>
+8561
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+4
+</weightclass>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Armor>
+10
+</Armor>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBAMediumPulseLaser:Body
+ISBAFlamer:Body
+BAAPMount:RA
+InfantryAssaultRifle:RA:APM
+BAAPMount:LA
+InfantryAssaultRifle:LA:APM
+BAHeavyBattleClaw:RA
+BAHeavyBattleClaw:LA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:LA
+IS BA Advanced:RA
+IS BA Advanced:RA
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3078
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<overview>
+The Kopis battle armor was designed by StarCorps Industries as an assault unit. 
+</overview>
+
+<capabilities>
+Slow but heavily armed, the Kopis can remain on the battlefield supporting friendly units for a long time. The advanced armor used by the Kopis designers allows it to stand up to most weaponry, shrugging off anything short of a PPC or AC/10 hit. The low top speed is mitigated through the use of VTOL transportation for offensive operations, while smart commanders use the Kopis as a defense unit for cities or other tight terrain. In those restricted environments the low top speed isn't a factor.
+</capabilities>
+
+<deployment>
+Developed for the liberation of Terra introduced in 3078, this variant replaces the Medium Lasers with a single Medium Pulse Laser and a Flamer. It was used to fight the Word of Blake's infantry defenders on Terra. 
+</deployment>
+
+<history>
+ The standard model was given the nickname of "The Dark Alley".
+</history>
+
+<manufacturer>
+Grumium Creations
+</manufacturer>
+
+<primaryFactory>
+Grumium	
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kanazuchi Assault Battle Armor
+</Name>
+
+<Model>
+[Industrial Drill](Sqd5)
+</Model>
+
+<mul id:>
+8558
+</mul id:>
+
+<chassis>
+biped
+</chassis>
+
+<weightclass>
+4
+</weightclass>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<Armor>
+15
+</Armor>
+
+<Squad Equipment>
+ISBAMediumLaser:RA
+ISBASRM2OS:Body
+ISBASRM2OS:Body
+BAMEA:LA
+BAIndustrialDrill:LA
+BAAPMount:Body
+InfantryAssaultRifle:Body:APM
+BAAPMount:Body
+InfantryAssaultRifle:Body:APM
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3058
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO 3058U - Clan Invasion
+</source>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<overview>
+The Kanazuchi (Japanese: "hammer") is a Draconis Combine battle armor design, one of the heaviest to come from that realm. It also saw the most trouble getting approved. 
+</overview>
+
+<capabilities>
+The 750kg of armoring it carries makes the Kanazuchi one of the best-protected suits built, as demonstrated during its final test. However due to the nature of its construction the Kanazuchi cannot make anti-'Mech attacks or ride on OmniMechs like other suits. Combined with a lack of jump jets and top speed of 10.8 km/h, the suit is best utilized in an urban defense role. The suit is also equipped with multiple Anti-Personnel Weapon Mounts on both its arms and torso. While only two can be utilized at any one time, the wearer can choose which ones in any combination: both torso mounts, one torso and one arm mount, or both arm mounts. Using the torso mounts allows for twice as many rounds to be carried but the weapon can only fire at targets within a forward 90° firing arc. Using the arm mounts gives a greater range of motion but the weapon only carries its standard number of rounds. Finally the Kanazuchi is equipped with a Heavy Battle Claw in its left arm. This claw can be swapped out for other manipulators, such as an Industrial Drill or Salvage Arm, as mission parameters dictate.
+</capabilities>
+
+<deployment>
+The Kanazuchi is armed with a standard Medium Laser in its right arm. The weapon is powered by two military power packs carried in the back of the suit, although the immense power drain of the weapon still means it's normally reserved for battlefield targets. Supporting the main weapon are two SRM-2 racks on either side of the cockpit-like section where the pilot sits. Each launcher has enough reloads to fire twice, although they can only shoot targets within a forward 90° firing arc.
+</deployment>
+
+<history>
+Development of the suit began in July 3053 as soon as the Raiden reached its prototype stage and its designers began working on a suit which would carry more weapons and armor. Originally it was to be called the "Komodo" but when the popular Komodo BattleMech was introduced that same year the name was changed. Progress proceeded smoothly until the summer of 3054 when DCMS High Command severely reduced the project's budget due to lack of faith in its design. Undeterred, the team continued their work, often with little or no pay, in order to finally reach the prototype stage in November 3055. Unfortunately the first trials were a disaster for the ungainly suit, weighed down with one ton of armor and a dizzying array of weapons: a medium laser, two small lasers, two SRM-2 racks, a flamer and a submachine gun. Not only was the Kanazuchi slow to move, it was exhausting to wear, and several times its test pilots suffered serious injury from feedback or excessive torque. High Command nearly killed the project again, but the design team had faith in their ability to build a suit which would meet expectations and for the next year worked round-the-clock with no pay on a redesign. When the second prototype was demonstrated before the Coordinator and High Command, it performed well enough to warrant a tripling of the team's budget. Within eighteen months the suit was ready for its final test, when a captured Timber Wolf was brought in to fire its ER PPC at it. While the direct hit virtually destroyed the Kanazuchi, the test pilot inside remained alive and the suit was still functional enough to respond with a couple of shots from its main weapon. Mass production of the suit began in December 3058, although relatively few were built at first. This changed after the Combine-Ghost Bear War and the Kanazuchi soon became a common sight to the citizens of the Combine.
+</history>
+
+<manufacturer>
+Luthien Armor Works,Luthien Armor Works
+</manufacturer>
+
+<primaryFactory>
+Luthien,Savinsville
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

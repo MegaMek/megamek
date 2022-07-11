@@ -109,6 +109,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     static final int MEKTABLE_ROWHEIGHT_FULL = 65;
     static final int MEKTREE_ROWHEIGHT_FULL = 40;
     private final static int TEAMOVERVIEW_BORDER = 45;
+    private final static int MAP_POPUP_OFFSET = -2; // a slight offset so cursor sits inside popup
     
     private JTabbedPane panTabs = new JTabbedPane();
     private JPanel panUnits = new JPanel();
@@ -286,6 +287,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         lisBoardsAvailable.addListSelectionListener(this);
         lisBoardsAvailable.addMouseListener(mapListMouseListener);
+        lisBoardsAvailable.addMouseMotionListener(mapListMouseListener);
         
         teamOverviewWindow.addWindowListener(teamOverviewWindowListener);
         
@@ -994,6 +996,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // Update the board base image if it's generated and the settings have changed
                 // or the board name has changed
                 String boardName = mapSettings.getBoardsSelectedVector().get(index);
+                if (boardName == null) {
+                    continue;
+                }
                 if (!button.getBoard().equals(boardName) 
                         || oldMapSettings.getMedium() != mapSettings.getMedium()
                         || (!mapSettings.equalMapGenParameters(oldMapSettings) 
@@ -1155,6 +1160,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void refreshGameSettings() {
         refreshTeams();
+        refreshMapSettings();
         refreshDoneButton();
     }
     
@@ -1281,6 +1287,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             comboTeam.setSelectedIndex(localPlayer().getTeam());
             comboTeam.addActionListener(lobbyListener);
         }
+    }
+
+    /** Updates the map settings from the Game */
+    private void refreshMapSettings() {
+        mapSettings = game().getMapSettings();
     }
 
     /**
@@ -1500,11 +1511,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             // The deployment position
             int startPos = psd.getStartPos();
             final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
-            if (gOpts.booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
-                    && (startPos >= 1) && (startPos <= 9)) {
-                startPos += 10;
-            }
-            c.getLocalPlayer().setStartingPos(startPos);
+            
+            player.setStartingPos(startPos);
+            player.setStartOffset(psd.getStartOffset());
+            player.setStartWidth(psd.getStartWidth());
             c.sendPlayerInfo();
             
             // If the gameoption set_arty_player_homeedge is set, adjust the player's offboard 
@@ -2237,7 +2247,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         
         lisBoardsAvailable.removeListSelectionListener(this);
         lisBoardsAvailable.removeMouseListener(mapListMouseListener);
-        
+        lisBoardsAvailable.removeMouseMotionListener(mapListMouseListener);
+
         teamOverviewWindow.removeWindowListener(teamOverviewWindowListener);
         
         mekTable.removeMouseListener(mekTableMouseAdapter);
@@ -2466,10 +2477,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 break;
             case PlayerTablePopup.PTP_DEPLOY:
                 int startPos = Integer.parseInt(st.nextToken());
-                if (game().getOptions().booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
-                        && (startPos >= 1) && (startPos <= 9)) {
-                    startPos += 10;
-                }
 
                 for (Player player: getselectedPlayers()) {
                     if (lobbyActions.isSelfOrLocalBot(player)) {
@@ -2681,7 +2688,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
 
     public class MapListMouseAdapter extends MouseInputAdapter implements ActionListener {
-        
+        ScalingPopup popup;
+
         @Override
         public void actionPerformed(ActionEvent action) {
             String[] command = action.getActionCommand().split(":");
@@ -2702,9 +2710,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger() && lisBoardsAvailable.isEnabled()) {
-                // If the right mouse button is pressed over an unselected map,
-                // clear the selection and select that entity instead
+            if (lisBoardsAvailable.isEnabled()) {
+                // If a mouse button is pressed over a map,
+                // show the board selection popup
                 int index = lisBoardsAvailable.locationToIndex(e.getPoint());
                 if (index != -1 && lisBoardsAvailable.getCellBounds(index, index).contains(e.getPoint())) {
                     if (!lisBoardsAvailable.isSelectedIndex(index)) {
@@ -2715,7 +2723,26 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
         }
 
-        /** Shows the right-click menu on the mek table */
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            if (popup == null) {
+                return;
+            }
+            Point p = e.getLocationOnScreen();
+            if (!popup.contains(p)) {
+                closePopup();
+            }
+        }
+
+        private void closePopup() {
+            if (popup == null) {
+                return;
+            }
+            popup.setVisible(false);
+            popup = null;
+        }
+
+        /** Shows the map selection menu on the map table */
         private void showPopup(MouseEvent e) {
             if (lisBoardsAvailable.isSelectionEmpty()) {
                 return;
@@ -2723,8 +2750,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             List<String> boards = lisBoardsAvailable.getSelectedValuesList();
             int activeButtons = mapSettings.getMapWidth() * mapSettings.getMapHeight();
             boolean enableRotation = (mapSettings.getBoardWidth() % 2) == 0;
-            ScalingPopup popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
-            popup.show(e.getComponent(), e.getX(), e.getY());
+            popup = MapListPopup.mapListPopup(boards, activeButtons, this, ChatLounge.this, enableRotation);
+            popup.show(e.getComponent(), e.getX() + MAP_POPUP_OFFSET, e.getY() + MAP_POPUP_OFFSET);
         }
     }
     
@@ -3364,6 +3391,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         protected Void doInBackground() throws Exception {
             Image image;
             while (!isCancelled()) {
+                // Create thumbnails for the MapSettings boards
                 String boardName = boards.poll(1, TimeUnit.SECONDS);
                 if (boardName != null && !baseImages.containsKey(boardName)) {
                     image = prepareImage(boardName);

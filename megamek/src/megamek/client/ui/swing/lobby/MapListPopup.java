@@ -14,12 +14,15 @@
 package megamek.client.ui.swing.lobby;
 
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import megamek.client.ui.swing.util.ScalingPopup;
+import org.apache.logging.log4j.core.util.FileUtils;
 
 class MapListPopup {
     
@@ -36,10 +39,22 @@ class MapListPopup {
         boolean oneSelected = boards.size() == 1;
 
         ScalingPopup popup = new ScalingPopup();
-        popup.add(singleBoardMenu(oneSelected, false, listener, numButtons, boards));
-        
-        if (enableRotation) {
-            popup.add(singleBoardMenu(oneSelected, true, listener, numButtons, boards));
+        if (numButtons == 1) {
+            String name = mapShortName(boards.get(0));
+            JMenuItem mi = menuItem("Set \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + false, true, listener);
+            popup.add(mi);
+            mi.setEnabled(oneSelected);
+            if (enableRotation) {
+                mi = menuItem("Set Rotated \"" + name + "\" as Board 0", MLP_BOARD + ":" + 0 + ":" + boards.get(0) + ":" + true, true, listener);
+                popup.add(mi);
+                mi.setEnabled(oneSelected);
+            }
+        } else {
+            popup.add(singleBoardMenu(oneSelected, false, listener, numButtons, boards));
+
+            if (enableRotation) {
+                popup.add(singleBoardMenu(oneSelected, true, listener, numButtons, boards));
+            }
         }
         
         popup.add(multiBoardRandomMenu(!oneSelected, listener, numButtons, boards));
@@ -47,13 +62,21 @@ class MapListPopup {
         return popup;
     }
 
+    /** @return the short map name given the long path */
+    private static String mapShortName(String mapPath) {
+        // File is the most robust way to split
+        File f = new File(mapPath);
+        return f.getName();
+    }
+
     /**
      * Returns the "set as board" submenu.
      */
     private static JMenu singleBoardMenu(boolean enabled, boolean rotated, ActionListener listener, 
             int numB, List<String> boards) {
+        String name = mapShortName(boards.get(0));
 
-        JMenu menu = new JMenu(!rotated ? "Set as Board..." : "Set as Board (rotated)...");
+        JMenu menu = new JMenu(!rotated ? "Set \"" + name + "\" as Board..." : " Set \"" + name + "\" as Board (rotated)...");
         menu.setEnabled(enabled);
         if (enabled) {
             for (int i = 0; i < numB; i++) {

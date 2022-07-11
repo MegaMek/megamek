@@ -11,8 +11,34 @@ VERSION HISTORY:
 + Issue #3689: Show pilot callsign in damage phase report
 + Issue #3664: Draw TMM pips in movement and firing phases
 + PR #3707: Fixing MM's Try With Resources Resource Leaks
++ Issue #3699 Deadfire LRMs and SRMs have incorrect range brackets
++ PR #3721: Adding Dragon's Teeth and Burned/Felled Woods Rough Terrain Fluff Sprites
++ Issue #3688: Adding Colour to Heat Reports
++ Issue #3722: Princess will do a better job not targeting ignored units with artillery
++ Issue #3729: Any button click on map now brings up menu, improving usability on single-button machines
++ PR #3734: Fixing Nowhwere Typos
++ PR #3733: Change border colors on the minimap for moved units
++ Issue #3599: Unjam/clear turret buttons update properly after canceling pending firing orders
++ Issue #3711: Female mechwarriors are now able to have a beer after ejecting from their mech
++ Data: New Sprites including the return of 'Royal' sprites (Thanks to UlyssesSockdrawer)
++ Data: Battle Armor moving to new MUL conventions (4,5,6 unit squads). 
++ Issue #3695: Increased amount and usefulness of data displayed in the General tab of the unit display.
++ Issue #3719: No kicking while bogged down
++ Issue #3742: Errata - Infantry Heat Suit environment type
++ PR #1134: Improvements to Fluff Image folders (see Wiki for specifics).
++ Issue #3715: Zero pad auto-board save image filenames
++ Issue #3743: Fixing ToolTip TMM Yellow Colours
++ Issue #3731: Save Lobby Map Settings during Save
++ Issue #3757: Minimum Range for Clan LRM
++ PR #3771: UnitDisplay: Lobby-style Quirk Text
++ Issue #1852: More flexible deployment zones; improvements to deployment zone rendering; defunct 'deep deployment zone' feature as it's now redundant
++ Issue #3753: Vehicles with Vehicle Grenade Launchers no longer lock up the game during firing phase when VGL firing arc goes off board
++ Issue #470: Display weapon fields of fire during TAG phase
++ Issue #3730: Savegame Planetary settings are not persistent if in Lobby
++ Issue #3744: Mast Mount not in Support Vee equipment for VTOL
 + Updating to FlatLAF 2.3 from 2.2
-+ Updating to Mockito 4.6.0 from 4.5.1
++ Updating to Mockito 4.6.1 from 4.5.1
+
 
 0.49.8 (2022-05-27 1430 UTC)
 + PR #3431: MUL ID

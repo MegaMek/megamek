@@ -456,7 +456,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         int targEl;
 
         if (te == null) {
-            targEl = -game.getBoard().getHex(target.getPosition()).depth();
+            Hex hex = game.getBoard().getHex(target.getPosition());
+            
+            targEl = hex == null ? 0 : -hex.depth();
         } else {
             targEl = te.relHeight();
         }

@@ -15,6 +15,11 @@ fluff:91:1-12 - Sports Courts
 fluff:92:1-5 - Swimming Pools
 fluff:93:1-14 - Gardens
 
+Rough ---------------
+
+rough:1,2,*,fluff:1 - Dragon's Teeth
+rough:1,2,*,fluff:2 - Burned/felled woods
+
 Roads ---------------
 
 road:1;road_fluff:1 - Rounded road corners

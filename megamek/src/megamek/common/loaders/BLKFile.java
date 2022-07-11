@@ -1022,6 +1022,7 @@ public class BLKFile {
                         .map(String::valueOf)
                         .collect(Collectors.toCollection(Vector::new)));
             }
+            blk.writeBlockData("designtype", js.getDesignType());
             blk.writeBlockData("crew", js.getNCrew());
             blk.writeBlockData("officers", js.getNOfficers());
             blk.writeBlockData("gunners", js.getNGunners());

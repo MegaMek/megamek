@@ -17,6 +17,7 @@ import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.bot.princess.BehaviorSettings;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.Building.DemolitionCharge;
 import megamek.common.actions.*;
@@ -47,10 +48,12 @@ import megamek.server.commands.*;
 import megamek.server.victory.VictoryResult;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
@@ -96,8 +99,6 @@ public class GameManager implements IGameManager {
     public Vector<Report> getvPhaseReport() {
         return vPhaseReport;
     }
-
-    private MapSettings mapSettings = MapSettings.getInstance();
 
     // Track buildings that are affected by an entity's movement.
     private Hashtable<Building, Boolean> affectedBldgs = new Hashtable<>();
@@ -145,6 +146,7 @@ public class GameManager implements IGameManager {
         game.getOptions().loadOptions();
 
         game.setPhase(GamePhase.LOUNGE);
+        MapSettings mapSettings = game.getMapSettings();
         mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
         mapSettings.setNullBoards(DEFAULT_BOARD);
 
@@ -622,6 +624,13 @@ public class GameManager implements IGameManager {
                 player.setDone(getGame().getEntitiesOwnedBy(player) <= 0);
                 send(connId, new Packet(PacketCommand.PHASE_CHANGE, getGame().getPhase()));
             }
+
+            // LOUNGE triggers a Game.reset() on the client, which wipes out
+            // the PlanetaryCondition, so resend
+            if (game.getPhase() == GamePhase.LOUNGE) {
+                send(connId, createPlanetaryConditionsPacket());
+            }
+
             if ((game.getPhase() == GamePhase.FIRING)
                     || (game.getPhase() == GamePhase.TARGETING)
                     || (game.getPhase() == GamePhase.OFFBOARD)
@@ -826,13 +835,14 @@ public class GameManager implements IGameManager {
             case SENDING_MAP_SETTINGS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!mapSettings.equalMapGenParameters(newSettings)) {
+                    if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
                         sendServerChat("Player " + player.getName() + " changed map settings");
                     }
-                    mapSettings = newSettings;
+                    MapSettings mapSettings = newSettings;
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
+                    game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createMapSettingsPacket());
@@ -841,20 +851,20 @@ public class GameManager implements IGameManager {
             case SENDING_MAP_DIMENSIONS:
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
-                    if (!mapSettings.equalMapGenParameters(newSettings)) {
+                    if (!game.getMapSettings().equalMapGenParameters(newSettings)) {
                         sendServerChat("Player " + player.getName() + " changed map dimensions");
                     }
-                    mapSettings = newSettings;
+                    MapSettings mapSettings = newSettings;
                     mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
+                    game.setMapSettings(mapSettings);
                     resetPlayersDone();
                     transmitAllPlayerDones();
                     send(createMapSettingsPacket());
                 }
                 break;
             case SENDING_PLANETARY_CONDITIONS:
-                // MapSettings newSettings = (MapSettings) packet.getObject(0);
                 if (game.getPhase().isBefore(GamePhase.DEPLOYMENT)) {
                     PlanetaryConditions conditions = (PlanetaryConditions) packet.getObject(0);
                     sendServerChat("Player " + player.getName() + " changed planetary conditions");
@@ -1573,6 +1583,7 @@ public class GameManager implements IGameManager {
         switch (phase) {
             case LOUNGE:
                 clearReports();
+                MapSettings mapSettings = game.getMapSettings();
                 mapSettings.setBoardsAvailableVector(ServerBoardHelper.scanForBoards(mapSettings));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
@@ -2601,6 +2612,7 @@ public class GameManager implements IGameManager {
      * specified into one mega-board and sets that board as current.
      */
     public void applyBoardSettings() {
+        MapSettings mapSettings = game.getMapSettings();
         mapSettings.chooseSurpriseBoards();
         Board[] sheetBoards = new Board[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
@@ -12294,7 +12306,7 @@ public class GameManager implements IGameManager {
             turn = game.getTurnForPlayer(connId);
         }
         if ((turn == null) || !turn.isValid(connId, entity, game)
-                || !(game.getBoard().isLegalDeployment(coords, entity.getStartingPos())
+                || !(game.getBoard().isLegalDeployment(coords, entity)
                 || (assaultDrop && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)
                 && entity.canAssaultDrop()))) {
             String msg = "server got invalid deployment packet from "
@@ -18612,7 +18624,8 @@ public class GameManager implements IGameManager {
             r.addDesc(entity);
             r.add(entity.heatBuildup);
             r.add(toSink);
-            r.add(entity.heat);
+            Color color = GUIPreferences.getInstance().getColorForHeat(entity.heat, Color.BLACK);
+            r.add(r.bold(r.fgColor(color, String.valueOf(entity.heat))));
             addReport(r);
             entity.heatBuildup = 0;
             vPhaseReport.addAll(rhsReports);
@@ -29717,6 +29730,7 @@ public class GameManager implements IGameManager {
      * @param connId the id for connection that received the packet.
      */
     private void receiveGameOptionsAux(Packet packet, int connId) {
+        MapSettings mapSettings = game.getMapSettings();
         for (Enumeration<?> i = ((Vector<?>) packet.getObject(1)).elements(); i.hasMoreElements(); ) {
             IBasicOption option = (IBasicOption) i.nextElement();
             IOption originalOption = game.getOptions().getOption(option.getName());
@@ -29764,6 +29778,7 @@ public class GameManager implements IGameManager {
      * Creates a packet containing the map settings
      */
     private Packet createMapSettingsPacket() {
+        MapSettings mapSettings = game.getMapSettings();
         return new Packet(PacketCommand.SENDING_MAP_SETTINGS, mapSettings);
     }
 
@@ -31211,9 +31226,11 @@ public class GameManager implements IGameManager {
 
                 r = new Report(6436, Report.PUBLIC);
                 r.indent(1);
-                String fontColorOpen = curCF <= 0 ? "<font color='C00000'>" : "";
-                String fontColorClose = curCF <= 0 ? "</font>" : "";
-                r.add(String.format("%s%s%s", fontColorOpen, curCF, fontColorClose));
+                if (curCF <= 0) {
+                    r.add(r.warning(String.valueOf(curCF)));
+                } else {
+                    r.add(curCF);
+                }
                 vPhaseReport.add(r);
 
                 final int damageThresh = (int) Math.ceil(bldg.getPhaseCF(coords) / 10.0);
@@ -32857,7 +32874,7 @@ public class GameManager implements IGameManager {
                     }
                     if (pe instanceof MechWarrior) {
                         // MWs have a beer together
-                        r = new Report(6415, Report.PUBLIC);
+                        r = new Report(6416, Report.PUBLIC);
                         r.add(pe.getDisplayName());
                         addReport(r);
                         continue;
@@ -32886,7 +32903,7 @@ public class GameManager implements IGameManager {
                     }
                     if (pe instanceof MechWarrior) {
                         // MWs have a beer together
-                        r = new Report(6415, Report.PUBLIC);
+                        r = new Report(6417, Report.PUBLIC);
                         r.add(pe.getDisplayName());
                         addReport(r);
                         continue;

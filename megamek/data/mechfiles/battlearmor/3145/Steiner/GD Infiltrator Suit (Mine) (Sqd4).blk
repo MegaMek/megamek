@@ -1,0 +1,138 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gray Death Infiltrator Suit
+</Name>
+
+<Model>
+(Mines)(Sqd4)
+</Model>
+
+<mul id:>
+6586
+</mul id:>
+
+<year>
+3102
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+ISBADavidLightGaussRifle:RA
+ISBAMineDispenser:LA
+BAParafoil:Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+Mine
+Mine
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+Mine
+Mine
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+Mine
+Mine
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+Mine
+Mine
+</Trooper 4 Equipment>
+
+<source>
+TRO 3145 Lyran Commonwealth - Late Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+Manufactured on Furillo by Defiance Industries, the Gray Death Infiltrator Suit was the successor to the Infiltrator Mk. I, and while intended to fill a range of battlefield roles, it performed best as a scout or skirmisher. 
+</overview>
+
+<capabilities>
+he Gray Death Infiltrator Suit is capable of making swarm and leg attacks as well as being able to travel by mechanized transport. Each suit had a Basic Manipulator mounted on each arm and had more than a third of a ton of basic stealth armor for protection.
+</capabilities>
+
+<deployment>
+Each Gray Death Infiltrator Suit had a "David" Light Gauss Rifle with fifteen rounds of ammunition installed on the right arm. The left arm of each suit was fitted with a Modular Weapon Mount, which was capable of mounting a Firedrake Support Needler and thirty rounds of ammunition, a Light TAG system with sixty rounds of ammunition, a package of Improved Sensors, a Remote Sensor Dispenser with six sensors or a Mine Dispenser and two mines.
+</deployment>
+
+<history>
+ Nicknamed the Quokka, the Gray Death Infiltrator Suit was configured to be highly mobile and incorporated a Parafoil to allow it to make precise aerial drops. 
+</history>
+
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Furillo
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

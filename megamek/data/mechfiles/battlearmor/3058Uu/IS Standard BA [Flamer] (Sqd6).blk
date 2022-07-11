@@ -1,0 +1,122 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+IS Standard Battle Armor
+</Name>
+
+<Model>
+[Flamer](Sqd6)
+</Model>
+
+<mul id:>
+8905
+</mul id:>
+
+<year>
+3052
+</year>
+
+<originalBuildYear>
+3052
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+CLBAFlamer:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+</Squad Equipment>
+
+<source>
+TRO 3058U - Clan Invasion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Inner Sphere Standard was developed following the initial thrust of the Clan invasion, as Inner Sphere powers rushed to duplicate the battle armor technology the Clans fielded. 
+</overview>
+
+<capabilities>
+Like the Elemental the final form of the Inner Sphere Standard can leap 90 meters at a time, although engineers were never able to figure out how to combine this ability with the additional SRM-2 pack. It also carries less protection than the Elemental: its 450kg of armor can withstand a full burst from an Inner Sphere Large Pulse Laser and keep the pilot alive. The Standard's left arm ends in a Battle Claw, allowing the suit to make anti-'Mech attacks or utilize an OmniMech's handholds to ride into battle. The integrated Medipack in the suit helps keep the trooper alive when injured, although not to the same degree as the Clan LSSU standard in the Elemental.
+</capabilities>
+
+<deployment>
+The Inner Sphere Standard uses a unique Modular Weapon Mount taking up its right arm. Typically the mount can take one standard battle armor weapon, such as a Machine Gun or Flamer useful against conventional infantry, or a Small Laser or One-Shot SRM-2 launcher for attacking hardened targets. Starting in 3061 during the Capellan-St. Ives War several units equipped with Inner Sphere Standard battle armor armed their units with Light Recoilless Rifles. Instead of taking one standard weapon however the mount can carry two "secondary" weapons, such as Submachine Guns or Gyrojet Rifles, similar to an Anti-Personnel Weapon Mount.
+</deployment>
+
+<history>
+Lacking any battlefield salvage on which to base their development though, engineers were forced to work off of ancient rumors of early power armor suits like the Nighthawk, more akin to armored Exoskeletons than the "Toads" currently rampaging through known space, and these prototypes fared poorly during testing. It took salvage from the first victories over the Clans to truly kick-start the development of battle armor. The New Avalon Institute of Science was the first to reproduce in part the Clans' Elemental armor as the Inner Sphere Standard in 3050. These early Standard suits, dubbed gorilla suits, were immediately distributed to Federated Commonwealth troops fighting against the Clans and select mercenary units such as the Gray Death Legion. At the same time the Capellan Confederation, Draconis Combine, and Free Worlds League also began developing battle armor suits based on captured Clan armor. That these suits were functionally identical to the FedCom Standard has been chalked up to corporate espionage, illegal technology sharing, or both. Regardless, all of these early Standard suits were markedly inferior to the Elemental suit they were based on, including weaker offensive firepower, less armoring, and an inability to use jump jets. Continuous refinement of the suit eventually rectified this last problem by the time of the Battle of Tukayyid in 3052, leading to the final production model of the Inner Sphere Standard. However, the limitations of Inner Sphere technology means the suit still pales in comparison to the Elemental. Despite its relative inferiority the Standard has remained quite popular throughout the Inner Sphere, proving to be a flexible and efficient suit in service to the Great Houses; it also served as the basis for many other battle armor designs, most notably the Cavalier and Raiden. Falling prices and a willingness of manufacturers to find new markets rather than cease production also meant these suits soon found their way into the hands of mercenaries, personal security and police forces. Although the Federated Suns eventually shifted production completely to their Cavalier suits, the standard suit remained in production in all of the other realms to a greater or lesser extent for several years, seeing service in many conflicts such as the Jihad.
+</history>
+
+<manufacturer>
+Ceres Metals Industries,HDF Manufacturing,Free Worlds Defence Industries,Tanadi Computers,Defiance Industries,Alphard Trading Corporation,Irian BattleMechs Unlimited,Kali Yama Weapons Industries Inc.,Luthien Armor Works,Albion Advanced Technologies and Products,Hellespont Industrials,Corean Enterprises - MacAdams-Suharno,General Motors,TharHes Industries,Cosby BattleMech and Myomer Research Firm
+</manufacturer>
+
+<primaryFactory>
+Capella,Falsterbo,Gibson,Hachiman,Hesperus II,Illyria,Irian,Kalidasa,Luthien,New Avalon,Sian,Stewart,Talcott,Tharkad,Vega
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

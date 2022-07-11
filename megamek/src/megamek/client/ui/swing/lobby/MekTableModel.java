@@ -43,6 +43,7 @@ import java.awt.*;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.alternateTableBGColor;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiGreen;
@@ -188,8 +189,8 @@ public class MekTableModel extends AbstractTableModel {
         } else {
             MapSettings mset = chatLounge.mapSettings;
             Player lPlayer = clientGui.getClient().getLocalPlayer();
-            unitTooltips.add("<HTML>" + UnitToolTip.getEntityTipLobby(entity, lPlayer, mset));
-            pilotTooltips.add("<HTML>" + PilotToolTip.getPilotTipDetailed(entity));
+            unitTooltips.add( HTML_BEGIN + UnitToolTip.getEntityTipLobby(entity, lPlayer, mset) + HTML_END);
+            pilotTooltips.add(HTML_BEGIN + PilotToolTip.getPilotTipDetailed(entity, true) + HTML_END);
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         if (chatLounge.isCompact()) {

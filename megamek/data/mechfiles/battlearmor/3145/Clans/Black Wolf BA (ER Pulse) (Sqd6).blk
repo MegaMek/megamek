@@ -1,0 +1,113 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Black Wolf Battle Armor
+</Name>
+
+<Model>
+[ERSPL](Sqd6)
+</Model>
+
+<mul id:>
+9090
+</mul id:>
+
+<year>
+3138
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+38
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+BAHeavyBattleClaw:RA
+CLBAERSmallPulseLaser:LA
+Clan BA Reactive:RA
+Clan BA Reactive:Body
+Clan BA Reactive:Body
+Clan BA Reactive:Body
+Clan BA Reactive:Body
+Clan BA Reactive:Body
+Clan BA Reactive:Body
+</Point Equipment>
+
+<source>
+TRO 3145 The Clans - Dark Ages
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+1
+</jumpingMP>
+
+<armor>
+11
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Black Wolf is a thirty-second century, Heavy Class battle armor which was originally created by Clan Scientists from both halves of the divided Wolf Clan. 
+</overview>
+
+<history>
+he battle armor began as a joint project between Clan Wolf and Clan Wolf-in-Exile, as part of a means of reunification between the two sundered factions. However, the reunification the Black Wolf suggested would not come to pass with the later formation of the Wolf Empire in 3142. One of the Black Wolf's deployments would be during the invasion of Tharkad in 3143, where the suit's use would become a symbol of terror for Clan Wolf-in-Exile's allies in the Lyran Commonwealth.
+</history>
+
+<capabilities>
+The Black Wolf is slow, but mobile. The battle armor suit is able to jump as far as it can trot to its closest enemy under its own power. With its Heavy Battle Claw, the battle armor is able to be transported to the front lines by an OmniMech, if needed. The Claw also provides some form of defense, and can be quite damaging to an opponent, at very close ranges. The suit is protected by 385 kg of Reactive Armor, giving it heavy resistance to explosive weaponry such as artillery and missile fire.
+</capabilities>
+
+<deployment>
+Black Wolf operators are able to switch out whatever weapons and equipment are necessary for a given mission, thanks to its left arm-mounted Modular Weapon Mount. Its weapons can be the Inner Sphere-built Heavy Mortar, the recent Clan-built Extended Range Small Pulse Laser, a Battle Armor-scale LB-X Autocannon, a single Heavy Flamer, or the Man-Portable Plasma Rifle.
+</deployment>
+
+<manufacturer>
+WC Site 2,Corean Enterprises MacAdams-Suharno,W-7 Facilities 
+</manufacturer>
+
+<primaryFactory>
+Arc-Royal,Stewart,Weingarten
+</primaryFactory>
+
+<notes>
+The Black Wolf was originally conceived by WizKids' MechWarrior Dark Age Collectable Miniatures game as a part of its Battleforce expansion set. The figure for the Black Wolf battle armor would only be used with a mercenary faction. The battle armor would later adopted by Catalyst Game Labs and redefined in the tabletop game once the company advanced the franchise's timeline to 3145.
+</notes>

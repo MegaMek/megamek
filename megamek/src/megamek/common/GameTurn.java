@@ -492,10 +492,12 @@ public class GameTurn implements Serializable {
         /**
          * @return true if the player is valid.
          */
-        public boolean isValid(int playerId, Game game) {
+        @Override
+        public boolean isValid(int playerId, IGame game) {
+            Game actualGame = (Game) game;
             return IntStream.range(0, entityIds.length)
-                    .anyMatch(index -> (game.getEntity(entityIds[index]) != null)
-                            && (playerId == game.getEntity(entityIds[index]).getOwnerId()));
+                    .anyMatch(index -> (actualGame.getEntity(entityIds[index]) != null)
+                            && (playerId == actualGame.getEntity(entityIds[index]).getOwnerId()));
         }
 
         @Override

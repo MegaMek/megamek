@@ -196,8 +196,12 @@ public class ArtilleryTargetingControl {
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(shooter); enemies.hasNext();) {
             Entity e = enemies.next();
             
-            // skip airborne entities, and those off board - we'll handle them later
-            if (!e.isAirborne() && !e.isAirborneVTOLorWIGE() && !e.isOffBoard()) {
+            // skip airborne entities, and those off board - we'll handle them later and don't target ignored units
+            if (!e.isAirborne()
+                    && !e.isAirborneVTOLorWIGE()
+                    && !e.isOffBoard()
+                    && !owner.getBehaviorSettings().getIgnoredUnitTargets().contains(e.getId())) {
+
                 targetSet.add(new HexTarget(e.getPosition(), Targetable.TYPE_HEX_ARTILLERY));
                 
                 // while we're here, consider shooting at hexes within "MAX_BLAST_RADIUS"

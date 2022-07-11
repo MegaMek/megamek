@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ Pollux ADA Heavy Tank
 2710
 </year>
 
+<originalBuildYear>
+2710
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -35,6 +39,9 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -88,6 +95,26 @@ ISLBXAC10
 Medium Laser
 </Turret Equipment>
 
+<capabilities>
+Based on Hadley's highly automated air-defense turret, the Pollux's main weapons would remain the same. The Hegemony Arms DAT/96 Sniper Artillery Piece would be mounted in a turret along with a Blankenburg LB 10-X Autocannon. Both guns would typically carry only flak ammunition, with 3 tons of space dedicated for each weapon. A turret-mounted Medium Laser and a forward facing Small Pulse Laser would give the tank some token means of close-in self-defense. Also protecting the tank is 6 tons of Grumman-5 Ferro-Fibrous armor giving its hull modest strength to ward off light attacks while its escorts take out would-be attackers. Powering the vehicle is a GM 225-rated standard fusion engine, giving the vehicle modest speeds to keep up with typical vehicle formations and heavy 'Mechs.
+</capabilities>
+
+<overview>
+The Pollux ADA Heavy Tank was a dedicated anti-aircraft artillery vehicle designed to serve as a component of the Terran Hegemony's planetary defense forces.
+</overview>
+
+<history>
+The tank's creation was due in part to Hegemony worlds feeling they were left undefended due to the focus of using a Space Defense System as their only means of defense. The Pollux's weapons systems were geared to handle airborne threats on the surface. First Lord Jonathan Cameron authorized the creation of the vehicle to appease these worlds' governments. However, the Pollux also was appealing to the SLDF, which had sought dedicated anti-aircraft defense vehicles since the days of the Reunification War. Hadley Incorporated was asked by the SLDF to build the vehicles, however up to that time they had only built GAD-14 automated air defense turrets for SLDF's facilities. They teamed with GM who helped them design a combat vehicle chassis to mount a down-scaled version of the GAD-14 turret. After production began in the early twenty-eighth century, the vehicle was quietly deployed evenly to both SLDF and newly created planetary ADA (air defense artillery) garrison units. However, the practice was ended in 2718 when officials complained that these units, which were supposed to be deployed solely to their planetary garrisons, were going to SLDF's ADA units. During the Periphery Uprising, General Aleksandr Kerensky quietly transferred specialized Pollux combat units to the regular army as part of his efforts to put down rebels in the Periphery. These Pollux ADA units were ironically deployed as part of Kerensky's liberation force to free Hegemony worlds that they were designed to defend.
+</history>
+
+<manufacturer>
+Hadley, Inc./General Motors
+</manufacturer>
+
+<primaryFactory>
+Pollux
+</primaryFactory>
+
 <source>
 Hist LOT II
 </source>
@@ -95,3 +122,4 @@ Hist LOT II
 <tonnage>
 75.0
 </tonnage>
+

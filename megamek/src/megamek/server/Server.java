@@ -554,6 +554,8 @@ public class Server implements Runnable {
         if (null != gamePlayer) {
             gamePlayer.setColour(player.getColour());
             gamePlayer.setStartingPos(player.getStartingPos());
+            gamePlayer.setStartWidth(player.getStartWidth());
+            gamePlayer.setStartOffset(player.getStartOffset());
             gamePlayer.setTeam(player.getTeam());
             gamePlayer.setCamouflage(player.getCamouflage().clone());
             gamePlayer.setNbrMFConventional(player.getNbrMFConventional());

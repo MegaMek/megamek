@@ -39,6 +39,9 @@ include "Cliff/Cliffs.tileinc"
 include "Structured_Pavement/Structured_Pavement.tileinc"
 include "saxarba/Includes/Pavement.tileinc"
 
+########PICK UP ULYSSES SPRITE FLUFF ADDITIONS
+
+include "UlyssesSprites/UlyssesSprites.tileinc"
 
 
 #GRAY SAND

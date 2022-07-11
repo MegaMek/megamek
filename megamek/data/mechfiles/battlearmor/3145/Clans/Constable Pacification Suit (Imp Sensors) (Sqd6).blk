@@ -1,0 +1,107 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Constable Pacification Suit
+</Name>
+
+<Model>
+[Sensor] (Sqd6)
+</Model>
+
+<mul id:>
+8720
+</mul id:>
+
+<year>
+3092
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<Point Equipment>
+CLBAHeavyGL:LA
+CLBAHeavyGL:RA
+BABattleClaw:LA
+BABattleClaw:RA
+BACuttingTorch:LA
+BACuttingTorch:RA
+CLBAImprovedSensors:Body
+BASearchlight:Body
+</Point Equipment>
+
+<source>
+TRO 3145 The Clans - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+
+<overview>
+Introduced by Clan Ghost Bear, the Constable Pacification Suit was designed to help the Ghost Bear Dominion maintain order among its Inner Sphere-born citizenry. 
+</overview>
+
+<history>
+It was initially created by the Ghost Bear Watch to aid them in fending off the Motstnd, a Rasalhagian terrorist organisation. The Watch was able to deal with the terrorists without endangering its civilian population thanks to the suit's variety of weapon and equipment options. The Ghost Bear Watch handled the suit's initial application improperly. The Watch was able to develop less military methods as a result of the suit's sale to civilian police and other organisations.  
+</history>
+
+<capabilities>
+The Constable's design was based on the Rogue Bear battle armor, where the Bear's appeal of mobility was paramount for the suit's role. It is extremely mobile, able to move by ground as far as it can jump. The suit's armor protection is similar to a typical military-grade suit of light battle armor. The suit's weaponry and equipment includes a pair of Heavy Grenade Launchers, giving the operator the flexibility of being able use an array of ammunition types lethal and nonlethal. A pair of Cutting Torches round out the suit's permanently mounted equipment, giving it the ability to open things that require a more delicate touch. The suit also includes a body-mounted Modular Weapon Mount that can fits up to seventy-five kilograms of optional equipment. These can include an ECM Suite, Light Machine Gun, Single-Tube SRM Launcher, Improved Sensors, or Light TAG.
+</capabilities>
+
+<deployment>
+The suit has expanded to other Clans and the paramilitary units of the Draconis Combine, including the Internal Security Force and the Civilian Guidance Corps.
+</deployment>
+
+<manufacturer>
+BA Facility Gamma
+</manufacturer>
+
+<primaryFactory>
+Mannedorf
+</primaryFactory>

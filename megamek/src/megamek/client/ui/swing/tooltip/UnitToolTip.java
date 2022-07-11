@@ -44,23 +44,28 @@ public final class UnitToolTip {
     
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
-    
+
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
-        return getEntityTip(entity, localPlayer, true, mapSettings);
+        return getEntityTipTable(entity, localPlayer, true, false, mapSettings);
     }
     
     /** Returns the unit tooltip with values that are relevant in-game. */
     public static StringBuilder getEntityTipGame(Entity entity, Player localPlayer) {
-        return getEntityTip(entity, localPlayer, false, null);
+        return getEntityTipTable(entity, localPlayer, false, true, null);
+    }
+
+    /** Returns the unit tooltip with values that are relevant in-game without the Pilot info. */
+    public static StringBuilder getEntityTipUnitDisplay(Entity entity, Player localPlayer) {
+        return getEntityTipTable(entity, localPlayer, true, false, null);
     }
 
     // PRIVATE
     
     /** Assembles the whole unit tooltip. */
-    private static StringBuilder getEntityTip(Entity entity, Player localPlayer,
-            boolean inLobby, @Nullable MapSettings mapSettings) {
+    private static StringBuilder getEntityTipTable(Entity entity, Player localPlayer,
+           boolean details, boolean pilotInfo, @Nullable MapSettings mapSettings) {
         
         // Tooltip info for a sensor blip
         if (EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
@@ -68,6 +73,7 @@ public final class UnitToolTip {
         }
 
         StringBuilder result = new StringBuilder();
+        result.append("<TABLE BORDER=0 BGCOLOR=" + BGCOLOR + " width=100%><TR><TD>");
         Game game = entity.getGame();
         GUIPreferences guip = GUIPreferences.getInstance();
 
@@ -76,19 +82,27 @@ public final class UnitToolTip {
         result.append(guiScaledFontHTML(entity.getOwner().getColour().getColour()));
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " [Clan] " : "";
         result.append(entity.getChassis()).append(clanStr);
+        result.append(" (").append((int)entity.getWeight()).append("t)");
         result.append("<BR>").append(owner.getName());
         result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
         result.append(MessageFormat.format(" [ID: {0}] </FONT>", entity.getId()));
         result.append("</FONT>");
 
         // Pilot; in the lounge the pilot is separate so don't add it there
-        if (inLobby && (mapSettings != null)) {
+        if (details && (mapSettings != null)) {
             result.append(deploymentWarnings(entity, localPlayer, mapSettings));
             result.append("<BR>");
         } else {
-            result.append(forceEntry(entity, localPlayer));
+            if (pilotInfo) {
+                result.append(forceEntry(entity, localPlayer));
+            }
             result.append(inGameValues(entity, localPlayer));
-            result.append(PilotToolTip.getPilotTipShort(entity));
+            if (pilotInfo) {
+                result.append(PilotToolTip.getPilotTipShort(entity,
+                        GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)));
+            } else {
+                result.append("<BR>");
+            }
         }
         
         // An empty squadron should not show any info
@@ -120,13 +134,13 @@ public final class UnitToolTip {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             result.append(scaledHTMLSpacer(3));
             result.append(guiScaledFontHTML(uiQuirksColor(), TT_SMALLFONT_DELTA));
-            String quirksList = getOptionList(entity.getQuirks().getGroups(), entity::countQuirks, inLobby);
+            String quirksList = getOptionList(entity.getQuirks().getGroups(), entity::countQuirks, details);
             if (!quirksList.isEmpty()) {
                 result.append(quirksList);
             }
             for (Mounted weapon: entity.getWeaponList()) {
                 String wpQuirksList = getOptionList(weapon.getQuirks().getGroups(), 
-                        grp -> weapon.countQuirks(), (e) -> weapon.getDesc(), inLobby);
+                        grp -> weapon.countQuirks(), (e) -> weapon.getDesc(), details);
                 if (!wpQuirksList.isEmpty()) {
                     // Line break after weapon name not useful here
                     result.append(wpQuirksList.replace(":</I><BR>", ":</I>"));
@@ -137,7 +151,7 @@ public final class UnitToolTip {
 
         // Partial repairs
         String partialList = getOptionList(entity.getPartialRepairs().getGroups(), 
-                grp -> entity.countPartialRepairs(), inLobby);
+                grp -> entity.countPartialRepairs(), details);
         if (!partialList.isEmpty()) {
             result.append(scaledHTMLSpacer(3));
             result.append(guiScaledFontHTML(uiPartialRepairColor(), TT_SMALLFONT_DELTA));
@@ -150,13 +164,15 @@ public final class UnitToolTip {
             result.append(carriedUnits(entity));
         }
         
-        if (inLobby && entity.hasAnyC3System()) {
+        if (details && entity.hasAnyC3System()) {
             result.append(scaledHTMLSpacer(3));
             result.append(c3Info(entity));
         }
+        result.append("</TD></TR></TABLE>");
+
         return result;
     }
-    
+
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
         GUIPreferences guip = GUIPreferences.getInstance();
@@ -588,18 +604,6 @@ public final class UnitToolTip {
             result.append(addToTT("BV", BR, currentBV, initialBV, percentage));
         }
 
-        // Heat, not shown for units with 999 heat sinks (vehicles)
-        if (entity.getHeatCapacity() != 999) {
-            int heat = entity.heat;
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForHeat(heat)));
-            if (heat == 0) {
-                result.append(addToTT("Heat0", BR));
-            } else { 
-                result.append(addToTT("Heat", BR, heat));
-            }
-            result.append("</FONT>");
-        }
-
         // Actual Movement
         if (!isGunEmplacement) {
             // "Has not yet moved" only during movement phase
@@ -631,19 +635,32 @@ public final class UnitToolTip {
                 if (entity.isMakingDfa()) { 
                     result.append(addToTT("DFA", NOBR));
                 }
-
             }
         }
 
-        // Velocity, Altitude, Elevation
         if (entity.isAero()) {
+            // Velocity, Altitude, Elevation, Fuel
             result.append(guiScaledFontHTML(uiLightViolet()));
             IAero aero = (IAero) entity;
-            result.append(addToTT("AeroVelAlt", BR, aero.getCurrentVelocity(), aero.getAltitude()));
+            result.append(addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getFuel()));
             result.append("</FONT>");
         } else if (entity.getElevation() != 0) {
+            // Elevation only
             result.append(guiScaledFontHTML(uiLightViolet()));
             result.append(addToTT("Elev", BR, entity.getElevation()));
+            result.append("</FONT>");
+        }
+
+        // Heat, not shown for units with 999 heat sinks (vehicles)
+        if (entity.getHeatCapacity() != 999) {
+            int heat = entity.heat;
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForHeat(heat)));
+            if (heat == 0) {
+                result.append(addToTT("Heat0", BR));
+            } else {
+                result.append(addToTT("Heat", BR, heat));
+            }
+            result.append(" / "+entity.getHeatCapacity());
             result.append("</FONT>");
         }
 
@@ -663,6 +680,14 @@ public final class UnitToolTip {
             result.append(addToTT("Immobile", BR));
             result.append("</FONT>");
         }
+
+        // Unit Prone
+        if (!isGunEmplacement && entity.isProne()) {
+            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(addToTT("Prone", BR));
+            result.append("</FONT>");
+        }
+
 
         if (!entity.getHiddenActivationPhase().isUnknown()) {
             result.append(addToTT("HiddenActivating", BR, entity.getHiddenActivationPhase().toString()));
@@ -712,7 +737,7 @@ public final class UnitToolTip {
         // If sensors, display what sensors this unit is using
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)
                 || game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-            result.append(addToTT("Sensors", BR, entity.getSensorDesc()));
+            result.append(addToTT("Sensors", BR, entity.getSensorDesc(), Compute.getMaxVisualRange(entity, false)));
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {
@@ -827,11 +852,11 @@ public final class UnitToolTip {
         result.append("</FONT>");
         return result;
     }
-    
+
     /** Returns the full force chain the entity is in as one text line. */
     private static StringBuilder forceEntry(Entity entity, Player localPlayer) {
         StringBuilder result = new StringBuilder();
-        
+
         if (entity.partOfForce()) {
             // Get the my / ally / enemy color and desaturate it
             Color color = GUIPreferences.getInstance().getEnemyUnitColor();

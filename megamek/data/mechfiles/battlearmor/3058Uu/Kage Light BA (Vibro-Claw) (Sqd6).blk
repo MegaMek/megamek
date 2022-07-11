@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,20 +17,16 @@ Kage Light Battle Armor
 </Name>
 
 <Model>
-(DEST)
+(Vibro-Claw)(Sqd6)
 </Model>
 
 <mul id:>
-1730
+8912
 </mul id:>
 
 <year>
-3059
+3069
 </year>
-
-<originalBuildYear>
-3059
-</originalBuildYear>
 
 <type>
 IS Level 2
@@ -39,9 +35,6 @@ IS Level 2
 <motion_type>
 Jump
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 1
@@ -56,10 +49,9 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-ISBASmallLaser:RA
-BAArmoredGlove:LA
-BAArmoredGlove:RA
-InfantryAssaultRifle:APM:RA
+BABattleClawVibro:LA
+BABattleClawVibro:RA
+BAPartialWing:Body
 IS BA Stealth (Basic):Body
 IS BA Stealth (Basic):Body
 IS BA Stealth (Basic):Body
@@ -81,6 +73,37 @@ LegAttack
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
 
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<source>
+TRO 3058U - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+
 <capabilities>
 As it is primarily geared towards intelligence-gathering and covert operations, the Kage does not carry particularly heavy weaponry: an Anti-Personnel Weapon Mount on the right forearm, typically equipped with a submachine gun, keeps both of the Armored Gloves free for other tasks.
 </capabilities>
@@ -90,7 +113,7 @@ The Kage (Japanese: "shadow") Light Battle Armor was one of the first Battle Arm
 </overview>
 
 <deployment>
-This DEST-specific Kage variant, introduced in 3059, has a maximum jumping range of 90 meters. Unlike the DCMS' other Kage squads however, every Kage-equipped member of the squad carries a Small Laser.
+First appearing during brutal fighting on Luthien in 3069, this variant arms the Kage with a pair of Vibro-Claws in place of the armored gloves of the standard model. Unfortunately to make room for this alteration the use of a support weapon or AP mount was lost. 
 </deployment>
 
 <history>
@@ -113,28 +136,3 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
-
-<source>
-TRO 3058U - Clan Invasion
-</source>
-
-<chassis>
-biped
-</chassis>
-
-<jumpingMP>
-3
-</jumpingMP>
-
-<armor>
-5
-</armor>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<weightclass>
-1
-</weightclass>
-

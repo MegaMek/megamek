@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,58 +13,53 @@ BattleArmor
 </UnitType>
 
 <Name>
-Nighthawk PA(L)
+Nephilim Assault Battle Armor
 </Name>
 
 <Model>
-Mk. XXI (SE)
+(Plasma)(Sqd6)
 </Model>
 
-<year>
-3055
-</year>
+<mul id:>
+9014
+</mul id:>
 
-<originalBuildYear>
-3055
-</originalBuildYear>
+<year>
+3071
+</year>
 
 <type>
 IS Level 2
 </type>
 
 <motion_type>
-Jump
+Leg
 </motion_type>
 
-<transporters>
-</transporters>
-
 <cruiseMP>
-1
+2
 </cruiseMP>
 
 <armor_type>
-32
+36
 </armor_type>
 
 <armor_tech>
-3
+1
 </armor_tech>
 
 <Squad Equipment>
-IS BA ECM:Body
-BAArmoredGlove:LA
-BAArmoredGlove:RA
-Laser Rifle (Mauser 960):APM
-BAExtendedLifeSupport:Body
-SwarmMek
-SwarmWeaponMek
-StopSwarm
-LegAttack
-IS BA Stealth (Standard):LA
-IS BA Stealth (Standard):RA
-IS BA Stealth (Standard):RA
-IS BA Stealth (Standard):LA
+ISBAPlasmaRifle:RA
+ISBASRM2OS:Body
+ISBASRM2OS:Body
+BAHeavyBattleClaw:LA
+IS BA Mimetic:LA
+IS BA Mimetic:Body
+IS BA Mimetic:LA
+IS BA Mimetic:LA
+IS BA Mimetic:RA
+IS BA Mimetic:RA
+IS BA Mimetic:LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -82,8 +77,11 @@ IS BA Stealth (Standard):LA
 <Trooper 5 Equipment>
 </Trooper 5 Equipment>
 
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
 <source>
-TRO 3075 - Star League
+TRO 3075 - Jihad
 </source>
 
 <chassis>
@@ -91,18 +89,17 @@ biped
 </chassis>
 
 <jumpingMP>
-3
+0
 </jumpingMP>
 
 <armor>
-2
+16
 </armor>
 
 <Trooper Count>
-5
+6
 </Trooper Count>
 
 <weightclass>
-0
+4
 </weightclass>
-

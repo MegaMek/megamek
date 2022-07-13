@@ -51,6 +51,9 @@ public final class Player extends TurnOrdered {
 
     private boolean seeEntireBoard = false; // Player can observe double blind games
 
+    // New SingleBlind
+    private boolean seeEntireBoardBot = false; // Bot can observe double blind games
+
     // these are game-specific, and maybe should be separate from the player object
     private int startingPos = Board.START_ANY;
     private int startOffset = 0;
@@ -277,6 +280,38 @@ public final class Player extends TurnOrdered {
         }
     }
 
+    /**
+     * Creates new singleBlind command that works only on bots
+     */
+    public void setSingleBlind(boolean singleBlind) {
+        seeEntireBoardBot = singleBlind;
+    }
+
+    /**
+     * This simply returns the value, without checking the bot flag
+     */
+    public boolean getSingleBlind() {
+        return seeEntireBoardBot;
+    }
+
+    /**
+     * If bot is false, seeEntireBoardBot does nothing
+     */
+    public boolean canSeeSingleBlind() {
+        return (bot && seeEntireBoardBot);
+    }
+
+    public void setSingleBlindObserver(boolean singleBlindObserver) {
+        this.bot = singleBlindObserver;
+        // If not a bot, clear the set single blind flag
+        if (!singleBlindObserver) {
+            setSingleBlind(false);
+        }
+        if (game != null && game.getTeamForPlayer(this) != null) {
+            game.getTeamForPlayer(this).cacheObserverStatus();
+        }
+
+    }
     public PlayerColour getColour() {
         return colour;
     }

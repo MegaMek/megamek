@@ -2346,7 +2346,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         return true;
     }
-    
+
     /**
      * Returns true if the local player can see the given entity.
      * This is true except when a blind drop option is active and one or more

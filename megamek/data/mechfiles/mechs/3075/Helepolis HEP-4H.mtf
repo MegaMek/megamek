@@ -151,4 +151,18 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:First unleashed by the Terran Hegemony in 2460, the Helepolis is a ponderous BattleMech designed to deliver artillery fire. 	
 
+capabilities:The Helepolis is built around an Armstrong Industries Sniper Artillery Piece. The accurate, long-range fire makes it effective against static defenses. 
+
+deployment:This variant was introduced much more recently by Vining Engineering and Salvage Team. VEST rebuilt a factory on Solaris VII after the Word of Blake had left that world. There, they began to produce an upgraded version of the Helepolis. This upgrade of the 3H is built on an Endo Steel frame. It is powered by a 300-rated Light Fusion Engine that gives it a top speed of 64 km/h, though this necessitated splitting the missile launcher into two LRM-5s
+
+history:The 'Mech was proven ineffective on multiple occasions and, following the destruction of the production facilities in 2775, the design was lost during the Succession Wars. The HEP-2H dates to 2567, replacing the 2X. The Helepolis is a slow heavy 'Mech with a maximum speed of 54 km/h. It has a respectable thirteen tons of armor, however. When rebels within the Hegemony military launched the September Revolt, the new Director-General, Ian Cameron deployed batteries of Helepolis 'Mechs to keep them pinned down within the capital city of Geneva on Terra.
+
+manufacturer:Vining Engineering and Salvage Teams
+primaryfactory:Solaris VII
+systemmanufacturer:CHASSIS:Mitchell Heavy HEP Endo
+systemmanufacturer:ENGINE:VLAR 300 Light Engine
+systemmanufacturer:ARMOR:Armorscale with CASE
+systemmanufacturer:COMMUNICATIONS:Exeter Longscan 100
+systemmanufacturer:TARGETING:Tacticon Tracer 150b

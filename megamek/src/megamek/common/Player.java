@@ -52,6 +52,9 @@ public final class Player extends TurnOrdered {
 
     private boolean seeEntireBoard = false; // Player can observe double blind games
 
+    // New SingleBlind
+    private boolean seeEntireBoardBot = false; // Bot can observe double blind games
+
     // these are game-specific, and maybe should be separate from the player object
     private int startingPos = Board.START_ANY;
     private int startOffset = 0;
@@ -245,40 +248,24 @@ public final class Player extends TurnOrdered {
         this.bot = bot;
     }
 
+    /** @return true if gameMaster flag is true and not a bot*/
     public boolean isGameMaster() {
-//        if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
-//            return false;
-//        }
-        return gameMaster;
+        return ((!bot) && gameMaster);
     }
 
     public void setGameMaster(boolean gameMaster) {
         this.gameMaster = gameMaster;
-        // If not an gamemaster, clear the set see all flag
-        if (!gameMaster) {
-            setSeeAll(false);
-        }
         if (game != null && game.getTeamForPlayer(this) != null) {
             game.getTeamForPlayer(this).cacheObserverStatus();
         }
     }
 
+    /** @return true if observer flag is true and not in VICTORY phase*/
     public boolean isObserver() {
         if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
             return false;
         }
         return observer;
-    }
-
-    public void setObserver(boolean observer) {
-        this.observer = observer;
-        // If not an observer, clear the set see all flag
-        if (!observer) {
-            setSeeAll(false);
-        }
-        if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObserverStatus();
-        }
     }
 
     public void setSeeAll(boolean seeAll) {
@@ -296,7 +283,51 @@ public final class Player extends TurnOrdered {
      * If observer is false, see_entire_board does nothing
      */
     public boolean canSeeAll() {
-        return (observer && seeEntireBoard);
+        return ((gameMaster || observer) && seeEntireBoard);
+    }
+
+    public void setObserver(boolean observer) {
+        this.observer = observer;
+        // If not an observer, clear the set see all flag
+        if (!observer) {
+            setSeeAll(false);
+        }
+        if (game != null && game.getTeamForPlayer(this) != null) {
+            game.getTeamForPlayer(this).cacheObserverStatus();
+        }
+    }
+
+    /**
+     * Creates new singleBlind command that works only on bots
+     */
+    public void setSingleBlind(boolean singleBlind) {
+        seeEntireBoardBot = singleBlind;
+    }
+
+    /**
+     * This simply returns the value, without checking the bot flag
+     */
+    public boolean getSingleBlind() {
+        return seeEntireBoardBot;
+    }
+
+    /**
+     * If bot is false, seeEntireBoardBot does nothing
+     */
+    public boolean canSeeSingleBlind() {
+        return (bot && seeEntireBoardBot);
+    }
+
+    public void setSingleBlindObserver(boolean singleBlindObserver) {
+        this.bot = singleBlindObserver;
+        // If not a bot, clear the set single blind flag
+        if (!singleBlindObserver) {
+            setSingleBlind(false);
+        }
+        if (game != null && game.getTeamForPlayer(this) != null) {
+            game.getTeamForPlayer(this).cacheObserverStatus();
+        }
+
     }
 
     public PlayerColour getColour() {

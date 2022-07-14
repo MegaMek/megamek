@@ -88,9 +88,11 @@ public class PlayerListDialog extends JDialog {
             }
 
             if (player.isGameMaster()) {
-                playerDisplay.append("[GM]");
+                playerDisplay.append(" [GM]");
+            } else if (player.isBot()) {
+                playerDisplay.append(" [Bot]");
             } else {
-                playerDisplay.append("[Player]");
+                playerDisplay.append(" [Player]");
             }
 
             ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());

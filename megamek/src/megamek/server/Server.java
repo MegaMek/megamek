@@ -675,6 +675,7 @@ public class Server implements Runnable {
                 if (player.isGhost()) {
                     returning = true;
                     player.setGhost(false);
+                    player.setBot(isBot);
                     // switch id
                     connId = player.getId();
                     conn.setId(connId);

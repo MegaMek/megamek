@@ -21,13 +21,13 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.BattleForceSPA;
+import megamek.common.alphaStrike.BattleForceSUA;
 
 import java.util.Locale;
 import java.util.function.Function;
 
 import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASPointValueConverter {
 
@@ -308,7 +308,7 @@ public class ASPointValueConverter {
      *               called only when the given SPA is present on the element
      * @return The result of the given spaMod function if the SPA is present on the element, 0 otherwise.
      */
-    private static double processSPAMod(String type, ASConverter.ConversionData conversionData, BattleForceSPA spa,
+    private static double processSPAMod(String type, ASConverter.ConversionData conversionData, BattleForceSUA spa,
                                         Function<AlphaStrikeElement, Double> spaMod) {
         AlphaStrikeElement element = conversionData.element;
         if (element.hasSUA(spa)) {
@@ -570,7 +570,7 @@ public class ASPointValueConverter {
         for (String mode : element.getMovementModes()) {
             int mod = ASConverter.tmmForMovement(element.getMovement(mode), report);
             if (mode.equals("j")) {
-                highestJumpMod = mod + 1;
+                highestJumpMod = mod;
             } else {
                 highestNonJumpMod = Math.max(highestNonJumpMod, mod);
             }

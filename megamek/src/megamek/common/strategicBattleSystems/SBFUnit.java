@@ -23,7 +23,7 @@ package megamek.common.strategicBattleSystems;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.BattleForceSPA;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 
 import java.util.Arrays;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.*;
 
 /**
@@ -53,7 +53,7 @@ public class SBFUnit {
     private int skill;
     private ASDamageVector damage;
     private int pointValue;
-    private EnumMap<BattleForceSPA, Object> specialAbilities = new EnumMap<>(BattleForceSPA.class);
+    private EnumMap<BattleForceSUA, Object> specialAbilities = new EnumMap<>(BattleForceSUA.class);
 
     public String getName() {
         return name;
@@ -116,10 +116,10 @@ public class SBFUnit {
     public void setPointValue(int pointValue) {
         this.pointValue = pointValue;
     }
-    public EnumMap<BattleForceSPA, Object> getSpecialAbilities() {
+    public EnumMap<BattleForceSUA, Object> getSpecialAbilities() {
         return specialAbilities;
     }
-    public void setSpecialAbilities(EnumMap<BattleForceSPA, Object> specialAbilities) {
+    public void setSpecialAbilities(EnumMap<BattleForceSUA, Object> specialAbilities) {
         this.specialAbilities = specialAbilities;
     }
     public int getArmor() {
@@ -139,7 +139,7 @@ public class SBFUnit {
      * NEW version - Adds a Special Unit Ability that is not associated with any
      * additional information or number, e.g. RCN.
      */
-    public void addSPA(BattleForceSPA spa) {
+    public void addSPA(BattleForceSUA spa) {
         specialAbilities.put(spa, null);
     }
 
@@ -148,7 +148,7 @@ public class SBFUnit {
      * that SPA is already present, the given number is added to the one already present. If the present
      * number is a Double type value, that type is preserved.
      */
-    public void addSPA(BattleForceSPA spa, int number) {
+    public void addSPA(BattleForceSUA spa, int number) {
         if (!specialAbilities.containsKey(spa)) {
             specialAbilities.put(spa, number);
         } else {
@@ -165,7 +165,7 @@ public class SBFUnit {
      * as MHQ2. If that SPA is already present, the given number is added to the one already present.
      * if the previosly present number was an integer, it will be converted to a Double type value.
      */
-    public void addSPA(BattleForceSPA spa, double number) {
+    public void addSPA(BattleForceSUA spa, double number) {
         if (!specialAbilities.containsKey(spa)) {
             specialAbilities.put(spa, number);
         } else {
@@ -182,7 +182,7 @@ public class SBFUnit {
      * The previously present associated Object, if any, is discarded. If the ability was not present, 
      * it is added.  
      */
-    public void replaceSPA(BattleForceSPA spa, Object newValue) {
+    public void replaceSPA(BattleForceSUA spa, Object newValue) {
         specialAbilities.put(spa, newValue);
     }
 
@@ -190,7 +190,7 @@ public class SBFUnit {
      * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamage damage) {
+    public void addSPA(BattleForceSUA spa, ASDamage damage) {
         specialAbilities.put(spa, damage);
     }
 
@@ -198,7 +198,7 @@ public class SBFUnit {
      * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
+    public void addSPA(BattleForceSUA spa, ASDamageVector damage) {
         specialAbilities.put(spa, damage);
     }
 
@@ -206,7 +206,7 @@ public class SBFUnit {
      * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
      * that SPA is already present, the new value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
+    public void addSPA(BattleForceSUA spa, ASArcSummary value) {
         specialAbilities.put(spa, value);
     }
 
@@ -225,15 +225,15 @@ public class SBFUnit {
         specialAbilities.put(BIM, specialMoves);
     }
 
-    public Object getSPA(BattleForceSPA spa) {
+    public Object getSPA(BattleForceSUA spa) {
         return specialAbilities.get(spa);
     }
 
-    public boolean hasSPA(BattleForceSPA spa) {
+    public boolean hasSPA(BattleForceSUA spa) {
         return specialAbilities.containsKey(spa);
     }
 
-    public void removeSPA(BattleForceSPA spa) {
+    public void removeSPA(BattleForceSUA spa) {
         specialAbilities.remove(spa);
     }
 
@@ -245,7 +245,7 @@ public class SBFUnit {
                 .collect(Collectors.joining(","));
     }
 
-    public boolean showSpecial(BattleForceSPA spa) {
+    public boolean showSpecial(BattleForceSUA spa) {
         if ((type == SBFElementType.BM) && (spa == SOA || spa == SRCH)) {
             return false;
         }
@@ -255,7 +255,7 @@ public class SBFUnit {
         return true;
     }
 
-    public static String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
+    public static String formatSPAString(BattleForceSUA spa, @Nullable Object spaObject) {
         if (spa == TUR) {
             return "TUR(" + spaObject + ")";
 //        } else if (spa == BIM || spa == LAM) {
@@ -289,7 +289,7 @@ public class SBFUnit {
     }
 
     /** Returns true if this SBF Unit has any of the given SPAs. */
-    public boolean hasAnySPAOf(BattleForceSPA spa, BattleForceSPA... furtherSpas) {
+    public boolean hasAnySPAOf(BattleForceSUA spa, BattleForceSUA... furtherSpas) {
         return (hasSPA(spa)) || Arrays.stream(furtherSpas).anyMatch(this::hasSPA);
     }
 

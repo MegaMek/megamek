@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.*;
 
 public class SBFUnitConverter {
@@ -150,33 +150,33 @@ public class SBFUnitConverter {
      * Returns the number of the given AlphaStrike elements that have the given spa (regardless of its
      * associated objects)
      */
-    private static int spaCount(Collection<AlphaStrikeElement> elements, BattleForceSPA spa) {
+    private static int spaCount(Collection<AlphaStrikeElement> elements, BattleForceSUA spa) {
         return (int)elements.stream().filter(e -> e.hasSUA(spa)).count();
     }
 
-    private static void addUnitSpasIfAny(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
+    private static void addUnitSpasIfAny(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
         addUnitSpas(elements, unit, 1, spas);
     }
 
-    private static void addUnitSpasIfHalf(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
+    private static void addUnitSpasIfHalf(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
         addUnitSpas(elements, unit, Math.max(1, elements.size() / 2), spas);
     }
 
-    private static void addUnitSpasIfAll(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
+    private static void addUnitSpasIfAll(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
         addUnitSpas(elements, unit, elements.size(), spas);
     }
 
     private static void addUnitSpas(Collection<AlphaStrikeElement> elements, SBFUnit unit,
-                                    int threshold, BattleForceSPA[] spas) {
-        for (BattleForceSPA spa : spas) {
+                                    int threshold, BattleForceSUA[] spas) {
+        for (BattleForceSUA spa : spas) {
             if (spaCount(elements, spa) >= threshold) {
                 unit.addSPA(spa);
             }
         }
     }
 
-    private static void sumUnitSpas(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
-        for (BattleForceSPA spa : spas) {
+    private static void sumUnitSpas(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
+        for (BattleForceSUA spa : spas) {
             for (AlphaStrikeElement element : elements) {
                 if (element.hasSUA(spa)) {
                     if (element.getSUA(spa) == null) {
@@ -194,8 +194,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private static void sumUnitArtillery(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
-        for (BattleForceSPA spa : spas) {
+    private static void sumUnitArtillery(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
+        for (BattleForceSUA spa : spas) {
             double artSum = elements.stream().filter(e -> e.hasSUA(spa)).count() * SBFFormation.getSbfArtilleryDamage(spa);
             int value = (int) Math.round(artSum / 3);
             if (value > 0) {
@@ -204,8 +204,8 @@ public class SBFUnitConverter {
         }
     }
 
-    private static void sumUnitSpasDivideBy3(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSPA... spas) {
-        for (BattleForceSPA spa : spas) {
+    private static void sumUnitSpasDivideBy3(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
+        for (BattleForceSUA spa : spas) {
             for (AlphaStrikeElement element : elements) {
                 if (element.hasSUA(spa)) {
                     if (element.getSUA(spa) == null) {

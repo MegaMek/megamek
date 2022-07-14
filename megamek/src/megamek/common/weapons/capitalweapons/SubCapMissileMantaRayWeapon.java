@@ -65,6 +65,6 @@ public class SubCapMissileMantaRayWeapon extends SubCapMissileWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        return (range <= AlphaStrikeElement.CAPITAL_RANGES[0]) ? 5 : 0;
+        return (range <= AlphaStrikeElement.SHORT_RANGE) ? 5 : 0;
     }
 }

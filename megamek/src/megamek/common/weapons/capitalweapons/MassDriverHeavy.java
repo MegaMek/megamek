@@ -56,6 +56,6 @@ public class MassDriverHeavy extends MassDriverWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        return (range <= AlphaStrikeElement.CAPITAL_RANGES[2]) ? 126 : 0;
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 126 : 0;
     }
 }

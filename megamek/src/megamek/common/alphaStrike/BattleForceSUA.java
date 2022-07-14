@@ -1,34 +1,35 @@
 /*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  * Copyright (c) 28.02.22, 09:35 - The MegaMek Team. All Rights Reserved.
- *  *
- *  * This file is part of MegaMek.
- *  *
- *  * MegaMek is free software: you can redistribute it and/or modify
- *  * it under the terms of the GNU General Public License as published by
- *  * the Free Software Foundation, either version 3 of the License, or
- *  * (at your option) any later version.
- *  *
- *  * MegaMek is distributed in the hope that it will be useful,
- *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  * GNU General Public License for more details.
- *  *
- *  * You should have received a copy of the GNU General Public License
- *  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of MegaMek.
  *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.alphaStrike;
-
-import megamek.common.WeaponType;
 
 import java.util.Arrays;
 import java.util.EnumMap;
 
 /**
+ * This enum contains AlphaStrike, BattleForce and (some - WIP) Strategic BattleForce Special Unit Abilities
+ * (SUAs) and some utility methods for them.
+ *
  * @author Neoancient
+ * @author Simon (Juliez)
  */
-public enum BattleForceSPA {
+public enum BattleForceSUA {
+    UNKNOWN,
     //From StratOps
     PRB, AC, AFC, AT, ATxD, AMP, AECM, AM, AMS, ARTAIS, ARTAC, ARTBA,
     ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT, ARTTC, ARTSC, ARTLTC, ARM, ARS, ATMO,
@@ -44,13 +45,14 @@ public enum BattleForceSPA {
     // Battleforce only
     ATAC, DB, PL, TCP,
     //TODO: PL, DB do not exist, TCP = Triple-Core Processor?
-    // AlphaStrike only
+    // AlphaStrike only (this may be incorrect, WIP)
     CRW, CR, DUN, EE, FC, FF, MTN, OVL, PARA, TSMX, RCA, RFA, HTC, TRN, SUBS, SUBW, JMPS, JMPW,
-    // Strategic Battleforce only
-    AC3, CAP, COM, SCAP, FUEL, MSL, SDCS
+    CAP, SCAP, FUEL, MSL,
+    // SBF
+    AC3, COM, SDCS
     ;
     
-    static EnumMap<BattleForceSPA, BattleForceSPA> transportBayDoors = new EnumMap<>(BattleForceSPA.class);
+    private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);
 
     static {
         transportBayDoors.put(AT, ATxD);
@@ -64,14 +66,6 @@ public enum BattleForceSPA {
         transportBayDoors.put(VTS, VTSxD);
     }
     
-    public boolean usedByBattleForce() {
-        return ordinal() < CRW.ordinal();
-    }
-    
-    public boolean usedByAlphaStrike() {
-        return ordinal() < ATAC.ordinal() || ordinal() >= CRW.ordinal();
-    }
-
     public boolean isTransport() {
         return isAnyOf(AT, CT, CK, MT, PT, ST, VTM, VTH, VTS);
     }
@@ -79,13 +73,14 @@ public enum BattleForceSPA {
     public boolean isDoor() {
         return isAnyOf(ATxD, CTxD, CKxD, MTxD, PTxD, STxD, VTMxD, VTHxD, VTSxD);
     }
-    
-    public BattleForceSPA getDoor() {
-        return transportBayDoors.get(this);
+
+    /** @return The Door SUA associated with this SUA. Returns UNKNOWN when this SUA is not a transport SUA. */
+    public BattleForceSUA getDoor() {
+        return transportBayDoors.getOrDefault(this, UNKNOWN);
     }
 
     public boolean isArtillery() {
-        return ordinal() <= ARTLTC.ordinal() && ordinal() >= ARTAIS.ordinal();
+        return isAnyOf(ARTAIS, ARTAC, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT, ARTTC, ARTSC, ARTLTC);
     }
 
     @Override
@@ -97,32 +92,14 @@ public enum BattleForceSPA {
         if (this == TSEMPO) {
             spaName = "TSEMP-O";
         }
+        if (isDoor()) {
+            spaName = "-D";
+        }
         return spaName;
     }
 
-    public static BattleForceSPA getSPAForDmgClass(int dmgClass) {
-        switch (dmgClass) {
-            case WeaponType.BFCLASS_LRM:
-                return LRM;
-            case WeaponType.BFCLASS_SRM:
-                return SRM;
-            case WeaponType.BFCLASS_AC:
-                return AC;
-            case WeaponType.BFCLASS_FLAK:
-                return FLK;
-            case WeaponType.BFCLASS_IATM:
-                return IATM;
-            case WeaponType.BFCLASS_TORP:
-                return TOR;
-            case WeaponType.BFCLASS_REL:
-                return REL;
-            default:
-                return null;
-        }
-    }
-
-    /** Returns true if this SPA is equal to any of the given SPAs. */
-    public boolean isAnyOf(BattleForceSPA spa, BattleForceSPA... furtherSpas) {
+    /** Returns true if this SUA is equal to any of the given SUAs. */
+    public boolean isAnyOf(BattleForceSUA spa, BattleForceSUA... furtherSpas) {
         return (this == spa) || Arrays.stream(furtherSpas).anyMatch(s -> this == s);
     }
 

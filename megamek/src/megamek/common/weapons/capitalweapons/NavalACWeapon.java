@@ -46,7 +46,7 @@ public abstract class NavalACWeapon extends AmmoWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        int maxRange = rackSize < 35 ? AlphaStrikeElement.CAPITAL_RANGES[2] : AlphaStrikeElement.CAPITAL_RANGES[1];
+        int maxRange = rackSize < 35 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.MEDIUM_RANGE;
         return (range <= maxRange) ? rackSize : 0;
     }
 }

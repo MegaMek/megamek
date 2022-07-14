@@ -44,7 +44,7 @@ public abstract class NLWeapon extends EnergyWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        int maxRange = shortAV < 4 ? AlphaStrikeElement.CAPITAL_RANGES[2] : AlphaStrikeElement.CAPITAL_RANGES[3];
+        int maxRange = shortAV < 4 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.EXTREME_RANGE;
         return (range <= maxRange) ? shortAV : 0;
     }
 }

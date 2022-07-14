@@ -128,7 +128,6 @@ public class ConfigurableASCardPanel extends JPanel {
     private void updateSize() {
         if (sizeChooser.getSelectedItem() != null) {
             cardPanel.setScale((Float) sizeChooser.getSelectedItem());
-            invalidate();
         }
     }
 

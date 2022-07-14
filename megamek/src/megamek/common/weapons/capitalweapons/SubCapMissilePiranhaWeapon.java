@@ -66,6 +66,6 @@ public class SubCapMissilePiranhaWeapon extends SubCapMissileWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        return (range <= AlphaStrikeElement.CAPITAL_RANGES[2]) ? 3 : 0;
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 3 : 0;
     }
 }

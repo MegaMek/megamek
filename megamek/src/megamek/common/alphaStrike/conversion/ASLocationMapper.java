@@ -21,6 +21,11 @@ package megamek.common.alphaStrike.conversion;
 import megamek.common.*;
 import static megamek.common.MiscType.*;
 
+/**
+ * This class provides AlphaStrike conversion utilities for converting all sorts of locations
+ * of TW units to the damage conversion location index. Not useful for anything outside
+ * of AlphaStrike conversion.
+ */
 public class ASLocationMapper {
 
     static int damageLocationsCount(Entity en) {
@@ -124,18 +129,7 @@ public class ASLocationMapper {
                 return "";
             }
         } else {
-            if (isTurretLocation(en, index)) {
-                return "TUR";
-            }
             return "";
-        }
-    }
-
-    private static boolean isTurretLocation(Entity en, int index) {
-        if (en instanceof Tank) {
-            return index > 1;
-        } else {
-            return false;
         }
     }
 
@@ -164,30 +158,21 @@ public class ASLocationMapper {
             case 0:
                 if (location == Jumpship.LOC_NOSE) {
                     return 1;
-                }
-                if (en.isSpheroid() && (location == Jumpship.LOC_FLS || location == Jumpship.LOC_FRS)
+                } else  if (en.isSpheroid() && (location == Jumpship.LOC_FLS || location == Jumpship.LOC_FRS)
                         && !rearMounted) {
                     return 0.5;
                 }
                 break;
             case 1:
-                if (location == Jumpship.LOC_FLS || location == Jumpship.LOC_ALS) {
-                    return 0.5;
-                }
-                break;
+                return (location == Jumpship.LOC_FLS || location == Jumpship.LOC_ALS) ? 0.5 : 0;
             case 2:
-                if (location == Jumpship.LOC_FRS || location == Jumpship.LOC_ARS) {
-                    return 0.5;
-                }
-                break;
+                return (location == Jumpship.LOC_FRS || location == Jumpship.LOC_ARS) ? 0.5 : 0;
             case 3:
                 if (location == Jumpship.LOC_AFT) {
                     return 1;
+                } else {
+                    return (location == Jumpship.LOC_ALS || location == Jumpship.LOC_ARS) ? 0.5 : 0;
                 }
-                if (location == Jumpship.LOC_ALS || location == Jumpship.LOC_ARS) {
-                    return 0.5;
-                }
-                break;
         }
         return 0;
     }
@@ -237,18 +222,6 @@ public class ASLocationMapper {
         return 0;
     }
 
-
-    /**   Is this correct?
-     * AlphaStrike combines turrets with the overall (front) damage values.
-     */
-//    @Override
-//    public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
-//        if (index == 0) {
-//            return location > LOC_BODY ? 1.0 : 0.0;
-//        }
-//        return getBattleForceLocationMultiplier(index, location, rearMounted);
-//    }
-
     private static double getAeroLocationMultiplier(int index, int location, boolean rearMounted) {
         if ((index == 0 && location != Aero.LOC_AFT && !rearMounted)
                 || (index == 1 && (location == Aero.LOC_AFT || rearMounted))) {
@@ -276,7 +249,7 @@ public class ASLocationMapper {
         if ((index == 0 && !rearMounted) || ((index == 1) && rearMounted)) {
             return 1;
         } else if (index == 2) {
-            return 0; // TODO: not sure if this is right
+            return 0;
         }
         return 0;
     }

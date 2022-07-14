@@ -82,6 +82,7 @@ public class ASCard {
 
     protected StringDrawer.StringDrawerConfig valueConfig;
     protected StringDrawer.StringDrawerConfig hitsTitleConfig;
+    protected StringDrawer.StringDrawerConfig specialsHeaderConfig;
 
     protected int baseInfoBoxHeight = 99;
     protected int damageBoxY = 287;
@@ -211,6 +212,8 @@ public class ASCard {
 
         hitsTitleConfig = new StringDrawer.StringDrawerConfig().rightAlign().centerY()
                 .color(Color.BLACK).font(hitsTitleFont).outline(Color.BLACK, 0.4f);
+
+        specialsHeaderConfig = new StringDrawer.StringDrawerConfig().color(Color.BLACK).font(specialsFont);
     }
 
     /** This method controls drawing the card. */
@@ -364,46 +367,50 @@ public class ASCard {
     protected void paintSpecial(Graphics2D g) {
         drawBox(g, specialBoxX, specialBoxY, specialBoxWidth, specialBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
         paintSpecialTextLines(g, element, specialsFont, specialBoxX + 8, specialBoxY + 2,
-                specialBoxWidth - 16);
+                specialBoxWidth - 16, 28);
     }
 
     /** Helper method that writes the actual special ability text lines. */
-    protected void paintSpecialTextLines(Graphics2D g, AlphaStrikeElement element, Font font, int x, int y, int width) {
-        if (element != null) {
-            String specials = "SPECIAL: " + element.getSpecialsString(",").replace(",", ", ");
-            g.setFont(font);
-            int ascent = g.getFontMetrics(font).getAscent();
+    protected void paintSpecialTextLines(Graphics2D g, AlphaStrikeElement element, Font font,
+                                         int x, int y, int width, int lineHeight) {
+        int headerWidth = new StringDrawer("SPECIAL: ").at(x, y + lineHeight)
+                .maxWidth(width).useConfig(specialsHeaderConfig).draw(g).width + 10;
+        String specials = element.getSpecialsString(", ");
+        int specialsWidth = g.getFontMetrics(font).stringWidth(specials);
+        int maxWidth = width;
+        int firstLineWidth = width - headerWidth;
+        if (specials.isBlank() || specialsWidth < firstLineWidth) {
+            new StringDrawer(specials).at(x + headerWidth, y + lineHeight).maxWidth(firstLineWidth).font(font).draw(g);
+            return;
+        } else if (specialsWidth + headerWidth > 3 * width) {
+            // the 1.05 makes lines a little wider to balance line breaks putting too much text in the last line
+            width = (int) ((specialsWidth + headerWidth) / 3 * 1.05);
+        }
 
-            if (element.getSpecialsString().isBlank() ||
-                    (g.getFontMetrics(font).stringWidth(specials) < width)) {
-                g.drawString(specials, x, y + ascent);
-                return;
-            }
+        int line = 1;
+        String[] tokens = specials.split(", ");
+        int index = 0;
+        StringBuilder fittingLine = new StringBuilder();
 
-            int linedelta = g.getFontMetrics(font).getHeight();
-            int line = 1;
-            String[] tokens = element.getSpecialsString(",").split(",");
-            int index = 0;
-            StringBuilder fittingLine = new StringBuilder("SPECIAL: ");
-
-            while (line <= 3) {
-                while (index < tokens.length) {
-                    String nextItem = tokens[index] + (index == tokens.length - 1 ? "" : ", ");
-                    if ((g.getFontMetrics(font).stringWidth(fittingLine + nextItem) < width)
-                            || fittingLine.toString().isBlank()) {
-                        fittingLine.append(nextItem);
-                        index++;
-                    } else {
-                        break;
-                    }
-                }
-
-                g.drawString(fittingLine.toString(), x, y + ascent + (line - 1) * linedelta);
-                fittingLine = new StringBuilder();
-                line++;
-                if (index == tokens.length) {
+        while (line <= 3) {
+            int lineStart = (line == 1) ? headerWidth : 0;
+            while (index < tokens.length) {
+                String nextItem = tokens[index] + (index == tokens.length - 1 ? "" : ", ");
+                if ((g.getFontMetrics(font).stringWidth(fittingLine + nextItem) + lineStart < width)
+                        || fittingLine.toString().isBlank() || (line == 3)) {
+                    fittingLine.append(nextItem);
+                    index++;
+                } else {
                     break;
                 }
+            }
+
+            new StringDrawer(fittingLine.toString()).at(x + lineStart, y + line * lineHeight)
+                    .maxWidth(maxWidth - lineStart).font(font).draw(g);
+            fittingLine = new StringBuilder();
+            line++;
+            if (index == tokens.length) {
+                break;
             }
         }
     }

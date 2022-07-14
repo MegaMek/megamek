@@ -23,7 +23,7 @@ package megamek.common.strategicBattleSystems;
 import megamek.common.*;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.BattleForceSPA;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
 
@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public final class SBFFormationConverter {
 
@@ -122,33 +122,33 @@ public final class SBFFormationConverter {
      * Returns the number of the given SBFUnits that have the given spa (regardless of its
      * associated objects)
      */
-    private static int spaCount(SBFFormation formation, BattleForceSPA spa) {
+    private static int spaCount(SBFFormation formation, BattleForceSUA spa) {
         return (int)formation.getUnits().stream().filter(e -> e.hasSPA(spa)).count();
     }
 
-    private static void addFormationSpasIfAny(SBFFormation formation, BattleForceSPA... spas) {
+    private static void addFormationSpasIfAny(SBFFormation formation, BattleForceSUA... spas) {
         addFormationSpas(formation, 1, spas);
     }
 
-    private static void addFormationSpasIfAll(SBFFormation formation, BattleForceSPA... spas) {
+    private static void addFormationSpasIfAll(SBFFormation formation, BattleForceSUA... spas) {
         addFormationSpas(formation, formation.getUnits().size(), spas);
     }
 
-    private static void addFormationSpasIf2Thirds(SBFFormation formation, BattleForceSPA... spas) {
+    private static void addFormationSpasIf2Thirds(SBFFormation formation, BattleForceSUA... spas) {
         int twoThirds = Math.max(formation.getUnits().size() - 1, 1);
         addFormationSpas(formation, twoThirds, spas);
     }
 
-    private static void addFormationSpas(SBFFormation formation, int threshold, BattleForceSPA[] spas) {
-        for (BattleForceSPA spa : spas) {
+    private static void addFormationSpas(SBFFormation formation, int threshold, BattleForceSUA[] spas) {
+        for (BattleForceSUA spa : spas) {
             if (spaCount(formation, spa) >= threshold) {
                 formation.addSPA(spa);
             }
         }
     }
 
-    private static void sumFormationSpas(SBFFormation formation, BattleForceSPA... spas) {
-        for (BattleForceSPA spa : spas) {
+    private static void sumFormationSpas(SBFFormation formation, BattleForceSUA... spas) {
+        for (BattleForceSUA spa : spas) {
             for (SBFUnit unit : formation.getUnits()) {
                 if (unit.hasSPA(spa)) {
                     if (unit.getSPA(spa) == null) {

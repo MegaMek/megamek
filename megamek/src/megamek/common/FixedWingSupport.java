@@ -11,12 +11,8 @@
  */
 package megamek.common;
 
-import megamek.common.alphaStrike.BattleForceSPA;
-import megamek.common.verifier.SupportVeeStructure;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.FixedWingSupportCostCalculator;
-
-import java.util.Map;
 
 /**
  * @author Jason Tighe
@@ -269,15 +265,6 @@ public class FixedWingSupport extends ConvFighter {
     public int getTotalSlots() {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
-
-    //TODO!!!
-//    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-//        super.addBattleForceSpecialAbilities(specialAbilities);
-//        specialAbilities.put(BattleForceSPA.ATMO, null);
-//        if (getMaxBombPoints() > 0) {
-//            specialAbilities.put(BattleForceSPA.BOMB, getMaxBombPoints() / 5);
-//        }
-//    }
 
     @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {

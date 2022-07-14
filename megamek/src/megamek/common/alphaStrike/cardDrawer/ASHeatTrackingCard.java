@@ -80,4 +80,11 @@ public class ASHeatTrackingCard extends ASCard {
             new StringDrawer("HEAT SCALE").at(193, ym).centerY().font(headerFont).maxWidth(208).draw(g);
         }
     }
+
+    @Override
+    protected void paintSpecial(Graphics2D g) {
+        drawBox(g, specialBoxX, specialBoxY, specialBoxWidth, specialBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
+        paintSpecialTextLines(g, element, specialsFont, specialBoxX + 8, specialBoxY + 2,
+                specialBoxWidth - 16, 24);
+    }
 }

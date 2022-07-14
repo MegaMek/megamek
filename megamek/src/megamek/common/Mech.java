@@ -15,7 +15,6 @@
 */
 package megamek.common;
 
-import megamek.common.alphaStrike.BattleForceSPA;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.MekBVCalculator;
 import megamek.common.cost.MekCostCalculator;

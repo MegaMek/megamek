@@ -64,6 +64,6 @@ public class SubCapMissileSwordfishWeapon extends SubCapMissileWeapon {
 
 	@Override
 	public double getBattleForceDamage(int range, Mounted linked) {
-		return (range <= AlphaStrikeElement.CAPITAL_RANGES[0]) ? 4.5 : 0;
+		return (range <= AlphaStrikeElement.SHORT_RANGE) ? 4.5 : 0;
 	}
 }

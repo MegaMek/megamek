@@ -47,7 +47,7 @@ public abstract class SubCapCannonWeapon extends AmmoWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        int maxRange = shortAV < 4 ? AlphaStrikeElement.CAPITAL_RANGES[2] : AlphaStrikeElement.CAPITAL_RANGES[1];
+        int maxRange = shortAV < 4 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.MEDIUM_RANGE;
         return (range <= maxRange) ? shortAV : 0;
     }
 }

@@ -102,6 +102,7 @@ public final class ASCardPanel extends JComponent {
             card.setFont(cardFont);
         }
         cardImage = card.getCardImage(scale);
+        revalidate();
         repaint();
     }
 

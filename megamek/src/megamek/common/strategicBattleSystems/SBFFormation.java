@@ -23,13 +23,13 @@ package megamek.common.strategicBattleSystems;
 import megamek.common.alphaStrike.ASArcSummary;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.BattleForceSPA;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.AS;
 import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 
@@ -48,7 +48,7 @@ public class SBFFormation {
     private int morale;
     private int skill;
     private int pointValue;
-    private EnumMap<BattleForceSPA, Object> specialAbilities = new EnumMap<>(BattleForceSPA.class);
+    private EnumMap<BattleForceSUA, Object> specialAbilities = new EnumMap<>(BattleForceSUA.class);
 
 
     public String getName() {
@@ -117,10 +117,10 @@ public class SBFFormation {
     public void setPointValue(int pointValue) {
         this.pointValue = pointValue;
     }
-    public EnumMap<BattleForceSPA, Object> getSpecialAbilities() {
+    public EnumMap<BattleForceSUA, Object> getSpecialAbilities() {
         return specialAbilities;
     }
-    public void setSpecialAbilities(EnumMap<BattleForceSPA, Object> specialAbilities) {
+    public void setSpecialAbilities(EnumMap<BattleForceSUA, Object> specialAbilities) {
         this.specialAbilities = specialAbilities;
     }
     public List<SBFUnit> getUnits() {
@@ -134,7 +134,7 @@ public class SBFFormation {
      * NEW version - Adds a Special Unit Ability that is not associated with any
      * additional information or number, e.g. RCN.
      */
-    public void addSPA(BattleForceSPA spa) {
+    public void addSPA(BattleForceSUA spa) {
         specialAbilities.put(spa, null);
     }
 
@@ -143,7 +143,7 @@ public class SBFFormation {
      * that SPA is already present, the given number is added to the one already present. If the present
      * number is a Double type value, that type is preserved.
      */
-    public void addSPA(BattleForceSPA spa, int number) {
+    public void addSPA(BattleForceSUA spa, int number) {
         if (!specialAbilities.containsKey(spa)) {
             specialAbilities.put(spa, number);
         } else {
@@ -160,7 +160,7 @@ public class SBFFormation {
      * as MHQ2. If that SPA is already present, the given number is added to the one already present.
      * if the previosly present number was an integer, it will be converted to a Double type value.
      */
-    public void addSPA(BattleForceSPA spa, double number) {
+    public void addSPA(BattleForceSUA spa, double number) {
         if (!specialAbilities.containsKey(spa)) {
             specialAbilities.put(spa, number);
         } else {
@@ -177,7 +177,7 @@ public class SBFFormation {
      * The previously present associated Object, if any, is discarded. If the ability was not present,
      * it is added.
      */
-    public void replaceSPA(BattleForceSPA spa, Object newValue) {
+    public void replaceSPA(BattleForceSUA spa, Object newValue) {
         specialAbilities.put(spa, newValue);
     }
 
@@ -185,7 +185,7 @@ public class SBFFormation {
      * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamage damage) {
+    public void addSPA(BattleForceSUA spa, ASDamage damage) {
         specialAbilities.put(spa, damage);
     }
 
@@ -193,7 +193,7 @@ public class SBFFormation {
      * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
+    public void addSPA(BattleForceSUA spa, ASDamageVector damage) {
         specialAbilities.put(spa, damage);
     }
 
@@ -201,7 +201,7 @@ public class SBFFormation {
      * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
      * that SPA is already present, the new value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
+    public void addSPA(BattleForceSUA spa, ASArcSummary value) {
         specialAbilities.put(spa, value);
     }
 
@@ -220,11 +220,11 @@ public class SBFFormation {
         specialAbilities.put(BIM, specialMoves);
     }
 
-    public Object getSPA(BattleForceSPA spa) {
+    public Object getSPA(BattleForceSUA spa) {
         return specialAbilities.get(spa);
     }
 
-    public boolean hasSPA(BattleForceSPA spa) {
+    public boolean hasSPA(BattleForceSUA spa) {
         return specialAbilities.containsKey(spa);
     }
 
@@ -236,7 +236,7 @@ public class SBFFormation {
                 .collect(Collectors.joining(","));
     }
 
-    public boolean showSpecial(BattleForceSPA spa) {
+    public boolean showSpecial(BattleForceSUA spa) {
         //TODO
         if ((type == SBFElementType.BM) && (spa == SOA || spa == SRCH)) {
             return false;
@@ -247,7 +247,7 @@ public class SBFFormation {
         return true;
     }
 
-    public static String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
+    public static String formatSPAString(BattleForceSUA spa, @Nullable Object spaObject) {
         if (spa == TUR) {
             return "TUR(" + spaObject + ")";
 //        } else if (spa == BIM || spa == LAM) {
@@ -265,7 +265,7 @@ public class SBFFormation {
      * Returns the Artillery Special's SBF damage (standard, not homing missile damage).
      * Returns 0 when the given SPA is not an Artillery SPA.
      */
-    public static int getSbfArtilleryDamage(BattleForceSPA spa) {
+    public static int getSbfArtilleryDamage(BattleForceSUA spa) {
         switch (spa) {
             case ARTTC:
                 return 1;
@@ -297,7 +297,7 @@ public class SBFFormation {
      * Returns the Artillery Special's SBF damage for homing missiles.
      * Returns 0 when the given SPA is not ARTAIS or ARTAC.
      */
-    public static int getSbfArtilleryHomingDamage(BattleForceSPA spa) {
+    public static int getSbfArtilleryHomingDamage(BattleForceSUA spa) {
         return spa.isAnyOf(ARTAIS, ARTAC) ? 2 : 0;
     }
 

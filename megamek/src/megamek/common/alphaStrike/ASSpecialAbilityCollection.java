@@ -25,7 +25,7 @@ import megamek.common.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 /**
  * This class encapsulates a block of AlphaStrike or Battleforce or SBF special abilities. Most
@@ -53,7 +53,7 @@ public class ASSpecialAbilityCollection {
      * with standard damage at least.
      * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
      */
-    private EnumMap<BattleForceSPA, Object> specialAbilities = new EnumMap<>(BattleForceSPA.class);
+    private final EnumMap<BattleForceSUA, Object> specialAbilities = new EnumMap<>(BattleForceSUA.class);
 
     /** The AlphaStrike element this collection is part of. Used to format string output. */
     private final AlphaStrikeElement element;
@@ -99,7 +99,7 @@ public class ASSpecialAbilityCollection {
      * @return The value associated with the given Special Unit Ability. Depending on the given spa, this
      * value can be null or of different types.
      */
-    public Object getSPA(BattleForceSPA spa) {
+    public Object getSPA(BattleForceSUA spa) {
         return specialAbilities.get(spa);
     }
 
@@ -110,7 +110,7 @@ public class ASSpecialAbilityCollection {
      *
      * @return The complete formatted Special Unit Ability string such as "LRM1/1/-".
      */
-    public String formatSPAString(BattleForceSPA spa, @Nullable Object spaObject) {
+    public String formatSPAString(BattleForceSUA spa, @Nullable Object spaObject) {
         if (spa == TUR) {
             return "TUR(" + spaObject + ")";
         } else if (spa == BIM || spa == LAM) {
@@ -120,8 +120,9 @@ public class ASSpecialAbilityCollection {
             return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
         } else if (spa.isTransport()) {
             String result = spa + spaObject.toString();
-            if (element.hasSUA(spa.getDoor()) && ((int) element.getSUA(spa.getDoor()) > 0)) {
-                result += "-D" + element.getSUA(spa.getDoor());
+            if (element.isLargeAerospace()
+                    && element.hasSUA(spa.getDoor()) && ((int) element.getSUA(spa.getDoor()) > 0)) {
+                result += spa.getDoor().toString() + element.getSUA(spa.getDoor());
             }
             return result;
         } else {
@@ -130,7 +131,7 @@ public class ASSpecialAbilityCollection {
     }
 
     /** @return The formatted LAM/BIM Special Ability string such as LAM(36"g/4a). */
-    private static String lamString(BattleForceSPA spa, Object spaObject) {
+    private static String lamString(BattleForceSUA spa, Object spaObject) {
         String result = spa.toString() + "(";
         if (spa == LAM) {
             result += ((Map<String, Integer>)spaObject).get("g") + INCH + "g/";
@@ -143,7 +144,7 @@ public class ASSpecialAbilityCollection {
      * NEW version - Adds a Special Unit Ability that is not associated with any
      * additional information or number, e.g. RCN.
      */
-    public void addSPA(BattleForceSPA spa) {
+    public void addSPA(BattleForceSUA spa) {
         specialAbilities.put(spa, null);
     }
 
@@ -152,7 +153,7 @@ public class ASSpecialAbilityCollection {
      * that SPA is already present, the given number is added to the one already present. If the present
      * number is a Double type value, that type is preserved.
      */
-    public void addSPA(BattleForceSPA spa, int number) {
+    public void addSPA(BattleForceSUA spa, int number) {
         if (!specialAbilities.containsKey(spa)) {
             specialAbilities.put(spa, number);
         } else {
@@ -169,7 +170,7 @@ public class ASSpecialAbilityCollection {
      * as MHQ2. If that SPA is already present, the given number is added to the one already present.
      * if the previosly present number was an integer, it will be converted to a Double type value.
      */
-    public void addSPA(BattleForceSPA spa, double number) {
+    public void addSPA(BattleForceSUA spa, double number) {
         if (!specialAbilities.containsKey(spa)) {
             specialAbilities.put(spa, number);
         } else {
@@ -186,7 +187,7 @@ public class ASSpecialAbilityCollection {
      * The previously present associated Object, if any, is discarded. If the ability was not present,
      * it is added.
      */
-    public void replaceSPA(BattleForceSPA spa, Object newValue) {
+    public void replaceSPA(BattleForceSUA spa, Object newValue) {
         specialAbilities.put(spa, newValue);
     }
 
@@ -194,7 +195,7 @@ public class ASSpecialAbilityCollection {
      * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamage damage) {
+    public void addSPA(BattleForceSUA spa, ASDamage damage) {
         specialAbilities.put(spa, damage);
     }
 
@@ -202,7 +203,7 @@ public class ASSpecialAbilityCollection {
      * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
      * that SPA is already present, the new damage value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASDamageVector damage) {
+    public void addSPA(BattleForceSUA spa, ASDamageVector damage) {
         specialAbilities.put(spa, damage);
     }
 
@@ -210,13 +211,8 @@ public class ASSpecialAbilityCollection {
      * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
      * that SPA is already present, the new value replaces the former.
      */
-    public void addSPA(BattleForceSPA spa, ASArcSummary value) {
+    public void addSPA(BattleForceSUA spa, ASArcSummary value) {
         specialAbilities.put(spa, value);
-    }
-
-    /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
-    public void addTurSPA(List<List<Object>> turAbility) {
-        specialAbilities.put(TUR, turAbility);
     }
 
     /** NEW version - Adds the LAM Special Unit Ability with a LAM movement map. */
@@ -235,11 +231,11 @@ public class ASSpecialAbilityCollection {
      * or greater than zero. E.g., if an element has the MHQ spa, then MHQ >= 1. If it has IF, then
      * the IF value is at least 0*.
      */
-    public boolean hasSPA(BattleForceSPA spa) {
+    public boolean hasSPA(BattleForceSUA spa) {
         return specialAbilities.containsKey(spa);
     }
 
-    public void removeSPA(BattleForceSPA spa) {
+    public void removeSPA(BattleForceSUA spa) {
         specialAbilities.remove(spa);
     }
 }

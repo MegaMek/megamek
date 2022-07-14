@@ -109,11 +109,11 @@ public class ASArcSummary {
                 && !CAPDamage.hasDamage() && !MSLDamage.hasDamage();
     }
 
-    public boolean hasSPA(BattleForceSPA spa) {
+    public boolean hasSPA(BattleForceSUA spa) {
         return arcSpecials.hasSPA(spa);
     }
 
-    public Object getSPA(BattleForceSPA spa) {
+    public Object getSPA(BattleForceSUA spa) {
         return arcSpecials.getSPA(spa);
     }
 

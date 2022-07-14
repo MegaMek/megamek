@@ -39,7 +39,7 @@ public abstract class SubCapLaserWeapon extends EnergyWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted linked) {
-        int maxRange = shortAV <= 1 ? AlphaStrikeElement.CAPITAL_RANGES[2] : AlphaStrikeElement.CAPITAL_RANGES[1];
+        int maxRange = shortAV <= 1 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.MEDIUM_RANGE;
         return (range <= maxRange) ? shortAV : 0;
     }
 }

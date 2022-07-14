@@ -87,6 +87,9 @@ public class ASLargeAeroCard extends ASCard {
 
         valueConfig = new StringDrawer.StringDrawerConfig().centerY().scaleX(0.9f)
                 .color(Color.BLACK).font(largeAeroValueFont).outline(Color.BLACK, 0.5f);
+
+        specialsHeaderConfig = new StringDrawer.StringDrawerConfig().color(Color.BLACK)
+                .font(blackFont.deriveFont((float)largeAeroSpecialFont.getSize()));
     }
 
     @Override
@@ -330,7 +333,7 @@ public class ASLargeAeroCard extends ASCard {
     @Override
     protected void paintSpecial(Graphics2D g) {
         ASCard.drawBox(g, 536, 485, 477, 152, Color.LIGHT_GRAY, BOX_STROKE);
-        paintSpecialTextLines(g, element, largeAeroSpecialFont, 551, 497, 447);
+        paintSpecialTextLines(g, element, largeAeroSpecialFont, 551, 484, 447, 44);
     }
 
     @Override

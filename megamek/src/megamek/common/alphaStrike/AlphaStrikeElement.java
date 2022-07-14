@@ -27,7 +27,7 @@ import java.util.Map.Entry;
 
 import static java.util.stream.Collectors.joining;
 import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 /**
  * This class represents an AlphaStrike Element which is a single unit such as a Mek with
@@ -229,6 +229,7 @@ public class AlphaStrikeElement {
         return movement.getOrDefault(mode, 0);
     }
 
+    /** @return The number of damage range bands this element uses, 3 (SML) for ground units, 4 (SMLE) for aero. */
     public int getRangeBands() {
         return usesSML() ? RANGEBANDS_SML : RANGEBANDS_SMLE;
     }
@@ -398,7 +399,7 @@ public class AlphaStrikeElement {
      *
      * @param sua The Special Unit Ability to add
      */
-    public void addSPA(BattleForceSPA sua) {
+    public void addSPA(BattleForceSUA sua) {
         specialAbilities.addSPA(sua);
     }
 
@@ -430,18 +431,18 @@ public class AlphaStrikeElement {
      * @param sua The Special Unit Ability to check
      * @return True when this AS element has the given Special Unit Ability
      */
-    public boolean hasSUA(BattleForceSPA sua) {
+    public boolean hasSUA(BattleForceSUA sua) {
         return specialAbilities.hasSPA(sua);
     }
 
     /**
      * Returns true when this AS element has any of the given Special Unit Abilities.
-     * See {@link #hasSUA(BattleForceSPA)}
+     * See {@link #hasSUA(BattleForceSUA)}
      *
      * @param sua The Special Unit Ability to check
      * @return True when this AS element has the given Special Unit Ability
      */
-    public boolean hasAnySUAOf(BattleForceSPA sua, BattleForceSPA... furtherSuas) {
+    public boolean hasAnySUAOf(BattleForceSUA sua, BattleForceSUA... furtherSuas) {
         return hasSUA(sua) || Arrays.stream(furtherSuas).anyMatch(this::hasSUA);
     }
 
@@ -453,7 +454,7 @@ public class AlphaStrikeElement {
      *
      * @param sua The Special Unit Ability to get the ability value for
      */
-    public Object getSUA(BattleForceSPA sua) {
+    public Object getSUA(BattleForceSUA sua) {
         return specialAbilities.getSPA(sua);
     }
 
@@ -529,7 +530,7 @@ public class AlphaStrikeElement {
      * @param spa The Special Unit Ability to check
      * @return True when the given Special Unit Ability should be listed on the element's card
      */
-    public boolean showSpecial(BattleForceSPA spa) {
+    public boolean showSpecial(BattleForceSUA spa) {
         return !(spa.isDoor()
                 || (isType(BM, PM) && (spa == SOA))
                 || (isType(CV, BM) && (spa == SRCH))

@@ -27,7 +27,7 @@ import megamek.common.force.Forces;
 
 import java.util.ArrayList;
 
-import static megamek.common.alphaStrike.BattleForceSPA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ACSCombatTeamConverter {
 

@@ -459,6 +459,19 @@ public class Game implements IGame, Serializable {
     }
 
     /**
+     * Return a clone players vector sorted by id
+     */
+    public Vector<Player> getPlayersVectorSorted() {
+        Vector<Player> clone = (Vector<Player>) players.clone();
+         Collections.sort(clone, new Comparator<Player>() {
+            public int compare(Player result1, Player result2) {
+                return ((Integer)result1.getId()).compareTo(result2.getId());
+            }
+        });
+        return clone;
+    }
+
+    /**
      * Return the current number of active players in the game.
      */
     public int getNoOfPlayers() {

@@ -47,7 +47,6 @@ public class GameMasterCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         Player player = server.getPlayer(connId);
-        int numEntities = server.getGame().getEntitiesOwnedBy(player);
 
         if (args.length != 1) {
             server.sendServerChat(connId, "Incorrect number of arguments "
@@ -56,22 +55,6 @@ public class GameMasterCommand extends ServerCommand {
             server.sendServerChat(connId, getHelp());
             return;
         }
-
-        //            int teamId = Integer.parseInt(args[1]);
-        //
-        //            if ((Player.TEAM_UNASSIGNED == teamId) && (numEntities != 0)) {
-        //                server.sendServerChat(connId, "Player must have no more " +
-        //                        "units to join the unassigned team!");
-        //                return;
-        //            }
-        //            String teamString = "join Team " + teamId + ".  ";
-        //            if (teamId == Player.TEAM_UNASSIGNED) {
-        //                teamString = " leave their team and go unassigned.  ";
-        //            } else if (teamId == Player.TEAM_NONE) {
-        //                teamString = " go lone wolf!  ";
-        //            }
-
-        // TODO allow GM to be demoted to regular player without a vote
 
         for (Player p : server.getGame().getPlayersVector()) {
             if (p.getId() != player.getId()) {
@@ -86,7 +69,9 @@ public class GameMasterCommand extends ServerCommand {
         for (Player p : server.getGame().getPlayersVector()) {
             p.setAllowGameMaster(false);
         }
-        player.setAllowGameMaster(true);
+
+        // requester automatically votes yes
+        AllowGameMasterCommand.voteYes(server, player);
     }
 
 }

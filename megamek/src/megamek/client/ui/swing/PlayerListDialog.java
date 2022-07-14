@@ -62,7 +62,8 @@ public class PlayerListDialog extends JDialog {
     public static void refreshPlayerList(JList<String> playerList,
             Client client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
-        for (Player player : client.getGame().getPlayersVector()) {
+
+        for (Player player : client.getGame().getPlayersVectorSorted()) {
             StringBuffer playerDisplay = new StringBuffer(player.getName());
 
             // Append team information
@@ -93,6 +94,14 @@ public class PlayerListDialog extends JDialog {
                 playerDisplay.append(" [Bot]");
             } else {
                 playerDisplay.append(" [Player]");
+            }
+
+            if (player.canSeeAll()) {
+                playerDisplay.append(" [SeeAll]");
+            }
+
+            if (player.canSeeSingleBlind()) {
+                playerDisplay.append(" [SingleBlind]");
             }
 
             ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());

@@ -43,45 +43,49 @@ public class AllowGameMasterCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-            Player player = server.getPlayer(connId);
-            player.setAllowGameMaster(true);
+        Player player = server.getPlayer(connId);
 
-            if (!gameManager.isGameMasterRequestInProgress()) {
-                server.sendServerChat(connId, "No vote to change teams in progress!");
-                return;
-            }
+        if (!gameManager.isGameMasterRequestInProgress()) {
+            server.sendServerChat(connId, "No vote to for Game Master is progess!");
+            return;
+        }
+        voteYes(server, player);
+    }
 
-            // Tally votes
-            boolean allowGameMaster = true;
-            int voteCount = 0;
-            int eligiblePlayerCount = 0;
-            for (Player p : server.getGame().getPlayersVector()) {
-                if (p.getTeam() != Player.TEAM_UNASSIGNED) {
-                    allowGameMaster &= p.isAllowingGameMaster();
-                    if (p.isAllowingGameMaster()) {
-                        voteCount++;
-                    }
-                    eligiblePlayerCount++;
+    protected static void voteYes(Server server, Player player ) {
+        player.setAllowGameMaster(true);
+
+        // Tally votes
+        boolean allowGameMaster = true;
+        int voteCount = 0;
+        int eligiblePlayerCount = 0;
+        for (Player p : server.getGame().getPlayersVector()) {
+            if (p.getTeam() != Player.TEAM_UNASSIGNED) {
+                allowGameMaster &= p.isAllowingGameMaster();
+                if (p.isAllowingGameMaster()) {
+                    voteCount++;
                 }
+                eligiblePlayerCount++;
             }
+        }
 
-            // Inform all players about the vote
-            server.sendServerChat(player.getName() + " has voted to allow "
+        GameManager gameManager = (GameManager) server.getGameManager();
+
+        // Inform all players about the vote
+        server.sendServerChat(player.getName() + " has voted to allow "
+                + gameManager.getPlayerRequestingGameMaster().getName()
+                + " to become Game Master"
+                + ", " + voteCount
+                + " vote(s) received out of " + eligiblePlayerCount
+                + " vote(s) needed");
+
+        // If all votes are received, perform team change
+        if (allowGameMaster) {
+            server.sendServerChat("All votes received, "
                     + gameManager.getPlayerRequestingGameMaster().getName()
-                    + " to become Game Master"
-                    + ", " + voteCount
-                    + " vote(s) received out of " + eligiblePlayerCount
-                    + " vote(s) needed");
-
-            // If all votes are received, perform team change
-            if (allowGameMaster) {
-                server.sendServerChat("All votes received, "
-                        + gameManager.getPlayerRequestingGameMaster().getName()
-                        + " will become Game Master"
-                        + " at the end of the turn.");
-                gameManager.allowGameMaster();
-            }
-
+                    + " will become Game Master.");
+            gameManager.allowGameMaster();
+        }
     }
 
 }

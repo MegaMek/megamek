@@ -142,12 +142,6 @@ public class GameManager implements IGameManager {
     private Player playerRequestingGameMaster = null;
 
     /**
-     * Flag that is set to true when all players have voted to allow another
-     * player to become Game Master
-     */
-    private boolean changeGameMaster = false;
-
-    /**
      * Special packet queue for client feedback requests.
      */
     private final ConcurrentLinkedQueue<Server.ReceivedPacket> cfrPacketQueue = new ConcurrentLinkedQueue<>();
@@ -316,11 +310,10 @@ public class GameManager implements IGameManager {
     @Override
     public void requestGameMaster(Player player) {
         playerRequestingGameMaster = player;
-        changeGameMaster = false;
     }
 
     public void allowGameMaster() {
-        changeGameMaster = true;
+        processGameMaster();
     }
 
     public boolean isGameMasterRequestInProgress() {
@@ -338,7 +331,6 @@ public class GameManager implements IGameManager {
             sendServerChat(playerRequestingGameMaster.getName() + " has become Game Master");
             playerRequestingGameMaster = null;
         }
-        changeGameMaster = false;
     }
 
     @Override
@@ -2093,9 +2085,6 @@ public class GameManager implements IGameManager {
      * Ends this phase and moves on to the next.
      */
     private void endCurrentPhase() {
-        if (changeGameMaster) {
-            processGameMaster();
-        }
         switch (game.getPhase()) {
             case LOUNGE:
                 game.addReports(vPhaseReport);

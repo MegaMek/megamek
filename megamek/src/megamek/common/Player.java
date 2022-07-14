@@ -50,12 +50,10 @@ public final class Player extends TurnOrdered {
     private boolean observer = false;
     private boolean gameMaster = false;
 
-    private boolean seeEntireBoard = false; // Player can observe double blind games
+    private boolean seeEntireBoard = false; // Player can observe double-blind games
+    private boolean seeEntireBoardBot = false; // Bot can observe double-blind games
 
-    // New SingleBlind
-    private boolean seeEntireBoardBot = false; // Bot can observe double blind games
-
-    // these are game-specific, and maybe should be separate from the player object
+    // deployment settings
     private int startingPos = Board.START_ANY;
     private int startOffset = 0;
     private int startWidth = 3;
@@ -85,14 +83,12 @@ public final class Player extends TurnOrdered {
     private Vector<Minefield> visibleMinefields = new Vector<>();
 
     private boolean admitsDefeat = false;
-    
-    /**
-     * Boolean that keeps track of whether a player has accepted another 
-     * player's request to change teams.
-     */
+
+    //TODO Voting should not be stored in savegame. mark transient?
+    /** if has voted to allow a player to change teams.*/
     private boolean allowingTeamChange = false;
 
-    /** tracks if this player has voted to allow it or another player to become Game Master.*/
+    /** if player has voted to allow a player to become Game Master.*/
     private boolean allowingGameMaster = false;
     //endregion Variable Declarations
 
@@ -653,9 +649,12 @@ public final class Player extends TurnOrdered {
 
         copy.done = done;
         copy.ghost = ghost;
+        //TODO should bot get copied?
         copy.observer = observer;
+        copy.gameMaster = gameMaster;
 
         copy.seeEntireBoard = seeEntireBoard;
+        copy.seeEntireBoardBot = seeEntireBoardBot;
 
         copy.startingPos = startingPos;
 

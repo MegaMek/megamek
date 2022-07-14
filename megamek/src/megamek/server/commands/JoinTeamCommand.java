@@ -83,13 +83,15 @@ public class JoinTeamCommand extends ServerCommand {
             }
             
             server.requestTeamChange(teamId, player);
-            
+
             for (Player p : server.getGame().getPlayersVector()) {
                 p.setAllowTeamChange(false);
             }
-            player.setAllowTeamChange(true);
+
+            // requester automatically votes yes
+            AllowTeamChangeCommand.voteYes(server, player);
         } catch (NumberFormatException nfe) {
-            server.sendServerChat(connId,"Failed to parse team number!");
+            server.sendServerChat(connId,"Failed to parse team number \""+args[1]+"\"!");
         }
     }
 

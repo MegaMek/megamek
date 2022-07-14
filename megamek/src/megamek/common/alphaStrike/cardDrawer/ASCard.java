@@ -265,12 +265,17 @@ public class ASCard {
 
     /** Write model, chassis and squad size. Overridden for some card types. */
     protected void drawModelChassis(Graphics2D g) {
-        new StringDrawer(element.getModel()).at(36, 44).font(modelFont).centerY()
+        String model = element.getModel();
+        // Remove MM's "(SqdX)" addition to the model
+        if (element.isBattleArmor()) {
+            model = model.replaceAll("\\(Sqd[0-9]\\)", "");
+        }
+        new StringDrawer(model).at(36, 44).font(modelFont).centerY()
                 .maxWidth(750).scaleX(1.3f).draw(g);
         new StringDrawer(element.getChassis().toUpperCase(Locale.ROOT)).at(36, 89)
                 .font(chassisFont).centerY().maxWidth(770).scaleX(0.8f).draw(g);
 
-        // BA Squad Size
+        // Add BA Squad Size
         if (element.isBattleArmor()) {
             new StringDrawer("Squad " + element.getSquadSize()).at(36, 137).maxWidth(500).scaleX(1.3f)
                     .font(modelFont).centerY().draw(g);

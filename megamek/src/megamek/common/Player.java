@@ -50,7 +50,7 @@ public final class Player extends TurnOrdered {
     private boolean observer = false;
     private boolean gameMaster = false;
 
-    private boolean seeEntireBoard = false; // Player can observe double-blind games
+    private boolean seeEntireBoard = false; // Observer or Game Master can observe double-blind games
     private boolean seeEntireBoardBot = false; // Bot can observe double-blind games
 
     // deployment settings

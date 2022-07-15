@@ -1,0 +1,17 @@
+July 12/2022
+
+This is a chat command toggle - /singleblind. It is intended to give vision of the entire map to a bot player as a partial working option for the bot in Double Blind games. You should get a failure message if it is attempted to be assigned to a non-bot player.
+
+To use, type:
+
+/who - this will give you player numbers. In this example, Princess (a bot) is player 1.
+/singleblind 1 - this will give a bot in the Player 1 spot vision of the entire map at the start of the next phase (after any player hits done). It is a Toggle, so if you type /singleblind 1 again, it will remove the vision at the start of the next phase.
+
+Notes:
+If it is turned off, unless Princess has direct LOS on an enemy unit, she will forget where enemy units were, and at least in my tests, she will always return to her home edge and mill about, even if she has travelled quite far away from it.
+While it is active, she does not share the /singleblind sight with her teammates, even if "teammates share vision" option is enabled. So she will see enemy units and move toward them, but other humans and bots on her team will not see them. So if you want different bots on the same team to have singleblind vision, you need to assign it to each of them. However, once she gets direct LOS on an enemy unit, because of normal vision rules, she will share their location with teammates and remain engaged, even if you turn /singleblind off.
+You should get a failure message and it should not work if you attempt to assign it to a human. If you somehow manage to assign it or otherwise give it to a human player, please report it so it can be fixed.
+
+Relating to this PR - https://github.com/MegaMek/megamek/pull/3780
+
+

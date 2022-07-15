@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,7 +65,7 @@ public class GameMasterCommand extends ServerCommand {
         server.requestGameMaster(player);
 
         for (Player p : server.getGame().getPlayersVector()) {
-            p.setAllowGameMaster(false);
+            p.setVotedToAllowGameMaster(false);
         }
 
         // requester automatically votes yes

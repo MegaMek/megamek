@@ -70,7 +70,7 @@ public class SingleBlindCommand extends ServerCommand {
 
                 Player player = server.getPlayer(playerId);
 
-                boolean hasSingleBlind = player.canSeeSingleBlind();
+                boolean hasSingleBlind = player.getSingleBlind();
                 if (hasSingleBlind) {
                     giveTake = " no longer has";
                 } else {
@@ -91,7 +91,7 @@ public class SingleBlindCommand extends ServerCommand {
                             + server.getPlayer(connId).getName());
                 }
 
-                player.setSingleBlind(!hasSingleBlind);
+                gameManager.processSingleBlind(player, !hasSingleBlind);
                 gameManager.sendEntities(playerId);
             } catch (Exception ex) {
                 server.sendServerChat("/singleblind : singleblind failed. Is the player a Bot? Type /who for a list of players with id #s.");

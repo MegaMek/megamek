@@ -64,7 +64,6 @@ public class PlayerListDialog extends JDialog {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
 
         for (Player player : client.getGame().getPlayersVectorSorted()) {
-//            StringBuffer playerDisplay = new StringBuffer(player.getName());
             StringBuffer playerDisplay = new StringBuffer(String.format("%-12s", player.getName()));
 
             // Append team information
@@ -100,13 +99,25 @@ public class PlayerListDialog extends JDialog {
                 }
             }
 
-            if (player.canSeeAll()) {
+            if (player.getSeeAll()) {
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_seeall"));
             }
 
-            if (player.canSeeSingleBlind()) {
+            if (player.getSingleBlind()) {
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_singleblind"));
             }
+
+            if (player.canIgnoreDoubleBlind()) {
+                playerDisplay.append("[IgnoreDoubleBlind]");
+            }
+
+//            if (player.canSeeAll()) {
+//                playerDisplay.append(Messages.getString("PlayerListDialog.player_seeall"));
+//            }
+//
+//            if (player.canSeeSingleBlind()) {
+//                playerDisplay.append(Messages.getString("PlayerListDialog.player_singleblind"));
+//            }
 
             ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());
         }

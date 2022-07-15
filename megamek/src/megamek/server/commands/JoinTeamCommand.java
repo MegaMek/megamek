@@ -85,7 +85,7 @@ public class JoinTeamCommand extends ServerCommand {
             server.requestTeamChange(teamId, player);
 
             for (Player p : server.getGame().getPlayersVector()) {
-                p.setAllowTeamChange(false);
+                p.setVotedToAllowTeamChange(false);
             }
 
             // requester automatically votes yes

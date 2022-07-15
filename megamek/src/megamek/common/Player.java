@@ -85,11 +85,8 @@ public final class Player extends TurnOrdered {
     private boolean admitsDefeat = false;
 
     //TODO Voting should not be stored in savegame. mark transient?
-    /** if has voted to allow a player to change teams.*/
-    private boolean allowingTeamChange = false;
-
-    /** if player has voted to allow a player to become Game Master.*/
-    private boolean allowingGameMaster = false;
+    private boolean votedToAllowTeamChange = false;
+    private boolean votedToAllowGameMaster = false;
     //endregion Variable Declarations
 
     //region Constructors
@@ -250,7 +247,7 @@ public final class Player extends TurnOrdered {
 
     /** @return true if gameMaster flag is true and not a bot*/
     public boolean isGameMaster() {
-        return ( isGameMasterPermitted() && gameMaster);
+        return (isGameMasterPermitted() && gameMaster);
     }
 
     public void setGameMaster(boolean gameMaster) {
@@ -273,14 +270,14 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * This simply returns the value, without checking the observer or gamemaster flag
+     * This simply returns the value of the flag, without checking if it is permitted
      */
     public boolean getSeeAll() {
         return seeAll;
     }
 
     /**
-     * @return true if seeAll is true and gamemaster or observer
+     * @return true if seeAll is true and is permitted
      */
     public boolean canSeeAll() {
         return (isSeeAllPermitted() && seeAll);
@@ -292,24 +289,27 @@ public final class Player extends TurnOrdered {
 
     public void setObserver(boolean observer) {
         this.observer = observer;
-        // If not an observer, clear the set see all flag
-        if (!observer) {
-            setSeeAll(false);
-        }
         if (game != null && game.getTeamForPlayer(this) != null) {
             game.getTeamForPlayer(this).cacheObserverStatus();
         }
     }
 
     /**
-     * Creates new singleBlind command that works only on bots
+     * singleBlind allows bots to ignore double-blind
      */
     public void setSingleBlind(boolean singleBlind) {
         this.singleBlind = singleBlind;
     }
 
     /**
-     * If bot is false, seeEntireBoardBot does nothing
+     * This simply returns the flag, without checking if it is permitted
+     */
+    public boolean getSingleBlind() {
+        return singleBlind;
+    }
+
+    /**
+     * @return true if singleBlind flag is true and is permitted
      */
     public boolean canSeeSingleBlind() {
         return (isSingleBlindPermitted() && singleBlind);
@@ -384,20 +384,20 @@ public final class Player extends TurnOrdered {
         return admitsDefeat;
     }
 
-    public void setAllowTeamChange(boolean allowChange) {
-        allowingTeamChange = allowChange;
+    public void setVotedToAllowTeamChange(boolean allowChange) {
+        votedToAllowTeamChange = allowChange;
     }
 
-    public boolean isAllowingTeamChange() {
-        return allowingTeamChange;
+    public boolean getVotedToAllowTeamChange() {
+        return votedToAllowTeamChange;
     }
 
-    public void setAllowGameMaster(boolean allowChange) {
-        allowingGameMaster = allowChange;
+    public void setVotedToAllowGameMaster(boolean allowChange) {
+        votedToAllowGameMaster = allowChange;
     }
 
-    public boolean isAllowingGameMaster() {
-        return allowingGameMaster;
+    public boolean getVotedToAllowGameMaster() {
+        return votedToAllowGameMaster;
     }
 
     public void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes) {

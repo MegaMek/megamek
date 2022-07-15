@@ -126,7 +126,7 @@ public class GameManager implements IGameManager {
     private int requestedTeam = Player.TEAM_NONE;
 
     /**
-     * Keeps track of what player made a request to change teams.
+     * Keeps track of which player made a request to change teams.
      */
     private Player playerChangingTeam = null;
 
@@ -137,7 +137,7 @@ public class GameManager implements IGameManager {
     private boolean changePlayersTeam = false;
 
     /**
-     * Keeps track of what player made a request to become Game Master.
+     * Keeps track of which player made a request to become Game Master.
      */
     private Player playerRequestingGameMaster = null;
 
@@ -331,6 +331,18 @@ public class GameManager implements IGameManager {
             sendServerChat(playerRequestingGameMaster.getName() + " has become Game Master");
             playerRequestingGameMaster = null;
         }
+    }
+
+    public void processSingleBlind(Player player, boolean singleBlind) {
+        player.setSingleBlind(singleBlind);
+        transmitPlayerUpdate(player);
+        sendServerChat(player.getName() + " set SingleBlind:" + player.getSingleBlind());
+    }
+
+    public void processSeeAll(Player player, boolean seeAll) {
+        player.setSeeAll(seeAll);
+        transmitPlayerUpdate(player);
+        sendServerChat(player.getName() + " set SeaAll:" + player.getSeeAll());
     }
 
     @Override
@@ -535,18 +547,6 @@ public class GameManager implements IGameManager {
             p.setObserver((getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
         }
     }
-
-//    /**
-//     * Checks each player to see if they have entitites, and if true, sets the
-//     * singleblindobserver flag for that player if it is a bot. An exception is that there are no
-//     * observers during the lounge phase.
-//     */
-//    public void checkForSingleBlindObservers() {
-//        for (Enumeration<Player> e = getGame().getPlayers(); e.hasMoreElements(); ) {
-//            Player p = e.nextElement();
-//            p.setSingleBlindObserver((getGame().getEntitiesOwnedBy(p) >= 1) && !getGame().getPhase().isLounge());
-//        }
-//    }
 
     @Override
     public void removeAllEntitiesOwnedBy(Player player) {

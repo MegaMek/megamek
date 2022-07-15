@@ -451,7 +451,7 @@ public class Game implements IGame, Serializable {
     }
 
     /**
-     * Return the players vector
+     * @return the players vector
      */
     @Override
     public Vector<Player> getPlayersVector() {
@@ -459,7 +459,7 @@ public class Game implements IGame, Serializable {
     }
 
     /**
-     * Return a clone players vector sorted by id
+     * @return a clone of the players vector sorted by id
      */
     public Vector<Player> getPlayersVectorSorted() {
         Vector<Player> clone = (Vector<Player>) players.clone();

@@ -43,18 +43,17 @@ public class AllowTeamChangeCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
+        Player player = server.getPlayer(connId);
 
-            Player player = server.getPlayer(connId);
-
-            if (!gameManager.isTeamChangeRequestInProgress()) {
-                server.sendServerChat(connId, "No vote to change teams in progress!");
-                return;
-            }
-            voteYes(server, player);
+        if (!gameManager.isTeamChangeRequestInProgress()) {
+            server.sendServerChat(connId, "No vote to change teams in progress!");
+            return;
+        }
+        voteYes(server, player);
     }
 
-    public static  void voteYes(Server server, Player player) {
-        player.setAllowTeamChange(true);
+    public static void voteYes(Server server, Player player) {
+        player.setVotedToAllowTeamChange(true);
 
         // Tally votes
         boolean changeTeam = true;
@@ -62,13 +61,12 @@ public class AllowTeamChangeCommand extends ServerCommand {
         int eligiblePlayerCount = 0;
         for (Player p : server.getGame().getPlayersVector()) {
             if (p.getTeam() != Player.TEAM_UNASSIGNED) {
-                changeTeam &= p.isAllowingTeamChange();
-                if (p.isAllowingTeamChange()) {
+                changeTeam &= p.getVotedToAllowTeamChange();
+                if (p.getVotedToAllowTeamChange()) {
                     voteCount++;
                 }
                 eligiblePlayerCount++;
             }
-
         }
 
         GameManager gameManager = (GameManager) server.getGameManager();

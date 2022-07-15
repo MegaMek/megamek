@@ -18,6 +18,7 @@
  */
 package megamek.server.commands;
 
+import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import megamek.server.Server;
@@ -67,31 +68,30 @@ public class SingleBlindCommand extends ServerCommand {
                     playerId = Integer.parseInt(args[playerArg]);
                 }
 
-                // If cannot get singleblind because not a bot, send failure message and stop messages below.
-                boolean canObtainSingleBlind = server.getPlayer(playerId).isBot();
-                if (!canObtainSingleBlind) {
-                    server.sendServerChat(connId, "/singleblind : singleblind attempt failed. Is the player a Bot? Type /who for a list of players with id #s.");
-                    return;
-                }
+                Player player = server.getPlayer(playerId);
 
-                boolean hasSingleBlind = server.getPlayer(playerId).canSeeSingleBlind();
+                boolean hasSingleBlind = player.canSeeSingleBlind();
                 if (hasSingleBlind) {
                     giveTake = " no longer has";
                 } else {
+                    if (!player.isSingleBlindPermitted()) {
+                        server.sendServerChat(connId, "/singleblind : singleblind attempt failed. Is the player a Bot? Type /who for a list of players with id #s.");
+                        return;
+                    }
                     giveTake = " has been granted";
                 }
 
                 if (playerId == connId) {
-                    server.sendServerChat(server.getPlayer(playerId).getName()
+                    server.sendServerChat(player.getName()
                             + giveTake + " vision of the entire map with /singleblind, by "
                             + server.getPlayer(connId).getName());
                 } else {
-                    server.sendServerChat(server.getPlayer(playerId).getName()
+                    server.sendServerChat(player.getName()
                             + giveTake + " vision of the entire map with /singleblind, by "
                             + server.getPlayer(connId).getName());
                 }
 
-                server.getPlayer(playerId).setSingleBlind(!hasSingleBlind);
+                player.setSingleBlind(!hasSingleBlind);
                 gameManager.sendEntities(playerId);
             } catch (Exception ex) {
                 server.sendServerChat("/singleblind : singleblind failed. Is the player a Bot? Type /who for a list of players with id #s.");

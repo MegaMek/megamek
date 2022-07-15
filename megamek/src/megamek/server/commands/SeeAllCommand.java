@@ -70,7 +70,7 @@ public class SeeAllCommand extends ServerCommand {
                 if (has_see_all) {
                     give_take = " no longer has";
                 } else {
-                    if ((!player.isGameMaster()) && (!player.isObserver()))
+                    if ((!player.isSeeAllPermitted()))
                     {
                         server.sendServerChat(connId, player.getName()
                                 + " is not an Observer or Game Master so may be given /seeall");

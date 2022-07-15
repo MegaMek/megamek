@@ -50,8 +50,8 @@ public final class Player extends TurnOrdered {
     private boolean observer = false;
     private boolean gameMaster = false;
 
-    private boolean seeEntireBoard = false; // Observer or Game Master can observe double-blind games
-    private boolean seeEntireBoardBot = false; // Bot can observe double-blind games
+    private boolean seeAll = false; // Observer or Game Master can observe double-blind games
+    private boolean singleBlind = false; // Bot can observe double-blind games
 
     // deployment settings
     private int startingPos = Board.START_ANY;
@@ -244,9 +244,13 @@ public final class Player extends TurnOrdered {
         this.bot = bot;
     }
 
+    public boolean isGameMasterPermitted() {
+        return !bot;
+    }
+
     /** @return true if gameMaster flag is true and not a bot*/
     public boolean isGameMaster() {
-        return ((!bot) && gameMaster);
+        return ( isGameMasterPermitted() && gameMaster);
     }
 
     public void setGameMaster(boolean gameMaster) {
@@ -265,21 +269,25 @@ public final class Player extends TurnOrdered {
     }
 
     public void setSeeAll(boolean seeAll) {
-        seeEntireBoard = seeAll;
+        this.seeAll = seeAll;
     }
 
     /**
-     * This simply returns the value, without checking the observer flag
+     * This simply returns the value, without checking the observer or gamemaster flag
      */
     public boolean getSeeAll() {
-        return seeEntireBoard;
+        return seeAll;
     }
 
     /**
-     * If observer is false, see_entire_board does nothing
+     * @return true if seeAll is true and gamemaster or observer
      */
     public boolean canSeeAll() {
-        return ((gameMaster || observer) && seeEntireBoard);
+        return (isSeeAllPermitted() && seeAll);
+    }
+
+    public boolean isSeeAllPermitted() {
+        return gameMaster || observer;
     }
 
     public void setObserver(boolean observer) {
@@ -297,33 +305,22 @@ public final class Player extends TurnOrdered {
      * Creates new singleBlind command that works only on bots
      */
     public void setSingleBlind(boolean singleBlind) {
-        seeEntireBoardBot = singleBlind;
-    }
-
-    /**
-     * This simply returns the value, without checking the bot flag
-     */
-    public boolean getSingleBlind() {
-        return seeEntireBoardBot;
+        this.singleBlind = singleBlind;
     }
 
     /**
      * If bot is false, seeEntireBoardBot does nothing
      */
     public boolean canSeeSingleBlind() {
-        return (bot && seeEntireBoardBot);
+        return (isSingleBlindPermitted() && singleBlind);
     }
 
-    public void setSingleBlindObserver(boolean singleBlindObserver) {
-        this.bot = singleBlindObserver;
-        // If not a bot, clear the set single blind flag
-        if (!singleBlindObserver) {
-            setSingleBlind(false);
-        }
-        if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObserverStatus();
-        }
+    public boolean isSingleBlindPermitted() {
+        return bot;
+    }
 
+    public boolean canIgnoreDoubleBlind() {
+        return canSeeSingleBlind() || canSeeAll();
     }
 
     public PlayerColour getColour() {
@@ -649,12 +646,12 @@ public final class Player extends TurnOrdered {
 
         copy.done = done;
         copy.ghost = ghost;
-        //TODO should bot get copied?
+        copy.bot = bot;
         copy.observer = observer;
         copy.gameMaster = gameMaster;
 
-        copy.seeEntireBoard = seeEntireBoard;
-        copy.seeEntireBoardBot = seeEntireBoardBot;
+        copy.seeAll = seeAll;
+        copy.singleBlind = singleBlind;
 
         copy.startingPos = startingPos;
 

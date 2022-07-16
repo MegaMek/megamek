@@ -229,7 +229,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
     private ClientGUI clientgui = null;
 
-    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" };
+    private static final String[] LOCALE_CHOICES = { "en", "de", "ru", "es" };
     
     private static final Dimension LABEL_SPACER = new Dimension(5, 0);
     private static final Dimension DEPENDENT_INSET = new Dimension(25, 0);
@@ -305,7 +305,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         displayLocale = new JComboBox<>();
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); 
         displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); 
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian")); 
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian"));
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Spanish")); 
         displayLocale.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         row.add(displayLocaleLabel);

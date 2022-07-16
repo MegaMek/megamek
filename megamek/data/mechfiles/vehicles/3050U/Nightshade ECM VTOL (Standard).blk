@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,16 +17,20 @@ Nightshade ECM VTOL
 </Name>
 
 <Model>
-(Armor)
+(Standard)
 </Model>
 
 <mul id:>
-2274
+2278
 </mul id:>
 
 <year>
-2820
+2597
 </year>
+
+<originalBuildYear>
+2597
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -37,7 +41,7 @@ VTOL
 </motion_type>
 
 <transporters>
-troopspace:1.0
+cargobay:0.5:1:1
 </transporters>
 
 <cruiseMP>
@@ -49,14 +53,15 @@ troopspace:1.0
 </engine_type>
 
 <armor>
-14
 10
-10
-12
+6
+6
+8
 2
 </armor>
 
 <Body Equipment>
+ISGuardianECMSuite
 </Body Equipment>
 
 <Front Equipment>
@@ -76,7 +81,7 @@ Medium Laser
 </Rotor Equipment>
 
 <source>
-TRO 3050 - Succession Wars
+TRO 3050 - Star League
 </source>
 
 <tonnage>
@@ -92,7 +97,7 @@ The Nightshade is a light VTOL designed in 2597 specifically to provide an aeria
 </overview>
 
 <deployment>
-After the Guardian system became LosTech, the most common field refit was to strip the system out to create an impromptu and cramped two-person passenger bay
+Added almost as an after thought, the Nightshade carries a single nose-mounted Randal medium laser. While a sturdy dependable weapon, made highly accurate by being linked to track the movement of the pilot's helmet, it adds negligible firepower to a battle.
 </deployment>
 
 <history>
@@ -100,11 +105,11 @@ With the Guardian entering the realms of LosTech and the destruction of Yelm's m
 </history>
 
 <manufacturer>
-Refit
+Yelm Weapons, Yelm Weapons
 </manufacturer>
 
 <primaryFactory>
-Varous
+Fletcher (TH),New Earth
 </primaryFactory>
 
 <systemManufacturers>

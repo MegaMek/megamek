@@ -19,6 +19,7 @@
 package megamek.server.commands;
 
 import megamek.common.Player;
+import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
@@ -54,22 +55,28 @@ public class GameMasterCommand extends ServerCommand {
             return;
         }
 
-        for (Player p : server.getGame().getPlayersVector()) {
-            if (p.getId() != player.getId()) {
-                server.sendServerChat(p.getId(), player.getName()
-                        + " wants to become a Game Master"
-                        + SERVER_VOTE_PROMPT_MSG);
+        // toggling off game master requires no vote
+        if (player.getGameMaster()) {
+            GameManager gameManager = (GameManager) server.getGameManager();
+            gameManager.setGameMaster(player, false);
+            return;
+        } else {
+            // require voting
+            for (Player p : server.getGame().getPlayersVector()) {
+                if (p.getId() != player.getId()) {
+                    server.sendServerChat(p.getId(), player.getName() + " wants to become a Game Master" + SERVER_VOTE_PROMPT_MSG);
+                }
             }
+
+            server.requestGameMaster(player);
+
+            for (Player p : server.getGame().getPlayersVector()) {
+                p.setVotedToAllowGameMaster(false);
+            }
+
+            // requester automatically votes yes
+            AllowGameMasterCommand.voteYes(server, player);
         }
-
-        server.requestGameMaster(player);
-
-        for (Player p : server.getGame().getPlayersVector()) {
-            p.setVotedToAllowGameMaster(false);
-        }
-
-        // requester automatically votes yes
-        AllowGameMasterCommand.voteYes(server, player);
     }
 
 }

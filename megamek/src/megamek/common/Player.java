@@ -252,6 +252,14 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * If you are checking to see this player is a Game Master, use {@link #isGameMaster()} ()} instead
+     * @return the value of gameMaster flag, without checking if it is permitted.
+     */
+    public boolean getGameMaster() {
+        return gameMaster;
+    }
+
+    /**
      * sets {@link #gameMaster} but this only allows GM status if other conditions permits it.
      * see {@link #isGameMaster()}
      */

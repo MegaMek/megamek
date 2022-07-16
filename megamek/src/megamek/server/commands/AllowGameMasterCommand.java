@@ -87,7 +87,7 @@ public class AllowGameMasterCommand extends ServerCommand {
             server.sendServerChat("All votes received, "
                     + gameManager.getPlayerRequestingGameMaster().getName()
                     + " will become Game Master.");
-            gameManager.allowGameMaster();
+            gameManager.processGameMasterRequest();
         }
     }
 

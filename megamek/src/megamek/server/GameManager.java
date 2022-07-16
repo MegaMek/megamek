@@ -312,10 +312,6 @@ public class GameManager implements IGameManager {
         playerRequestingGameMaster = player;
     }
 
-    public void allowGameMaster() {
-        processGameMaster();
-    }
-
     public boolean isGameMasterRequestInProgress() {
         return playerRequestingGameMaster != null;
     }
@@ -324,25 +320,29 @@ public class GameManager implements IGameManager {
         return playerRequestingGameMaster;
     }
 
-    private void processGameMaster() {
+    public void processGameMasterRequest() {
         if (playerRequestingGameMaster != null) {
-            playerRequestingGameMaster.setGameMaster(true);
-            transmitPlayerUpdate(playerRequestingGameMaster);
-            sendServerChat(playerRequestingGameMaster.getName() + " has become Game Master");
+            setGameMaster(playerRequestingGameMaster, true);
             playerRequestingGameMaster = null;
         }
     }
 
-    public void processSingleBlind(Player player, boolean singleBlind) {
-        player.setSingleBlind(singleBlind);
+    public void setGameMaster(Player player, boolean gameMaster) {
+        player.setGameMaster(gameMaster);
         transmitPlayerUpdate(player);
-        sendServerChat(player.getName() + " set SingleBlind:" + player.getSingleBlind());
+        sendServerChat(player.getName() + " set GameMaster: " + player.getGameMaster());
     }
 
-    public void processSeeAll(Player player, boolean seeAll) {
+    public void setSingleBlind(Player player, boolean singleBlind) {
+        player.setSingleBlind(singleBlind);
+        transmitPlayerUpdate(player);
+        sendServerChat(player.getName() + " set SingleBlind: " + player.getSingleBlind());
+    }
+
+    public void setSeeAll(Player player, boolean seeAll) {
         player.setSeeAll(seeAll);
         transmitPlayerUpdate(player);
-        sendServerChat(player.getName() + " set SeeAll:" + player.getSeeAll());
+        sendServerChat(player.getName() + " set SeeAll: " + player.getSeeAll());
     }
 
     @Override
@@ -368,7 +368,7 @@ public class GameManager implements IGameManager {
         return requestedTeam;
     }
 
-    private void processTeamChange() {
+    private void processTeamChangeRequest() {
         if (playerChangingTeam != null) {
             playerChangingTeam.setTeam(requestedTeam);
             getGame().setupTeams();
@@ -2342,7 +2342,7 @@ public class GameManager implements IGameManager {
                 break;
             case END_REPORT:
                 if (changePlayersTeam) {
-                    processTeamChange();
+                    processTeamChangeRequest();
                 }
                 if (victory()) {
                     changePhase(GamePhase.VICTORY);

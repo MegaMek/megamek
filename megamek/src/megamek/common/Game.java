@@ -451,7 +451,7 @@ public class Game implements IGame, Serializable {
     }
 
     /**
-     * @return the players vector
+     * @return the {@link #players} vector
      */
     @Override
     public Vector<Player> getPlayersVector() {
@@ -459,11 +459,12 @@ public class Game implements IGame, Serializable {
     }
 
     /**
-     * @return a clone of the players vector sorted by id
+     * @return a clone of the {@link #players} vector sorted by id
      */
     public Vector<Player> getPlayersVectorSorted() {
         Vector<Player> clone = (Vector<Player>) players.clone();
-         Collections.sort(clone, new Comparator<Player>() {
+        Collections.sort(clone, new Comparator<Player>() {
+            @Override
             public int compare(Player result1, Player result2) {
                 return ((Integer)result1.getId()).compareTo(result2.getId());
             }

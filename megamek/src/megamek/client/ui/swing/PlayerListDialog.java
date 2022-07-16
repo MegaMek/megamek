@@ -99,6 +99,8 @@ public class PlayerListDialog extends JDialog {
                 }
             }
 
+            // this may be too much detail long term, but is useful for understanding the modes
+            // during testing
             if (player.getSeeAll()) {
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_seeall"));
             }
@@ -108,16 +110,8 @@ public class PlayerListDialog extends JDialog {
             }
 
             if (player.canIgnoreDoubleBlind()) {
-                playerDisplay.append("[IgnoreDoubleBlind]");
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_ignoreDoubleBlind"));
             }
-
-//            if (player.canSeeAll()) {
-//                playerDisplay.append(Messages.getString("PlayerListDialog.player_seeall"));
-//            }
-//
-//            if (player.canSeeSingleBlind()) {
-//                playerDisplay.append(Messages.getString("PlayerListDialog.player_singleblind"));
-//            }
 
             ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());
         }

@@ -342,7 +342,7 @@ public class GameManager implements IGameManager {
     public void processSeeAll(Player player, boolean seeAll) {
         player.setSeeAll(seeAll);
         transmitPlayerUpdate(player);
-        sendServerChat(player.getName() + " set SeaAll:" + player.getSeeAll());
+        sendServerChat(player.getName() + " set SeeAll:" + player.getSeeAll());
     }
 
     @Override

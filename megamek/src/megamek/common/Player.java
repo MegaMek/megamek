@@ -228,7 +228,7 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * Specifies if this player connected as a bot.
+     * @return true if this player connected as a bot.
      */
     public boolean isBot() {
         return bot;
@@ -241,15 +241,20 @@ public final class Player extends TurnOrdered {
         this.bot = bot;
     }
 
+    /** @return true if this player may become a Game Master. Any human may be a GM*/
     public boolean isGameMasterPermitted() {
         return !bot;
     }
 
-    /** @return true if gameMaster flag is true and not a bot*/
+    /** @return true if {@link #gameMaster} flag is true and {@link #isGameMasterPermitted()}*/
     public boolean isGameMaster() {
         return (isGameMasterPermitted() && gameMaster);
     }
 
+    /**
+     * sets {@link #gameMaster} but this only allows GM status if other conditions permits it.
+     * see {@link #isGameMaster()}
+     */
     public void setGameMaster(boolean gameMaster) {
         this.gameMaster = gameMaster;
         if (game != null && game.getTeamForPlayer(this) != null) {
@@ -257,7 +262,7 @@ public final class Player extends TurnOrdered {
         }
     }
 
-    /** @return true if observer flag is true and not in VICTORY phase*/
+    /** @return true if {@link #observer} flag is true and not in VICTORY phase*/
     public boolean isObserver() {
         if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
             return false;
@@ -265,28 +270,39 @@ public final class Player extends TurnOrdered {
         return observer;
     }
 
+    /**
+     *  sets {@link #seeAll}. This will only enable seeAll if other conditions allow it.
+     *  see {@link #canIgnoreDoubleBlind()}
+     */
     public void setSeeAll(boolean seeAll) {
         this.seeAll = seeAll;
     }
 
     /**
-     * This simply returns the value of the flag, without checking if it is permitted
+     * If you are checking to see if double-blind applies to this player, use {@link #canIgnoreDoubleBlind()}
+     * @return the value of seeAll flag, without checking if it is permitted
      */
     public boolean getSeeAll() {
         return seeAll;
     }
 
     /**
-     * @return true if seeAll is true and is permitted
+     * If you are checking to see if double-blind applies to this player, use {@link #canIgnoreDoubleBlind()}
+     * @return true if {@link #seeAll} is true and is permitted
      */
     public boolean canSeeAll() {
         return (isSeeAllPermitted() && seeAll);
     }
 
+    /**
+     * If you are checking to see if double-blind applies to this player, use {@link #canIgnoreDoubleBlind()}
+     * @return true if player is allowed use seeAll
+     * */
     public boolean isSeeAllPermitted() {
         return gameMaster || observer;
     }
 
+    /** set the {@link #observer} flag. Observers have no units ad no team */
     public void setObserver(boolean observer) {
         this.observer = observer;
         if (game != null && game.getTeamForPlayer(this) != null) {
@@ -295,30 +311,42 @@ public final class Player extends TurnOrdered {
     }
 
     /**
-     * singleBlind allows bots to ignore double-blind
+     *  sets {@link #seeAll}. This will only enable seeAll if other conditions allow it.
+     *  see {@link #canIgnoreDoubleBlind()}
      */
     public void setSingleBlind(boolean singleBlind) {
         this.singleBlind = singleBlind;
     }
 
     /**
-     * This simply returns the flag, without checking if it is permitted
+     * If you are checking to see this player can ignore double-blind, use {@link #canIgnoreDoubleBlind()} ()} instead
+     * @return the value of singleBlind flag, without checking if it is permitted.
      */
     public boolean getSingleBlind() {
         return singleBlind;
     }
 
     /**
-     * @return true if singleBlind flag is true and is permitted
+     * @return true if singleBlind flag is true and {@link #isSingleBlindPermitted()}
      */
     public boolean canSeeSingleBlind() {
         return (isSingleBlindPermitted() && singleBlind);
     }
 
+    /**
+     * If you are checking to see if double-blind applies to this player, use {@link #canIgnoreDoubleBlind()}
+     * @return true if player is allowed use singleblind (bots only)
+     * */
     public boolean isSingleBlindPermitted() {
         return bot;
     }
 
+    /**
+     * Double-blind uses Line-of-sight to determine which units are displayed on the board
+     * and in reports. seeAll and singleBlind flags allow this to be ignored, granting a view
+     * of the entire map and units.
+     * @return true if this player ignores the double-blind setting.
+     */
     public boolean canIgnoreDoubleBlind() {
         return canSeeSingleBlind() || canSeeAll();
     }

@@ -67,6 +67,7 @@ public class AlphaStrikeElement {
     private int size;
     private int tmm;
     private Map<String,Integer> movement = new LinkedHashMap<>();
+    private String primaryMovementMode = "";
     private UnitRole role;
     private int skill = 4;
 
@@ -356,6 +357,11 @@ public class AlphaStrikeElement {
         squadSize = newSquadSize;
     }
 
+    /** Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA. */
+    public void setPrimaryMovementMode(String movementMode) {
+        primaryMovementMode = movementMode;
+    }
+
     public AlphaStrikeElement() {
         
     }
@@ -459,11 +465,21 @@ public class AlphaStrikeElement {
     }
 
     /**
-     * @return The formatted String for the complete movement capability of this AS element, e.g. 4"/6"j. This
-     * includes all movement modes of the element.
+     * Returns a formatted String for the standard movement capability of this AS element, e.g. 4"/6"j. This
+     * includes all movement modes of the element that are typically printed as MV on an AS card.
+     * As the only exception, this does not include the a and g movement modes of LandAirMeks, which are
+     * printed as special unit abilities.
+     *
+     * @return A formatted standard movement string, e.g. 4"/6"j.
      */
     public String getMovementAsString() {
-    	return movement.entrySet().stream().map(this::moveString).collect(joining("/"));    	
+        if (isBattleMek()) {
+            return movement.entrySet().stream()
+                    .filter(e -> !e.getKey().equals("a") && !e.getKey().equals("g"))
+                    .map(this::moveString).collect(joining("/"));
+        } else {
+            return movement.entrySet().stream().map(this::moveString).collect(joining("/"));
+        }
     }
     
     /** @return The formatted String for a single movement mode entry, e.g. 4a or 12"j. */
@@ -555,9 +571,12 @@ public class AlphaStrikeElement {
         return isType(CV) && getPrimaryMovementType().equals("s");
     }
 
-    /** @return True when this AS element is of a type that can have the OV and OVL abilities (BM and AF). */
+    /**
+     * @return True when this AS element is of a type that tracks heat levels and can have
+     * the OV and OVL abilities (BM, IM and AF).
+     */
     public boolean usesOV() {
-        return isType(BM, AF);
+        return isType(BM, IM, AF);
     }
 
     /**
@@ -648,28 +667,27 @@ public class AlphaStrikeElement {
 
     /** @return The primary movement value in inches, i.e. the type "" for ground units or "s" for submarines. */
     public int getPrimaryMovementValue() {
-        return movement.values().iterator().next();
+        return getMovement(primaryMovementMode);
     }
 
     /** @return The primary (= first) movement type String, such as "" for ground units or "s" for submarines. */
     public String getPrimaryMovementType() {
-        return movement.keySet().iterator().next();
+        return primaryMovementMode;
     }
 
-    /** @return All movement mode Strings of this AS element, such as ["", "j"]. */
+    /**
+     * Returns all movement modes available to this unit. For LandAirMeks, this includes one or both of aero
+     * and Wige movement modes a and g!
+     *
+     * @return All movement mode Strings of this AS element, such as ["", "j"].
+     */
     public Set<String> getMovementModes() {
         return movement.keySet();
     }
 
-    /** @return True if this AS element has the given movement mode. */
+    /** @return True if this AS element has the given movement mode, including LAM's a/g modes. */
     public boolean hasMovementMode(String mode) {
         return movement.containsKey(mode);
-    }
-
-    //TODO: check if Aero SV can track heat (are they all CF or can they be AF)
-    /** @return True if this AS element tracks heat (BM, IM, AF and Aerospace SV). */
-    public boolean tracksHeat() {
-        return isType(BM, IM, AF) || isAerospaceSV();
     }
 
     /** @return True if this AS element is a fighter (AF, CF). */

@@ -66,6 +66,7 @@ final class ASMovementConverter {
 
     private static Map<String, Integer> convertMovementForNonInfantry(ASConverter.ConversionData conversionData) {
         Entity entity = conversionData.entity;
+        AlphaStrikeElement element = conversionData.element;
         CalculationReport report = conversionData.conversionReport;
 
         var result = new HashMap<String, Integer>();
@@ -105,6 +106,7 @@ final class ASMovementConverter {
         }
 
         String movementCode = getMovementCode(conversionData);
+        element.setPrimaryMovementMode(movementCode);
 
         if ((jumpMove == baseMove) && (jumpMove > 0) && movementCode.equals("")) {
             result.put("j", baseMove);
@@ -128,6 +130,7 @@ final class ASMovementConverter {
 
     private static Map<String, Integer> convertMovementForInfantry(ASConverter.ConversionData conversionData) {
         Entity entity = conversionData.entity;
+        AlphaStrikeElement element = conversionData.element;
         CalculationReport report = conversionData.conversionReport;
 
         var result = new HashMap<String, Integer>();
@@ -143,6 +146,7 @@ final class ASMovementConverter {
         report.addLine("Walking MP:", Integer.toString(walkingMP));
         report.addLine("Jumping MP:", Integer.toString(jumpingMP));
         String movementCode = getMovementCode(conversionData);
+        element.setPrimaryMovementMode(movementCode);
 
         if (walkingMP > jumpingMP) {
             result.put(movementCode, walkingMP * 2);

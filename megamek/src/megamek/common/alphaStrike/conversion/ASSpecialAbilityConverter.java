@@ -739,6 +739,7 @@ final class ASSpecialAbilityConverter {
             var lamMoves = new HashMap<String, Integer>();
             lamMoves.put("g", lam.getAirMechCruiseMP(false, false) * 2);
             lamMoves.put("a", lam.getCurrentThrust());
+            element.getMovement().putAll(lamMoves);
             if (lam.getLAMType() == LandAirMech.LAM_BIMODAL) {
                 report.addLine("Bimodal Movement", "BIM");
                 element.getSpecialAbilities().addBimSPA(lamMoves);

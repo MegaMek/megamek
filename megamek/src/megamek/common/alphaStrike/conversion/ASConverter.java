@@ -108,6 +108,9 @@ public final class ASConverter {
         conversionReport.addLine("Skill:", Integer.toString(element.getSkill()));
 
         element.setMovement(ASMovementConverter.convertMovement(conversionData));
+        if (element.getMovementModes().size() == 1) {
+            element.setPrimaryMovementMode(element.getMovementModes().iterator().next());
+        }
         element.setTMM(ASMovementConverter.convertTMM(conversionData));
         element.setFullArmor(ASArmStrConverter.convertArmor(conversionData));
         element.setFullStructure(ASArmStrConverter.convertStructure(conversionData));
@@ -116,6 +119,10 @@ public final class ASConverter {
         initWeaponLocations(undamagedEntity, element);
         element.heat = new int[element.getRangeBands()];
         ASDamageConverter.convertDamage(conversionData);
+
+        var dc = new ASDamageConverter2(conversionData);
+        dc.convertDamage2();
+
         ASSpecialAbilityConverter.finalizeSpecials(element);
         element.setPointValue(ASPointValueConverter.getPointValue(conversionData));
         ASPointValueConverter.adjustPVforSkill(element, conversionReport);

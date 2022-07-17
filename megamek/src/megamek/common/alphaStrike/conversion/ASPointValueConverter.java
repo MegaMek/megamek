@@ -523,7 +523,8 @@ public class ASPointValueConverter {
         AlphaStrikeElement element = conversionData.element;
 
         double result = 0;
-        double movemod = getMovementMod(conversionData);
+//        double movemod = getMovementMod(conversionData);
+        double movemod = element.getTMM();
         if (element.hasSUA(MAS) && (3 > movemod)) {
             result += 3;
             report.addLine("MAS and MoveMod > 3", "+ 3", "");

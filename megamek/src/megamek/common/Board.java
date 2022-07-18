@@ -1075,10 +1075,11 @@ public class Board implements Serializable {
                                 valid = false;
                                 currBuff.append("Building has an exit to a building of another Building Type (Light, Medium...).\n");
                             }
-                            if (hex.containsTerrain(Terrains.BLDG_CLASS) 
-                                    && ((adjHex.containsTerrain(Terrains.BLDG_CLASS) 
-                                            && (adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() != hex.getTerrain(Terrains.BLDG_CLASS).getLevel()))
-                                            || (!adjHex.containsTerrain(Terrains.BLDG_CLASS)))) {
+                            int thisClass = hex.containsTerrain(Terrains.BLDG_CLASS) ?
+                                    hex.getTerrain(Terrains.BLDG_CLASS).getLevel() : 0;
+                            int adjClass = adjHex.containsTerrain(Terrains.BLDG_CLASS) ?
+                                    adjHex.getTerrain(Terrains.BLDG_CLASS).getLevel() : 0;
+                            if (thisClass != adjClass) {
                                 valid = false;
                                 currBuff.append("Building has an exit in direction ").append(dir).append(" to a building of another Building Class.\n");
                             }

@@ -23,6 +23,7 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.dialogs.BotConfigDialog;
@@ -43,6 +44,7 @@ import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
@@ -66,7 +68,8 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             currentPlayerStartPos -= 10;
         }
         
-        numFormatter.setAllowsInvalid(false);
+        numFormatter.setMinimum(0);
+        numFormatter.setCommitsOnValidEdit(true);
         initialize();
     }
 
@@ -159,7 +162,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     private final TipButton[] butStartPos = new TipButton[11];
     // this might seem like kind of a dumb way to declare it, but JFormattedTextField doesn't have an overload that
     // takes both a number formatter and a default value.
-    private final NumberFormatter numFormatter = new NumberFormatter();
+    private final NumberFormatter numFormatter = new NumberFormatter(NumberFormat.getIntegerInstance());
     private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
     private final JFormattedTextField txtOffset = new JFormattedTextField(formatterFactory, 0);
     private final JFormattedTextField txtWidth = new JFormattedTextField(formatterFactory, 3);
@@ -220,26 +223,30 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     
     private JPanel startSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.startPos");
-        Content panContent = new Content(new GridLayout(2, 1));
+        Content panContent = new Content(new GridBagLayout());
         result.add(panContent);
         setupStartGrid();
-        panContent.add(panStartButtons);
-        panContent.add(deploymentParametersPanel());
+        panContent.add(panStartButtons, GBC.eol());
+        panContent.add(deploymentParametersPanel(), GBC.eol());
         return result;
     }
     
     private JPanel deploymentParametersPanel() {
-        JPanel result = new JPanel(new GridLayout(2, 2, 10, 5));
+        GridBagLayout gbl = new GridBagLayout();
+        JPanel result = new JPanel(gbl);
        
         JLabel lblOffset = new JLabel(Messages.getString("CustomMechDialog.labDeploymentOffset"));
         lblOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
         JLabel lblWidth = new JLabel(Messages.getString("CustomMechDialog.labDeploymentWidth"));
         lblWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
         
-        result.add(lblOffset);
-        result.add(txtOffset);
-        result.add(lblWidth);
-        result.add(txtWidth);
+        txtOffset.setColumns(4);
+        txtWidth.setColumns(4);
+        
+        result.add(lblOffset, GBC.std());
+        result.add(txtOffset, GBC.eol());
+        result.add(lblWidth, GBC.std());
+        result.add(txtWidth, GBC.eol());
         
         return result;
     }

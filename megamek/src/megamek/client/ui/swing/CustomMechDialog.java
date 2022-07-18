@@ -396,7 +396,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panDeploy.add(labDeploymentWidth, GBC.std());
         panDeploy.add(txtDeploymentWidth, GBC.eol());
         
-        numFormatter.setAllowsInvalid(false);
+        numFormatter.setMinimum(0);
+        numFormatter.setCommitsOnValidEdit(true);
+        
         labDeploymentOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
         labDeploymentWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
         txtDeploymentOffset.setColumns(4);

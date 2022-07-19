@@ -39,7 +39,8 @@ VERSION HISTORY:
 + Issue #203, #3780: Introduced a chat command to allow individual bot player to see entire board in double blind mode
 + Issue #3564: Board validation will now find all invalid connected building hexes of different classes 
 + Issue #3694: Restored ALT-Click behavior of the Map Editor building button
-+ Data: Implements Spanish Translation for MegaMek. Thanks to IsWas 
++ Data: Implements Spanish Translation for MegaMek. Thanks to IsWas
++ Issue #3783: Added option to change report link color
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

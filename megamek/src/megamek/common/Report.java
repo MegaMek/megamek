@@ -568,8 +568,8 @@ public class Report implements Serializable {
         GUIPreferences guip = GUIPreferences.getInstance();
         styleSheet.addRule(
                 "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
-        styleSheet.addRule("a {color: #565656 }");
-        styleSheet.addRule("span.warning { color: "+ hexColor(guip.getWarningColor())+" }");
+        styleSheet.addRule("a { color: " + hexColor(guip.getReportLinkColor()) + " }");
+        styleSheet.addRule("span.warning { color: " + hexColor(guip.getWarningColor()) + " }");
     }
 
     public String span(String name, String text) {

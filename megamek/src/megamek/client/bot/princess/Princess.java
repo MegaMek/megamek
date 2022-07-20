@@ -1220,7 +1220,7 @@ public class Princess extends BotClient {
                     return mp;
                 }
             }
-
+            
             final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
 
             if (null == paths) {
@@ -1392,7 +1392,7 @@ public class Princess extends BotClient {
                     getFireControlState().getAdditionalTargets().add(levelingTarget);
                     sendChat("Hex " + levelingTarget.getPosition().toFriendlyString() + " impedes route to destination, targeting for clearing.", Level.INFO);
                 }
-
+                
                 // if any of the long range paths, pruned, are within LOS of leveling coordinates, then we're actually
                 // just going to go back to the standard unit paths
                 List<MovePath> prunedPaths = new ArrayList<>();

@@ -17,7 +17,7 @@ Infiltrator Mk. II Battle Armor
 </Name>
 
 <Model>
-Coral Intent(Sqd6)
+Coral Intent(Sqd5)
 </Model>
 
 <mul id:>
@@ -85,7 +85,7 @@ biped
 </armor>
 
 <Trooper Count>
-6
+5
 </Trooper Count>
 
 <weightclass>

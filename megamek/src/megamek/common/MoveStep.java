@@ -2403,47 +2403,41 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if (canUseSprint(game)
-                    && ((getMpUsed() <= sprintMPNoMASC)
-                            || ((getMpUsed() <= sprintMP) && (isMASCUsedEntity || isSuperchargerUsedEntity)))
-                    && !isRunProhibited() && !isEvading()) {
-                if (entity.getMovementMode() == EntityMovementMode.VTOL
-                        || (entity.getMovementMode() == EntityMovementMode.WIGE
-                                && getClearance() > 0)) {
-                    movementType = EntityMovementType.MOVE_VTOL_SPRINT;
-                } else {
-                    movementType = EntityMovementType.MOVE_SPRINT;
-                }
-            } else if ((getMpUsed() <= sprintMPOneMASC) && !isRunProhibited()
-                    && !isEvading()) {
-                // decide if using MASC or Supercharger if need only one
-                // choose Super if even
-                MPBoosters mpBoosters = entity.getArmedMPBoosters();
-                int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
-                int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
-                if (mascTarget < scTarget) {
+            } else if (canUseSprint(game) ) {
+                if (((getMpUsed() <= sprintMPNoMASC) || ((getMpUsed() <= sprintMP) && (isMASCUsedEntity || isSuperchargerUsedEntity))) && !isRunProhibited() && !isEvading()) {
+                    if (entity.getMovementMode() == EntityMovementMode.VTOL || (entity.getMovementMode() == EntityMovementMode.WIGE && getClearance() > 0)) {
+                        movementType = EntityMovementType.MOVE_VTOL_SPRINT;
+                    } else {
+                        movementType = EntityMovementType.MOVE_SPRINT;
+                    }
+                } else if ((getMpUsed() <= sprintMPOneMASC) && !isRunProhibited() && !isEvading()) {
+                    // decide if using MASC or Supercharger if need only one
+                    // choose Super if even
+                    MPBoosters mpBoosters = entity.getArmedMPBoosters();
+                    int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
+                    int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
+                    if (mascTarget < scTarget) {
+                        setUsingMASC(true);
+                        setTargetNumberMASC(entity.getMASCTarget());
+                    } else {
+                        setUsingSupercharger(true);
+                        setTargetNumberSupercharger(scTarget);
+                    }
+                    if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                        movementType = EntityMovementType.MOVE_VTOL_SPRINT;
+                    } else {
+                        movementType = EntityMovementType.MOVE_SPRINT;
+                    }
+                } else if ((getMpUsed() <= sprintMP) && !isRunProhibited() && !isEvading() && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                     setUsingMASC(true);
                     setTargetNumberMASC(entity.getMASCTarget());
-                } else {
                     setUsingSupercharger(true);
-                    setTargetNumberSupercharger(scTarget);
-                }
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                    movementType = EntityMovementType.MOVE_VTOL_SPRINT;
-                } else {
-                    movementType = EntityMovementType.MOVE_SPRINT;
-                }
-            } else if ((getMpUsed() <= sprintMP)
-                    && !isRunProhibited() && !isEvading()
-                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
-                setUsingMASC(true);
-                setTargetNumberMASC(entity.getMASCTarget());
-                setUsingSupercharger(true);
-                setTargetNumberSupercharger(entity.getSuperchargerTarget());
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                    movementType = EntityMovementType.MOVE_VTOL_SPRINT;
-                } else {
-                    movementType = EntityMovementType.MOVE_SPRINT;
+                    setTargetNumberSupercharger(entity.getSuperchargerTarget());
+                    if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                        movementType = EntityMovementType.MOVE_VTOL_SPRINT;
+                    } else {
+                        movementType = EntityMovementType.MOVE_SPRINT;
+                    }
                 }
             }
         }

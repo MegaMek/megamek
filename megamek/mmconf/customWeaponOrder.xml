@@ -1,9 +1,4 @@
 <?xml version="1.0"?>
 <customWeaponOrders>
-	<unit>
-		<id>Hunchback HBK-4G</id>
-		<orderType>Range (High-Low)</orderType>
-		<weaponList></weaponList>
-		<orderList></orderList>
-	</unit>
+
 </customWeaponOrders>

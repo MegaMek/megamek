@@ -84,9 +84,9 @@ public final class Player extends TurnOrdered {
 
     private boolean admitsDefeat = false;
 
-    //TODO Voting should not be stored in savegame. mark transient?
-    private boolean votedToAllowTeamChange = false;
-    private boolean votedToAllowGameMaster = false;
+    //Voting should not be stored in save game so marked transient
+    private transient boolean votedToAllowTeamChange = false;
+    private transient boolean votedToAllowGameMaster = false;
     //endregion Variable Declarations
 
     //region Constructors

@@ -23,9 +23,9 @@ import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
- * This command allows a player to allow another player to switch teams.
+ * This command votes to allow another player to assume the elevated Game Master role
  *
- * @author arlith
+ * @author pakfront
  */
 public class AllowGameMasterCommand extends ServerCommand {
 

@@ -23,7 +23,7 @@ import megamek.server.GameManager;
 import megamek.server.Server;
 
 /**
- * This command allows a player to become a Gamemaster,
+ * This command starts a vote to allow player to assume the elevated Game Master role
  *
  * @author arlith
  */
@@ -34,7 +34,7 @@ public class GameMasterCommand extends ServerCommand {
             + "to allow this change.";
 
     public GameMasterCommand(Server server) {
-        super(server, "gm", "Gives a player game master authority "
+        super(server, "gm", "Starts a vote to gives a player game master authority "
                 + "Usage: /gm ");
     }
 

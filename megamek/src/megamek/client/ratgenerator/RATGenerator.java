@@ -487,7 +487,7 @@ public class RATGenerator {
                 double totalModelWeight = cRec.totalModelWeight(early,
                         cRec.isOmni() ? user : fRec);
                 for (ModelRecord mRec : cRec.getModels()) {
-                    if (mRec.getIntroYear() >= year
+                    if (mRec.getIntroYear() > year
                             || (!weightClasses.isEmpty()
                                     && !weightClasses.contains(mRec.getWeightClass()))
                             || (networkMask & mRec.getNetworkMask()) != networkMask) {

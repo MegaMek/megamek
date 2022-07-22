@@ -307,7 +307,7 @@ public class RATGeneratorEditor extends JFrame {
     private void showMUL() {
         try {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
-            && currentMulId > 0) {
+                    && currentMulId > 0) {
                 Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + currentMulId).toURI());
             }
         } catch (Exception ex) {

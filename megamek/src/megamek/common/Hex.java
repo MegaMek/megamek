@@ -15,11 +15,17 @@ package megamek.common;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
+import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Hex represents a single hex on the board.
@@ -808,4 +814,75 @@ public class Hex implements Serializable {
 
         return sb.toString();
     }
+
+    /**
+     * Returns a string representation of this Hex to use for copy/paste actions. The string contains
+     * the elevation, theme and terrains of this Hex except automatic terrains (such as inclines). The
+     * generated string can be parsed to generate a copy of the hex using {@link #parseClipboardString(String)}.
+     *
+     * @return A string representation to use when copying a hex to the clipboard.
+     */
+    public String getClipboardString() {
+        StringBuilder hexString = new StringBuilder("MegaMek Hex///");
+        hexString.append("Level###").append(getLevel()).append("///");
+        hexString.append("Theme###").append(getTheme()).append("///");
+        hexString.append("Terrain###");
+        List<String> terrains = Arrays.stream(getTerrainTypes())
+                .filter(t -> !Terrains.AUTOMATIC.contains(t))
+                .mapToObj(t -> getTerrain(t).toString()).collect(Collectors.toList());
+        hexString.append(String.join(";", terrains));
+        return hexString.toString();
+    }
+
+    /**
+     * Returns a new Hex parsed from a clipboard string representation.
+     * Returns null when the clipboard String is not created by {@link #getClipboardString()}
+     * (i.e., when it does not at least start with "MegaMek Hex").
+     *
+     * @param clipboardString The string representation of the Hex to parse
+     * @return A hex containing any features that could be parsed from clipboardString
+     */
+    public static @Nullable Hex parseClipboardString(String clipboardString) {
+        StringTokenizer hexInfo = new StringTokenizer(clipboardString, "///");
+        String theme = "";
+        int hexLevel = 0;
+        String terrainString = "";
+
+        if (!clipboardString.startsWith("MegaMek Hex")) {
+            return null;
+        }
+
+        while (hexInfo.hasMoreTokens()) {
+            String info = hexInfo.nextToken();
+            StringTokenizer subInfo = new StringTokenizer(info, "###");
+            if (subInfo.hasMoreTokens()) {
+                String infoType = subInfo.nextToken();
+                switch (infoType) {
+                    case "MegaMek Hex":
+                        // This is just a header
+                    case "Level":
+                        if (subInfo.hasMoreTokens()) {
+                            try {
+                                hexLevel = Integer.parseInt(subInfo.nextToken());
+                            } catch (NumberFormatException ignored) {
+                                // hexLevel stays at 0
+                            }
+                        }
+                        break;
+                    case "Theme":
+                        if (subInfo.hasMoreTokens()) {
+                            theme = subInfo.nextToken();
+                        }
+                        break;
+                    case "Terrain":
+                        if (subInfo.hasMoreTokens()) {
+                            terrainString = subInfo.nextToken();
+                        }
+                        break;
+                }
+            }
+        }
+        return new Hex(hexLevel, terrainString, theme, new Coords(0, 0));
+    }
+
 }

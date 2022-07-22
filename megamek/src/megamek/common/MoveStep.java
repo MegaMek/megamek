@@ -2858,11 +2858,10 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * If the entity has both, choose Supercharger
+     * If the entity has both, choose the one with the lower risk, or Supercharger if they are even
      * Require a PSR if it has not been done in an earlier part of the move
      */
     private void UseEitherMASCOrSupercharger(boolean hasMASCBeenUsed, boolean hasSuperchargerBeenUsed) {
-
         MPBoosters mpBoosters = entity.getArmedMPBoosters();
         if (!hasMASCBeenUsed && !hasSuperchargerBeenUsed) {
             int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
@@ -2872,7 +2871,7 @@ public class MoveStep implements Serializable {
                 setTargetNumberMASC(entity.getMASCTarget());
             } else {
                 setUsingSupercharger(true);
-                setTargetNumberSupercharger(scTarget);
+                setTargetNumberSupercharger(entity.getSuperchargerTarget());
             }
         }
     }

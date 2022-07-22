@@ -13,6 +13,7 @@
  */
 package megamek.utilities;
 
+import megamek.MMConstants;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
@@ -33,6 +34,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,6 +61,8 @@ public class RATGeneratorEditor extends JFrame {
     private final JTabbedPane panMain = new JTabbedPane();
 
     private final JTextField txtSearch = new JTextField(20);
+    private final JButton butMUL = new JButton("Open MUL");
+    private int currentMulId = -1;
     private final JTable tblMasterUnitList = new JTable();
     private MasterUnitListTableModel masterUnitListModel;
     private TableRowSorter<MasterUnitListTableModel> masterUnitListSorter;
@@ -254,6 +258,9 @@ public class RATGeneratorEditor extends JFrame {
                 filterMasterUnitList();
             }
         });
+        unitSearchPanel.add(Box.createHorizontalStrut(15));
+        unitSearchPanel.add(butMUL);
+        butMUL.addActionListener(e -> showMUL());
 
         tblMasterUnitList.setModel(masterUnitListModel);
         masterUnitListSorter = new TableRowSorter<>(masterUnitListModel);
@@ -272,9 +279,11 @@ public class RATGeneratorEditor extends JFrame {
             if (tblMasterUnitList.getSelectedRow() >= 0) {
                 ModelRecord rec = masterUnitListModel.
                         getUnitRecord(tblMasterUnitList.convertRowIndexToModel(tblMasterUnitList.getSelectedRow()));
+                currentMulId = rec.getMechSummary().getMulId();
                 unitModelEditorModel.setData(rec, UnitEditorTableModel.MODE_MODEL);
                 unitChassisEditorModel.setData(rec, UnitEditorTableModel.MODE_CHASSIS);
             } else {
+                currentMulId = -1;
                 unitModelEditorModel.clearData();
                 unitChassisEditorModel.clearData();
             }
@@ -293,6 +302,18 @@ public class RATGeneratorEditor extends JFrame {
         factionEditSide.add(Box.createVerticalStrut(5));
         factionEditSide.add(createUnitChassisEditor());
         return new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, unitContainer, factionEditSide);
+    }
+
+    private void showMUL() {
+        try {
+            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)
+            && currentMulId > 0) {
+                Desktop.getDesktop().browse(new URL(MMConstants.MUL_URL_PREFIX + currentMulId).toURI());
+            }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private JComponent createCopyBetweenButtonPanel() {

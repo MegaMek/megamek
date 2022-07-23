@@ -490,19 +490,6 @@ public class Hex implements Serializable {
     }
 
     /**
-     * @return the number of terrain attributes present that are displayable in tooltips
-     */
-    public int displayableTerrainsPresent() {
-        int present = 0;
-        for (Integer i : terrains.keySet()) {
-            if ((null != Terrains.getDisplayName(i, terrains.get(i).getLevel()))) {
-                present++;
-            }
-        }
-        return present;
-    }
-
-    /**
      * @return the number of terrain attributes present
      */
     public int terrainsPresent() {
@@ -843,46 +830,37 @@ public class Hex implements Serializable {
      * @return A hex containing any features that could be parsed from clipboardString
      */
     public static @Nullable Hex parseClipboardString(String clipboardString) {
-        StringTokenizer hexInfo = new StringTokenizer(clipboardString, "///");
-        String theme = "";
-        int hexLevel = 0;
-        String terrainString = "";
-
         if (!clipboardString.startsWith("MegaMek Hex")) {
             return null;
         }
 
-        while (hexInfo.hasMoreTokens()) {
-            String info = hexInfo.nextToken();
-            StringTokenizer subInfo = new StringTokenizer(info, "###");
-            if (subInfo.hasMoreTokens()) {
-                String infoType = subInfo.nextToken();
-                switch (infoType) {
-                    case "MegaMek Hex":
-                        // This is just a header
-                    case "Level":
-                        if (subInfo.hasMoreTokens()) {
-                            try {
-                                hexLevel = Integer.parseInt(subInfo.nextToken());
-                            } catch (NumberFormatException ignored) {
-                                // hexLevel stays at 0
-                            }
-                        }
-                        break;
-                    case "Theme":
-                        if (subInfo.hasMoreTokens()) {
-                            theme = subInfo.nextToken();
-                        }
-                        break;
-                    case "Terrain":
-                        if (subInfo.hasMoreTokens()) {
-                            terrainString = subInfo.nextToken();
-                        }
-                        break;
-                }
+        String theme = "";
+        int hexLevel = 0;
+        String terrainString = "";
+        String[] tokens = clipboardString.split("///");
+        for (String token : tokens) {
+            String[] infos = token.split("###");
+            if (infos.length < 2) {
+                continue;
+            }
+            switch (infos[0]) {
+                case "MegaMek Hex":
+                    // This is just a header
+                case "Level":
+                    try {
+                        hexLevel = Integer.parseInt(infos[1]);
+                    } catch (NumberFormatException ignored) {
+                        // hexLevel stays at 0
+                    }
+                    break;
+                case "Theme":
+                    theme = infos[1];
+                    break;
+                case "Terrain":
+                    terrainString = infos[1];
+                    break;
             }
         }
         return new Hex(hexLevel, terrainString, theme, new Coords(0, 0));
     }
-
 }

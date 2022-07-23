@@ -41,6 +41,7 @@ VERSION HISTORY:
 + Issue #3694: Restored ALT-Click behavior of the Map Editor building button
 + Data: Implements Spanish Translation for MegaMek. Thanks to IsWas
 + Issue #3783: Added option to change report link color
++ PR #3708: Add a MUL link to the RAT Generator Editor
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 + Issue #3791: RAT Generators don't generate units in their introduction year.

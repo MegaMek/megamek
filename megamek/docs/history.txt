@@ -46,6 +46,7 @@ VERSION HISTORY:
 + Issue #7784: Artillery reports properly respect /seeall flag
 + PR #3787: Added a GM mode flag (/gm to initiate, /allowGM to vote in favor, requires unanimous total confirmation)
   - GM Mode currently allows GM to use "/seeall" command even if GM is not an observer
++ PR #3798: Minor bot performance improvement; prevent bot-controlled jumping and zero-turn-cost infantry units from spinning in place like ballerinas
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 + Issue #3791: RAT Generators don't generate units in their introduction year.

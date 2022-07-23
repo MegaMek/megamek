@@ -43,48 +43,49 @@ public class AllowTeamChangeCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        try {
-            Player player = server.getPlayer(connId);
-            player.setAllowTeamChange(true);
-            
-            if (!gameManager.isTeamChangeRequestInProgress()) {
-                server.sendServerChat(connId, "No vote to change teams in progress!");
-                return;
-            }
-            
-            // Tally votes
-            boolean changeTeam = true;
-            int voteCount = 0;
-            int eligiblePlayerCount = 0;
-            for (Player p : server.getGame().getPlayersVector()) {
-                if (p.getTeam() != Player.TEAM_UNASSIGNED) {
-                    changeTeam &= p.isAllowingTeamChange();
-                    if (p.isAllowingTeamChange()) {
-                        voteCount++;
-                    }
-                    eligiblePlayerCount++;
+        Player player = server.getPlayer(connId);
+
+        if (!gameManager.isTeamChangeRequestInProgress()) {
+            server.sendServerChat(connId, "No vote to change teams in progress!");
+            return;
+        }
+        voteYes(server, player);
+    }
+
+    public static void voteYes(Server server, Player player) {
+        player.setVotedToAllowTeamChange(true);
+
+        // Tally votes
+        boolean changeTeam = true;
+        int voteCount = 0;
+        int eligiblePlayerCount = 0;
+        for (Player p : server.getGame().getPlayersVector()) {
+            if (p.getTeam() != Player.TEAM_UNASSIGNED) {
+                changeTeam &= p.getVotedToAllowTeamChange();
+                if (p.getVotedToAllowTeamChange()) {
+                    voteCount++;
                 }
-                
+                eligiblePlayerCount++;
             }
-            
-            // Inform all players about the vote
-            server.sendServerChat(player.getName() + " has voted to allow " 
+        }
+
+        GameManager gameManager = (GameManager) server.getGameManager();
+
+        // Inform all players about the vote
+        server.sendServerChat(player.getName() + " has voted to allow "
+                + gameManager.getPlayerRequestingTeamChange().getName()
+                + " to join Team " + gameManager.getRequestedTeam()
+                + ", " + voteCount
+                + " vote(s) received out of " + eligiblePlayerCount
+                + " vote(s) needed");
+
+        // If all votes are received, perform team change
+        if (changeTeam) {
+            server.sendServerChat("All votes received, "
                     + gameManager.getPlayerRequestingTeamChange().getName()
-                    + " to join Team " + gameManager.getRequestedTeam()
-                    + ", " + voteCount
-                    + " vote(s) received out of " + eligiblePlayerCount
-                    + " vote(s) needed");
-            
-            // If all votes are received, perform team change
-            if (changeTeam) {
-                server.sendServerChat("All votes received, "
-                        + gameManager.getPlayerRequestingTeamChange().getName()
-                        + " will join Team " + gameManager.getRequestedTeam()
-                        + " at the end of the turn.");
-                gameManager.allowTeamChange();
-            }
-        } catch (NumberFormatException nfe) {
-            server.sendServerChat(connId,"Failed to parse team number!");
+                    + " will join Team " + gameManager.getRequestedTeam()
+                    + " at the end of the turn.");
+            gameManager.allowTeamChange();
         }
     }
 

@@ -13,6 +13,7 @@
  */
 package megamek.server.commands;
 
+import megamek.common.Player;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import megamek.server.Server;
@@ -48,6 +49,7 @@ public class SeeAllCommand extends ServerCommand {
             server.sendServerChat(connId, "Double Blind rules not in effect.");
             return;
         }
+
         if (server.isPassworded()
                 && (args.length < 2 || !server.isPassword(args[1]))) {
             server.sendServerChat(connId, "The password is incorrect. Usage: /seeall <password> <id#>");
@@ -62,23 +64,31 @@ public class SeeAllCommand extends ServerCommand {
                     playerId = Integer.parseInt(args[playerArg]);
                 }
 
-                boolean has_see_all = server.getPlayer(playerId).getSeeAll();
+                Player player = server.getPlayer(playerId);
+
+                boolean has_see_all = player.getSeeAll();
                 if (has_see_all) {
                     give_take = " no longer has";
                 } else {
+                    if ((!player.isSeeAllPermitted()))
+                    {
+                        server.sendServerChat(connId, player.getName()
+                                + " is not an Observer or Game Master so may be given /seeall");
+                        return;
+                    }
                     give_take = " has been granted";
                 }
 
                 if (playerId == connId) {
-                    server.sendServerChat(server.getPlayer(playerId).getName()
+                    server.sendServerChat(player.getName()
                             + give_take + " vision of the entire map");
                 } else {
-                    server.sendServerChat(server.getPlayer(playerId).getName()
+                    server.sendServerChat(player.getName()
                             + give_take + " vision of the entire map by "
                             + server.getPlayer(connId).getName());
                 }
 
-                server.getPlayer(playerId).setSeeAll(!has_see_all);
+                gameManager.setSeeAll(player, !has_see_all);
                 gameManager.sendEntities(playerId);
             } catch (Exception ex) {
                 server.sendServerChat("/seeall : seeall failed. Type /who for a list of players with id #s.");

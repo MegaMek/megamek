@@ -9560,7 +9560,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // If a player can see all, it sees this
-        if (p.canSeeAll()) {
+        if (p.canIgnoreDoubleBlind()) {
             return true;
         }
 

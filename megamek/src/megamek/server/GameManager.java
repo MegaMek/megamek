@@ -126,7 +126,7 @@ public class GameManager implements IGameManager {
     private int requestedTeam = Player.TEAM_NONE;
 
     /**
-     * Keeps track of what player made a request to change teams.
+     * Keeps track of which player made a request to change teams.
      */
     private Player playerChangingTeam = null;
 
@@ -135,6 +135,11 @@ public class GameManager implements IGameManager {
      * player to change teams.
      */
     private boolean changePlayersTeam = false;
+
+    /**
+     * Keeps track of which player made a request to become Game Master.
+     */
+    private Player playerRequestingGameMaster = null;
 
     /**
      * Special packet queue for client feedback requests.
@@ -194,6 +199,8 @@ public class GameManager implements IGameManager {
         commands.add(new AssignNovaNetServerCommand(server, this));
         commands.add(new AllowTeamChangeCommand(server, this));
         commands.add(new JoinTeamCommand(server));
+        commands.add(new AllowGameMasterCommand(server, this));
+        commands.add(new GameMasterCommand(server));
         return commands;
     }
 
@@ -301,6 +308,44 @@ public class GameManager implements IGameManager {
     }
 
     @Override
+    public void requestGameMaster(Player player) {
+        playerRequestingGameMaster = player;
+    }
+
+    public boolean isGameMasterRequestInProgress() {
+        return playerRequestingGameMaster != null;
+    }
+
+    public Player getPlayerRequestingGameMaster() {
+        return playerRequestingGameMaster;
+    }
+
+    public void processGameMasterRequest() {
+        if (playerRequestingGameMaster != null) {
+            setGameMaster(playerRequestingGameMaster, true);
+            playerRequestingGameMaster = null;
+        }
+    }
+
+    public void setGameMaster(Player player, boolean gameMaster) {
+        player.setGameMaster(gameMaster);
+        transmitPlayerUpdate(player);
+        sendServerChat(player.getName() + " set GameMaster: " + player.getGameMaster());
+    }
+
+    public void setSingleBlind(Player player, boolean singleBlind) {
+        player.setSingleBlind(singleBlind);
+        transmitPlayerUpdate(player);
+        sendServerChat(player.getName() + " set SingleBlind: " + player.getSingleBlind());
+    }
+
+    public void setSeeAll(Player player, boolean seeAll) {
+        player.setSeeAll(seeAll);
+        transmitPlayerUpdate(player);
+        sendServerChat(player.getName() + " set SeeAll: " + player.getSeeAll());
+    }
+
+    @Override
     public void requestTeamChange(int team, Player player) {
         requestedTeam = team;
         playerChangingTeam = player;
@@ -323,7 +368,7 @@ public class GameManager implements IGameManager {
         return requestedTeam;
     }
 
-    private void processTeamChange() {
+    private void processTeamChangeRequest() {
         if (playerChangingTeam != null) {
             playerChangingTeam.setTeam(requestedTeam);
             getGame().setupTeams();
@@ -500,18 +545,6 @@ public class GameManager implements IGameManager {
         for (Enumeration<Player> e = getGame().getPlayers(); e.hasMoreElements(); ) {
             Player p = e.nextElement();
             p.setObserver((getGame().getEntitiesOwnedBy(p) < 1) && !getGame().getPhase().isLounge());
-        }
-    }
-
-    /**
-     * Checks each player to see if they have entitites, and if true, sets the
-     * singleblindobserver flag for that player if it is a bot. An exception is that there are no
-     * observers during the lounge phase.
-     */
-    public void checkForSingleBlindObservers() {
-        for (Enumeration<Player> e = getGame().getPlayers(); e.hasMoreElements(); ) {
-            Player p = e.nextElement();
-            p.setSingleBlindObserver((getGame().getEntitiesOwnedBy(p) >= 1) && !getGame().getPhase().isLounge());
         }
     }
 
@@ -2309,7 +2342,7 @@ public class GameManager implements IGameManager {
                 break;
             case END_REPORT:
                 if (changePlayersTeam) {
-                    processTeamChange();
+                    processTeamChangeRequest();
                 }
                 if (victory()) {
                     changePhase(GamePhase.VICTORY);
@@ -12957,7 +12990,7 @@ public class GameManager implements IGameManager {
         if (getGame().getPhase().isSimultaneous(getGame())) {
             // Update attack only to player who declared it & observers
             for (Player player : game.getPlayersVector()) {
-                if (player.canSeeSingleBlind() || player.canSeeAll() || player.isObserver()
+                if (player.canIgnoreDoubleBlind() || player.isObserver()
                         || (entity.getOwnerId() == player.getId())) {
                     send(player.getId(), p);
                 }
@@ -28397,8 +28430,7 @@ public class GameManager implements IGameManager {
         // Deal with players who can see all.
         for (Enumeration<Player> p = game.getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
-
-            if (player.canSeeSingleBlind() || player.canSeeAll() && !vCanSee.contains(player)) {
+            if (player.canIgnoreDoubleBlind() && !vCanSee.contains(player)) {
                 vCanSee.addElement(player);
             }
         }
@@ -28548,7 +28580,7 @@ public class GameManager implements IGameManager {
         boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
 
         // If they can see all, return the input list
-        if (pViewer.canSeeSingleBlind() || pViewer.canSeeAll()) {
+        if (pViewer.canIgnoreDoubleBlind()) {
             return vEntities;
         }
 
@@ -30090,7 +30122,7 @@ public class GameManager implements IGameManager {
                 if ((aaa.getPlayerId() == p.getId())
                         || ((team != Player.TEAM_NONE)
                         && (team == game.getPlayer(aaa.getPlayerId()).getTeam()))
-                        || p.getSingleBlind() || p.getSeeAll()) {
+                        || p.canIgnoreDoubleBlind()) {
                     v.addElement(aaa);
                 }
             }

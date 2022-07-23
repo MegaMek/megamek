@@ -675,6 +675,7 @@ public class Server implements Runnable {
                 if (player.isGhost()) {
                     returning = true;
                     player.setGhost(false);
+                    player.setBot(isBot);
                     // switch id
                     connId = player.getId();
                     conn.setId(connId);
@@ -1107,6 +1108,10 @@ public class Server implements Runnable {
 
     public void requestTeamChange(int teamId, Player player) {
         gameManager.requestTeamChange(teamId, player);
+    }
+
+    public void requestGameMaster(Player player) {
+        gameManager.requestGameMaster(player);
     }
 
     public static String formatChatMessage(String origin, String message) {

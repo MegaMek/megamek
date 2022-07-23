@@ -42,6 +42,10 @@ VERSION HISTORY:
 + Data: Implements Spanish Translation for MegaMek. Thanks to IsWas
 + Issue #3783: Added option to change report link color
 + PR #3708: Add a MUL link to the RAT Generator Editor
++ Issue #3786: Properly update player slot "am I a bot" state when swapping between human and bot players
++ Issue #7784: Artillery reports properly respect /seeall flag
++ PR #3787: Added a GM mode flag (/gm to initiate, /allowGM to vote in favor, requires unanimous total confirmation)
+  - GM Mode currently allows GM to use "/seeall" command even if GM is not an observer
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 + Issue #3791: RAT Generators don't generate units in their introduction year.

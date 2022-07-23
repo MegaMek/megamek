@@ -167,7 +167,7 @@ public class EquipmentType implements ITechnology {
 
     protected TechAdvancement techAdvancement = new TechAdvancement();
 
-    protected BigInteger flags = BigInteger.valueOf(0);
+    protected BigInteger flags = BigInteger.ZERO;
 
     protected long subType = 0;
 
@@ -505,7 +505,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public boolean hasFlag(BigInteger flag) {
-        return !(flags.and(flag)).equals(BigInteger.valueOf(0));
+        return !(flags.and(flag)).equals(BigInteger.ZERO);
     }
 
     public double getBV(Entity entity) {

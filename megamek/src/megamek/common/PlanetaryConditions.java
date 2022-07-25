@@ -18,6 +18,8 @@ package megamek.common;
 
 import java.io.Serializable;
 
+import org.apache.logging.log4j.LogManager;
+
 /**
  * This class will hold all the information on planetary conditions and a variety of helper functions
  * for those conditions
@@ -799,7 +801,11 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void setWeather(int type) {
-        weatherConditions = type;
+        if ((type <= 0) || (type >= WE_SIZE)) {
+            LogManager.getLogger().error(String.format("Invalid weather type supplied: %d", type));
+        } else {
+            weatherConditions = type;
+        }
     }
 
     public int getWeather() {

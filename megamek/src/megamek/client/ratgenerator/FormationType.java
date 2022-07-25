@@ -1616,7 +1616,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.otherCriteria.add(new CountConstraint(3, ms -> ms.getEquipmentNames().stream()
                 .map(EquipmentType::get)
-                .anyMatch(eq -> eq instanceof WeaponType && ((WeaponType) eq).hasIndirectFire()),
+                .anyMatch(eq -> (eq instanceof WeaponType) && ((WeaponType) eq).hasIndirectFire()),
                 "Indirect fire weapon"));
         ft.reportMetrics.put("Indirect", ms -> ft.otherCriteria.get(0).criterion.test(ms));
         allFormationTypes.put(ft.name, ft);

@@ -47,7 +47,7 @@ public class ObjectUtility {
 
     /**
      * @return the first non-<i>null</i> argument, else <i>null</i> if all are <i>null</i>
-     * @see #nonNull(T, T)
+     * @see #nonNull(Object, Object, Object...)
      */
     @SafeVarargs
     public static <T> T nonNull(final @Nullable T first, final @Nullable T second,

@@ -1107,7 +1107,7 @@ public class GameManager implements IGameManager {
     }
 
     /**
-     * Called during the end phase. Checks each entity for ASEW effects counters and decrements them by 1 if > 0
+     * Called during the end phase. Checks each entity for ASEW effects counters and decrements them by 1 if greater than 0
      */
     public void decrementASEWTurns() {
         for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {

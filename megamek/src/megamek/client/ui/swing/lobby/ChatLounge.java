@@ -1969,11 +1969,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         int returnVal = fc.showSaveDialog(clientgui.frame);
         File selectedFile = fc.getSelectedFile();
-        if (!selectedFile.getName().toLowerCase().endsWith(".xml")) {
-            selectedFile = new File(selectedFile.getPath() + ".xml");
-        }
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (selectedFile == null)) {
             return;
+        }
+        if (!selectedFile.getName().toLowerCase().endsWith(".xml")) {
+            selectedFile = new File(selectedFile.getPath() + ".xml");
         }
         if (selectedFile.exists()) {
             String msg = Messages.getString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());

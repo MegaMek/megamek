@@ -17,7 +17,7 @@ TinStar BattleArmor
 </Name>
 
 <Model>
-(Standard)
+(Standard)(Sqd4)
 </Model>
 
 <mul id:>
@@ -25,11 +25,11 @@ TinStar BattleArmor
 </mul id:>
 
 <year>
-3088
+3087
 </year>
 
 <originalBuildYear>
-3088
+3087
 </originalBuildYear>
 
 <type>
@@ -68,24 +68,12 @@ LegAttack
 BAAPMount:LA
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
 <overview>
 Fronc Reaches
 </overview>
 
 <manufacturer>
-Hilltopper Engineering
+Marshals Battle Armor Assembly Facility
 </manufacturer>
 
 <primaryFactory>
@@ -93,7 +81,7 @@ Independence
 </primaryFactory>
 
 <source>
-Dark Ages
+OTP:Fronc Reaches - Early Republic
 </source>
 
 <chassis>

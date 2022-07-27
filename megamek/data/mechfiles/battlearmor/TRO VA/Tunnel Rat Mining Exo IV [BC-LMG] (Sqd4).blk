@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Tunnel Rat IV Mining Exoskeleton
+</Name>
+
+<Model>
+[Battle Claw/LMG](Sqd4)
+</Model>
+
+<mul id:>
+7217
+</mul id:>
+
+<year>
+3079
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+BABattleClaw:RA
+ISBAExtendedLifeSupport:Body
+BASearchlight:Body
+ISBALightMachineGun:RA
+</Squad Equipment>
+
+<source>
+TRO Vehicle Annex (r) - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The Tunnel Rat mining exoskeleton was part of GM's ambition to reenter the mining industry. 
+</overview>
+
+<capabilities>
+The suit was given modular plug-ins to allow tools to be attached for various jobs. The suit is notable for its communication and sturdy life support features.
+</capabilities>
+
+<deployment>
+This version has a sixty meter jump capability and carries a Light Machine Gun and Battle Claw.
+</deployment>
+
+<history>
+This was made possible with the recovery of the Helm Memory Core. GM had originally produced the mining suits during the late Star League Era, however, the Succession Wars caused the company to lose the technological knowledge to produce such suits. The company's ambitions to expand its offerings once again in the mining market became reality when power armor technology was recovered. Utilized for the mining industry, the Tunnel Rat was created as a suit able to withstand the harsh elements of underground mining. 
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Kathil
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

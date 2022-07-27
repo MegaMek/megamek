@@ -21,15 +21,15 @@ AIX-210(Sqd6)
 </Model>
 
 <mul id:>
--1
+9246
 </mul id:>
 
 <year>
-3145
+3124
 </year>
 
 <originalBuildYear>
-3145
+3124
 </originalBuildYear>
 
 <type>
@@ -48,7 +48,7 @@ Leg
 </cruiseMP>
 
 <armor_type>
-28
+32
 </armor_type>
 
 <armor_tech>
@@ -58,10 +58,15 @@ Leg
 <Squad Equipment>
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+InfantryAssaultRifle:APM
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+IS BA Stealth (Standard):LA
+IS BA Stealth (Standard):RA
+IS BA Stealth (Standard):RA
+IS BA Stealth (Standard):LA
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -134,3 +139,27 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<source>
+ToS Kandersteg - Late Republic
+</source>

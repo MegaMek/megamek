@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Salrilla Exoskeleton
+</Name>
+
+<Model>
+[Mine Clearance](Sqd6)
+</Model>
+
+<mul id:>
+9177
+</mul id:>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BACuttingTorch:Body
+BASearchlight:Body
+BABasicManipulatorMineClearance:LA
+BABasicManipulatorMineClearance:RA
+</Squad Equipment>
+
+<source>
+TRO Vehicle Annex (r) - Clan Invasion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<exoskeleton>
+true
+</exoskeleton>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The PEX-2F Salrilla is an industrial Exoskeleton developed by StarCorps Industries for battlefield salvage details.
+</overview>
+
+<capabilities>
+The Salrilla retains the Gorilla's body-mounted searchlight and cutting torch and is also protected by 100 kilograms of standard armor. The exoskeleton's actuators and motors allow it to reach speeds of approximately 30 km/h, allowing the frame to reach its battlefield salvage objectives in a timely manner and evade potential threats.
+</capabilities>
+
+<deployment>
+Created to clear minefields, this version removes the salvage arm of the Salrilla and is equipped with two basic manipulators optimized for mine clearance. It retains the same performance, cutting torch, searchlight, and armor protection of the Salrilla.
+</deployment>
+
+<history>
+The suit is based on their successful Gorilla Industrial Suit. The company developed the suit after seeing private concerns try to use the Gorilla as a battlefield salvage unit with less success. StarCorps took strides to improve the Gorilla for the task, with the result being a more heavily armored and speedier machine with a slight hike in cost over the original.
+</history>
+
+<manufacturer>
+StarCorps Industries,StarCorps Industries,StarCorps Industries,StarCorps Industries
+</manufacturer>
+
+<primaryFactory>
+Crofton,Emris IV,Loburg,St. Ives
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -17,27 +17,27 @@ Undine Battle Armor
 </Name>
 
 <Model>
-'Sebastian'(Sqd4)
+(Upgrade)(Sqd5)
 </Model>
 
 <mul id:>
-8383
+8597
 </mul id:>
 
 <year>
-3145
+3069
 </year>
 
 <originalBuildYear>
-3145
+3069
 </originalBuildYear>
 
 <type>
-Clan Level 3
+Clan Level 2
 </type>
 
 <motion_type>
-UMU
+Jump
 </motion_type>
 
 <transporters>
@@ -56,20 +56,18 @@ UMU
 </armor_tech>
 
 <Point Equipment>
-BABattleClaw:RA
-BABattleClaw:LA
 CLBAERMicroLaser:RA
-CLBAERMicroLaser:LA
-CLBASRM1OS:Body
-CLBASRM1OS:Body
+CLBALRM3:Body
+BACL Ammo LRM-3:Body:Shots4#
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
 </Point Equipment>
 
-<notes>
-Should be SRT1 but not coded in the MM at this time.
-</notes>
-
 <source>
-XTRO Royal Fantasy - Dark Age
+TRO 3058U - Jihad
 </source>
 
 <chassis>
@@ -81,15 +79,15 @@ biped
 </jumpingMP>
 
 <armor>
-9
+8
 </armor>
 
 <Trooper Count>
-4
+5
 </Trooper Count>
 
 <weightclass>
-3
+2
 </weightclass>
 
 <overview>
@@ -101,7 +99,7 @@ With its unique weaponry and revolutionary underwater motor system, the Undine i
 </capabilities>
 
 <deployment>
-Debuted in 3145 on the Arena Amazonia Arena and piloted by Samson Wright and squad, this variant is a battlesuit specifically configured for intense underwater combat, where even the mightiest 'Mech might be felled by a well-placed shot. To facilitate a quick—and embarrassing—kill, this modified form of the Clan's Undine suit has upgraded its mass and used the extra weight to improve its armor and weapons. This version can now withstand a hit from all grades of Inner Sphere-spec lasers and even light PPCs with little chance for critical failure. At the same time, this armor can dish out twice the laser fire of the original model (two ER Micro Lasers), backed up by a pair of Multi-Purpose SRM launchers for truly amphibious combat. As it retains its Clan-spec chassis, the variant continues to benefit from the perks of Clan engineering, including the HarJel sealing and retains the underwater maneuvering system of the original Undine. Though the increased weight does preclude its effective use as an anti-'Mech swarmer, the variant adds a second battle claw. 
+This Goliath Scorpion variant is designed to be used out of water and is especially effective with standard Elemental suits. The underwater maneuvering units are replaced with enough jump jets to push the Undine up to ninety meters, just like the Elemental armor. The laser is retained, but the LRM is replaced with an LRM-3 with either two reloads of LRM/Ts or four reloads of regular missiles. The searchlight is also replaced for an armored cargo bay with capacity for 30kg of equipment.
 </deployment>
 
 <history>
@@ -109,11 +107,11 @@ Debuted in 3145 on the Arena Amazonia Arena and piloted by Samson Wright and squ
 </history>
 
 <manufacturer>
-Unknown
+Unknown,W-7 Facilities
 </manufacturer>
 
 <primaryFactory>
-Solaris VII
+Dagda,Weingarten
 </primaryFactory>
 
 <systemManufacturers>

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,31 +17,24 @@ Undine Battle Armor
 </Name>
 
 <Model>
-'Sebastian'(Sqd4)
+(Standard)(Sqd6)
 </Model>
 
 <mul id:>
-8383
+8960
 </mul id:>
 
 <year>
-3145
+3059
 </year>
 
-<originalBuildYear>
-3145
-</originalBuildYear>
-
 <type>
-Clan Level 3
+Clan Level 2
 </type>
 
 <motion_type>
-UMU
+umu
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 1
@@ -56,20 +49,18 @@ UMU
 </armor_tech>
 
 <Point Equipment>
-BABattleClaw:RA
-BABattleClaw:LA
 CLBAERMicroLaser:RA
-CLBAERMicroLaser:LA
-CLBASRM1OS:Body
-CLBASRM1OS:Body
+CLBALRM5 (OS):Body
+BABattleClaw:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BASearchlight:Body
 </Point Equipment>
 
-<notes>
-Should be SRT1 but not coded in the MM at this time.
-</notes>
-
 <source>
-XTRO Royal Fantasy - Dark Age
+TRO 3058U - Clan Invasion
 </source>
 
 <chassis>
@@ -81,15 +72,15 @@ biped
 </jumpingMP>
 
 <armor>
-9
+8
 </armor>
 
 <Trooper Count>
-4
+6
 </Trooper Count>
 
 <weightclass>
-3
+2
 </weightclass>
 
 <overview>
@@ -101,7 +92,7 @@ With its unique weaponry and revolutionary underwater motor system, the Undine i
 </capabilities>
 
 <deployment>
-Debuted in 3145 on the Arena Amazonia Arena and piloted by Samson Wright and squad, this variant is a battlesuit specifically configured for intense underwater combat, where even the mightiest 'Mech might be felled by a well-placed shot. To facilitate a quick—and embarrassing—kill, this modified form of the Clan's Undine suit has upgraded its mass and used the extra weight to improve its armor and weapons. This version can now withstand a hit from all grades of Inner Sphere-spec lasers and even light PPCs with little chance for critical failure. At the same time, this armor can dish out twice the laser fire of the original model (two ER Micro Lasers), backed up by a pair of Multi-Purpose SRM launchers for truly amphibious combat. As it retains its Clan-spec chassis, the variant continues to benefit from the perks of Clan engineering, including the HarJel sealing and retains the underwater maneuvering system of the original Undine. Though the increased weight does preclude its effective use as an anti-'Mech swarmer, the variant adds a second battle claw. 
+The Undine carries an ER Micro Pulse Laser in its right arm and a Battle Claw in its left, however the centerpiece of the suit's weaponry is its LRM-5 launcher loaded with a single round of special amphibious missiles. A Searchlight provides additional illumination while an Underwater Maneuvering Unit allows the Undine to achieve speeds of over 32 km/h when submerged.
 </deployment>
 
 <history>
@@ -109,11 +100,11 @@ Debuted in 3145 on the Arena Amazonia Arena and piloted by Samson Wright and squ
 </history>
 
 <manufacturer>
-Unknown
+Unknown,W-7 Facilities
 </manufacturer>
 
 <primaryFactory>
-Solaris VII
+Dagda,Weingarten
 </primaryFactory>
 
 <systemManufacturers>

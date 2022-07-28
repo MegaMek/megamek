@@ -17,7 +17,7 @@ Water Elemental Mining Suit
 </Name>
 
 <Model>
-
+(Standard)(Sqd4)
 </Model>
 
 <mul id:>
@@ -66,21 +66,6 @@ HHSearchlight
 Mission Equipment Storage (200 kg):Body
 </Squad Equipment>
 
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
-
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
 <manufacturer>
 Clan Goliath Scorpion
 </manufacturer>
@@ -89,12 +74,8 @@ Clan Goliath Scorpion
 Hades Industrial Complex
 </primaryFactory>
 
-<imagepath>
-.\data\images\fluff\BattleArmor\Water Elemental Mining Suit.png
-</imagepath>
-
 <source>
-Succession Wars
+TRO Golden Century - Early Succession War
 </source>
 
 <chassis>

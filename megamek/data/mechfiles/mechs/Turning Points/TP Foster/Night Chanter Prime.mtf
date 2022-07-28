@@ -7,6 +7,7 @@ techbase:Clan
 era:2850
 source:TP:Foster - Succession Wars
 rules level:2
+mul id:9232
 
 mass:45
 engine:225 Fusion (Clan) Engine(IS)

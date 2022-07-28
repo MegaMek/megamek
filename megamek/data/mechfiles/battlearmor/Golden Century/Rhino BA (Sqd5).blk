@@ -1,0 +1,121 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Rhino Battle Armor
+</Name>
+
+<Model>
+(Standard)(Sqd5)
+</Model>
+
+<mul id:>
+9200
+</mul id:>
+
+<year>
+2871
+</year>
+
+<originalBuildYear>
+2871
+</originalBuildYear>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<Point Equipment>
+BAHeavyBattleClaw:RA
+CLBASmallPulseLaser:LA
+CLBASRM2:Body
+BA-SRM2 Ammo:Body:Shots4#
+BA-SRM2 Ammo:Body:Shots2#
+</Point Equipment>
+
+<source>
+TRO Golden Century - Early Succession War
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+1
+</jumpingMP>
+
+<armor>
+14
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Rhino was an early attempt made by Clan Hell's Horses to develop true battle armor during the Golden Century.
+</overview>
+
+<capabilities>
+The Rhino's weapons layout and equipment was similar to the Elemental (Battle Armor), but was not as capable as the later machine. Its weapons ranges were shorter and it lacked maneuverability and speed. However, the armor was greater than what the Elemental Battle Suit would carry. In addition, while the suit's SRM 2 was easy to use and reload, it had a significant jamming issue. This issue would cause catastrophic ammo explosions dealing major damage to the suit and the pilot (for an example, see Bertram). Engineers tried to resolve the issue, but the Rhino was shelved before the issue could be rectified
+</capabilities>
+
+<deployment>
+The Rhino was armed with a Small Pulse Laser, an SRM-2 and a Heavy Battle Claw. These weapons were in fixed mounts and could not be changed.
+</deployment>
+
+<history>
+In 2879 on Atreus, Clan Hell's Horses tried to sneak a Star of Rhino's behind Clan Smoke Jaguar lines. There they encountered two Points of Elemental battle armor. In the ensuing battle, the better mobility of the Elemental battle armor allowed the Jaguars, with less numbers and firepower, to defeat the Horses with few losses. Meanwhile, only a point of Rhinos would survive the encounter.
+</history>
+
+<manufacturer>
+Unknown
+</manufacturer>
+
+<primaryFactory>
+Niles
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

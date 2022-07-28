@@ -734,19 +734,20 @@ final class ASSpecialAbilityConverter {
                 report.addLine("LAM with Bombs", "BOMB");
                 element.getSpecialAbilities().addSPA(BOMB, bombValue);
             }
-            report.addLine("LAM Fuel", "Fuel: " + lam.getFuel(), "JMPS");
+            report.addLine("LAM Fuel", "Fuel: " + lam.getFuel(), "FUEL");
             element.getSpecialAbilities().addSPA(FUEL, (int) Math.round(0.05 * lam.getFuel()));
             var lamMoves = new HashMap<String, Integer>();
-            lamMoves.put("g", lam.getAirMechCruiseMP(false, false) * 2);
-            lamMoves.put("a", lam.getCurrentThrust());
-            element.getMovement().putAll(lamMoves);
             if (lam.getLAMType() == LandAirMech.LAM_BIMODAL) {
                 report.addLine("Bimodal Movement", "BIM");
+                lamMoves.put("a", lam.getCurrentThrust());
                 element.getSpecialAbilities().addBimSPA(lamMoves);
             } else {
                 report.addLine("LAM Movement", "LAM");
+                lamMoves.put("g", lam.getAirMechCruiseMP(false, false) * 2);
+                lamMoves.put("a", lam.getCurrentThrust());
                 element.getSpecialAbilities().addLamSPA(lamMoves);
             }
+            element.getMovement().putAll(lamMoves);
         }
 
         if (entity instanceof QuadVee) {

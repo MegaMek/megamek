@@ -124,8 +124,8 @@ public final class ASConverter {
         dc.convertDamage2();
 
         ASSpecialAbilityConverter.finalizeSpecials(element);
-        element.setPointValue(ASPointValueConverter.getPointValue(conversionData));
-        ASPointValueConverter.adjustPVforSkill(element, conversionReport);
+        ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
+        element.setPointValue(pvConverter.getSkillAdjustedPointValue());
         return element;
     }
 
@@ -141,10 +141,10 @@ public final class ASConverter {
             this.conversionReport = conversionReport;
         }
     }
-    
-    /** 
+
+    /**
      * Returns true if the given entity can be converted to AlphaStrike. This is only
-     * false for entities of some special types such as TeleMissile or GunEmplacement. 
+     * false for entities of some special types such as TeleMissile or GunEmplacement.
      */
     public static boolean canConvert(Entity entity) {
         return !(entity == null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)

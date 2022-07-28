@@ -21,6 +21,8 @@ package megamek.client.ui.swing.calculationReport;
 import megamek.common.annotations.Nullable;
 
 import javax.swing.*;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
@@ -212,16 +214,16 @@ public interface CalculationReport {
      * Formats the given double with only the necessary digits and at most three digits. Uses the fixed Locale.US
      * as the Java way of converting "" + value seems to use Locale.US by default as well.
      */
-    static String fmtDouble(double d) {
+    static String fmt(double d) {
         long timesThousand = Math.round(1000 * d);
         if (timesThousand % 1000 == 0) {
-            return String.format(Locale.US, "%1$,.0f", d);
+            return String.format(Locale.US, "%1$.0f", d);
         } else if (timesThousand % 100 == 0) {
-            return String.format(Locale.US, "%1$,.1f", d);
+            return String.format(Locale.US, "%1$.1f", d);
         } else if (timesThousand % 10 == 0) {
-            return String.format(Locale.US, "%1$,.2f", d);
+            return String.format(Locale.US, "%1$.2f", d);
         } else {
-            return String.format(Locale.US, "%1$,.3f", d);
+            return String.format(Locale.US, "%1$.3f", d);
         }
     }
 }

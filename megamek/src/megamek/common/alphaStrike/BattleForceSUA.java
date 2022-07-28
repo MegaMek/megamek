@@ -42,7 +42,6 @@ public enum BattleForceSUA {
     TELE, TSM, TUR, TOR, UMU, VRT, VTM, VTMxD, VTH, VTHxD, VTS, VTSxD, VLG, VSTOL, WAT,
     ABA, BRA, BHJ2, BHJ3, BIM, DN, GLD, IRA, LAM, MCS, UCS, NOVA, CASEP, QV, RHS,
     RAMS, ECS, DJ, HJ, RBT, JAM, TSEMP, TSEMPO, TSI, VR,
-    // Battleforce only
     ATAC, DB, PL, TCP,
     //TODO: PL, DB do not exist, TCP = Triple-Core Processor?
     // AlphaStrike only (this may be incorrect, WIP)

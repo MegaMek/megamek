@@ -23,7 +23,7 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Locale;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
 
 final class ASArmStrConverter {
 
@@ -123,14 +123,6 @@ final class ASArmStrConverter {
         }
     }
 
-    public static String fmt(double d) {
-        if (d == (long) d) {
-            return String.format(Locale.US, "%1$,.0f", d);
-        } else {
-            return String.format(Locale.US, "%1$,.1f", d);
-        }
-    }
-
     /**
      * Determines the Aerospace Armor Threshold, AlphaStrike Companion p.95
      */
@@ -147,7 +139,7 @@ final class ASArmStrConverter {
 
             report.addLine("Threshold",
                     element.getFullArmor() + " / 3" + (element.usesArcs() ? " / " + arcs : "") + ", round up",
-                    "= " + threshold);
+                    "= " + fmt(threshold));
             return threshold;
         } else {
             return -1;

@@ -31,7 +31,7 @@ import java.util.*;
 import static megamek.common.ITechnology.TECH_BASE_CLAN;
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.client.ui.swing.calculationReport.CalculationReport.fmtDouble;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
 
 public class ASDamageConverter2 {
 
@@ -157,46 +157,46 @@ public class ASDamageConverter2 {
         report.addEmptyLine();
         report.addLine("--- Short Range Damage:", "");
         double rawSDamage = calculateFrontDamage(weaponsList, SHORT_RANGE);
-        report.addLine("Raw S damage:", "= " + fmtDouble(rawSDamage));
+        report.addLine("Raw S damage:", "= " + fmt(rawSDamage));
         if (element.usesOV()) {
         // Heat adjust
         }
         int finalSDamage = ASConverter.roundUp(roundUpToTenth(rawSDamage));
-        report.addLine("Final S damage:", "Dual Rounding", "= " + fmtDouble(finalSDamage));
+        report.addLine("Final S damage:", "Dual Rounding", "= " + fmt(finalSDamage));
 
         // Front M damage
         report.addEmptyLine();
         report.addLine("--- Medium Range Damage:", "");
         double rawMDamage = calculateFrontDamage(weaponsList, MEDIUM_RANGE);
-        report.addLine("Raw M damage:", "= " + fmtDouble(rawMDamage));
+        report.addLine("Raw M damage:", "= " + fmt(rawMDamage));
         if (element.usesOV()) {
             // Heat adjust
         }
         int finalMDamage = ASConverter.roundUp(roundUpToTenth(rawMDamage));
-        report.addLine("Final M damage:", "Dual Rounding", "= " + fmtDouble(finalMDamage));
+        report.addLine("Final M damage:", "Dual Rounding", "= " + fmt(finalMDamage));
 
         // Front L damage
         report.addEmptyLine();
         report.addLine("--- Long Range Damage:", "");
         double rawLDamage = calculateFrontDamage(weaponsList, LONG_RANGE);
-        report.addLine("Raw L damage:", "= " + fmtDouble(rawLDamage));
+        report.addLine("Raw L damage:", "= " + fmt(rawLDamage));
         if (element.usesOV()) {
             // Heat adjust
         }
         int finalLDamage = ASConverter.roundUp(roundUpToTenth(rawLDamage));
-        report.addLine("Final L damage:", "Dual Rounding", "= " + fmtDouble(finalLDamage));
+        report.addLine("Final L damage:", "Dual Rounding", "= " + fmt(finalLDamage));
 
         // Front E damage
         if (element.usesSMLE()) {
             report.addEmptyLine();
             report.addLine("--- Extreme Range Damage:", "");
             double rawEDamage = calculateFrontDamage(weaponsList, EXTREME_RANGE);
-            report.addLine("Raw E damage:", "= " + fmtDouble(rawEDamage));
+            report.addLine("Raw E damage:", "= " + fmt(rawEDamage));
             if (element.usesOV()) {
                 // Heat adjust
             }
             int finalEDamage = ASConverter.roundUp(roundUpToTenth(rawEDamage));
-            report.addLine("Final E damage:", "Dual Rounding", "= " + fmtDouble(finalEDamage));
+            report.addLine("Final E damage:", "Dual Rounding", "= " + fmt(finalEDamage));
         }
 
 
@@ -212,7 +212,7 @@ public class ASDamageConverter2 {
                 damageModifier = getDamageMultiplier(weapon, weaponType);
                 double modifiedDamage = baseDamage * damageModifier;
                 String calculation = (damageModifier != 1) ? baseDamage + " x " + damageModifier : "";
-                report.addLine(weapon.getName(), calculation, "+ " + fmtDouble(modifiedDamage));
+                report.addLine(weapon.getName(), calculation, "+ " + fmt(modifiedDamage));
                 rawDamage += modifiedDamage;
             }
         }

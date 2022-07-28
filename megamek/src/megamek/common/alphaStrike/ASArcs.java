@@ -19,5 +19,21 @@
 package megamek.common.alphaStrike;
 
 public enum ASArcs {
-    FRONT, LEFT, RIGHT, REAR
+    FRONT, LEFT, RIGHT, REAR;
+
+    @Override
+    public String toString() {
+        switch (this) {
+            case FRONT:
+                return "Front Arc";
+            case LEFT:
+                return "Left Arc";
+            case RIGHT:
+                return "Right Arc";
+            case REAR:
+                return "Rear Arc";
+            default:
+                return "Unknown Arc";
+        }
+    }
 }

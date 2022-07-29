@@ -379,12 +379,16 @@ public class ASPointValueConverter {
             modifierList.add("VTOL/WiGE");
         }
         if (element.hasSUA(STL)) {
-            result += 1;
+            result += 2;
             modifierList.add("STL");
         }
         if (element.hasAnySUAOf(LG, SLG, VLG)) {
             result -= 1;
             modifierList.add("LG/SLG/VLG");
+        }
+        if (element.isJumpCapable() && (element.isInfantry() || !element.getStandardDamage().hasDamage())) {
+            result += 1;
+            modifierList.add("Jump");
         }
         double multiplier = (result <= 2 ? 0.1 : 0.25);
         double defFactor = 1 + multiplier * result;
@@ -393,36 +397,6 @@ public class ASPointValueConverter {
                 "1 + " + fmt(multiplier) + " x " + fmt(result) + modifiers,
                 "");
         return defFactor;
-    }
-
-    /**
-     * Returns the movement modifier (for the Point Value DIR calculation only),
-     * AlphaStrike Companion Errata v1.4, p.17
-     * Latest info: DIR calculation simply uses the TMM value
-     */
-    private static double getMovementMod(ASConverter.ConversionData conversionData) {
-        CalculationReport report = conversionData.conversionReport;
-        AlphaStrikeElement element = conversionData.element;
-
-        int highestNonJumpMod = -1;
-        int highestJumpMod = -1;
-        for (String mode : element.getMovementModes()) {
-            int mod = ASConverter.tmmForMovement(element.getMovement(mode), report);
-            if (mode.equals("j")) {
-                highestJumpMod = mod;
-            } else {
-                highestNonJumpMod = Math.max(highestNonJumpMod, mod);
-            }
-        }
-        double result = (highestNonJumpMod == -1) ? highestJumpMod : highestNonJumpMod;
-        report.addLine("Correct Movement Modifier TMM", "", result);
-        result += element.isInfantry() && element.isJumpCapable() ? 1 : 0;
-        if (element.isInfantry() && element.isJumpCapable()) {
-            result += 1;
-            report.addLine("Jump Capable Infantry", "+ 1", "");
-        }
-        report.addLine("DIR Movement modifier", "", result);
-        return result;
     }
 
     protected void processGroundCapabilities() {

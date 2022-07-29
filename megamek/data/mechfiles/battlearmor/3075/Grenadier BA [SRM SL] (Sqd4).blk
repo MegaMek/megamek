@@ -16,11 +16,11 @@ Grenadier Battle Armor
 </Name>
 
 <Model>
-[SL](Sqd6)
+[SRM/SL](Sqd4)
 </Model>
 
 <mul id:>
-8996
+4244
 </mul id:>
 
 <chassis>
@@ -32,7 +32,7 @@ biped
 </weightclass>
 
 <Trooper Count>
-6
+4
 </Trooper Count>
 
 <cruiseMP>

@@ -801,7 +801,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public void setWeather(int type) {
-        if ((type <= 0) || (type >= WE_SIZE)) {
+        if ((type < 0) || (type >= WE_SIZE)) {
             LogManager.getLogger().error(String.format("Invalid weather type supplied: %d", type));
         } else {
             weatherConditions = type;

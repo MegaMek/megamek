@@ -411,9 +411,19 @@ super * "ice:1" "" "saxarba/misc/ice.png"
 super * "ice:*" "" "saxarba/misc/ice.png"
 
 
-#SPECIAL SIRMEGAV BUILDINGS
-include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
-include "saxarba/Includes/BuildingsAddtlSaxarba.tileinc"
+
+
+# Quay/Wharf wall pieces - fluff because they must paint above water and the water itself should not contain pavement
+super * "fluff:100:01" "" "Structured_Pavement/Fluff/quay_fluff01.png"
+super * "fluff:100:02" "" "Structured_Pavement/Fluff/quay_fluff02.png"
+super * "fluff:100:03" "" "Structured_Pavement/Fluff/quay_fluff03.png"
+super * "fluff:100:04" "" "Structured_Pavement/Fluff/quay_fluff04.png"
+super * "fluff:100:05" "" "Structured_Pavement/Fluff/quay_fluff05.png"
+super * "fluff:100:06" "" "Structured_Pavement/Fluff/quay_fluff06.png"
+super * "fluff:100:07" "" "Structured_Pavement/Fluff/quay_fluff07.png"
+super * "fluff:100:08" "" "Structured_Pavement/Fluff/quay_fluff08.png"
+
+
 
 #BUILDINGS
 #Standard buildings for mars and lunar and volcano themes
@@ -427,6 +437,10 @@ include "saxarba/Includes/BuildingsNonSClassNoArmor.tileinc"
 include "saxarba/Includes/BuildingsSealedLunar_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSealedMars_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSealedVolcano_noClassSpecified.tileinc"
+
+#SPECIAL SIRMEGAV BUILDINGS
+include "saxarba/SMV_Buildings/SirMegaVBuildings.tileinc"
+include "saxarba/Includes/BuildingsAddtlSaxarba.tileinc"
 
 include "saxarba/Includes/BuildingsSClassArmor_noClassSpecified.tileinc"
 include "saxarba/Includes/BuildingsSClassNoArmor_noClassSpecified.tileinc"

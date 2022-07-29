@@ -225,6 +225,16 @@ public class Terrains implements Serializable {
                 } else if (level == 4) {
                     return "Hardened Building";
                 }
+            case BLDG_CLASS:
+                if (level == 1) {
+                    return "Hangar";
+                } else if (level == 2) {
+                    return "Fortress";
+                } else if (level == 3) {
+                    return "Gun Emplacement";
+                } else {
+                    return "No Class";
+                }
             case WOODS:
                 if (level == 1) {
                     return "Light woods";

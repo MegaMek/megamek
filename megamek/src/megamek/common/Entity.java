@@ -13989,8 +13989,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /** @return Target number taking into account game options */
-    private int getMASCorSuperchargerTarget(int nLevel)
-    {
+    private int getMASCorSuperchargerTarget(int nLevel) {
         if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nLevel];
         } else if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {

@@ -130,6 +130,7 @@ super * "pavement:4:61" "" "Structured_Pavement/SaxStd_1.png"
 super * "pavement:4:62" "" "Structured_Pavement/SaxStd_1.png"
 super * "pavement:4:63" "" "Structured_Pavement/SaxStd_1.png"
 
+# Corner pieces to achieve rectangluar runways
 super * "pavement:4:65" "" "Structured_Pavement/AddPav_65.png"
 super * "pavement:4:66" "" "Structured_Pavement/AddPav_66.png"
 super * "pavement:4:67" "" "Structured_Pavement/AddPav_67.png"
@@ -142,3 +143,5 @@ super * "pavement:4:73" "" "Structured_Pavement/AddPav_73.png"
 super * "pavement:4:74" "" "Structured_Pavement/AddPav_74.png"
 super * "pavement:4:75" "" "Structured_Pavement/AddPav_75.png"
 super * "pavement:4:76" "" "Structured_Pavement/AddPav_76.png"
+
+

@@ -51,10 +51,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.io.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static megamek.common.Terrains.*;
 
@@ -252,6 +257,8 @@ public class BoardEditor extends JPanel
     private EditorTextField texTerrExits;
     private ScalingIconButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
+    private JButton copyButton = new JButton(Messages.getString("BoardEditor.copyButton"));
+    private JButton pasteButton = new JButton(Messages.getString("BoardEditor.pasteButton"));
     private ScalingIconButton butExitUp, butExitDown;
     private JComboBox<String> choTheme;
     private ScalingIconButton butTerrDown, butTerrUp;
@@ -911,6 +918,13 @@ public class BoardEditor extends JPanel
         butExitUp = prepareButton("ButtonEXUP", "Increase Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butExitDown = prepareButton("ButtonEXDN", "Decrease Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
 
+        // Copy and Paste
+        FixedYPanel panCopyPaste = new FixedYPanel(new FlowLayout(FlowLayout.RIGHT, 4, 4));
+        panCopyPaste.add(pasteButton);
+        panCopyPaste.add(copyButton);
+        copyButton.addActionListener(e -> copyWorkingHexToClipboard());
+        pasteButton.addActionListener(e -> pasteFromClipboard());
+
         // Arrows and text fields for type and exits
         JPanel panUP = new JPanel(new GridLayout(1, 0, 4, 4));
         panUP.add(butTerrUp);
@@ -1016,6 +1030,7 @@ public class BoardEditor extends JPanel
         centerPanel.add(panelHexSettings);
         centerPanel.add(panelTerrSettings);
         centerPanel.add(panlisHex);
+        centerPanel.add(panCopyPaste);
         var scrCenterPanel = new JScrollPane(centerPanel);
         scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
         add(scrCenterPanel, BorderLayout.CENTER);
@@ -2244,6 +2259,8 @@ public class BoardEditor extends JPanel
         texTerrExits.setFont(scaledFont);
         texElev.setFont(scaledFont);
         texTerrainLevel.setFont(scaledFont);
+        copyButton.setFont(scaledFont);
+        pasteButton.setFont(scaledFont);
         
         labHelp1.setFont(scaledFont);
         labHelp2.setFont(scaledFont);
@@ -2373,6 +2390,27 @@ public class BoardEditor extends JPanel
         String title = (curBoardFile == null) ? Messages.getString("BoardEditor.title")
                 : Messages.getString("BoardEditor.title0", curBoardFile);
         frame.setTitle(title + (hasChanges ? "*" : ""));
+    }
+
+    private void copyWorkingHexToClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(curHex.getClipboardString()), null);
+    }
+
+    private void pasteFromClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        if ((contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            try {
+                String clipboardString = (String) contents.getTransferData(DataFlavor.stringFlavor);
+                Hex pastedHex = Hex.parseClipboardString(clipboardString);
+                if (pastedHex != null) {
+                    setCurrentHex(pastedHex);
+                }
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+            }
+        }
     }
     
     

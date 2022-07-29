@@ -587,7 +587,10 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
 
                 for (int j = 0; j < board.getWidth(); j++) {
                     for (int k = 0; k < board.getHeight(); k++) {
-                        if (board.isLegalDeployment(new Coords(j, k), dir)) {
+                        Coords coords = new Coords(j, k);
+                        
+                        if (board.isLegalDeployment(coords, deployingUnit) &&
+                                !deployingUnit.isLocationProhibited(coords)) {
                             paintSingleCoordBorder(g, j, k, Color.yellow);
                         }
                     }
@@ -945,18 +948,28 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
+        Color borderColor = Color.WHITE;
+        Color fontColor = Color.BLACK;
+        if (entity.moved != EntityMovementType.MOVE_NONE) {
+            borderColor = Color.BLACK;
+        }
+
+        float outerBorderWidth = 30f;
+        float innerBorderWidth = 20f;
+
         if (stratOpsSymbols) {
             // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
-            g2.setColor(new Color(255, 255, 255, 150));
+            g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+            g2.setColor(Color.BLACK);
             g2.draw(STRAT_BASERECT);
 
             // Black background to fill forms like the DropShip
-            g2.setColor(Color.BLACK);
+            g2.setColor(fontColor);
             g2.fill(STRAT_BASERECT);
 
             // Rectangle border for all units
-            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             g2.draw(STRAT_BASERECT);
 
             // Set a thin brush for filled areas (leave a thick brush for line symbols
@@ -970,7 +983,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(form);
 
             // Add the weight class or other lettering for certain units
-            g.setColor(Color.BLACK);
+            g.setColor(fontColor);
             if ((entity instanceof Protomech) || (entity instanceof Mech) || (entity instanceof Aero)) {
                 String s = "";
                 if (entity instanceof Protomech) {
@@ -990,7 +1003,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                             (float) STRAT_SYMBOLSIZE.getHeight() / 3.0f));
                 }
             } else if (entity instanceof MechWarrior) {
-                g2.setColor(Color.black);
+                g2.setColor(fontColor);
                 g2.fillOval(-25, -25, 50, 50);
             }
             // Draw the unit icon in black
@@ -999,8 +1012,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         } else {
             // Standard symbols
             // White border to set off the icon from the background
-            g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-            g2.setColor(new Color(255, 255, 255, 150));
+            g2.setStroke(new BasicStroke(outerBorderWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
+            g2.setColor(Color.BLACK);
             g2.draw(form);
 
             // Fill the form in player color / team color
@@ -1008,8 +1021,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.fill(form);
             
             // Black border
-            g2.setColor(Color.BLACK);
-            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(innerBorderWidth / 2f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
             g2.draw(form);
         }
         

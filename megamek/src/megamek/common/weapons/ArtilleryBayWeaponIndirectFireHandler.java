@@ -240,7 +240,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (wtype != null) {
             r.add(wtype.getName());
         } else {
-            r.add("Error: From Nowhwere");
+            r.add("Error: From Nowhere");
         }
 
         r.add(target.getDisplayName(), true);

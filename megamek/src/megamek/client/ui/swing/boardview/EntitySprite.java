@@ -47,6 +47,10 @@ class EntitySprite extends Sprite {
 
     // Statics
     private static final int SMALL = 0;
+    private static final int STATUS_BAR_LENGTH = 24;
+    private static final int STATUS_BAR_X = 55;
+    private static final int MAX_TMM_PIPS = 6;
+    private static final int TMM_PIP_SIZE = STATUS_BAR_LENGTH / MAX_TMM_PIPS;
     private static final boolean DIRECT = true;
     private static final Color LABEL_TEXT_COLOR = Color.WHITE;
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
@@ -627,7 +631,7 @@ class EntitySprite extends Sprite {
                     stStr.add(new Status(damageColor, 0, SMALL));
                 }
             }
-            
+
             // Unit Label
             // no scaling for the label, its size is changed by varying
             // the font size directly => better control
@@ -746,32 +750,57 @@ class EntitySprite extends Sprite {
                 }
             }
 
-            // armor and internal status bars
-            int baseBarLength = 23;
+            // armor, internal and TMM status bars
             int barLength = 0;
             double percentRemaining = 0.00;
 
             percentRemaining = entity.getArmorRemainingPercent();
-            barLength = (int) (baseBarLength * percentRemaining);
+            barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
             graph.setColor(Color.darkGray);
-            graph.fillRect(56, 7, 23, 3);
+            graph.fillRect(STATUS_BAR_X + 1, 7, STATUS_BAR_LENGTH, 3);
             graph.setColor(Color.lightGray);
-            graph.fillRect(55, 6, 23, 3);
+            graph.fillRect(STATUS_BAR_X, 6, STATUS_BAR_LENGTH, 3);
             graph.setColor(getStatusBarColor(percentRemaining));
-            graph.fillRect(55, 6, barLength, 3);
+            graph.fillRect(STATUS_BAR_X, 6, barLength, 3);
 
             if (!ge) {
                 // Gun emplacements don't have internal structure
                 percentRemaining = entity.getInternalRemainingPercent();
-                barLength = (int) (baseBarLength * percentRemaining);
+                barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 
                 graph.setColor(Color.darkGray);
-                graph.fillRect(56, 11, 23, 3);
+                graph.fillRect(STATUS_BAR_X + 1, 11, STATUS_BAR_LENGTH, 3);
                 graph.setColor(Color.lightGray);
-                graph.fillRect(55, 10, 23, 3);
+                graph.fillRect(STATUS_BAR_X, 10, STATUS_BAR_LENGTH, 3);
                 graph.setColor(getStatusBarColor(percentRemaining));
-                graph.fillRect(55, 10, barLength, 3);
+                graph.fillRect(STATUS_BAR_X, 10, barLength, 3);
+            }
+
+            // TMM pips show if done in movement, or on all units during firing
+            int pipOption = guip.getInt(GUIPreferences.ADVANCED_TMM_PIP_MODE);
+            if ((pipOption != 0) && !ge
+                    && ((entity.isDone() && bv.game.getPhase().isMovement())
+                    || bv.game.getPhase().isFiring())) {
+                int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
+                Color tmmColor = (pipOption == 1) ? Color.WHITE : guip.getColorForMovement(entity.moved);
+                graph.setColor(Color.darkGray);
+                graph.fillRect(STATUS_BAR_X, 12 + TMM_PIP_SIZE, STATUS_BAR_LENGTH, TMM_PIP_SIZE);
+                if (tmm >= 0) {
+                    // draw left to right for positive TMM
+                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                        graph.setColor(Color.DARK_GRAY);
+                        graph.setColor(i < tmm ? tmmColor : Color.BLACK);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                    }
+                } else {
+                    // draw pips right to left for negative TMM
+                    for (int i = 0; i < MAX_TMM_PIPS; i++) {
+                        graph.setColor(Color.DARK_GRAY);
+                        graph.setColor(i >= (MAX_TMM_PIPS + tmm) ? tmmColor : Color.BLACK);
+                        graph.fillRect(STATUS_BAR_X + (i * TMM_PIP_SIZE), 12 + TMM_PIP_SIZE, TMM_PIP_SIZE - 1, TMM_PIP_SIZE - 1);
+                    }
+                }
             }
         }
 

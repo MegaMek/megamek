@@ -712,7 +712,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
                     invalidEnvironment = true;
                 }
 
-                if ((en instanceof Tank)
+                if ((en instanceof Tank) && !(en instanceof GunEmplacement)
                         && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
                     invalidEnvironment = true;
                 }

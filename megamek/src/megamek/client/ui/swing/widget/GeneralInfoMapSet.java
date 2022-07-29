@@ -347,6 +347,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             heatCapacityStr = heatCap + " [" + heatCapWater + "]";
         }
 
+        heatR.color = GUIPreferences.getInstance().getColorForHeat(en.heat, Color.WHITE);
         heatR.setString(en.heat
                 + " (" + heatCapacityStr + " " + Messages.getString("GeneralInfoMapSet.capacity") + ")");
 
@@ -368,7 +369,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 || (en instanceof Mech && ((Mech) en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
-                //Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
+                // Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
             } else if (en.getMovementMode() == EntityMovementMode.WIGE) {
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.WIGE"));
@@ -389,25 +390,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             curSensorsL.setVisible(true);
             visualRangeL.setVisible(true);
             curSensorsR.setString(en.getSensorDesc());
-            visualRangeR.setString(Integer.toString(en.getGame()
-                    .getPlanetaryConditions().getVisualRange(en, false)));
-            //If using sensors, update our visual range display to the automatic detection range of the current sensor
-            if (en.isSpaceborne() && en.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
-                int autoVisualRange = 0;
-                //For squadrons. Default to the passive thermal/optical value used by component fighters
-                if (en.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
-                    autoVisualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
-                }
-                if (en.getActiveSensor() != null) {
-                    if (en.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
-                        // required because the return on this from the method below is for ground maps
-                        autoVisualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
-                    } else {
-                        autoVisualRange = (int) Math.ceil(en.getActiveSensor().getRangeByBracket() / 10.0);
-                    }
-                }
-                visualRangeR.setString(Integer.toString(autoVisualRange));
-            }
+            visualRangeR.setString(Integer.toString(Compute.getMaxVisualRange(en, false)));
         } else {
             curSensorsR.setVisible(false);
             visualRangeR.setVisible(false);

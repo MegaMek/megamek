@@ -1,0 +1,123 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Kishi Ceremonial Armor
+</Name>
+
+<Model>
+(Standard)(Sqd6)
+</Model>
+
+<mul id:>
+9099
+</mul id:>
+
+<year>
+3105
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<Squad Equipment>
+BAHeavyBattleClawVibro:LA
+ISBAHeavyMachineGun:RA
+ISMechanicalJumpBooster:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:RA
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:Body
+IS BA Reflective:Body
+</Squad Equipment>
+
+<source>
+TRO 3145 Draconis Combine - Late Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+Manufactured by Ishikawajima-Harima Battle Armor Industries on Luthien, the Kishi battle armor is a byproduct of the design and testing process that produced the Clan Nova Cat Thunderbird series of battle armor suits.
+</overview>
+
+<capabilities>
+The Kishi is ideal for urban operations and the standard configuration of the suit gives it an edge over opponents when engaged in close-combat situations; it is also popular for the layer of compact memory foam that lines each suit, allowing the user to operate his or her suit for extended periods in comfort and thereby making the Kishi more suitable for extended operations. Protected by a third of a ton of reflective armor, Kishi suits are capable of making swarm and leg attacks as well as being mechanized. A mechanical jump booster propels the suit up to 30 meters.
+</capabilities>
+
+<deployment>
+A Kishi suit mounts two weapons, a single Heavy Machine Gun on the right arm with fifty rounds of ammunition and a Heavy Vibro Battle Claw on the left arm
+</deployment>
+
+<history>
+As Kishi suits don't require oversized body types to operate it comfortably and can be easily maintained, it has rapidly become the primary battle armor suit of the Draconis Combine Mustered Soldiery.
+</history>
+
+<manufacturer>
+Ishikawajima-Harima BAI
+</manufacturer>
+
+<primaryFactory>
+Luthien
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

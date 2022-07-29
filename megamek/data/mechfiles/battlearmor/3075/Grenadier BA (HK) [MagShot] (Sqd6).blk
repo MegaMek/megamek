@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Grenadier Battle Armor
+</Name>
+
+<Model>
+(Hunter-Killer) [MagShot](Sqd6)
+</Model>
+
+<mul id:>
+8991	
+</mul id:>
+
+<year>
+3075
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBAMagshotGR:LA
+ISBAFireDrakeNeedler:RA
+ISBASRM5:Body
+BABasicManipulator:RA
+IS BA Stealth:RA
+IS BA Stealth:Body
+IS BA Stealth:LA
+IS BA Stealth:Body
+BA-SRM5 Ammo:Body:Shots4#
+</Squad Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Grenadier is a battle armor design created by the Hahm-Heinz Design Bureau. 
+</overview>
+
+<capabilities>
+The team still wanted mobility, however, so the Grenadier can muster up a respectable 21 km/h on the ground. The armor is where the Grenadier is lacking, having only enough to stop an Inner Sphere Large Pulse Laser, the same amount as the venerable Inner Sphere Standard. This armor, however, is standard stealth armor, so the Grenadier is a bit more difficult to target. 
+</capabilities>
+
+<deployment>
+This variant has had its battlefield endurance and flexibility reduced in favor of maximizing its killing power. It mounts an SRM-5 with only four shots, though that is still more ammunition than most battle armor with missiles carry. A Missile-Capable Modular Weapon Mount can hold a Magshot or a Compact Narc Launcher. Finally, the anti-personnel mount has been replaced with a "Firedrake" Support Needler
+</deployment>
+
+<history>
+The firm has long had a relationship with General Motors' secondary plants on Talcott and Salem, so when the NAIS first started creating battle armor, Hahm-Heinz had access to prototypes that they could work from. Though it took almost ten years from the commencement of the program to a prototype, Hahm-Heinz created the Grenadier, which was based on a concept design that was geared towards the most powerful weapons systems possible.
+</history>
+
+<manufacturer>
+Albion Advanced Technologies and Products,General Motors
+</manufacturer>
+
+<primaryFactory>
+New Avalon,Talcott
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -18,7 +18,7 @@ BoardWidth=2
 BoardHeight=1
 
 # Directories to choose random boards from
-RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
+RandomDirs=Map Set 2,Map Set 3,Map Set 4,Map Set 5,Map Set 6,Map Set 7
 
 # Maps can be specified by name.  The order is left-to-right, top-to-bottom
 # Any unspecified boards will be set to RANDOM

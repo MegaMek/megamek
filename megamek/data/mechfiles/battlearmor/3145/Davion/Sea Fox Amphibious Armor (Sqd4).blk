@@ -1,0 +1,124 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Sea Fox Amphibious Armor
+</Name>
+
+<Model>
+(Standard)(Sqd4)
+</Model>
+
+<mul id:>
+6308
+</mul id:>
+
+<year>
+3116
+</year>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+UMU
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+31
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BACuttingTorch:RA
+ISBASRM1OS:LA
+ISBALightMachineGun:Body
+ISBAExtendedLifeSupport:Body
+ISMechanicalJumpBooster:Body
+BAArmoredGlove:RA
+BAArmoredGlove:LA
+Infantry Auto Rifle:APM:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Basic):RA
+IS BA Stealth (Basic):Body
+IS BA Stealth (Basic):Body
+</Squad Equipment>
+
+<source>
+TRO 3145 Federated Suns - Late Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+
+<overview>
+The Sea Fox amphibious battle armor is a niche unit, but one that excels within that niche; intended to operate underwater.
+</overview>
+
+<capabilities>
+Expanding the capabilities of the Sea Fox are its Armored Gloves mounted on each arm and a Mechanical Jump Booster capable of propelling the suit thirty meters through the air. The Sea Fox is even capable of attacking the legs of BattleMechs moving through shallow water.
+</capabilities>
+
+<deployment>
+The Sea Fox mounts several weapon systems or systems that could be used as weapons, including a Cutting Torch, a single-shot SRM tube and a Light Machine Gun with fifty rounds of ammunition
+</deployment>
+
+<history>
+Equipped with a Clantech Underwater Maneuvering Unit capable of moving the suit at the same speed in shallow water as it could move on land, the Sea Fox is an excellent infiltrator and ambush fighter, capable of excelling in urban operations in areas where waterways are available for access.
+</history>
+
+<manufacturer>
+General Motors
+</manufacturer>
+
+<primaryFactory>
+Salem
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

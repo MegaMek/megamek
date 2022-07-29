@@ -123,7 +123,6 @@ public class RandomCallsignGenerator implements Serializable {
 
         try (InputStream is = new FileInputStream(file);
              Scanner input = new Scanner(is, StandardCharsets.UTF_8.name())) {
-
             // skip the first line, as that's the header
             lineNumber++;
             input.nextLine();

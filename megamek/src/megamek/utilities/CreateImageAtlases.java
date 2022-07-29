@@ -81,7 +81,7 @@ public class CreateImageAtlases {
 
     void scanDirectory(File file) {
         if (file.isDirectory()) {
-            // Ignore certian directories
+            // Ignore certain directories
             if (file.toString().contains("largeTextures")) {
                 return;
             }
@@ -92,7 +92,6 @@ public class CreateImageAtlases {
                 }
             }
         }
-
     }
 
     /**
@@ -197,10 +196,11 @@ public class CreateImageAtlases {
 
         atlasCreator.writeImgFileToAtlasMap();
 
-        try (BufferedWriter fout = new BufferedWriter(new FileWriter(new File("atlasedImages.txt")))) {
+        try (FileWriter fw = new FileWriter("atlasedImages.txt"); // TODO : Remove inline file path
+             BufferedWriter bw = new BufferedWriter(fw)) {
             for (String imgFile : atlasCreator.imagesStored) {
-                fout.write(imgFile);
-                fout.write("\n");
+                bw.write(imgFile);
+                bw.write("\n");
             }
         } catch (IOException e) {
             System.out.println("Failed to write out list of atlased images!");

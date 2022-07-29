@@ -13,11 +13,11 @@ Dropship
 </UnitType>
 
 <Name>
-Model 96C 'Howdah'
+Model 96C
 </Name>
 
 <Model>
-
+“Howdah” SDS Command Ship
 </Model>
 
 <mul id:>
@@ -42,10 +42,10 @@ Spheroid
 
 <transporters>
 smallcraftbay:2.0:2:2
-artsasfbay:6.0:4:5
+artsasfbay:6.0:4:3
+cargobay:1283.0:2:1
 steeragequarters:235.0:0
 2ndclassquarters:63.0:0
-cargobay:1283.0:2:1
 </transporters>
 
 <SafeThrust>
@@ -159,6 +159,7 @@ ISArtemisIV
 
 <Hull Equipment>
 ISNavalTugAdaptor
+AutoTacticalAnalysisComputer:SIZE:20.0
 </Hull Equipment>
 
 <structural_integrity>

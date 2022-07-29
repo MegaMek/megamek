@@ -16,7 +16,7 @@ Description=LG&M third mission
 BoardWidth=1
 BoardHeight=2
 
-Maps=MapSet3/16x17 Desert Sinkhole 1,MapSet3/16x17 Desert Sinkhole 2
+Maps=Map Set 3/16x17 Desert Sinkhole 1,Map Set 3/16x17 Desert Sinkhole 2
 
 
 Factions=RedfieldsRenegades,LoneStar

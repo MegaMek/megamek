@@ -2186,6 +2186,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             return;
         }
         // save!
+
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
         } catch (IOException e) {

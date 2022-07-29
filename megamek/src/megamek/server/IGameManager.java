@@ -67,6 +67,8 @@ public interface IGameManager {
 
     void handleCfrPacket(Server.ReceivedPacket rp);
 
+    void requestGameMaster(Player player);
+
     void requestTeamChange(int teamId, Player player);
 
     List<ServerCommand> getCommandList(Server server);

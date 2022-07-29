@@ -1485,7 +1485,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     
     public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
         // do nothing here outside the arty targeting phase
-        if (!clientgui.getClient().getGame().getPhase().isTargeting()) {
+        if (!clientgui.getClient().getGame().getPhase().isTargeting() &&
+                !clientgui.getClient().getGame().getPhase().isOffboard()) {
             return;
         }
         

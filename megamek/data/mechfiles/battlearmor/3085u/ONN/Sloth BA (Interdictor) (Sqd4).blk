@@ -1,0 +1,107 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Sloth Battle Armor
+</Name>
+
+<Model>
+(Interdictor)(Sqd4)
+</Model>
+
+<mul id:>
+2969
+</mul id:>
+
+<chassis>
+quad
+</chassis>
+
+<weightclass>
+3
+</weightclass>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<Armor>
+5
+</Armor>
+
+<Squad Equipment>
+ISBAERSmallLaser:Body
+ISBAERSmallLaser:Body
+IS BA ECM:Body
+</Squad Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3075
+</year>
+
+<motion_type>
+Leg
+</motion_type>
+
+<source>
+TRO 3085 - Jihad
+</source>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<overview>
+The Sloth was one of the first generation of battle armor designs developed by the Inner Sphere, based on data stolen from the Clans by the 1st Somerset Strikers during the early days of Operation REVIVAL. 
+</overview>
+
+<capabilities>
+The Sloth carries 250 kg of armor, enough to stop a hit by a medium laser and keep the pilot alive, and its low profile makes it harder to hit than humanoid suits. However a major drawback of the Sloth is the lack of any manipulators or claws. This prevents the suit from picking up or carrying objects, riding into battle via OmniMech handholds, or performing anti-'Mech attacks.
+</capabilities>
+
+<deployment>
+In 3075, in the midst of the Jihad, designers refitted the Sloth by removing the pop-up mine and small lasers in favor of an ECM suite and a pair of ER Small Lasers. This system disrupted Word of Blake forces very effectively.
+</deployment>
+
+<history>
+Using this stolen data, the Federated Commonwealth immediately began development on two different designs, one of which was a light scout suit, the Infiltrator. For the second design, a team at the New Avalon Institute of Science, consisting mostly of Lyran nationals, set to work on a heavily-armored and well-armed suit that could stand and fight against other battle armor. Rather than attempting to copy the humanoid Elemental suit that was so effective, they opted to create a quadruped design that could serve as a mobile weapons platform. The reasons behind this unusual decision were several-fold: with its low profile and four-legged base, the Sloth would provide a strong, stable platform to better mount more impressive weaponry. The quadruped design also had fewer technical challenges than a humanoid one, sharing more in common with traditional BattleMechs and Combat Vehicles, speeding up the development process and making it easier to train new pilots. The first prototype SLH-X Sloth was deployed by the 1st Somerset Strikers on Waldorff V during an initial life-fire test alongside the Infiltrator; its first test pilot was Franklin Sakamoto who, unofficially, was the illegitimate son of Draconis Combine Coordinator Theodore Kurita. When Clan Jade Falcon launched a surprise attack during the test Franklin also became the first Inner Sphere battle armor warrior to destroy an enemy 'Mech in combat, using his Sloth's mine launcher to take down a Mad Dog. Based on its combat performance the Commonwealth approved the Sloth for production in 3050, debuting at the same time as the Infiltrator. While the Sloth served well for its time and represented an important first step in native Inner Sphere battle armor development, it suffered from flaws inherent to its design. While deployed throughout the twin realms, Federated Suns high command was never impressed by the Sloth's design, resulting in production shifting to the Lyran half. When the FedCom Civil War ended the Lyran Alliance would continue to build the Sloth in limited numbers until its replacement, the Fenrir, debuted in 3060. Afterwards all production on the Sloth ceased, although surviving designs would continue to be used by many units, including mercenaries, for several more years.
+</history>
+
+<manufacturer>
+TharHes Industries,Albion Advanced Technologies and Products
+</manufacturer>
+
+<primaryFactory>
+Eutin,New Avalon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -2260,7 +2260,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CLVTOLJetBooster");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
+        misc.flags = misc.flags.or(F_JET_BOOSTER).or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_MASC);
         misc.subType |= S_JETBOOSTER;
         misc.criticals = 1;
         misc.omniFixedOnly = true;
@@ -3972,7 +3972,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.addLookupName("HeatSuit");
         misc.damageDivisor = 1.0;
-        misc.subType = S_COLD_WEATHER;
+        misc.subType = S_HOT_WEATHER;
         misc.cost = 100;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "317, TO";
@@ -6241,7 +6241,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "213, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C).setISAdvancement(2595, 2597, 3050, 2845, 3045)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, false, true).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_CC);
         return misc;
     }
@@ -8584,7 +8584,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5;
         misc.tankslots = 0;
         misc.cost = 50000;
-        misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT);
+        misc.flags = misc.flags.or(F_MAST_MOUNT).or(F_VTOL_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "350, TO";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)

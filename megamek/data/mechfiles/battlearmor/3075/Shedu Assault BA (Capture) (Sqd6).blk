@@ -1,0 +1,161 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Shedu Assault Battle Armor
+</Name>
+
+<Model>
+(Capture Team)(Sqd6)
+</Model>
+
+<mul id:>
+9034
+</mul id:>
+
+<year>
+3074
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+30
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<Squad Equipment>
+ISBAMagshotGR:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+IS BA Advanced:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+ISDetachableWeaponPack:Body
+ISBATaser:DWP
+</Trooper 6 Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+15
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+
+<overview>
+The Shedu is a battle armor design in the Word of Blake's Demon Series that is used exclusively by Manei Domini, one of the last of the Demons to be created by Precentor Vapula. 
+</overview>
+
+<capabilities>
+The major advantage of the quad chassis is its speed, and Vapula used that to give the Shedu an excellent maximum ground speed for an assault-weight suit. Unlike other quad designs like the Fenrir or Rottweiler however Vapula did not skimp on protection and gave it 600kg of advanced armor, enough to withstand a Gauss rifle slug. Thus compared to the Fenrir the Shedu has slightly less space and weight for weaponry, though since like all Demon suits it is designed to work in groups this is less of a problem. Although equipped with modular weapon mounts three primary configurations appeared with the introduction of the Shedu, followed by a couple more exotic variants. As one of the last Demon suits to enter service the Shedu was relatively rare, though more common than its companion the Nephilim.
+</capabilities>
+
+<deployment>
+The "Capture" configuration utilizes the DWP for a pair of Battle Armor Tasers, giving each suit the potential to force two BattleMechs to shut down, though at the cost of potential debilitating feedback. A turret-mounted Magshot Gauss Rifle provides withering firepower that enables the Shedu to stay in the fight even if it either uses all of its tasers or jettisons the DWP.
+</deployment>
+
+<history>
+Named for the half-bull, half-human demons of myth, the Shedu is an assault-class, quadrupedal battle suit, a radical departure from the rest of the Demon line. 
+</history>
+
+<manufacturer>
+Gibson Federated BattleMechs (A Division of Free Worlds Defense Industries)
+</manufacturer>
+
+<primaryFactory>
+Gibson
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+The TRO3075 entry lists a 3-slot configurable turret with a weight of 40 kg. The correct weight of 80 kg would exceed the maximum 2000 kg.
+</notes>

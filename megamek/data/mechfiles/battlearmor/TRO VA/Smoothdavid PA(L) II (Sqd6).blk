@@ -1,0 +1,116 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Smoothdavid PA(L)
+</Name>
+
+<Model>
+II(Sqd6)
+</Model>
+
+<mul id:>
+9039
+</mul id:>
+
+<year>
+3064
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+BASearchlight:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<source>
+TRO Vehicle Annex (r) - Cvivil War
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+1
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The Smoothdavid II/III and Smoothgoliath II Light Personal Armor was designed by TharHes Industries of Tharkad.
+</overview>
+
+<capabilities>
+The suit is protected by only 50kg of armor, making it ill-suited for the battlefield. Despite this lack of protection compared to standard Battle Armor, the Smoothdavid II is able to conduct anti-BattleMech attacks.
+</capabilities>
+
+<deployment>
+The Smoothdavid II is fitted out with two modular Anti-Personnel Weapon Mounts, one found on each arm. In addition to the APWs, because the suit is fitted with Armored Gloves manipulators, it can also handle any handheld infantry weaponry. The suit is equipped with a searchlight and able to carry 205kg of equipment.
+</deployment>
+
+<history>
+Introduced in 3064, the design was created for government and law enforcement agencies, when it became apparent that Battle Armor was too heavy and clumsy for police work. The Smoothdavid prototypes were first seen in action on Solaris VII in field tests. The tests in the Exoskeleton arenas of Solaris proved to be successful and boosted the suit's visibility to potential customers. The suit became part of various government agencies and saw service during the last Whitting Conference in 3067.
+</history>
+
+<manufacturer>
+TharHes Industries
+</manufacturer>
+
+<primaryFactory>
+Tharkad
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

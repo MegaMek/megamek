@@ -187,7 +187,8 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+        try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(isr)) {
             int lineNumber = 0;
             String key = "Huh";
             float totalWeight = 0.0f;

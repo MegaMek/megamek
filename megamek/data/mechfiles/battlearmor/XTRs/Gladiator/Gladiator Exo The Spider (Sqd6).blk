@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gladiator Exoskeleton
+</Name>
+
+<Model>
+'The Spider'(Sqd6)
+</Model>
+
+<mul id:>
+8880
+</mul id:>
+
+<year>
+3076
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+BA-Magnetic Clamp:Body
+BABattleClawVibro:LA
+BAArmoredGlove:RA
+ISMechanicalJumpBooster:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+Infantry Auto Rifle:APM
+</Squad Equipment>
+
+<source>
+XTR Gladiators
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The Gladiator Exoskeleton was created for the thrills and chills of the Class 1 fighting circuit on Solaris VII.
+</overview>
+
+<capabilities>
+The exoskeleton was designed to handle any of a wide array of handheld infantry arms and also heavy melee weaponry for show fights. It is noted for its sturdy and easy to maintain design. The suit visually resembles a mechanical knight. The suit is typically equipped with a pair of Armored Gloves and has 100 kg worth of Standard Armor protecting its hull. Weaponry typically used for the Gladiator was primarily arena restricted weaponry. It also could have its manipulators changed for other equipment. One popular modification was equipped with an Industrial Drill.
+</capabilities>
+
+<deployment>
+The personal exoskeleton of Abasi Oteke, "The Spider" is equipped with a Battle-Vibro Claw on its right arm while keeping the armored glove on the left. Oteke then added Magnetic Clamps on the knees and elbows, which baffled many opponents until they discovered the final addition: A Mechanical Jump Booster that launches "The Spider" into the air and lets Oteke grab onto the many metal structures that surround a Class 1 pit fight.
+</deployment>
+
+<history>
+The Gladiator was Solaris Arms' entry against similar Pit Fighters to get notoriety. Solaris Arms hoped that by demonstrating their Exoskeleton's capacities in the arena, they would catch the eye of military organizations. They hoped to lure them into purchasing the design for anti-BattleMech combat applications. However, the general consensus from the Inner Sphere powers was that it was more prudent to concentrate their funding into battle armor development. The Solaris Arms plant was destroyed in 3071, but StarCorps put the design into production on Emris IV.
+</history>
+
+
+<manufacturer>
+Solaris Arms
+</manufacturer>
+
+<primaryFactory>
+Solaris VII
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

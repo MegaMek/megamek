@@ -25,6 +25,9 @@ import megamek.common.weapons.bayweapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayweapons.CapitalMissileBayWeapon;
 
 import javax.swing.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -68,9 +71,23 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private JLabel labDeploymentZone = new JLabel(
             Messages.getString("CustomMechDialog.labDeploymentZone"), SwingConstants.RIGHT);
 
+    private JLabel labDeploymentOffset = new JLabel(
+            Messages.getString("CustomMechDialog.labDeploymentOffset"), SwingConstants.RIGHT);
+    
+    private JLabel labDeploymentWidth = new JLabel(
+            Messages.getString("CustomMechDialog.labDeploymentWidth"), SwingConstants.RIGHT);
+    
     private JComboBox<String> choDeploymentRound = new JComboBox<>();
     
     private JComboBox<String> choDeploymentZone = new JComboBox<>();
+    
+    // this might seem like kind of a dumb way to declare it, but JFormattedTextField doesn't have an overload that
+    // takes both a number formatter and a default value.
+    private final NumberFormatter numFormatter = new NumberFormatter();
+    private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
+    
+    private JFormattedTextField txtDeploymentOffset = new JFormattedTextField(formatterFactory);
+    private JFormattedTextField txtDeploymentWidth = new JFormattedTextField(formatterFactory);
 
     private JLabel labDeployShutdown = new JLabel(
             Messages.getString("CustomMechDialog.labDeployShutdown"), SwingConstants.RIGHT);
@@ -166,12 +183,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private HashMap<Integer, WeaponQuirks> h_wpnQuirks = new HashMap<>();
 
     private ArrayList<DialogOptionComponent> optionComps = new ArrayList<>();
-    // private ArrayList<DialogOptionComponent> quirkComps = new
-    // ArrayList<DialogOptionComponent>();
     private ArrayList<DialogOptionComponent> partRepsComps = new ArrayList<>();
-    // private HashMap<Integer, ArrayList<DialogOptionComponent>>
-    // h_wpnQuirkComps = new HashMap<Integer,
-    // ArrayList<DialogOptionComponent>>();
 
     private boolean editable;
 
@@ -379,6 +391,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panDeploy.add(choDeploymentRound, GBC.eol());
         panDeploy.add(labDeploymentZone, GBC.std());
         panDeploy.add(choDeploymentZone, GBC.eol());
+        panDeploy.add(labDeploymentOffset, GBC.std());
+        panDeploy.add(txtDeploymentOffset, GBC.eol());
+        panDeploy.add(labDeploymentWidth, GBC.std());
+        panDeploy.add(txtDeploymentWidth, GBC.eol());
+        
+        numFormatter.setMinimum(0);
+        numFormatter.setCommitsOnValidEdit(true);
+        
+        labDeploymentOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
+        labDeploymentWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
+        txtDeploymentOffset.setColumns(4);
+        txtDeploymentWidth.setColumns(4);
+        
         if (clientgui.getClient().getGame().getOptions()
                 .booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)
                 && !(entity instanceof Infantry)
@@ -782,7 +807,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choStartingMode.addItemListener(this);
         }
         
-        choDeploymentRound.removeItemListener(this);
+        choDeploymentZone.removeItemListener(this);
+        txtDeploymentOffset.setEnabled(false);
+        txtDeploymentWidth.setEnabled(false);
         
         choDeploymentRound.removeAllItems();
         choDeploymentRound.addItem(Messages.getString("CustomMechDialog.StartOfGame"));
@@ -817,11 +844,17 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         choDeploymentZone.addItem(Messages.getString("CustomMechDialog.deployEdge"));
         choDeploymentZone.addItem(Messages.getString("CustomMechDialog.deployCenter"));
 
-        choDeploymentZone.setEnabled(entity.getDeployRound() != 0);
         choDeploymentZone.setSelectedIndex(entity.getStartingPos(false) + 1);
         
-        choDeploymentRound.addItemListener(this);
+        choDeploymentZone.addItemListener(this);
 
+        txtDeploymentOffset.setText(Integer.toString(entity.getStartingOffset(false)));
+        txtDeploymentWidth.setText(Integer.toString(entity.getStartingWidth(false)));
+        
+        boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0);
+        txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
+        txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
+        
         chHidden.removeActionListener(this);
         boolean enableHidden = true;
         // Airborne units can't be hidden
@@ -1224,10 +1257,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     entity.setConversionMode(LandAirMech.CONV_MODE_MECH);
                 }
             }
-
+            
             // Set the entity's deployment position and round.
             entity.setStartingPos(choDeploymentZone.getSelectedIndex() - 1);
             entity.setDeployRound(choDeploymentRound.getSelectedIndex());
+            entity.setStartingOffset(Integer.parseInt(txtDeploymentOffset.getText()));
+            entity.setStartingWidth(Integer.parseInt(txtDeploymentWidth.getText()));
 
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected()
@@ -1306,13 +1341,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chDeployProne.setSelected(false);
             return;
         }
-        if (itemEvent.getSource().equals(choDeploymentRound)) {
-            if (choDeploymentRound.getSelectedIndex() == 0) {
-                choDeploymentZone.setEnabled(false);
-                choDeploymentZone.setSelectedIndex(0);
-            } else {
-                choDeploymentZone.setEnabled(true);
-            }
+        
+        if (itemEvent.getSource().equals(choDeploymentZone)) {
+            boolean enableDeploymentZoneControls = choDeploymentZone.isEnabled() && (choDeploymentZone.getSelectedIndex() > 0);
+            txtDeploymentOffset.setEnabled(enableDeploymentZoneControls);
+            txtDeploymentWidth.setEnabled(enableDeploymentZoneControls);
         }
     }
 

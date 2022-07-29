@@ -41,7 +41,10 @@ import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -49,17 +52,17 @@ import java.util.zip.GZIPInputStream;
  */
 public class Server implements Runnable {
     // server setup
-    private String password;
+    private final String password;
 
     private final IGameManager gameManager;
 
     private final String metaServerUrl;
 
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
 
-    private String motd;
+    private final String motd;
 
-    private EmailService mailer;
+    private final EmailService mailer;
 
     public static class ReceivedPacket {
         private int connectionId;
@@ -121,30 +124,30 @@ public class Server implements Runnable {
     }
 
     // commands
-    private Hashtable<String, ServerCommand> commandsHash = new Hashtable<>();
+    private final Map<String, ServerCommand> commandsHash = new ConcurrentHashMap<>();
 
     // game info
-    private final Vector<AbstractConnection> connections = new Vector<>(4);
+    private final List<AbstractConnection> connections = new CopyOnWriteArrayList<>();
 
-    private Hashtable<Integer, ConnectionHandler> connectionHandlers = new Hashtable<>();
+    private final Map<Integer, ConnectionHandler> connectionHandlers = new ConcurrentHashMap<>();
 
     private final ConcurrentLinkedQueue<ReceivedPacket> packetQueue = new ConcurrentLinkedQueue<>();
 
     private final boolean dedicated;
 
-    private Vector<AbstractConnection> connectionsPending = new Vector<>(4);
+    private final List<AbstractConnection> connectionsPending = new CopyOnWriteArrayList<>();
 
-    private Hashtable<Integer, AbstractConnection> connectionIds = new Hashtable<>();
+    private final Map<Integer, AbstractConnection> connectionIds = new ConcurrentHashMap<>();
 
     private int connectionCounter;
 
     // listens for and connects players
     private Thread connector;
 
-    private PacketPump packetPump;
+    private final PacketPump packetPump;
     private Thread packetPumpThread;
 
-    private Timer watchdogTimer = new Timer("Watchdog Timer");
+    private final Timer watchdogTimer = new Timer("Watchdog Timer");
 
     private static Server serverInstance = null;
 
@@ -177,32 +180,31 @@ public class Server implements Runnable {
 
     private static final String WARGAMES_RESPONSE = "Let's play global thermonuclear war.";
 
-    private ConnectionListener connectionListener = new ConnectionListener() {
+    private final ConnectionListener connectionListener = new ConnectionListener() {
         /**
          * Called when it is sensed that a connection has terminated.
          */
         @Override
         public void disconnected(DisconnectedEvent e) {
+            AbstractConnection conn = e.getConnection();
+
+            // write something in the log
+            LogManager.getLogger().info("s: connection " + conn.getId() + " disconnected");
+
+            connections.remove(conn);
             synchronized (serverLock) {
-                AbstractConnection conn = e.getConnection();
-
-                // write something in the log
-                LogManager.getLogger().info("s: connection " + conn.getId() + " disconnected");
-
-                connections.removeElement(conn);
-                connectionsPending.removeElement(conn);
+                connectionsPending.remove(conn);
                 connectionIds.remove(conn.getId());
                 ConnectionHandler ch = connectionHandlers.get(conn.getId());
                 if (ch != null) {
                     ch.signalStop();
                     connectionHandlers.remove(conn.getId());
                 }
-
-                // if there's a player for this connection, remove it too
-                Player player = getPlayer(conn.getId());
-                if (null != player) {
-                    Server.this.disconnected(player);
-                }
+            }
+            // if there's a player for this connection, remove it too
+            Player player = getPlayer(conn.getId());
+            if (null != player) {
+                Server.this.disconnected(player);
             }
         }
 
@@ -479,11 +481,8 @@ public class Server implements Runnable {
         }
 
         // kill pending connections
-        for (Enumeration<AbstractConnection> connEnum = connectionsPending.elements(); connEnum.hasMoreElements(); ) {
-            AbstractConnection conn = connEnum.nextElement();
-            conn.close();
-        }
-        connectionsPending.removeAllElements();
+        connectionsPending.forEach(AbstractConnection::close);
+        connectionsPending.clear();
 
         // Send "kill" commands to all connections
         // This WILL handle the connection end on both sides
@@ -508,8 +507,8 @@ public class Server implements Runnable {
     /**
      * Returns an enumeration of all the command names
      */
-    public Enumeration<String> getAllCommandNames() {
-        return commandsHash.keys();
+    public Collection<String> getAllCommandNames() {
+        return commandsHash.keySet();
     }
 
     /**
@@ -547,6 +546,8 @@ public class Server implements Runnable {
         if (null != gamePlayer) {
             gamePlayer.setColour(player.getColour());
             gamePlayer.setStartingPos(player.getStartingPos());
+            gamePlayer.setStartWidth(player.getStartWidth());
+            gamePlayer.setStartOffset(player.getStartOffset());
             gamePlayer.setTeam(player.getTeam());
             gamePlayer.setCamouflage(player.getCamouflage().clone());
             gamePlayer.setNbrMFConventional(player.getNbrMFConventional());
@@ -666,6 +667,7 @@ public class Server implements Runnable {
                 if (player.isGhost()) {
                     returning = true;
                     player.setGhost(false);
+                    player.setBot(isBot);
                     // switch id
                     connId = player.getId();
                     conn.setId(connId);
@@ -679,8 +681,8 @@ public class Server implements Runnable {
         }
 
         // right, switch the connection into the "active" bin
-        connectionsPending.removeElement(conn);
-        connections.addElement(conn);
+        connectionsPending.remove(conn);
+        connections.add(conn);
         connectionIds.put(conn.getId(), conn);
 
         // add and validate the player info
@@ -1005,10 +1007,11 @@ public class Server implements Runnable {
     }
 
     /**
-     * Returns a connection, indexed by id
+     * Executes the process on each active connection.
+     * @param process The process to execute.
      */
-    public Enumeration<AbstractConnection> getConnections() {
-        return connections.elements();
+    public void forEachConnection(Consumer<AbstractConnection> process) {
+        connections.forEach(process);
     }
 
     /**
@@ -1096,6 +1099,10 @@ public class Server implements Runnable {
         gameManager.requestTeamChange(teamId, player);
     }
 
+    public void requestGameMaster(Player player) {
+        gameManager.requestGameMaster(player);
+    }
+
     public static String formatChatMessage(String origin, String message) {
         return origin + ": " + message;
     }
@@ -1123,11 +1130,9 @@ public class Server implements Runnable {
     }
 
     void send(Packet packet) {
-        synchronized (serverLock) {
-            connections.stream()
-                    .filter(Objects::nonNull)
-                    .forEach(connection -> connection.send(packet));
-        }
+        connections.stream()
+                .filter(Objects::nonNull)
+                .forEach(connection -> connection.send(packet));
     }
 
     /**
@@ -1276,7 +1281,7 @@ public class Server implements Runnable {
                     AbstractConnection c = ConnectionFactory.getInstance().createServerConnection(s, id);
                     c.addConnectionListener(connectionListener);
                     c.open();
-                    connectionsPending.addElement(c);
+                    connectionsPending.add(c);
                     ConnectionHandler ch = new ConnectionHandler(c);
                     Thread newConnThread = new Thread(ch, "Connection " + id);
                     newConnThread.start();

@@ -1,0 +1,125 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Gray Death Standard Suit
+</Name>
+
+<Model>
+[Laser](Sqd6)
+</Model>
+
+<mul id:>
+8891
+</mul id:>
+
+<year>
+3052
+</year>
+
+<originalBuildYear>
+3052
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBASmallLaser:RA
+BAAPMount:LA
+InfantryAssaultRifle:APM:LA
+ISImprovedSensors:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:LA
+</Squad Equipment>
+
+<source>
+TRO 3058U - Clan Invasion
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Gray Death Standard battle armor was developed by the technicians of the Gray Death Legion after the New Avalon Institute of Science sent them prototype battle armor suits, the progenitors of what eventually became the Inner Sphere Standard, for field testing. 
+</overview>
+
+<capabilities>
+The Legion decided to remove the suits' jump jets to make room for dedicated anti-infantry firepower, superior sensor systems, and reinforced myomer bundles to improve ground speed. While losing the ability to leap over obstacles, these changes made the suit easier to maintain and cheaper to build than the Inner Sphere Standard.
+</capabilities>
+
+<deployment>
+The battle armor retains the Modular Weapon Mount of the Inner Sphere Standard in its right arm, allowing it to carry either a single-tube SRM launcher with four reloads, a Flamer, a Small Laser, or a Machine Gun. Starting in 3069 the mount could also accept a Light Recoilless Rifle. On its left arm is an Anti-Personnel Weapon Mount for dealing with conventional infantry. The left arm also ends in a Battle Claw, allowing it to make anti-'Mech attacks or be transported into battle via OmniMech handholds. The Gray Death Standard carries 450kg of standard armoring, enough to survive a full burst from an Inner Sphere Large Pulse Laser and keep the trooper inside alive, and Improved Sensors for detecting hidden opponents, including mimicking the function of a portable radar sensor. It can also maintain an impressive top speed of 32.4 km/h over open ground.
+</deployment>
+
+<history>
+The new armor, as well as the Gray Death Scout suit, debuted during the Clan Invasion in battle against Clan Jade Falcon for control of Pandora. The Gray Death Standard played a decisive role in the Gray Death Legion's victory over the Falcons. Afterwards the Legion continued to build limited numbers of Standard suits, largely to replenish their own losses but also to sell small numbers to other mercenary commands. Following its creation, the Legion also sold limited numbers of Gray Death Standard suits to the Lyran Alliance. The Gray Death Legion was effectively destroyed in battle on Hesperus II in 3065, one of the many casualties of the FedCom Civil War, but the suits they created would live on. Surviving members of the Legion's support staff created Gray Death Technologies and, with financial aid from Defiance Industries, established a dedicated factory on Glengarry to continued production. As the only dedicated battle armor manufacturer within the realm, Gray Death Technologies continued to sell its Standard suits to the Lyran Alliance Armed Forces and various mercenaries. Disaster struck again during the Jihad when the Word of Blake attacked Glengarry in 3073 and sacked the factory. The destruction was not complete however and the survivors were able to restart production on a new variant of the Gray Death Standard. When Precentor Berith attacked again a year later he was more thorough in destroying the factory and rendered GDT incapable of building any battle suits. By that point Gray Death Technologies was bought up by Defiance Industries, which decided to move manufacturing of the Gray Death Standard to Furillo and put a hold on new suits. Production of the Gray Death Strike suit resumed in late 3080, although sale of the latter was restricted to the Lyran Alliance (and Defiance Industries' own security forces).
+</history>
+
+<manufacturer>
+Defiance Industries,Gray Death Technologies
+</manufacturer>
+
+<primaryFactory>
+Furillo,Glengary
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

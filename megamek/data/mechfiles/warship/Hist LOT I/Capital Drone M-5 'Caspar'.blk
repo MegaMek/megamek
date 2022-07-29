@@ -1,0 +1,270 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Capital Drone
+</Name>
+
+<Model>
+M-5 'Caspar'
+</Model>
+
+<mul id:>
+7146
+</mul id:>
+
+<year>
+2710
+</year>
+
+<originalBuildYear>
+2710
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+cargobay:1840.5:1:1
+</transporters>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<heatsinks>
+1250
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+2500
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+11
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+48
+48
+48
+48
+48
+48
+</armor>
+
+<Nose Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+Naval Laser 55
+(B) Naval PPC (Heavy)
+Naval PPC (Heavy)
+(B) Capital Missile Launcher (Killer Whale)
+Ammo Killer Whale:20
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:20
+Ammo AR10 Killer Whale:10
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+(B) Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:20
+Ammo AR10 Killer Whale:10
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) Naval Laser 45
+Naval Laser 45
+Naval Laser 45
+(B) Capital Missile Launcher (Barracuda)
+Capital Missile Launcher (Barracuda)
+Ammo Barracuda:40
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) Naval Laser 55
+Naval Laser 55
+(B) Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Naval Autocannon (NAC/20)
+Ammo NAC/20:300
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+SDSSelfDestructSystem
+ImprovedCasparDroneControlSystem
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) Naval Laser 55
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:40
+Ammo AR10 Killer Whale:20
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) Naval Laser 55
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Naval Autocannon (NAC/25)
+Naval Autocannon (NAC/25)
+Ammo NAC/25:200
+(B) Capital Missile Launcher (AR10 Launcher)
+Capital Missile Launcher (AR10 Launcher)
+Ammo AR10 Barracuda:40
+Ammo AR10 Killer Whale:20
+</Right Broadsides Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<capabilities>
+The Caspar has four Class-55 Naval Lasers, two Heavy NPPCs, and one Killer Whale (20 missiles), which gives it lots of long-range armament and contributes to the deadly nature of its slicing strikes. Almost every ship of the day may be destroyed by two Class-55 Naval Lasers, three NAC/20's (300 rounds), and one AR-10 Launcher (with 10 Killer Whale and 20 Barracuda missiles), positioned in the forward quarters facing to give the maximum shooting arc. With one Class-55 Naval Laser, four Class-25 Naval Autocannons (200 rounds per pairing, split into groups of two to help concentrate firepower against enemies), and two AR-10 Launchers (with 20 Killer Whale and 20 Barracuda missiles), the Caspar was able to dive into enemy formations and rip them to pieces. To complete up its powerful armament, the rear quarters are equipped with two Class-55 Naval Lasers, three Class-20 Naval Autocannons, and two Barracuda Launchers, each of which can fire 40 missiles. [5] The self-destruct system that was integrated into the engine compartment was thought to be the single weakness of this ideal WarShip. The WarShip drone might be destroyed if the drone received a lucky blow to the aft. Ferro-Carbide armour weighing 322.5 tonnes encased the hull of the Caspar.
+</capabilities>
+
+<overview>
+Considered the pinnacle of the SDS network, the M-5 drones were named after an ancient Terran commander and would go on to become the thing of legends after the Star League fell and is still talked about in revered tones to this day.
+</overview>
+
+<deployment>
+The SDS Drone Control System provides for (Gunnery 3, Piloting 4).
+</deployment>
+
+<history>
+The Caspar was the primary capital-class SDS drone. The M-5 was based upon the Lola block II hull, which was heavily modifying to make it a nightmare for any opponent. The design of the M-5 allowed it to nearly mount the firepower of a battleship-class ship while maintaining the thrust of a destroyer-class ship. Most worlds of the Hegemony were protected by at least a handful of M-5 drones while key worlds had multiple squadrons. Terra itself was defended by two hundred and fifty of these drones and if not for Kerensky's technicians devising a jamming system against them, the Inner Sphere today might still have the Amaris Empire sitting at its center.
+</history>
+
+<manufacturer>
+Nicholas Spacecraft/Ulsop Robotics
+</manufacturer>
+
+<primaryFactory>
+New Earth
+</primaryFactory>
+
+<notes>
+SDS Drone Control System (Gunnery 3, Piloting 4).
+</notes>
+
+<use>
+Capital Drone
+</use>
+
+<length>
+628 meters
+</length>
+
+<source>
+LofT Vol 1 - Star League
+</source>
+
+<tonnage>
+680000.0
+</tonnage>
+
+<bv>
+181377
+</bv>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<crew>
+229
+</crew>
+
+<officers>
+39
+</officers>
+
+<gunners>
+48
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+0
+</life_boat>
+
+<escape_pod>
+0
+</escape_pod>
+

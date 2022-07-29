@@ -4,10 +4,7 @@ import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.FiringDisplay;
-import megamek.client.ui.swing.MovementDisplay;
-import megamek.client.ui.swing.TargetingPhaseDisplay;
+import megamek.client.ui.swing.*;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -1036,10 +1033,13 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         String heatText = Integer.toString(currentHeatBuildup);
-        if (currentHeatBuildup > en.getHeatCapacityWithWater()) {
+        int heatOverCapacity = currentHeatBuildup - en.getHeatCapacityWithWater();
+        if (heatOverCapacity > 0) {
             heatText += "*"; // overheat indication
         }
 
+        currentHeatBuildupR.setForeground(GUIPreferences.getInstance().getColorForHeat(
+                heatOverCapacity, Color.WHITE));
         currentHeatBuildupR.setText(heatText + " (" + heatCapacityStr + ')');
 
         // change what is visible based on type
@@ -1923,9 +1923,17 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             } else if (atype.getAmmoType() == AmmoType.T_MML) {
                 if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                    ranges[0] = new int[] { 6, 7, 14, 21, 28 };
+                    if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+                        ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+                    } else {
+                        ranges[0] = new int[] { 6, 7, 14, 21, 28 };
+                    }
                 } else {
-                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                    if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+                        ranges[0] = new int[] { 0, 2, 4, 6, 8 };
+                    } else {
+                        ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                    }
                 }
             } else if (atype.getAmmoType() == AmmoType.T_IATM) {
                 if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
@@ -1939,7 +1947,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 }
             }
         }
-
         // No minimum range for hotload
         if ((mounted.getLinked() != null) && mounted.getLinked().isHotLoaded()) {
             ranges[0][0] = 0;
@@ -2078,17 +2085,33 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             }
         } else if (atype.getAmmoType() == AmmoType.T_MML) {
             if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                wMinR.setText("6");
-                wShortR.setText("1 - 7");
-                wMedR.setText("8 - 14");
-                wLongR.setText("15 - 21");
-                wExtR.setText("21 - 28");
+                if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+                    wMinR.setText("4");
+                    wShortR.setText("1 - 5");
+                    wMedR.setText("6 - 10");
+                    wLongR.setText("11 - 15");
+                    wExtR.setText("16 - 20");
+                } else {
+                    wMinR.setText("6");
+                    wShortR.setText("1 - 7");
+                    wMedR.setText("8 - 14");
+                    wLongR.setText("15 - 21");
+                    wExtR.setText("21 - 28");
+                }
             } else {
-                wMinR.setText("---");
-                wShortR.setText("1 - 3");
-                wMedR.setText("4 - 6");
-                wLongR.setText("7 - 9");
-                wExtR.setText("10 - 12");
+                if (atype.getMunitionType() == AmmoType.M_DEAD_FIRE) {
+                    wMinR.setText("---");
+                    wShortR.setText("1 - 2");
+                    wMedR.setText("3 - 4");
+                    wLongR.setText("5 - 6");
+                    wExtR.setText("7 - 8");
+                } else {
+                    wMinR.setText("---");
+                    wShortR.setText("1 - 3");
+                    wMedR.setText("4 - 6");
+                    wLongR.setText("7 - 9");
+                    wExtR.setText("10 - 12");
+                }
             }
         } else if (atype.getAmmoType() == AmmoType.T_IATM) {
             if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {

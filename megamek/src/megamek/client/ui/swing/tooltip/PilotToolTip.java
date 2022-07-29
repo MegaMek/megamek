@@ -40,33 +40,36 @@ public final class PilotToolTip {
     
     /** the portrait base size */
     private final static int PORTRAIT_BASESIZE = 72;
+    final static String BG_COLOR = "#313131";
 
-    public static StringBuilder getPilotTipDetailed(Entity entity) {
-        return getPilotTip(entity, true);
+    public static StringBuilder getPilotTipDetailed(Entity entity, boolean showPortrait) {
+        return getPilotTip(entity, true, showPortrait, true);
     }
     
-    public static StringBuilder getPilotTipShort(Entity entity) {
-        return getPilotTip(entity, false);
+    public static StringBuilder getPilotTipShort(Entity entity, boolean showPortrait) {
+        return getPilotTip(entity, false, showPortrait, false);
     }
-    
+
     // PRIVATE
 
-    private static StringBuilder getPilotTip(final Entity entity, boolean detailed) {
+    private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait) {
         StringBuilder result = new StringBuilder();
         
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
-        result.append(TABLE_BEGIN);
-        result.append(crewInfo(entity));
-        
-        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)) {
+        result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%><TR><TD>");
+
+        if (showPortrait) {
+            result.append(crewPortraits(entity, showDefaultPortrait));
             // Add a spacer cell
             int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
             result.append("<TD WIDTH=" + dist + "></TD>");
-            result.append(crewPortraits(entity));
         }
+
+        result.append(crewInfoCell(entity));
+
         result.append(TABLE_END);
-        
+
         // The crew advantages and MD
         result.append(scaledHTMLSpacer(3));
         result.append(crewAdvs(entity, detailed));
@@ -74,7 +77,7 @@ public final class PilotToolTip {
     }
     
     /** Returns a tooltip part with names and skills of the crew. */
-    private static StringBuilder crewInfo(final Entity entity) {
+    private static StringBuilder crewInfoCell(final Entity entity) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
         StringBuilder result = new StringBuilder();
@@ -115,11 +118,11 @@ public final class PilotToolTip {
     }
     
     /** Returns a tooltip part with crew portraits. */
-    private static StringBuilder crewPortraits(final Entity entity) {
+    private static StringBuilder crewPortraits(final Entity entity, boolean showDefaultPortrait) {
         Crew crew = entity.getCrew();
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < crew.getSlotCount(); i++) {
-            if (crew.getPortrait(i).isDefault()) {
+            if ((!showDefaultPortrait) && crew.getPortrait(i).isDefault()) {
                 continue;
             }
 

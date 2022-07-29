@@ -1930,7 +1930,8 @@ public class BoardEditor extends JPanel
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBu)) { 
             buttonUpDn.setSelected(false);
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
+            if (((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0)
+                    && ((ae.getModifiers() & ActionEvent.ALT_MASK) == 0)) {
                 curHex.removeAllTerrains();
             }
             setBasicBuilding((ae.getModifiers() & ActionEvent.ALT_MASK) != 0);

@@ -17,7 +17,6 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.enums.GamePhase;
 import megamek.server.GameManager;
-import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Vector;
@@ -58,9 +57,9 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         if (wtype != null) {
-            r.add(wtype.getName() + " " + ammoType.getSubMunitionName());
+            r.add(wtype.getName() + ' ' + ammoType.getSubMunitionName());
         } else {
-            r.add("Error: From Nowhwere");
+            r.add("Error: From Nowhere");
         }
 
         r.add(target.getDisplayName(), true);

@@ -1,0 +1,99 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Buraq Fast Battle Armor
+</Name>
+
+<Model>
+(Support)(Sqd4)
+</Model>
+
+<mul id:>
+6235
+</mul id:>
+
+<year>
+3104
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<Point Equipment>
+CLBAMyomerBooster:Body
+Clan Advanced SRM 2:Body
+BA-Advanced SRM-2 Ammo:Body:Shots4#
+CLBALightTAG:Body
+</Point Equipment>
+
+<source>
+TRO 3145 The Clans - Late Republic
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+
+<overview>
+The Buraq is a Clan Medium weight Quad battle armor, which was designed by Clan Hell's Horses during the early thirty-second century.
+</overview>
+
+<history>
+The horse-like Buraq was named for the mystical steed from ancient times, and like its mystical namesake, the battle armor is noted for its high ground speed. Typically, Clan Hell's Horses have used full stars consisting of different variants of the battle armor. These Buraq Stars work as a team in their appointed mission assignments. They've been utilized on the Horses' Periphery borders to help scout and pin down pirates terrorizing their worlds.
+</history>
+
+<capabilities>
+The Buraq's main feature is its Myomer Booster, which enables the Armor to reach its notable high speeds. Operators of the Buraq must rely on their speed for protection, as the Armor's hull is only protected by 175 kgs worth of Standard Armor. 
+</capabilities>
+
+<deployment>
+The Support model is used as an artillery spotter, and its main weapon is a single Advanced SRM 2 launcher that comes with four salvos of weapons fire. While also retaining the Myomer Booster, the Support model's most important feature is its Light Target Acquisition Gear.
+</deployment>
+
+<manufacturer>
+Csesztreg Industriplex Gamma
+</manufacturer>
+
+<primaryFactory>
+Csesztreg
+</primaryFactory>

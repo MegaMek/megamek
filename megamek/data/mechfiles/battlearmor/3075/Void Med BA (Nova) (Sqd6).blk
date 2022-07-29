@@ -1,0 +1,122 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Void Medium Battle Armor
+</Name>
+
+<Model>
+(Nova Cat)(Sqd6)
+</Model>
+
+<mul id:>
+9067
+</mul id:>
+
+<year>
+3068
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+ISBAMagshotGR:LA
+BAHeavyBattleClawVibro:RA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+ISBAJumpBooster:Body
+</Squad Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Void is a battle armor design that is produced by the Draconis Combine.
+</overview>
+
+<capabilities>
+The Void is protected by enough improved stealth armor to stop a medium laser. The stealth armor makes it more difficult to target the trooper, while also making it all but invisible to enemy detection devices, such as Active Probes. Like the Kage, the Void can jump one hundred and twenty meters, though it achieves this through the use of a jump booster instead of the partial wing. The Void can mount and ride OmniMechs.
+</capabilities>
+
+<deployment>
+Many Nova Cats also found the PPC too bulky, so they swapped it out with their version of the Magshot Gauss Rifle .
+</deployment>
+
+<history>
+ The DCMS decided to push its battle armor development program to continue producing new designs following the surge of the 3050s. Though the Combine-Ghost Bear War set the timetable back, the Void debuted in 3067 to a lukewarm reception. It was only after the High Command and Procurement Department realized that part of the design process involved making the suit specifically adjustable to accommodate Elementals, and fully understood the possibilities for trade and partnership with Clan Nova Cat, that a battlesuit that so closely resembles the Kage it was based upon was approved for production. 
+</history>
+
+<manufacturer>
+Ishikawajima-Harima BAI
+</manufacturer>
+
+<primaryFactory>
+Luthien
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

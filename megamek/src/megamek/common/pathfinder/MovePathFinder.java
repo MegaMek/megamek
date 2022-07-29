@@ -27,6 +27,13 @@ import java.util.*;
  */
 public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, MovePath> {
     /**
+     * This constant defines the maximum number of times it makes sense
+     * for a unit to turn in a row - if you're turning right four times, you might as well
+     * turn left twice instead.
+     */
+    private static final int MAX_TURN_COUNT = 3;
+    
+    /**
      * Node defined by coordinates and unit facing.
      * @author Saginatio
      */
@@ -254,13 +261,18 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
 
             final ArrayList<MovePath> result = new ArrayList<>();
 
-            if (lType != MoveStepType.TURN_LEFT) {
+            // we're trying to prevent
+            // a) turning left and right endlessly
+            // b) spinning around endlessly
+            // especially during movement where turning costs 0 MP
+            if (lType != MoveStepType.TURN_LEFT &&
+                    (mp.getEndStepCount(MoveStepType.TURN_RIGHT) < MAX_TURN_COUNT)) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
             }
-            if (lType != MoveStepType.TURN_RIGHT) {
+            if (lType != MoveStepType.TURN_RIGHT &&
+                    (mp.getEndStepCount(MoveStepType.TURN_LEFT) < MAX_TURN_COUNT)) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
             }
-
 
             /*
              * If the unit is prone or hull-down it limits movement options,
@@ -300,8 +312,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<CoordsWithFacing, C, M
             return result;
         }
     }
-
-     /**
+    
+    /**
      * Creates a new instance of MovePathFinder. Sets DestinationMap to
      * {@link MovePathDestinationMap} and adds {@link MovePathLegalityFilter}.
      * Rest of the methods needed by AbstractPathFinder have to be passed as a

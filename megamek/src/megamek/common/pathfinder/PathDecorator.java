@@ -112,7 +112,7 @@ public class PathDecorator {
         desiredMPs.add(source.getCachedEntityState().getRunMPwithoutMASC());
         desiredMPs.add(source.getCachedEntityState().getRunMPNoGravity());
         desiredMPs.add(source.getCachedEntityState().getWalkMP());
-        
+
         for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
             retVal.addAll(clippedPaths);

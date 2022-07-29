@@ -135,6 +135,10 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-'Mechs can't kick.");
         }
         
+        if (ae.isStuck()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Bogged-down units can't kick.");
+        }
+        
         String impossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
         if (impossible != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");

@@ -144,7 +144,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         }
 
         if (dataFile.exists("modular")) {
-            a.setBattleStation(true);
+            a.setModular(true);
         }
 
         // BattleStation

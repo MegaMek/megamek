@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ Vali Artillery Vehicle
 2600
 </year>
 
+<originalBuildYear>
+2600
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -35,6 +39,9 @@ IS Level 3
 <motion_type>
 Wheeled
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -80,6 +87,30 @@ ISArrowIV
 <Rear Equipment>
 </Rear Equipment>
 
+<capabilities>
+The only weapon that the Vali wields is a single Arrow IV launcher with five tons of ammunition.
+</capabilities>
+
+<overview>
+The concept for the Vali was born during the last years of the Reunification War by the Star League Defense Force when they were fighting the Taurian Concordat.
+</overview>
+
+<deployment>
+The Vali was produced for more than fifty years and was a mainstay in the forces of the SLDF through the twenty-seventh and twenty-eighth centuries. It fought all the way though Operation LIBERATION, suffering the highest losses of any artillery units. It is unknown if any were taken on Kerensky's Exodus, but each of the Successor States were able to take possession of many of the vehicles that were left behind; these went on to participate in the Succession Wars.
+</deployment>
+
+<history>
+As most technology during this time was advancing faster than the ability to be able to place it on a new vehicle, crews created makeshift artillery batteries by placing the new Arrow IV technology on top of existing vehicles. After the war, this makeshift vehicle would be built for the SLDF by Veridian Dynamics. When the first prototypes were created and shipped out to SLDF crews, they appreciated the reliability, ease of maintenance, and the spacious compartments for the crew. The only downsides the crews voiced about the machine were its lack of adequate protection and the lack of available ammunition; these were addressed and fixed once the Vali went into full scale production in 2600. The upgrades that were made consisted of making the design hold five tons of ammunition and to beef up the armor to four tons which was enough to protect against counterbattery fire.
+</history>
+
+<manufacturer>
+Veridian Dynamics
+</manufacturer>
+
+<primaryFactory>
+Ozawa
+</primaryFactory>
+
 <source>
 Hist LOT II
 </source>
@@ -87,3 +118,8 @@ Hist LOT II
 <tonnage>
 40.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

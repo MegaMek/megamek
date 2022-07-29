@@ -204,6 +204,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     protected int targetBay = -1;
 
     private int startingPos = Board.START_NONE;
+    private int startingOffset = 0;
+    private int startingWidth = 3;
 
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
@@ -9382,19 +9384,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * The round the unit will be deployed. We will deploy at the end of a
      * round. So if depoyRound is set to 5, we will deploy when round 5 is over.
-     * Any value of zero or less is automatically set to 1
      *
      * @param deployRound an int
      */
     public void setDeployRound(int deployRound) {
         this.deployRound = deployRound;
-
-        // Entity's that deploy after the start can set their own deploy zone
-        // If the deployRound is being set back to 0, make sure we reset the
-        // starting position (START_NONE implies inheritance from owning player)
-        if (deployRound == 0) {
-            setStartingPos(Board.START_NONE);
-        }
     }
 
     /**
@@ -9566,7 +9560,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // If a player can see all, it sees this
-        if (p.canSeeAll()) {
+        if (p.canIgnoreDoubleBlind()) {
             return true;
         }
 
@@ -13901,8 +13895,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Get the number of turns Supercharger has been used continuously.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during serialization.
+     * </p>
      *
      * @return the <code>int</code> number of turns Supercharger has been used.
      */
@@ -13912,8 +13907,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set the number of turns Supercharger has been used continuously.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during deserialization.
+     * </p>
      *
      * @param turns The <code>int</code> number of turns Supercharger has been used.
      */
@@ -13983,8 +13979,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set whether Supercharger has been used.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during deserialization.
+     * </p>
      *
      * @param used The <code>boolean</code> whether Supercharger has been used.
      */
@@ -15934,6 +15931,42 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         bloodStalkerTarget = value;
     }
     
+    public int getStartingOffset() {
+        return getStartingOffset(true);
+    }
+    
+    public int getStartingOffset(boolean inheritFromOwner) {
+        // if we are given permission to use the owner's settings
+        // and have specified entity-specific settings, use the owner's settings
+        if (inheritFromOwner && (startingPos == Board.START_NONE)) {
+            return owner.getStartOffset();
+        }
+        
+        return startingOffset;
+    }
+
+    public void setStartingOffset(int startingOffset) {
+        this.startingOffset = startingOffset;
+    }
+
+    public int getStartingWidth() {
+        return getStartingWidth(true);
+    }
+    
+    public int getStartingWidth(boolean inheritFromOwner) {
+        // if we are given permission to use the owner's settings
+        // and have specified entity-specific settings, use the owner's settings
+        if (inheritFromOwner && (startingPos == Board.START_NONE)) {
+            return owner.getStartWidth();
+        }
+        
+        return startingWidth;
+    }
+
+    public void setStartingWidth(int startingWidth) {
+        this.startingWidth = startingWidth;
+    }
+
     public int getBloodStalkerTarget() {
         return bloodStalkerTarget;
     }

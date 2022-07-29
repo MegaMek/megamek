@@ -23,6 +23,7 @@ import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.dialogs.BotConfigDialog;
@@ -37,9 +38,13 @@ import megamek.common.options.OptionsConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 
 import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.swing.lobby.LobbyUtility.isValidStartPos;
@@ -62,6 +67,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (currentPlayerStartPos > 10) {
             currentPlayerStartPos -= 10;
         }
+        
+        numFormatter.setMinimum(0);
+        numFormatter.setCommitsOnValidEdit(true);
         initialize();
     }
 
@@ -94,6 +102,16 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     /** Returns the chosen vibrabombs. */
     public int getVibMines() {
         return parseField(fldVibrabomb);
+    }
+    
+    /** Returns the start location offset */
+    public int getStartOffset() {
+        return parseField(txtOffset);
+    }
+    
+    /** Returns the player start location width */
+    public int getStartWidth() {
+        return parseField(txtWidth);
     }
     
     /** Returns the chosen deployment position. */
@@ -142,6 +160,12 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     // Deployment Section
     private final JPanel panStartButtons = new JPanel();
     private final TipButton[] butStartPos = new TipButton[11];
+    // this might seem like kind of a dumb way to declare it, but JFormattedTextField doesn't have an overload that
+    // takes both a number formatter and a default value.
+    private final NumberFormatter numFormatter = new NumberFormatter(NumberFormat.getIntegerInstance());
+    private final DefaultFormatterFactory formatterFactory = new DefaultFormatterFactory(numFormatter);
+    private final JFormattedTextField txtOffset = new JFormattedTextField(formatterFactory, 0);
+    private final JFormattedTextField txtWidth = new JFormattedTextField(formatterFactory, 3);
 
     // Bot Settings Section
     private final JButton butBotSettings = new JButton(Messages.getString("PlayerSettingsDialog.botSettings"));
@@ -199,10 +223,31 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
     
     private JPanel startSection() {
         JPanel result = new OptionPanel("PlayerSettingsDialog.header.startPos");
-        Content panContent = new Content(new GridLayout(1, 1));
+        Content panContent = new Content(new GridBagLayout());
         result.add(panContent);
         setupStartGrid();
-        panContent.add(panStartButtons);
+        panContent.add(panStartButtons, GBC.eol());
+        panContent.add(deploymentParametersPanel(), GBC.eol());
+        return result;
+    }
+    
+    private JPanel deploymentParametersPanel() {
+        GridBagLayout gbl = new GridBagLayout();
+        JPanel result = new JPanel(gbl);
+       
+        JLabel lblOffset = new JLabel(Messages.getString("CustomMechDialog.labDeploymentOffset"));
+        lblOffset.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentOffsetTip"));
+        JLabel lblWidth = new JLabel(Messages.getString("CustomMechDialog.labDeploymentWidth"));
+        lblWidth.setToolTipText(Messages.getString("CustomMechDialog.labDeploymentWidthTip"));
+        
+        txtOffset.setColumns(4);
+        txtWidth.setColumns(4);
+        
+        result.add(lblOffset, GBC.std());
+        result.add(txtOffset, GBC.eol());
+        result.add(lblWidth, GBC.std());
+        result.add(txtWidth, GBC.eol());
+        
         return result;
     }
     
@@ -261,6 +306,9 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         fldActive.setText(Integer.toString(player.getNbrMFActive()));
         fldInferno.setText(Integer.toString(player.getNbrMFInferno()));
         fldEmail.setText(player.getEmail());
+        txtWidth.setText(Integer.toString(player.getStartWidth()));
+        txtOffset.setText(Integer.toString(player.getStartOffset()));
+        
     }
 
     private void setupStartGrid() {

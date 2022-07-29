@@ -1,0 +1,153 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Purifier Adaptive Battle Armor
+</Name>
+
+<Model>
+[Narc](Sqd5)
+</Model>
+
+<mul id:>
+8570
+</mul id:>
+
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+36
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BA Mimetic:RA
+BA Mimetic:Body
+BA Mimetic:Body
+BA Mimetic:LA
+BA Mimetic:Body
+BA Mimetic:Body
+BA Mimetic:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BABattleClaw:RA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+CLBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots2#
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+CLBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots2#
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+CLBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots2#
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+CLBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots2#
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+CLBACompactNarc:LA
+BA-Compact Narc Ammo:LA:Shots2#
+</Trooper 5 Equipment>
+
+<source>
+TRO 3058U - Civil War
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Purifier Adaptive battle armor is produced by Word of Blake, though the original data was stolen from ComStar. 
+</overview>
+
+<capabilities>
+The Mimetic Armor makes the Purifier Adaptive much more difficult to target, especially when it is motionless. The drawback comes in the amount of armor it carries; only enough to stop a blast from a Medium Pulse Laser. It does, however, mount enough jump jets to leap ninety meters at a time. 
+</capabilities>
+
+<deployment>
+The Purifier Adaptive has a battle claw that aids it in anti-'Mech attacks. It mounts a modular weapon port that can accept an ER Small Laser, Compact Narc Launcher, Light TAG, or a Support PPC. The ER Small is the only vehicle-scale weapon. The TAG allows the squad to act as spotters for artillery and semi-guided missile fire. The Narc launcher only has one reload, and it is so bulky that a Purifier Adaptive trooper cannot make anti-'Mech attacks or jump until it runs out of ammunition and the launcher is jettisoned. The newest addition is the infantry-scale PPC, which, though an infantry weapon, allows the Purifier Adaptive to stand off and snipe at opponents, making good use of its mimetic armor.
+</deployment>
+
+<history>
+When the Word conquered Terra in 3058, they found the research that ComStar scientists had started only months before. For their part, ComStar believed the data had been destroyed, so they were as shocked as everybody else when a prototype turned up in August 3061. The Purifier Adaptive is revolutionary in that it uses mimetic, color-shifting armor. It has dozens of tiny cameras that feed data concerning the environment back to a computer that shifts the colors of the suit to camouflage, much like a chameleon does naturally. This effect is much better the less the armor moves, as the computer does not have to struggle to keep up with the background. The Republic of the Sphere captured many Purifier suits and put them into service. The Republic Armed Forces organized their troops into four man squads. Aside from this organizational change, the Purifier operated in exactly the same manner as the Word of Blake version.
+</history>
+
+<manufacturer>
+HDF Manufacturing,Krupp Armament Works
+</manufacturer>
+
+<primaryFactory>
+Falsterbo,Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

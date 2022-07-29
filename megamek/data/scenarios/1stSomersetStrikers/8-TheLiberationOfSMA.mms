@@ -4,7 +4,7 @@ Name=THE LIBERATION OF SOMERSET MILITARY ACADEMY (EPISODE 12)
 Description=The Strikers battle the clan garrison on Somerset.  The Somerset cadets are armed and join the fight.
 BoardWidth=1
 BoardHeight=2
-Maps=scenarios/citytech(SMA),MapSet2/16x17 BattleTech
+Maps=scenarios/citytech(SMA),Map Set 2/16x17 BattleTech
 # Place Light Elevation 1 buildings in Hexes 0606, 0608, 0610, 1006, 1008, and 1010.  Place a Medium Elevation 2 building in Hex 0806.
 Factions=1stSomersetStrikers,BlackVision
 Location_1stSomersetStrikers=any

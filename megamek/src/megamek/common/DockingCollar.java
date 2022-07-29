@@ -172,7 +172,7 @@ public class DockingCollar implements Transporter {
 
     @Override
     public String toString() {
-        return "Docking Collar";
+        return "dockingcollar";
     }
     
     public int getCollarNumber() {

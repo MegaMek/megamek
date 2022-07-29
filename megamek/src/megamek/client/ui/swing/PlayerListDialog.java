@@ -62,8 +62,9 @@ public class PlayerListDialog extends JDialog {
     public static void refreshPlayerList(JList<String> playerList,
             Client client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
-        for (Player player : client.getGame().getPlayersVector()) {
-            StringBuffer playerDisplay = new StringBuffer(player.getName());
+
+        for (Player player : client.getGame().getPlayersVectorSorted()) {
+            StringBuffer playerDisplay = new StringBuffer(String.format("%-12s", player.getName()));
 
             // Append team information
             if (displayTeam) {
@@ -79,13 +80,39 @@ public class PlayerListDialog extends JDialog {
                 }
             }
 
+            if (player.isGameMaster()) {
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_gm"));
+            }
+
             if (player.isGhost()) {
                 playerDisplay.append(Messages.getString("PlayerListDialog.player_ghost"));
-            } else if (player.isObserver()) {
-                playerDisplay.append(Messages.getString("PlayerListDialog.player_observer"));
-            } else if (player.isDone()) {
-                playerDisplay.append(Messages.getString("PlayerListDialog.player_done"));
+            } else {
+                if (player.isBot()) {
+                    playerDisplay.append(Messages.getString("PlayerListDialog.player_bot"));
+                } else {
+                    playerDisplay.append(Messages.getString("PlayerListDialog.player_human"));
+                }
+                if (player.isObserver()) {
+                    playerDisplay.append(Messages.getString("PlayerListDialog.player_observer"));
+                } else if (player.isDone()) {
+                    playerDisplay.append(Messages.getString("PlayerListDialog.player_done"));
+                }
             }
+
+            // this may be too much detail long term, but is useful for understanding the modes
+            // during testing
+            if (player.getSeeAll()) {
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_seeall"));
+            }
+
+            if (player.getSingleBlind()) {
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_singleblind"));
+            }
+
+            if (player.canIgnoreDoubleBlind()) {
+                playerDisplay.append(Messages.getString("PlayerListDialog.player_ignoreDoubleBlind"));
+            }
+
             ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());
         }
     }

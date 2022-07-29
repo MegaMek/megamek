@@ -1,0 +1,150 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Fa Shih Battle Armor
+</Name>
+
+<Model>
+2 [MG](Sqd6)
+</Model>
+
+<mul id:>
+8871
+</mul id:>
+
+<year>
+3078
+</year>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+BA Machine Gun:RA
+BA-Magnetic Clamp:LA
+BABasicManipulatorMineClearance:LA
+BABasicManipulatorMineClearance:RA
+CLBAMyomerBooster:Body
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+Mine:RA
+Mine:RA
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+Mine:RA
+Mine:RA
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+Mine:RA
+Mine:RA
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+Mine:RA
+Mine:RA
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+Mine:RA
+Mine:RA
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+Mine:RA
+Mine:RA
+</Trooper 6 Equipment>
+
+<source>
+XTRO Liao - Jihad
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+4
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Fa Shih ("Master of Methods") was the result of the Siann Confederation biting off more than it could chew. 
+</overview>
+
+<capabilities>
+The Fa Shih duplicates many of the features of the Inner Sphere Standard battle armor, including its jump capacity and most of the weaponry used. However the suit went against battle armor philosophy at the time by emphasizing defensive capabilities as much as offensive. The most notable expression of this philosophy is its use of mines. The Sianns have long used mines in combat, so the Fa Shih comes equipped with the ability to lay minefields similar in respect to FASCAM ordnance as well as mine clearing apparatuses on its arms. In keeping with the Xin Sheng campaign instituted by Chancellor Sun-Tzu Liao, the Fa Shih's armoring was also modeled along traditional Chinese aesthetic lines. To lay the "Mines" you need to use the "Lay Mine" then "Jump" to deploy the minefield. 
+</capabilities>
+
+<deployment>
+This experimental variant was a custom refit of the Fa Shih by Ceres Metals in 3078. Under the supervision of Ogden Isray, four Fa Shih suits were fitted with Clan-technology myomer boosters. This not only increased their ground speed to 32.4 km/h but improved their strength as well, allowing the armored soldiers to tear through more 'Mech armor with their manipulators. This came at a cost though as the anti-personnel mount and 150 kg of armor had to be removed, meaning the suit can only withstand two bursts from a Machine Gun. Only four of these suits were built due to the limited number of myomer boosters the Capellans were able to acquire.
+</deployment>
+
+<history>
+With the introduction of Battle Armor by the Clans and as other Inner Sphere powers began fielding their own native suits, the Confederation had decided to produce three different battle armor designs concurrently. Research and development began in April 3056, but since they did not have any practical experience with battle armor, they realized they could not take on such a large task and reduced their workload to one unit, an adaptation of the Inner Sphere Standard. Even so, it took several years and finally the help of the Word of Blake before the Sianns could properly implement the environmental containment and life support systems for their suit and begin final testing in 3060. Finalized prototypes became available starting in June 3061, with full-scale production starting March 3062. The Fa Shih quickly built a reputation for excellence among the Siann armed forces; although the Confederation eventually succeeded in its original design goal when the Trinity series of battle armor debuted, the Fa Shih continued to serve for many years on the battlefield. During the Jihad the Siann Confederation received a boon as the appearance of Clan forces on their borders allowed for the firsthand acquisition of Clan technology. Using Clan components Ceres Metals refitted several Fa Shih suits in 3078 to better match the Ying Long Trinity suit's capabilities and improve their anti-BattleMech potential. While successful, any further development of these improved Fa Shih suits at the time was stopped until the Confederation could either secure a steady supply of Clan technology or reverse engineer it themselves.[
+</history>
+
+<manufacturer>
+Ceres Metals Industries
+</manufacturer>
+
+<primaryFactory>
+Capella
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+To lay the "Mines" you need to use the "Lay Mine" then "Jump" to deploy the minefield. 
+</notes>
+
+

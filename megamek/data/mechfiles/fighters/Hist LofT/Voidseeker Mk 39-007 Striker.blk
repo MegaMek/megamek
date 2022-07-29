@@ -1,0 +1,148 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Voidseeker
+</Name>
+
+<Model>
+Mk 39-007 Striker
+</Model>
+
+<mul id:>
+7145
+</mul id:>
+
+<year>
+2763
+</year>
+
+<originalBuildYear>
+2763
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+None
+</motion_type>
+
+<transporters>
+</transporters>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+21
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+440
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+72
+58
+58
+53
+</armor>
+
+<Nose Equipment>
+ISERLargeLaser
+LRM 15
+ISArtemisIV
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERLargeLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERLargeLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumPulseLaser
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Fuselage Equipment>
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ImprovedShieldedAeroSRCS
+</Fuselage Equipment>
+
+<capabilities>
+The 007 Striker added fifteen more tonnes to the Mark 39's airframe, boosting the construction and armour of the wings and fuselage. The 75 tonne 007's maximum thrust was reduced by the "VoidSeeker" common engine, although it was nevertheless comparable to other heavy fighters of the day. With twenty-four reloads for the nose-mounted Artemis IV upgraded LRM launcher and three extended-range big lasers, it possessed three times the ranged firepower of the 004 and could threaten even hefty DropShips.
+</capabilities>
+
+<overview>
+The Mark 39 Voidseeker Attack Drone is an automated defense system of the SLDF based on the (then experimental) F-90 Stingray aerospace fighter.
+</overview>
+
+<deployment>
+Designed to work in conjunction with the much larger M-5 Caspar SDS drone warships, the Mark 39 is capable of engaging fighter sized targets which the Caspars are unable to target with their naval size armament. Smart Robotic Control System (Improved) gives the Mk. 39-004 Interceptor a Piloting Skill of 5, a Gunnery Skill of 4.
+</deployment>
+
+<history>
+he Voidseeker replaced the Mark 30 BlackWasp drone fighter and it can be speculated that, like the BlackWasp, the Mark 39 could be launched from the Caspar drones or carrier satellites. The Mark 39 is noted for having superior resistance to electronic warfare gear, compared to its predecessor. The most notable feature about the Mark 39 is that their sophisticated battle computers are capable of coordinating attacks with other Mark 39 and M-5 units by forming a decentralized computer network, which allows the drones to collectively make tactical decisions. The advantages include preventing overcommitting drones against a single target, and the impossibility of neutralizing the defenders by taking out any central command unit. The Mark 39 drones could also be slaved to a human controller. After the initial Voidseeker design was created and deemed successful, engineers created two versions: The MK 39-004 Interceptor and the MK 39-007 Striker. The Mark 39 family was very successful and deployed in vast numbers (by the thousands) in areas that did not warrant the deployment of M-5 Caspars, such as deep space naval installations like Camelot Command and planetary systems of minor value. Most of the Mark 39 systems had been destroyed, deactivated or otherwise neutralized by the end of the Second Succession War but some can still found in active service. Like landmines, the Mark 39 drones maintain a passive listening mode and respond to all ships that fail to provide a correct IFF transponder code.
+</history>
+
+<manufacturer>
+Ulsop Robotics
+</manufacturer>
+
+<primaryFactory>
+Terra
+</primaryFactory>
+
+<notes>
+Added 1 point to aft armor. Reduced fuel by .5 tons.
+</notes>
+
+<source>
+Hist: LofT Vol 1 - Star League
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

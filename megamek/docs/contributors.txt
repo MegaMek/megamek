@@ -262,6 +262,7 @@
      Jörg Harder <joergharder@t-online.de>
      Alexander Schölling <schoelling@users.sourceforge.net>
      Alexander "Twin_81" Manturov
+     IsWas - Spanish
 
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>

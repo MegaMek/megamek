@@ -150,4 +150,18 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:First unleashed by the Terran Hegemony in 2460, the Helepolis is a ponderous BattleMech designed to deliver artillery fire. 	
 
+capabilities:The Helepolis is built around an Armstrong Industries Sniper Artillery Piece. The accurate, long-range fire makes it effective against static defenses. 
+
+deployment:The 'Mech does carry some backup weapons to augment its screening forces. It can defend itself with a Coventry Starfire LRM-10 and Nova Large Laser. If an enemy gets close, the MechWarrior can call upon a Thunderstroke SRM-6 and a Starflash medium laser. This 2625 model upgrades the Large Laser to an ER Large Laser
+
+history:The 'Mech was proven ineffective on multiple occasions and, following the destruction of the production facilities in 2775, the design was lost during the Succession Wars. The HEP-2H dates to 2567, replacing the 2X. The Helepolis is a slow heavy 'Mech with a maximum speed of 54 km/h. It has a respectable thirteen tons of armor, however. When rebels within the Hegemony military launched the September Revolt, the new Director-General, Ian Cameron deployed batteries of Helepolis 'Mechs to keep them pinned down within the capital city of Geneva on Terra.
+
+manufacturer:Mitchell Vehicles
+primaryfactory:Graham IV
+systemmanufacturer:CHASSIS:Mitchell Heavy HEP
+systemmanufacturer:ENGINE:VOX 225
+systemmanufacturer:ARMOR:Armorscale with CASE
+systemmanufacturer:COMMUNICATIONS:Exeter Longscan 100
+systemmanufacturer:TARGETING:Tacticon Tracer 150b

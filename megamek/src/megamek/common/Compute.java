@@ -37,7 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import java.util.*;
 
 /**
- * The compute class is designed to provide static methods for mechs and other
+ * The Compute class is designed to provide static methods for 'Mechs and other
  * entities moving, firing, etc.
  */
 public class Compute {
@@ -80,7 +80,7 @@ public class Compute {
     public static final int ARC_VGL_REAR = 35;
     public static final int ARC_VGL_LR = 36;
     public static final int ARC_VGL_LF = 37;
-    //Expanded arcs for Waypoint Launched Capital Missiles
+    // Expanded arcs for Waypoint Launched Capital Missiles
     public static final int ARC_NOSE_WPL = 38;
     public static final int ARC_LWING_WPL = 39;
     public static final int ARC_RWING_WPL = 40;
@@ -93,7 +93,9 @@ public class Compute {
     public static final int ARC_AFT_WPL = 47;
     public static final int ARC_LEFT_BROADSIDE_WPL = 48;
     public static final int ARC_RIGHT_BROADSIDE_WPL = 49;
-    
+
+    public static int DEFAULT_MAX_VISUAL_RANGE = 1;
+
     /** Lookup table for vehicular grenade launcher firing arc from facing */
     private static final int[] VGL_FIRING_ARCS = { ARC_VGL_FRONT, ARC_VGL_RF, ARC_VGL_RR,
             ARC_VGL_REAR, ARC_VGL_LR, ARC_VGL_LF
@@ -101,38 +103,38 @@ public class Compute {
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
-    private static final int[][] clusterHitsTable = new int[][]{
-            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-            {2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2},
-            {3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3},
-            {4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4},
-            {5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5},
-            {6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6},
-            {7, 2, 2, 3, 4, 4, 4, 4, 6, 6, 7, 7},
-            {8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8},
-            {9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9},
-            {10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10},
-            {11, 4, 4, 5, 7, 7, 7, 7, 9, 9, 11, 11},
-            {12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12},
-            {13, 4, 4, 5, 8, 8, 8, 8, 11, 11, 13, 13},
-            {14, 5, 5, 6, 9, 9, 9, 9, 11, 11, 14, 14},
-            {15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15},
-            {16, 5, 5, 7, 10, 10, 10, 10, 13, 13, 16, 16},
-            {17, 5, 5, 7, 10, 10, 10, 10, 14, 14, 17, 17},
-            {18, 6, 6, 8, 11, 11, 11, 11, 14, 14, 18, 18},
-            {19, 6, 6, 8, 11, 11, 11, 11, 15, 15, 19, 19},
-            {20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20},
-            {21, 7, 7, 9, 13, 13, 13, 13, 17, 17, 21, 21},
-            {22, 7, 7, 9, 14, 14, 14, 14, 18, 18, 22, 22},
-            {23, 7, 7, 10, 15, 15, 15, 15, 19, 19, 23, 23},
-            {24, 8, 8, 10, 16, 16, 16, 16, 20, 20, 24, 24},
-            {25, 8, 8, 10, 16, 16, 16, 16, 21, 21, 25, 25},
-            {26, 9, 9, 11, 17, 17, 17, 17, 21, 21, 26, 26},
-            {27, 9, 9, 11, 17, 17, 17, 17, 22, 22, 27, 27},
-            {28, 9, 9, 11, 17, 17, 17, 17, 23, 23, 28, 28},
-            {29, 10, 10, 12, 18, 18, 18, 18, 23, 23, 29, 29},
-            {30, 10, 10, 12, 18, 18, 18, 18, 24, 24, 30, 30},
-            {40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40}};
+    private static final int[][] clusterHitsTable = new int[][] {
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 },
+            { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 },
+            { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 },
+            { 5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5 },
+            { 6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6 },
+            { 7, 2, 2, 3, 4, 4, 4, 4, 6, 6, 7, 7 },
+            { 8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8 },
+            { 9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9 },
+            { 10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10 },
+            { 11, 4, 4, 5, 7, 7, 7, 7, 9, 9, 11, 11 },
+            { 12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12 },
+            { 13, 4, 4, 5, 8, 8, 8, 8, 11, 11, 13, 13 },
+            { 14, 5, 5, 6, 9, 9, 9, 9, 11, 11, 14, 14 },
+            { 15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15 },
+            { 16, 5, 5, 7, 10, 10, 10, 10, 13, 13, 16, 16 },
+            { 17, 5, 5, 7, 10, 10, 10, 10, 14, 14, 17, 17 },
+            { 18, 6, 6, 8, 11, 11, 11, 11, 14, 14, 18, 18 },
+            { 19, 6, 6, 8, 11, 11, 11, 11, 15, 15, 19, 19 },
+            { 20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20 },
+            { 21, 7, 7, 9, 13, 13, 13, 13, 17, 17, 21, 21 },
+            { 22, 7, 7, 9, 14, 14, 14, 14, 18, 18, 22, 22 },
+            { 23, 7, 7, 10, 15, 15, 15, 15, 19, 19, 23, 23 },
+            { 24, 8, 8, 10, 16, 16, 16, 16, 20, 20, 24, 24 },
+            { 25, 8, 8, 10, 16, 16, 16, 16, 21, 21, 25, 25 },
+            { 26, 9, 9, 11, 17, 17, 17, 17, 21, 21, 26, 26 },
+            { 27, 9, 9, 11, 17, 17, 17, 17, 22, 22, 27, 27 },
+            { 28, 9, 9, 11, 17, 17, 17, 17, 23, 23, 28, 28 },
+            { 29, 10, 10, 12, 18, 18, 18, 18, 23, 23, 29, 29 },
+            { 30, 10, 10, 12, 18, 18, 18, 18, 24, 24, 30, 30 },
+            { 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40 } };
 
     /**
      * Wrapper to random#d6(n)
@@ -4638,11 +4640,44 @@ public class Compute {
         return roll >= tn;
     }
 
-    public static int getVisualRange(Game game, Entity ae, LosEffects los, boolean teIlluminated) {
-        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, teIlluminated);
+    /**
+     * @return visual range in hexes along a specific line of sight
+     */
+    public static int getVisualRange(Game game, Entity ae, LosEffects los, boolean targetIlluminated) {
+        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, targetIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
         visualRange = Math.max(1, visualRange);
+        return visualRange;
+    }
+
+    /**
+     * @return visual range in hexes given current planetary conditions and no los obstruction
+     */
+    public static int getMaxVisualRange(Entity entity, boolean targetIlluminated ) {
+        Game game = entity.getGame();
+        if (game == null) {
+            return DEFAULT_MAX_VISUAL_RANGE;
+        }
+
+        int visualRange;
+        if (entity.isSpaceborne() && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ADVANCED_SENSORS)) {
+            visualRange = 0;
+            //For squadrons. Default to the passive thermal/optical value used by component fighters
+            if (entity.hasETypeFlag(Entity.ETYPE_FIGHTER_SQUADRON)) {
+                visualRange = Sensor.ASF_OPTICAL_FIRING_SOLUTION_RANGE;
+            }
+            if (entity.getActiveSensor() != null) {
+                if (entity.getActiveSensor().getType() == Sensor.TYPE_AERO_SENSOR) {
+                    // required because the return on this from the method below is for ground maps
+                    visualRange = Sensor.ASF_RADAR_AUTOSPOT_RANGE;
+                } else {
+                    visualRange = (int) Math.ceil(entity.getActiveSensor().getRangeByBracket() / 10.0);
+                }
+            }
+        } else {
+            visualRange =  game.getPlanetaryConditions().getVisualRange(entity, targetIlluminated);
+        }
         return visualRange;
     }
 

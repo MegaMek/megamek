@@ -31,6 +31,7 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -221,10 +222,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        int size = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily() + "; font-size: " + size + "pt; font-style:normal;}");
+        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
+        Report.setupStylesheet(styleSheet);
     }
     
     public void appendReportTab(String additionalText) {

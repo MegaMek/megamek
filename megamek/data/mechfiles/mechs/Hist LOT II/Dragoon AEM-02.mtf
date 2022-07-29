@@ -134,3 +134,20 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+
+overview:The brainchild of Stefan Amaris, the Dragoon BattleMech was envisioned as part of Amaris's ambitious plan to create a family of "modular" multi-mission combat units for his Amaris Empire Armed Forces.
+
+capabilities:Armed with only a few, but powerful weapons found only in the 'Mech's arms. Powered by one of Nissan's 280-rated XL Fusion Engines, the 'Mech is able to achieve a modest pace of 64 km/h. Its defenses include a Guardian ECM Suite, while its armored hull is protected by 11.5 tons of Ferro-Fibrous armor.
+
+deployment:Designed as a short-ranged fighter, the Dragoon 02 is armed with a single ER PPC, the remaining weapons space is filled by five Medium Lasers, a Small Pulse Laser, and an AC/20. At the price of dropping its jump jets, the 'Mech's engine has been upgraded to an XL 350 to allow the 'Mech to close in quicker than the original model.
+
+history:n the year following the Amaris Coup, now-Emperor Amaris would have a means to make his dream into reality, and he began swiftly issuing contracts which would lead to the creation of the Dragoon. Built by Krupp Stellar Technologies Inc. in 2771 as their second BattleMech design, the Dragoon was designed with a similar modular subsystem akin to the Mercury BattleMech. With this system, the 'Mech's maintenance loads would be eased. Its modular nature would allow repair depots and factories to be able to reconfigure the design's weapons systems and its power plant for any needed mission-specific specs. Produced in limited numbers, only the elite of Amaris's regiments and a select few of Amaris's loyal chosen would receive the design and its variants. The design would see service in the Star League Civil War, often being salvaged by the Star League Defense Force. However, after the liberation of Terra, General Kerensky would order the purging of the design and the retooling of Krupp's two Dragoon production lines. The few remaining Dragoons in service elsewhere would become extinct before the 3rd Succession War.
+
+manufacturer:Krupp Stellar Technologies, Inc.
+primaryfactory:Terra
+systemmanufacturer:CHASSIS:KruppTech 770
+systemmanufacturer:ENGINE:Nissan 280 XL
+systemmanufacturer:ARMOR:PanzerFerro Type 7F
+systemmanufacturer:JUMPJET:Corwin Consolidated Model 3H
+systemmanufacturer:COMMUNICATIONS:Krupp-COMM 650 with Guardian ECM
+systemmanufacturer:TARGETING:KBC Hypersight Model 5

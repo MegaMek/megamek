@@ -1,0 +1,140 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Leonidas Battle Armor
+</Name>
+
+<Model>
+(David)(Sqd5)
+</Model>
+
+<mul id:>
+8751
+</mul id:>
+
+<year>
+3096
+</year>
+
+<originalBuildYear>
+3096
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+BADavidLightGaussRifle:RA
+BAAPMount:RA
+InfantryAssaultRifle:APM:RA
+BAHeavyBattleClaw:LA
+BAISAngelECMSuite:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO 3145 Free Worlds League - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+6
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<overview>
+The Leonidas suit is highly configurable, capable of being reconfigured for various battlefield missions including providing positional information, calling in artillery strikes, waging counterinsurgency warfare and conducting ambushes.
+</overview>
+
+<capabilities>
+Protected by Standard Stealth armor and capable of moving at speeds of up to 32.4 km/h - although incapable of jumping - Leonidas battle armor carries an Anti-Personnel Weapon Mount and a Modular Weapon Mount on the right arm while a Heavy Battle Claw was fitted to the left arm. The Modular Weapon Mount could be fitted with various weapons and systems including a "David" Light Gauss Rifle with fifteen rounds of ammunition, a Machine Gun and fifty rounds of ammunition, a Firedrake Support Needler with thirty rounds of ammunition, a Light TAG system with sixty rounds of ammunition or a package of Improved Sensors. Mounted to the body of the suit was an Angel ECM Suite.
+</capabilities>
+
+<deployment>
+The various roles are made possible through the different weapons and equipment loadouts available via the Modular Weapon Mount.
+</deployment>
+
+<history>
+Leonidas battle armor was a product of Etna Foundries and was intended to plug a capability gap in the armed forces of the Duchy of Oriente, a gap created by scarcity of the older Achileus stealth suit. After soldiers equipped with Leonidas battle armor achieved a number of successes provided a testimony to the suit's capabilities the Leonidas suit was exported widely across the Inner Sphere and to various Periphery states.
+</history>
+
+<manufacturer>
+Etna Foundries
+</manufacturer>
+
+<primaryFactory>
+Oriente
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -45,7 +45,7 @@ smallcraftbay:4.0:2:1
 steeragequarters:0.0:0
 2ndclassquarters:343.0:0
 crewquarters:70.0:0
-cargobay:300.0:2:2
+cargobay:300.0:2:5
 cargobay:1276.0:2:7
 </transporters>
 
@@ -190,7 +190,7 @@ TARGETING:Unknown
 </systemManufacturers>
 
 <notes>
-Overweight per the TRO, dropped cargo to make it legal.
+Overweight per the TRO, dropped cargo to make it legal. Needs 6 officers not 2 and 16 crew not 6. .
 </notes>
 
 <use>
@@ -222,7 +222,7 @@ H:Liberation of Terra II - Star League
 </designtype>
 
 <crew>
-55
+50
 </crew>
 
 <officers>

@@ -39,16 +39,15 @@ public class UnitDisplay extends JPanel {
     private static final long serialVersionUID = -2060993542227677984L;
 
     private MechPanelTabStrip tabStrip;
-
     private JPanel displayP;
-    private MovementPanel mPan;
+    private SummaryPanel mPan;
+    private MovementPanel dPan;
     private PilotPanel pPan;
     private ArmorPanel aPan;
     public WeaponPanel wPan;
     private SystemPanel sPan;
     private ExtraPanel ePan;
     private ClientGUI clientgui;
-
     private Entity currentlyDisplaying;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
 
@@ -72,18 +71,21 @@ public class UnitDisplay extends JPanel {
         tabStrip = new MechPanelTabStrip(this);
 
         displayP = new JPanel(new CardLayout());
-        mPan = new MovementPanel();
-        displayP.add("movement", mPan);
+
+        mPan = new SummaryPanel(this);
+        displayP.add(MechPanelTabStrip.SUMMARY, mPan);
         pPan = new PilotPanel(this);
-        displayP.add("pilot", pPan);
+        displayP.add(MechPanelTabStrip.PILOT, pPan);
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
-        displayP.add("armor", aPan);
+        displayP.add(MechPanelTabStrip.ARMOR, aPan);
         wPan = new WeaponPanel(this);
-        displayP.add("weapons", wPan);
+        displayP.add(MechPanelTabStrip.WEAPONS, wPan);
         sPan = new SystemPanel(this);
-        displayP.add("systems", sPan);
+        displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
         ePan = new ExtraPanel(this);
-        displayP.add("extras", ePan);
+        displayP.add(MechPanelTabStrip.EXTRAS, ePan);
+        dPan = new MovementPanel();
+        displayP.add(MechPanelTabStrip.DETAILS, dPan);
 
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
@@ -99,8 +101,8 @@ public class UnitDisplay extends JPanel {
         c.weighty = 1.0;
         addBag(displayP, c);
 
-        ((CardLayout) displayP.getLayout()).show(displayP, "movement");
-        
+        ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SUMMARY);
+
         if (controller != null) {
             registerKeyboardCommands(this, controller);
         }
@@ -300,6 +302,7 @@ public class UnitDisplay extends JPanel {
         wPan.displayMech(en);
         sPan.displayMech(en);
         ePan.displayMech(en);
+        dPan.displayMech(en);
     }
 
     /**
@@ -314,19 +317,20 @@ public class UnitDisplay extends JPanel {
      */
     public void showPanel(String s) {
         ((CardLayout) displayP.getLayout()).show(displayP, s);
-        if ("movement".equals(s)) {
-            tabStrip.setTab(0);
-        }
-        if ("pilot".equals(s)) {
-            tabStrip.setTab(1);
-        } else if ("armor".equals(s)) {
-            tabStrip.setTab(2);
-        } else if ("weapons".equals(s)) {
-            tabStrip.setTab(4);
-        } else if ("systems".equals(s)) {
-            tabStrip.setTab(3);
-        } else if ("extras".equals(s)) {
-            tabStrip.setTab(5);
+        if (MechPanelTabStrip.SUMMARY.equals(s)) {
+            tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
+        } else if (MechPanelTabStrip.PILOT.equals(s)) {
+            tabStrip.setTab(MechPanelTabStrip.PILOT_INDEX);
+        } else if (MechPanelTabStrip.ARMOR.equals(s)) {
+            tabStrip.setTab(MechPanelTabStrip.ARMOR_INDEX);
+        } else if (MechPanelTabStrip.WEAPONS.equals(s)) {
+            tabStrip.setTab(MechPanelTabStrip.WEAPONS_INDEX);
+        } else if (MechPanelTabStrip.SYSTEMS.equals(s)) {
+            tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
+        } else if (MechPanelTabStrip.EXTRAS.equals(s)) {
+            tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
+        } else if (MechPanelTabStrip.DETAILS.equals(s)) {
+            tabStrip.setTab(MechPanelTabStrip.DETAILS_INDEX);
         }
     }
 

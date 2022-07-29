@@ -24,6 +24,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.util.StringUtil;
 import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
+import megamek.server.commands.GameMasterCommand;
 import megamek.server.commands.JoinTeamCommand;
 import org.apache.logging.log4j.LogManager;
 
@@ -115,6 +116,8 @@ public class ChatProcessor {
             String msg = st.nextToken();
             if (msg.contains(JoinTeamCommand.SERVER_VOTE_PROMPT_MSG)) {
                 bot.sendChat("/allowTeamChange");
+            } else if (msg.contains(GameMasterCommand.SERVER_VOTE_PROMPT_MSG)) {
+                bot.sendChat("/allowGM");
             }
             return;
         } else if (p == null) {

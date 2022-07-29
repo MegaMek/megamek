@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ Ballista Self-Propelled Artillery Tank
 2480
 </year>
 
+<originalBuildYear>
+2480
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -35,6 +39,9 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 3
@@ -51,10 +58,6 @@ Tracked
 15
 30
 </armor>
-
-<armor_tech>
-5
-</armor_tech>
 
 <Body Equipment>
 ISSniperAmmo
@@ -82,6 +85,30 @@ Machine Gun
 ISSniper
 </Turret Equipment>
 
+<capabilities>
+Designed solely as an artillery vehicle, it is appropriately armed with a Hegemony Arms DAT/91 Sniper Artillery Cannon mounted in the turret. The vehicle carries three tons of ammunition onboard, however with its trailer hitch it can transport additional ammunition. The Ballista's secondary weaponry only includes three KKL/h-12 Machine Guns, mounting two forward and one in the rear. Powered by a 165-rated Internal Combustion Engine, the vehicle is able to keep up at modest pace with other mobile support elements. Protecting the Ballista's hull is 7.5 tons of Quantum Heavy Plate, giving adequate protection against enemy fire should opposing forces manage to penetrate deeply behind friendly battle lines.
+</capabilities>
+
+<overview>
+Designed in the last decades of the twenty-fifth century, the Ballista Self-Propelled Artillery Tank was produced for the Terran Hegemony Armed Forces.
+</overview>
+
+<history>
+Originally designed by Rivverson Technologies of Nanking, the Ballista was considered the latest word in artillery vehicles. Vehicles produced during the time were considerably heavier, slower, and carried less protection than the Ballista. The vehicle would be deployed in the closing years of the Age of War, its innovative design spurring the production of virtual clones for various Inner Sphere and Major Periphery nations. With the inception of the Star League, the Star League Defense Force's cobbled-together forces would soon purge these clone copies in favor of their originator to streamline logistics headaches. The vehicle soon became the standard SLDF mobile field artillery piece for centuries to follow, only being replaced by vehicles such as the Sniper Artillery Vehicle and the Marksman by the twenty-eighth century. The vehicle would remain in service (with minor updates), despite its ancient origin, through the Star League Civil War and well into the Succession Wars era with both the Inner Sphere and the Pentagon Powers. Indeed the Ballista was still in service with various powers during the Jihad.
+</history>
+
+<manufacturer>
+Rivverson Technologies
+</manufacturer>
+
+<primaryFactory>
+Nanking
+</primaryFactory>
+
+<notes>
+The vehicle's armament fluff classifies the individual Sniper weapon as a cannon. However, it is not a true Sniper Artillery Cannon, which is lighter and shorter ranged than a regular Sniper Artillery Piece. The Ballista's record sheet and weapon break down shows that the Sniper Artillery weapon is in fact listed as an Artillery Piece.
+</notes>
+
 <source>
 Hist LOT II
 </source>
@@ -89,3 +116,8 @@ Hist LOT II
 <tonnage>
 55.0
 </tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

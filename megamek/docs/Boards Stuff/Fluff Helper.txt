@@ -17,8 +17,8 @@ fluff:93:1-14 - Gardens
 
 Rough ---------------
 
-rough:1,2,*,fluff:1 - Dragon's Teeth
-rough:1,2,*,fluff:2 - Burned/felled woods
+rough:*,fluff:1 - Dragon's Teeth
+rough:*,fluff:2 - Burned/felled woods
 
 Roads ---------------
 
@@ -58,6 +58,9 @@ fluff:60:1-13 - Star League/Star League Faction Symbol
 fluff:61:1-13 - Star League/ComStar Faction Symbol
 fluff:62:1-13 - Red Cross Symbol
 
+Orbital Guns ---------------
+fluff:40:1-4
+
 Landing Pads ---------------
 
 fluff:40:1-6 - VTOL landing pads 
@@ -74,8 +77,8 @@ fluff:73:1-30 - Black Numbers
 
 SeaPort ---------------------
 
-wood:1;fluff:80:1-29 - Containers
-wood:1;fluff:81:1-48 - Cranes
+woods:1;fluff:80:1-29 - Containers
+woods:1;fluff:81:1-48 - Cranes
 fluff:82:1-6 - Crane tips
 
 

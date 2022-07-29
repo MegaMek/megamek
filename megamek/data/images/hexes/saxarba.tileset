@@ -43,7 +43,6 @@ include "saxarba/Includes/Pavement.tileinc"
 
 include "UlyssesSprites/UlyssesSprites.tileinc"
 
-
 #GRAY SAND
 super -3 "sand:*" "lunar" "saxarba/base/base_sand_gray_-3.png"
 super -2 "sand:*" "lunar" "saxarba/base/base_sand_gray_-2.png"
@@ -470,8 +469,6 @@ super * "smoke:*" "" "saxarba/misc/light_smoke.png"
 
 #SCREEN
 super * "screen:*" "" "saxarba/misc/light_smoke.png"
-
-
 
 #####BASE TERRAINS#####
 

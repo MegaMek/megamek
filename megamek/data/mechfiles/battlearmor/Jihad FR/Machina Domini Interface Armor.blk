@@ -17,7 +17,7 @@ Machina Domini Interface Armor
 </Name>
 
 <Model>
-(Standard)
+(Standard)(Sqd1)
 </Model>
 
 <mul id:>
@@ -59,18 +59,6 @@ SwarmWeaponMek
 StopSwarm
 LegAttack
 </Squad Equipment>
-
-<Trooper 1 Equipment>
-</Trooper 1 Equipment>
-
-<Trooper 2 Equipment>
-</Trooper 2 Equipment>
-
-<Trooper 3 Equipment>
-</Trooper 3 Equipment>
-
-<Trooper 4 Equipment>
-</Trooper 4 Equipment>
 
 <source>
 J:Final Reckoning - Jihad

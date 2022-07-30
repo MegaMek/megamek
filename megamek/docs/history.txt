@@ -53,6 +53,7 @@ VERSION HISTORY:
 + PR #3817: Prevent null pointer exception when clicking cancel during map setup save dialog.
 + PR #3475: Prevent null pointer exception when loading scenarios with invalid weather conditions flag; default to none instead
 + PR #3808: Add working hex copy/paste to the Board Editor
++ PR #3826: Add orbital guns fluff images
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

@@ -54,6 +54,8 @@ VERSION HISTORY:
 + PR #3475: Prevent null pointer exception when loading scenarios with invalid weather conditions flag; default to none instead
 + PR #3808: Add working hex copy/paste to the Board Editor
 + PR #3826: Add orbital guns fluff images
++ PR #3809: Fix the Formation Builder to again be able to generate fire support lances
++ Issues #3665, 3658: Server Connection Rework
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

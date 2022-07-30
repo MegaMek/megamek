@@ -695,7 +695,7 @@ public class AeroBVCalculator {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
-            pilotFactor = aero.getCrew().getBVSkillMultiplier(aero.getGame());
+            pilotFactor = aero.getCrew().getBVSkillMultiplier();
         }
 
         return (int) Math.round(finalBV * pilotFactor);

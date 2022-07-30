@@ -16,6 +16,7 @@
 package megamek.common;
 
 import megamek.client.generator.RandomGenderGenerator;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
@@ -985,30 +986,13 @@ public class Crew implements Serializable {
     }
 
     /**
-     * @param game The {@link Game} to use to determine the modifier
      * @return the BV multiplier for this pilot's gunnery/piloting
      */
-    public double getBVSkillMultiplier(Game game) {
-        return getBVSkillMultiplier(true, game);
-    }
-
-    /**
-     * @param usePiloting whether or not to use the default value non-anti-mech
-     *                    infantry/BA should not use the anti-mech skill
-     * @param game The {@link Game} to use to determine the modifier
-     * @return the BV multiplier for this pilot's gunnery/piloting
-     */
-    public double getBVSkillMultiplier(boolean usePiloting, Game game) {
-        int pilotVal = getPiloting();
-        if (!usePiloting) {
-            pilotVal = 5;
-        }
-        return getBVImplantMultiplier() * getBVSkillMultiplier(getGunnery(), pilotVal, game);
+    public double getBVSkillMultiplier() {
+        return getBVImplantMultiplier() * getBVSkillMultiplier(getGunnery(), getPiloting());
     }
 
     public double getBVImplantMultiplier() {
-
-        // get the highest level
         int level = 1;
         if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             level = 2;
@@ -1019,9 +1003,7 @@ public class Crew implements Serializable {
         if (options.booleanOption(OptionsConstants.MD_BVDNI)) {
             level = 5;
         }
-
-        return (level / 4.0) + 0.75;
-
+        return level / 4.0 + 0.75;
     }
 
     /**
@@ -1034,11 +1016,7 @@ public class Crew implements Serializable {
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        return getBVSkillMultiplier(gunnery, piloting, null);
-    }
-
-    public static double getBVSkillMultiplier(int gunnery, int piloting, Game game) {
-        return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
+        return bvMod[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
     }
 
     public boolean hasEdgeRemaining() {

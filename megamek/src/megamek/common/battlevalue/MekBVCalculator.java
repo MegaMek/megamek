@@ -1090,7 +1090,7 @@ public class MekBVCalculator {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
-            pilotFactor = mek.getCrew().getBVSkillMultiplier(mek.getGame());
+            pilotFactor = mek.getCrew().getBVSkillMultiplier();
         }
 
         return (int) Math.round(finalBV * pilotFactor);

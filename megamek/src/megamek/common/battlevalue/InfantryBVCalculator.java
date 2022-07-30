@@ -213,10 +213,7 @@ public class InfantryBVCalculator {
                 "" + (int) Math.round(bv * utm));
         bv *= utm;
 
-        double pilotFactor = 1;
-        if (!ignoreSkill) {
-            pilotFactor = infantry.getCrew().getBVSkillMultiplier(infantry.isAntiMekTrained(), infantry.getGame());
-        }
+        double pilotFactor = ignoreSkill ? 1 : infantry.getCrew().getBVSkillMultiplier();
         return (int) Math.round(bv * pilotFactor);
     }
 }

@@ -213,11 +213,7 @@ public class BattleArmorBVCalculator {
         }
 
         // Adjust BV for crew skills.
-        double pilotFactor = 1;
-        if (!ignoreSkill) {
-            pilotFactor = battleArmor.getCrew().getBVSkillMultiplier(battleArmor.isAntiMekTrained(), battleArmor.getGame());
-        }
-
+        double pilotFactor = ignoreSkill ? 1 : battleArmor.getCrew().getBVSkillMultiplier();
         return (int) Math.round(squadBV * pilotFactor);
     }
 }

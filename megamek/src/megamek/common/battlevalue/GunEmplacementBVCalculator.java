@@ -140,7 +140,7 @@ public class GunEmplacementBVCalculator {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
-            pilotFactor = gunEmplacement.getCrew().getBVSkillMultiplier(gunEmplacement.getGame());
+            pilotFactor = gunEmplacement.getCrew().getBVSkillMultiplier();
         }
 
         return (int) Math.round(finalBV * pilotFactor);

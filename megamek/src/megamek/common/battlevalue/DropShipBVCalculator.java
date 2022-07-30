@@ -486,7 +486,7 @@ public class DropShipBVCalculator {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
-            pilotFactor = dropShip.getCrew().getBVSkillMultiplier(dropShip.getGame());
+            pilotFactor = dropShip.getCrew().getBVSkillMultiplier();
         }
 
         return (int) Math.round(finalBV * pilotFactor);

@@ -317,7 +317,7 @@ public class ProtoMekBVCalculator {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
-            pilotFactor = protoMek.getCrew().getBVSkillMultiplier(protoMek.getGame());
+            pilotFactor = protoMek.getCrew().getBVSkillMultiplier();
         }
         bvReport.addLine("Multiply by Pilot Factor of ", "" + pilotFactor, "x ", pilotFactor);
         int retVal = (int) Math.round((finalBV) * pilotFactor);

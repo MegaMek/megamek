@@ -481,7 +481,7 @@ public class JumpShipBVCalculator {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignoreSkill) {
-            pilotFactor = jumpShip.getCrew().getBVSkillMultiplier(jumpShip.getGame());
+            pilotFactor = jumpShip.getCrew().getBVSkillMultiplier();
         }
 
         return (int) Math.round(finalBV * pilotFactor);

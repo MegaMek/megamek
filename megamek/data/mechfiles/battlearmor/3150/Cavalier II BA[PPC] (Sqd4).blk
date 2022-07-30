@@ -13,7 +13,7 @@ BattleArmor
 </UnitType>
 
 <Name>
-Cavalier II
+Cavalier II Battle Armor
 </Name>
 
 <Model>
@@ -33,7 +33,7 @@ Cavalier II
 </originalBuildYear>
 
 <type>
-Mixed (IS Chassis) Advanced
+Mixed (IS Chassis)
 </type>
 
 <motion_type>

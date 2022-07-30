@@ -13,15 +13,15 @@ BattleArmor
 </UnitType>
 
 <Name>
-Longinus Battle Armor C
+Longinus C Battle Armor
 </Name>
 
 <Model>
-[MRR]
+[PPC]
 </Model>
 
 <mul id:>
-8029
+9214
 </mul id:>
 
 <year>
@@ -62,8 +62,8 @@ StopSwarm
 LegAttack
 BABattleClaw:LA
 BAAPMount:LA
-CLBAMedium Recoilless Rifle:RA
 CLAdvancedSRM4OS:Body
+ISBASupportPPC:RA
 </Squad Equipment>
 
 <source>
@@ -83,7 +83,7 @@ biped
 </armor>
 
 <Trooper Count>
-4
+5
 </Trooper Count>
 
 <weightclass>
@@ -99,7 +99,7 @@ The Longinus came closest to mimicking the capabilities of the Elemental suit th
 </capabilities>
 
 <deployment>
-The suit's right arm ends in a Modular Weapon Mount which could carry the standard Small Laser, Flamer, or Machine Gun (in 3063 it could also accommodate a "David" Light Gauss Rifle). Its left arm ends in a Battle Claw and features an Anti-Personnel Weapon Mount which can carry a light weapon for use against unarmored infantry, such as a sub-machine gun. Most importantly the suit features an integral SRM-2 launcher carried on a special detachable mounting. Safety mechanisms prevent the Longinus from engaging its jump jets while the launcher is still attached, but once jettisoned it can make leaps of up to 90 meters at a time. Jettisoning the launcher is also required in order for the battle armor to make anti-'Mech attacks. Finally the launcher carries only a single round of missiles due to the additional safety mechanisms taking up space.
+Built by the Wolf Empire this suit is used extensively by second line commands as it lacks HarJel. It does carry an Advanced SRM 4 however, giving it significant firepower.
 </deployment>
 
 <history>
@@ -113,7 +113,6 @@ Kali Yama Weapons Industries Inc.,Corean Enterprises - MacAdams-Suharno
 <primaryFactory>
 Kalidasa,Stewart
 </primaryFactory>
-
 
 <systemManufacturers>
 CHASSIS:Unknown

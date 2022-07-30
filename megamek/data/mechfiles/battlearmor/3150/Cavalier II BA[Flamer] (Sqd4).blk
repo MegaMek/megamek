@@ -13,16 +13,12 @@ BattleArmor
 </UnitType>
 
 <Name>
-Cavalier II
+Cavalier II Battle Armor
 </Name>
 
 <Model>
-[MRR](Sqd4)
+[Flamer](Sqd4)
 </Model>
-
-<mul id:>
-8018
-</mul id:>
 
 <year>
 3150
@@ -33,8 +29,12 @@ Cavalier II
 </originalBuildYear>
 
 <type>
-Mixed (IS Chassis) Advanced
+Mixed (IS Chassis)
 </type>
+
+<mul id:>
+8017
+</mul id:>
 
 <motion_type>
 Jump
@@ -66,7 +66,7 @@ Clan BA Stealth (Basic):Body
 Clan BA Stealth (Basic):LA
 BAJumpBooster:Body
 BAAPMount:LA
-CLBAMedium Recoilless Rifle:RA
+CLBAFlamer:RA
 </Squad Equipment>
 
 <source>
@@ -97,13 +97,12 @@ biped
 Like the Inner Sphere Standard, the Cavalier has a Modular Weapon Mount in its right arm and a Battle Claw in the left. This mount can carry one standard battle armor weapon such as a Flamer, a Small Laser, a Machine Gun, or an SRM-1 with four missiles. Also like the Inner Sphere Standard, this weapon mount can instead accept two "secondary" weapons, such as Laser Rifles or Needler Rifles, for use against infantry. The Cavalier can run as fast as the Inner Sphere Standard, use jump jets to leap the same 90 meter distance, and is just as strong as the Standard. It's also protected by the same 450kg of armoring, although the shifting of armor plating between the two has increased protection around the thighs and calves while leaving the hand and arm joints more exposed to shrapnel. This armor configuration does give the Cavalier superior manual dexterity however.
 </capabilities>
 
-<overview>
-The Cavalier was a battle armor suit built in response to sagging morale in the Armed Forces of the Federated Commonwealth, due in large part to the secession of the Lyran state from the Federated Commonwealth.
-</overview>
-
-
 <deployment>
 Introduced in the Dark Age this suit carries Clan Stealth Armor derived from the Grenadier II. It also has improved jump capability and adds an Anti-Personnel Weapon Mount.
+</deployment>
+
+<deployment>
+As Cavalier suits were shipped to units as replacement for damaged and destroyed Inner Sphere Standards, they had an immediate effect on boosting morale. The Cavalier proved itself during the FedCom Civil War where it outperformed all other battle suits except for the Infiltrator Mk. II. Since its introduction the Cavalier quickly became the second-most produced battle armor design behind the Inner Sphere Standard; it could be found in every single Federated Suns RCT and in many Lyran RCTs as well. During the Jihad these suits were decisive on numerous occasions in battle against the Word of Blake.
 </deployment>
 
 <history>

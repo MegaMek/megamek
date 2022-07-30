@@ -13,7 +13,7 @@ BattleArmor
 </UnitType>
 
 <Name>
-Longinus Battle Armor C
+Longinus C Battle Armor
 </Name>
 
 <Model>
@@ -21,7 +21,7 @@ Longinus Battle Armor C
 </Model>
 
 <mul id:>
-9213
+8029
 </mul id:>
 
 <year>
@@ -83,7 +83,7 @@ biped
 </armor>
 
 <Trooper Count>
-5
+4
 </Trooper Count>
 
 <weightclass>

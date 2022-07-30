@@ -2049,9 +2049,6 @@
 	</chassis>
 	<chassis name='M9 SDS Battle Station' unitType='Space Station'>
 		<availability>TH:2</availability>
-		<model name='&apos;Pavise&apos;'>
-			<availability>TH:2</availability>
-		</model>
 	</chassis>
 	<chassis name='Mackie' unitType='Mek'>
 		<availability>TH:3-,SL.R:0,TH.HM:4-,Periphery:3</availability>
@@ -2241,7 +2238,7 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Defender' unitType='Conventional Fighter'>
 		<availability>CC:4,MOC:6,IS:5,Periphery.Deep:6,FS:5,MERC:6,Periphery:6,TC:6,OA:5,LA:6,SL:4,FWL:5,DC:5</availability>
-		<model name=''>
+		<model name='Defender'>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -2422,14 +2419,23 @@
 	</chassis>
 	<chassis name='Nighthawk PA(L)' unitType='BattleArmor'>
 		<availability>SL:2</availability>
-		<model name='Mk. XXI' mechanized='true'>
+		<model name='Mk. XXI(Sqd4)' mechanized='true'>
 			<roles>specops</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='Mk. XXII' mechanized='true'>
+		<model name='Mk. XXI(Sqd4)' mechanized='false'>
+			<availability>General:8</availability>
+		</model>
+		<model name='Mk. XXII(Sqd4)' mechanized='false'>
 			<availability>General:4</availability>
 		</model>
-		<model name='Mk. XXX' mechanized='true'>
+		<model name='Mk. XXII(Sqd4)' mechanized='true'>
+			<availability>General:4</availability>
+		</model>
+		<model name='Mk. XXX(Sqd4)' mechanized='false'>
+			<availability>General:4</availability>
+		</model>
+		<model name='Mk. XXX(Sqd4)' mechanized='true'>
 			<availability>General:4</availability>
 		</model>
 	</chassis>

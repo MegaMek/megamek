@@ -485,13 +485,8 @@ public class Server implements Runnable {
         connectionsPending.clear();
 
         // Send "kill" commands to all connections
-        // N.B. I may be starting a race here.
+        // This WILL handle the connection end on both sides
         send(new Packet(PacketCommand.CLOSE_CONNECTION));
-
-        // kill active connections
-        connections.forEach(AbstractConnection::close);
-        connections.clear();
-
         connectionIds.clear();
 
         // Shutdown Email

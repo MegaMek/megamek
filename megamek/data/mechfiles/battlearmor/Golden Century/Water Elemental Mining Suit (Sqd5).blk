@@ -17,7 +17,7 @@ Water Elemental Mining Suit
 </Name>
 
 <Model>
-(Standard)(Sqd4)
+(Standard)(Sqd5)
 </Model>
 
 <mul id:>
@@ -91,7 +91,7 @@ biped
 </armor>
 
 <Trooper Count>
-4
+5
 </Trooper Count>
 
 <weightclass>

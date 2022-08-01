@@ -59,12 +59,12 @@ Leg
 BABasicManipulator:RA
 ISBASmallLaser:LA
 CLBASRM4:Body
-BA-SRM4 Ammo:Body:Shots4#
-BA-SRM4 Ammo:Body:Shots4#
 Clan BA Stealth (Standard):RA
 Clan BA Stealth (Standard):RA
 Clan BA Stealth (Standard):Body
 Clan BA Stealth (Standard):LA
+BA-SRM4 Ammo:Body:Shots4#
+BA-SRM4 Ammo:Body:Shots4#
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -78,30 +78,6 @@ Clan BA Stealth (Standard):LA
 
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
-
-<source>
-XTRO Republic III - Dark Age
-</source>
-
-<chassis>
-biped
-</chassis>
-
-<jumpingMP>
-0
-</jumpingMP>
-
-<armor>
-12
-</armor>
-
-<Trooper Count>
-4
-</Trooper Count>
-
-<weightclass>
-3
-</weightclass>
 
 <capabilities>
 The Grenadier II has a Modular Weapon Mount in the left arm and a second mounted in the body. The right arm has a single Basic Manipulator.
@@ -135,4 +111,28 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<source>
+XTRO Republic III - Dark Age
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+12
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
 

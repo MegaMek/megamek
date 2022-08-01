@@ -59,7 +59,9 @@ VERSION HISTORY:
 + Data: +Data: BA MUL Alignment Project. 
 	This involves a complete rework of the BA naming conventions to match the MUL. Almost all suits now have a (Sqd4,5,6) designation indicating the size
 	as opposed to the random naming used before. MUL ID’s have been cross referenced and added as required. As a final bonus to the project all BA now have 
-	some fluff text from Sarna. 
+	some fluff text from Sarna.
++ Issue #3819 Unit Files needing updates.
++ Data: More BA fixes including fix to name_change.txt which resolves MekHQ #3412.  
 + Updating to FlatLAF 2.3 from 2.2
 + Updating to Mockito 4.6.1 from 4.5.1
 

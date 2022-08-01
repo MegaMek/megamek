@@ -1,35 +1,34 @@
-Version:1.0
+Version:1.3
 Peregrine (Horned Owl)
 6
 mul id:7748
-
 Config:Biped
 techbase:Clan
 era:3132
-rules level:2
 source:Rec Guide:ilClan #11 - Dark Age
+rules level:2
 
 mass:35
 engine:210 Fusion (Clan) Engine(IS)
 structure:Clan Endo Steel
 myomer:Standard
 
-heat sinks:10 Double
+heat sinks:10 Clan Double
 walk mp:6
 jump mp:0
 
 armor:Ferro-Fibrous(Clan)
-LA armor:9
-RA armor:9
-LT armor:10
-RT armor:10
-CT armor:13
+LA armor:11
+RA armor:11
+LT armor:11
+RT armor:11
+CT armor:15
 HD armor:9
-LL armor:11
-RL armor:11
-RTL armor:4
-RTR armor:4
-RTC armor:6
+LL armor:15
+RL armor:15
+RTL armor:5
+RTR armor:5
+RTC armor:7
 
 Weapons:3
 Medium Pulse Laser, Left Arm

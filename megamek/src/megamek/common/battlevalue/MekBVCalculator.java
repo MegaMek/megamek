@@ -1087,7 +1087,7 @@ public class MekBVCalculator {
         }
         finalBV = (int) Math.round(finalBV + xbv);
 
-        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(mek);
+        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(mek);
         return (int) Math.round(finalBV * pilotFactor);
     }
 

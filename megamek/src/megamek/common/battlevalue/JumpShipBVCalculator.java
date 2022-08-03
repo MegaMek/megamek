@@ -478,7 +478,7 @@ public class JumpShipBVCalculator {
 
         finalBV = Math.round(finalBV + xbv);
 
-        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(jumpShip);
+        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(jumpShip);
         return (int) Math.round(finalBV * pilotFactor);
     }
 }

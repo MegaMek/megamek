@@ -212,7 +212,7 @@ public class BattleArmorBVCalculator {
             squadBV += battleArmor.getExtraC3BV((int) Math.round(squadBV));
         }
 
-        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(battleArmor);
+        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(battleArmor);
         return (int) Math.round(squadBV * pilotFactor);
     }
 }

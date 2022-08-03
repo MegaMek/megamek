@@ -212,7 +212,7 @@ public class InfantryBVCalculator {
                 "" + (int) Math.round(bv * utm));
         bv *= utm;
 
-        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(infantry);
+        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(infantry);
         return (int) Math.round(bv * pilotFactor);
     }
 }

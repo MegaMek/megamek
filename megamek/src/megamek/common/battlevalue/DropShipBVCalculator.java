@@ -483,7 +483,7 @@ public class DropShipBVCalculator {
         }
         finalBV += xbv;
 
-        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(dropShip);
+        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(dropShip);
         return (int) Math.round(finalBV * pilotFactor);
     }
 

@@ -22,13 +22,14 @@ import megamek.codeUtilities.MathUtility;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.LAMPilot;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Utility class for obtaining BV Skill Multipliers (TM p.315).
  */
-public class SkillBVModifier {
+public class BvMultiplier {
 
-    private static final double[][] bvMod = new double[][] {
+    private static final double[][] bvMultipliers = new double[][] {
             {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
             {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
             {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
@@ -41,26 +42,16 @@ public class SkillBVModifier {
     };
 
     /**
-     * Returns the BV multiplier for the given gunnery and piloting values.
-     *
-     * @param gunnery the gunnery skill of a pilot
-     * @param piloting the piloting skill of a pilot
-     * @return a multiplier to the BV of whatever unit the pilot is piloting.
-     */
-    public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        return bvMod[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
-    }
-
-    /**
-     * Returns the BV skill multiplier for the gunnery/piloting of the given entity's pilot (TM p.315).
+     * Returns the BV multiplier for the gunnery/piloting of the given entity's pilot (TM p.315) as well as MD
+     * implants of the pilot.
      * Returns 1 if the given entity's crew is null. Special treatment is given to infantry units where
-     * units unable to make anti-mek attacks use 5 as their anti-mek (piloting) value and LAM pilots that
+     * units unable to make anti-mek attacks use 5 as their anti-mek (piloting) value as well as LAM pilots that
      * use the average of their aero and mek values.
      *
      * @param entity The entity to get the skill modifier for
-     * @return The BV skill multiplier for the given entity's pilot
+     * @return The BV multiplier for the given entity's pilot
      */
-    public static double getBVSkillMultiplier(Entity entity) {
+    public static double bvMultiplier(Entity entity) {
         if (entity.getCrew() == null) {
             return 1;
         }
@@ -74,8 +65,33 @@ public class SkillBVModifier {
             gunnery = (lamPilot.getGunneryMech() + lamPilot.getGunneryAero()) / 2;
             piloting = (lamPilot.getPilotingMech() + lamPilot.getPilotingAero()) / 2;
         }
-        return getBVSkillMultiplier(gunnery, piloting);
+        return bvImplantMultiplier(entity) * bvSkillMultiplier(gunnery, piloting);
     }
 
-    private SkillBVModifier() { }
+    /**
+     * Returns the BV multiplier for the given gunnery and piloting values.
+     *
+     * @param gunnery the gunnery skill of a pilot
+     * @param piloting the piloting skill of a pilot
+     * @return a multiplier to the BV of whatever unit the pilot is piloting.
+     */
+    public static double bvSkillMultiplier(int gunnery, int piloting) {
+        return bvMultipliers[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
+    }
+
+    public static double bvImplantMultiplier(Entity entity) {
+        int level = 1;
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
+            level = 2;
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)) {
+            level = 3;
+        }
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+            level = 5;
+        }
+        return level / 4.0 + 0.75;
+    }
+
+    private BvMultiplier() { }
 }

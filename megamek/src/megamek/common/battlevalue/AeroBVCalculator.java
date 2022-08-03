@@ -692,7 +692,7 @@ public class AeroBVCalculator {
         }
         finalBV += xbv;
 
-        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(aero);
+        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(aero);
         return (int) Math.round(finalBV * pilotFactor);
     }
 }

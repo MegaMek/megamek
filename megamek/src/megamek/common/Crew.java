@@ -973,20 +973,6 @@ public class Crew implements Serializable {
         return (getGunnery() != 4) || (getPiloting() != 5);
     }
 
-    public double getBVImplantMultiplier() {
-        int level = 1;
-        if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
-            level = 2;
-        }
-        if (options.booleanOption(OptionsConstants.MD_VDNI)) {
-            level = 3;
-        }
-        if (options.booleanOption(OptionsConstants.MD_BVDNI)) {
-            level = 5;
-        }
-        return level / 4.0 + 0.75;
-    }
-
     public boolean hasEdgeRemaining() {
         return (getOptions().intOption(OptionsConstants.EDGE) > 0);
     }

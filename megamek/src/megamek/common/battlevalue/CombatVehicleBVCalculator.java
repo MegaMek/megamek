@@ -500,12 +500,8 @@ public class CombatVehicleBVCalculator {
 
         finalBV = Math.round(finalBV + xbv);
 
-        double pilotFactor = 1;
-        if (!ignoreSkill && (null != combatVee.getCrew())) {
-            pilotFactor = combatVee.getCrew().getBVSkillMultiplier();
-        }
-
-        int finalAdjustedBV = (int) Math.round((finalBV) * pilotFactor);
+        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(combatVee);
+        int finalAdjustedBV = (int) Math.round(finalBV * pilotFactor);
         bvReport.addResultLine("Final Adjusted BV", "= ", finalAdjustedBV);
         return finalAdjustedBV;
     }

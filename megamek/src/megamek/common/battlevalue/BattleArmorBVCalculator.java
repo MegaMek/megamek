@@ -212,8 +212,7 @@ public class BattleArmorBVCalculator {
             squadBV += battleArmor.getExtraC3BV((int) Math.round(squadBV));
         }
 
-        // Adjust BV for crew skills.
-        double pilotFactor = ignoreSkill ? 1 : battleArmor.getCrew().getBVSkillMultiplier();
+        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(battleArmor);
         return (int) Math.round(squadBV * pilotFactor);
     }
 }

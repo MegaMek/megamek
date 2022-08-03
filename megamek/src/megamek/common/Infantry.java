@@ -1791,8 +1791,14 @@ public class Infantry extends Entity {
         return super.getMovementModeAsString();
     }
 
+    /**
+     * @return True for all infantry that are allowed AM attacks. Mechanized infantry and infantry units with
+     * encumbering armor are not allowed to make AM attacks, while all other infantry are.
+     * Note that a conventional infantry unit without Anti-Mek gear (15 kg per trooper) can still make AM attacks
+     * but has a fixed 8 AM skill rating.
+     */
     public boolean canMakeAntiMekAttacks() {
-        return !isMechanized();
+        return !isMechanized() && !isArmorEncumbering();
     }
 
     @Override

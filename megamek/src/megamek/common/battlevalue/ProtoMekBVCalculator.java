@@ -314,13 +314,9 @@ public class ProtoMekBVCalculator {
         int finalBV = (int) Math.round(dbv + obv + xbv);
         bvReport.addResultLine("Sum", "= ", finalBV);
 
-        // and then factor in pilot
-        double pilotFactor = 1;
-        if (!ignoreSkill) {
-            pilotFactor = protoMek.getCrew().getBVSkillMultiplier();
-        }
+        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(protoMek);
         bvReport.addLine("Multiply by Pilot Factor of ", "" + pilotFactor, "x ", pilotFactor);
-        int retVal = (int) Math.round((finalBV) * pilotFactor);
+        int retVal = (int) Math.round(finalBV * pilotFactor);
         bvReport.addResultLine("Final Battle Value", "= ", retVal);
         return retVal;
     }

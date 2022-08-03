@@ -319,13 +319,4 @@ public class LAMPilot extends Crew {
     public boolean isCustom() {
         return getGunneryMech() != 4 || getGunneryAero() != 4 || getPilotingMech() != 5 || getPilotingAero() != 5;
     }
-
-    /** @return The BV multiplier for this LAM pilot's gunnery/piloting. */
-    @Override
-    public double getBVSkillMultiplier() {
-        return getBVImplantMultiplier() * getBVSkillMultiplier(
-                (getGunneryMech() + getGunneryAero()) / 2,
-                (getPilotingMech() + getPilotingAero()) / 2);
-    }
-
 }

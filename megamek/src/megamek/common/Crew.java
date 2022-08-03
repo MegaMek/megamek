@@ -129,18 +129,6 @@ public class Crew implements Serializable {
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
 
-    private static final double[][] bvMod = new double[][]{
-            {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
-            {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
-            {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
-            {1.66, 1.58, 1.51, 1.44, 1.32, 1.20, 1.16, 1.10, 1.04},
-            {1.38, 1.32, 1.26, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85},
-            {1.31, 1.19, 1.13, 1.08, 0.99, 0.90, 0.86, 0.81, 0.77},
-            {1.24, 1.12, 1.07, 1.02, 0.94, 0.85, 0.81, 0.77, 0.72},
-            {1.17, 1.06, 1.01, 0.96, 0.88, 0.80, 0.76, 0.72, 0.68},
-            {1.10, 0.99, 0.95, 0.90, 0.83, 0.75, 0.71, 0.68, 0.64},
-    };
-
     //region extraData inner map keys
     public static final String MAP_GIVEN_NAME = "givenName";
     public static final String MAP_SURNAME = "surname";
@@ -985,13 +973,6 @@ public class Crew implements Serializable {
         return (getGunnery() != 4) || (getPiloting() != 5);
     }
 
-    /**
-     * @return the BV multiplier for this pilot's gunnery/piloting
-     */
-    public double getBVSkillMultiplier() {
-        return getBVImplantMultiplier() * getBVSkillMultiplier(getGunnery(), getPiloting());
-    }
-
     public double getBVImplantMultiplier() {
         int level = 1;
         if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -1004,19 +985,6 @@ public class Crew implements Serializable {
             level = 5;
         }
         return level / 4.0 + 0.75;
-    }
-
-    /**
-     * Returns the BV multiplier for a pilots gunnery/piloting. This function is
-     * static to evaluate the BV of a unit, even when they have not yet been
-     * assigned a pilot.
-     *
-     * @param gunnery  the gunnery skill of the pilot
-     * @param piloting the piloting skill of the pilot
-     * @return a multiplier to the BV of whatever unit the pilot is piloting.
-     */
-    public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        return bvMod[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
     }
 
     public boolean hasEdgeRemaining() {

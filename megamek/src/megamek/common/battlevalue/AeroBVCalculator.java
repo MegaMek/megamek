@@ -692,12 +692,7 @@ public class AeroBVCalculator {
         }
         finalBV += xbv;
 
-        // and then factor in pilot
-        double pilotFactor = 1;
-        if (!ignoreSkill) {
-            pilotFactor = aero.getCrew().getBVSkillMultiplier();
-        }
-
+        double pilotFactor = ignoreSkill ? 1 : SkillBVModifier.getBVSkillMultiplier(aero);
         return (int) Math.round(finalBV * pilotFactor);
     }
 }

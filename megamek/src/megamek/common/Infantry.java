@@ -1791,8 +1791,14 @@ public class Infantry extends Entity {
         return super.getMovementModeAsString();
     }
 
+    /**
+     * @return True for all infantry that are allowed AM attacks. Mechanized infantry and infantry units with
+     * encumbering armor or field guns are not allowed to make AM attacks, while all other infantry are.
+     * Note that a conventional infantry unit without Anti-Mek gear (15 kg per trooper) can still make AM attacks
+     * but has a fixed 8 AM skill rating.
+     */
     public boolean canMakeAntiMekAttacks() {
-        return !isMechanized();
+        return !isMechanized() && !isArmorEncumbering() && !hasActiveFieldGun();
     }
 
     @Override
@@ -2057,13 +2063,14 @@ public class Infantry extends Entity {
         return (((double) getInternal(LOC_INFANTRY) / getOInternal(LOC_INFANTRY)) < 0.9);
     }
 
+    /** @return True if this infantry has any field gun (destroyed or not). */
     public boolean hasFieldGun() {
-        for (Mounted m : getWeaponList()) {
-            if (m.getLocation() == Infantry.LOC_FIELD_GUNS) {
-                return true;
-            }
-        }
-        return false;
+        return getWeaponList().stream().anyMatch(m -> m.getLocation() == LOC_FIELD_GUNS);
+    }
+
+    /** @return True if this infantry has any working (not destroyed) field gun. */
+    public boolean hasActiveFieldGun() {
+        return getWeaponList().stream().filter(m -> !m.isDestroyed()).anyMatch(m -> m.getLocation() == LOC_FIELD_GUNS);
     }
 
     @Override

@@ -16,7 +16,6 @@
 package megamek.common;
 
 import megamek.client.generator.RandomGenderGenerator;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.enums.Gender;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;

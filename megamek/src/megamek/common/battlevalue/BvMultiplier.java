@@ -69,7 +69,8 @@ public class BvMultiplier {
     }
 
     /**
-     * Returns the BV multiplier for the given gunnery and piloting values.
+     * Returns the BV multiplier for the given gunnery and piloting values. Returns 1 for the neutral
+     * values 4/5.
      *
      * @param gunnery the gunnery skill of a pilot
      * @param piloting the piloting skill of a pilot
@@ -79,6 +80,13 @@ public class BvMultiplier {
         return bvMultipliers[MathUtility.clamp(gunnery, 0, 8)][MathUtility.clamp(piloting, 0, 8)];
     }
 
+    /**
+     * Returns the BV multiplier for any MD implants that the crew of the given entity has. When the crew
+     * doesn't have any relevant MD implants, returns 1.
+     *
+     * @param entity The entity to get the skill modifier for
+     * @return a multiplier to the BV of the given entity
+     */
     public static double bvImplantMultiplier(Entity entity) {
         int level = 1;
         if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {

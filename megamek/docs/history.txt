@@ -66,6 +66,7 @@ VERSION HISTORY:
 + Updating to Log4j 2.18.0 from 2.17.2
 + Updating to Mockito 4.6.1 from 4.5.1
 + Updating to JUnit 5.9.0 from 5.8.2
++ Issue #3435: Fixed image flickering in the About... dialog
 
 0.49.8 (2022-05-27 1430 UTC)
 + PR #3431: MUL ID

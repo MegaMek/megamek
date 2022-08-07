@@ -203,4 +203,21 @@ public interface CalculationReport {
         return ((resultPrefix != null) ? resultPrefix : "")
                 + String.format(Locale.US, "%1$,.1f", result);
     }
+
+    /**
+     * Formats the given double with only the necessary digits and at most three digits. Uses the fixed Locale.US
+     * as the Java way of converting "" + value seems to use Locale.US by default as well.
+     */
+    static String fmt(double d) {
+        long timesThousand = Math.round(1000 * d);
+        if (timesThousand % 1000 == 0) {
+            return String.format(Locale.US, "%1$.0f", d);
+        } else if (timesThousand % 100 == 0) {
+            return String.format(Locale.US, "%1$.1f", d);
+        } else if (timesThousand % 10 == 0) {
+            return String.format(Locale.US, "%1$.2f", d);
+        } else {
+            return String.format(Locale.US, "%1$.3f", d);
+        }
+    }
 }

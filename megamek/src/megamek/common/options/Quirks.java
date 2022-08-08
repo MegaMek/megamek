@@ -83,6 +83,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_SCOUT_BIKE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
@@ -389,6 +390,12 @@ public class Quirks extends AbstractOptions {
             if (qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
+            }
+            
+            if (qName.equals(OptionsConstants.QUIRK_POS_SCOUT_BIKE)) {
+                return ((en.getMovementMode() == EntityMovementMode.HOVER) ||
+                        (en.getMovementMode() == EntityMovementMode.WHEELED)) &&
+                        (en.getWeight() <= 10.0);
             }
                         
             return true;

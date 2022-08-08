@@ -253,7 +253,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     // Image to hold the complete board shadow map
     BufferedImage shadowMap;
-    double[] lightDirection = { -19, 7 };
     private static Kernel kernel = new Kernel(5, 5,
             new float[] {
                     1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f,
@@ -1431,6 +1430,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         Graphics2D g = shadowMap.createGraphics();
 
+        //Compute shadow angle based on planentary conditions.
+        double[] lightDirection = { -19, 7 };
         if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) ||
         (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)) {
             lightDirection = new double[] { 0, 0 };
@@ -2462,8 +2463,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
         if (hex.containsTerrain(Terrains.ROAD) 
-                || hex.containsTerrain(Terrains.WATER) 
-                || hex.containsTerrain(Terrains.PAVEMENT)
+                || hex.containsTerrain(Terrains.WATER)
+                || (hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.BUILDING))
                 || hex.containsTerrain(Terrains.GROUND_FLUFF)) {
             supersUnderShadow = true;
             if (supers != null) {

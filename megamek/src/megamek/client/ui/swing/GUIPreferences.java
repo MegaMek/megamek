@@ -513,7 +513,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_NUM_BA, "0");
         store.setDefault(RAT_NUM_INF, "0");
         store.setDefault(RAT_YEAR_MIN, "2300");
-        store.setDefault(RAT_YEAR_MAX, "3150");
+        store.setDefault(RAT_YEAR_MAX, "3175");
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
 

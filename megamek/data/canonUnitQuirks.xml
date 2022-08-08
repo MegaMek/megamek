@@ -1776,7 +1776,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[Pop-Up Mine](Sqd4)</model>
+		<model>[Pop-Up Mine](Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1800,7 +1800,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[Interdictor](Sqd5)</model>
+		<model>[Interdictor](Sqd4)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1818,7 +1818,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[Interdictor](Sqd6)</model>
+		<model>[Interdictor](Sqd5)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -2008,7 +2008,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 	
 	<unit>
 		<chassis>Tornado PA(L)</chassis>
-		<model>P17 'Hurricane'(Sqd5)</model>
+		<model>P17 'Hurricane'(Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<quirk>prototype</quirk>
 		<quirk>difficult_maintain</quirk>

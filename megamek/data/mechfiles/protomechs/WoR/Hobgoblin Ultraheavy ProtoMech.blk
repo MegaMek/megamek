@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,7 +25,7 @@ Hobgoblin Ultraheavy ProtoMech
 </mul id:>
 
 <year>
-3075
+3072
 </year>
 
 <originalBuildYear>
@@ -58,6 +58,10 @@ false
 <engine_type>
 0
 </engine_type>
+
+<clan_engine>
+false
+</clan_engine>
 
 <internal_type>
 -1
@@ -94,7 +98,7 @@ CLAPGaussRifle
 </Legs Equipment>
 
 <Main Gun Equipment>
-Fussilade
+Fusillade
 </Main Gun Equipment>
 
 <source>
@@ -104,3 +108,4 @@ WoRS - Jihad
 <tonnage>
 10.0
 </tonnage>
+

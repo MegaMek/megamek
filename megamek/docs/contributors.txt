@@ -135,6 +135,8 @@
 	 UlyssesSockdrawer
 	 Stonewall072
 	 Ashnod
+	 Pokefan548
+	 MadCartographer
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>

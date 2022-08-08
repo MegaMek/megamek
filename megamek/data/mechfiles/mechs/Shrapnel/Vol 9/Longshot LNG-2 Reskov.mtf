@@ -1,7 +1,7 @@
-Version:1.0
+Version:1.3
 Longshot
 LNG-2 (Reskov)
-
+mul id:9243
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3084
@@ -32,10 +32,10 @@ RTC armor:4
 
 Weapons:6
 Streak SRM 6, Left Torso
-Streak SRM 6, Right Torso
-ER Medium Laser, Right Torso
 ER Medium Laser, Left Torso
 ER Small Laser, Left Torso
+Streak SRM 6, Right Torso
+ER Medium Laser, Right Torso
 Small Laser, Right Torso
 
 Left Arm:

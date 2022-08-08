@@ -1,11 +1,11 @@
-Version:1.1
+Version:1.3
 Rattlesnake II
 RSN-1
-
+mul id:9241
 Config:Biped
 techbase:Mixed (IS Chassis)
 era:3150
-source:TRO 3067
+source:Shrapnel 9 - Dark Ages
 rules level:2
 
 mass:45
@@ -33,13 +33,13 @@ RTR armor:6
 RTC armor:7
 
 Weapons:7
-Medium Laser, Right Arm
+Medium Laser, Left Arm
 Medium Laser, Left Arm
 Medium Laser, Right Arm
-Medium Laser, Left Arm
-ER Small Laser, Head
+Medium Laser, Right Arm
 ER Medium Laser, Left Torso
 ER Medium Laser, Right Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder

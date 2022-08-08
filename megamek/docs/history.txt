@@ -61,7 +61,8 @@ VERSION HISTORY:
 	as opposed to the random naming used before. MUL IDs have been cross referenced and added as required. As a final bonus to the project all BA now have
 	some fluff text from Sarna.
 + Issue #3819 Unit Files needing updates.
-+ Data: More BA fixes including fix to name_change.txt which resolves MekHQ #3412.  
++ Data: More BA fixes including fix to name_change.txt which resolves MekHQ #3412.
++ Issue #3453: Updated About Box copyright text per #3453  
 + Updating to FlatLAF 2.4 from 2.2
 + Updating to Log4j 2.18.0 from 2.17.2
 + Updating to Mockito 4.6.1 from 4.5.1

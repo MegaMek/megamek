@@ -14082,7 +14082,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             r = new Report(2370);
             r.subject = getId();
             r.indent();
-            r.add(getMASCTarget());
+            r.add(isSupercharger ? getSuperchargerTarget() : getMASCTarget());
             r.add(nRoll);
 
             if ((!isSupercharger && (nRoll < getMASCTarget()))

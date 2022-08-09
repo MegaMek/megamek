@@ -393,8 +393,8 @@ public class Quirks extends AbstractOptions {
             }
             
             if (qName.equals(OptionsConstants.QUIRK_POS_SCOUT_BIKE)) {
-                return ((en.getMovementMode() == EntityMovementMode.HOVER) ||
-                        (en.getMovementMode() == EntityMovementMode.WHEELED)) &&
+                return (en.getMovementMode().isHover() ||
+                        en.getMovementMode().isWheeled()) &&
                         (en.getWeight() <= 10.0);
             }
                         

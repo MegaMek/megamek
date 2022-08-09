@@ -2387,15 +2387,9 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Defender' unitType='Conventional Fighter'>
 		<availability>MOC:6,CC:4,IS:5,Periphery.Deep:6,MERC:6,FS:5,CIR:5,Periphery:6,TC:6,OA:5,LA:6,SL:4,FWL:5,DC:5</availability>
-		<model name='Defender'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Steinadler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:1,LA:4,MERC:1</availability>
-		<model name='Steinadler (Golden Eagle)'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>CC:5,MOC:6,IS:5,Periphery.Deep:6,FS:5,MERC:6,CIR:6,Periphery:6,TC:6,OA:6,LA:5,SL:4,FWL:5,NIOPS:5,DC:5</availability>
@@ -2584,20 +2578,11 @@
 	</chassis>
 	<chassis name='Nighthawk PA(L)' unitType='BattleArmor'>
 		<availability>SL:2</availability>
-		<model name='Mk. XXI(Sqd4)' mechanized='true'>
+		<model name='Mk. XXI(Sqd4)' mechanized='false'>
 			<roles>specops</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='Mk. XXI(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
-		<model name='Mk. XXII(Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='Mk. XXII(Sqd4)' mechanized='true'>
-			<availability>General:6</availability>
-		</model>
-		<model name='Mk. XXX(Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
 		</model>
 		<model name='Mk. XXX(Sqd4)' mechanized='true'>

@@ -1430,7 +1430,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         Graphics2D g = shadowMap.createGraphics();
 
-        //Compute shadow angle based on planentary conditions.
+        // Compute shadow angle based on planentary conditions.
         double[] lightDirection = { -19, 7 };
         if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) ||
         (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)) {

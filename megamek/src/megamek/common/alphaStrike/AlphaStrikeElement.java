@@ -537,7 +537,17 @@ public class AlphaStrikeElement {
     public ASDamageVector getLRM() {
         return hasSUA(LRM) ? (ASDamageVector) getSUA(LRM) : ASDamageVector.ZERO;
     }
-    
+
+    /**
+     * Convenience method to obtain the element's TOR ability.
+     *
+     * @return The ASDamageVector that represents the element's TOR ability. If the element does not
+     * have TOR, this will return {@link ASDamageVector#ZERO}.
+     */
+    public ASDamageVector getTOR() {
+        return hasSUA(TOR) ? (ASDamageVector) getSUA(TOR) : ASDamageVector.ZERO;
+    }
+
     /**
      * Returns true if the given Special Unit Ability should be shown on this AS element's card or summary.
      * This is usually true but false for some, e.g. BM automatically have SOA and do not need to

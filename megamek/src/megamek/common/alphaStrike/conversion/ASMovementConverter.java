@@ -98,6 +98,7 @@ final class ASMovementConverter {
             report.addLine("Shield", "- 1", "= ", walkMP);
         }
 
+        walkMP = Math.max(walkMP, 0);
         int baseMove = ((int)Math.round(walkMP * 2));
         report.addLine("Hex to inch", "x 2", "= " + baseMove);
         if (baseMove % 2 == 1) {

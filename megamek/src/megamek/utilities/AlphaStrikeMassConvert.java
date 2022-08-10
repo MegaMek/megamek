@@ -35,7 +35,10 @@ import java.util.List;
  * spacer to TAB and set the format of the Damage column to "Text").
  */
 public class AlphaStrikeMassConvert {
-    
+
+    private AlphaStrikeMassConvert() {
+    }
+
     public static void main(String[] args) throws EntityLoadingException {
         System.out.println("Starting AlphaStrike conversion.");
         StringBuilder table = new StringBuilder(clipboardHeaderString());

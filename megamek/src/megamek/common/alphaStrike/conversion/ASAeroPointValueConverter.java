@@ -19,7 +19,6 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
@@ -32,35 +31,29 @@ public class ASAeroPointValueConverter extends ASPointValueConverter {
     }
 
     @Override
-    protected void processOffensiveSPAMods() {
-        processOffensiveSPAMod(SNARC, e -> 1.0);
-        processOffensiveSPAMod(INARC, e -> 1.0);
-        processOffensiveSPAMod(CNARC, e -> 0.5);
-        processOffensiveSPAMod(BT, e -> 0.5 * getHighestMove(element) * element.getSize());
-        processOffensiveSPAMod(OVL, e -> 0.25 * element.getOverheat());
-        processOffensiveSPAMod(HT, e -> {
-            ASDamageVector ht = (ASDamageVector) element.getSUA(HT);
-            return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
-        });
-        processArtyOffensiveSPAMods();
-    }
-
-    @Override
     protected void processMovement() {
         int highestMove = getHighestMove(element);
         defensiveValue += 0.25 * highestMove;
         report.addLine("Movement", highestMove + " / 4", "" + fmt(defensiveValue));
         if (highestMove >= 10) {
             defensiveValue += 1;
-            report.addLine("High Thrust", "+1", "= " + fmt(defensiveValue));
+            report.addLine("Thrust", "+2 (Very High Thrust)", "= " + fmt(defensiveValue));
+        } else if (highestMove >= 7) {
+            defensiveValue += 0.5;
+            report.addLine("Thrust", "+0.5 (High Thrust)", "= " + fmt(defensiveValue));
         }
     }
 
     @Override
-    protected void processDefensiveSPAMods() {
-        processDefensiveSPAMod(PNT, e -> (double) (int) element.getSUA(PNT));
-        processDefensiveSPAMod(STL, e -> 2.0);
-        processDefensiveSPAMod(RCA, e -> {
+    protected void processOffensiveBT() {
+        processOffensiveSUAMod(BT, e -> (double) element.getSize());
+    }
+
+    @Override
+    protected void processDefensiveSUAMods() {
+        processDefensiveSUAMod(PNT, e -> (double) (int) element.getSUA(PNT));
+        processDefensiveSUAMod(STL, e -> 2.0);
+        processDefensiveSUAMod(RCA, e -> {
             double armorThird = Math.floor((double)element.getFullArmor() / 3);
             double barFactor = element.hasSUA(BAR) ? 0.5 : 1;
             return armorThird * barFactor;
@@ -84,5 +77,7 @@ public class ASAeroPointValueConverter extends ASPointValueConverter {
     }
 
     @Override
-    protected void processGroundCapabilities() { }
+    protected void processGroundCapabilities() {
+        subTotal += c3Bonus();
+    }
 }

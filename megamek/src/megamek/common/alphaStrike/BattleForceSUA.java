@@ -94,6 +94,9 @@ public enum BattleForceSUA {
         if (isDoor()) {
             spaName = "-D";
         }
+        if (this == ITSM) {
+            spaName = "I-TSM";
+        }
         return spaName;
     }
 

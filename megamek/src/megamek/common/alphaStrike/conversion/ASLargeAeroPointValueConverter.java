@@ -140,20 +140,6 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
     }
 
     @Override
-    protected void processMovement() {
-        int highestMove = getHighestMove(element);
-        defensiveValue += 0.25 * highestMove;
-        report.addLine("Movement", highestMove + " / 4", "" + fmt(defensiveValue));
-        if (highestMove >= 10) {
-            defensiveValue += 2;
-            report.addLine("Thrust", "+2 (Very High Thrust)", "= " + fmt(defensiveValue));
-        } else if (highestMove >= 7) {
-            defensiveValue += 0.5;
-            report.addLine("Thrust", "+0.5 (High Thrust)", "= " + fmt(defensiveValue));
-        }
-    }
-
-    @Override
     protected void processSize() { }
 
     @Override
@@ -168,7 +154,7 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
     }
 
     @Override
-    protected void processDefensiveSPAMods() {
+    protected void processDefensiveSUAMods() {
         for (ASArcs arc : ASArcs.values()) {
             ASArcSummary arcSummary = element.getArc(arc);
             if (arcSummary.hasSPA(PNT)) {
@@ -179,8 +165,8 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
                         "= " + fmt(defensiveValue));
             }
         }
-        processDefensiveSPAMod(STL, e -> 2.0);
-        processDefensiveSPAMod(RCA, e -> {
+        processDefensiveSUAMod(STL, e -> 2.0);
+        processDefensiveSUAMod(RCA, e -> {
             double armorThird = Math.floor((double)element.getFullArmor() / 3);
             double barFactor = element.hasSUA(BAR) ? 0.5 : 1;
             return armorThird * barFactor;

@@ -2476,15 +2476,9 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Defender' unitType='Conventional Fighter'>
 		<availability>MOC:6,PP:4,CC:4,IS:5,Periphery.Deep:6,MERC:6,FS:5,CIR:5,Periphery:6,TC:6,OA:5,LA:6,FWL:5,DC:5</availability>
-		<model name='Defender'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Steinadler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:1,LA:4,MERC:1</availability>
-		<model name='Steinadler (Golden Eagle)'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>MOC:6,PP:4,CC:5,IS:5,Periphery.Deep:6,MERC:6,FS:5,CIR:6,TC:6,Periphery:6,CS:5,OA:6,LA:5,FWL:5,NIOPS:5,DC:5</availability>

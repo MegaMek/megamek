@@ -794,6 +794,13 @@
 		<omniMargin>2</omniMargin>
 		<techMargin>2</techMargin>
 	</faction>
+	<faction key='SL3.CSJ'>
+		<pctOmni>10,10</pctOmni>
+		<pctClan>0,5</pctClan>
+		<pctSL>70,70</pctSL>
+		<techMargin>2</techMargin>
+		<salvage pct='6'></salvage>
+	</faction>
 	<faction key='FWL.FWG'>
 		<pctOmni>20</pctOmni>
 		<pctClan>8</pctClan>
@@ -1325,71 +1332,36 @@
 	</chassis>
 	<chassis name='Achileus Light Battle Armor' unitType='BattleArmor'>
 		<availability>PR:4,DoO:4,WOB:4,DO:4,DGM:4,DTA:4,SC:4,MCM:4,PG:4,FWL:4,TP:4,RCM:4,DA:4,RFS:4</availability>
-		<model name='(WoB)(Sqd6)' mechanized='false'>
-			<availability>WOB:5</availability>
-		</model>
 		<model name='(WoB)(Sqd6)' mechanized='true'>
 			<availability>WOB:5</availability>
-		</model>
-		<model name='[David](Sqd4)' mechanized='true'>
-			<availability>General:5</availability>
 		</model>
 		<model name='[David](Sqd4)' mechanized='false'>
 			<availability>General:5</availability>
 		</model>
-		<model name='[David](Sqd6)' mechanized='false'>
-			<availability>CS:5,WOB:5</availability>
-		</model>
 		<model name='[David](Sqd6)' mechanized='true'>
 			<availability>CS:5,WOB:5</availability>
-		</model>
-		<model name='[Flamer](Sqd4)' mechanized='true'>
-			<availability>General:7</availability>
 		</model>
 		<model name='[Flamer](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
 		</model>
-		<model name='[Flamer](Sqd6)' mechanized='false'>
-			<availability>CS:7,WOB:7</availability>
-		</model>
 		<model name='[Flamer](Sqd6)' mechanized='true'>
 			<availability>CS:7,WOB:7</availability>
-		</model>
-		<model name='[Laser](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
 		</model>
 		<model name='[Laser](Sqd4)' mechanized='true'>
 			<availability>General:6</availability>
 		</model>
-		<model name='[Laser](Sqd6)' mechanized='false'>
-			<availability>CS:6,WOB:6</availability>
-		</model>
 		<model name='[Laser](Sqd6)' mechanized='true'>
 			<availability>CS:6,WOB:6</availability>
-		</model>
-		<model name='[MG](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
 		</model>
 		<model name='[MG](Sqd4)' mechanized='true'>
 			<availability>General:8</availability>
 		</model>
-		<model name='[MG](Sqd6)' mechanized='true'>
-			<availability>CS:8,WOB:8</availability>
-		</model>
 		<model name='[MG](Sqd6)' mechanized='false'>
 			<availability>CS:8,WOB:8</availability>
-		</model>
-		<model name='[TAG](Sqd4)' mechanized='true'>
-			<roles>spotter</roles>
-			<availability>General:5</availability>
 		</model>
 		<model name='[TAG](Sqd4)' mechanized='false'>
 			<roles>spotter</roles>
 			<availability>General:5</availability>
-		</model>
-		<model name='[TAG](Sqd6)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>CS:5,WOB:5</availability>
 		</model>
 		<model name='[TAG](Sqd6)' mechanized='true'>
 			<roles>spotter</roles>
@@ -1423,15 +1395,8 @@
 		<model name='(Salvage)(Sqd5)' mechanized='false'>
 			<availability>General:5</availability>
 		</model>
-		<model name='(Salvage)(Sqd5)' mechanized='false'>
-			<roles>support,marine</roles>
-			<availability>General:5</availability>
-		</model>
-		<model name='(Standard)(Sqd5)' mechanized='true'>
-			<roles>marine</roles>
-			<availability>General:5</availability>
-		</model>
 		<model name='(Standard)(Sqd5)' mechanized='false'>
+			<roles>marine</roles>
 			<availability>General:5</availability>
 		</model>
 	</chassis>
@@ -1444,26 +1409,14 @@
 	</chassis>
 	<chassis name='Afreet Medium Battle Armor' unitType='BattleArmor'>
 		<availability>CHH:4,CSL:5,CJF:5</availability>
-		<model name='(Hell&apos;s Horses)(Sqd5)' mechanized='false'>
-			<availability>CHH:8</availability>
-		</model>
 		<model name='(Hell&apos;s Horses)(Sqd5)' mechanized='true'>
 			<availability>CHH:8</availability>
-		</model>
-		<model name='(Interdictor)(Sqd5)' mechanized='false'>
-			<availability>CJF:4</availability>
 		</model>
 		<model name='(Interdictor)(Sqd5)' mechanized='true'>
 			<availability>CJF:4</availability>
 		</model>
-		<model name='(Jade Falcon)(Sqd5)' mechanized='true'>
-			<availability>CJF:8</availability>
-		</model>
 		<model name='(Jade Falcon)(Sqd5)' mechanized='false'>
 			<availability>CJF:8</availability>
-		</model>
-		<model name='(Standard)(Sqd5)' mechanized='false'>
-			<availability>General:7</availability>
 		</model>
 		<model name='(Standard)(Sqd5)' mechanized='true'>
 			<availability>General:7</availability>
@@ -1496,17 +1449,10 @@
 		<model name='(Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Ailette Zero-G Engineering Exoskeleton' unitType='BattleArmor'>
 		<availability>FS:4</availability>
 		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -2062,21 +2008,11 @@
 	</chassis>
 	<chassis name='Asura Medium Battle Armor' unitType='BattleArmor'>
 		<availability>WOB.SD:7</availability>
-		<model name='(Anti-Infantry)(Sqd6)' mechanized='false'>
-			<availability>WOB:5</availability>
-		</model>
 		<model name='(Anti-Infantry)(Sqd6)' mechanized='true'>
-			<roles>anti_infantry</roles>
 			<availability>WOB:5</availability>
-		</model>
-		<model name='(SRM)(Sqd6)' mechanized='false'>
-			<availability>WOB:4</availability>
 		</model>
 		<model name='(SRM)(Sqd6)' mechanized='true'>
 			<availability>WOB:4</availability>
-		</model>
-		<model name='(Standard)(Sqd6)' mechanized='true'>
-			<availability>WOB:8</availability>
 		</model>
 		<model name='(Standard)(Sqd6)' mechanized='false'>
 			<availability>WOB:8</availability>
@@ -2658,16 +2594,22 @@
 			<availability>CCO:2</availability>
 		</model>
 	</chassis>
-	<chassis name='Basilisk' unitType='ProtoMek'>
-		<availability>CSA:4,CCC:6</availability>
+	<chassis name='Basilisk ProtoMech (Quad)' unitType='ProtoMek'>
+		<availability>CCC:2,CCO:2</availability>
 		<model name='(Standard)'>
-			<availability>General:8</availability>
+			<availability>CCC:2,CCO:2</availability>
+		</model>
+	</chassis>
+	<chassis name='Basilisk' unitType='ProtoMek'>
+		<availability>CSA:2,CCC:6</availability>
+		<model name='(Standard)'>
+			<availability>CSA:2,CCC:6</availability>
 		</model>
 		<model name='2'>
 			<availability>CCC:6</availability>
 		</model>
 		<model name='3'>
-			<availability>CCC:4</availability>
+			<availability>CCC:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Bastion System Defense Station' unitType='Space Station'>
@@ -3292,6 +3234,17 @@
 			<availability>General:5</availability>
 		</model>
 	</chassis>
+	<chassis name='Boggart Ultraheavy ProtoMech' unitType='ProtoMek'>
+		<availability>CCO:4</availability>
+		<model name='(Standard)'>
+			<deployedWith>Sprite Ultraheavy ProtoMech</deployedWith>
+			<availability>CCO:3</availability>
+		</model>
+		<model name='2'>
+			<deployedWith>Sprite Ultraheavy ProtoMech</deployedWith>
+			<availability>CCO:2</availability>
+		</model>
+	</chassis>
 	<chassis name='Bolla Stealth Tank' unitType='Tank' omni='IS'>
 		<availability>WOB:4</availability>
 		<model name='Comminus'>
@@ -3700,26 +3653,14 @@
 	</chassis>
 	<chassis name='Cavalier Battle Armor' unitType='BattleArmor'>
 		<availability>LA:1,FS:8</availability>
-		<model name='[Flamer](Sqd4)' mechanized='true'>
-			<availability>General:7</availability>
-		</model>
 		<model name='[Flamer](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[Laser](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
 		</model>
 		<model name='[Laser](Sqd4)' mechanized='true'>
 			<availability>General:6</availability>
 		</model>
-		<model name='[MG](Sqd4)' mechanized='true'>
-			<availability>General:8</availability>
-		</model>
 		<model name='[MG](Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[SRM](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
 		</model>
 		<model name='[SRM](Sqd4)' mechanized='true'>
 			<availability>General:7</availability>
@@ -3753,8 +3694,8 @@
 		<model name='2'>
 			<availability>CSR:3,CBS:6</availability>
 		</model>
-		<model name='4'>
-			<availability>CBS:4</availability>
+		<model name='3'>
+			<availability>CBS:7+</availability>
 		</model>
 	</chassis>
 	<chassis name='Celerity' unitType='Mek'>
@@ -3765,15 +3706,22 @@
 		</model>
 	</chassis>
 	<chassis name='Centaur' unitType='ProtoMek'>
-		<availability>CHH:5,CSR:3,CBS:4,CNC:6,CSL:5,CJF:4</availability>
+		<availability>CHH:5,CSR:3,CEI:4,CNC:6,CSL:5,CJF:4</availability>
 		<model name='(Standard)'>
 			<availability>CHH:8,CNC:8,CSL:5,CJF:3</availability>
 		</model>
 		<model name='2'>
+			<roles>mag_clamp</roles>
 			<availability>CSL:5</availability>
 		</model>
 		<model name='3'>
 			<availability>CSR:3,CBS:6</availability>
+		</model>
+		<model name='4'>
+			<availability>CEI:4</availability>
+		</model>
+		<model name='Z'>
+			<availability>CEI:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Centipede Scout Car' unitType='Tank'>
@@ -4283,27 +4231,15 @@
 	</chassis>
 	<chassis name='Clan Medium Battle Armor' unitType='BattleArmor'>
 		<availability>CDS:4,CW:4-,CNC:7,CLAN.IS:3,CGB:5,CWIE:5</availability>
-		<model name='(Laser) &apos;Volk&apos; (Sqd5)' mechanized='false'>
-			<availability>CW:6</availability>
-		</model>
 		<model name='(Laser) &apos;Volk&apos; (Sqd5)' mechanized='true'>
 			<availability>CW:6</availability>
 		</model>
-		<model name='(Naval) &apos;Bar&apos; (Sqd5)' mechanized='true'>
+		<model name='(Naval) &apos;Bar&apos; (Sqd5)' mechanized='false'>
 			<roles>marine</roles>
 			<availability>CGB:8</availability>
 		</model>
-		<model name='(Naval) &apos;Bar&apos; (Sqd5)' mechanized='false'>
-			<availability>CGB:8</availability>
-		</model>
-		<model name='(Rabid)(Sqd5)' mechanized='true'>
-			<availability>CDS:7,CW:4,CNC:7,CGB:4,CWIE:7</availability>
-		</model>
 		<model name='(Rabid)(Sqd5)' mechanized='false'>
 			<availability>CDS:7,CW:4,CNC:7,CGB:4,CWIE:7</availability>
-		</model>
-		<model name='(Rache)(Sqd5)' mechanized='false'>
-			<availability>General:8</availability>
 		</model>
 		<model name='(Rache)(Sqd5)' mechanized='true'>
 			<availability>General:8</availability>
@@ -4599,14 +4535,8 @@
 	</chassis>
 	<chassis name='Corona Heavy Battle Armor' unitType='BattleArmor'>
 		<availability>CSA:5,CCC:4,CLAN.IS:3,CSL:4,CCO:3</availability>
-		<model name='(SRM) (Sqd5)' mechanized='false'>
-			<availability>CSA:4</availability>
-		</model>
 		<model name='(SRM) (Sqd5)' mechanized='true'>
 			<availability>CSA:4</availability>
-		</model>
-		<model name='(Standard) (Sqd5)' mechanized='true'>
-			<availability>General:8</availability>
 		</model>
 		<model name='(Standard) (Sqd5)' mechanized='false'>
 			<availability>General:8</availability>
@@ -5246,12 +5176,12 @@
 		</model>
 	</chassis>
 	<chassis name='Delphyne' unitType='ProtoMek'>
-		<availability>CSA:2,CSR:1,CBS:6,CGS:2,CCO:2</availability>
+		<availability>CSA:2,CSR:1,CBS:6,CEI:2,CGS:2,CCO:2</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
 		<model name='2'>
-			<availability>CBS:6,CGS:6</availability>
+			<availability>CBS:6,CEI:2,CGS:6</availability>
 		</model>
 		<model name='3'>
 			<deployedWith>Procyon</deployedWith>
@@ -5418,34 +5348,18 @@
 	</chassis>
 	<chassis name='Djinn Battle Armor' unitType='BattleArmor'>
 		<availability>WOB.SD:5,PIR:1,WOB:1</availability>
-		<model name='(Reflective) &apos;Terrorizer&apos; [Flamer] (Sqd6)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='(Reflective) &apos;Terrorizer&apos; [Flamer] (Sqd6)' mechanized='true'>
-			<availability>General:6</availability>
-		</model>
-		<model name='(Reflective) &apos;Terrorizer&apos; [Laser] (Sqd6)' mechanized='true'>
 			<availability>General:6</availability>
 		</model>
 		<model name='(Reflective) &apos;Terrorizer&apos; [Laser] (Sqd6)' mechanized='false'>
 			<availability>General:6</availability>
 		</model>
-		<model name='(Reflective) &apos;Terrorizer&apos; [MG] (Sqd6)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='(Reflective) &apos;Terrorizer&apos; [MG] (Sqd6)' mechanized='true'>
 			<availability>General:6</availability>
-		</model>
-		<model name='(Standard) (Sqd6)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>WOB.SD:8</availability>
 		</model>
 		<model name='(Standard) (Sqd6)' mechanized='true'>
 			<roles>spotter</roles>
 			<availability>WOB.SD:8</availability>
-		</model>
-		<model name='(Stealth) (Sqd6)' mechanized='true'>
-			<availability>WOB:4</availability>
 		</model>
 		<model name='(Stealth) (Sqd6)' mechanized='false'>
 			<availability>WOB:4</availability>
@@ -5699,89 +5613,45 @@
 	</chassis>
 	<chassis name='Elemental Battle Armor' unitType='BattleArmor'>
 		<availability>CHH:6,MERC.WD:6,CW:6,CLAN:6,CNC:6+</availability>
-		<model name='(Fire) [AP Gauss](Sqd5)' mechanized='true'>
-			<availability>CJF:4</availability>
-		</model>
 		<model name='(Fire) [AP Gauss](Sqd5)' mechanized='false'>
-			<availability>CJF:4</availability>
-		</model>
-		<model name='(Fire) [Flamer](Sqd5)' mechanized='true'>
 			<availability>CJF:4</availability>
 		</model>
 		<model name='(Fire) [Flamer](Sqd5)' mechanized='false'>
 			<availability>CJF:4</availability>
 		</model>
-		<model name='(Fire) [MicroPL](Sqd5)' mechanized='false'>
-			<availability>CJF:4</availability>
-		</model>
 		<model name='(Fire) [MicroPL](Sqd5)' mechanized='true'>
 			<availability>CJF:4</availability>
-		</model>
-		<model name='(Headhunter)(Sqd5)' mechanized='false'>
-			<availability>CW:2,CGB:2,CWIE:2</availability>
 		</model>
 		<model name='(Headhunter)(Sqd5)' mechanized='true'>
 			<availability>CW:2,CGB:2,CWIE:2</availability>
 		</model>
-		<model name='(Space) [Flamer](Sqd5)' mechanized='false'>
-			<availability>CSR:2,CLAN:2</availability>
-		</model>
 		<model name='(Space) [Flamer](Sqd5)' mechanized='true'>
-			<roles>marine</roles>
-			<availability>CSR:2,CLAN:2</availability>
-		</model>
-		<model name='(Space) [MG](Sqd5)' mechanized='false'>
 			<availability>CSR:2,CLAN:2</availability>
 		</model>
 		<model name='(Space) [MG](Sqd5)' mechanized='true'>
-			<roles>marine</roles>
-			<availability>CSR:2,CLAN:2</availability>
-		</model>
-		<model name='(Space) [MicroPL](Sqd5)' mechanized='true'>
-			<roles>marine</roles>
 			<availability>CSR:2,CLAN:2</availability>
 		</model>
 		<model name='(Space) [MicroPL](Sqd5)' mechanized='false'>
+			<roles>marine</roles>
 			<availability>CSR:2,CLAN:2</availability>
-		</model>
-		<model name='[AP Gauss](Sqd5)' mechanized='false'>
-			<availability>General:6</availability>
 		</model>
 		<model name='[AP Gauss](Sqd5)' mechanized='true'>
 			<availability>General:6</availability>
 		</model>
-		<model name='[ER Laser](Sqd5)' mechanized='false'>
-			<availability>MERC.WD:6,CLAN:6</availability>
-		</model>
 		<model name='[ER Laser](Sqd5)' mechanized='true'>
 			<availability>MERC.WD:6,CLAN:6</availability>
-		</model>
-		<model name='[Flamer](Sqd5)' mechanized='true'>
-			<availability>General:8</availability>
 		</model>
 		<model name='[Flamer](Sqd5)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
-		<model name='[HMG](Sqd5)' mechanized='true'>
-			<availability>CLAN:7</availability>
-		</model>
 		<model name='[HMG](Sqd5)' mechanized='false'>
 			<availability>CLAN:7</availability>
-		</model>
-		<model name='[Laser](Sqd5)' mechanized='false'>
-			<availability>General:7</availability>
 		</model>
 		<model name='[Laser](Sqd5)' mechanized='true'>
 			<availability>General:7</availability>
 		</model>
-		<model name='[MG](Sqd5)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='[MG](Sqd5)' mechanized='true'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[MicroPL](Sqd5)' mechanized='true'>
-			<availability>CLAN:6</availability>
 		</model>
 		<model name='[MicroPL](Sqd5)' mechanized='false'>
 			<availability>CLAN:6</availability>
@@ -5789,9 +5659,6 @@
 	</chassis>
 	<chassis name='Elemental II Battle Armor' unitType='BattleArmor'>
 		<availability>CHH:1</availability>
-		<model name='X(Sqd5)' mechanized='false'>
-			<availability>General:2</availability>
-		</model>
 		<model name='X(Sqd5)' mechanized='true'>
 			<availability>General:2</availability>
 		</model>
@@ -5801,16 +5668,7 @@
 		<model name='[AP Gauss](Sqd5)' mechanized='false'>
 			<availability>CHH:2</availability>
 		</model>
-		<model name='[AP Gauss](Sqd5)' mechanized='false'>
-			<availability>CHH:2</availability>
-		</model>
 		<model name='[Flamer](Sqd5)' mechanized='false'>
-			<availability>CHH:2</availability>
-		</model>
-		<model name='[Flamer](Sqd5)' mechanized='false'>
-			<availability>CHH:2</availability>
-		</model>
-		<model name='[MicroPL](Sqd5)' mechanized='false'>
 			<availability>CHH:2</availability>
 		</model>
 		<model name='[MicroPL](Sqd5)' mechanized='false'>
@@ -5943,15 +5801,6 @@
 			<availability>General:9</availability>
 		</model>
 	</chassis>
-	<chassis name='Erinyes' unitType='ProtoMek'>
-		<availability>CJF:1</availability>
-		<model name='(Standard)'>
-			<availability>CJF:6</availability>
-		</model>
-		<model name='2'>
-			<availability>CJF:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Essex II Destroyer' unitType='Warship'>
 		<availability>CSA:2,CS:4,CSR:1,CDS:2,FWL:1,WOB:2,CGS:1,CCO:1,DC:1</availability>
 		<model name='(2711)'>
@@ -6049,13 +5898,7 @@
 	</chassis>
 	<chassis name='Fa Shih Battle Armor' unitType='BattleArmor'>
 		<availability>CC:7</availability>
-		<model name='(Support) [King David](Sqd4)' mechanized='true'>
-			<availability>General:5</availability>
-		</model>
 		<model name='(Support) [King David](Sqd4)' mechanized='false'>
-			<availability>General:5</availability>
-		</model>
-		<model name='(Support) [Plasma](Sqd4)' mechanized='true'>
 			<availability>General:5</availability>
 		</model>
 		<model name='(Support) [Plasma](Sqd4)' mechanized='false'>
@@ -6064,36 +5907,17 @@
 		<model name='2 [MG](Sqd4)' mechanized='false'>
 			<availability>CC:1</availability>
 		</model>
-		<model name='2 [MG](Sqd4)' mechanized='false'>
-			<availability>CC:1</availability>
-		</model>
-		<model name='[Flamer](Sqd4)' mechanized='true'>
-			<availability>CC:7</availability>
-		</model>
 		<model name='[Flamer](Sqd4)' mechanized='false'>
 			<availability>CC:7</availability>
-		</model>
-		<model name='[LRR](Sqd4)' mechanized='false'>
-			<availability>CC:8</availability>
 		</model>
 		<model name='[LRR](Sqd4)' mechanized='true'>
 			<availability>CC:8</availability>
 		</model>
-		<model name='[Laser](Sqd4)' mechanized='true'>
-			<availability>CC:6</availability>
-		</model>
 		<model name='[Laser](Sqd4)' mechanized='false'>
 			<availability>CC:6</availability>
 		</model>
-		<model name='[MG](Sqd4)' mechanized='true'>
-			<availability>CC:8</availability>
-		</model>
 		<model name='[MG](Sqd4)' mechanized='false'>
 			<availability>CC:8</availability>
-		</model>
-		<model name='[TAG](Sqd4)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>CC:5</availability>
 		</model>
 		<model name='[TAG](Sqd4)' mechanized='true'>
 			<roles>spotter</roles>
@@ -6216,17 +6040,8 @@
 		<model name='&apos;Longshot&apos; (Sqd4)' mechanized='false'>
 			<availability>General:3</availability>
 		</model>
-		<model name='&apos;Longshot&apos; (Sqd4)' mechanized='false'>
-			<availability>General:3</availability>
-		</model>
 		<model name='[ERML](Sqd4)' mechanized='false'>
 			<availability>General:5</availability>
-		</model>
-		<model name='[ERML](Sqd4)' mechanized='false'>
-			<availability>General:5</availability>
-		</model>
-		<model name='[MG](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
 		</model>
 		<model name='[MG](Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
@@ -6234,17 +6049,8 @@
 		<model name='[MPL](Sqd4)' mechanized='false'>
 			<availability>General:5</availability>
 		</model>
-		<model name='[MPL](Sqd4)' mechanized='false'>
-			<availability>General:5</availability>
-		</model>
 		<model name='[Mortar](Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[Mortar](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
-		<model name='[SL](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
 		</model>
 		<model name='[SL](Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
@@ -6252,17 +6058,8 @@
 		<model name='[SPL](Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
 		</model>
-		<model name='[SPL](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[SRM](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[SRM](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
-		</model>
-		<model name='[VSP](Sqd6)' mechanized='false'>
-			<availability>General:3</availability>
 		</model>
 		<model name='[VSP](Sqd6)' mechanized='false'>
 			<availability>General:3</availability>
@@ -7006,12 +6803,6 @@
 		<model name='(Standard) [AG](Sqd4)' mechanized='false'>
 			<availability>MH:4</availability>
 		</model>
-		<model name='(Standard) [AG](Sqd4)' mechanized='false'>
-			<availability>MH:4</availability>
-		</model>
-		<model name='(Standard) [BC/ID](Sqd4)' mechanized='false'>
-			<availability>MH:2</availability>
-		</model>
 		<model name='(Standard) [BC/ID](Sqd4)' mechanized='false'>
 			<availability>MH:2</availability>
 		</model>
@@ -7068,32 +6859,17 @@
 	</chassis>
 	<chassis name='Gnome Battle Armor' unitType='BattleArmor'>
 		<availability>CHH:6,CLAN:2</availability>
-		<model name='(LRM)(Sqd5)' mechanized='true'>
-			<availability>CHH:4</availability>
-		</model>
 		<model name='(LRM)(Sqd5)' mechanized='false'>
 			<availability>CHH:4</availability>
-		</model>
-		<model name='(Standard)(Sqd5)' mechanized='false'>
-			<availability>General:7</availability>
 		</model>
 		<model name='(Standard)(Sqd5)' mechanized='true'>
 			<availability>General:7</availability>
 		</model>
-		<model name='(Upgrade) [Bearhunter](Sqd5)' mechanized='true'>
-			<availability>CHH:6</availability>
-		</model>
 		<model name='(Upgrade) [Bearhunter](Sqd5)' mechanized='false'>
 			<availability>CHH:6</availability>
 		</model>
-		<model name='(Upgrade) [MRR](Sqd5)' mechanized='true'>
-			<availability>CHH:8</availability>
-		</model>
 		<model name='(Upgrade) [MRR](Sqd5)' mechanized='false'>
 			<availability>CHH:8</availability>
-		</model>
-		<model name='(Upgrade) [Pulse Laser](Sqd5)' mechanized='false'>
-			<availability>CHH:6</availability>
 		</model>
 		<model name='(Upgrade) [Pulse Laser](Sqd5)' mechanized='true'>
 			<availability>CHH:6</availability>
@@ -7140,26 +6916,13 @@
 		<model name='(Fast Assault)(Sqd5)' mechanized='false'>
 			<availability>CHH:6</availability>
 		</model>
-		<model name='(Fast Assault)(Sqd5)' mechanized='false'>
-			<availability>CHH:6</availability>
-		</model>
-		<model name='(Rock Golem)(Sqd5)' mechanized='false'>
-			<availability>CHH:8</availability>
-		</model>
 		<model name='(Rock Golem)(Sqd5)' mechanized='false'>
 			<availability>CHH:8</availability>
 		</model>
 		<model name='(Standard)(Sqd5)' mechanized='false'>
 			<availability>CGB:8</availability>
 		</model>
-		<model name='(Standard)(Sqd5)' mechanized='false'>
-			<availability>CGB:8</availability>
-		</model>
 		<model name='(Support)(Sqd5)' mechanized='false'>
-			<availability>CGB:4</availability>
-		</model>
-		<model name='(Support)(Sqd5)' mechanized='false'>
-			<roles>urban,anti_infantry</roles>
 			<availability>CGB:4</availability>
 		</model>
 	</chassis>
@@ -7212,10 +6975,10 @@
 	<chassis name='Gorgon' unitType='ProtoMek'>
 		<availability>CSA:7,CSR:3,CBS:4,CNC:4,CJF:5,CCO:4</availability>
 		<model name='(Standard)'>
-			<availability>CSA:5,CSR:3,CBS:5,CNC:5,CJF:3</availability>
+			<availability>CSA:7,CSR:3,CBS:5,CNC:5</availability>
 		</model>
 		<model name='2'>
-			<availability>CSA:8,CJF:5,CCO:8</availability>
+			<availability>CSA:8,CCO:8</availability>
 		</model>
 		<model name='3'>
 			<availability>CSA:6,CSR:3,CBS:6</availability>
@@ -7230,14 +6993,7 @@
 		<model name='&apos;Falcata&apos;(Sqd4)' mechanized='false'>
 			<availability>FWL:5</availability>
 		</model>
-		<model name='&apos;Falcata&apos;(Sqd4)' mechanized='false'>
-			<availability>FWL:5</availability>
-		</model>
 		<model name='PEX-2B(Sqd4)' mechanized='false'>
-			<availability>MERC.KH:6,MERC.WD:6,IS:6-,MERC:5-,Periphery:4-</availability>
-		</model>
-		<model name='PEX-2B(Sqd4)' mechanized='false'>
-			<roles>support</roles>
 			<availability>MERC.KH:6,MERC.WD:6,IS:6-,MERC:5-,Periphery:4-</availability>
 		</model>
 	</chassis>
@@ -7362,42 +7118,23 @@
 	</chassis>
 	<chassis name='Gray Death Scout Suit' unitType='BattleArmor'>
 		<availability>LA:4,FS:1,MERC:3,TC:3</availability>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='(Standard)(Sqd4)' mechanized='true'>
-			<roles>recon</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Gray Death Standard Suit' unitType='BattleArmor'>
 		<availability>LA:7,MERC:5</availability>
-		<model name='[Flamer](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
-		</model>
 		<model name='[Flamer](Sqd4)' mechanized='true'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[LRR](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
 		</model>
 		<model name='[LRR](Sqd4)' mechanized='true'>
 			<availability>General:8</availability>
 		</model>
-		<model name='[Laser](Sqd4)' mechanized='true'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[Laser](Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
 		</model>
-		<model name='[MG](Sqd4)' mechanized='true'>
-			<availability>General:8</availability>
-		</model>
 		<model name='[MG](Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[SRM](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
 		</model>
 		<model name='[SRM](Sqd4)' mechanized='true'>
 			<availability>General:7</availability>
@@ -7405,15 +7142,6 @@
 	</chassis>
 	<chassis name='Gray Death Strike Armor' unitType='BattleArmor'>
 		<availability>LA:3</availability>
-		<model name='(Prototype)(Sqd4)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>LA:1</availability>
-		</model>
-		<model name='(Standard)(Sqd4)' mechanized='true'>
-			<roles>spotter</roles>
-			<deployedWith>Gray Death Standard Suit</deployedWith>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Great Wyrm' unitType='Mek'>
 		<availability>CSA:4,CCC:4,CHH:4,CLAN:1,CCO:4,CGB:4</availability>
@@ -7429,17 +7157,8 @@
 		<model name='(Hunter-Killer) [MagShot](Sqd4)' mechanized='false'>
 			<availability>FS:3</availability>
 		</model>
-		<model name='(Hunter-Killer) [MagShot](Sqd4)' mechanized='false'>
-			<availability>FS:3</availability>
-		</model>
 		<model name='(Hunter-Killer) [NARC](Sqd4)' mechanized='false'>
 			<availability>FS:3</availability>
-		</model>
-		<model name='(Hunter-Killer) [NARC](Sqd4)' mechanized='false'>
-			<availability>FS:3</availability>
-		</model>
-		<model name='[Flamer](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
 		</model>
 		<model name='[Flamer](Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
@@ -7447,24 +7166,11 @@
 		<model name='[LRR](Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
-		<model name='[LRR](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
-		<model name='[MagShot](Sqd4)' mechanized='false'>
-			<availability>FS:5</availability>
-		</model>
 		<model name='[MagShot](Sqd4)' mechanized='false'>
 			<availability>FS:5</availability>
 		</model>
 		<model name='[SRM/SL](Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
-		</model>
-		<model name='[SRM/SL](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
-		<model name='[TAG](Sqd4)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>General:4</availability>
 		</model>
 		<model name='[TAG](Sqd4)' mechanized='false'>
 			<roles>spotter</roles>
@@ -7636,42 +7342,22 @@
 		<model name='CEX-205 [Armored Glove](Sqd4)' mechanized='false'>
 			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
 		</model>
-		<model name='CEX-205 [Armored Glove](Sqd4)' mechanized='false'>
-			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
-		</model>
 		<model name='CEX-205 [Basic Manipulator](Sqd4)' mechanized='false'>
 			<roles>support</roles>
-			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
-		</model>
-		<model name='CEX-205 [Basic Manipulator](Sqd4)' mechanized='false'>
 			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
 		</model>
 		<model name='CEX-205 [Cargo Lifter](Sqd4)' mechanized='false'>
 			<roles>support</roles>
 			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
 		</model>
-		<model name='CEX-205 [Cargo Lifter](Sqd4)' mechanized='false'>
-			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
-		</model>
 		<model name='CEX-205 [Industrial Drill](Sqd4)' mechanized='false'>
-			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
-		</model>
-		<model name='CEX-205 [Industrial Drill](Sqd4)' mechanized='false'>
-			<roles>support</roles>
 			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
 		</model>
 		<model name='CEX-205 [Mine Clearance](Sqd4)' mechanized='false'>
 			<availability>MERC.KH:3,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
 		</model>
-		<model name='CEX-205 [Mine Clearance](Sqd4)' mechanized='false'>
-			<roles>support,minesweeper</roles>
-			<availability>MERC.KH:3,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
-		</model>
 		<model name='CEX-205 [Salvage Arm](Sqd4)' mechanized='false'>
 			<roles>support</roles>
-			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
-		</model>
-		<model name='CEX-205 [Salvage Arm](Sqd4)' mechanized='false'>
 			<availability>MERC.KH:3-,MERC.WD:2,IS:4,MERC:3,Periphery:2</availability>
 		</model>
 	</chassis>
@@ -7940,9 +7626,9 @@
 		</model>
 	</chassis>
 	<chassis name='Harpy' unitType='ProtoMek'>
-		<availability>CSA:3,CHH:6,CBS:2,CSL:6</availability>
+		<availability>CSA:4,CHH:8,CBS:2,CSL:6</availability>
 		<model name='(Standard)'>
-			<availability>CSA:4,CHH:4,CBS:4,CSL:4,CJF:2</availability>
+			<availability>CSA:4,CHH:6,CBS:4,CSL:4</availability>
 		</model>
 		<model name='2'>
 			<availability>CHH:8,CBS:8,CSL:8</availability>
@@ -8042,17 +7728,11 @@
 		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Hauberk II Battle Armor' unitType='BattleArmor'>
 		<availability>FS:2</availability>
 		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<roles>urban</roles>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -8606,6 +8286,17 @@
 			<availability>ROS:5,DC:5</availability>
 		</model>
 	</chassis>
+	<chassis name='Hobgoblin Ultraheavy ProtoMech' unitType='ProtoMek'>
+		<availability>CHH:4,CSL:4,CCO:6</availability>
+		<model name='(Standard)'>
+			<roles>mag_clamp</roles>
+			<availability>CHH:4,CSL:4,CCO:6</availability>
+		</model>
+		<model name='2'>
+			<roles>mag_clamp</roles>
+			<availability>CCO:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Hollander II' unitType='Mek'>
 		<availability>LA:6,MERC:5,FS:5</availability>
 		<model name='BZK-F5'>
@@ -8808,10 +8499,6 @@
 	</chassis>
 	<chassis name='Hurricane PA (L)' unitType='BattleArmor'>
 		<availability>CS:1</availability>
-		<model name='P17 &apos;Hurricane&apos;(Sqd6)' mechanized='true'>
-			<roles>specops</roles>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Huscarl' unitType='Aero' omni='IS'>
 		<availability>CS:3,FRR:5,CGB.FRR:5,CNC:4,CGB:4</availability>
@@ -8882,7 +8569,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hydra' unitType='ProtoMek'>
-		<availability>CHH:5,CBS:2,CSL:5</availability>
+		<availability>CHH:5,CBS:6,CSL:5</availability>
 		<model name='(Standard)'>
 			<availability>CHH:6,CBS:6,CSL:6</availability>
 		</model>
@@ -8907,62 +8594,32 @@
 	</chassis>
 	<chassis name='IS Standard Battle Armor' unitType='BattleArmor'>
 		<availability>CC:4,MOC:8,LA:3,ROS:4,FWL:3,IS:8,WOB:3,MH:8,FS:1,DC:2,TC:8</availability>
-		<model name='[Flamer](Sqd4)' mechanized='true'>
-			<availability>General:7</availability>
-		</model>
 		<model name='[Flamer](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[Flamer](Sqd6)' mechanized='true'>
-			<availability>CS:7,WOB:7</availability>
 		</model>
 		<model name='[Flamer](Sqd6)' mechanized='false'>
 			<availability>CS:7,WOB:7</availability>
 		</model>
-		<model name='[LRR](Sqd4)' mechanized='true'>
-			<availability>General:8</availability>
-		</model>
 		<model name='[LRR](Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[LRR](Sqd6)' mechanized='true'>
-			<availability>CS:8,WOB:8</availability>
 		</model>
 		<model name='[LRR](Sqd6)' mechanized='false'>
 			<availability>CS:8,WOB:8</availability>
 		</model>
-		<model name='[Laser](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[Laser](Sqd4)' mechanized='true'>
 			<availability>General:6</availability>
-		</model>
-		<model name='[Laser](Sqd6)' mechanized='true'>
-			<availability>CS:6,WOB:6</availability>
 		</model>
 		<model name='[Laser](Sqd6)' mechanized='false'>
 			<availability>CS:6,WOB:6</availability>
 		</model>
-		<model name='[MG](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='[MG](Sqd4)' mechanized='true'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[MG](Sqd6)' mechanized='true'>
-			<availability>CS:8,WOB:8</availability>
 		</model>
 		<model name='[MG](Sqd6)' mechanized='false'>
 			<availability>CS:8,WOB:8</availability>
 		</model>
-		<model name='[SRM](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
-		</model>
 		<model name='[SRM](Sqd4)' mechanized='true'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[SRM](Sqd6)' mechanized='true'>
-			<availability>CS:7,WOB:7</availability>
 		</model>
 		<model name='[SRM](Sqd6)' mechanized='false'>
 			<availability>CS:7,WOB:7</availability>
@@ -9031,37 +8688,22 @@
 	</chassis>
 	<chassis name='Infiltrator Mk. I Battle Armor' unitType='BattleArmor'>
 		<availability>LA:1,FS:1,MERC:2,TC:2</availability>
-		<model name='&apos;Waddle&apos;(Sqd4)' mechanized='true'>
+		<model name='&apos;Waddle&apos;(Sqd4)' mechanized='false'>
 			<roles>recon</roles>
 			<availability>LA:6,FS:6,TC:6</availability>
 		</model>
-		<model name='&apos;Waddle&apos;(Sqd4)' mechanized='false'>
-			<availability>LA:6,FS:6,TC:6</availability>
-		</model>
-		<model name='(Special Ops)(Sqd4)' mechanized='true'>
-			<roles>specops</roles>
-			<availability>LA:2,FS:2,MERC:2</availability>
-		</model>
 		<model name='(Special Ops)(Sqd4)' mechanized='false'>
+			<roles>specops</roles>
 			<availability>LA:2,FS:2,MERC:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Infiltrator Mk. II Battle Armor' unitType='BattleArmor'>
 		<availability>ROS:3,FS:3,TC:3</availability>
-		<model name='&apos;Puma&apos;(Sqd4)' mechanized='true'>
-			<availability>FS:8,TC:8</availability>
-		</model>
 		<model name='&apos;Puma&apos;(Sqd4)' mechanized='false'>
 			<availability>FS:8,TC:8</availability>
 		</model>
-		<model name='(Magnetic)(Sqd4)' mechanized='false'>
-			<availability>ROS:4,FS:4</availability>
-		</model>
 		<model name='(Magnetic)(Sqd4)' mechanized='true'>
 			<availability>ROS:4,FS:4</availability>
-		</model>
-		<model name='(Sensor)(Sqd4)' mechanized='false'>
-			<availability>FS:4</availability>
 		</model>
 		<model name='(Sensor)(Sqd4)' mechanized='true'>
 			<availability>FS:4</availability>
@@ -9140,9 +8782,6 @@
 	</chassis>
 	<chassis name='Ironhold Assault Battle Armor' unitType='BattleArmor'>
 		<availability>CJF:3</availability>
-		<model name='(Standard)(Sqd5)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='(Standard)(Sqd5)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
@@ -9609,67 +9248,36 @@
 	</chassis>
 	<chassis name='Kage Light Battle Armor' unitType='BattleArmor'>
 		<availability>ROS:2,DC:4</availability>
-		<model name='(DEST)(Sqd4)' mechanized='false'>
-			<availability>DC:4</availability>
-		</model>
 		<model name='(DEST)(Sqd4)' mechanized='true'>
-			<roles>recon</roles>
 			<availability>DC:4</availability>
 		</model>
-		<model name='(Space)(Sqd4)' mechanized='true'>
+		<model name='(Space)(Sqd4)' mechanized='false'>
 			<roles>marine</roles>
 			<availability>ROS:2,DC:2</availability>
 		</model>
-		<model name='(Space)(Sqd4)' mechanized='false'>
-			<availability>ROS:2,DC:2</availability>
-		</model>
-		<model name='(Vibro-Claw)(Sqd4)' mechanized='true'>
+		<model name='(Vibro-Claw)(Sqd4)' mechanized='false'>
 			<roles>recon</roles>
 			<availability>DC:4</availability>
-		</model>
-		<model name='(Vibro-Claw)(Sqd4)' mechanized='false'>
-			<availability>DC:4</availability>
-		</model>
-		<model name='C(Sqd4)' mechanized='false'>
-			<availability>DC:2</availability>
 		</model>
 		<model name='C(Sqd4)' mechanized='true'>
 			<availability>DC:2</availability>
 		</model>
-		<model name='[ECM](Sqd4)' mechanized='true'>
+		<model name='[ECM](Sqd4)' mechanized='false'>
 			<roles>recon</roles>
 			<availability>MERC:2,DC:5</availability>
-		</model>
-		<model name='[ECM](Sqd4)' mechanized='false'>
-			<availability>MERC:2,DC:5</availability>
-		</model>
-		<model name='[Flamer](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
 		</model>
 		<model name='[Flamer](Sqd4)' mechanized='true'>
-			<roles>recon</roles>
 			<availability>General:7</availability>
 		</model>
-		<model name='[Laser](Sqd4)' mechanized='true'>
+		<model name='[Laser](Sqd4)' mechanized='false'>
 			<roles>recon</roles>
 			<availability>General:6</availability>
-		</model>
-		<model name='[Laser](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
-		<model name='[MG](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
 		</model>
 		<model name='[MG](Sqd4)' mechanized='true'>
-			<roles>recon</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='[TAG](Sqd4)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>General:5</availability>
-		</model>
 		<model name='[TAG](Sqd4)' mechanized='true'>
-			<roles>recon,spotter</roles>
+			<roles>spotter</roles>
 			<availability>General:5</availability>
 		</model>
 	</chassis>
@@ -9685,12 +9293,6 @@
 		<model name='(Upgrade) [Battle Claw](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
 		</model>
-		<model name='(Upgrade) [Battle Claw](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
-		</model>
-		<model name='[Battle Claw](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[Battle Claw](Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
 		</model>
@@ -9698,14 +9300,8 @@
 			<roles>support</roles>
 			<availability>General:4</availability>
 		</model>
-		<model name='[Industrial Drill](Sqd4)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
 		<model name='[Salvage Arm](Sqd4)' mechanized='false'>
 			<roles>support</roles>
-			<availability>DC.SL:6,General:6</availability>
-		</model>
-		<model name='[Salvage Arm](Sqd4)' mechanized='false'>
 			<availability>DC.SL:6,General:6</availability>
 		</model>
 	</chassis>
@@ -9921,75 +9517,38 @@
 	</chassis>
 	<chassis name='Kobold Battle Armor' unitType='BattleArmor'>
 		<availability>CS:5,FRR:5,CGB.FRR:5</availability>
-		<model name='X-C3(Sqd6)' mechanized='false'>
-			<availability>CS:2</availability>
-		</model>
 		<model name='X-C3(Sqd6)' mechanized='true'>
 			<availability>CS:2</availability>
-		</model>
-		<model name='[MicroGL/Flamer](Sqd4)' mechanized='false'>
-			<availability>FRR:6,CGB.FRR:6</availability>
 		</model>
 		<model name='[MicroGL/Flamer](Sqd4)' mechanized='true'>
 			<availability>FRR:6,CGB.FRR:6</availability>
 		</model>
-		<model name='[MicroGL/Flamer](Sqd6)' mechanized='true'>
-			<availability>CS:6</availability>
-		</model>
 		<model name='[MicroGL/Flamer](Sqd6)' mechanized='false'>
 			<availability>CS:6</availability>
-		</model>
-		<model name='[MicroGL/SPL](Sqd4)' mechanized='false'>
-			<availability>FRR:4,CGB.FRR:4</availability>
 		</model>
 		<model name='[MicroGL/SPL](Sqd4)' mechanized='true'>
 			<availability>FRR:4,CGB.FRR:4</availability>
 		</model>
-		<model name='[MicroGL/SPL](Sqd6)' mechanized='false'>
-			<availability>CS:4</availability>
-		</model>
 		<model name='[MicroGL/SPL](Sqd6)' mechanized='true'>
 			<availability>CS:4</availability>
-		</model>
-		<model name='[MicroGL/TAG](Sqd4)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>FRR:6,CGB.FRR:6</availability>
 		</model>
 		<model name='[MicroGL/TAG](Sqd4)' mechanized='true'>
 			<roles>spotter</roles>
 			<availability>FRR:6,CGB.FRR:6</availability>
 		</model>
-		<model name='[MicroGL/TAG](Sqd6)' mechanized='true'>
-			<roles>spotter</roles>
-			<availability>CS:6</availability>
-		</model>
 		<model name='[MicroGL/TAG](Sqd6)' mechanized='false'>
 			<roles>spotter</roles>
 			<availability>CS:6</availability>
 		</model>
-		<model name='[SL/Flamer](Sqd4)' mechanized='false'>
-			<availability>FRR:6,CGB.FRR:6</availability>
-		</model>
 		<model name='[SL/Flamer](Sqd4)' mechanized='true'>
 			<availability>FRR:6,CGB.FRR:6</availability>
-		</model>
-		<model name='[SL/Flamer](Sqd6)' mechanized='true'>
-			<availability>CS:6</availability>
 		</model>
 		<model name='[SL/Flamer](Sqd6)' mechanized='false'>
 			<availability>CS:6</availability>
 		</model>
-		<model name='[SL/TAG](Sqd4)' mechanized='true'>
-			<roles>spotter</roles>
-			<availability>FRR:8,CGB.FRR:8</availability>
-		</model>
 		<model name='[SL/TAG](Sqd4)' mechanized='false'>
 			<roles>spotter</roles>
 			<availability>FRR:8,CGB.FRR:8</availability>
-		</model>
-		<model name='[SL/TAG](Sqd6)' mechanized='false'>
-			<roles>spotter</roles>
-			<availability>CS:8</availability>
 		</model>
 		<model name='[SL/TAG](Sqd6)' mechanized='true'>
 			<roles>spotter</roles>
@@ -10047,14 +9606,7 @@
 		<model name='&apos;The Dark Alley&apos;(Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
-		<model name='&apos;The Dark Alley&apos;(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='(Anti-Infantry)(Sqd4)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
-		<model name='(Anti-Infantry)(Sqd4)' mechanized='false'>
-			<roles>anti_infantry</roles>
 			<availability>General:4</availability>
 		</model>
 	</chassis>
@@ -10747,62 +10299,32 @@
 	</chassis>
 	<chassis name='Longinus Battle Armor' unitType='BattleArmor'>
 		<availability>PR:8,DoO:8,WOB:8,DO:8,DGM:8,DTA:8,SC:8,MCM:8,PG:8,FWL:8,MH:5,TP:8,RCM:8,DA:8,RFS:8</availability>
-		<model name='(Magnetic)(Sqd4)' mechanized='false'>
-			<availability>FWL:5</availability>
-		</model>
 		<model name='(Magnetic)(Sqd4)' mechanized='true'>
 			<availability>FWL:5</availability>
-		</model>
-		<model name='(Magnetic)(Sqd6)' mechanized='false'>
-			<availability>WOB:6</availability>
 		</model>
 		<model name='(Magnetic)(Sqd6)' mechanized='true'>
 			<availability>WOB:6</availability>
 		</model>
-		<model name='[David](Sqd4)' mechanized='true'>
-			<availability>General:5</availability>
-		</model>
 		<model name='[David](Sqd4)' mechanized='false'>
 			<availability>General:5</availability>
-		</model>
-		<model name='[David](Sqd6)' mechanized='true'>
-			<availability>CS:5,WOB:5</availability>
 		</model>
 		<model name='[David](Sqd6)' mechanized='false'>
 			<availability>CS:5,WOB:5</availability>
 		</model>
-		<model name='[Flamer](Sqd4)' mechanized='true'>
-			<availability>General:7</availability>
-		</model>
 		<model name='[Flamer](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[Flamer](Sqd6)' mechanized='true'>
-			<availability>CS:7,WOB:7</availability>
 		</model>
 		<model name='[Flamer](Sqd6)' mechanized='false'>
 			<availability>CS:7,WOB:7</availability>
 		</model>
-		<model name='[Laser](Sqd4)' mechanized='true'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[Laser](Sqd4)' mechanized='false'>
 			<availability>General:6</availability>
-		</model>
-		<model name='[Laser](Sqd6)' mechanized='false'>
-			<availability>CS:6,WOB:6</availability>
 		</model>
 		<model name='[Laser](Sqd6)' mechanized='true'>
 			<availability>CS:6,WOB:6</availability>
 		</model>
-		<model name='[MG](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='[MG](Sqd4)' mechanized='true'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[MG](Sqd6)' mechanized='true'>
-			<availability>CS:8,WOB:8</availability>
 		</model>
 		<model name='[MG](Sqd6)' mechanized='false'>
 			<availability>CS:8,WOB:8</availability>
@@ -11647,33 +11169,18 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Crane' unitType='Conventional Fighter'>
 		<availability>MOC:2,CC:5,Periphery.CM:2,Periphery.ME:2</availability>
-		<model name='Crane'>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Defender II' unitType='Conventional Fighter'>
 		<availability>FWL:5,IS:2</availability>
-		<model name='Defender II'>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Defender' unitType='Conventional Fighter'>
 		<availability>MOC:6,CC:4,HL:5,FRR:4,CLAN:4,IS:5,Periphery.Deep:5,MERC:6,FS:5,CIR:5,BAN:4,Periphery:6,TC:6,OA:5,LA:6,CGB.FRR:4,FWL:5,DC:5</availability>
-		<model name='Defender'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Kaiseradler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:2,LA:5,MERC:1</availability>
-		<model name='Kaiseradler (Imperial Eagle)'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Steinadler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:2,LA:5,MERC:1</availability>
-		<model name='Steinadler (Golden Eagle)'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Men Shen' unitType='Mek' omni='IS'>
 		<availability>CC:7,MOC:5+</availability>
@@ -11794,21 +11301,30 @@
 		</model>
 	</chassis>
 	<chassis name='Minotaur' unitType='ProtoMek'>
-		<availability>CSA:6,CHH:8,CCC:8,CSR:2,CBS:4,CSL:8,CGS:6</availability>
+		<availability>CSA:6,CHH:8,CCC:8,CSR:2,CBS:4,CEI:8,CSL:8,CGS:6</availability>
 		<model name='(Standard)'>
-			<availability>CLAN:5</availability>
+			<availability>CSA:6,CHH:8,CCC:8,CSR:2,CBS:4,CEI:8,CSL:8,CGS:6</availability>
 		</model>
 		<model name='2'>
-			<availability>CSA:6,CHH:8,CCC:6,CSL:8,CGS:6</availability>
+			<availability>CSA:6,CHH:8,CCC:6,CEI:8,CSL:8,CGS:6</availability>
+		</model>
+		<model name='3'>
+			<roles>fire_support</roles>
+			<availability>CEI:8</availability>
 		</model>
 		<model name='4'>
 			<availability>CBS:4</availability>
 		</model>
 		<model name='P2'>
-			<availability>CHH:4</availability>
+			<roles>mag_clamp</roles>
+			<availability>CHH:4+</availability>
 		</model>
 		<model name='XP'>
 			<availability>CHH:3</availability>
+		</model>
+		<model name='Z'>
+			<roles>mag_clamp</roles>
+			<availability>CEI:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Miraborg' unitType='Dropship'>
@@ -12202,17 +11718,8 @@
 		<model name='(Capture Team)[HMG](Sqd6)' mechanized='false'>
 			<availability>General:3</availability>
 		</model>
-		<model name='(Capture Team)[HMG](Sqd6)' mechanized='false'>
-			<availability>General:3</availability>
-		</model>
 		<model name='(Gauss)(Sqd6)' mechanized='false'>
 			<availability>General:6</availability>
-		</model>
-		<model name='(Gauss)(Sqd6)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
-		<model name='(Narc)(Sqd6)' mechanized='false'>
-			<availability>General:3</availability>
 		</model>
 		<model name='(Narc)(Sqd6)' mechanized='false'>
 			<availability>General:3</availability>
@@ -12220,17 +11727,8 @@
 		<model name='(Plasma)(Sqd6)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Plasma)(Sqd6)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='(Seeker) [MG](Sqd6)' mechanized='false'>
 			<availability>General:4</availability>
-		</model>
-		<model name='(Seeker) [MG](Sqd6)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
-		<model name='(Support)(Sqd6)' mechanized='false'>
-			<availability>General:3</availability>
 		</model>
 		<model name='(Support)(Sqd6)' mechanized='false'>
 			<availability>General:3</availability>
@@ -12317,20 +11815,11 @@
 	</chassis>
 	<chassis name='Nighthawk PA(L)' unitType='BattleArmor'>
 		<availability>CS:2,NIOPS:2,WOB.PM:4,MERC:2</availability>
-		<model name='Mk. XXI(Sqd4)' mechanized='true'>
+		<model name='Mk. XXI(Sqd4)' mechanized='false'>
 			<roles>specops</roles>
 			<availability>General:8</availability>
 		</model>
-		<model name='Mk. XXI(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
-		<model name='Mk. XXII(Sqd4)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
 		<model name='Mk. XXII(Sqd4)' mechanized='true'>
-			<availability>General:4</availability>
-		</model>
-		<model name='Mk. XXX(Sqd4)' mechanized='false'>
 			<availability>General:4</availability>
 		</model>
 		<model name='Mk. XXX(Sqd4)' mechanized='true'>
@@ -12643,9 +12132,10 @@
 	<chassis name='Orc' unitType='ProtoMek'>
 		<availability>CHH:5,CSL:5,CGS:3,CCO:3</availability>
 		<model name='(Standard)'>
-			<availability>General:8</availability>
+			<availability>CHH:8,CSL:8,CCO:8,CGS:8</availability>
 		</model>
 		<model name='2'>
+			<roles>fire_support</roles>
 			<availability>General:5</availability>
 		</model>
 		<model name='3'>
@@ -13316,38 +12806,20 @@
 	</chassis>
 	<chassis name='Phalanx Battle Armor' unitType='BattleArmor'>
 		<availability>FWL:6,WOB:6</availability>
-		<model name='(A)(Sqd4)' mechanized='true'>
-			<availability>FWL:8</availability>
-		</model>
 		<model name='(A)(Sqd4)' mechanized='false'>
 			<availability>FWL:8</availability>
-		</model>
-		<model name='(A)(Sqd6)' mechanized='true'>
-			<availability>WOB:8</availability>
 		</model>
 		<model name='(A)(Sqd6)' mechanized='false'>
 			<availability>WOB:8</availability>
 		</model>
-		<model name='(B)(Sqd4)' mechanized='false'>
-			<availability>FWL:1</availability>
-		</model>
 		<model name='(B)(Sqd4)' mechanized='true'>
 			<availability>FWL:1</availability>
-		</model>
-		<model name='(B)(Sqd6)' mechanized='true'>
-			<availability>WOB:3</availability>
 		</model>
 		<model name='(B)(Sqd6)' mechanized='false'>
 			<availability>WOB:3</availability>
 		</model>
-		<model name='(C)(Sqd4)' mechanized='true'>
-			<availability>FWL:1</availability>
-		</model>
 		<model name='(C)(Sqd4)' mechanized='false'>
 			<availability>FWL:1</availability>
-		</model>
-		<model name='(C)(Sqd6)' mechanized='false'>
-			<availability>WOB:5</availability>
 		</model>
 		<model name='(C)(Sqd6)' mechanized='true'>
 			<availability>WOB:5</availability>
@@ -13756,8 +13228,14 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Procyon ProtoMech' unitType='ProtoMek'>
+		<availability>CHH:4+</availability>
+		<model name='(Quad)'>
+			<availability>CHH:4+</availability>
+		</model>
+	</chassis>
 	<chassis name='Procyon' unitType='ProtoMek'>
-		<availability>CHH:5,CBS:4,CSL:6,CCO:6</availability>
+		<availability>CHH:5,CBS:4,CSL:6,CCO:8</availability>
 		<model name='(Quad)'>
 			<availability>CHH:4+</availability>
 		</model>
@@ -13765,6 +13243,7 @@
 			<availability>CHH:8,CBS:8,CSL:8,CCO:8</availability>
 		</model>
 		<model name='2'>
+			<roles>fire_support</roles>
 			<availability>CHH:2,CCO:2</availability>
 		</model>
 		<model name='3'>
@@ -13774,6 +13253,7 @@
 			<availability>CCO:4</availability>
 		</model>
 		<model name='5'>
+			<roles>mag_clamp</roles>
 			<availability>CCO:4</availability>
 		</model>
 	</chassis>
@@ -13867,53 +13347,27 @@
 	</chassis>
 	<chassis name='Purifier Adaptive Battle Armor' unitType='BattleArmor'>
 		<availability>WOB:6,MH:4,CIR:4,TC:4</availability>
-		<model name='[Laser](Sqd4)' mechanized='true'>
-			<availability>General:7</availability>
-		</model>
 		<model name='[Laser](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[Laser](Sqd6)' mechanized='false'>
-			<availability>CS:7,WOB:7,Periphery:7</availability>
 		</model>
 		<model name='[Laser](Sqd6)' mechanized='true'>
 			<availability>CS:7,WOB:7,Periphery:7</availability>
 		</model>
-		<model name='[Narc](Sqd4)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
 		<model name='[Narc](Sqd4)' mechanized='true'>
 			<availability>General:4</availability>
-		</model>
-		<model name='[Narc](Sqd6)' mechanized='true'>
-			<availability>CS:4,WOB:4,Periphery:4</availability>
 		</model>
 		<model name='[Narc](Sqd6)' mechanized='false'>
 			<availability>CS:4,WOB:4,Periphery:4</availability>
 		</model>
-		<model name='[PPC](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[PPC](Sqd4)' mechanized='true'>
 			<availability>General:6</availability>
-		</model>
-		<model name='[PPC](Sqd6)' mechanized='false'>
-			<availability>CS:6,WOB:6,Periphery:6</availability>
 		</model>
 		<model name='[PPC](Sqd6)' mechanized='true'>
 			<availability>CS:6,WOB:6,Periphery:6</availability>
 		</model>
-		<model name='[TAG](Sqd4)' mechanized='true'>
-			<roles>spotter</roles>
-			<availability>General:5</availability>
-		</model>
 		<model name='[TAG](Sqd4)' mechanized='false'>
 			<roles>spotter</roles>
 			<availability>General:5</availability>
-		</model>
-		<model name='[TAG](Sqd6)' mechanized='true'>
-			<roles>spotter</roles>
-			<availability>CS:5,WOB:5,Periphery:5</availability>
 		</model>
 		<model name='[TAG](Sqd6)' mechanized='false'>
 			<roles>spotter</roles>
@@ -13922,25 +13376,13 @@
 	</chassis>
 	<chassis name='Purifier Battle Armor Terra' unitType='BattleArmor'>
 		<availability>WOB:4</availability>
-		<model name='[AP Gauss](Sqd6)' mechanized='true'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[AP Gauss](Sqd6)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
-		<model name='[ERSL](Sqd6)' mechanized='true'>
 			<availability>General:6</availability>
 		</model>
 		<model name='[ERSL](Sqd6)' mechanized='false'>
 			<availability>General:6</availability>
 		</model>
-		<model name='[MRR](Sqd6)' mechanized='true'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[MRR](Sqd6)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
-		<model name='[SPL](Sqd6)' mechanized='false'>
 			<availability>General:6</availability>
 		</model>
 		<model name='[SPL](Sqd6)' mechanized='true'>
@@ -14013,39 +13455,20 @@
 	</chassis>
 	<chassis name='Raiden Battle Armor' unitType='BattleArmor'>
 		<availability>DC:8</availability>
-		<model name='(Anti-Infantry)(Sqd4)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
 		<model name='(Anti-Infantry)(Sqd4)' mechanized='true'>
-			<roles>urban</roles>
 			<availability>General:4</availability>
-		</model>
-		<model name='[Flamer](Sqd4)' mechanized='false'>
-			<availability>General:7</availability>
 		</model>
 		<model name='[Flamer](Sqd4)' mechanized='true'>
 			<availability>General:7</availability>
 		</model>
-		<model name='[Laser](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='[Laser](Sqd4)' mechanized='true'>
 			<availability>General:6</availability>
-		</model>
-		<model name='[MG](Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
 		</model>
 		<model name='[MG](Sqd4)' mechanized='true'>
 			<availability>General:8</availability>
 		</model>
-		<model name='[MRM](Sqd4)' mechanized='true'>
-			<availability>General:7</availability>
-		</model>
 		<model name='[MRM](Sqd4)' mechanized='false'>
 			<availability>General:7</availability>
-		</model>
-		<model name='[Tsunami](Sqd4)' mechanized='false'>
-			<availability>General:6</availability>
 		</model>
 		<model name='[Tsunami](Sqd4)' mechanized='true'>
 			<availability>General:6</availability>
@@ -14448,7 +13871,7 @@
 	<chassis name='Roc' unitType='ProtoMek'>
 		<availability>CCC:4,CHH:4,CSR:4,CBS:7,CNC:7,CSL:4,CGS:6,CCO:8,CWIE:5</availability>
 		<model name='(Standard)'>
-			<availability>CLAN:5</availability>
+			<availability>CCC:6,CHH:6,CSR:4,CBS:7,CNC:7,CSL:4,CCO:8,CGS:6,CWIE:5</availability>
 		</model>
 		<model name='2'>
 			<availability>CCC:6,CSR:5,CBS:8,CNC:6,CSL:6,CCO:8,CGS:6</availability>
@@ -14457,22 +13880,15 @@
 			<availability>CSR:3,CBS:6,CNC:4,CCO:4,CWIE:3</availability>
 		</model>
 		<model name='4'>
-			<availability>CSR:3,CCO:4</availability>
+			<availability>CSR:5,CCO:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Rogue Bear Heavy Battle Armor' unitType='BattleArmor'>
 		<availability>CGB:5-</availability>
-		<model name='(Standard)(Sqd5)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='(Standard)(Sqd5)' mechanized='true'>
 			<availability>General:8</availability>
 		</model>
-		<model name='HR(Sqd5)' mechanized='false'>
-			<availability>CGB:2</availability>
-		</model>
 		<model name='HR(Sqd5)' mechanized='true'>
-			<roles>recon</roles>
 			<availability>CGB:2</availability>
 		</model>
 	</chassis>
@@ -14540,25 +13956,11 @@
 		<model name='(Close Combat)(Sqd4)' mechanized='false'>
 			<availability>LA:4</availability>
 		</model>
-		<model name='(Close Combat)(Sqd4)' mechanized='false'>
-			<roles>urban</roles>
-			<availability>LA:4</availability>
-		</model>
 		<model name='(Firedrake)(Sqd4)' mechanized='false'>
-			<availability>General:5</availability>
-		</model>
-		<model name='(Firedrake)(Sqd4)' mechanized='false'>
-			<roles>anti_infantry</roles>
 			<availability>General:5</availability>
 		</model>
 		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<roles>recon</roles>
-			<availability>LA:6</availability>
-		</model>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<availability>LA:6</availability>
-		</model>
-		<model name='(Upgrade)(Sqd4)' mechanized='false'>
 			<availability>LA:6</availability>
 		</model>
 		<model name='(Upgrade)(Sqd4)' mechanized='false'>
@@ -14804,21 +14206,11 @@
 	</chassis>
 	<chassis name='Salamander Battle Armor' unitType='BattleArmor'>
 		<availability>CHH:4,CLAN:3</availability>
-		<model name='(Anti-Infantry)(Sqd5)' mechanized='false'>
-			<availability>CJF:5</availability>
-		</model>
 		<model name='(Anti-Infantry)(Sqd5)' mechanized='true'>
-			<roles>anti_infantry</roles>
 			<availability>CJF:5</availability>
-		</model>
-		<model name='(Laser)(Sqd5)' mechanized='false'>
-			<availability>CSR:3,CW:6</availability>
 		</model>
 		<model name='(Laser)(Sqd5)' mechanized='true'>
 			<availability>CSR:3,CW:6</availability>
-		</model>
-		<model name='(Standard)(Sqd5)' mechanized='true'>
-			<availability>General:7</availability>
 		</model>
 		<model name='(Standard)(Sqd5)' mechanized='false'>
 			<availability>General:7</availability>
@@ -14893,24 +14285,25 @@
 		</model>
 	</chassis>
 	<chassis name='Satyr' unitType='ProtoMek'>
-		<availability>CCC:3,CSR:2,CBS:5,CNC:2,CGS:6,CCO:7,CWIE:4</availability>
+		<availability>CCC:3,CSR:2,CBS:5,CEI:4,CNC:2,CGS:6,CCO:7,CWIE:4</availability>
 		<model name='(Standard)'>
 			<roles>recon,raider</roles>
-			<availability>CLAN:6</availability>
+			<availability>CCC:6,CSR:4,CBS:5,CEI:4,CNC:6,CCO:7,CGS:6,CWIE:4</availability>
 		</model>
 		<model name='2'>
 			<roles>recon,raider</roles>
-			<availability>CLAN:8</availability>
+			<availability>CCC:5,CSR:4,CBS:5,CNC:4,CCO:7,CGS:6,CWIE:4</availability>
 		</model>
 		<model name='3'>
 			<roles>recon,raider</roles>
-			<availability>CGS:4,CWIE:2</availability>
+			<availability>CEI:4,CGS:4,CWIE:2</availability>
 		</model>
 		<model name='4'>
 			<roles>recon,raider,spotter</roles>
 			<availability>CSR:2,CNC:4</availability>
 		</model>
 		<model name='XP'>
+			<roles>inf_support</roles>
 			<availability>CNC:4</availability>
 		</model>
 	</chassis>
@@ -15150,21 +14543,11 @@
 	</chassis>
 	<chassis name='Se&apos;irim Medium Battle Armor' unitType='BattleArmor'>
 		<availability>WOB.SD:7</availability>
-		<model name='(Anti-Infantry)(Sqd6)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
 		<model name='(Anti-Infantry)(Sqd6)' mechanized='true'>
-			<roles>anti_infantry</roles>
 			<availability>General:4</availability>
-		</model>
-		<model name='(Capture Team)(Sqd6)' mechanized='true'>
-			<availability>General:2</availability>
 		</model>
 		<model name='(Capture Team)(Sqd6)' mechanized='false'>
 			<availability>General:2</availability>
-		</model>
-		<model name='(Standard)(Sqd6)' mechanized='true'>
-			<availability>General:8</availability>
 		</model>
 		<model name='(Standard)(Sqd6)' mechanized='false'>
 			<availability>General:8</availability>
@@ -15479,30 +14862,14 @@
 		<model name='(Capture Team)(Sqd6)' mechanized='false'>
 			<availability>General:3</availability>
 		</model>
-		<model name='(Capture Team)(Sqd6)' mechanized='false'>
-			<availability>General:3</availability>
-		</model>
-		<model name='(PPC)(Sqd6)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
 		<model name='(PPC)(Sqd6)' mechanized='false'>
 			<availability>General:4</availability>
 		</model>
 		<model name='(Recon)(Sqd6)' mechanized='false'>
 			<availability>General:4</availability>
 		</model>
-		<model name='(Recon)(Sqd6)' mechanized='false'>
-			<roles>recon</roles>
-			<availability>General:4</availability>
-		</model>
 		<model name='(Standard)(Sqd6)' mechanized='false'>
 			<availability>General:8</availability>
-		</model>
-		<model name='(Standard)(Sqd6)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Support)(Sqd6)' mechanized='false'>
-			<availability>General:6</availability>
 		</model>
 		<model name='(Support)(Sqd6)' mechanized='false'>
 			<availability>General:6</availability>
@@ -15615,15 +14982,22 @@
 		</model>
 	</chassis>
 	<chassis name='Siren' unitType='ProtoMek'>
-		<availability>CSA:5,CCC:7,CCO:4</availability>
+		<availability>CSA:5,CCC:7,CEI:6,CCO:4</availability>
 		<model name='(Standard)'>
-			<availability>CSA:4,CCC:4,CCO:4</availability>
+			<roles>recon</roles>
+			<availability>CSA:4,CCC:4,CEI:6,CCO:4</availability>
 		</model>
 		<model name='2'>
-			<availability>CSA:8,CCC:8</availability>
+			<roles>recon</roles>
+			<availability>CSA:8,CCC:8,CEI:6</availability>
 		</model>
 		<model name='3'>
+			<roles>recon</roles>
 			<availability>CSA:6,CCC:4</availability>
+		</model>
+		<model name='4'>
+			<roles>recon</roles>
+			<availability>CEI:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Sirocco' unitType='Mek'>
@@ -15682,12 +15056,6 @@
 		<availability>LA:3,ROS:4,FS:3</availability>
 		<model name='(Interdictor)(Sqd4)' mechanized='false'>
 			<availability>General:5</availability>
-		</model>
-		<model name='(Interdictor)(Sqd4)' mechanized='false'>
-			<availability>General:5</availability>
-		</model>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<availability>LA:3</availability>
 		</model>
 		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<availability>LA:3</availability>
@@ -15907,10 +15275,35 @@
 			<availability>General:5</availability>
 		</model>
 	</chassis>
+	<chassis name='Sprite Ultraheavy ProtoMech' unitType='ProtoMek'>
+		<availability>CHH:4,CBS:3,CSL:4,CCO:5</availability>
+		<model name='(Standard)'>
+			<roles>fire_support</roles>
+			<deployedWith>Boggart Ultraheavy ProtoMech</deployedWith>
+			<availability>CHH:5,CBS:6,CSL:5,CCO:5</availability>
+		</model>
+		<model name='2'>
+			<roles>fire_support</roles>
+			<deployedWith>Boggart Ultraheavy ProtoMech</deployedWith>
+			<availability>CCO:5</availability>
+		</model>
+		<model name='3'>
+			<roles>fire_support</roles>
+			<deployedWith>Boggart Ultraheavy ProtoMech</deployedWith>
+			<availability>CCO:5</availability>
+		</model>
+	</chassis>
 	<chassis name='Sprite' unitType='ProtoMek'>
 		<availability>CHH:4,CBS:4,CSL:4,CCO:5</availability>
 		<model name='(Standard)'>
-			<availability>General:8</availability>
+			<roles>fire_support</roles>
+			<deployedWith>Boggart Ultraheavy ProtoMech</deployedWith>
+			<availability>CHH:5,CBS:6,CSL:5,CCO:5</availability>
+		</model>
+		<model name='2'>
+			<roles>fire_support</roles>
+			<deployedWith>Boggart Ultraheavy ProtoMech</deployedWith>
+			<availability>CCO:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Stalker' unitType='Mek'>
@@ -16425,25 +15818,14 @@
 	</chassis>
 	<chassis name='Sylph Battle Armor' unitType='BattleArmor'>
 		<availability>CSA:2,CCC:6,CSR:2,CDS:2</availability>
-		<model name='(Standard)(Sqd5)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='(Standard)(Sqd5)' mechanized='true'>
-			<roles>recon</roles>
 			<availability>General:6</availability>
-		</model>
-		<model name='(Upgrade)(Sqd5)' mechanized='true'>
-			<roles>recon</roles>
-			<availability>General:7</availability>
 		</model>
 		<model name='(Upgrade)(Sqd5)' mechanized='false'>
+			<roles>recon</roles>
 			<availability>General:7</availability>
 		</model>
-		<model name='XR(Sqd5)' mechanized='false'>
-			<availability>CSR:1</availability>
-		</model>
 		<model name='XR(Sqd5)' mechanized='true'>
-			<roles>recon</roles>
 			<availability>CSR:1</availability>
 		</model>
 	</chassis>
@@ -16594,40 +15976,21 @@
 	</chassis>
 	<chassis name='Tengu Heavy Battle Armor' unitType='BattleArmor'>
 		<availability>WOB.SD:5</availability>
-		<model name='(SVSP)(Sqd6)' mechanized='true'>
-			<availability>General:5</availability>
-		</model>
 		<model name='(SVSP)(Sqd6)' mechanized='false'>
 			<availability>General:5</availability>
 		</model>
-		<model name='(Support)[LRR](Sqd6)' mechanized='false'>
-			<availability>General:6</availability>
-		</model>
 		<model name='(Support)[LRR](Sqd6)' mechanized='true'>
 			<availability>General:6</availability>
-		</model>
-		<model name='[C3i](Sqd6)' mechanized='true'>
-			<roles>spotter</roles>
-			<availability>General:5</availability>
 		</model>
 		<model name='[C3i](Sqd6)' mechanized='false'>
 			<roles>spotter</roles>
 			<availability>General:5</availability>
 		</model>
-		<model name='[ML](Sqd6)' mechanized='false'>
-			<availability>General:5</availability>
-		</model>
 		<model name='[ML](Sqd6)' mechanized='true'>
 			<availability>General:5</availability>
 		</model>
-		<model name='[Plasma](Sqd6)' mechanized='true'>
-			<availability>General:8</availability>
-		</model>
 		<model name='[Plasma](Sqd6)' mechanized='false'>
 			<availability>General:8</availability>
-		</model>
-		<model name='[RL](Sqd6)' mechanized='true'>
-			<availability>General:4</availability>
 		</model>
 		<model name='[RL](Sqd6)' mechanized='false'>
 			<availability>General:4</availability>
@@ -17098,60 +16461,31 @@
 	</chassis>
 	<chassis name='Tornado PA(L)' unitType='BattleArmor'>
 		<availability>CS:2,FWL:2,WOB:2,MH:1</availability>
-		<model name='G12(Sqd6)' mechanized='false'>
-			<availability>FWL:8,WOB:8</availability>
-		</model>
 		<model name='G12(Sqd6)' mechanized='true'>
-			<roles>specops</roles>
 			<availability>FWL:8,WOB:8</availability>
-		</model>
-		<model name='G13 [David Light Gauss](Sqd6)' mechanized='true'>
-			<availability>WOB:4,MH:4</availability>
 		</model>
 		<model name='G13 [David Light Gauss](Sqd6)' mechanized='false'>
-			<availability>WOB:4,MH:4</availability>
-		</model>
-		<model name='G13 [Flamer](Sqd6)' mechanized='true'>
 			<availability>WOB:4,MH:4</availability>
 		</model>
 		<model name='G13 [Flamer](Sqd6)' mechanized='false'>
 			<availability>WOB:4,MH:4</availability>
 		</model>
-		<model name='G13 [Grenade Launcher](Sqd6)' mechanized='false'>
-			<availability>WOB:4,MH:4</availability>
-		</model>
 		<model name='G13 [Grenade Launcher](Sqd6)' mechanized='true'>
-			<availability>WOB:4,MH:4</availability>
-		</model>
-		<model name='G13 [Machine Gun](Sqd6)' mechanized='false'>
 			<availability>WOB:4,MH:4</availability>
 		</model>
 		<model name='G13 [Machine Gun](Sqd6)' mechanized='true'>
 			<availability>WOB:4,MH:4</availability>
 		</model>
-		<model name='G13 [Small Laser](Sqd6)' mechanized='true'>
-			<availability>WOB:4,MH:4</availability>
-		</model>
 		<model name='G13 [Small Laser](Sqd6)' mechanized='false'>
 			<availability>WOB:4,MH:4</availability>
-		</model>
-		<model name='G14(Sqd6)' mechanized='true'>
-			<availability>WOB:3</availability>
 		</model>
 		<model name='G14(Sqd6)' mechanized='false'>
 			<availability>WOB:3</availability>
 		</model>
-		<model name='G17(Sqd6)' mechanized='true'>
-			<availability>WOB:4</availability>
-		</model>
 		<model name='G17(Sqd6)' mechanized='false'>
 			<availability>WOB:4</availability>
 		</model>
-		<model name='P12 &apos;Hurricane&apos;(Sqd6)' mechanized='false'>
-			<availability>CS:8</availability>
-		</model>
 		<model name='P12 &apos;Hurricane&apos;(Sqd6)' mechanized='true'>
-			<roles>specops</roles>
 			<availability>CS:8</availability>
 		</model>
 		<model name='P17 &apos;Hurricane&apos;(Sqd6)' mechanized='false'>
@@ -17295,54 +16629,30 @@
 	</chassis>
 	<chassis name='Trinity Medium Battle Armor' unitType='BattleArmor'>
 		<availability>CC:7,MOC:7,MH:4,TC:7</availability>
-		<model name='(Asterion Upgrade)[PPC](Sqd4)' mechanized='true'>
-			<availability>TC:4</availability>
-		</model>
-		<model name='(Asterion Upgrade)[PPC](Sqd4)' mechanized='true'>
-			<availability>TC:4</availability>
-		</model>
 		<model name='(Asterion Upgrade)[PPC](Sqd4)' mechanized='false'>
 			<availability>TC:4</availability>
 		</model>
-		<model name='(Asterion)[MRR](Sqd4)' mechanized='true'>
-			<availability>MH:5,TC:5</availability>
-		</model>
 		<model name='(Asterion)[MRR](Sqd4)' mechanized='false'>
-			<availability>MH:5,TC:5</availability>
-		</model>
-		<model name='(Asterion)[PPC](Sqd4)' mechanized='false'>
 			<availability>MH:5,TC:5</availability>
 		</model>
 		<model name='(Asterion)[PPC](Sqd4)' mechanized='true'>
 			<availability>MH:5,TC:5</availability>
 		</model>
-		<model name='(Theseus RL)[LRR](Sqd4)' mechanized='true'>
-			<availability>MOC:5</availability>
-		</model>
 		<model name='(Theseus RL)[LRR](Sqd4)' mechanized='false'>
-			<availability>MOC:5</availability>
-		</model>
-		<model name='(Theseus Support)&apos;Killshot&apos;(Sqd4)' mechanized='true'>
 			<availability>MOC:5</availability>
 		</model>
 		<model name='(Theseus Support)&apos;Killshot&apos;(Sqd4)' mechanized='false'>
 			<availability>MOC:5</availability>
 		</model>
-		<model name='(Theseus)[MRR](Sqd4)' mechanized='false'>
-			<availability>MOC:8</availability>
-		</model>
 		<model name='(Theseus)[MRR](Sqd4)' mechanized='true'>
 			<availability>MOC:8</availability>
-		</model>
-		<model name='(Ying Long)(Plasma)(Sqd4)' mechanized='false'>
-			<availability>CC:8</availability>
 		</model>
 		<model name='(Ying Long)(Plasma)(Sqd4)' mechanized='true'>
 			<availability>CC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Triton' unitType='ProtoMek'>
-		<availability>CGS:5</availability>
+		<availability>CEI:5,CGS:5</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
@@ -17423,14 +16733,7 @@
 		<model name='[Armored Glove](Sqd4)' mechanized='false'>
 			<availability>IS:4-</availability>
 		</model>
-		<model name='[Armored Glove](Sqd4)' mechanized='false'>
-			<availability>IS:4-</availability>
-		</model>
 		<model name='[Industrial Drill](Sqd4)' mechanized='false'>
-			<availability>IS:4-</availability>
-		</model>
-		<model name='[Industrial Drill](Sqd4)' mechanized='false'>
-			<roles>support</roles>
 			<availability>IS:4-</availability>
 		</model>
 	</chassis>
@@ -17439,22 +16742,13 @@
 		<model name='[Armored Glove](Sqd4)' mechanized='false'>
 			<availability>IS:4-,Periphery:4</availability>
 		</model>
-		<model name='[Armored Glove](Sqd4)' mechanized='false'>
-			<availability>IS:4-,Periphery:4</availability>
-		</model>
 		<model name='[Industrial Drill](Sqd4)' mechanized='false'>
 			<roles>support</roles>
-			<availability>IS:4-</availability>
-		</model>
-		<model name='[Industrial Drill](Sqd4)' mechanized='false'>
 			<availability>IS:4-</availability>
 		</model>
 	</chassis>
 	<chassis name='Tunnel Rat III Mining Exoskeleton' unitType='BattleArmor'>
 		<availability>IS:4-</availability>
-		<model name='[Armored Glove](Sqd4)' mechanized='false'>
-			<availability>IS:4-</availability>
-		</model>
 		<model name='[Armored Glove](Sqd4)' mechanized='false'>
 			<availability>IS:4-</availability>
 		</model>
@@ -17468,22 +16762,10 @@
 		<model name='[Armored Glove/GL](Sqd4)' mechanized='false'>
 			<availability>IS:3-</availability>
 		</model>
-		<model name='[Armored Glove/GL](Sqd4)' mechanized='false'>
-			<availability>IS:3-</availability>
-		</model>
-		<model name='[Armored Glove/LMG](Sqd4)' mechanized='false'>
-			<availability>IS:3-</availability>
-		</model>
 		<model name='[Armored Glove/LMG](Sqd4)' mechanized='false'>
 			<availability>IS:3-</availability>
 		</model>
 		<model name='[Battle Claw/GL](Sqd4)' mechanized='false'>
-			<availability>IS:3-</availability>
-		</model>
-		<model name='[Battle Claw/GL](Sqd4)' mechanized='false'>
-			<availability>IS:3-</availability>
-		</model>
-		<model name='[Battle Claw/LMG](Sqd4)' mechanized='false'>
 			<availability>IS:3-</availability>
 		</model>
 		<model name='[Battle Claw/LMG](Sqd4)' mechanized='false'>
@@ -17658,14 +16940,8 @@
 	</chassis>
 	<chassis name='Undine Battle Armor' unitType='BattleArmor'>
 		<availability>CDS:4,CW:4,CGS:6</availability>
-		<model name='(Standard)(Sqd5)' mechanized='false'>
-			<availability>General:4</availability>
-		</model>
 		<model name='(Standard)(Sqd5)' mechanized='true'>
 			<availability>General:4</availability>
-		</model>
-		<model name='(Upgrade)(Sqd5)' mechanized='false'>
-			<availability>General:6,CGS:8</availability>
 		</model>
 		<model name='(Upgrade)(Sqd5)' mechanized='true'>
 			<availability>General:6,CGS:8</availability>
@@ -18163,28 +17439,15 @@
 	</chassis>
 	<chassis name='Void Medium Battle Armor' unitType='BattleArmor'>
 		<availability>CNC:4,DC:5+</availability>
-		<model name='(DCA)(Sqd4)' mechanized='false'>
-			<availability>DC:6</availability>
-		</model>
 		<model name='(DCA)(Sqd4)' mechanized='true'>
-			<roles>marine</roles>
 			<availability>DC:6</availability>
 		</model>
-		<model name='(Minelayer)(Sqd4)' mechanized='true'>
+		<model name='(Minelayer)(Sqd4)' mechanized='false'>
 			<roles>minelayer</roles>
 			<availability>DC:4</availability>
 		</model>
-		<model name='(Minelayer)(Sqd4)' mechanized='false'>
-			<availability>DC:4</availability>
-		</model>
-		<model name='(Nova Cat)(Sqd5)' mechanized='true'>
-			<availability>CNC:8</availability>
-		</model>
 		<model name='(Nova Cat)(Sqd5)' mechanized='false'>
 			<availability>CNC:8</availability>
-		</model>
-		<model name='(Standard)(Sqd4)' mechanized='true'>
-			<availability>DC:8</availability>
 		</model>
 		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<availability>DC:8</availability>
@@ -18549,9 +17812,6 @@
 	</chassis>
 	<chassis name='Water Elemental Mining Suit' unitType='BattleArmor'>
 		<availability>CGS:2</availability>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>

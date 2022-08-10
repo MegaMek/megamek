@@ -583,6 +583,7 @@ public class Tank extends Entity {
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
         boolean hexHasRoad = hex.containsTerrain(Terrains.ROAD);
+        boolean scoutBikeIntoLightWoods = (hex.terrainLevel(Terrains.WOODS) == 1) && hasQuirk(OptionsConstants.QUIRK_POS_SCOUT_BIKE);
 
         // roads allow movement through hexes that you normally couldn't go through
         switch (movementMode) {
@@ -606,7 +607,7 @@ public class Tank extends Entity {
                 }
             case WHEELED:
                 if (!isSuperHeavy()) {
-                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad && !scoutBikeIntoLightWoods)
                             || (hex.containsTerrain(Terrains.ROUGH) && !hexHasRoad)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
@@ -628,8 +629,8 @@ public class Tank extends Entity {
                             || (hex.terrainLevel(Terrains.GEYSER) == 2);
                 }
             case HOVER:
-                if (!isSuperHeavy()) {
-                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad)
+                if (!isSuperHeavy()) {                    
+                    return (hex.containsTerrain(Terrains.WOODS) && !hexHasRoad && !scoutBikeIntoLightWoods)
                             || (hex.containsTerrain(Terrains.JUNGLE) && !hexHasRoad)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
                             || ((hex.terrainLevel(Terrains.ROUGH) > 1) && !hexHasRoad)

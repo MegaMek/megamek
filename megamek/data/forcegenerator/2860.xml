@@ -3186,27 +3186,15 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Crane' unitType='Conventional Fighter'>
 		<availability>CC:5,MOC:2,Periphery.CM:2,Periphery.ME:2</availability>
-		<model name='Crane'>
-			<availability>General:8</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Defender' unitType='Conventional Fighter'>
 		<availability>MOC:6,CC:4,CLAN:4,IS:5,Periphery.Deep:6,MERC:6,FS:5,CIR:5,BAN:4,TC:6,Periphery:6,OA:5,LA:6,FWL:5,DC:5</availability>
-		<model name='Defender'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Kaiseradler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:2,LA:5,MERC:1</availability>
-		<model name='Kaiseradler (Imperial Eagle)'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Medium Strike Fighter Steinadler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:2,LA:5,MERC:1</availability>
-		<model name='Steinadler (Golden Eagle)'>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>MOC:6,CC:5,IS:5,Periphery.Deep:6,MERC:6,FS:5,CIR:6,TC:6,Periphery:6,CS:5,OA:6,LA:5,FWL:5,NIOPS:5,DC:5</availability>
@@ -4836,9 +4824,6 @@
 	</chassis>
 	<chassis name='Water Elemental Mining Suit' unitType='BattleArmor'>
 		<availability>CW:1,CGS:2</availability>
-		<model name='(Standard)(Sqd4)' mechanized='false'>
-			<availability>General:8</availability>
-		</model>
 		<model name='(Standard)(Sqd4)' mechanized='false'>
 			<availability>General:8</availability>
 		</model>

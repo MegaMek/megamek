@@ -65,7 +65,8 @@ VERSION HISTORY:
 + Issue #3453: Updated About Box copyright text per #3453 
 + Issue #3435: Fixed image flickering in the About... dialog
 + Issues #3748, #3806 (partly): Correct infantry BV w.r.t. Anti-Mek attack ability and skill
-+ Issues #3800, #3740: Fix various issues with sprinting, MASC and Supercharger
++ Issues #3847: RAT Generator - Won't Generate Super Heavy ProtoMeks or Tanks
++ PR #3842: Scout Bike quirk implemented
 + Updating to FlatLAF 2.4 from 2.2
 + Updating to Log4j 2.18.0 from 2.17.2
 + Updating to Mockito 4.6.1 from 4.5.1

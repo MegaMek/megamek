@@ -1017,26 +1017,23 @@ public class RATGeneratorEditor extends JFrame {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if ((column == 0) && (value instanceof String)) {
-                String faction = (String) value;
+            int realModelRow = tblUnitModelEditor.convertRowIndexToModel(row);
+            String faction = (String) unitModelEditorModel.getValueAt(realModelRow, 0);
+            if (column == 0) {
                 if (!currentChassisFactions.contains(faction)) {
                     setForeground(Color.RED);
                 } else {
                     setForeground(null);
                 }
-                if (tblUnitChassisEditor.getSelectedRow() > -1) {
-                    int realRow = tblUnitChassisEditor.convertRowIndexToModel(tblUnitChassisEditor.getSelectedRow());
-                    String chassisSelectedFaction = unitChassisEditorModel.factions.get(realRow);
-                    if (faction.equals(chassisSelectedFaction)) {
-                        setBackground(Color.YELLOW);
-                    } else {
-                        setBackground(null);
-                    }
-                }
-
             }
-
-
+            setBackground(null);
+            if (tblUnitChassisEditor.getSelectedRow() > -1) {
+                int realRow = tblUnitChassisEditor.convertRowIndexToModel(tblUnitChassisEditor.getSelectedRow());
+                String chassisSelectedFaction = unitChassisEditorModel.factions.get(realRow);
+                if (faction.equals(chassisSelectedFaction)) {
+                    setBackground(Color.YELLOW);
+                }
+            }
             return this;
         }
     };
@@ -1045,18 +1042,15 @@ public class RATGeneratorEditor extends JFrame {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if ((column == 0) && (value instanceof String)) {
-                String faction = (String) value;
-                if (tblUnitModelEditor.getSelectedRow() > -1) {
-                    int realRow = tblUnitModelEditor.convertRowIndexToModel(tblUnitModelEditor.getSelectedRow());
-                    String modelSelectedFaction = unitModelEditorModel.factions.get(realRow);
-                    if (faction.equals(modelSelectedFaction)) {
-                        setBackground(Color.GREEN);
-                    } else {
-                        setBackground(null);
-                    }
+            int realChassisRow = tblUnitChassisEditor.convertRowIndexToModel(row);
+            String faction = (String) unitChassisEditorModel.getValueAt(realChassisRow, 0);
+            setBackground(null);
+            if (tblUnitModelEditor.getSelectedRow() > -1) {
+                int realRow = tblUnitModelEditor.convertRowIndexToModel(tblUnitModelEditor.getSelectedRow());
+                String modelSelectedFaction = unitModelEditorModel.factions.get(realRow);
+                if (faction.equals(modelSelectedFaction)) {
+                    setBackground(Color.GREEN);
                 }
-
             }
             return this;
         }

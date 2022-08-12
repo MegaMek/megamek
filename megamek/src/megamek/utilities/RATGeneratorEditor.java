@@ -388,6 +388,7 @@ public class RATGeneratorEditor extends JFrame {
         }
         tblUnitModelEditor.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         tblUnitModelEditor.setDefaultRenderer(String.class, unitListRenderer);
+        tblUnitModelEditor.getSelectionModel().addListSelectionListener(evt -> tblUnitChassisEditor.repaint());
 
         TableRowSorter<UnitEditorTableModel> unitEditorListSorter = new TableRowSorter<>(unitModelEditorModel);
         unitEditorListSorter.setComparator(0, Comparator.comparing(String::toString));
@@ -452,6 +453,8 @@ public class RATGeneratorEditor extends JFrame {
             columnModel.getColumn(i).setPreferredWidth(50);
         }
         tblUnitChassisEditor.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tblUnitChassisEditor.setDefaultRenderer(String.class, chassisListRenderer);
+        tblUnitChassisEditor.getSelectionModel().addListSelectionListener(evt -> tblUnitModelEditor.repaint());
 
         TableRowSorter<UnitEditorTableModel> unitEditorListSorter = new TableRowSorter<>(unitChassisEditorModel);
         unitEditorListSorter.setComparator(0, Comparator.comparing(String::toString));
@@ -769,7 +772,7 @@ public class RATGeneratorEditor extends JFrame {
         HashMap<String, List<String>> data;
         private int mode;
         private AbstractUnitRecord unitRecord;
-        
+
         private String getUnitKey() {
             return (mode == MODE_CHASSIS) ? unitRecord.getChassisKey() : unitRecord.getKey();
         }
@@ -1014,15 +1017,41 @@ public class RATGeneratorEditor extends JFrame {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            if ((column == 0) && (value instanceof String)) {
-                String faction = (String) value;
+            int realModelRow = tblUnitModelEditor.convertRowIndexToModel(row);
+            String faction = (String) unitModelEditorModel.getValueAt(realModelRow, 0);
+            if (column == 0) {
                 if (!currentChassisFactions.contains(faction)) {
                     setForeground(Color.RED);
                 } else {
                     setForeground(null);
                 }
             }
+            setBackground(null);
+            if (tblUnitChassisEditor.getSelectedRow() > -1) {
+                int realRow = tblUnitChassisEditor.convertRowIndexToModel(tblUnitChassisEditor.getSelectedRow());
+                String chassisSelectedFaction = unitChassisEditorModel.factions.get(realRow);
+                if (faction.equals(chassisSelectedFaction)) {
+                    setBackground(Color.YELLOW);
+                }
+            }
+            return this;
+        }
+    };
 
+    TableCellRenderer chassisListRenderer = new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            int realChassisRow = tblUnitChassisEditor.convertRowIndexToModel(row);
+            String faction = (String) unitChassisEditorModel.getValueAt(realChassisRow, 0);
+            setBackground(null);
+            if (tblUnitModelEditor.getSelectedRow() > -1) {
+                int realRow = tblUnitModelEditor.convertRowIndexToModel(tblUnitModelEditor.getSelectedRow());
+                String modelSelectedFaction = unitModelEditorModel.factions.get(realRow);
+                if (faction.equals(modelSelectedFaction)) {
+                    setBackground(Color.GREEN);
+                }
+            }
             return this;
         }
     };

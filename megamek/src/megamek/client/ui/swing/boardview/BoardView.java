@@ -2462,7 +2462,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // themselves can't be checked for roads.
         List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
-        if ((hex.containsTerrain(Terrains.ROAD))
+        if (hex.containsTerrain(Terrains.ROAD)
                 || hex.containsTerrain(Terrains.WATER)
                 || hex.containsTerrain(Terrains.PAVEMENT)
                 || hex.containsTerrain(Terrains.GROUND_FLUFF)

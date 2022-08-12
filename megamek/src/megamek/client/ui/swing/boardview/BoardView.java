@@ -2464,10 +2464,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         boolean supersUnderShadow = false;
         if ((hex.containsTerrain(Terrains.ROAD))
                 || hex.containsTerrain(Terrains.WATER)
-                || (hex.containsTerrain(Terrains.PAVEMENT))
+                || hex.containsTerrain(Terrains.PAVEMENT)
                 || hex.containsTerrain(Terrains.GROUND_FLUFF)
                 || hex.containsTerrain(Terrains.ROUGH)
-                || (hex.containsTerrain(Terrains.SNOW) )) {
+                || hex.containsTerrain(Terrains.RUBBLE)
+                || hex.containsTerrain(Terrains.SNOW)) {
             supersUnderShadow = true;
             if (supers != null) {
                 for (Image image : supers) {

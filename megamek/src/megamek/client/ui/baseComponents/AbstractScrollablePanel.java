@@ -67,8 +67,8 @@ public abstract class AbstractScrollablePanel extends AbstractPanel implements S
     }
 
     /**
-     * This creates an AbstractScrollablePanel using the default MHQ resource bundle and specified layout
-     * manager and double buffered boolean.
+     * This creates an AbstractScrollablePanel using the default resource bundle and specified
+     * layout manager and double buffered boolean.
      * @see AbstractPanel#AbstractPanel(JFrame, String, LayoutManager, boolean)
      */
     protected AbstractScrollablePanel(final JFrame frame, final String name,

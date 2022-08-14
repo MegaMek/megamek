@@ -28,6 +28,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.dialogs.helpDialogs.MMReadMeHelpDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.swing.dialog.MainMenuUnitBrowserDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.ConnectDialog;
 import megamek.client.ui.swing.gameConnectionDialogs.HostDialog;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
@@ -950,6 +951,15 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 break;
             case ClientGUI.MAIN_QUIT:
                 quit();
+                break;
+            case ClientGUI.FILE_UNITS_BROWSE:
+                UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
+                if (!MechSummaryCache.getInstance().isInitialized()) {
+                    unitLoadingDialog.setVisible(true);
+                }
+                MainMenuUnitBrowserDialog unitSelectorDialog = new MainMenuUnitBrowserDialog(frame, unitLoadingDialog);
+                new Thread(unitSelectorDialog, "Mech Selector Dialog").start();
+                unitSelectorDialog.setVisible(true);
                 break;
         }
     };

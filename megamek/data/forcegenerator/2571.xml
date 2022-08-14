@@ -397,6 +397,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Baleena Passenger Submarine' unitType='Naval'>
+		<availability>TH:3-,LA:4-,FWL:4-</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>TH:3-,LA:3,FWL:3</availability>
+		</model>
+	</chassis>
 	<chassis name='Banshee' unitType='Mek'>
 		<availability>MOC:5-,OA:5-,TH:6,LA:7-,Periphery.Deep:4-,RWR:5-,FS:7-,MERC:7-,Periphery:4-,TC:5-,DC:7-</availability>
 		<model name='BNC-1E'>
@@ -417,9 +424,9 @@
 		</model>
 	</chassis>
 	<chassis name='Bastion System Defense Station' unitType='Space Station'>
-		<availability>IS:1</availability>
+		<availability>TH:6,IS:4</availability>
 		<model name='(2584)'>
-			<availability>IS:1</availability>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='BattleAxe' unitType='Mek'>
@@ -891,17 +898,9 @@
 	</chassis>
 	<chassis name='Factory - Medium/Large' unitType='Space Station'>
 		<availability>IS:3,Periphery:3</availability>
-		<model name='(2400)'>
-			<roles>civilian</roles>
-			<availability>IS:4,Periphery:4</availability>
-		</model>
 	</chassis>
 	<chassis name='Factory - Small' unitType='Space Station'>
 		<availability>IS:4,Periphery:4</availability>
-		<model name='(2300)'>
-			<roles>civilian</roles>
-			<availability>IS:4,Periphery:4</availability>
-		</model>
 	</chassis>
 	<chassis name='Falcon' unitType='Mek'>
 		<availability>CC:3,LA:3,SL:4,FWL:3,FS:3,MERC:3</availability>
@@ -1139,17 +1138,22 @@
 		</model>
 	</chassis>
 	<chassis name='Habitat - Large' unitType='Space Station'>
-		<availability>IS:2,Periphery:2</availability>
-		<model name='(2500)'>
-			<roles>civilian</roles>
-			<availability>IS:2,Periphery:2</availability>
-		</model>
+		<availability>TH:6,IS:3,Periphery:2</availability>
 	</chassis>
 	<chassis name='Habitat - Small' unitType='Space Station'>
-		<availability>IS:4,Periphery:4</availability>
-		<model name='(2400)'>
+		<availability>TH:8,IS:4,Periphery:4</availability>
+	</chassis>
+	<chassis name='Habitat' unitType='Space Station'>
+		<availability>TH:8,IS:5,Periphery:4</availability>
+		<model name='Large (2500)'>
 			<roles>civilian</roles>
-			<availability>IS:4,Periphery:4</availability>
+			<deployedWith>Pressurized Yard,Unpressurized Yard,Factory</deployedWith>
+			<availability>General:6</availability>
+		</model>
+		<model name='Small (2400)'>
+			<roles>civilian</roles>
+			<deployedWith>Pressurized Yard,Unpressurized Yard,Factory</deployedWith>
+			<availability>General:7</availability>
 		</model>
 	</chassis>
 	<chassis name='Hammerhands' unitType='Mek'>
@@ -1630,12 +1634,12 @@
 		</model>
 	</chassis>
 	<chassis name='Mauna Kea Command Vessel' unitType='Naval'>
-		<availability>General:7</availability>
+		<availability>SL:8,IS:8,Periphery:6</availability>
 		<model name='(LRM)'>
-			<availability>General:4</availability>
+			<availability>SL:8,IS:8,Periphery:6</availability>
 		</model>
 		<model name='(LRT)'>
-			<availability>General:4</availability>
+			<availability>SL:8,IS:8,Periphery:6</availability>
 		</model>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
@@ -1763,9 +1767,10 @@
 		<availability>TH:4,SL:4</availability>
 	</chassis>
 	<chassis name='Moray Heavy Attack Submarine' unitType='Naval'>
-		<availability>SL:3</availability>
+		<availability>SL:3,IS:2,RWR:1</availability>
 		<model name='(Original)'>
-			<availability>General:8</availability>
+			<deployedWith>Manta Fast Attack Submarine</deployedWith>
+			<availability>SL:3,IS:4,RWR:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Mosquito Light Fighter' unitType='Conventional Fighter'>
@@ -2002,30 +2007,37 @@
 	</chassis>
 	<chassis name='Pressurized Yard - Huge' unitType='Space Station'>
 		<availability>IS:2,Periphery:2</availability>
-		<model name='(2450)'>
-			<roles>civilian</roles>
-			<availability>IS:2,Periphery:2</availability>
-		</model>
 	</chassis>
 	<chassis name='Pressurized Yard - Large' unitType='Space Station'>
 		<availability>IS:3,Periphery:3</availability>
-		<model name='(2400)'>
-			<roles>civilian</roles>
-			<availability>IS:3,Periphery:3</availability>
-		</model>
 	</chassis>
 	<chassis name='Pressurized Yard - Medium' unitType='Space Station'>
 		<availability>IS:4,Periphery:4</availability>
-		<model name='(2350)'>
-			<roles>civilian</roles>
-			<availability>IS:4,Periphery:4</availability>
-		</model>
 	</chassis>
 	<chassis name='Pressurized Yard - Small' unitType='Space Station'>
-		<availability>IS:5,Periphery:5</availability>
-		<model name='(2200)'>
+		<availability>TH:9,IS:8,Periphery:7</availability>
+	</chassis>
+	<chassis name='Pressurized Yard' unitType='Space Station'>
+		<availability>TH:9,IS:6,Periphery:4</availability>
+		<model name='Huge (2450)'>
 			<roles>civilian</roles>
-			<availability>IS:5,Periphery:5</availability>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:1</availability>
+		</model>
+		<model name='Large (2400)'>
+			<roles>civilian</roles>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:3</availability>
+		</model>
+		<model name='Medium (2350)'>
+			<roles>civilian</roles>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:5</availability>
+		</model>
+		<model name='Small (2200)'>
+			<roles>civilian</roles>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:7</availability>
 		</model>
 	</chassis>
 	<chassis name='Prometheus Combat Support Bridgelayer' unitType='Tank'>
@@ -2156,7 +2168,7 @@
 		</model>
 	</chassis>
 	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
-		<availability>CC:2-,TH:2-,LA:2-,FWL:2-,FS:2-,DC:2-</availability>
+		<availability>CC:4-,TH:5-,LA:4-,FWL:4-,FS:5-,DC:4-</availability>
 		<model name='(Standard)'>
 			<availability>CC:2,TH:2,LA:2,FWL:2,FS:2,DC:2</availability>
 		</model>
@@ -2184,20 +2196,19 @@
 		</model>
 	</chassis>
 	<chassis name='Silverfin Coastal Cutter' unitType='Naval'>
-		<availability>IS:8</availability>
+		<availability>LA:6</availability>
 		<model name='(Standard)'>
-			<availability>IS:8</availability>
+			<availability>LA:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Snowden Mining Station' unitType='Space Station'>
-		<availability>TC:3</availability>
+		<availability>TH:2,IS:2,Periphery:1,TC:2</availability>
 		<model name='(MK I)'>
 			<roles>civilian</roles>
-			<availability>TC:2</availability>
+			<availability>TH:6,IS:4,TC:5,Periphery:4</availability>
 		</model>
 		<model name='(Standard)'>
-			<roles>civilian</roles>
-			<availability>TC:1</availability>
+			<availability>TH:2,IS:2,Periphery:1,TC:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Sparrowhawk' unitType='Aero'>
@@ -2408,30 +2419,34 @@
 	</chassis>
 	<chassis name='Unpressurized Yard - Huge' unitType='Space Station'>
 		<availability>IS:3,Periphery:3</availability>
-		<model name='(2350)'>
-			<roles>civilian</roles>
-			<availability>IS:3,Periphery:3</availability>
-		</model>
-	</chassis>
-	<chassis name='Unpressurized Yard - Large' unitType='Space Station'>
-		<availability>IS:4,Periphery:4</availability>
-		<model name='(2300)'>
-			<roles>civilian</roles>
-			<availability>IS:4,Periphery:4</availability>
-		</model>
 	</chassis>
 	<chassis name='Unpressurized Yard - Medium' unitType='Space Station'>
 		<availability>IS:5,Periphery:5</availability>
-		<model name='(2250)'>
-			<roles>civilian</roles>
-			<availability>IS:5,Periphery:5</availability>
-		</model>
 	</chassis>
 	<chassis name='Unpressurized Yard - Small' unitType='Space Station'>
 		<availability>IS:6,Periphery:6</availability>
-		<model name='(2100)'>
+	</chassis>
+	<chassis name='Unpressurized Yard' unitType='Space Station'>
+		<availability>TH:9,IS:7,Periphery:6</availability>
+		<model name='Huge (2350)'>
 			<roles>civilian</roles>
-			<availability>IS:6,Periphery:6</availability>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:2</availability>
+		</model>
+		<model name='Large (2300)'>
+			<roles>civilian</roles>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:4</availability>
+		</model>
+		<model name='Medium (2250)'>
+			<roles>civilian</roles>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:6</availability>
+		</model>
+		<model name='Small (2100)'>
+			<roles>civilian</roles>
+			<deployedWith>Factory,Habitat</deployedWith>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Vendetta Medium Fighter' unitType='Conventional Fighter'>
@@ -2520,6 +2535,12 @@
 		<model name='(2606)'>
 			<roles>destroyer</roles>
 			<availability>SL:8,IS:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Whitestreak Jetski' unitType='Naval'>
+		<availability>TH:2-,IS:2-,Periphery:1-</availability>
+		<model name='(Standard)'>
+			<availability>TH:2-,IS:2-,Periphery:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Whitestreak Speedboat' unitType='Naval'>

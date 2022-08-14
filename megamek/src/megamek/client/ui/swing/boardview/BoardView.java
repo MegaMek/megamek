@@ -2514,7 +2514,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // Check for buildings and woods burried under their own shadows.
-        if (supers != null && supersUnderShadow
+        if ((supers != null) && supersUnderShadow
                 && (hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.WOODS))) {
             Image lastSuper = supers.get(supers.size() - 1);
             scaledImage = getScaledImage(lastSuper, true);

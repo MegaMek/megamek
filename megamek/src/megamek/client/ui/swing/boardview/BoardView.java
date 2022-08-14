@@ -253,7 +253,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     // Image to hold the complete board shadow map
     BufferedImage shadowMap;
-    double[] lightDirection = { -19, 7 };
     private static Kernel kernel = new Kernel(5, 5,
             new float[] {
                     1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f, 1f / 25f,
@@ -1431,6 +1430,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
         Graphics2D g = shadowMap.createGraphics();
 
+        // Compute shadow angle based on planentary conditions.
+        double[] lightDirection = { -19, 7 };
         if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) ||
         (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)) {
             lightDirection = new double[] { 0, 0 };
@@ -2461,10 +2462,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // themselves can't be checked for roads.
         List<Image> supers = tileManager.supersFor(hex);
         boolean supersUnderShadow = false;
-        if (hex.containsTerrain(Terrains.ROAD) 
-                || hex.containsTerrain(Terrains.WATER) 
+        if (hex.containsTerrain(Terrains.ROAD)
+                || hex.containsTerrain(Terrains.WATER)
                 || hex.containsTerrain(Terrains.PAVEMENT)
-                || hex.containsTerrain(Terrains.GROUND_FLUFF)) {
+                || hex.containsTerrain(Terrains.GROUND_FLUFF)
+                || hex.containsTerrain(Terrains.ROUGH)
+                || hex.containsTerrain(Terrains.RUBBLE)
+                || hex.containsTerrain(Terrains.SNOW)) {
             supersUnderShadow = true;
             if (supers != null) {
                 for (Image image : supers) {
@@ -2507,6 +2511,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     }
                 }
             }
+        }
+
+        // Check for buildings and woods burried under their own shadows.
+        if ((supers != null) && supersUnderShadow
+                && (hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(Terrains.WOODS))) {
+            Image lastSuper = supers.get(supers.size() - 1);
+            scaledImage = getScaledImage(lastSuper, true);
+            g.drawImage(scaledImage, 0, 0, this);
         }
 
         // AO Hex Shadow in this hex when a higher one is adjacent

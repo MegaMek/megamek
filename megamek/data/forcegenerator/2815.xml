@@ -1222,6 +1222,13 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Cormorant Medium Cargo Craft' unitType='Tank'>
+		<availability>IS:6,Periphery:5</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:8-</availability>
+		</model>
+	</chassis>
 	<chassis name='Corsair' unitType='Aero'>
 		<availability>PP:6,CC:3,MOC:3,CLAN:5,FS:6,MERC:3,CIR:2,Periphery:2,TC:3,OA:3,LA:4,FWL:5,DC:3</availability>
 		<model name='CSR-V12'>
@@ -1551,11 +1558,11 @@
 		<availability>CS:3,FWL:3,IS:2,NIOPS:3</availability>
 		<model name='(HPG)'>
 			<roles>civilian</roles>
-			<availability>FWL:1</availability>
+			<availability>CS:3</availability>
 		</model>
 		<model name='(Standard)'>
 			<roles>civilian</roles>
-			<availability>General:8</availability>
+			<availability>CS:8,IS:8,NIOPS:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Exterminator' unitType='Mek'>
@@ -2207,15 +2214,15 @@
 		</model>
 	</chassis>
 	<chassis name='Invader Jumpship' unitType='Jumpship'>
-		<availability>PP:9,CC:9,MOC:8,CLAN:9,IS:7,Periphery.Deep:8,FS:9,CIR:8,Periphery:8,TC:8,CS:9,OA:8,LA:9,PIR:5,FWL:9,NIOPS:9</availability>
+		<availability>CS:8,PIR:5,CLAN:8,IS:8,Periphery.Deep:6,MERC:6,Periphery:8,TC:7</availability>
 		<model name='(2631 PPC)'>
-			<availability>General:6,CLAN:6</availability>
+			<availability>CS:7,CLAN:7,IS:8,MERC:6,TC:7,Periphery:7</availability>
 		</model>
 		<model name='(2631)'>
-			<availability>General:6,CLAN:6</availability>
+			<availability>CS:8,PIR:5,CLAN:8,IS:8,Periphery.Deep:6,MERC:6,Periphery:8</availability>
 		</model>
 		<model name='(2631) (LF)'>
-			<availability>General:2,CLAN:2</availability>
+			<availability>CLAN:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Ironsides' unitType='Aero'>
@@ -2852,9 +2859,16 @@
 		<availability>Periphery.R:1,LA:4,MERC:1</availability>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
-		<availability>MOC:6,PP:4,CC:5,IS:5,Periphery.Deep:6,MERC:6,FS:5,CIR:6,Periphery:6,TC:6,CS:5,OA:6,LA:5,FWL:5,NIOPS:5,DC:5</availability>
+		<availability>CS:5,CLAN:4,IS:5,Periphery.Deep:2,NIOPS:5,MERC:3,Periphery:4</availability>
 		<model name='(2503)'>
+			<availability>General:6</availability>
+		</model>
+		<model name='(2602)'>
 			<availability>General:8</availability>
+		</model>
+		<model name='(2602)(Passenger)'>
+			<roles>civilian</roles>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Mercury' unitType='Mek'>
@@ -2939,12 +2953,9 @@
 		</model>
 	</chassis>
 	<chassis name='Monolith Jumpship' unitType='Jumpship'>
-		<availability>PP:2,CLAN:2,IS:3</availability>
+		<availability>PP:2,CLAN:2,IS:2</availability>
 		<model name='(2776)'>
 			<availability>General:8,CLAN:8</availability>
-		</model>
-		<model name='(2839)'>
-			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Moray Heavy Attack Submarine' unitType='Naval'>
@@ -3564,9 +3575,9 @@
 		</model>
 	</chassis>
 	<chassis name='Scout JumpShip' unitType='Jumpship'>
-		<availability>PP:4,CC:4,MOC:3,IS:4,FS:4,CIR:3,Periphery:2,TC:3,CS:5,OA:3,LA:4,FWL:4,NIOPS:5,DC:4</availability>
+		<availability>CS:7,CLAN:5,IS:6,MERC:3,Periphery:4</availability>
 		<model name='(2712)'>
-			<availability>General:8</availability>
+			<availability>General:8,CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
@@ -3756,9 +3767,12 @@
 		</model>
 	</chassis>
 	<chassis name='Star Lord JumpShip' unitType='Jumpship'>
-		<availability>PP:2,IS:4,MERC:2,Periphery:2</availability>
+		<availability>CS:3,CLAN:3,IS:2,MERC:1,Periphery:2</availability>
 		<model name='(2590)'>
-			<availability>General:8</availability>
+			<availability>General:8,CLAN:8</availability>
+		</model>
+		<model name='(2590) (LF)'>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Starslayer' unitType='Mek'>
@@ -3998,12 +4012,12 @@
 		</model>
 	</chassis>
 	<chassis name='Tramp JumpShip' unitType='Jumpship'>
-		<availability>PP:6,CC:5,MOC:5,CLAN:5,IS:5,Periphery.Deep:5,FS:5,MERC:5,CIR:5,Periphery:5,CS:6,LA:5,FWL:5,NIOPS:6,DC:5</availability>
+		<availability>PP:6,CS:5,CLAN:4,IS:3,NIOPS:6,MERC:2,Periphery:4</availability>
 		<model name='(2754)'>
 			<availability>General:8,CLAN:4</availability>
 		</model>
 		<model name='(2755) (LF)'>
-			<availability>CLAN:8</availability>
+			<availability>CS:5+,CLAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Transit' unitType='Aero'>

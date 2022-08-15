@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,75 +17,86 @@ Fensalir Combat WiGE
 </Name>
 
 <Model>
-(HAG)
+(3137 Upgrade)
 </Model>
 
 <mul id:>
-1055
+8039
 </mul id:>
 
-<Tonnage>
-80
-</Tonnage>
+<year>
+3137
+</year>
+
+<originalBuildYear>
+3137
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+WiGE
+</motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 5
 </cruiseMP>
 
-<Armor>
-60
-60
-60
-48
-</Armor>
-
-<Front Equipment>
-CLHAG30
-CLATM9
-CLATM9
-CLERMediumLaser
-CLERMediumLaser
-</Front Equipment>
-<Body Equipment>
-CLHAG30 Ammo
-CLHAG30 Ammo
-CLHAG30 Ammo
-CLHAG30 Ammo
-CLHAG30 Ammo
-CLATM9 Ammo
-CLATM9 ER Ammo
-CLATM9 HE Ammo
-</Body Equipment>
-<transporters>
-TroopSpace:5
-</transporters>
-<type>
-Mixed (IS Chassis) Experimental
-</type>
-
-<year>
-3084
-</year>
-
-<source>
-TRO 3085 - Early Republic
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 6
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+7
+</armor_tech>
 
-<motion_type>
-WIGE
-</motion_type>
+<armor>
+60
+60
+60
+48
+</armor>
+
+<Body Equipment>
+ISArmoredMotiveSystem
+ISCASE
+ISGuardianECMSuite
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISLBXAC10
+Light PPC
+Light PPC
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+80.0
+</tonnage>
 
 <capabilities>
 The Fensalir at the time was the largest Combat WiGE of its kind. It boasted 11.5 tons of Heavy Ferro-Fibrous armor to protect its hull. The vehicle features an Infantry Transport Bay to allow it to deliver up to 4 tons of troops to a hot zone.
@@ -96,7 +107,7 @@ The Fensalir Combat WiGE was an attack craft which was built as a joint effort b
 </overview>
 
 <deployment>
-Originally known as the A88 by Inner Sphere intelligence organizations developed in 3084, this vehicle turns out to be Clan Wolf-in-Exile's copy of the Fensalir. This Fensalir is a Mix-Tech variant which uses both Inner Sphere chassis components and Clan weaponry. The main weapon is swapped out for a Class 30 Hyper-Assault Gauss Rifle. The secondary weaponry is changed out for a pair of ATM 9 launchers and the Clan version of the ER Medium Lasers. The vehicle's infantry bay is reconfigured to handle a point's worth of Battle Armor
+This version is equipped with the Schildkröte's weaponry and adds Vehicular Jump Jets.
 </deployment>
 
 <history>
@@ -104,11 +115,11 @@ The Fensalir was first produced at Nashan's plant on Furillo in 3084, while John
 </history>
 
 <manufacturer>
-WC Site 4
+Nashan Diversified
 </manufacturer>
 
 <primaryFactory>
-Arc-Royal
+Furillo
 </primaryFactory>
 
 <systemManufacturers>
@@ -119,3 +130,7 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<source>
+TRO 3150 - Dark Age
+</source>

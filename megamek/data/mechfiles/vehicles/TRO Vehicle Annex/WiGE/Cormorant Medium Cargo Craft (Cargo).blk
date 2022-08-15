@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -17,16 +17,20 @@ Cormorant Medium Cargo Craft
 </Name>
 
 <Model>
-(Standard)
+(Cargo)
 </Model>
 
 <mul id:>
-4004
+4003
 </mul id:>
 
 <year>
-2690
+2831
 </year>
+
+<originalBuildYear>
+2831
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -37,7 +41,7 @@ WiGE
 </motion_type>
 
 <transporters>
-cargobay:29:1
+cargobay:30.5:1:1
 </transporters>
 
 <cruiseMP>
@@ -48,16 +52,28 @@ cargobay:29:1
 1
 </engine_type>
 
-<fuel>
-4
-</fuel>
-
 <armor>
 10
 10
 10
 9
 </armor>
+
+<Body Equipment>
+AmphibiousChassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
 
 <barrating>
 6
@@ -67,32 +83,13 @@ cargobay:29:1
 3
 </structural_tech_rating>
 
-<Body Equipment>
-AmphibiousChassis
-IS Machine Gun Ammo - Half
-</Body Equipment>
+<engine_tech_rating>
+3
+</engine_tech_rating>
 
-<Front Equipment>
-</Front Equipment>
-
-<Right Equipment>
-Machine Gun
-</Right Equipment>
-
-<Left Equipment>
-Machine Gun
-</Left Equipment>
-
-<Rear Equipment>
-</Rear Equipment>
-
-<source>
-TRO VAr - Star League
-</source>
-
-<tonnage>
-70.0
-</tonnage>
+<armor_tech_rating>
+3
+</armor_tech_rating>
 
 <capabilities>
 The Cormorant is designed to be a seaborne capable craft, which has an Amphibious Chassis for water landings. It has a Cargo Bay with a 30.5 ton capacity, with a rear-mounted bay door. It has a 1.5 tons of BAR 6 rated commercial armor protecting the craft from light damage.
@@ -103,7 +100,7 @@ The Cormorant Medium Cargo Transport is a Federated Suns vehicle produced by Mic
 </overview>
 
 <deployment>
-The Cormorant is designed to be a seaborne capable craft, which has an Amphibious Chassis for water landings. It has a Cargo Bay with a 29.5 ton capacity, with a rear-mounted bay door.
+Some crews remove weapons to increase cargo capacity, but those who must brave the wilderness prefer to keep the firepower as light as possible.
 </deployment>
 
 <history>
@@ -111,11 +108,11 @@ The Cormorant is noted for being the most common WiGE in the FedSuns, produced s
 </history>
 
 <manufacturer>
-Michaelson Aircraft
+Michaelson Aircraft,Refit
 </manufacturer>
 
 <primaryFactory>
-Ruchbah
+Ruchbah,Refit
 </primaryFactory>
 
 <systemManufacturers>
@@ -126,3 +123,20 @@ JUMPJET:Unknown
 COMMUNICATIONS:Unknown
 TARGETING:Unknown
 </systemManufacturers>
+
+<source>
+TRO VAr - Early Succession Wars
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+
+<fuel>
+4.0
+</fuel>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

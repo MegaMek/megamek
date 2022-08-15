@@ -2092,6 +2092,9 @@ Fenris (Ice Ferret) L:SCOUT
 Fenris (Ice Ferret) Prime:STRIKER
 Fenris (Ice Ferret) T:SCOUT
 Fenris (Ice Ferret) U:STRIKER
+Fensalir Combat WiGE (3132 Upgrade):SKIRMISHER
+Fensalir Combat WiGE (3137 Upgrade):SNIPER
+Fensalir Combat WiGE (Stealth):SNIPER
 Fensalir Combat WiGE (HAG):SKIRMISHER
 Fensalir Combat WiGE (Infantry):SKIRMISHER
 Fensalir Combat WiGE (Standard):SKIRMISHER
@@ -4785,6 +4788,8 @@ Pandarus LFA-1X:MISSILE_BOAT
 Pandion Combat WiGE (C3):SCOUT
 Pandion Combat WiGE (Infantry):SCOUT
 Pandion Combat WiGE (Standard):STRIKER
+Pandion Combat WiGE (3135 Upgrade):STRIKER
+Pandion Combat WiGE (3140 Upgrade):STRIKER
 Panther PNT-10K:BRAWLER
 Panther PNT-10K2:BRAWLER
 Panther PNT-10KA:BRAWLER

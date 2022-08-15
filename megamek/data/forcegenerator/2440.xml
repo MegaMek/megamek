@@ -162,7 +162,7 @@
 		</model>
 	</chassis>
 	<chassis name='Aquilla Transport Jumpship' unitType='Warship'>
-		<availability>IS:6,Periphery.Deep:6,Periphery:6</availability>
+		<availability>Periphery:6</availability>
 		<model name='(Standard)'>
 			<roles>cargo</roles>
 			<availability>General:8</availability>

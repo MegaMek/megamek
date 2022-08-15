@@ -20,10 +20,12 @@ package megamek.common.alphaStrike;
 
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.conversion.ASDamageConverter;
+
 /**
  * Represents a single AlphaStrike damage value that may be minimal damage (0*).
  * Minimal Damage is repesented by isMinimal() returning true, all other values
  * by getDamage() being their damage value and isMinimal() returning false.
+ * ASDamage is immutable.
  */
 public class ASDamage {
     

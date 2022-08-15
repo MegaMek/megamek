@@ -49,7 +49,7 @@ final class ASSpecialAbilityConverter {
 
             if (isExplosive(m) && !hasExplosiveComponent) {
                 // Report this only once:
-                report.addLine("Explosive equipment: ", m.getName(), "-ENE");
+                report.addLine("Explosive equipment: ", m.getName(), "- ENE");
                 hasExplosiveComponent = true;
             }
 

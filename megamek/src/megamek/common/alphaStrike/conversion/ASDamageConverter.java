@@ -30,7 +30,7 @@ import megamek.common.weapons.other.CLFussilade;
 
 import java.util.*;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
@@ -662,10 +662,10 @@ public final class ASDamageConverter {
         double nonRounded = element.weaponLocations[0].standardDamage.get(RANGE_BAND_MEDIUM);
         element.setOverheat(Math.min(heatDelta(nonRounded, heatCapacity, totalFrontHeat), 4));
 
-        report.addLine("Total Raw Dmg M: ", "", fmt(nonRounded));
+        report.addLine("Total Raw Dmg M: ", "", formatForReport(nonRounded));
         report.addLine("Total Adjusted Dmg M: ",
-                fmt(nonRounded) + " x " + heatCapacity + " / (" + totalFrontHeat + " - 4)",
-                fmt(nonRounded * heatCapacity / (totalFrontHeat - 4)));
+                formatForReport(nonRounded) + " x " + heatCapacity + " / (" + totalFrontHeat + " - 4)",
+                formatForReport(nonRounded * heatCapacity / (totalFrontHeat - 4)));
         report.addLine("Resulting Overheat", "OV " + element.getOverheat());
 
         // Determine OVL from long range damage and heat

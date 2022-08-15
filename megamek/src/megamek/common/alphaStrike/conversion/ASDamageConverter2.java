@@ -21,7 +21,7 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.*;
-import megamek.common.annotations.Nullable;
+import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.common.weapons.other.CLFussilade;
@@ -31,7 +31,7 @@ import java.util.*;
 import static megamek.common.ITechnology.TECH_BASE_CLAN;
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 public class ASDamageConverter2 {
 
@@ -43,34 +43,57 @@ public class ASDamageConverter2 {
     };
     private static final List<Double> ZERO_DAMAGE = List.of(0d, 0d, 0d, 0d);
 
-    private Entity entity;
-    private AlphaStrikeElement element;
-    private CalculationReport report;
+    protected Entity entity;
+    protected AlphaStrikeElement element;
+    protected CalculationReport report;
 
-//    private ASConverter.WeaponLocation[] weaponLocations;
-    private String[] locationNames;
+    //    private ASConverter.WeaponLocation[] weaponLocations;
+    protected String[] locationNames;
     private int[] heat;
     // The locations where damage and special abilities are going to end up in. [0] contains the unit's standard
     // damage and central abilities, the others can be turrets, arcs or rear.
-    private ASArcSummary[] locations;
-    private Map<WeaponType, Boolean> ammoForWeapon = new HashMap<>();
-    private final boolean hasTargetingComputer;
+    protected ASArcSummary[] locations;
+    private final Map<WeaponType, Boolean> ammoForWeapon = new HashMap<>();
+    protected final boolean hasTargetingComputer;
+    protected ArrayList<Mounted> weaponsList;
+    private boolean needsHeatAdjustment = false;
+    private double heatAdjustFactorSM = 1;
+    protected double heatAdjustFactorLE = 1;
 
+    protected ASDamage finalSDamage;
+    protected ASDamage finalMDamage;
+    protected ASDamage finalLDamage;
+    protected ASDamage finalEDamage;
 
-    ASDamageConverter2(ASConverter.ConversionData conversionData) {
-        entity = conversionData.entity;
-        element = conversionData.element;
-        report = conversionData.conversionReport;
+    static ASDamageConverter2 getASDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
+        if (element.isConventionalInfantry()) {
+            return new ASConvInfantryDamageConverter(entity, element, report);
+        } else if (element.usesArcs()) {
+            return new ASArcedDamageConverter(entity, element, report);
+        } else if (element.isAerospace()) {
+            return new ASAeroDamageConverter(entity, element, report);
+        } else {
+            return new ASDamageConverter2(entity, element, report);
+        }
+    }
+
+    /**
+     * Do not call this directly. Use the static getASDamageConverter instead.
+     * Constructs a damage converter for ground units.
+     *
+     * @param entity The entity to convert damage for
+     * @param element The partially-converted element corresponding to the entity
+     * @param report The calculation report to write to
+     */
+    protected ASDamageConverter2(Entity entity, AlphaStrikeElement element, CalculationReport report) {
+        this.element = element;
+        this.entity = entity;
+        this.report = report;
         locations = new ASArcSummary[ASLocationMapper.damageLocationsCount(entity)];
         locationNames = new String[locations.length];
         for (int index = 0; index < locationNames.length; index++) {
             locationNames[index] = ASLocationMapper.locationName(entity, index);
-            if (element.usesArcs()) {
-                locations[index] = ASArcSummary.createArcSummary(element);
-            } else {
-                // If it is not a turret, it can still use the turret-type summary
-                locations[index] = ASArcSummary.createTurretSummary(element);
-            }
+            locations[index] = ASArcSummary.createTurretSummary(element);
         }
         hasTargetingComputer = entity.hasTargComp();
     }
@@ -95,33 +118,10 @@ public class ASDamageConverter2 {
         Assign to real fields
 
 
-        Arcs:
-        Loop Weapons
-           Loop Bayweapons
-               Loop Arcs (Wegen report)
-                   AddSDamage
-                       STD
-                       CAP
-                       SCAP
-                       MSL
-                   AddMDamage
-                   ...
-                   AddLDamage
-                   ...
-                   AddEDamage
-                   ...
-        Adjust for all heat
-        Assign to real fields
-
-
-
-
-
     }
     */
 
     void convertDamage2() {
-
         report.addEmptyLine();
         report.addSubHeader("Damage Conversion:");
 
@@ -134,75 +134,40 @@ public class ASDamageConverter2 {
         // Track weapons we've already calculated ammunition for
 //        HashMap<String, Boolean> ammoForWeapon = new HashMap<>();
         assembleAmmoCounts();
+//        boolean needsHeatAdjustment = false;
+//        int heatCapacity = getHeatCapacity();
+//        int mediumRangeFrontHeat = getHeatGeneration(false, false);
 
-        ArrayList<Mounted> weaponsList = new ArrayList<>(entity.getWeaponList());
+        weaponsList = new ArrayList<>(entity.getWeaponList());
         weaponsList.removeIf(Objects::isNull);
 
-        // Special abilities
+        processSpecialAbilities();
+        processDamage();
+    }
+
+    protected void processSpecialAbilities() {
         report.addEmptyLine();
         report.addLine("--- Special Abilities:", "");
         for (Mounted weapon : weaponsList) {
             WeaponType weaponType = (WeaponType) weapon.getType();
             assignSpecialAbilities(weapon, weaponType);
         }
-
-        // Heat
-        if (element.usesOV()) {
-            report.addEmptyLine();
-            report.addLine("--- Heat Capacity:", "");
-            int heatCapacity = getHeatCapacity(entity, element);
+        if (foundNoSpecialAbility()) {
+            report.addLine("None", "", "");
         }
-
-        // Front S damage
-        report.addEmptyLine();
-        report.addLine("--- Short Range Damage:", "");
-        double rawSDamage = calculateFrontDamage(weaponsList, SHORT_RANGE);
-        report.addLine("Raw S damage:", "= " + fmt(rawSDamage));
-        if (element.usesOV()) {
-        // Heat adjust
-        }
-        int finalSDamage = ASConverter.roundUp(roundUpToTenth(rawSDamage));
-        report.addLine("Final S damage:", "Dual Rounding", "= " + fmt(finalSDamage));
-
-        // Front M damage
-        report.addEmptyLine();
-        report.addLine("--- Medium Range Damage:", "");
-        double rawMDamage = calculateFrontDamage(weaponsList, MEDIUM_RANGE);
-        report.addLine("Raw M damage:", "= " + fmt(rawMDamage));
-        if (element.usesOV()) {
-            // Heat adjust
-        }
-        int finalMDamage = ASConverter.roundUp(roundUpToTenth(rawMDamage));
-        report.addLine("Final M damage:", "Dual Rounding", "= " + fmt(finalMDamage));
-
-        // Front L damage
-        report.addEmptyLine();
-        report.addLine("--- Long Range Damage:", "");
-        double rawLDamage = calculateFrontDamage(weaponsList, LONG_RANGE);
-        report.addLine("Raw L damage:", "= " + fmt(rawLDamage));
-        if (element.usesOV()) {
-            // Heat adjust
-        }
-        int finalLDamage = ASConverter.roundUp(roundUpToTenth(rawLDamage));
-        report.addLine("Final L damage:", "Dual Rounding", "= " + fmt(finalLDamage));
-
-        // Front E damage
-        if (element.usesSMLE()) {
-            report.addEmptyLine();
-            report.addLine("--- Extreme Range Damage:", "");
-            double rawEDamage = calculateFrontDamage(weaponsList, EXTREME_RANGE);
-            report.addLine("Raw E damage:", "= " + fmt(rawEDamage));
-            if (element.usesOV()) {
-                // Heat adjust
-            }
-            int finalEDamage = ASConverter.roundUp(roundUpToTenth(rawEDamage));
-            report.addLine("Final E damage:", "Dual Rounding", "= " + fmt(finalEDamage));
-        }
-
-
     }
 
-    private double calculateFrontDamage(List<Mounted> weaponsList, int range) {
+    private boolean foundNoSpecialAbility() {
+        return Arrays.stream(locations).map(ASArcSummary::getSpecials).allMatch(ASSpecialAbilityCollection::isEmpty);
+    }
+
+    protected void processDamage() {
+        processMDamage();
+        processSDamage();
+        processLDamage();
+    }
+
+    protected double calculateFrontDamage(List<Mounted> weaponsList, int range) {
         double rawDamage = 0;
         for (Mounted weapon : weaponsList) {
             double damageModifier = 1;
@@ -212,20 +177,130 @@ public class ASDamageConverter2 {
                 damageModifier = getDamageMultiplier(weapon, weaponType);
                 double modifiedDamage = baseDamage * damageModifier;
                 String calculation = (damageModifier != 1) ? baseDamage + " x " + damageModifier : "";
-                report.addLine(weapon.getName(), calculation, "+ " + fmt(modifiedDamage));
+                report.addLine(weapon.getName(), calculation, "+ " + formatForReport(modifiedDamage));
                 rawDamage += modifiedDamage;
             }
         }
         return rawDamage;
     }
 
-    private double getDamageMultiplier(Mounted weapon, WeaponType weaponType) {
+    protected void processMDamage() {
+        report.addEmptyLine();
+        report.addLine("--- Medium Range Damage:", "");
+        double rawMDamage = calculateFrontDamage(weaponsList, MEDIUM_RANGE);
+        double mDamage = rawMDamage;
+        int roundedUpRaw = ASConverter.roundUp(roundUpToTenth(rawMDamage));
+        int roundedUpAdjusted = 0;
+
+        if (element.usesOV()) {
+            int heatCapacity = getHeatCapacity();
+            int mediumRangeFrontHeat = getHeatGeneration(false, false);
+            report.addLine("Heat Generation M: ", formatForReport(mediumRangeFrontHeat), "");
+            if (mediumRangeFrontHeat - 4 <= heatCapacity) {
+                report.addLine("Heat Capacity: ", heatCapacity + ", no heat adjustment", "");
+            } else {
+                report.addLine("Heat Capacity: ", heatCapacity + "", "");
+                report.addLine("Raw M damage:",
+                        formatForReport(rawMDamage) + ", dual rounded", "= " + roundedUpRaw);
+                needsHeatAdjustment = true;
+                heatAdjustFactorSM = (double) heatCapacity / (mediumRangeFrontHeat - 4);
+                double mDamageAdjusted = rawMDamage * heatAdjustFactorSM;
+                roundedUpAdjusted = ASConverter.roundUp(roundUpToTenth(mDamageAdjusted));
+                element.setOverheat(Math.min(roundedUpRaw - roundedUpAdjusted, 4));
+                report.addLine("Adjusted Damage: ",
+                        formatForReport(rawMDamage) + " x " + heatCapacity + " / (" + mediumRangeFrontHeat + " - 4)",
+                        "= " + formatForReport(mDamageAdjusted));
+                mDamage = mDamageAdjusted;
+            }
+        }
+
+        finalMDamage = ASDamage.createDualRoundedUp(mDamage);
+        report.addLine("Final M damage:",
+                formatForReport(mDamage) + ", dual rounded", "= " + finalMDamage.toStringWithZero());
+
+        if (element.hasOV()) {
+            report.addLine("Damage difference",
+                    roundedUpRaw + " - " + roundedUpAdjusted,
+                    "OV " + element.getOverheat());
+        }
+    }
+
+    protected void processSDamage() {
+        report.addEmptyLine();
+        report.addLine("--- Short Range Damage:", "");
+        double sDamage = calculateFrontDamage(weaponsList, SHORT_RANGE);
+
+        if (needsHeatAdjustment) {
+            report.addLine("Adjusted Damage: ",
+                    formatForReport(sDamage) + " x (see M)",
+                    "= " + formatForReport(sDamage * heatAdjustFactorSM));
+            sDamage = sDamage * heatAdjustFactorSM;
+        }
+
+        finalSDamage = ASDamage.createDualRoundedUp(sDamage);
+        report.addLine("Final S damage:",
+                formatForReport(sDamage) + ", dual rounded", "= " + finalSDamage.toStringWithZero());
+    }
+
+    protected void processLDamage() {
+
+        report.addEmptyLine();
+        report.addLine("--- Long Range Damage:", "");
+        double rawLDamage = calculateFrontDamage(weaponsList, LONG_RANGE);
+        double lDamage = rawLDamage;
+        int roundedUpRaw = ASConverter.roundUp(roundUpToTenth(rawLDamage));
+        int roundedUpAdjusted = 0;
+
+        // Determine OVL from long range damage and heat
+        if (element.getOverheat() > 0) {
+            int heatCapacity = getHeatCapacity();
+            double longRangeFrontHeat = getHeatGeneration(false, true);
+            report.addLine("Heat Generation L: ", formatForReport(longRangeFrontHeat), "");
+            if (longRangeFrontHeat - 4 <= heatCapacity) {
+                report.addLine("Heat Capacity: ", heatCapacity + ", no heat adjustment", "");
+            } else {
+                report.addLine("Heat Capacity: ", heatCapacity + "", "");
+                heatAdjustFactorLE = (double) heatCapacity / (longRangeFrontHeat - 4);
+                double lDamageAdjusted = rawLDamage * heatAdjustFactorLE;
+                roundedUpAdjusted = ASConverter.roundUp(roundUpToTenth(lDamageAdjusted));
+                report.addLine("Raw L damage:",
+                        formatForReport(rawLDamage) + ", dual rounded", "= " + roundedUpRaw);
+                report.addLine("Adjusted Damage: ",
+                        formatForReport(rawLDamage) + " x " + heatCapacity + " / ("
+                                + formatForReport(longRangeFrontHeat) + " - 4)",
+                        "= " + formatForReport(lDamageAdjusted));
+                if (roundedUpAdjusted < roundedUpRaw) {
+                    element.addSPA(OVL);
+                    lDamage = lDamageAdjusted;
+                } else {
+                    report.addLine("Damage difference",
+                            roundedUpRaw + " = " + roundedUpAdjusted + ", no OVL, no adjustment", "");
+                }
+            }
+        }
+
+        finalLDamage = ASDamage.createDualRoundedUp(lDamage);
+        report.addLine("Final L damage:",
+                formatForReport(lDamage) + ", dual rounded", "= " + finalLDamage.toStringWithZero());
+
+        if (element.hasSUA(OVL)) {
+            report.addLine("Damage difference",
+                    roundedUpRaw + " > " + roundedUpAdjusted,
+                    "OVL");
+        }
+    }
+
+    protected void processEDamage() { }
+
+    protected double getDamageMultiplier(Mounted weapon, WeaponType weaponType) {
         // Low ammo count
         double damageModifier = ammoForWeapon.getOrDefault(weaponType, true) ? 1 : 0.75;
+
         // Oneshot or Fusillade
         if (weaponType.hasFlag(WeaponType.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
             damageModifier *= .1;
         }
+
         // Targetting Computer
         if (hasTargetingComputer && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
                 && (weaponType.getAmmoType() != AmmoType.T_AC_LBX)
@@ -279,117 +354,126 @@ public class ASDamageConverter2 {
 
     private void assignSpecialAbilities(Mounted weapon, WeaponType weaponType) {
         if (weaponType.getAmmoType() == AmmoType.T_INARC) {
-            report.addLine(weapon.getName(), "INARC1");
-            assignToLocation(weapon, INARC, 1);
+            assignToLocations(weapon, INARC, 1);
         } else if (weaponType.getAmmoType() == AmmoType.T_NARC) {
             if (weaponType.hasFlag(WeaponType.F_BA_WEAPON)) {
-                report.addLine(weapon.getName(), "CNARC1");
-                assignToLocation(weapon, CNARC, 1);
+                assignToLocations(weapon, CNARC, 1);
             } else {
-                report.addLine(weapon.getName(), "SNARC1");
-                assignToLocation(weapon, SNARC, 1);
+                assignToLocations(weapon, SNARC, 1);
             }
         }
 
-        //            if (weapon.getAtClass() == WeaponType.CLASS_SCREEN) {
-//                element.getSpecialAbilities().addSPA(SCR, 1);
-//                continue;
-//            }
-//
-//            //TODO: really not Aero? Where is AMS pointdefense handled else?
-//            if (weapon.hasFlag(WeaponType.F_AMS)) {
-//                if (ASLocationMapper.damageLocationMultiplier(entity, 0, mount) > 0) {
-//                    if (entity instanceof Aero) {
-//                        pointDefense += 0.3;
-//                    } else {
-//                        element.addSPA(AMS);
-//                    }
-//                }
-//                for (ASArcSummary arcTurret : findArcTurret(element, entity, mount, turretsArcs)) {
-//                    if (entity instanceof Aero) {
-//                        arcTurret.getSpecials().addSPA(PNT, 0.3);
-//                    } else {
-//                        arcTurret.getSpecials().addSPA(AMS);
-//                    }
-//                }
-//                continue;
-//            }
-//
-//            if (weapon.hasFlag(WeaponType.F_TAG)) {
-//                if (weapon.hasFlag(WeaponType.F_C3MBS)) {
-//                    element.getSpecialAbilities().addSPA(C3BSM, 1);
-//                    element.getSpecialAbilities().addSPA(MHQ, 6);
-//                } else if (weapon.hasFlag(WeaponType.F_C3M)) {
-//                    element.getSpecialAbilities().addSPA(C3M, 1);
-//                    element.getSpecialAbilities().addSPA(MHQ, 5);
-//                }
-//                if (weapon.getShortRange() < 5) {
-//                    element.addSPA(LTAG);
-//                    findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(LTAG));
-//                } else {
-//                    element.addSPA(TAG);
-//                    findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(TAG));
-//                }
-//                continue;
-//            }
+        if (weaponType.getAtClass() == WeaponType.CLASS_SCREEN) {
+            assignToLocations(weapon, SCR, 1);
+        }
+
+        if (weaponType.hasFlag(WeaponType.F_TAG)) {
+            if (weaponType.hasFlag(WeaponType.F_C3MBS)) {
+                assignToLocations(weapon, C3BSM, 1);
+                assignToLocations(weapon, MHQ, 6);
+            } else if (weaponType.hasFlag(WeaponType.F_C3M)) {
+                assignToLocations(weapon, C3M, 1);
+                assignToLocations(weapon, MHQ, 5);
+            }
+            assignToLocations(weapon, (weaponType.getShortRange() < 5) ? LTAG : TAG);
+        }
 //
 //            if (weapon.hasFlag(WeaponType.F_FLAMER) || weapon.hasFlag(WeaponType.F_PLASMA)) {
 //                // For CI, add a placeholder heat value to be replaced later by the S damage value, ASC p.124
 //                element.getSpecialAbilities().addSPA(HT, ASDamageVector.createNormRndDmg(0));
 //            }
 //
-//            if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-//                if (!((entity instanceof Aero) && isArtilleryCannon(weapon))) {
-//                    element.getSpecialAbilities().addSPA(getArtilleryType(weapon), 1);
-//                    findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(getArtilleryType(weapon), 1));
-//                    continue;
-//                }
-//            }
-//
-//            if (weapon instanceof ArtilleryBayWeapon) {
-//                for (int index : mount.getBayWeapons()) {
-//                    Mounted m = entity.getEquipment(index);
-//                    if (m.getType() instanceof WeaponType) {
-//                        element.getSpecialAbilities().addSPA(getArtilleryType((WeaponType) m.getType()), 1);
-//                        findArcTurret(element, entity, mount, turretsArcs)
-//                                .forEach(a -> a.getSpecials().addSPA(getArtilleryType((WeaponType) m.getType()), 1));
-//                    }
-//                }
-//            }
 //
 //            if (weapon.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
 //                bombRacks++;
 //                continue;
 //            }
 //
-//            if (weapon.getAmmoType() == AmmoType.T_TASER) {
-//                if (entity instanceof BattleArmor) {
-//                    element.getSpecialAbilities().addSPA(BTAS, 1);
-//                } else {
-//                    element.getSpecialAbilities().addSPA(MTAS, 1);
-//                }
-//            }
-//
-//            if (weapon.hasFlag(WeaponType.F_TSEMP)) {
-//                BattleForceSUA spa = weapon.hasFlag(WeaponType.F_ONESHOT) ? TSEMPO : TSEMP;
-//                element.getSpecialAbilities().addSPA(spa, 1);
-//                findArcTurret(element, entity, mount, turretsArcs).forEach(a -> a.getSpecials().addSPA(spa, 1));
-//                continue;
-//            }
-//
-//            if (weapon instanceof InfantryAttack) {
-//                element.addSPA(AM);
-//                continue;
-//            }
+        if (weaponType.getAmmoType() == AmmoType.T_TASER) {
+            assignToLocations(weapon, element.isBattleArmor() ? BTAS : MTAS, 1);
+        }
 
+        if (weaponType.hasFlag(WeaponType.F_TSEMP)) {
+            assignToLocations(weapon, weaponType.hasFlag(WeaponType.F_ONESHOT) ? TSEMPO : TSEMP, 1);
+        }
+
+        if (weaponType instanceof InfantryAttack) {
+            assignToLocations(weapon, AM);
+        }
+
+        processAMS(weapon, weaponType);
+        processArtillery(weapon, weaponType);
     }
 
-    private void assignToLocation(Mounted weapon, BattleForceSUA sua, int number) {
-        for (int i = 0; i < locations.length; i++) {
-            if (ASLocationMapper.damageLocationMultiplier(entity, i, weapon) != 0) {
-                locations[i].getSpecials().addSPA(sua, number);
+    protected void processAMS(Mounted weapon, WeaponType weaponType) {
+        if (weaponType.hasFlag(WeaponType.F_AMS)) {
+            assignToLocations(weapon, AMS);
+        }
+    }
+
+    protected void processArtillery(Mounted weapon, WeaponType weaponType) {
+        if (weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
+            assignToLocations(weapon, getArtilleryType(weaponType), 1);
+        }
+    }
+
+    /**
+     * Checks the location multiplier for all locations and assigns the given SUA to any location where
+     * the multiplier is not zero, i.e. to any location that the weapon is counted towards.
+     *
+     * @param weapon The weapon to check
+     * @param sua The special unit ability to add
+     */
+    protected void assignToLocations(Mounted weapon, BattleForceSUA sua) {
+        for (int loc = 0; loc < locations.length; loc++) {
+            if ((ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0)
+                    && !locations[loc].hasSPA(sua)) {
+                locations[loc].getSpecials().addSPA(sua);
+                reportAssignToLocations(weapon, sua, "", loc);
             }
         }
+    }
+
+    /**
+     * Checks the location multiplier for all locations and assigns the given SUA with the given ability
+     * value to any location where the multiplier is not zero, i.e. to any location that the weapon is
+     * counted towards. If the SUA is already present, the ability value is added.
+     *
+     * @param weapon The weapon to check
+     * @param sua The special unit ability to add
+     * @param abilityValue The ability value to add
+     */
+    protected void assignToLocations(Mounted weapon, BattleForceSUA sua, int abilityValue) {
+        for (int loc = 0; loc < locations.length; loc++) {
+            if (ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0) {
+                locations[loc].getSpecials().addSPA(sua, abilityValue);
+                reportAssignToLocations(weapon, sua, abilityValue + "", loc);
+            }
+        }
+    }
+
+    /**
+     * Checks the location multiplier for all locations and assigns the given SUA with the given ability
+     * value to any location where the multiplier is not zero, i.e. to any location that the weapon is
+     * counted towards. If the SUA is already present, the ability value is added.
+     *
+     * @param weapon The weapon to check
+     * @param sua The special unit ability to add
+     * @param abilityValue The ability value to add
+     */
+    protected void assignToLocations(Mounted weapon, BattleForceSUA sua, double abilityValue) {
+        for (int loc = 0; loc < locations.length; loc++) {
+            if (ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0) {
+                locations[loc].getSpecials().addSPA(sua, abilityValue);
+                reportAssignToLocations(weapon, sua, formatForReport(abilityValue), loc);
+            }
+        }
+    }
+
+    private void reportAssignToLocations(Mounted weapon, BattleForceSUA sua, String abilityValue, int loc) {
+        String locationText = (loc > 0) ? " (" + ASLocationMapper.locationName(entity, loc) + ")" : "";
+        String weaponText = weapon.getName() + " (" + entity.getLocationAbbr(weapon.getLocation()) + ")";
+        report.addLine(weaponText, "+ " + sua.toString() + abilityValue + locationText);
     }
 
 //            void convertDamage() {
@@ -432,74 +516,6 @@ public class ASDamageConverter2 {
 //
 
 //
-//            if (weapon instanceof BayWeapon) {
-//                for (int index : mount.getBayWeapons()) {
-//                    Mounted m = entity.getEquipment(index);
-//                    if (m.getType() instanceof WeaponType) {
-//                        if (m.getType().hasFlag(WeaponType.F_AMS)) {
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 0, m) != 0) {
-//                                element.getFrontArc().getSpecials().addSPA(PNT, 0.3d);
-//                            }
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 1, m) != 0) {
-//                                element.getLeftArc().getSpecials().addSPA(PNT, 0.3d);
-//                            }
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 2, m) != 0) {
-//                                element.getRightArc().getSpecials().addSPA(PNT, 0.3d);
-//                            }
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 3, m) != 0) {
-//                                element.getRearArc().getSpecials().addSPA(PNT, 0.3d);
-//                            }
-//                            continue;
-//                        }
-//
-//                        if (((WeaponType) m.getType()).isAlphaStrikePointDefense()) {
-//                            double sDmg = ((WeaponType) m.getType()).getBattleForceDamage(ranges[0], m.getLinkedBy());
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 0, m) != 0) {
-//                                element.getFrontArc().getSpecials().addSPA(PNT, sDmg);
-//                            }
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 1, m) != 0) {
-//                                element.getLeftArc().getSpecials().addSPA(PNT, sDmg);
-//                            }
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 2, m) != 0) {
-//                                element.getRightArc().getSpecials().addSPA(PNT, sDmg);
-//                            }
-//                            if (ASLocationMapper.damageLocationMultiplier(entity, 3, m) != 0) {
-//                                element.getRearArc().getSpecials().addSPA(PNT, sDmg);
-//                            }
-//                        }
-//
-//                        // TELE missile special ability for Large Aero
-//                        if ((((WeaponType) m.getType()).getAtClass() == WeaponType.CLASS_TELE_MISSILE)) {
-//                            addSPAToArcs(TELE, m, entity, element);
-//                        }
-//
-//                        // MSL missile special ability for Large Aero
-//                        if (!element.usesCapitalWeapons() && element.isAerospace()
-//                                && ((WeaponType) m.getType()).getBattleForceClass() == WeaponType.BFCLASS_CAPITAL_MISSILE) {
-//                            addSPAToArcs(MSL, m, entity, element);
-//                        }
-//
-//                        // SCAP missile special ability for Large Aero
-//                        if (!element.usesCapitalWeapons() && element.isAerospace()
-//                                && ((WeaponType) m.getType()).getBattleForceClass() == WeaponType.BFCLASS_SUBCAPITAL) {
-//                            addSPAToArcs(SCAP, m, entity, element);
-//                        }
-//
-//
-//                        for (int r = 0; r < element.getRangeBands(); r++) {
-//                            baseDamage[r] += ((WeaponType) m.getType()).getBattleForceDamage(ranges[r], m.getLinkedBy());
-//                            heat[r] += ((WeaponType) m.getType()).getBattleForceHeatDamage(ranges[r]);
-//                            for (int loc = 0; loc < weaponLocations.length; loc++) {
-//                                double locMultiplier = ASLocationMapper.damageLocationMultiplier(entity, loc, m);
-//                                if (locMultiplier != 0) {
-//                                    weaponLocations[loc].addDamage(
-//                                            ((WeaponType) m.getType()).getBattleForceClass(), r, baseDamage[r] * locMultiplier);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            } else {
 //                for (int r = 0; r < element.getRangeBands(); r++) {
 //                    if (entity instanceof BattleArmor) {
 //                        baseDamage[r] = baseDamage[r] = getBattleArmorDamage(weapon, ranges[r], ((BattleArmor) entity),
@@ -522,20 +538,7 @@ public class ASDamageConverter2 {
 //                        weaponLocations[loc].heatDamage.set(r, ht);
 //                    }
 //                }
-//            }
 //
-//            // Targetting Computer
-//            if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE)
-//                    && (weapon.getAmmoType() != AmmoType.T_AC_LBX)
-//                    && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
-//                damageModifier *= 1.10;
-//            }
-//
-//            // Actuator Enhancement System
-//            if (entity.hasWorkingMisc(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM, -1, mount.getLocation())
-//                    && ((mount.getLocation() == Mech.LOC_LARM) || (mount.getLocation() == Mech.LOC_RARM))) {
-//                damageModifier *= 1.05;
-//            }
 //
 //            for (int loc = 0; loc < weaponLocations.length; loc++) {
 //                double locMultiplier = ASLocationMapper.damageLocationMultiplier(entity, loc, mount);
@@ -574,24 +577,6 @@ public class ASDamageConverter2 {
 //            }
 //            if (entity instanceof Aero && weapon.isAlphaStrikePointDefense()) {
 //                pointDefense += baseDamage[RANGE_BAND_SHORT] * damageModifier * ASLocationMapper.damageLocationMultiplier(entity, 0, mount);
-//            }
-//        }
-//
-//        if (entity instanceof Infantry) {
-//            Infantry infantry = (Infantry) entity;
-//            int baseRange = 0;
-//            if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryN() >= 2)) {
-//                baseRange = infantry.getSecondaryWeapon().getInfantryRange();
-//            } else if (infantry.getPrimaryWeapon() != null) {
-//                baseRange = infantry.getPrimaryWeapon().getInfantryRange();
-//            }
-//            int range = baseRange * 3;
-//            for (int r = 0; r < STANDARD_RANGES.length; r++) {
-//                if (range >= STANDARD_RANGES[r]) {
-//                    weaponLocations[0].addDamage(r, getConvInfantryStandardDamage(infantry));
-//                } else {
-//                    break;
-//                }
 //            }
 //        }
 //
@@ -744,15 +729,14 @@ public class ASDamageConverter2 {
 //        return result;
 //    }
 
-    private static boolean isArtilleryCannon(WeaponType weapon) {
+    protected static boolean isArtilleryCannon(WeaponType weapon) {
         return (weapon.getAmmoType() == AmmoType.T_LONG_TOM_CANNON)
                 || (weapon.getAmmoType() == AmmoType.T_SNIPER_CANNON)
                 || (weapon.getAmmoType() == AmmoType.T_THUMPER_CANNON);
     }
 
     /** Translates an Artillery WeaponType to the AlphaStrike Special Unit Ability, if any can be found. */
-    private static @Nullable
-    BattleForceSUA getArtilleryType(WeaponType weaponType) {
+    protected static BattleForceSUA getArtilleryType(WeaponType weaponType) {
         switch (weaponType.getAmmoType()) {
             case AmmoType.T_ARROW_IV:
                 return (weaponType.getTechBase() == TECH_BASE_CLAN) ? ARTAC : ARTAIS;
@@ -782,7 +766,7 @@ public class ASDamageConverter2 {
             case AmmoType.T_BA_TUBE:
                 return ARTBA;
         }
-        return null;
+        return UNKNOWN;
     }
 
     private static double getBattleArmorDamage(WeaponType weapon, int range, BattleArmor ba, boolean apmMount) {
@@ -806,10 +790,6 @@ public class ASDamageConverter2 {
                 || weapon.getBattleForceClass() == WeaponType.BFCLASS_MML;
     }
 
-    private static double getConvInfantryStandardDamage(Infantry inf) {
-        return inf.getDamagePerTrooper() * TROOP_FACTOR[Math.min(inf.getShootingStrength(), 30)] / 10.0;
-    }
-
     private static int resultingHTValue(int heatSum) {
         if (heatSum > 10) {
             return 2;
@@ -826,10 +806,7 @@ public class ASDamageConverter2 {
      * the prerequisites for OVL are fulfilled.
      * Also assigns OVL where applicable.
      */
-//    private static void adjustForHeat(ASConverter.ConversionData conversionData) {
-//        AlphaStrikeElement element = conversionData.element;
-//        Entity entity = conversionData.entity;
-//        CalculationReport report = conversionData.conversionReport;
+    private void adjustForHeat() {
 //        if (!entity.tracksHeat() && !element.usesArcs()) {
 //            return;
 //        }
@@ -877,26 +854,6 @@ public class ASDamageConverter2 {
 //        double frontadjustment = (double) heatCapacity / (totalFrontHeat - 4);
 //        double rearHeat = getHeatGeneration(entity, element, true, false);
 //        double rearAdjustment = rearHeat - 4 > heatCapacity ? heatCapacity / (rearHeat - 4) : 1;
-//        // No special treatment for the rear arc of Large Aero units
-//        if (element.usesArcs()) {
-//            rearAdjustment = frontadjustment;
-//            if (element.getFrontArc().hasSPA(PNT)) {
-//                double pntValue = (Double) element.getFrontArc().getSPA(PNT);
-//                element.getFrontArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
-//            }
-//            if (element.getLeftArc().hasSPA(PNT)) {
-//                double pntValue = (Double) element.getLeftArc().getSPA(PNT);
-//                element.getLeftArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
-//            }
-//            if (element.getRightArc().hasSPA(PNT)) {
-//                double pntValue = (Double) element.getRightArc().getSPA(PNT);
-//                element.getRightArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
-//            }
-//            if (element.getRearArc().hasSPA(PNT)) {
-//                double pntValue = (Double) element.getRearArc().getSPA(PNT);
-//                element.getRearArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
-//            }
-//        }
 //        for (int loc = 0; loc < weaponLocations.length; loc++) {
 //            ASConverter.WeaponLocation wloc = weaponLocations[loc];
 //            double adjustment = locationNames[loc].equals("REAR") ? rearAdjustment : frontadjustment;
@@ -914,7 +871,7 @@ public class ASDamageConverter2 {
 //                wloc.indirect = heatAdjust(wloc.indirect, adjustment);
 //            }
 //        }
-//    }
+    }
 
     /**
      * Returns the delta between the unadjusted rounded and heat-adjusted rounded damage value,
@@ -971,8 +928,7 @@ public class ASDamageConverter2 {
      * If onlyRear is true, only rear-facing weapons are included, otherwise only front-facing weapons are included!
      * If onlyLongRange is true, only weapons with an L damage value are included.
      */
-    private static int getHeatGeneration(Entity entity, AlphaStrikeElement element,
-                                         boolean onlyRear, boolean onlyLongRange) {
+    private int getHeatGeneration(boolean onlyRear, boolean onlyLongRange) {
         if (entity instanceof Mech) {
             return getMekHeatGeneration((Mech) entity, element, onlyRear, onlyLongRange);
         } else {
@@ -1082,32 +1038,30 @@ public class ASDamageConverter2 {
     }
 
     /** Returns the heat dissipation for Meks and AFs, according to ASC - Converting Heat Errata v1.2. */
-    private int getHeatCapacity(Entity entity, AlphaStrikeElement element) {
+    private int getHeatCapacity() {
         int heatCapacity = 0;
         if (entity instanceof Mech) {
             heatCapacity = ((Mech) entity).getHeatCapacity(false, false);
-        } else if (entity.isFighter()) {
-            heatCapacity = entity.getHeatCapacity(false);
-        } else if (element.usesArcs()) {
+        } else if (entity.isFighter() || element.usesArcs()) {
             heatCapacity = entity.getHeatCapacity(false);
         }
-        report.addLine("Heat Sink Capacity:", "", heatCapacity);
+//        report.addLine("Heat Sink Capacity:", "", heatCapacity);
         long coolantPodCount = entity.getEquipment().stream().filter(Mounted::isCoolantPod).count();
         if (coolantPodCount > 0) {
             heatCapacity += coolantPodCount;
-            report.addLine("Coolant Pods", "+ ", coolantPodCount);
+//            report.addLine("Coolant Pods", "+ ", coolantPodCount);
         }
         if (entity.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             heatCapacity += 3;
-            report.addLine("Partial Wing", "+ 3");
+//            report.addLine("Partial Wing", "+ 3");
         }
         if (element.hasSUA(RHS)) {
             heatCapacity += 1;
-            report.addLine("Radical Heat Sinks", "+ 1");
+//            report.addLine("Radical Heat Sinks", "+ 1");
         }
         if (element.hasSUA(ECS)) {
             heatCapacity += 1;
-            report.addLine("Emergency Coolant System", "+ 1");
+//            report.addLine("Emergency Coolant System", "+ 1");
         }
         return heatCapacity;
     }

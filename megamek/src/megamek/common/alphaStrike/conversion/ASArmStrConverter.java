@@ -23,7 +23,7 @@ import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import org.apache.logging.log4j.LogManager;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 final class ASArmStrConverter {
 
@@ -80,7 +80,7 @@ final class ASArmStrConverter {
 
             if ((entity.getBARRating(0) < 9) && (entity.getArmorType(loc) != EquipmentType.T_ARMOR_COMMERCIAL)) {
                 armorMod *= 0.1 * entity.getBARRating(0);
-                calculation += fmt(0.1 * entity.getBARRating(0)) + " x ";
+                calculation += formatForReport(0.1 * entity.getBARRating(0)) + " x ";
             }
 
             // Some empty locations report -1 armor!
@@ -108,7 +108,7 @@ final class ASArmStrConverter {
             report.addLine("Modular Armor", "10 x " + count, "+ " + 10 * count);
         }
 
-        String displayArmorPoints = fmt(armorPoints);
+        String displayArmorPoints = formatForReport(armorPoints);
 
         if (entity.isCapitalScale()) {
             int finalArmor = (int) Math.round(armorPoints * 0.33);
@@ -139,7 +139,7 @@ final class ASArmStrConverter {
 
             report.addLine("Threshold",
                     element.getFullArmor() + " / 3" + (element.usesArcs() ? " / " + arcs : "") + ", round up",
-                    "= " + fmt(threshold));
+                    "= " + formatForReport(threshold));
             return threshold;
         } else {
             return -1;

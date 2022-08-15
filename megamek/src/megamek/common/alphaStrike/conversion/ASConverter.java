@@ -72,7 +72,12 @@ public final class ASConverter {
         element.setMulId(undamagedEntity.getMulId());
         element.setRole(UnitRoleHandler.getRoleFor(undamagedEntity));
 
-        conversionReport.addHeader("AlphaStrike Conversion for " + undamagedEntity.getShortName());
+        if (undamagedEntity.getShortName().length() < 15) {
+            conversionReport.addHeader("AlphaStrike Conversion for " + undamagedEntity.getShortName());
+        } else {
+            conversionReport.addHeader("AlphaStrike Conversion for");
+            conversionReport.addHeader(undamagedEntity.getShortName());
+        }
         conversionReport.addEmptyLine();
 
         conversionReport.addSubHeader("Basic Info:");
@@ -120,7 +125,7 @@ public final class ASConverter {
         element.heat = new int[element.getRangeBands()];
         ASDamageConverter.convertDamage(conversionData);
 
-        var dc = new ASDamageConverter2(conversionData);
+        var dc = ASDamageConverter2.getASDamageConverter(entity, element, conversionReport);
         dc.convertDamage2();
 
         ASSpecialAbilityConverter.finalizeSpecials(element);

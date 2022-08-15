@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
@@ -65,7 +65,7 @@ public class ASPointValueConverter {
         // Offensive Value
         processStandardDamageAndOV();
         processSize();
-        processOffensiveSPAMods();
+        processOffensiveSUAMods();
         processOffensiveBlanketMod();
 
         // Defensive Value
@@ -75,13 +75,13 @@ public class ASPointValueConverter {
         processDefensiveSUAMods();
         processDefensiveFactors();
         report.addLine("Defensive Value:",
-                fmt(defensiveValue) + " + " + fmt(dir),
-                "= " + fmt(defensiveValue + dir));
+                formatForReport(defensiveValue) + " + " + formatForReport(dir),
+                "= " + formatForReport(defensiveValue + dir));
         defensiveValue += dir;
 
         subTotal = offensiveValue + defensiveValue;
         report.addEmptyLine();
-        report.addLine("Subtotal", fmt(offensiveValue) + " + " + fmt(defensiveValue), fmt(subTotal));
+        report.addLine("Subtotal", formatForReport(offensiveValue) + " + " + formatForReport(defensiveValue), formatForReport(subTotal));
 
         processGroundCapabilities();
         processForceBonus();
@@ -97,26 +97,26 @@ public class ASPointValueConverter {
         double dmgM = pointValueMDamage(element);
         double dmgL = pointValueLDamage(element);
         offensiveValue = dmgS + dmgM * 2 + dmgL;
-        report.addLine("Damage", fmt(dmgS) + " + 2 x " + fmt(dmgM) + " + " + fmt(dmgL), fmt(offensiveValue));
+        report.addLine("Damage", formatForReport(dmgS) + " + 2 x " + formatForReport(dmgM) + " + " + formatForReport(dmgL), formatForReport(offensiveValue));
 
         if (element.getOverheat() >= 1) {
             double overheatFactor = 1 + 0.5 * (element.getOverheat() - 1);
             overheatFactor /= (dmgM + dmgL == 0) ? 2 : 1;
             offensiveValue += overheatFactor;
-            report.addLine("Overheat", "+ " + fmt(overheatFactor), "= " + fmt(offensiveValue));
+            report.addLine("Overheat", "+ " + formatForReport(overheatFactor), "= " + formatForReport(offensiveValue));
         }
     }
 
     protected void processSize() {
         if (element.isMek() || element.isProtoMek()) {
             offensiveValue += 0.5 * element.getSize();
-            report.addLine("Size", "+ " + element.getSize() + " / 2", "= " + fmt(offensiveValue));
+            report.addLine("Size", "+ " + element.getSize() + " / 2", "= " + formatForReport(offensiveValue));
         }
     }
 
     protected void processMovement() {
         defensiveValue += 0.125 * getHighestMove(element);
-        report.addLine("Movement", getHighestMove(element) + " / 8", "= " + fmt(defensiveValue));
+        report.addLine("Movement", getHighestMove(element) + " / 8", "= " + formatForReport(defensiveValue));
         if (element.hasMovementMode("a")) {
             if (element.getMovement("a") >= 10) {
                 defensiveValue += 1;
@@ -130,7 +130,7 @@ public class ASPointValueConverter {
 
         if (element.isJumpCapable()) {
             defensiveValue += 0.5;
-            report.addLine("Jump-capable", "+ 0.5", "= " + fmt(defensiveValue));
+            report.addLine("Jump-capable", "+ 0.5", "= " + formatForReport(defensiveValue));
         }
     }
 
@@ -158,8 +158,8 @@ public class ASPointValueConverter {
         return newPointValue;
     }
 
-    /** Returns the Ground Offensive SPA modifier, ASC p.139. */
-    protected void processOffensiveSPAMods() {
+    /** Returns the Ground Offensive SUA modifier, ASC p.139. */
+    protected void processOffensiveSUAMods() {
         processOffensiveSUAMod(TAG, e -> 0.5);
         processOffensiveSUAMod(LTAG, e -> 0.25);
         processOffensiveSUAMod(SNARC, e -> (double) (int) element.getSUA(SNARC));
@@ -185,13 +185,13 @@ public class ASPointValueConverter {
         if (element.hasSUA(RHS)) {
             if (element.hasSUA(OVL)) {
                 offensiveValue += 1;
-                report.addLine("Offensive SPA", "+ 1 (RHS and OVL)", "");
+                report.addLine("Offensive SUA", "+ 1 (RHS and OVL)", "");
             } else if (element.getOverheat() > 0) {
                 offensiveValue += 0.5;
-                report.addLine("Offensive SPA", "+ 0.5 (RHS and OV > 0)", "");
+                report.addLine("Offensive SUA", "+ 0.5 (RHS and OV > 0)", "");
             } else {
                 offensiveValue += 0.25;
-                report.addLine("Offensive SPA", "+ 0.25 (RHS)", "");
+                report.addLine("Offensive SUA", "+ 0.25 (RHS)", "");
             }
         }
         processArtyOffensiveSUAMods();
@@ -230,7 +230,7 @@ public class ASPointValueConverter {
             double modifier = spaMod.apply(element);
             String spaString = element.getSpecialAbilities().formatSPAString(spa, element.getSUA(spa));
             offensiveValue += modifier;
-            report.addLine("Offensive SPA", "+ " + modifier + " (" + spaString + ")", "= " + fmt(offensiveValue));
+            report.addLine("Offensive SUA", "+ " + formatForReport(modifier) + " (" + spaString + ")", "= " + formatForReport(offensiveValue));
         }
     }
 
@@ -246,14 +246,12 @@ public class ASPointValueConverter {
             double modifier = spaMod.apply(element);
             String spaString = element.getSpecialAbilities().formatSPAString(spa, element.getSUA(spa));
             defensiveValue += modifier;
-            report.addLine("Defensive SPA", "+ " + modifier + " (" + spaString + ")", "= " + fmt(defensiveValue));
+            report.addLine("Defensive SUA", "+ " + formatForReport(modifier) + " (" + spaString + ")", "= " + formatForReport(defensiveValue));
         }
     }
 
     protected void processOffensiveBlanketMod() {
-        // TODO: according to errata, no rounding the blanket mod. But excel sheet does it.
-//        double blanketMod = 1;
-        double blanketMod = 0;
+        double blanketMod = 1;
         List<String> modifierList = new ArrayList<>();
         if (element.hasSUA(ATAC)) {
             blanketMod += 0.1;
@@ -278,16 +276,10 @@ public class ASPointValueConverter {
             modifierList.add("BFC");
         }
         String modifiers = modifierList.isEmpty() ? "" : " (" + String.join(", ", modifierList) + ")";
-//        report.addLine("Offensive Value:",
-//                fmt(offensiveValue) + " x " + fmt(blanketMod) + modifiers,
-//                "= " + fmt(offensiveValue * blanketMod));
-        // excel sheet:
-        double delta = roundToHalf(offensiveValue * blanketMod);
         report.addLine("Offensive Value:",
-                fmt(offensiveValue) + " + " + fmt(delta) + modifiers,
-                (2* offensiveValue * blanketMod) + "= " + fmt(offensiveValue + delta));
-        offensiveValue += delta;
-//        offensiveValue *= blanketMod;
+                formatForReport(offensiveValue) + " x " + formatForReport(blanketMod) + modifiers,
+                "= " + formatForReport(offensiveValue * blanketMod));
+        offensiveValue *= blanketMod;
     }
 
     protected void processDefensiveSUAMods() {
@@ -306,11 +298,11 @@ public class ASPointValueConverter {
         processDefensiveSUAMod(IRA, e -> barFactor * 0.5 * armorThird);
         if (element.hasSUA(CR) && (element.getFullStructure() >= 3)) {
             defensiveValue += 0.25;
-            report.addLine("Defensive SPA", "+ 0.25 (CR)", "= " + fmt(defensiveValue));
+            report.addLine("Defensive SPA", "+ 0.25 (CR)", "= " + formatForReport(defensiveValue));
         }
         if (element.hasSUA(ARM) && (element.getFullStructure() > 1)) {
             defensiveValue += 0.5;
-            report.addLine("Defensive SPA", "+ 0.5 (ARM)", "= " + fmt(defensiveValue));
+            report.addLine("Defensive SPA", "+ 0.5 (ARM)", "= " + formatForReport(defensiveValue));
         }
     }
 
@@ -320,8 +312,8 @@ public class ASPointValueConverter {
         processStructure();
         double defFactor = getDefenseFactor();
         report.addLine("- DIR:",
-                fmt(dir) + " x " + fmt(defFactor) + ", round to half",
-                "= " + fmt(0.5 * Math.round(dir * defFactor * 2)));
+                formatForReport(dir) + " x " + formatForReport(defFactor) + ", round to half",
+                "= " + formatForReport(0.5 * Math.round(dir * defFactor * 2)));
         dir = 0.5 * Math.round(dir * defFactor * 2);
     }
 
@@ -350,8 +342,8 @@ public class ASPointValueConverter {
         dir = element.getFullArmor() * armorMultiplier;
         String modifiers = modifierList.isEmpty() ? "" : " (" + String.join(", ", modifierList) + ")";
         report.addLine("- Armor",
-                element.getFullArmor() + " x " + fmt(armorMultiplier) + modifiers,
-                "= " + fmt(dir));
+                element.getFullArmor() + " x " + formatForReport(armorMultiplier) + modifiers,
+                "= " + formatForReport(dir));
     }
 
     private void processStructure() {
@@ -366,15 +358,16 @@ public class ASPointValueConverter {
         }
         dir += element.getFullStructure() * strucMultiplier;
         report.addLine("- Structure",
-                "+ " + element.getFullStructure() + " x " + fmt(strucMultiplier) + modifiers,
-                "= " + fmt(dir));
+                "+ " + element.getFullStructure() + " x " + formatForReport(strucMultiplier) + modifiers,
+                "= " + formatForReport(dir));
     }
 
     private double getDefenseFactor() {
         double result = 0;
         double movemod = element.getTMM();
-        if (element.isJumpCapable() && (element.isInfantry() || !element.getStandardDamage().hasDamage())
-                && !element.hasSUA(TSEMP)) {
+        if (element.isJumpCapable() && (element.isInfantry()
+                || (!element.getStandardDamage().hasDamage() && !element.hasAnySUAOf(TSEMP, ARTS,
+                ARTAC, ARTAIS, ARTBA, ARTCM12, ARTCM5, ARTCM7, ARTCM9, ARTLT, ARTLTC, ARTSC, ARTT, ARTTC)))) {
             movemod += 1;
         }
         List<String> modifierList = new ArrayList<>();
@@ -409,7 +402,7 @@ public class ASPointValueConverter {
         double defFactor = 1 + multiplier * result;
         String modifiers = " (" + String.join(", ", modifierList) + ")";
         report.addLine("- Defense Factor",
-                "1 + " + fmt(multiplier) + " x " + fmt(result) + modifiers,
+                "1 + " + formatForReport(multiplier) + " x " + formatForReport(result) + modifiers,
                 "");
         return defFactor;
     }
@@ -526,7 +519,7 @@ public class ASPointValueConverter {
             calculation += "+ " + mhqValue + " (MHQ) ";
         }
         if (!calculation.isBlank()) {
-            report.addLine("Force Bonus", calculation, "= " + fmt(subTotal));
+            report.addLine("Force Bonus", calculation, "= " + formatForReport(subTotal));
         }
     }
 

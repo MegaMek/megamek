@@ -187,6 +187,11 @@ public class AlphaStrikeElement {
         return overheat;
     }
 
+    /** @return True if this AS element has an OV value other than 0. */
+    public boolean hasOV() {
+        return overheat > 0;
+    }
+
     /** @return The AS element's Point Value (PV). This is not adjusted for damage. */
     public int getPointValue() {
         return pointValue;

@@ -21,7 +21,7 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.fmt;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASAeroPointValueConverter extends ASPointValueConverter {
@@ -34,13 +34,13 @@ public class ASAeroPointValueConverter extends ASPointValueConverter {
     protected void processMovement() {
         int highestMove = getHighestMove(element);
         defensiveValue += 0.25 * highestMove;
-        report.addLine("Movement", highestMove + " / 4", "" + fmt(defensiveValue));
+        report.addLine("Movement", highestMove + " / 4", "" + formatForReport(defensiveValue));
         if (highestMove >= 10) {
             defensiveValue += 1;
-            report.addLine("Thrust", "+2 (Very High Thrust)", "= " + fmt(defensiveValue));
+            report.addLine("Thrust", "+2 (Very High Thrust)", "= " + formatForReport(defensiveValue));
         } else if (highestMove >= 7) {
             defensiveValue += 0.5;
-            report.addLine("Thrust", "+0.5 (High Thrust)", "= " + fmt(defensiveValue));
+            report.addLine("Thrust", "+0.5 (High Thrust)", "= " + formatForReport(defensiveValue));
         }
     }
 
@@ -69,11 +69,11 @@ public class ASAeroPointValueConverter extends ASPointValueConverter {
             calculation += " / 2 (BAR)";
         }
         double thresholdMultiplier = Math.min(1.3 + 0.1 * element.getThreshold(), 1.9);
-        calculation += " x " + fmt(thresholdMultiplier);
+        calculation += " x " + formatForReport(thresholdMultiplier);
         dir += thresholdMultiplier * barFactor * element.getFullArmor();
-        report.addLine("- Armor", calculation, "= " + fmt(dir));
+        report.addLine("- Armor", calculation, "= " + formatForReport(dir));
         dir += element.getFullStructure();
-        report.addLine("- Structure", "+ " + element.getFullStructure(), "= " + fmt(dir));
+        report.addLine("- Structure", "+ " + element.getFullStructure(), "= " + formatForReport(dir));
     }
 
     @Override

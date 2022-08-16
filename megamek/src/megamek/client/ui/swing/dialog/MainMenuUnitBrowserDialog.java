@@ -33,7 +33,7 @@ public class MainMenuUnitBrowserDialog extends AbstractUnitSelectorDialog {
     public MainMenuUnitBrowserDialog(JFrame parent, UnitLoadingDialog unitLoadingDialog) {
         super(parent, unitLoadingDialog);
         enableYearLimits = false;
-        allowedYear = 3155;
+        allowedYear = ALLOWED_YEAR_ANY;
         canonOnly = false;
         allowInvalid = true;
         gameTechLevel = TechConstants.T_SIMPLE_UNOFFICIAL;

@@ -254,7 +254,8 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
             }
         }
 
-        private void assignSpecialAbilities(Mounted weapon, WeaponType weaponType) {
+        @Override
+        protected void assignSpecialAbilities(Mounted weapon, WeaponType weaponType) {
             if (weaponType.getAmmoType() == AmmoType.T_INARC) {
                 report.addLine(weapon.getName(), "INARC1");
                 assignToLocation(weapon, INARC, 1);
@@ -1003,7 +1004,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
             }
         }
 
-        private static int weaponHeat(WeaponType weaponType) {
+        protected static int weaponHeat(WeaponType weaponType) {
             int ammoType = weaponType.getAmmoType();
             if (ammoType == AmmoType.T_AC_ROTARY) {
                 return weaponType.getHeat() * 6;

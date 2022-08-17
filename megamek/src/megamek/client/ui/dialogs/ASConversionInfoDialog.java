@@ -42,6 +42,10 @@ public class ASConversionInfoDialog extends AbstractDialog {
         this(frame, report, element.getName(), false);
     }
 
+    public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable AlphaStrikeElement element, boolean modal) {
+        this(frame, report, element.getName(), modal);
+    }
+
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report) {
         this(frame, report, "", false);
     }

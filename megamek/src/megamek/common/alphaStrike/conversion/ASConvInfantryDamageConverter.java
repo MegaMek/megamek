@@ -19,21 +19,20 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.Infantry;
+import megamek.common.*;
 import megamek.common.alphaStrike.ASDamage;
+import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.weapons.InfantryAttack;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.alphaStrike.BattleForceSUA.AM;
+import static megamek.common.alphaStrike.BattleForceSUA.HT;
 
 public class ASConvInfantryDamageConverter extends ASDamageConverter2 {
 
-    private static final int[] TROOP_FACTOR = {
-            0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
-            13, 14, 15, 16, 16, 17, 17, 17, 18, 18
-    };
-
     private final Infantry infantry;
+    private boolean hasHT = false;
 
     protected ASConvInfantryDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
@@ -73,5 +72,28 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter2 {
                 formatForReport(damagePerTrooper) + " x " + troopFactor + " / 10",
                 "= " + formatForReport(damage));
         return damage;
+    }
+
+    @Override
+    protected void assignSpecialAbilities(Mounted weapon, WeaponType weaponType) {
+        super.assignSpecialAbilities(weapon, weaponType);
+
+        if (weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA)) {
+            hasHT = true;
+        }
+
+        if (weaponType instanceof InfantryAttack) {
+            assignToLocations(weapon, AM);
+        }
+    }
+
+    @Override
+    protected void finalizeSpecialAbilities() {
+        super.finalizeSpecialAbilities();
+        if (hasHT && finalSDamage.hasDamage()) {
+            // TODO: Rules don't say what to do about damage 0*?
+            element.getSpecialAbilities().addSPA(HT,
+                    ASDamageVector.create(Math.min(2, finalSDamage.damage), 0, 0, 0, 3));
+        }
     }
 }

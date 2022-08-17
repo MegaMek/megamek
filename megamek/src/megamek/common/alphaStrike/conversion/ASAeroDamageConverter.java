@@ -22,14 +22,14 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.Entity;
-import megamek.common.Mounted;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
 import static megamek.common.alphaStrike.BattleForceSUA.OVL;
 import static megamek.common.alphaStrike.BattleForceSUA.PNT;
 
@@ -76,6 +76,35 @@ class ASAeroDamageConverter extends ASDamageConverter2 {
     protected void processArtillery(Mounted weapon, WeaponType weaponType) {
         if ((weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY) && !isArtilleryCannon(weaponType)) {
             assignToLocations(weapon, getArtilleryType(weaponType), 1);
+        }
+    }
+
+    @Override
+    protected int getHeatGeneration(boolean onlyRear, boolean onlyLongRange) {
+        int totalHeat = entity.hasWorkingMisc(MiscType.F_STEALTH, -1) ? 10 : 0;
+
+        for (Mounted mount : entity.getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon instanceof BayWeapon) {
+                for (int index : mount.getBayWeapons()) {
+                    totalHeat += aeroWeaponHeat(entity.getEquipment(index), onlyRear, onlyLongRange);
+                }
+            } else {
+                totalHeat += aeroWeaponHeat(mount, onlyRear, onlyLongRange);
+            }
+        }
+        return totalHeat;
+    }
+
+    private static int aeroWeaponHeat(Mounted weapon, boolean onlyRear, boolean onlyLongRange) {
+        WeaponType weaponType = (WeaponType) weapon.getType();
+        if (weaponType.hasFlag(WeaponType.F_ONESHOT)
+                || (onlyRear && !weapon.isRearMounted() && (weapon.getLocation() != Aero.LOC_AFT))
+                || (!onlyRear && (weapon.isRearMounted() || (weapon.getLocation() == Aero.LOC_AFT)))
+                || (onlyLongRange && weaponType.getBattleForceDamage(LONG_RANGE) == 0)) {
+            return 0;
+        } else {
+            return weaponHeat(weaponType);
         }
     }
 }

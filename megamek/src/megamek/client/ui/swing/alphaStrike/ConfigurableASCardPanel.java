@@ -19,6 +19,7 @@
 package megamek.client.ui.swing.alphaStrike;
 
 import megamek.MMConstants;
+import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
@@ -43,15 +44,19 @@ public class ConfigurableASCardPanel extends JPanel {
     private final JComboBox<Float> sizeChooser = new JComboBox<>();
     private final JButton copyButton = new JButton("Copy to Clipboard");
     private final JButton mulButton = new JButton("MUL");
+    private final JButton conversionButton = new JButton("Conversion Report");
     private final ASCardPanel cardPanel = new ASCardPanel();
+    private AlphaStrikeElement element;
     private int mulId;
+    private final JFrame parent;
 
     /**
      * Constructs a panel with the given AlphaStrike element to display.
      *
      * @param element The AlphaStrike element to display
      */
-    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element) {
+    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element, JFrame parent) {
+        this.parent = parent;
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
         fontChooser.addItem("");
@@ -75,6 +80,8 @@ public class ConfigurableASCardPanel extends JPanel {
         mulButton.addActionListener(ev -> showMUL());
         mulButton.setToolTipText("Show the Master Unit List entry for this unit. Opens a browser window.");
 
+        conversionButton.addActionListener(e -> showConversionReport());
+
         var chooserLine = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         chooserLine.setBorder(new EmptyBorder(10, 0, 10, 0));
         chooserLine.add(Box.createHorizontalStrut(15));
@@ -87,6 +94,8 @@ public class ConfigurableASCardPanel extends JPanel {
         chooserLine.add(copyButton);
         chooserLine.add(Box.createHorizontalStrut(15));
         chooserLine.add(mulButton);
+        chooserLine.add(Box.createHorizontalStrut(15));
+        chooserLine.add(conversionButton);
 
         var cardLine = new JScrollPane(cardPanel);
         cardPanel.setBorder(new EmptyBorder(5, 65, 0, 0));
@@ -99,8 +108,8 @@ public class ConfigurableASCardPanel extends JPanel {
     }
 
     /** Construct a new panel without an AlphaStrike element to display. */
-    public ConfigurableASCardPanel() {
-        this(null);
+    public ConfigurableASCardPanel(JFrame parent) {
+        this(null, parent);
     }
 
     /**
@@ -109,6 +118,7 @@ public class ConfigurableASCardPanel extends JPanel {
      * @param element The AlphaStrike element to display
      */
     public void setASElement(@Nullable AlphaStrikeElement element) {
+        this.element = element;
         cardPanel.setASElement(element);
         mulId = (element != null) ? element.getMulId() : -1;
         mulButton.setEnabled(mulId > 0);
@@ -140,6 +150,10 @@ public class ConfigurableASCardPanel extends JPanel {
             LogManager.getLogger().error("", ex);
             JOptionPane.showMessageDialog(this, ex.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void showConversionReport() {
+        new ASConversionInfoDialog(parent, element.getConversionReport(), element).setVisible(true);
     }
 
     // Taken from https://alvinalexander.com/java/java-copy-image-to-clipboard-example/

@@ -45,6 +45,8 @@ public class ASLocationMapper {
             return (en.hasMisc(F_QUAD_TURRET) || en.hasMisc(F_SHOULDER_TURRET) || en.hasMisc(F_HEAD_TURRET)) ? 3 : 2;
         } else if (en instanceof Aero) {
             return 2;
+        } else if (en instanceof BattleArmor) {
+            return 1;
         } else if (en instanceof Infantry) {
             return ((Infantry) en).hasFieldGun() ? 2 : 1;
         } else {
@@ -74,6 +76,10 @@ public class ASLocationMapper {
             return getTankLocationMultiplier(loc, mount.getLocation());
         } else if (en instanceof Aero) {
             return getAeroLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+        } else if (en instanceof BattleArmor) {
+            // A few weapons (e.g. Narc) are present in the weapon list for every trooper, count only the first (loc = 1)
+            // Weapons in location 0 (Squad/Point) can all be counted
+            return (mount.getLocation() <= 1) ? 1 : 0;
         } else if (en instanceof Infantry) {
             return (loc == mount.getLocation()) ? 1 : 0;
         } else if (en instanceof TripodMech) {

@@ -18,6 +18,8 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.UnitRole;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.options.Quirks;
@@ -62,6 +64,7 @@ public class AlphaStrikeElement {
     private String model;
     private int mulId = -1;
     private int pointValue;
+    private CalculationReport conversionReport = new DummyCalculationReport();
 
     private ASUnitType asUnitType;
     private int size;
@@ -244,6 +247,16 @@ public class AlphaStrikeElement {
         return squadSize;
     }
 
+    /** @return The conversion report for this unit. May be a DummyCalculationReport without information. */
+    public CalculationReport getConversionReport() {
+        return conversionReport;
+    }
+
+    /** @return False when this element has no meaningful conversion report, true when it has. */
+    public boolean hasConversionReport() {
+        return !(conversionReport == null) && !(conversionReport instanceof DummyCalculationReport);
+    }
+
     public ASSpecialAbilityCollection getSpecialAbilities() {
         return specialAbilities;
     }
@@ -365,6 +378,18 @@ public class AlphaStrikeElement {
     /** Sets the AS element's Battle Armor Squad Size. Does not check if this actually is a BA. */
     public void setPrimaryMovementMode(String movementMode) {
         primaryMovementMode = movementMode;
+    }
+
+    /** Sets the AS element's conversion report to the given report, if it is not null. */
+    public void setConversionReport(CalculationReport newReport) {
+        if (newReport != null) {
+            conversionReport = newReport;
+        }
+    }
+
+    /** Resets the AS element's conversion report to an empty DummyCalculationReport. */
+    public void clearConversionReport() {
+        conversionReport = new DummyCalculationReport();
     }
 
     public AlphaStrikeElement() {

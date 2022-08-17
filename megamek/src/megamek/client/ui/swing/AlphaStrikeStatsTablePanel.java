@@ -132,7 +132,7 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
         }
         JButton button = new JButton("?");
         button.setEnabled(conversionReport != null);
-        button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport, element).setVisible(true));
+        button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport, element, true).setVisible(true));
         panel.add(button);
         add(panel);
     }

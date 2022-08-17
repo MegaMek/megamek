@@ -133,4 +133,8 @@ public class ASDamage {
             return damage + "";
         }
     }
+
+    public double asDoubleValue() {
+        return minimal ? 0.5 : damage;
+    }
 }

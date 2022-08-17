@@ -36,7 +36,7 @@ public class EntityViewPane extends AbstractTabbedPane {
     //region Variable Declarations
     private MechViewPanel entityPanel;
     private MechViewPanel troPanel;
-    private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel();
+    private final ConfigurableASCardPanel cardPanel = new ConfigurableASCardPanel(getFrame());
     //endregion Variable Declarations
 
     //region Constructors

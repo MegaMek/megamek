@@ -1,6 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,10 +51,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.io.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static megamek.common.Terrains.*;
 
@@ -77,7 +82,7 @@ public class BoardEditor extends JPanel
      * @author arlith
      */
     private static class TerrainHelper implements Comparable<TerrainHelper> {
-        private int terrainType;
+        private final int terrainType;
 
         TerrainHelper(int terrain) {
             terrainType = terrain;
@@ -163,8 +168,7 @@ public class BoardEditor extends JPanel
      *  https://stackoverflow.com/questions/480261/java-swing-mouseover-text-on-jcombobox-items 
      */
     private static class ComboboxToolTipRenderer extends DefaultListCellRenderer {
-        private static final long serialVersionUID = -6776114675645434769L;
-        
+
         private TerrainHelper[] terrains;
         private List<TerrainTypeHelper> terrainTypes;
 
@@ -193,27 +197,25 @@ public class BoardEditor extends JPanel
         }
     }
  
-    private static final long serialVersionUID = 4689863639249616192L;
-    
-    private GUIPreferences guip = GUIPreferences.getInstance();
+    private final GUIPreferences guip = GUIPreferences.getInstance();
 
     private static final int BASE_TERRAINBUTTON_ICON_WIDTH = 70;
     private static final int BASE_ARROWBUTTON_ICON_WIDTH = 25;
 
     // Components
-    private JFrame frame = new JFrame();
-    private Game game = new Game();
+    private final JFrame frame = new JFrame();
+    private final Game game = new Game();
     private Board board = game.getBoard();
     private BoardView bv;
     public static final int[] allDirections = { 0, 1, 2, 3, 4, 5 };
     boolean isDragging = false;
     private Component bvc;
-    private CommonMenuBar menuBar = new CommonMenuBar(this);
+    private final CommonMenuBar menuBar = new CommonMenuBar(this);
     private CommonAboutDialog about;
     private AbstractHelpDialog help;
     private CommonSettingsDialog setdlg;
     private JDialog minimapW;
-    private MegaMekController controller;
+    private final MegaMekController controller;
     
     // The current files
     private File curfileImage;
@@ -224,7 +226,7 @@ public class BoardEditor extends JPanel
     private Hex curHex = new Hex();
     
     // Easy terrain access buttons
-    private List<ScalingIconButton> terrainButtons = new ArrayList<>();
+    private final List<ScalingIconButton> terrainButtons = new ArrayList<>();
     private ScalingIconButton buttonLW, buttonLJ;
     private ScalingIconButton buttonOW, buttonOJ;
     private ScalingIconButton buttonWa, buttonSw, buttonRo;
@@ -232,14 +234,14 @@ public class BoardEditor extends JPanel
     private ScalingIconButton buttonMd, buttonPv, buttonSn;
     private ScalingIconButton buttonIc, buttonTu, buttonMg;
     private ScalingIconButton buttonBr, buttonFT;
-    private List<ScalingIconToggleButton> brushButtons = new ArrayList<>();
+    private final List<ScalingIconToggleButton> brushButtons = new ArrayList<>();
     private ScalingIconToggleButton buttonBrush1, buttonBrush2, buttonBrush3;
     private ScalingIconToggleButton buttonUpDn, buttonOOC;
 
     // The brush size: 1 = 1 hex, 2 = radius 1, 3 = radius 2  
     private int brushSize = 1;
     private int hexLeveltoDraw = -1000;
-    private Font fontComboTerr = new Font("SansSerif", Font.BOLD, 12);
+    private final Font fontComboTerr = new Font("SansSerif", Font.BOLD, 12);
     private EditorTextField texElev;
     private ScalingIconButton butElevUp;
     private ScalingIconButton butElevDown;
@@ -252,6 +254,8 @@ public class BoardEditor extends JPanel
     private EditorTextField texTerrExits;
     private ScalingIconButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
+    private JButton copyButton = new JButton(Messages.getString("BoardEditor.copyButton"));
+    private JButton pasteButton = new JButton(Messages.getString("BoardEditor.pasteButton"));
     private ScalingIconButton butExitUp, butExitDown;
     private JComboBox<String> choTheme;
     private ScalingIconButton butTerrDown, butTerrUp;
@@ -266,21 +270,21 @@ public class BoardEditor extends JPanel
     private MapSettings mapSettings = MapSettings.getInstance();
     private JButton butExpandMap;
     private Coords lastClicked;
-    private JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT);
+    private final JLabel labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT);
     
-    private FixedYPanel panelHexSettings = new FixedYPanel();
-    private FixedYPanel panelTerrSettings = new FixedYPanel(new GridLayout(0, 2, 4, 4));
-    private FixedYPanel panelBoardSettings = new FixedYPanel();
+    private final FixedYPanel panelHexSettings = new FixedYPanel();
+    private final FixedYPanel panelTerrSettings = new FixedYPanel(new GridLayout(0, 2, 4, 4));
+    private final FixedYPanel panelBoardSettings = new FixedYPanel();
     
     // Help Texts
-    private JLabel labHelp1 = new JLabel(Messages.getString("BoardEditor.helpText"), SwingConstants.LEFT);
-    private JLabel labHelp2 = new JLabel(Messages.getString("BoardEditor.helpText2"), SwingConstants.LEFT);
+    private final JLabel labHelp1 = new JLabel(Messages.getString("BoardEditor.helpText"), SwingConstants.LEFT);
+    private final JLabel labHelp2 = new JLabel(Messages.getString("BoardEditor.helpText2"), SwingConstants.LEFT);
     
     // Undo / Redo
-    private List<ScalingIconButton> undoButtons = new ArrayList<>();
+    private final List<ScalingIconButton> undoButtons = new ArrayList<>();
     private ScalingIconButton buttonUndo, buttonRedo;
-    private Stack<HashSet<Hex>> undoStack = new Stack<>();
-    private Stack<HashSet<Hex>> redoStack = new Stack<>();
+    private final Stack<HashSet<Hex>> undoStack = new Stack<>();
+    private final Stack<HashSet<Hex>> redoStack = new Stack<>();
     private HashSet<Hex> currentUndoSet;
     private HashSet<Coords> currentUndoCoords;
     
@@ -312,7 +316,7 @@ public class BoardEditor extends JPanel
     /**
      * A MouseAdapter that closes a JLabel when clicked 
      */
-    private MouseAdapter clickToHide = new MouseAdapter() {
+    private final MouseAdapter clickToHide = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.getSource() instanceof JLabel) {
@@ -859,6 +863,7 @@ public class BoardEditor extends JPanel
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setCellRenderer(lisTerrainRenderer);
         lisTerrain.setVisibleRowCount(6);
+        lisTerrain.setPrototypeCellValue(new TerrainTypeHelper(new Terrain(WATER, 2)));
         lisTerrain.setFixedCellWidth(180);
         refreshTerrainList();
 
@@ -910,6 +915,13 @@ public class BoardEditor extends JPanel
         texTerrExits.getDocument().addDocumentListener(this);
         butExitUp = prepareButton("ButtonEXUP", "Increase Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
         butExitDown = prepareButton("ButtonEXDN", "Decrease Exit / Gfx", null, BASE_ARROWBUTTON_ICON_WIDTH);
+
+        // Copy and Paste
+        FixedYPanel panCopyPaste = new FixedYPanel(new FlowLayout(FlowLayout.RIGHT, 4, 4));
+        panCopyPaste.add(pasteButton);
+        panCopyPaste.add(copyButton);
+        copyButton.addActionListener(e -> copyWorkingHexToClipboard());
+        pasteButton.addActionListener(e -> pasteFromClipboard());
 
         // Arrows and text fields for type and exits
         JPanel panUP = new JPanel(new GridLayout(1, 0, 4, 4));
@@ -1003,19 +1015,21 @@ public class BoardEditor extends JPanel
 
         // Arrange everything
         setLayout(new BorderLayout());
-        var centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+        Box centerPanel = Box.createVerticalBox();
         centerPanel.add(labHelp1);
         centerPanel.add(labHelp2);
+        centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(terrainButtonPanel);
+        centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(brushButtonPanel);
-        centerPanel.add(Box.createVerticalGlue());
+        centerPanel.add(Box.createVerticalStrut(10));
         centerPanel.add(undoButtonPanel);
         centerPanel.add(Box.createVerticalGlue());
         centerPanel.add(panelBoardSettings);
         centerPanel.add(panelHexSettings);
         centerPanel.add(panelTerrSettings);
         centerPanel.add(panlisHex);
+        centerPanel.add(panCopyPaste);
         var scrCenterPanel = new JScrollPane(centerPanel);
         scrCenterPanel.getVerticalScrollBar().setUnitIncrement(16);
         add(scrCenterPanel, BorderLayout.CENTER);
@@ -1930,7 +1944,8 @@ public class BoardEditor extends JPanel
             lastClicked = null;
         } else if (ae.getSource().equals(buttonBu)) { 
             buttonUpDn.setSelected(false);
-            if ((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0) {
+            if (((ae.getModifiers() & ActionEvent.SHIFT_MASK) == 0)
+                    && ((ae.getModifiers() & ActionEvent.ALT_MASK) == 0)) {
                 curHex.removeAllTerrains();
             }
             setBasicBuilding((ae.getModifiers() & ActionEvent.ALT_MASK) != 0);
@@ -2243,6 +2258,8 @@ public class BoardEditor extends JPanel
         texTerrExits.setFont(scaledFont);
         texElev.setFont(scaledFont);
         texTerrainLevel.setFont(scaledFont);
+        copyButton.setFont(scaledFont);
+        pasteButton.setFont(scaledFont);
         
         labHelp1.setFont(scaledFont);
         labHelp2.setFont(scaledFont);
@@ -2269,12 +2286,7 @@ public class BoardEditor extends JPanel
      * Displays the currently selected hex picture, in component form
      */
     private class HexCanvas extends JPanel {
-        private static final long serialVersionUID = 3201928357525361191L;
 
-        HexCanvas() {
-            setPreferredSize(new Dimension(90, 90));
-        }
-        
         /** Returns list or an empty list when list is null. */
         private List<Image> safeList(List<Image> list) {
             return list == null ? Collections.emptyList() : list;
@@ -2373,6 +2385,27 @@ public class BoardEditor extends JPanel
                 : Messages.getString("BoardEditor.title0", curBoardFile);
         frame.setTitle(title + (hasChanges ? "*" : ""));
     }
+
+    private void copyWorkingHexToClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(curHex.getClipboardString()), null);
+    }
+
+    private void pasteFromClipboard() {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable contents = clipboard.getContents(null);
+        if ((contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            try {
+                String clipboardString = (String) contents.getTransferData(DataFlavor.stringFlavor);
+                Hex pastedHex = Hex.parseClipboardString(clipboardString);
+                if (pastedHex != null) {
+                    setCurrentHex(pastedHex);
+                }
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
+            }
+        }
+    }
     
     
     /**
@@ -2382,8 +2415,6 @@ public class BoardEditor extends JPanel
      * @author Simon
      */
     public static class EditorTextField extends JTextField {
-        private static final long serialVersionUID = 1137300303131688344L;
-        
         private int minValue = Integer.MIN_VALUE;
         private int maxValue = Integer.MAX_VALUE;
         
@@ -2511,13 +2542,12 @@ public class BoardEditor extends JPanel
      * A specialized JButton that only shows an icon but scales that icon according
      * to the current GUI scaling when its rescale() method is called.
      */
-    private class ScalingIconButton extends JButton {
-        private static final long serialVersionUID = 4351623243707863737L;
-        
-        private Image baseImage;
+    private static class ScalingIconButton extends JButton {
+
+        private final Image baseImage;
         private Image baseRolloverImage;
         private Image baseDisabledImage;
-        private int baseWidth;
+        private final int baseWidth;
         
         ScalingIconButton(Image image, int width) {
             super();
@@ -2570,13 +2600,12 @@ public class BoardEditor extends JPanel
      * A specialized JToggleButton that only shows an icon but scales that icon according
      * to the current GUI scaling when its rescale() method is called.
      */
-    private class ScalingIconToggleButton extends JToggleButton {
-        private static final long serialVersionUID = 4351623243707863737L;
-        
-        private Image baseImage;
+    private static class ScalingIconToggleButton extends JToggleButton {
+
+        private final Image baseImage;
         private Image baseRolloverImage;
         private Image baseSelectedImage;
-        private int baseWidth;
+        private final int baseWidth;
         
         ScalingIconToggleButton(Image image, int width) {
             super();

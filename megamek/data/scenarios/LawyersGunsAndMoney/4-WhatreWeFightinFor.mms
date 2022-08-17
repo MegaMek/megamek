@@ -16,7 +16,7 @@ Description=LG&M fourth mission
 BoardWidth=1
 BoardHeight=2
 
-Maps=MapSet5/16x17 Deep Canyon 1,MapSet5/16x17 Deep Canyon 2
+Maps=Map Set 5/16x17 Deep Canyon 1,Map Set 5/16x17 Deep Canyon 2
 
 
 Factions=RedfieldsRenegades,LoneStar

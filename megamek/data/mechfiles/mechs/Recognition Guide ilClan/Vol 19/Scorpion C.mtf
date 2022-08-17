@@ -1,8 +1,7 @@
-Version:1.1
+Version:1.3
 Scorpion
 C
 mul id:8316
-
 Config:Quad
 techbase:Mixed (IS Chassis)
 era:3150
@@ -16,7 +15,7 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:10 Single
+heat sinks:10 Clan Double
 walk mp:6
 jump mp:0
 

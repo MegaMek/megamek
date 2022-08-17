@@ -1181,7 +1181,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Aegis Point Defense Suit</chassis>
-		<model>(Standard)</model>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>imp_com</quirk>
 	</unit>
@@ -1217,7 +1217,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Clan Interface Armor</chassis>
-		<model>(Standard)</model>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>non_standard</quirk>
 	</unit>
@@ -1238,14 +1238,30 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Elemental II Battle Armor</chassis>
-		<model>(Standard)</model>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Elemental II Battle Armor</chassis>
-		<model>X</model>
+		<model>X(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>bad_rep_clan</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Elemental II Battle Armor</chassis>
+		<model>X(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>bad_rep_clan</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Elemental II Battle Armor</chassis>
+		<model>X(Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<quirk>bad_rep_clan</quirk>
 		<quirk>prototype</quirk>
@@ -1278,8 +1294,8 @@ Example: You can define quirks that affect all units of a given chassis and then
 	</unit>
 
 	<unit>
-		<chassis>Gray Death Strike Armor</chassis>
-		<model>(Standard)</model>
+		<chassis>Gray Death Strike Suit</chassis>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>distracting</quirk>
 	</unit>
@@ -1290,40 +1306,70 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Infantry</unitType>
 		<quirk>difficult_maintain</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Groundhog Exoskeleton</chassis>
+		<model>all</model>
+		<unitType>Infantry</unitType>
+		<quirk>imp_com</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Groundhog Exoskeleton</chassis>
-		<model>'Master Thief'</model>
+		<model>'Master Thief'(Sqd1)</model>
 		<unitType>Infantry</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Hauberk Battle Armor</chassis>
-		<model>Commando</model>
+		<model>Commando(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Hauberk Battle Armor</chassis>
+		<model>Commando(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Hauberk Battle Armor</chassis>
+		<model>Commando(Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
 
 	<unit>
-		<chassis>Hurricane PA (L)</chassis>
-		<model>P17</model>
-		<unitType>Infantry</unitType>
-		<quirk>prototype</quirk>
-		<quirk>difficult_maintain</quirk>
-		<quirk>non_standard</quirk>
-	</unit>
-
-	<unit>
 		<chassis>Kishi Ceremonial Armor</chassis>
-		<model>(Standard)</model>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Kobold Battle Armor</chassis>
-		<model>X-C3</model>
+		<model>X-C3(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>prototype</quirk>
+		<quirk>bad_rep_is</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Kobold Battle Armor</chassis>
+		<model>X-C3(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>prototype</quirk>
+		<quirk>bad_rep_is</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Kobold Battle Armor</chassis>
+		<model>X-C3(Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<quirk>prototype</quirk>
 		<quirk>bad_rep_is</quirk>
@@ -1353,7 +1399,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>PAB-28 Sniper Suit</chassis>
-		<model>(Standard)</model>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>difficult_maintain</quirk>
 	</unit>
@@ -1368,7 +1414,15 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Rogue Bear Heavy Battle Armor</chassis>
-		<model>HR</model>
+		<model>HR(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>non_standard</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Rogue Bear Heavy Battle Armor</chassis>
+		<model>HR(Sqd5)</model>
 		<unitType>Infantry</unitType>
 		<quirk>non_standard</quirk>
 		<quirk>prototype</quirk>
@@ -1376,15 +1430,40 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Rogue Bear Heavy Battle Armor</chassis>
-		<model>(Hybrid)</model>
+		<model>HR(Sqd6)</model>
+		<unitType>Infantry</unitType>
+		<quirk>non_standard</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Rogue Bear Heavy Battle Armor</chassis>
+		<model>(Hybrid)(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>easy_maintain</quirk>
+		<quirk>non_standard</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Rogue Bear Heavy Battle Armor</chassis>
+		<model>(Hybrid)(Sqd5)</model>
 		<unitType>Infantry</unitType>
 		<quirk>easy_maintain</quirk>
 		<quirk>non_standard</quirk>
 	</unit>
 
 	<unit>
+		<chassis>Rogue Bear Heavy Battle Armor</chassis>
+		<model>(Hybrid)(Sqd6)</model>
+		<unitType>Infantry</unitType>
+		<quirk>easy_maintain</quirk>
+		<quirk>non_standard
+		</quirk>
+	</unit>
+	
+	<unit>
 		<chassis>Sea Fox Amphibious Armor</chassis>
-		<model>(Standard)</model>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>non_standard</quirk>
 		<weaponQuirk>
@@ -1397,7 +1476,67 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[David Light Gauss]</model>
+		<model>[David Light Gauss](Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>2</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>3</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[David Light Gauss](Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>2</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>3</slot>
+			<weaponName>BADavidLightGaussRifle</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[David Light Gauss](Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1427,7 +1566,31 @@ Example: You can define quirks that affect all units of a given chassis and then
 	
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[SRM]</model>
+		<model>[SRM](Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>ISBASRM4</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[SRM](Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>ISBASRM4</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+		<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[SRM](Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1439,7 +1602,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[MRM]</model>
+		<model>[MRM](Sqd4)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1448,9 +1611,94 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>ISBAMRM5</weaponName>
 		</weaponQuirk>
 	</unit>
+	
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[MG]</model>
+		<model>[MRM](Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>ISBAMRM5</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[MRM](Sqd6)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>ISBAMRM5</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[MG](Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>2</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>3</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[MG](Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>2</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>3</slot>
+			<weaponName>CLBAMG</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[MG](Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1480,7 +1728,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[Pop-Up Mine]</model>
+		<model>[Pop-Up Mine](Sqd4)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1501,10 +1749,94 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>BAMineLauncher</weaponName>
 		</weaponQuirk>
 	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[Pop-Up Mine](Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>CLBAHeavyGrenadeLauncher</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>CLBAHeavyGrenadeLauncher</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>2</slot>
+			<weaponName>BAMineLauncher</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[Pop-Up Mine](Sqd6)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>CLBAHeavyGrenadeLauncher</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>CLBAHeavyGrenadeLauncher</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>2</slot>
+			<weaponName>BAMineLauncher</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[Interdictor](Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>CLBAFlamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>CLBAFlamer</weaponName>
+		</weaponQuirk>
+	</unit>
 
 	<unit>
 		<chassis>Shen Long Battle Armor</chassis>
-		<model>[Interdictor]</model>
+		<model>[Interdictor](Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>0</slot>
+			<weaponName>CLBAFlamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>mod_weapons</weaponQuirkName>
+			<location>Squad</location>
+			<slot>1</slot>
+			<weaponName>CLBAFlamer</weaponName>
+		</weaponQuirk>
+	</unit>	
+
+	<unit>
+		<chassis>Shen Long Battle Armor</chassis>
+		<model>[Interdictor](Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>mod_weapons</weaponQuirkName>
@@ -1536,7 +1868,33 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Sylph Battle Armor</chassis>
-		<model>(Enhanced)</model>
+		<model>(Enhanced)(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>hard_pilot</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<location>Point</location>
+			<slot>3</slot>
+			<weaponName>CLBAERMicroLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Sylph Battle Armor</chassis>
+		<model>(Enhanced)(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>hard_pilot</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<location>Point</location>
+			<slot>3</slot>
+			<weaponName>CLBAERMicroLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Sylph Battle Armor</chassis>
+		<model>(Enhanced)(Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<quirk>hard_pilot</quirk>
 		<weaponQuirk>
@@ -1549,15 +1907,31 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Sylph Battle Armor</chassis>
-		<model>XR</model>
+		<model>XR(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>hard_pilot</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Sylph Battle Armor</chassis>
+		<model>XR(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>hard_pilot</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Sylph Battle Armor</chassis>
+		<model>XR(Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<quirk>hard_pilot</quirk>
 		<quirk>prototype</quirk>
 	</unit>
 
 	<unit>
-		<chassis>'Surat' (Grey Death) Solahma Suit</chassis>
-		<model>(Standard)</model>
+		<chassis>Surat (Gray Death) Solahma Suit</chassis>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>easy_maintain</quirk>
 		<quirk>bad_rep_is</quirk>
@@ -1566,7 +1940,7 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Taranis Battle Armor</chassis>
-		<model>(Standard)</model>
+		<model>all</model>
 		<unitType>Infantry</unitType>
 		<quirk>distracting</quirk>
 		<weaponQuirk>
@@ -1592,10 +1966,53 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Tornado PA(L)</chassis>
-		<model>G17</model>
+		<model>G17(Sqd4)</model>
 		<unitType>Infantry</unitType>
 		<quirk>bad_rep_is</quirk>
 		<quirk>difficult_maintain</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Tornado PA(L)</chassis>
+		<model>G17(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>bad_rep_is</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Tornado PA(L)</chassis>
+		<model>G17(Sqd6)</model>
+		<unitType>Infantry</unitType>
+		<quirk>bad_rep_is</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Tornado PA(L)</chassis>
+		<model>P17 'Hurricane'(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>prototype</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>non_standard</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Tornado PA(L)</chassis>
+		<model>P17 'Hurricane'(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>prototype</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>non_standard</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Tornado PA(L)</chassis>
+		<model>P17 'Hurricane'(Sqd6)</model>
+		<unitType>Infantry</unitType>
+		<quirk>prototype</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>non_standard</quirk>
 	</unit>
 
 	<unit>
@@ -1609,7 +2026,21 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Void Medium Battle Armor</chassis>
-		<model>(Minelayer)</model>
+		<model>(Minelayer)(Sqd4)</model>
+		<unitType>Infantry</unitType>
+		<quirk>poor_target_long</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Void Medium Battle Armor</chassis>
+		<model>(Minelayer)(Sqd5)</model>
+		<unitType>Infantry</unitType>
+		<quirk>poor_target_long</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Void Medium Battle Armor</chassis>
+		<model>(Minelayer)(Sqd6)</model>
 		<unitType>Infantry</unitType>
 		<quirk>poor_target_long</quirk>
 	</unit>

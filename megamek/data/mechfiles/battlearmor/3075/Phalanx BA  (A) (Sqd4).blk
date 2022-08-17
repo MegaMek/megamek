@@ -1,0 +1,121 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Phalanx Battle Armor
+</Name>
+
+<Model>
+(A)(Sqd4)
+</Model>
+
+<mul id:>
+4813
+</mul id:>
+
+<year>
+3065
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBASRM4:Body
+BA-SRM4 Ammo:Body:Shots1#
+BA-SRM4 Ammo:Body:Shots1#
+BABattleClaw:LA
+BAArmoredGlove:RA
+Infantry Auto Rifle:APM:RA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):RA
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):LA
+ISBAKingDavidLightGaussRifle:RA
+</Squad Equipment>
+
+<source>
+TRO 3075 - Civil War
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Phalanx is a battle armor design created and produced by Irian Technologies in the Free Worlds League. This design is the FWLM's answer to larger, harder-hitting battle armor such as the Kanazuchi and Gnome. 
+</overview>
+
+<capabilities>
+The Phalanx has decent speed for heavy battle armor, capable of moving on the ground at a clip up to 22 km/h. It skimps on armor protection, however, as a Large Laser is enough to completely destroy the suit and kill the trooper inside. This armor is, however, improved stealth, which means that the Phalanx is much more difficult to target than most other battle armor.
+</capabilities>
+
+<deployment>
+The Phalanx features a "King David" Light Gauss Rifle, which has good range, but only decent firepower. To supplement this, the battlesuit carries an SRM-4 with an additional reload. The missile launcher uses a detachable system similar to the one found on the Longinus. The Phalanx has a Battle Claw on the left hand and an Armored Glove on the right, meaning that it can make use of infantry weapons and can ride mounted on OmniMechs. It cannot, however, make anti-'Mech attacks.
+</deployment>
+
+<history>
+They began to engineer the Phalanx in 3059, but problems plagued the team that could not be resolved. After more than two years, IrTech brought in scientists from Word of Blake, who quickly solved the technical problems. When production began in 3065, the Word was allowed to purchase units as repayment for their assistance.Shortly thereafter, they began producing their own variant on Gibson.
+</history>
+
+<manufacturer>
+Irian BattleMechs Unlimited,Irian BattleMechs Unlimited
+</manufacturer>
+
+<primaryFactory>
+Irian,Washburn
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

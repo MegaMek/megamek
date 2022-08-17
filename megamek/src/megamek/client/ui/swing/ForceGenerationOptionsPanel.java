@@ -88,7 +88,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP, UnitType.SPACE_STATION
     };
     private static final int EARLIEST_YEAR = 2398;
-    private static final int LATEST_YEAR = 3155;
+    private static final int LATEST_YEAR = 3160;
     //endregion Variable Declarations
 
     //region Constructors
@@ -617,13 +617,16 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                             EntityWeightClass.WEIGHT_COLOSSAL, false);
                     break;
                 case UnitType.NAVAL:
+                    addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
+                            EntityWeightClass.WEIGHT_SUPER_HEAVY, true);
+                    break;
                 case UnitType.TANK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
-                            EntityWeightClass.WEIGHT_ASSAULT, false);
+                            EntityWeightClass.WEIGHT_SUPER_HEAVY, false);
                     break;
                 case UnitType.PROTOMEK:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
-                            EntityWeightClass.WEIGHT_ASSAULT, true);
+                            EntityWeightClass.WEIGHT_SUPER_HEAVY, true);
                     break;
                 case UnitType.BATTLE_ARMOR:
                     addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,

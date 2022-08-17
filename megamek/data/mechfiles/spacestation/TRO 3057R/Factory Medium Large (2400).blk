@@ -13,11 +13,11 @@ SpaceStation
 </UnitType>
 
 <Name>
-Factory - Medium/Large
+Factory
 </Name>
 
 <Model>
-(2400)
+Medium/Large (2400)
 </Model>
 
 <mul id:>

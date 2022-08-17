@@ -7,6 +7,7 @@ techbase:Clan
 era:3065
 source:ForcePack Wolfs Dragoons - Civil War
 rules level:3
+mul id:8387
 
 mass:70
 engine:280 Fusion (Clan) Engine(IS)
@@ -74,9 +75,9 @@ CLLRM20
 CLArtemisIV
 CLStreakSRM4
 Clan Streak SRM 4 Ammo
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
@@ -88,9 +89,9 @@ CLLRM20
 CLArtemisIV
 CLStreakSRM4
 Clan Streak SRM 4 Ammo
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 

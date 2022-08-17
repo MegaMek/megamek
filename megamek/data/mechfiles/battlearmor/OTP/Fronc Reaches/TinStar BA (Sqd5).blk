@@ -1,0 +1,105 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+TinStar BattleArmor
+</Name>
+
+<Model>
+(Standard)(Sqd5)
+</Model>
+
+<mul id:>
+7700
+</mul id:>
+
+<year>
+3087
+</year>
+
+<originalBuildYear>
+3087
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<Squad Equipment>
+BABasicManipulator:LA
+BABasicManipulator:RA
+ISBASupportPPC:LA
+BADavidLightGaussRifle:RA
+BA-Magnetic Clamp:Body
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+BAAPMount:LA
+</Squad Equipment>
+
+<overview>
+Fronc Reaches
+</overview>
+
+<manufacturer>
+Marshals Battle Armor Assembly Facility
+</manufacturer>
+
+<primaryFactory>
+Independence
+</primaryFactory>
+
+<source>
+OTP:Fronc Reaches - Early Republic
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>

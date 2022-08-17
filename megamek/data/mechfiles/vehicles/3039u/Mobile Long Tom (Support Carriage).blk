@@ -41,7 +41,7 @@ Tracked
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
 
 <armor>
@@ -52,7 +52,7 @@ Tracked
 </armor>
 
 <Body Equipment>
-Communications Equipment (3 ton)
+Communications Equipment (4 ton)
 </Body Equipment>
 
 <Front Equipment>

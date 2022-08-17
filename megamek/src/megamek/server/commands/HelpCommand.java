@@ -15,7 +15,6 @@ package megamek.server.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 
 import megamek.server.Server;
 
@@ -59,15 +58,10 @@ public class HelpCommand extends ServerCommand {
     }
 
     private String commandList() {
-        StringBuffer commandList = new StringBuffer();
+        StringBuilder commandList = new StringBuilder();
 
-        ArrayList<String> cmdNames = new ArrayList<>();
-        for (Enumeration<String> i = server.getAllCommandNames(); i
-                .hasMoreElements();) {           
-            ServerCommand command = server.getCommand(i.nextElement());
-            cmdNames.add(command.getName());
-        }
-        
+        ArrayList<String> cmdNames = new ArrayList<>(server.getAllCommandNames());
+
         Collections.sort(cmdNames);
         for (String cmdName : cmdNames) {
             if (commandList.length() > 0) {

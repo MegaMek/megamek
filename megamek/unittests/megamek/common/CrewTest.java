@@ -19,6 +19,7 @@
  */
 package megamek.common;
 
+import megamek.common.battlevalue.BvMultiplier;
 import megamek.common.options.GameOptions;
 import org.junit.jupiter.api.Test;
 
@@ -41,14 +42,14 @@ public class CrewTest {
         // Test the default case.
         Game mockGame = null;
         double expected = 1.0;
-        double actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
+        double actual = BvMultiplier.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
 
         mockGame = mock(Game.class);
         GameOptions mockOptions = mock(GameOptions.class);
         when(mockGame.getOptions()).thenReturn(mockOptions);
         expected = 1.0;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
+        actual = BvMultiplier.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
 
         // Test a 3/4 pilot.
@@ -56,7 +57,7 @@ public class CrewTest {
         piloting = 4;
         when(mockOptions.booleanOption(eq("alternate_pilot_bv_mod"))).thenReturn(false);
         expected = 1.32;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
+        actual = BvMultiplier.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
 
         // Test a 5/6 pilot.
@@ -64,7 +65,7 @@ public class CrewTest {
         piloting = 6;
         when(mockOptions.booleanOption(eq("alternate_pilot_bv_mod"))).thenReturn(false);
         expected = 0.86;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
+        actual = BvMultiplier.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
 
         // Test a 2/6 pilot.
@@ -72,7 +73,7 @@ public class CrewTest {
         piloting = 6;
         when(mockOptions.booleanOption(eq("alternate_pilot_bv_mod"))).thenReturn(false);
         expected = 1.35;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
+        actual = BvMultiplier.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
 
         // Test a 0/0 pilot.
@@ -80,7 +81,7 @@ public class CrewTest {
         piloting = 0;
         when(mockOptions.booleanOption(eq("alternate_pilot_bv_mod"))).thenReturn(false);
         expected = 2.42;
-        actual = Crew.getBVSkillMultiplier(gunnery, piloting, mockGame);
+        actual = BvMultiplier.bvSkillMultiplier(gunnery, piloting);
         assertEquals(expected, actual, 0.001);
     }
 }

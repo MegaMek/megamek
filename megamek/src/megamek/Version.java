@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,7 @@ public final class Version implements Comparable<Version>, Serializable {
      * This Constructor is not to be used outside of unit testing
      */
     public Version() {
-        setRelease(1);
+        setRelease(0);
         setMajor(0);
         setMinor(0);
         setSnapshot(false);
@@ -201,7 +201,7 @@ public final class Version implements Comparable<Version>, Serializable {
         if (StringUtility.isNullOrBlank(text)) {
             final String message = String.format(
                     "Cannot parse the version from %s. This may lead to severe issues that cannot be otherwise explained.",
-                    ((text == null) ? "a null string" : text));
+                    ((text == null) ? "a null string" : "a blank string"));
             LogManager.getLogger().fatal(message);
             JOptionPane.showMessageDialog(null, message, "Version Parsing Failure",
                     JOptionPane.ERROR_MESSAGE);

@@ -26,7 +26,8 @@ public enum UnitRole {
     FAST_DOGFIGHTER (false),
     FIRE_SUPPORT (false),
     INTERCEPTOR (false),
-    TRANSPORT (false);
+    TRANSPORT (false),
+	NONE (false);
 
     private boolean ground;
 
@@ -74,6 +75,8 @@ public enum UnitRole {
                 return INTERCEPTOR;
             case "transport":
                 return TRANSPORT;
+            case "none":
+            	return NONE;
             default:
                 LogManager.getLogger().error("Could not parse AS Role " + role);
                 return UNDETERMINED;

@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Phalanx Battle Armor
+</Name>
+
+<Model>
+(D)(Sqd6)
+</Model>
+
+<mul id:>
+9151
+</mul id:>
+
+<year>
+3132
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+33
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBAMediumVSPLaser:DWP
+ISDetachableWeaponPack:Body
+BABattleClaw:LA
+BAArmoredGlove:RA
+Infantry Auto Rifle:APM
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):LA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):RA
+</Squad Equipment>
+
+<source>
+RS3145 NT NU - Dark Ages
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Phalanx is a battle armor design created and produced by Irian Technologies in the Free Worlds League. This design is the FWLM's answer to larger, harder-hitting battle armor such as the Kanazuchi and Gnome. 
+</overview>
+
+<capabilities>
+The Phalanx has decent speed for heavy battle armor, capable of moving on the ground at a clip up to 22 km/h. It skimps on armor protection, however, as a Large Laser is enough to completely destroy the suit and kill the trooper inside. This armor is, however, improved stealth, which means that the Phalanx is much more difficult to target than most other battle armor.
+</capabilities>
+
+<deployment>
+This version of the Phalanx carries a single battle claw and a Medium Variable Speed Pulse Laser.
+</deployment>
+
+<history>
+Since the Word helped the FWLM create the Phalanx, they have created their own variant. Though they use the original as well, the Blakist Phalanx carries a 'Mech Taser Rifle instead of the "King David" rifle. The one-shot weapon enables Phalanx troopers to disable a vehicle or 'Mech, though it also suffers feedback and, potentially, an explosion. This version of the Phalanx uses Advanced Technology. 
+</history>
+
+<manufacturer>
+Irian BattleMechs Unlimited
+</manufacturer>
+
+<primaryFactory>
+Irian
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

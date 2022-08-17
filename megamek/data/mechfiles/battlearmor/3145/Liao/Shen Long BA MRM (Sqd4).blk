@@ -1,0 +1,115 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Shen Long Battle Armor
+</Name>
+
+<Model>
+[MRM](Sqd4)
+</Model>
+
+<mul id:>
+6433
+</mul id:>
+
+<year>
+3092
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor_type>
+36
+</armor_type>
+
+<armor_tech>
+3
+</armor_tech>
+
+<Squad Equipment>
+ISBAMRM5:TU
+IS MRM 5 Ammo:TU:Shots4#
+</Squad Equipment>
+
+<source>
+TRO 3145 Capellan Confederation - Early Republic
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<turret>
+Modular:4
+</turret>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+11
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<overview>
+The Sheng Long is a Quad type Heavy Class Battle Armor which was produced in last years of the thirty-first century for both the Capellan Confederation and its close-allies in the Magistracy of Canopus.
+</overview>
+
+<capabilities>
+Designed with speed and firepower in mind, the Sheng Long (Chinese name for Storm Dragon), employs its modular turret and stealth to outmaneuver and assist in ambushing of enemy combat units. The Shen Long uses 550 kilograms of Mimetic Armor to be able elude enemy sensors while they close in on it.
+</capabilities>
+
+<deployment>
+Fitted with a Modular Turret Mount, the Armor is able to handle upwards to 400 kg worth of weapons and equipment. Its primary modular setup is its David configuration, where its fits 4 David Light Gauss Rifles into the turret with 15 rounds of ammunition for these guns. Antipersonnel Configurations is armed with 4 standard Machine Guns with 50 rounds of ammunition and a Pop-Up Mine configuration which comes with 2 Heavy Grenade Launchers and a single Pop-Up Mine launcher. Anti-vehicular configurations includes 5-tubed Medium-Ranged Missile Launcher and a 4-Tubed Short-Range Missile Launcher, each with four rounds of ammo. Electronic Warfare configuration includes a Battle Armor scale ECM Suite with 2 Flamers for self-defense purposes
+</deployment>
+
+<history>
+It would first see significant actions with Davion along Confederation border and during the Victoria War of 3105.[4] During that conflict the Shen Long would be noted for its action on Menke. That world's Menke Home Guard would team the speedy armor with minelaying Fa Shih Battle Armor to lure Davion's 'Mech Lance into a valley and employ the Armor's various configurations to fool the Davion forces and convincing them to withdraw at the cost of an Assault 'Mech.
+</history>
+
+<manufacturer>
+Hellespont Industrials
+</manufacturer>
+
+<primaryFactory>
+Sian
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

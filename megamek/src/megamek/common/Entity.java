@@ -9559,7 +9559,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // If a player can see all, it sees this
-        if (p.canSeeAll()) {
+        if (p.canIgnoreDoubleBlind()) {
             return true;
         }
 
@@ -13382,8 +13382,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Get the number of turns Supercharger has been used continuously.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during serialization.
+     * </p>
      *
      * @return the <code>int</code> number of turns Supercharger has been used.
      */
@@ -13393,8 +13394,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set the number of turns Supercharger has been used continuously.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during deserialization.
+     * </p>
      *
      * @param turns The <code>int</code> number of turns Supercharger has been used.
      */
@@ -13464,8 +13466,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Set whether Supercharger has been used.
-     * <p/>
+     * <p>
      * This method should <strong>only</strong> be used during deserialization.
+     * </p>
      *
      * @param used The <code>boolean</code> whether Supercharger has been used.
      */
@@ -13566,7 +13569,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             r = new Report(2370);
             r.subject = getId();
             r.indent();
-            r.add(getMASCTarget());
+            r.add(isSupercharger ? getSuperchargerTarget() : getMASCTarget());
             r.add(nRoll);
 
             if ((!isSupercharger && (nRoll < getMASCTarget()))

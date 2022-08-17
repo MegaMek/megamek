@@ -4,9 +4,10 @@ A
 
 Config:Biped Omnimech
 techbase:Clan
-era:2850
+era:2865
 source:TP:Foster - Succession Wars
 rules level:3
+mul id:9233
 
 mass:45
 engine:225 Fusion (Clan) Engine(IS)

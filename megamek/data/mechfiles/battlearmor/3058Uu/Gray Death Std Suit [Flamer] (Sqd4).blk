@@ -126,3 +126,12 @@ Defiance Industries,Gray Death Technologies
 <primaryFactory>
 Furillo,Glengary
 </primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

@@ -4449,11 +4449,12 @@ public class MiscType extends EquipmentType {
         misc.cost = 5000;
         misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
         misc.rulesRefs = "195, AToW-C";
+        //Kit never really goes extinct but should be very rare.
         misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_E)
-                .setAvailability(RATING_C, RATING_E, RATING_F, RATING_X)
-                .setISAdvancement(2570, 2575, 2580, 2800, DATE_NONE)
+                .setAvailability(RATING_C, RATING_E, RATING_F, RATING_F)
+                .setISAdvancement(2570, 2575, 2580, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2570, 2575, 2580, 2950, DATE_NONE)
+                .setClanAdvancement(2570, 2575, 2580, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, true, false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH);
@@ -6241,7 +6242,7 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "213, TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C).setISAdvancement(2595, 2597, 3050, 2845, 3045)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
+                .setISApproximate(false, false, false, false, true).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setReintroductionFactions(F_CC);
         return misc;
     }

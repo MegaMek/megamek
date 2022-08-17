@@ -1,0 +1,164 @@
+Version:1.1
+Rattlesnake
+JR7-31R (Gideon)
+
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3084
+source:Shrapnel 9 - Early Republic
+rules level:2
+mul id:9240
+
+mass:35
+engine:245 XL (Clan) Engine
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Small Cockpit
+gyro:Standard Gyro
+
+heat sinks:12 Clan Double
+walk mp:7
+jump mp:7
+
+armor:Ferro-Fibrous(Clan)
+LA armor:11
+RA armor:11
+LT armor:11
+RT armor:11
+CT armor:15
+HD armor:9
+LL armor:16
+RL armor:16
+RTL armor:5
+RTR armor:5
+RTC armor:5
+
+Weapons:6
+ER Medium Laser, Right Torso
+ER Medium Laser, Left Torso
+ER Small Laser, Head
+Medium Laser, Left Arm
+Medium Laser, Center Torso
+Medium Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Medium Laser
+IS Endo Steel
+IS Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLERMediumLaser
+CLTargeting Computer
+CLTargeting Computer
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLERMediumLaser
+ISAngelECMSuite
+ISAngelECMSuite
+CLMASC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Medium Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+CLERSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+manufacturer:General Motors
+primaryfactory:New Valencia
+systemmanufacturer:CHASSIS:NCIA Endo Steel Type R
+systemmanufacturer:ENGINE:315 Consolidated XL
+systemmanufacturer:ARMOR:Alpha 3-E Compound Ferro-Fibrous
+systemmanufacturer:JUMPJET:Rawlings 45
+systemmanufacturer:COMMUNICATIONS:Hammerstorm Hugin Mk XXI-E with ECM
+systemmanufacturer:TARGETING:Hammerstorm Munin XVI
+

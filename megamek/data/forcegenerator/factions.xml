@@ -67,7 +67,7 @@
 	<faction key='CIR' name='Circinus Federation' minor='false' clan='false' periphery='true'>
 		<years>2785-3081</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery.MW</parentFaction>
+		<parentFaction>Periphery.MW,WOB.pm</parentFaction>
 	</faction>
 	<faction key='CLAN' name='Clan - General' minor='false' clan='true' periphery='false'>
 		<years>2807-</years>
@@ -455,12 +455,12 @@
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='RR' name='Republic Remnant' minor='false' clan='false' periphery='false'>
-		<years>3135-</years>
+		<years>3135-3151</years>
 		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='ROS' name='Republic of the Sphere' minor='false' clan='false' periphery='false'>
-		<years>3081-</years>
+		<years>3081-3151</years>
 		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
@@ -513,6 +513,11 @@
 	<faction key='SL' name='Star League' minor='false' clan='false' periphery='false'>
 		<years>2571-2780</years>
 		<ratingLevels>C,B,A</ratingLevels>
+	</faction>
+	<faction key='SL3' name='Star League (Clan Wolf)' minor='false' clan='false' periphery='false'>
+		<years>3151-</years>
+		<ratingLevels>C,B,A</ratingLevels>
+		<parentFaction>CWE,ROS</parentFaction>
 	</faction>
 	<faction key='SLIE' name='Star League-in-Exile' minor='false' clan='false' periphery='false'>
 		<years>2786-2801</years>
@@ -870,6 +875,12 @@
 		<years>3028-3057</years>
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>FC</parentFaction>
+	</faction>
+	<faction key='SL3.CSJ' name='Fidelis' minor='true' clan='true' periphery='false'>
+		<nameChange year='3151'>Star League (Clan Smoke Jaguar)</nameChange>
+		<years>3076-</years>
+		<ratingLevels>Front Line,Keshik</ratingLevels>
+		<parentFaction>WOB,ROS</parentFaction>
 	</faction>
 	<faction key='MSC.FWG' name='Free Worlds Guards' minor='false' clan='false' periphery='false'>
 		<years>3082-3138</years>
@@ -1353,6 +1364,11 @@
 		<years>3062-</years>
 		<ratingLevels>B</ratingLevels>
 		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='SL3.CJF' name='Star League (Clan Jade Falcon)' minor='true' clan='true' periphery='false'>
+		<years>3151-</years>
+		<ratingLevels>Front Line,Keshik</ratingLevels>
+		<parentFaction>CJF,CLAN.IS</parentFaction>
 	</faction>
 	<faction key='SL.R' name='Star League Royal' minor='false' clan='false' periphery='false'>
 		<years>2571-2780</years>

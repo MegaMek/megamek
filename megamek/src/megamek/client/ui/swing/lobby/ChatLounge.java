@@ -123,9 +123,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     // Game Setup
     private JButton butOptions = new JButton(Messages.getString("ChatLounge.butOptions"));
-    private JToggleButton butGroundMap = new JToggleButton("Ground Map");
+    //private JToggleButton butGroundMap = new JToggleButton("Ground Map");
+    private JToggleButton butGroundMap = new JToggleButton(Messages.getString("ChatLounge.butGroundMap"));
+    //private JToggleButton butLowAtmoMap = new JToggleButton("Low Altitude Map");
     private JToggleButton butLowAtmoMap = new JToggleButton("Low Altitude Map");
+    //private JToggleButton butHighAtmoMap = new JToggleButton("High Altitude Map");
     private JToggleButton butHighAtmoMap = new JToggleButton("High Altitude Map");
+    //private JToggleButton butSpaceMap = new JToggleButton("Space Map");
     private JToggleButton butSpaceMap = new JToggleButton("Space Map");
     private ButtonGroup grpMap = new ButtonGroup();
 
@@ -160,8 +164,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butCamo = new JButton();
     private JButton butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot"));
     private JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
-    private JButton butBotSettings = new JButton("Bot Settings...");
-    private JButton butConfigPlayer = new JButton("Configure Player...");
+//    private JButton butBotSettings = new JButton("Bot Settings...");
+//    private JButton butConfigPlayer = new JButton("Configure Player...");
+    private JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
+    private JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
     
     private MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
     private PlayerTableModel playerModel = new PlayerTableModel();
@@ -1963,11 +1969,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         int returnVal = fc.showSaveDialog(clientgui.frame);
         File selectedFile = fc.getSelectedFile();
-        if (!selectedFile.getName().toLowerCase().endsWith(".xml")) {
-            selectedFile = new File(selectedFile.getPath() + ".xml");
-        }
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (selectedFile == null)) {
             return;
+        }
+        if (!selectedFile.getName().toLowerCase().endsWith(".xml")) {
+            selectedFile = new File(selectedFile.getPath() + ".xml");
         }
         if (selectedFile.exists()) {
             String msg = Messages.getString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());
@@ -2346,7 +2352,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         }
         return true;
     }
-    
+
     /**
      * Returns true if the local player can see the given entity.
      * This is true except when a blind drop option is active and one or more

@@ -36,9 +36,45 @@ VERSION HISTORY:
 + Issue #470: Display weapon fields of fire during TAG phase
 + Issue #3730: Savegame Planetary settings are not persistent if in Lobby
 + Issue #3744: Mast Mount not in Support Vee equipment for VTOL
-+ Updating to FlatLAF 2.3 from 2.2
++ Issue #203, #3780: Introduced a chat command to allow individual bot player to see entire board in double blind mode
++ Issue #3564: Board validation will now find all invalid connected building hexes of different classes 
++ Issue #3694: Restored ALT-Click behavior of the Map Editor building button
++ Data: Implements Spanish Translation for MegaMek. Thanks to IsWas
++ Issue #3783: Added option to change report link color
++ PR #3708: Add a MUL link to the RAT Generator Editor
++ Issue #3786: Properly update player slot "am I a bot" state when swapping between human and bot players
++ Issue #7784: Artillery reports properly respect /seeall flag
++ PR #3787: Added a GM mode flag (/gm to initiate, /allowGM to vote in favor, requires unanimous total confirmation)
+  - GM Mode currently allows GM to use "/seeall" command even if GM is not an observer
++ PR #3798: Minor bot performance improvement; prevent bot-controlled jumping and zero-turn-cost infantry units from spinning in place like ballerinas
++ Issue #3791: RAT Generators don't generate units in their introduction year.
++ PR #3767: Modernize Server collections
++ Data: Fixing Maps in Scenarios files.
++ PR #3817: Prevent null pointer exception when clicking cancel during map setup save dialog.
++ PR #3475: Prevent null pointer exception when loading scenarios with invalid weather conditions flag; default to none instead
++ PR #3808: Add working hex copy/paste to the Board Editor
++ PR #3826: Add orbital guns fluff images
++ PR #3809: Fix the Formation Builder to again be able to generate fire support lances
++ Issues #3665, 3658: Server Connection Rework
++ Data: BA MUL Alignment Project.
+	This involves a complete rework of the BA naming conventions to match the MUL. Almost all suits now have a (Sqd4,5,6) designation indicating the size
+	as opposed to the random naming used before. MUL IDs have been cross referenced and added as required. As a final bonus to the project all BA now have
+	some fluff text from Sarna.
++ Issue #3819 Unit Files needing updates.
++ Data: More BA fixes including fix to name_change.txt which resolves MekHQ #3412.
++ Issue #3453: Updated About Box copyright text per #3453 
++ Issue #3435: Fixed image flickering in the About... dialog
++ Issues #3748, #3806 (partly): Correct infantry BV w.r.t. Anti-Mek attack ability and skill
++ Issues #3800, #3740: Fix various issues with sprinting, MASC and Supercharger
++ Issues #3847: RAT Generator - Won't Generate Super Heavy ProtoMeks or Tanks
++ PR #3842: Scout Bike quirk implemented
++ PR #3853: Base Components: Adding AbstractScrollablePanel
++ PR #3855: Add a unit browser to the main menu
++ Issues #2397, #2675, #3135: Fixing Shadow Rendering Issues
++ Updating to FlatLAF 2.4 from 2.2
++ Updating to Log4j 2.18.0 from 2.17.2
 + Updating to Mockito 4.6.1 from 4.5.1
-
++ Updating to JUnit 5.9.0 from 5.8.2
 
 0.49.8 (2022-05-27 1430 UTC)
 + PR #3431: MUL ID

@@ -1,0 +1,165 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Hantu
+</Name>
+
+<Model>
+AIX-210(Sqd6)
+</Model>
+
+<mul id:>
+9246
+</mul id:>
+
+<year>
+3124
+</year>
+
+<originalBuildYear>
+3124
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+32
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<Squad Equipment>
+BAArmoredGlove:LA
+BAArmoredGlove:RA
+InfantryAssaultRifle:APM
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+IS BA Stealth (Standard):LA
+IS BA Stealth (Standard):RA
+IS BA Stealth (Standard):RA
+IS BA Stealth (Standard):LA
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<Trooper 6 Equipment>
+</Trooper 6 Equipment>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<overview>
+The CEX-205 Groundhog is the ancestor of the AIX-210 armoured infantry exoskeleton. The adaptability of the Groundhog impressed the Kandersteg Militia.
+</overview>
+
+<capabilities>
+Even if Clan-equivalent technology exists, the base AIX-210 has very little integrated hardware. It can carry standard infantry equipment more easily because to the armoured gloves and basic myomers, which increases endurance and fighting effectiveness. However, many versions take advantage of the 200 kilos of spare space to add everything from better life support to modular adapters for sensors, electronic warfare gear, and integrated weaponry. Variants are typically identified by changing the final number of the designation, AIX-21x. Although the Kandersteg Militia only seldom buys variants, several mercenary commands going through Kandersteg's hiring halls like using them.
+</capabilities>
+
+<deployment>
+Due to the untiring exoskeleton muscles, Kandersteg deploys its AIX-210 Hantus in squads of six and platoons of twenty-four, similar to regular infantry troops, and typically equips them with an abundance of support weapons. Various users are still experimenting with AIX-21x forms.
+</deployment>
+
+<history>
+They licenced the basic design from Blue Shot Weapons in order to create a more customised version. Because of its stealth armour, the result is formally known as the Hantu ("Ghost") in the Kandersteg Militia, but most users refer to it as the "Jenglot" (a tiny, deformed, vampiric humanoid) because of how they fare against most modern battlefield threats. Kandersteg designed the Hantu to reduce the vulnerability of its conventional infantry battalions, rather than for regular battlesuit squads. Even the most lightly armoured PA(L) was significantly more durable than standard infantry kit, and adroit use of stealth armour manufactured for Clan Wolf-in-Exile improved survival even further. Two complications hampered this noble goal. The first was the cost, but perhaps far more important was the issue of training. Battlesuit troopers must undergo extensive training in order to use complex systems such as jump jets and integrated weapons, as well as complex tactics such as swarming. The Groundhog's transparent, ergonomic interface was designed for minimally trained civilian users, while the Hantu avoided jump jets. Kandersteg also spent time training militia commanders to treat Hantu-fitted infantry as enhanced conventional infantry rather than battlesuit infantry. Kandersteg's special forces, who are trained in battle armour, use more capable suits rather than the Hantu.
+</history>
+
+<manufacturer>
+Kandersteg Foundry Alpha
+</manufacturer>
+
+<primaryFactory>
+Kandersteg
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+2
+</armor>
+
+<Trooper Count>
+6
+</Trooper Count>
+
+<weightclass>
+0
+</weightclass>
+
+<source>
+ToS Kandersteg - Late Republic
+</source>

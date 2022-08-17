@@ -95,13 +95,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_MAP_TEXT_COLOR = "AdvancedMapTextColor";
     public static final String ADVANCED_WARNING_COLOR = "AdvancedWarningColor";
     public static final String ADVANCED_TMM_PIP_MODE = "AdvancedTmmPipMode";
-    public static final String ADVANCED_HEAT_5_COLOR = "ADVANCED_HEAT_5_COLOR";
-    public static final String ADVANCED_HEAT_10_COLOR = "ADVANCED_HEAT_10_COLOR";
-    public static final String ADVANCED_HEAT_15_COLOR = "ADVANCED_HEAT_15_COLOR";
-    public static final String ADVANCED_HEAT_20_COLOR = "ADVANCED_HEAT_20_COLOR";
-    public static final String ADVANCED_HEAT_25_COLOR = "ADVANCED_HEAT_25_COLOR";
-    public static final String ADVANCED_HEAT_30_COLOR = "ADVANCED_HEAT_30_COLOR";
-    public static final String ADVANCED_HEAT_OVERHEAT_COLOR = "ADVANCED_HEAT_OVERHEAT_COLOR";
+    public static final String ADVANCED_HEAT_COLOR_5 = "AdvancedHeatColor5";
+    public static final String ADVANCED_HEAT_COLOR_10 = "AdvancedHeatColor10";
+    public static final String ADVANCED_HEAT_COLOR_15 = "AdvancedHeatColor15";
+    public static final String ADVANCED_HEAT_COLOR_20 = "AdvancedHeatColor20";
+    public static final String ADVANCED_HEAT_COLOR_25 = "AdvancedHeatColor25";
+    public static final String ADVANCED_HEAT_COLOR_30 = "AdvancedHeatColor30";
+    public static final String ADVANCED_HEAT_COLOR_OVERHEAT = "AdvancedHeatColorOverheat";
+    public static final String ADVANCED_REPORT_COLOR_LINK = "AdvancedReportColorLink";
+
 
     /* --End advanced settings-- */
 
@@ -285,6 +287,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_HEAT_30_COLOR = new Color(248, 64, 64);
     private static final Color DEFAULT_HEAT_OVERHEAT_COLOR = new Color(248, 12, 12);
 
+    // Report Color
+    private static final Color DEFAULT_REPORT_LINK_COLOR = new Color(73, 102, 230);
+
+
     // Map colors
     private static final Color DEFAULT_MAP_BRIGHT_GREEN = new Color(80, 230, 80);
     private static final Color DEFAULT_MAP_BLUE = new Color(60, 140, 240);  // greenish blue
@@ -357,13 +363,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
-        setDefault(ADVANCED_HEAT_5_COLOR, DEFAULT_HEAT_5_COLOR);
-        setDefault(ADVANCED_HEAT_10_COLOR, DEFAULT_HEAT_10_COLOR);
-        setDefault(ADVANCED_HEAT_15_COLOR, DEFAULT_HEAT_15_COLOR);
-        setDefault(ADVANCED_HEAT_20_COLOR, DEFAULT_HEAT_20_COLOR);
-        setDefault(ADVANCED_HEAT_25_COLOR, DEFAULT_HEAT_25_COLOR);
-        setDefault(ADVANCED_HEAT_20_COLOR, DEFAULT_HEAT_30_COLOR);
-        setDefault(ADVANCED_HEAT_OVERHEAT_COLOR, DEFAULT_HEAT_OVERHEAT_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_5, DEFAULT_HEAT_5_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_10, DEFAULT_HEAT_10_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_15, DEFAULT_HEAT_15_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_20, DEFAULT_HEAT_20_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_25, DEFAULT_HEAT_25_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_20, DEFAULT_HEAT_30_COLOR);
+        setDefault(ADVANCED_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
+
+        setDefault(ADVANCED_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -505,7 +513,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_NUM_BA, "0");
         store.setDefault(RAT_NUM_INF, "0");
         store.setDefault(RAT_YEAR_MIN, "2300");
-        store.setDefault(RAT_YEAR_MAX, "3150");
+        store.setDefault(RAT_YEAR_MAX, "3175");
         store.setDefault(RAT_PAD_BV, false);
         store.setDefault(RAT_SELECTED_RAT, "");
 
@@ -1584,6 +1592,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(ADVANCED_WARNING_COLOR, getColorString(color));
     }
 
+    public Color getReportLinkColor() {
+        return getColor(ADVANCED_REPORT_COLOR_LINK);
+    }
+
+    public void setReportLinkColor(Color color) {
+        store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
+    }
     /**
      * Sets the user preference for the Unit Display window to active.
      */
@@ -1669,19 +1684,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
         if (heat <= 0) {
             return defaultColor;
         } else if (heat <= 5) {
-            return getColor(ADVANCED_HEAT_5_COLOR);
+            return getColor(ADVANCED_HEAT_COLOR_5);
         } else if (heat <= 10) {
-            return getColor(ADVANCED_HEAT_10_COLOR);
+            return getColor(ADVANCED_HEAT_COLOR_10);
         } else if (heat <= 15) {
-            return getColor(ADVANCED_HEAT_15_COLOR);
+            return getColor(ADVANCED_HEAT_COLOR_15);
         } else if (heat <= 20) {
-            return  getColor(ADVANCED_HEAT_20_COLOR);
+            return  getColor(ADVANCED_HEAT_COLOR_20);
         } else if (heat <= 25) {
-            return  getColor(ADVANCED_HEAT_25_COLOR);
+            return  getColor(ADVANCED_HEAT_COLOR_25);
         } else if (heat <= 30) {
-            return  getColor(ADVANCED_HEAT_30_COLOR);
+            return  getColor(ADVANCED_HEAT_COLOR_30);
         }
-        return  getColor(ADVANCED_HEAT_OVERHEAT_COLOR);
+        return  getColor(ADVANCED_HEAT_COLOR_OVERHEAT);
     }
 
     public void setUnitLabelStyle(LabelDisplayStyle style) {

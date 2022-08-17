@@ -2210,17 +2210,23 @@ public class MoveStep implements Serializable {
         }
         int tmpWalkMP = cachedEntityState.getWalkMP() + bonus;
 
-        int runMP = cachedEntityState.getRunMP() + bonus;
-        int runMPOneMASC = cachedEntityState.getRunMPwithOneMASC() + bonus;
-        int runMPNoMASC = cachedEntityState.getRunMPwithoutMASC() + bonus;
+        // For entities with neither MASC nor Supercharger, these values will be the same
+        int runMPMax = cachedEntityState.getRunMP() + bonus;
+        int runMPSingleBoost = cachedEntityState.getRunMPwithOneMASC() + bonus;
+        int runMPNoBoost = cachedEntityState.getRunMPwithoutMASC() + bonus;
 
+        // Sprint MP is calculated depending on the entity type
+        // For those that cannot sprint, it is the same as run.
+        // For those that can, it is the maximum distance it can sprint
+        // For entities with neither MASC nor Supercharger, these values will be the same
+        int sprintMPMax = cachedEntityState.getSprintMP() + bonus;
+        int sprintMPSingleBoost = cachedEntityState.getSprintMPwithOneMASC() + bonus;
+        int sprintMPNoBoost = cachedEntityState.getSprintMPwithoutMASC() + bonus;
 
-        int sprintMP = cachedEntityState.getSprintMP() + bonus;
-        int sprintMPOneMASC = cachedEntityState.getSprintMPwithOneMASC() + bonus;
-        int sprintMPNoMASC = cachedEntityState.getSprintMPwithoutMASC() + bonus;
-
-        final boolean isMASCUsedEntity = entity.isMASCUsed();
-        final boolean isSuperchargerUsedEntity = entity.isSuperchargerUsed();
+        // Have these been used already this turn. If so, they do not require a recheck agaisnt PSR
+        // This can happen as a result of interrupted turns due to failed PSRs, pointblank shots, etc.
+        final boolean hasMASCBeenUsed = entity.isMASCUsed();
+        final boolean hasSuperchargerBeenUsed = entity.isSuperchargerUsed();
 
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
@@ -2232,22 +2238,22 @@ public class MoveStep implements Serializable {
                     // On the ground or underwater use AirMech walk/run.
                     // Sprint can only be used on the ground, so that is already set.
                     tmpWalkMP = ((LandAirMech) entity).getAirMechWalkMP();
-                    runMPNoMASC = ((LandAirMech) entity).getAirMechRunMP();
+                    runMPNoBoost = ((LandAirMech) entity).getAirMechRunMP();
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
                     MPBoosters mpBoosters = ((LandAirMech) entity).getArmedMPBoosters();
                     if (!mpBoosters.isNone()) {
-                        runMP = mpBoosters.calculateRunMP(tmpWalkMP);
+                        runMPMax = mpBoosters.calculateRunMP(tmpWalkMP);
                     } else {
-                        runMP = runMPNoMASC;
+                        runMPMax = runMPNoBoost;
                     }
                 } else {
                     // Only 1 ground MP for ground effect vehicles and glider ProtoMeks
-                    tmpWalkMP = runMP = runMPNoMASC = sprintMP = sprintMPNoMASC = 1;
+                    tmpWalkMP = runMPMax = runMPNoBoost = sprintMPMax = sprintMPNoBoost = 1;
                 }
             } else if (entity instanceof LandAirMech) {
                 // LAMs cannot use overdrive and MASC does not affect airborne MP.
                 tmpWalkMP = ((LandAirMech) entity).getAirMechCruiseMP();
-                runMP = runMPNoMASC = sprintMP = sprintMPNoMASC = ((LandAirMech) entity).getAirMechFlankMP();
+                runMPMax = runMPNoBoost = sprintMPMax = sprintMPNoBoost = ((LandAirMech) entity).getAirMechFlankMP();
             }
         }
 
@@ -2358,15 +2364,29 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
                 }
-            } else if ((((getMpUsed() <= runMP) && (isMASCUsedEntity || isSuperchargerUsedEntity))
-                    || (getMpUsed() <= runMPNoMASC)) && !isRunProhibited()) {
-                // Poor performance requires spending all walk MP in the
-                //  previous round in order to flank
-                if (hasPoorPerformance
+            } else if (hasPoorPerformance
                         && (entity.getMpUsedLastRound() < cachedEntityState.getWalkMP())) {
-                    movementType = EntityMovementType.MOVE_ILLEGAL;
-                    return;
+                // Poor performance requires spending all walk MP in the
+                // previous round in order to move faster than a walk
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            } else if (getMpUsed() <= runMPMax && !isRunProhibited()) {
+                // RUN - If we got this far, entity is moving farther than a walk
+                // but within run and running is legal
+
+                if ( getMpUsed() > runMPNoBoost ) {
+                    // must be using MP booster to go this fast
+                    if (isEvading) {
+                        // MP Boosters like MASC and Supercharger cannot be use when evading
+                        movementType = EntityMovementType.MOVE_ILLEGAL;
+                        return;
+                    } else if ((getMpUsed() <= runMPSingleBoost)) {
+                        UseEitherMASCOrSupercharger(hasMASCBeenUsed, hasSuperchargerBeenUsed);
+                    } else if ((getMpUsed() <= runMPMax)) {
+                        UseBothMASCAndSupercharger(hasMASCBeenUsed, hasSuperchargerBeenUsed);
+                    }
                 }
+
                 if ((entity.getMovementMode() == EntityMovementMode.VTOL
                         || entity.getMovementMode() == EntityMovementMode.WIGE)
                         && getClearance() > 0) {
@@ -2374,73 +2394,22 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if ((getMpUsed() <= runMPOneMASC) && !isRunProhibited()
-                    && !isEvading()) {
-                // decide which to use if both are active
-                MPBoosters mpBoosters = entity.getArmedMPBoosters();
-                int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
-                int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
-                if (mascTarget < scTarget) {
-                    setUsingMASC(true);
-                    setTargetNumberMASC(entity.getMASCTarget());
-                } else {
-                    setUsingSupercharger(true);
-                    setTargetNumberSupercharger(scTarget);
+            } else if ((getMpUsed() <= sprintMPMax) && !isRunProhibited() && !isEvading() && canUseSprint(game)) {
+                // SPRINT - If we got this far, entity is moving farther than a run
+                // but within sprint and sprinting must be legal and the option enabled
+
+                if (getMpUsed() > sprintMPNoBoost) {
+                    // must be using MP booster to go this fast
+                    if (getMpUsed() <= sprintMPSingleBoost) {
+                        UseEitherMASCOrSupercharger(hasMASCBeenUsed, hasSuperchargerBeenUsed);
+                    } else {
+                        UseBothMASCAndSupercharger(hasMASCBeenUsed, hasSuperchargerBeenUsed);
+                    }
                 }
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                    movementType = EntityMovementType.MOVE_VTOL_RUN;
-                } else {
-                    movementType = EntityMovementType.MOVE_RUN;
-                }
-            } else if ((getMpUsed() <= runMP) && !isRunProhibited()
-                    && !isEvading()) {
-                setUsingMASC(true);
-                setTargetNumberMASC(entity.getMASCTarget());
-                setUsingSupercharger(true);
-                setTargetNumberSupercharger(entity.getSuperchargerTarget());
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                    movementType = EntityMovementType.MOVE_VTOL_RUN;
-                } else {
-                    movementType = EntityMovementType.MOVE_RUN;
-                }
-            } else if (canUseSprint(game)
-                    && ((getMpUsed() <= sprintMPNoMASC)
-                            || ((getMpUsed() <= sprintMP) && (isMASCUsedEntity || isSuperchargerUsedEntity)))
-                    && !isRunProhibited() && !isEvading()) {
+
                 if (entity.getMovementMode() == EntityMovementMode.VTOL
                         || (entity.getMovementMode() == EntityMovementMode.WIGE
-                                && getClearance() > 0)) {
-                    movementType = EntityMovementType.MOVE_VTOL_SPRINT;
-                } else {
-                    movementType = EntityMovementType.MOVE_SPRINT;
-                }
-            } else if ((getMpUsed() <= sprintMPOneMASC) && !isRunProhibited()
-                    && !isEvading()) {
-                // decide if using MASC or Supercharger if need only one
-                // choose Super if even
-                MPBoosters mpBoosters = entity.getArmedMPBoosters();
-                int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
-                int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
-                if (mascTarget < scTarget) {
-                    setUsingMASC(true);
-                    setTargetNumberMASC(entity.getMASCTarget());
-                } else {
-                    setUsingSupercharger(true);
-                    setTargetNumberSupercharger(scTarget);
-                }
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-                    movementType = EntityMovementType.MOVE_VTOL_SPRINT;
-                } else {
-                    movementType = EntityMovementType.MOVE_SPRINT;
-                }
-            } else if ((getMpUsed() <= sprintMP)
-                    && !isRunProhibited() && !isEvading()
-                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
-                setUsingMASC(true);
-                setTargetNumberMASC(entity.getMASCTarget());
-                setUsingSupercharger(true);
-                setTargetNumberSupercharger(entity.getSuperchargerTarget());
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                        && getClearance() > 0)) {
                     movementType = EntityMovementType.MOVE_VTOL_SPRINT;
                 } else {
                     movementType = EntityMovementType.MOVE_SPRINT;
@@ -2885,6 +2854,39 @@ public class MoveStep implements Serializable {
                         && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
+        }
+    }
+
+    /**
+     * If the entity has both, choose the one with the lower risk, or Supercharger if they are even
+     * Require a PSR if it has not been done in an earlier part of the move
+     */
+    private void UseEitherMASCOrSupercharger(boolean hasMASCBeenUsed, boolean hasSuperchargerBeenUsed) {
+        MPBoosters mpBoosters = entity.getArmedMPBoosters();
+        if (!hasMASCBeenUsed && !hasSuperchargerBeenUsed) {
+            int scTarget = mpBoosters.hasSupercharger() ? entity.getSuperchargerTarget() : 2000;
+            int mascTarget = mpBoosters.hasMASC() ? entity.getMASCTarget() : 2000;
+            if (mascTarget < scTarget) {
+                setUsingMASC(true);
+                setTargetNumberMASC(entity.getMASCTarget());
+            } else {
+                setUsingSupercharger(true);
+                setTargetNumberSupercharger(entity.getSuperchargerTarget());
+            }
+        }
+    }
+
+    /**
+     * Require a PSR if it has not been done in an earlier part of the move
+     */
+    private void UseBothMASCAndSupercharger(boolean hasMASCBeenUsed, boolean hasSuperchargerBeenUsed) {
+        if (!hasMASCBeenUsed) {
+            setUsingMASC(true);
+            setTargetNumberMASC(entity.getMASCTarget());
+        }
+        if (!hasSuperchargerBeenUsed) {
+            setUsingSupercharger(true);
+            setTargetNumberSupercharger(entity.getSuperchargerTarget());
         }
     }
 

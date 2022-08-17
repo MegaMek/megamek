@@ -1,0 +1,115 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Simian Battle Armor
+</Name>
+
+<Model>
+[SL](Sqd5)
+</Model>
+
+<mul id:>
+8777
+</mul id:>
+
+<year>
+3135
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<Squad Equipment>
+BABattleClawMagnets:LA
+BABattleClawMagnets:RA
+ISBASmallLaser:RA
+BASearchlight:Body
+</Squad Equipment>
+
+<source>
+TRO 3145 Republic of the Sphere - Dark Ages
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+7
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<armor_type>
+28
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
+
+<overview>
+The Simian is a thirty-second century medium battle armor which was the brain child of Republic of the Sphere Paladin, Kara Rutherford. 
+</overview>
+
+<capabilities>
+One of the battle armor's hallmarks is its mobility, being able to outpace typical battle armor while retaining high Jump Jet capacity. Its 350 kg worth of armor protection, while not able to stop heavy weapons, can allow the soldier inside to survive long enough to close to its target using its mobility.
+</capabilities>
+
+<deployment>
+The Simian sports a Modular Weapon Mount on the right shoulder. This system typically holds a Small Laser, but other configurations include a Light Recoilless Rifle, Flamer, or Heavy Machine Guns. Usually the Simian doesn't mount advanced weaponry, instead choosing to use more easily available standard weaponry. Its arms are also used as effective melee weapons when engaging infantry, with Magnetic Claws enabling them to do additional damage to enemy Combat Vehicles and BattleMechs. A small Searchlight was added as well, but this seems to be an afterthought.
+</deployment>
+
+<history>
+The design came about due in part to Paladin Rutherford's concern of the high cost of battle armor development. Her efforts to make a cost-effective design would give birth to the Simian, however, she would not live to see it enter production. Produced on Devil's Rock at the secretive Rhodes Foundry, the suit was among many developments which were unknown to the rest of the Inner Sphere; which had already descended into chaos by the time Armor saw production in 3135. It was first deployed alongside the heavier Centaur battle armor as part of the Republic's false-flag raids across the Walled borders just after April 3136. The armor would work well in these special ops forces, causing havoc among Inner Sphere and Clan forces trying to figure out whom these suits belonged to.
+</history>
+
+<manufacturer>
+Rhodes Foundry Ltd.
+</manufacturer>
+
+<primaryFactory>
+Devil's Rock
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMPJET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+The TRO3075 entry lists a 3-slot

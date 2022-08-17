@@ -15,6 +15,7 @@
 package megamek.common;
 
 import megamek.client.bot.princess.Princess;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -1851,6 +1852,24 @@ public class MovePath implements Cloneable, Serializable {
         return !game.getBoard().contains(getFinalCoords().translated(getFinalFacing()));
     }
 
+    /**
+     * Worker function that counts the number of steps of the given type 
+     * at the end of the given path before another step type occurs.
+     */
+    public int getEndStepCount(MoveStepType stepType) {
+        int stepCount = 0;
+        
+        for (int index = getStepVector().size() - 1; index >= 0; index--) {
+            if (getStepVector().get(index).getType() == stepType) {
+                stepCount++;
+            } else {
+                break;
+            }
+        }
+        
+        return stepCount;
+    }
+    
     /**
      * Debugging method that calculates a destruction-aware move path to the destination coordinates
      */

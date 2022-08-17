@@ -6,8 +6,8 @@ mul id:7823
 Config:Quad
 techbase:Inner Sphere
 era:3068
-source:Jihad
-rules level:3
+source:TRO:IrTech
+rules level:2
 
 mass:15
 engine:60 Fusion Engine(IS)

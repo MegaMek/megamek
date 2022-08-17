@@ -63,6 +63,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_RUGGED_1 = "rugged_1" ; 
     public static final String QUIRK_POS_RUGGED_2 = "rugged_2" ; 
     public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; 
+    public static final String QUIRK_POS_SCOUT_BIKE="scout_bike";
     public static final String QUIRK_POS_SEARCHLIGHT= "searchlight"; 
     public static final String QUIRK_POS_STABLE= "stable"; 
     public static final String QUIRK_POS_TRAILER_HITCH= "trailer_hitch"; 

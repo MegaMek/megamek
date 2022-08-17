@@ -18,7 +18,7 @@ BoardWidth=2
 BoardHeight=1
 
 # Directories to choose random boards from
-RandomDirs=MapSet2,MapSet3,MapSet4,MapSet5,MapSet6,MapSet7
+RandomDirs=Map Set 2,Map Set 3,Map Set 4,Map Set 5,Map Set 6,Map Set 7
 
 # Maps can be specified by name.  The order is left-to-right, top-to-bottom
 # Any unspecified boards will be set to RANDOM
@@ -45,7 +45,7 @@ PlanetaryConditionsGravity=1.12
 PlanetaryConditionsLight=1
 # Weather: Default = None; 1/2/3/4 = Light/Moderate/Heavy/Gusting Rain; 5 = Downpour; 
 # 6/7/9 Light/Moderate/Heavy Snow; 8 = Snow Flurries; 10 = Sleet; 11 = Blizzard;
-# 12 = Ice Storm; 13/14 = Light/Heavy Hail
+# 12 = Ice Storm; Anything else resolves to default.
 PlanetaryConditionsWeather=13
 # Wind: Default = None; 1/2/3 = Light/Moderate/Strong Gale; 4 = Storm; 5 = Tornado F1-3; 6 = Tornado F4
 PlanetaryConditionsWind=4

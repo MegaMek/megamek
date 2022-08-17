@@ -325,6 +325,14 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false);
+    }
+    
+    /**
+     * Returns this entity's safe thrust, factored for heat, extreme
+     * temperatures, gravity, partial repairs, bomb load and whether it's grounded or not.
+     */
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor, boolean ignoreGroundedStatus) {
         int j = getOriginalWalkMP();
         // adjust for engine hits
         if (engineHits >= getMaxEngineHits()) {
@@ -354,7 +362,8 @@ public class Aero extends Entity implements IAero, IBomber {
         }
 
         // if they are not airborne, then they get MP halved (aerodyne) or no MP
-        if (!isAirborne()) {
+        // and also if we're not ignoring the "grounded" status
+        if (!ignoreGroundedStatus && !isAirborne()) {
             j = j / 2;
             if (isSpheroid()) {
                 j = 0;
@@ -3244,5 +3253,26 @@ public class Aero extends Entity implements IAero, IBomber {
      */
     public void setEjecting(boolean ejecting) {
         this.ejecting = ejecting;
+    }
+    
+    /**
+     * Aerospace units are considered permanently immobilized
+     *
+     * @return true if unit is permanently immobile
+     */
+    public boolean isPermanentlyImmobilized(boolean checkCrew) {
+        if (checkCrew && ((getCrew() == null) || getCrew().isDead())) {
+            return true;
+        } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
+                /*
+                 * Need to make sure here that we're ignoring heat because
+                 * that's not actually "permanent":
+                 */
+                && ((getWalkMP(true, true, false, true) == 0)
+                    && (getRunMP(true, true, false) == 0) && (getJumpMP() == 0))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

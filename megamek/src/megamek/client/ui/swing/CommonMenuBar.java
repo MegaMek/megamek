@@ -35,6 +35,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import static megamek.client.ui.swing.ClientGUI.*;
 import static java.awt.event.KeyEvent.*;
+import static megamek.client.ui.swing.ClientGUI.FILE_UNITS_BROWSE;
 
 /**
  * The menu bar that is used across MM, i.e. in the main menu, the board editor and
@@ -72,6 +73,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem fileUnitsPaste = new JMenuItem(getString("CommonMenuBar.fileUnitsPaste"));
     private JMenuItem fileUnitsCopy = new JMenuItem(getString("CommonMenuBar.fileUnitsCopy"));
     private JMenuItem fileUnitsSave = new JMenuItem(getString("CommonMenuBar.fileUnitsSave"));
+    private JMenuItem fileUnitsBrowse = new JMenuItem(getString("CommonMenuBar.fileUnitsBrowse"));
 
     // The Board menu
     private JMenuItem boardNew = new JMenuItem(getString("CommonMenuBar.fileBoardNew"));
@@ -191,6 +193,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         
         initMenuItem(fileRefreshCache, menu, FILE_REFRESH_CACHE);
+        initMenuItem(fileUnitsBrowse, menu, FILE_UNITS_BROWSE);
         menu.addSeparator();
         
         initMenuItem(fireSaveWeaponOrder, menu, FIRE_SAVE_WEAPON_ORDER);
@@ -429,6 +432,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         fileUnitsReinforce.setEnabled(isLobby || isInGame);
         fileUnitsReinforceRAT.setEnabled(isLobby || isInGame);
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
+        fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);
         gamePlayerList.setEnabled(isInGame);
         viewLabels.setEnabled(isInGameBoardView);

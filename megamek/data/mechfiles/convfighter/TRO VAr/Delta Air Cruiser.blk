@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-##Write the version number just in case...
+# Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,23 +13,23 @@ FixedWingSupport
 </UnitType>
 
 <Name>
-Boomerang Spotter Plane
+Delta Air Cruiser
 </Name>
 
 <Model>
-(Standard)
+MA-80
 </Model>
 
 <mul id:>
-3854
+4635
 </mul id:>
 
 <year>
-2888
+3037
 </year>
 
 <originalBuildYear>
-2888
+3037
 </originalBuildYear>
 
 <type>
@@ -41,8 +41,9 @@ Aerodyne
 </motion_type>
 
 <transporters>
-ejectionseats:1.0:0
-cargobay:0.013:1:2
+cargobay:6.0:1:1
+1stclassquarters:20.0:2
+troopspace:9.0
 </transporters>
 
 <SafeThrust>
@@ -62,7 +63,7 @@ cargobay:0.013:1:2
 </sink_type>
 
 <fuel>
-273
+750
 </fuel>
 
 <engine_type>
@@ -70,20 +71,27 @@ cargobay:0.013:1:2
 </engine_type>
 
 <armor>
-0
-0
-0
-0
+28
+19
+19
+12
 </armor>
 
 <Nose Equipment>
-ISReconCamera
 </Nose Equipment>
 
 <Left Wing Equipment>
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
 </Left Wing Equipment>
 
 <Right Wing Equipment>
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -93,32 +101,28 @@ ISReconCamera
 </Wings Equipment>
 
 <Body Equipment>
-PropChassisMod
-UltraLightChassisMod
-STOLChassisMod
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
 </Body Equipment>
 
 <barrating>
-2
+6
 </barrating>
 
 <structural_tech_rating>
 3
 </structural_tech_rating>
 
-<engine_tech_rating>
-3
-</engine_tech_rating>
-
-<armor_tech_rating>
-3
-</armor_tech_rating>
-
 <source>
-TRO 3039 - Early Succession War
+TRO Vehicle Annex (r) - Succession Wars
 </source>
 
 <tonnage>
-4.999
+180.0
 </tonnage>
-

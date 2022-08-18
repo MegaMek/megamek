@@ -2316,6 +2316,12 @@
 			<availability>General:3,SL.R:3</availability>
 		</model>
 	</chassis>
+	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
+		<availability>FS:5</availability>
+		<model name='(Standard)'>
+			<availability>General:6</availability>
+		</model>
+	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>
 		<availability>General:8,SL.R:7</availability>
 		<model name='(Primitive)'>
@@ -2514,7 +2520,7 @@
 		</model>
 		<model name='(Standard)'>
 			<roles>support</roles>
-			<availability>General:7</availability>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Striker' unitType='Mek'>
@@ -2641,6 +2647,15 @@
 		<model name='TR-A-6'>
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>SL:5,IS:4,MERC:2,Periphery:2</availability>
+		<model name='(Original)'>
+			<availability>General:5</availability>
+		</model>
+		<model name='(Standard)'>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Transit' unitType='Aero'>

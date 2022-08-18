@@ -1034,10 +1034,10 @@
 		</model>
 	</chassis>
 	<chassis name='Boomerang Spotter Plane' unitType='Conventional Fighter'>
-		<availability>HL:1,FS:6,MERC:4,Periphery:3</availability>
+		<availability>CC:3,MOC:1,LA:2,FWL:2,FS:4,MERC:1,DC:3,Periphery:1</availability>
 		<model name='(Standard)'>
 			<roles>recon,support</roles>
-			<availability>General:8</availability>
+			<availability>General:8-</availability>
 		</model>
 	</chassis>
 	<chassis name='Bowman' unitType='Mek'>
@@ -4436,6 +4436,12 @@
 			<availability>CDS:5,CW:8,CSV:5,CNC:8,General:7,CSJ:8,CJF:9,CGB:9</availability>
 		</model>
 	</chassis>
+	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>General:2</availability>
+		</model>
+	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>
 		<availability>General:8,CLAN:3</availability>
 		<model name='(Standard)'>
@@ -4875,9 +4881,9 @@
 	</chassis>
 	<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
 		<availability>CC:3</availability>
-		<model name='(Standard)'>
+		<model name='(Original)'>
 			<roles>support</roles>
-			<availability>General:8</availability>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Storm Giant' unitType='Mek'>
@@ -5157,6 +5163,12 @@
 		<availability>CS:1</availability>
 		<model name='P12 &apos;Hurricane&apos;(Sqd6)' mechanized='true'>
 			<availability>CS:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>CC:4-,MOC:2,OA:2,CLAN:2-,CIR:2,MERC:2,TC:2,BAN:2-</availability>
+		<model name='(Original)'>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Tramp JumpShip' unitType='Jumpship'>

@@ -1181,10 +1181,10 @@
 		</model>
 	</chassis>
 	<chassis name='Boomerang Spotter Plane' unitType='Conventional Fighter'>
-		<availability>HL:1,FS:6,MERC:4,Periphery:3</availability>
+		<availability>CC:4,MOC:2,MERC.KH:3,MERC.WD:3,LA:4,FWL:3,FS:6,MERC:2,DC:4,Periphery:2</availability>
 		<model name='(Standard)'>
 			<roles>recon,support</roles>
-			<availability>General:8</availability>
+			<availability>General:8-</availability>
 		</model>
 	</chassis>
 	<chassis name='Bowman' unitType='Mek'>
@@ -4667,6 +4667,13 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Protector High-Speed Medevac' unitType='Conventional Fighter'>
+		<availability>FS:3</availability>
+		<model name='C-790'>
+			<roles>support</roles>
+			<availability>General:5</availability>
+		</model>
+	</chassis>
 	<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>
 		<availability>General:4-</availability>
 		<model name='(Sealed)'>
@@ -4875,6 +4882,12 @@
 		</model>
 		<model name='Prime'>
 			<availability>CDS:5,CW:8,CSV:5,CNC:8,General:7,CSJ:8,CJF:9,CGB:9</availability>
+		</model>
+	</chassis>
+	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
+		<availability>FS:2</availability>
+		<model name='(Standard)'>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>
@@ -5361,9 +5374,9 @@
 	</chassis>
 	<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
 		<availability>CC:2</availability>
-		<model name='(Standard)'>
+		<model name='(Original)'>
 			<roles>support</roles>
-			<availability>General:8</availability>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Storm Giant' unitType='Mek'>
@@ -5683,6 +5696,12 @@
 		<availability>CS:2</availability>
 		<model name='P12 &apos;Hurricane&apos;(Sqd6)' mechanized='true'>
 			<availability>CS:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>CC:4-,CLAN:2-,BAN:2-</availability>
+		<model name='(Original)'>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Tramp JumpShip' unitType='Jumpship'>
@@ -6272,6 +6291,12 @@
 		<model name='(2947)'>
 			<roles>asf_carrier,destroyer</roles>
 			<availability>CLAN:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Zanadu Air Bus' unitType='Conventional Fighter'>
+		<availability>LA:2</availability>
+		<model name='(Standard)'>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Zephyr Hovertank' unitType='Tank'>

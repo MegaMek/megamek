@@ -3002,6 +3002,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
+		<availability>FS:5</availability>
+		<model name='(Standard)'>
+			<availability>General:6</availability>
+		</model>
+	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>
 		<availability>General:8,SL.R:7</availability>
 		<model name='(Standard)'>
@@ -3303,11 +3309,11 @@
 		<availability>CC:4</availability>
 		<model name='(Original)'>
 			<roles>support</roles>
-			<availability>General:5</availability>
+			<availability>General:5-</availability>
 		</model>
 		<model name='(Standard)'>
 			<roles>support</roles>
-			<availability>General:8</availability>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Striker' unitType='Mek'>
@@ -3464,6 +3470,15 @@
 		</model>
 		<model name='THK-63b'>
 			<availability>SL.R:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>MOC:4,PP:3,OA:4,SLIE:3,SL:5,IS:4,CIR:6,MERC:2,Periphery:2,TC:4</availability>
+		<model name='(Original)'>
+			<availability>General:4</availability>
+		</model>
+		<model name='(Standard)'>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Tramp JumpShip' unitType='Jumpship'>

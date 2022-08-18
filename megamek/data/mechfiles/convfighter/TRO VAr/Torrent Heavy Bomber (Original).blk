@@ -17,7 +17,7 @@ Torrent Heavy Bomber
 </Name>
 
 <Model>
-(Standard)
+(Original)
 </Model>
 
 <mul id:>
@@ -25,11 +25,11 @@ Torrent Heavy Bomber
 </mul id:>
 
 <year>
-2652
+2100
 </year>
 
 <originalBuildYear>
-2652
+2100
 </originalBuildYear>
 
 <type>
@@ -41,7 +41,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
-cargobay:15.0:1:1
+cargobay:20.5:1:1
 </transporters>
 
 <SafeThrust>
@@ -89,7 +89,6 @@ Machine Gun
 </Right Wing Equipment>
 
 <Aft Equipment>
-SRM 6
 </Aft Equipment>
 
 <Wings Equipment>
@@ -98,9 +97,7 @@ SRM 6
 <Body Equipment>
 Advanced Fire Control
 STOLChassisMod
-ISGuardianECMSuite
 IS Machine Gun Ammo - Half
-IS Ammo SRM-6
 External Stores Hardpoint
 External Stores Hardpoint
 External Stores Hardpoint
@@ -143,7 +140,7 @@ Originally used by the United States of North America's Air Force, the Torrent w
 </overview>
 
 <deployment>
-The Torrent features four nose-mounted Machine Guns with half a ton of ammunition and a six-tube short range missile launcher mounted aft with one ton of ammunition, all aimed by an Advanced Fire Control system. The aircraft is protected by three and a half tons of Hubris heavy armor and an ECM suite suite. It has an internal Cargo Bay able to carry fifteen tons and fifteen External Stores Hardpoints, allowing the aircraft to carry a variety of explosive ordnance.
+This represents an original versions based on the Fluff text.
 </deployment>
 
 <history>

@@ -818,6 +818,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>IS:4,MERC:2,Periphery:2</availability>
+		<model name='(Original)'>
+			<availability>General:5</availability>
+		</model>
+	</chassis>
 	<chassis name='Tracker Surveillance' unitType='Warship'>
 		<availability>TH:2</availability>
 		<model name='(2407)'>

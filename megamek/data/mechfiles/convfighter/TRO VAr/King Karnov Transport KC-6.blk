@@ -13,23 +13,23 @@ FixedWingSupport
 </UnitType>
 
 <Name>
-Boomerang Spotter Plane
+King Karnov Transport
 </Name>
 
 <Model>
-(Standard)
+KC-6
 </Model>
 
 <mul id:>
-3854
+4446
 </mul id:>
 
 <year>
-2888
+3015
 </year>
 
 <originalBuildYear>
-2888
+3015
 </originalBuildYear>
 
 <type>
@@ -41,17 +41,20 @@ Aerodyne
 </motion_type>
 
 <transporters>
-ejectionseats:1.0:0
-cargobay:0.013:1:2
+cargobay:59.5:1:1
 </transporters>
 
 <SafeThrust>
-4
+3
 </SafeThrust>
 
 <cockpit_type>
 0
 </cockpit_type>
+
+<vstol>
+1
+</vstol>
 
 <heatsinks>
 0
@@ -62,7 +65,7 @@ cargobay:0.013:1:2
 </sink_type>
 
 <fuel>
-273
+190
 </fuel>
 
 <engine_type>
@@ -70,14 +73,13 @@ cargobay:0.013:1:2
 </engine_type>
 
 <armor>
-0
-0
-0
-0
+34
+33
+33
+33
 </armor>
 
 <Nose Equipment>
-ISReconCamera
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,12 +96,11 @@ ISReconCamera
 
 <Body Equipment>
 PropChassisMod
-UltraLightChassisMod
-STOLChassisMod
+VSTOLChassisMod
 </Body Equipment>
 
 <barrating>
-2
+7
 </barrating>
 
 <structural_tech_rating>
@@ -114,11 +115,15 @@ STOLChassisMod
 3
 </armor_tech_rating>
 
+<notes>
+Based on fluff
+</notes>
+
 <source>
-TRO 3039 - Early Succession War
+TRO Vehicle Annex (r) - Clan Invasion
 </source>
 
 <tonnage>
-4.999
+200.0
 </tonnage>
 

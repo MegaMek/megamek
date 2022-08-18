@@ -856,6 +856,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
+		<availability>FS:1</availability>
+		<model name='(Standard)'>
+			<availability>General:2</availability>
+		</model>
+	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>
 		<availability>General:3</availability>
 		<model name='(Primitive)'>
@@ -909,6 +915,12 @@
 		<availability>FS:4</availability>
 		<model name='SWD-1'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>IS:4,MERC:2,Periphery:2</availability>
+		<model name='(Original)'>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Tracker Surveillance' unitType='Warship'>

@@ -24,6 +24,7 @@ import megamek.common.UnitRole;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.options.Quirks;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -38,7 +39,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * @author Neoancient
  * @author Simon (Juliez)
  */
-public class AlphaStrikeElement {
+public class AlphaStrikeElement implements Serializable {
 
     public static final String INCH = "\"";
 
@@ -64,7 +65,7 @@ public class AlphaStrikeElement {
     private String model;
     private int mulId = -1;
     private int pointValue;
-    private CalculationReport conversionReport = new DummyCalculationReport();
+    private transient CalculationReport conversionReport = new DummyCalculationReport();
 
     private ASUnitType asUnitType;
     private int size;
@@ -136,9 +137,9 @@ public class AlphaStrikeElement {
     private Quirks quirks = new Quirks();
 
     // The following are used during conversion from TW to AS
-    public ASConverter.WeaponLocation[] weaponLocations;
-    public String[] locationNames;
-    public int[] heat;
+    public transient ASConverter.WeaponLocation[] weaponLocations;
+    public transient String[] locationNames;
+    public transient int[] heat;
 
     /** @return The AS element's chassis, such as "Atlas". */
     public String getChassis() {
@@ -685,6 +686,21 @@ public class AlphaStrikeElement {
     public boolean isAerospaceSV() {
         return isType(SV) && (hasMovementMode("a") || hasMovementMode("k")
                 || hasMovementMode("i") || hasMovementMode("p"));
+    }
+
+    /** @return True if this AS element is a support vehicle of any kind (SV). */
+    public boolean isSupportVehicle() {
+        return isType(SV);
+    }
+
+    /** @return True if this AS element is a combat vehicle or ground support vehicle (CV, ground SV incl. VTOL). */
+    public boolean isVehicle() {
+        return isGround() && (isCombatVehicle() || isSupportVehicle());
+    }
+
+    /** @return True if this AS element is a combat vehicle (CV, not support vehicle). */
+    public boolean isCombatVehicle() {
+        return isType(CV);
     }
 
     /** @return This AS element's MUL ID if it has one, -1 otherwise. */

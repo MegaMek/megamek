@@ -14,6 +14,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -59,5 +60,10 @@ public class ISAMS extends AmmoWeapon {
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return 0;
     }
 }

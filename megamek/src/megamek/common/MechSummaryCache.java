@@ -15,6 +15,8 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -499,6 +501,26 @@ public class MechSummaryCache {
             }
         } else {
             ms.setMyomerName("None");
+        }
+
+        if (!(e instanceof Aero) && ASConverter.canConvert(e)) {
+            AlphaStrikeElement element = ASConverter.convertForMechCache(e);
+            ms.setAsUnitType(element.getType());
+            ms.setSize(element.getSize());
+            ms.setTmm(element.getTMM());
+            ms.setMovement(element.getMovement());
+            ms.setPrimaryMovementMode(element.getPrimaryMovementType());
+            ms.setStandardDamage(element.getStandardDamage());
+            ms.setOverheat(element.getOverheat());
+//            ms.setFrontArc(element.getFrontArc());
+//            ms.setLeftArc(element.getLeftArc());
+//            ms.setRightArc(element.getRightArc());
+//            ms.setRearArc(element.getRearArc());
+            ms.setThreshold(element.getThreshold());
+            ms.setFullArmor(element.getFullArmor());
+            ms.setFullStructure(element.getFullStructure());
+            ms.setSquadSize(element.getSquadSize());
+            ms.setSpecialAbilities(element.getSpecialAbilities());
         }
 
         return ms;

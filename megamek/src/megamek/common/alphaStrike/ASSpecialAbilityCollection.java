@@ -20,8 +20,7 @@
  */
 package megamek.common.alphaStrike;
 
-import megamek.common.annotations.Nullable;
-
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -34,7 +33,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * ability block per arc. Units with turret(s) have one or more such blocks as part of the ASArcSummaries
  * representing the turret(s).
  */
-public class ASSpecialAbilityCollection {
+public class ASSpecialAbilityCollection implements Serializable {
 
     public static final String INCH = "\"";
 
@@ -58,9 +57,8 @@ public class ASSpecialAbilityCollection {
     /** The AlphaStrike element this collection is part of. Used to format string output. */
     private final AlphaStrikeElement element;
 
-    /** Construct a new special ability collection for the given AlphaStrike element. */
     public ASSpecialAbilityCollection(AlphaStrikeElement element) {
-        this.element = Objects.requireNonNull(element);
+        this.element = element;
     }
 
     public boolean isEmpty() {
@@ -90,7 +88,7 @@ public class ASSpecialAbilityCollection {
     public String getSpecialsString(String delimiter) {
         return specialAbilities.keySet().stream()
                 .filter(element::showSpecial)
-                .map(spa -> formatSPAString(spa, getSPA(spa)))
+                .map(this::formatSUAString)
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(delimiter));
     }
@@ -104,29 +102,29 @@ public class ASSpecialAbilityCollection {
     }
 
     /**
-     * Creates the formatted SPA string for the given spa and SPA value (the object assigned
-     * to the SPA such as an ASDamageVector). For turrets this includes everything in that
+     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that
      * turret.
      *
-     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-".
+     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
      */
-    public String formatSPAString(BattleForceSUA spa, @Nullable Object spaObject) {
-        if (spa == TUR) {
+    public String formatSUAString(BattleForceSUA sua) {
+        Object spaObject = getSPA(sua);
+        if (sua == TUR) {
             return "TUR(" + spaObject + ")";
-        } else if (spa == BIM || spa == LAM) {
-            return lamString(spa, spaObject);
-        } else if ((spa == C3BSS) || (spa == C3M) || (spa == C3BSM) || (spa == C3EM)
-                || (spa == INARC) || (spa == CNARC) || (spa == SNARC)) {
-            return spa.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
-        } else if (spa.isTransport()) {
-            String result = spa + spaObject.toString();
+        } else if (sua == BIM || sua == LAM) {
+            return lamString(sua, spaObject);
+        } else if ((sua == C3BSS) || (sua == C3M) || (sua == C3BSM) || (sua == C3EM)
+                || (sua == INARC) || (sua == CNARC) || (sua == SNARC)) {
+            return sua.toString() + ((int) spaObject == 1 ? "" : (int) spaObject);
+        } else if (sua.isTransport()) {
+            String result = sua + spaObject.toString();
             if (element.isLargeAerospace()
-                    && element.hasSUA(spa.getDoor()) && ((int) element.getSUA(spa.getDoor()) > 0)) {
-                result += spa.getDoor().toString() + element.getSUA(spa.getDoor());
+                    && hasSPA(sua.getDoor()) && ((int) getSPA(sua.getDoor()) > 0)) {
+                result += sua.getDoor().toString() + getSPA(sua.getDoor());
             }
             return result;
         } else {
-            return spa.toString() + (spaObject != null ? spaObject : "");
+            return sua.toString() + (spaObject != null ? spaObject : "");
         }
     }
 
@@ -153,14 +151,14 @@ public class ASSpecialAbilityCollection {
      * that SPA is already present, the given number is added to the one already present. If the present
      * number is a Double type value, that type is preserved.
      */
-    public void addSPA(BattleForceSUA spa, int number) {
+    public void addSPA(BattleForceSUA spa, int intAbilityValue) {
         if (!specialAbilities.containsKey(spa)) {
-            specialAbilities.put(spa, number);
+            specialAbilities.put(spa, intAbilityValue);
         } else {
             if (specialAbilities.get(spa) instanceof Integer) {
-                specialAbilities.put(spa, (int) specialAbilities.get(spa) + number);
+                specialAbilities.put(spa, (int) specialAbilities.get(spa) + intAbilityValue);
             } else if (specialAbilities.get(spa) instanceof Double) {
-                specialAbilities.put(spa, (double) specialAbilities.get(spa) + number);
+                specialAbilities.put(spa, (double) specialAbilities.get(spa) + intAbilityValue);
             }
         }
     }
@@ -170,14 +168,14 @@ public class ASSpecialAbilityCollection {
      * as MHQ2. If that SPA is already present, the given number is added to the one already present.
      * if the previosly present number was an integer, it will be converted to a Double type value.
      */
-    public void addSPA(BattleForceSUA spa, double number) {
+    public void addSPA(BattleForceSUA spa, double doubleValue) {
         if (!specialAbilities.containsKey(spa)) {
-            specialAbilities.put(spa, number);
+            specialAbilities.put(spa, doubleValue);
         } else {
             if (specialAbilities.get(spa) instanceof Integer) {
-                specialAbilities.put(spa, (int) specialAbilities.get(spa) + number);
+                specialAbilities.put(spa, (int) specialAbilities.get(spa) + doubleValue);
             } else if (specialAbilities.get(spa) instanceof Double) {
-                specialAbilities.put(spa, (double) specialAbilities.get(spa) + number);
+                specialAbilities.put(spa, (double) specialAbilities.get(spa) + doubleValue);
             }
         }
     }

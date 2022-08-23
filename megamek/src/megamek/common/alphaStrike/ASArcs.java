@@ -24,8 +24,6 @@ public enum ASArcs {
     @Override
     public String toString() {
         switch (this) {
-            case FRONT:
-                return "Front Arc";
             case LEFT:
                 return "Left Arc";
             case RIGHT:
@@ -33,7 +31,20 @@ public enum ASArcs {
             case REAR:
                 return "Rear Arc";
             default:
-                return "Unknown Arc";
+                return "Front Arc";
+        }
+    }
+
+    public int toInt() {
+        switch (this) {
+            case LEFT:
+                return 1;
+            case RIGHT:
+                return 2;
+            case REAR:
+                return 3;
+            default:
+                return 0;
         }
     }
 }

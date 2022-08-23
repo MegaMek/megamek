@@ -18,6 +18,8 @@
  */
 package megamek.common.alphaStrike;
 
+import java.io.Serializable;
+
 /**
  * This class holds the AlphaStrike information for one arc of a multi-arc unit such as a
  * Dropship or Warship as well as for a turret of a ground unit.
@@ -28,7 +30,7 @@ package megamek.common.alphaStrike;
  * 
  * @author Simon (Juliez)
  */
-public class ASArcSummary {
+public class ASArcSummary implements Serializable {
 
     /** When true, this doesn't use the CAP, SCAP and MSL damages. */
     private final boolean isTurret;

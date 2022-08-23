@@ -40,14 +40,23 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter2 {
     }
 
     @Override
+    protected void processDamage() {
+        processSDamage();
+        processMDamage();
+        processLDamage();
+        processHT();
+        processFrontSpecialDamage(IF);
+    }
+
+    @Override
     protected double determineDamage(Mounted weapon, int range) {
         if (weapon.isAPMMounted()) {
+            double apDamage = AP_MOUNT_DAMAGE;
             //TODO: What does the "plus 1" mean in "Battle armor units apply the damage value for Anti-Personnel
             // weapon once per AP weapon mount on the suit itself, plus 1 if the suit has
             // at least 1 armored glove manipulator."
-            //TODO: To what range are AP mounted weapons effective?
-            double apDamage = AP_MOUNT_DAMAGE;
             apDamage += (entity.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) ? AP_MOUNT_DAMAGE : 0;
+            //TODO: To what range are AP mounted weapons effective?
             return range == 0 ? apDamage : 0;
         } else {
             return super.determineDamage(weapon, range);
@@ -55,9 +64,8 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter2 {
     }
 
     protected void processSDamage() {
-        report.addEmptyLine();
         report.addLine("--- Short Range Damage:", "");
-        double sDamage = calculateFrontDamage(weaponsList, SHORT_RANGE);
+        double sDamage = assembleFrontDamage(SHORT_RANGE);
 
         if (sDamage > 0) {
             report.addLine("Troop Factor", formatForReport(sDamage) + " x " + formatForReport(troopFactor),
@@ -83,7 +91,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter2 {
     protected void processMDamage() {
         report.addEmptyLine();
         report.addLine("--- Medium Range Damage:", "");
-        double mDamage = calculateFrontDamage(weaponsList, MEDIUM_RANGE);
+        double mDamage = assembleFrontDamage(MEDIUM_RANGE);
         if (mDamage > 0) {
             report.addLine("Troop Factor", formatForReport(mDamage) + " x " + formatForReport(troopFactor),
                     "= " + formatForReport(mDamage * troopFactor));
@@ -99,7 +107,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter2 {
     protected void processLDamage() {
         report.addEmptyLine();
         report.addLine("--- Long Range Damage:", "");
-        double lDamage = calculateFrontDamage(weaponsList, LONG_RANGE);
+        double lDamage = assembleFrontDamage(LONG_RANGE);
         if (lDamage > 0) {
             report.addLine("Troop Factor", formatForReport(lDamage) + " x " + formatForReport(troopFactor),
                     "= " + formatForReport(lDamage * troopFactor));
@@ -143,7 +151,9 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter2 {
     protected void processSpecialAbilities() {
         super.processSpecialAbilities();
         if (bombRacks > 0) {
-            element.getSpecialAbilities().addSPA(BOMB, (bombRacks * ((BattleArmor) entity).getShootingStrength()) / 5);
+            int bombValue = bombRacks * ((BattleArmor) entity).getShootingStrength() / 5;
+            element.getSpecialAbilities().addSPA(BOMB, bombValue);
+            report.addLine("BA bomb racks", "", "BOMB" + bombValue);
         }
     }
 }

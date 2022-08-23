@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
@@ -37,46 +38,59 @@ import java.util.*;
  */
 public final class ASConverter {
 
-        public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
-        return convert(entity, true, conversionReport);
+    public static AlphaStrikeElement convertForMechCache(Entity entity) {
+        return performConversion(entity, false, new DummyCalculationReport());
+    }
+
+    public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
+        return standardConversion(entity, true, conversionReport);
     }
 
     public static AlphaStrikeElement convert(Entity entity) {
-        return convert(entity, true, new DummyCalculationReport());
+        return standardConversion(entity, true, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot) {
-        return convert(entity, includePilot, new DummyCalculationReport());
+        return standardConversion(entity, includePilot, new DummyCalculationReport());
     }
 
     public static AlphaStrikeElement convert(Entity entity, boolean includePilot, CalculationReport conversionReport) {
-        Objects.requireNonNull(entity);
-        if (!canConvert(entity)) {
-            LogManager.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
-            return null; 
-        }
+        return standardConversion(entity, includePilot, conversionReport);
+    }
+
+    private static AlphaStrikeElement standardConversion(Entity entity, boolean includePilot,
+                                                             CalculationReport conversionReport) {
         Entity undamagedEntity = getUndamagedEntity(entity);
         if (undamagedEntity == null) {
             LogManager.getLogger().error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
         }
+        return performConversion(entity, includePilot, conversionReport);
+    }
+
+    private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot, CalculationReport conversionReport) {
+        Objects.requireNonNull(entity);
+        if (!canConvert(entity)) {
+            LogManager.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
+            return null; 
+        }
 
         var element = new AlphaStrikeElement();
-        final ConversionData conversionData = new ConversionData(undamagedEntity, element, conversionReport);
+        final ConversionData conversionData = new ConversionData(entity, element, conversionReport);
 
         // Basic info
-        element.setName(undamagedEntity.getShortName());
-        element.setQuirks(undamagedEntity.getQuirks());
-        element.setModel(undamagedEntity.getModel());
-        element.setChassis(undamagedEntity.getChassis());
-        element.setMulId(undamagedEntity.getMulId());
-        element.setRole(UnitRoleHandler.getRoleFor(undamagedEntity));
+        element.setName(entity.getShortName());
+        element.setQuirks(entity.getQuirks());
+        element.setModel(entity.getModel());
+        element.setChassis(entity.getChassis());
+        element.setMulId(entity.getMulId());
+        element.setRole(UnitRoleHandler.getRoleFor(entity));
 
-        if (undamagedEntity.getShortName().length() < 15) {
-            conversionReport.addHeader("AlphaStrike Conversion for " + undamagedEntity.getShortName());
+        if (entity.getShortName().length() < 15) {
+            conversionReport.addHeader("AlphaStrike Conversion for " + entity.getShortName());
         } else {
             conversionReport.addHeader("AlphaStrike Conversion for");
-            conversionReport.addHeader(undamagedEntity.getShortName());
+            conversionReport.addHeader(entity.getShortName());
         }
         conversionReport.addEmptyLine();
 
@@ -87,14 +101,14 @@ public final class ASConverter {
         conversionReport.addLine("Unit Role:", element.getRole().toString(), "");
 
         // Type
-        element.setType(ASUnitType.getUnitType(undamagedEntity));
-        String unitType = Entity.getEntityTypeName(undamagedEntity.getEntityType());
-        if ((undamagedEntity instanceof Mech) && ((Mech) undamagedEntity).isIndustrial()) {
+        element.setType(ASUnitType.getUnitType(entity));
+        String unitType = Entity.getEntityTypeName(entity.getEntityType());
+        if ((entity instanceof Mech) && ((Mech) entity).isIndustrial()) {
             unitType += " / Industrial";
         }
         conversionReport.addLine("Unit Type:", unitType, element.getType().toString());
-        if (undamagedEntity instanceof BattleArmor) {
-            element.setSquadSize(((BattleArmor) undamagedEntity).getSquadSize());
+        if (entity instanceof BattleArmor) {
+            element.setSquadSize(((BattleArmor) entity).getSquadSize());
         }
 
         // Size
@@ -102,7 +116,7 @@ public final class ASConverter {
 
         // Skill
         if (includePilot) {
-            if ((undamagedEntity instanceof Infantry) && element.isConventionalInfantry()) {
+            if ((entity instanceof Infantry) && element.isConventionalInfantry()) {
                 // CI only use their Gunnery skill, as there is no piloting (only Anti-Mek at a base of 8)
                 element.setSkill(entity.getCrew().getGunnery());
             } else {
@@ -120,15 +134,17 @@ public final class ASConverter {
         element.setFullArmor(ASArmStrConverter.convertArmor(conversionData));
         element.setFullStructure(ASArmStrConverter.convertStructure(conversionData));
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
-        ASSpecialAbilityConverter.convertSpecialUnitAbilities(conversionData);
-        initWeaponLocations(undamagedEntity, element);
+        initWeaponLocations(entity, element);
         element.heat = new int[element.getRangeBands()];
         ASDamageConverter.convertDamage(conversionData);
 
         var dc = ASDamageConverter2.getASDamageConverter(entity, element, conversionReport);
-        dc.convertDamage2();
+        dc.convert();
 
-        ASSpecialAbilityConverter.finalizeSpecials(element);
+//        ASSpecialAbilityConverter.convertSpecialUnitAbilities(conversionData);
+//        ASSpecialAbilityConverter.finalizeSpecials(element);
+
+        ASSpecialAbilityConverter2.getConverter(entity, element, conversionReport).processAbilities();
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
         element.setPointValue(pvConverter.getSkillAdjustedPointValue());
         element.setConversionReport(conversionReport);
@@ -151,8 +167,9 @@ public final class ASConverter {
     /**
      * Returns true if the given entity can be converted to AlphaStrike. This is only
      * false for entities of some special types such as TeleMissile or GunEmplacement.
+     * Also returns false if entity is null.
      */
-    public static boolean canConvert(Entity entity) {
+    public static boolean canConvert(@Nullable Entity entity) {
         return !(entity == null) && !((entity instanceof TeleMissile) || (entity instanceof FighterSquadron)
                 || (entity instanceof EscapePods) || (entity instanceof EjectedCrew)
                 || (entity instanceof ArmlessMech) || (entity instanceof GunEmplacement));

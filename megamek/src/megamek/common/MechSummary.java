@@ -14,12 +14,16 @@
  */
 package megamek.common;
 
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.alphaStrike.ASArcSummary;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASUnitType;
+
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * The MechSummary of a unit offers compiled information about the unit without having to load the file.
@@ -90,6 +94,27 @@ public class MechSummary implements Serializable {
 
     /** The number of times the piece of equipment in the corresponding equipmentNames list appears. */
     private Vector<Integer> equipmentQuantities;
+
+    // AlphaStrike values
+    private int pointValue = 0;
+    private ASUnitType asUnitType = ASUnitType.UNKNOWN;
+    private int size = 0;
+    private int tmm = 0;
+    private Map<String,Integer> movement = new LinkedHashMap<>();
+    private String primaryMovementMode = "";
+    private ASDamageVector standardDamage = ASDamageVector.ZERO;
+    private int overheat = 0;
+//    private ASArcSummary frontArc;
+//    private ASArcSummary leftArc;
+//    private ASArcSummary rightArc;
+//    private ASArcSummary rearArc;
+    private int threshold = 0;
+    private int fullArmor;
+    private int fullStructure;
+    private int squadSize;
+    private ASSpecialAbilityCollection specialAbilities;
+
+
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();
@@ -531,6 +556,70 @@ public class MechSummary implements Serializable {
 
     public void setSuitWeight(double suitWeight) {
         this.suitWeight = suitWeight;
+    }
+
+    public void setAsUnitType(ASUnitType asUnitType) {
+        this.asUnitType = asUnitType;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setTmm(int tmm) {
+        this.tmm = tmm;
+    }
+
+    public void setMovement(Map<String, Integer> movement) {
+        this.movement = movement;
+    }
+
+    public void setPrimaryMovementMode(String primaryMovementMode) {
+        this.primaryMovementMode = primaryMovementMode;
+    }
+
+    public void setStandardDamage(ASDamageVector standardDamage) {
+        this.standardDamage = standardDamage;
+    }
+
+    public void setOverheat(int overheat) {
+        this.overheat = overheat;
+    }
+
+//    public void setFrontArc(ASArcSummary frontArc) {
+//        this.frontArc = frontArc;
+//    }
+//
+//    public void setLeftArc(ASArcSummary leftArc) {
+//        this.leftArc = leftArc;
+//    }
+//
+//    public void setRightArc(ASArcSummary rightArc) {
+//        this.rightArc = rightArc;
+//    }
+//
+//    public void setRearArc(ASArcSummary rearArc) {
+//        this.rearArc = rearArc;
+//    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public void setFullArmor(int fullArmor) {
+        this.fullArmor = fullArmor;
+    }
+
+    public void setFullStructure(int fullStructure) {
+        this.fullStructure = fullStructure;
+    }
+
+    public void setSquadSize(int squadSize) {
+        this.squadSize = squadSize;
+    }
+
+    public void setSpecialAbilities(ASSpecialAbilityCollection specialAbilities) {
+        this.specialAbilities = specialAbilities;
     }
 
     @Override

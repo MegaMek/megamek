@@ -201,7 +201,7 @@ public class ASPointValueConverter {
         processOffensiveSUAMod(BT, e -> 0.5 * getHighestMove(element) * element.getSize());
     }
 
-    /** Returns the Artillery part of the Ground Offensive SPA modifier, ASC p.139. */
+    /** Returns the Artillery part of the Ground Offensive SUA modifier, ASC p.139. */
     protected void processArtyOffensiveSUAMods() {
         processOffensiveSUAMod(ARTAIS, e -> 12.0 * (int) e.getSUA(ARTAIS));
         processOffensiveSUAMod(ARTAC, e -> 12.0 * (int) e.getSUA(ARTAC));
@@ -219,34 +219,34 @@ public class ASPointValueConverter {
     }
 
     /**
-     * A helper method for SPA modifiers of various types. Returns the modifier (or 0)
+     * A helper method for SUA modifiers of various types. Returns the modifier (or 0)
      * and adds a line to the report.
      *
-     * @param spa The SPA to be checked
-     * @param spaMod A Function object that returns the modifier for the element and SPA. This is
+     * @param sua The SUA to be checked
+     * @param suaMod A Function object that returns the modifier for the element and SUA. This is
      */
-    protected void processOffensiveSUAMod(BattleForceSUA spa, Function<AlphaStrikeElement, Double> spaMod) {
-        if (element.hasSUA(spa)) {
-            double modifier = spaMod.apply(element);
-            String spaString = element.getSpecialAbilities().formatSPAString(spa, element.getSUA(spa));
+    protected void processOffensiveSUAMod(BattleForceSUA sua, Function<AlphaStrikeElement, Double> suaMod) {
+        if (element.hasSUA(sua)) {
+            double modifier = suaMod.apply(element);
+            String suaString = element.getSpecialAbilities().formatSUAString(sua);
             offensiveValue += modifier;
-            report.addLine("Offensive SUA", "+ " + formatForReport(modifier) + " (" + spaString + ")", "= " + formatForReport(offensiveValue));
+            report.addLine("Offensive SUA", "+ " + formatForReport(modifier) + " (" + suaString + ")", "= " + formatForReport(offensiveValue));
         }
     }
 
     /**
-     * A helper method for SPA modifiers of various types. Returns the modifier (or 0)
+     * A helper method for SUA modifiers of various types. Returns the modifier (or 0)
      * and adds a line to the report.
      *
-     * @param spa The SPA to be checked
-     * @param spaMod A Function object that returns the modifier for the element and SPA. This is
+     * @param sua The SUA to be checked
+     * @param suaMod A Function object that returns the modifier for the element and SUA. This is
      */
-    protected void processDefensiveSUAMod(BattleForceSUA spa, Function<AlphaStrikeElement, Double> spaMod) {
-        if (element.hasSUA(spa)) {
-            double modifier = spaMod.apply(element);
-            String spaString = element.getSpecialAbilities().formatSPAString(spa, element.getSUA(spa));
+    protected void processDefensiveSUAMod(BattleForceSUA sua, Function<AlphaStrikeElement, Double> suaMod) {
+        if (element.hasSUA(sua)) {
+            double modifier = suaMod.apply(element);
+            String suaString = element.getSpecialAbilities().formatSUAString(sua);
             defensiveValue += modifier;
-            report.addLine("Defensive SUA", "+ " + formatForReport(modifier) + " (" + spaString + ")", "= " + formatForReport(defensiveValue));
+            report.addLine("Defensive SUA", "+ " + formatForReport(modifier) + " (" + suaString + ")", "= " + formatForReport(defensiveValue));
         }
     }
 
@@ -298,11 +298,11 @@ public class ASPointValueConverter {
         processDefensiveSUAMod(IRA, e -> barFactor * 0.5 * armorThird);
         if (element.hasSUA(CR) && (element.getFullStructure() >= 3)) {
             defensiveValue += 0.25;
-            report.addLine("Defensive SPA", "+ 0.25 (CR)", "= " + formatForReport(defensiveValue));
+            report.addLine("Defensive SUA", "+ 0.25 (CR)", "= " + formatForReport(defensiveValue));
         }
         if (element.hasSUA(ARM) && (element.getFullStructure() > 1)) {
             defensiveValue += 0.5;
-            report.addLine("Defensive SPA", "+ 0.5 (ARM)", "= " + formatForReport(defensiveValue));
+            report.addLine("Defensive SUA", "+ 0.5 (ARM)", "= " + formatForReport(defensiveValue));
         }
     }
 
@@ -476,50 +476,54 @@ public class ASPointValueConverter {
 
     /** Adds the force bonus to the current subTotal and returns the new subTotal. */
     protected void processForceBonus() {
-        String calculation = "";
+        List<String> modifierList = new ArrayList<>();
+        double bonus = 0;
         if (element.hasSUA(AECM)) {
-            subTotal += 3;
-            calculation += "+ 3 (AECM) ";
+            bonus += 3;
+            modifierList.add("AECM");
         }
         if (element.hasSUA(BH)) {
-            subTotal += 2;
-            calculation += "+ 2 (BH) ";
+            bonus += 2;
+            modifierList.add("BH");
         }
         if (element.hasSUA(C3RS)) {
-            subTotal += 2;
-            calculation += "+ 2 (C3RS) ";
+            bonus += 2;
+            modifierList.add("C3RS");
         }
         if (element.hasSUA(ECM)) {
-            subTotal += 2;
-            calculation += "+ 2 (ECM) ";
+            bonus += 2;
+            modifierList.add("ECM");
         }
         if (element.hasSUA(RCN)) {
-            subTotal += 2;
-            calculation += "+ 2 (RCN) ";
+            bonus += 2;
+            modifierList.add("RCN");
         }
         if (element.hasSUA(TRN)) {
-            subTotal += 2;
-            calculation += "+ 2 (TRN) ";
+            bonus += 2;
+            modifierList.add("TRN");
         }
         if (element.hasSUA(LPRB)) {
-            subTotal += 1;
-            calculation += "+ 1 (LPRB) ";
+            bonus += 1;
+            modifierList.add("LPRB");
         }
         if (element.hasSUA(PRB)) {
-            subTotal += 1;
-            calculation += "+ 1 (PRB) ";
+            bonus += 1;
+            modifierList.add("PRB");
         }
         if (element.hasSUA(LECM)) {
-            subTotal += 0.5;
-            calculation += "+ 0.5 (LECM) ";
+            bonus += 0.5;
+            modifierList.add("LECM");
         }
         if (element.hasSUA(MHQ)) {
             int mhqValue = (int) element.getSUA(MHQ);
-            subTotal += mhqValue;
-            calculation += "+ " + mhqValue + " (MHQ) ";
+            bonus += mhqValue;
+            modifierList.add("MHQ");
         }
-        if (!calculation.isBlank()) {
-            report.addLine("Force Bonus", calculation, "= " + formatForReport(subTotal));
+        if (!modifierList.isEmpty()) {
+            String modifiers = " (" + String.join(", ", modifierList) + ")";
+            subTotal += bonus;
+            report.addLine("Force Bonus", "+ " + bonus + modifiers,
+                    "= " + formatForReport(subTotal));
         }
     }
 

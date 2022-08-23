@@ -38,6 +38,7 @@ public class ASConversionInfoDialog extends AbstractDialog {
     private final CalculationReport report;
     private final String unitName;
 
+    //TODO: Commenting
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable AlphaStrikeElement element) {
         this(frame, report, element.getName(), false);
     }

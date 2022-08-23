@@ -20,6 +20,7 @@ package megamek.client.ui.swing.alphaStrike;
 
 import megamek.MMConstants;
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
@@ -64,6 +65,7 @@ public class ConfigurableASCardPanel extends JPanel {
             fontChooser.addItem(family);
         }
         fontChooser.addActionListener(ev -> updateFont());
+        fontChooser.setSelectedItem(GUIPreferences.getInstance().getAsCardFont());
 
         sizeChooser.addItem(2f);
         sizeChooser.addItem(1.5f);
@@ -71,7 +73,7 @@ public class ConfigurableASCardPanel extends JPanel {
         sizeChooser.addItem(0.75f);
         sizeChooser.addItem(0.5f);
         sizeChooser.addItem(0.33f);
-        sizeChooser.setSelectedItem(0.75f);
+        sizeChooser.setSelectedItem(GUIPreferences.getInstance().getAsCardSize());
         sizeChooser.addActionListener(ev -> updateSize());
         sizeChooser.setRenderer((list, value, index, isSelected, cellHasFocus) -> new JLabel(Float.toString(value)));
 
@@ -131,6 +133,7 @@ public class ConfigurableASCardPanel extends JPanel {
             cardPanel.setCardFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
         } else {
             cardPanel.setCardFont(Font.decode(selectedItem));
+            GUIPreferences.getInstance().setAsCardFont(selectedItem);
         }
     }
 
@@ -138,6 +141,7 @@ public class ConfigurableASCardPanel extends JPanel {
     private void updateSize() {
         if (sizeChooser.getSelectedItem() != null) {
             cardPanel.setScale((Float) sizeChooser.getSelectedItem());
+            GUIPreferences.getInstance().setAsCardSize((Float) sizeChooser.getSelectedItem());
         }
     }
 
@@ -153,7 +157,9 @@ public class ConfigurableASCardPanel extends JPanel {
     }
 
     private void showConversionReport() {
-        new ASConversionInfoDialog(parent, element.getConversionReport(), element).setVisible(true);
+        var dialog = new ASConversionInfoDialog(parent, element.getConversionReport(), element);
+        dialog.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        dialog.setVisible(true);
     }
 
     // Taken from https://alvinalexander.com/java/java-copy-image-to-clipboard-example/

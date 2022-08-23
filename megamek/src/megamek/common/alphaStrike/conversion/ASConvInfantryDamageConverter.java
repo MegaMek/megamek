@@ -19,20 +19,21 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.Infantry;
+import megamek.common.Mounted;
+import megamek.common.WeaponType;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.InfantryAttack;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.alphaStrike.BattleForceSUA.AM;
-import static megamek.common.alphaStrike.BattleForceSUA.HT;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public class ASConvInfantryDamageConverter extends ASDamageConverter2 {
 
     private final Infantry infantry;
-    private boolean hasHT = false;
 
     protected ASConvInfantryDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
@@ -62,6 +63,8 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter2 {
         }
         report.addLine("Final Damage", "", finalSDamage + "");
         report.addLine("Range:", range + " hexes", maxRangeText);
+
+        processHT();
     }
 
     private double getConvInfantryStandardDamage() {
@@ -78,22 +81,33 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter2 {
     protected void assignSpecialAbilities(Mounted weapon, WeaponType weaponType) {
         super.assignSpecialAbilities(weapon, weaponType);
 
-        if (weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA)) {
-            hasHT = true;
-        }
-
         if (weaponType instanceof InfantryAttack) {
             assignToLocations(weapon, AM);
         }
     }
 
     @Override
-    protected void finalizeSpecialAbilities() {
-        super.finalizeSpecialAbilities();
-        if (hasHT && finalSDamage.hasDamage()) {
-            // TODO: Rules don't say what to do about damage 0*?
-            element.getSpecialAbilities().addSPA(HT,
-                    ASDamageVector.create(Math.min(2, finalSDamage.damage), 0, 0, 0, 3));
+    protected void processHT() {
+        report.startTentativeSection();
+        report.addEmptyLine();
+        report.addLine("--- Heat Damage (HT):", "");
+        for (Mounted weapon : weaponsList) {
+            WeaponType weaponType = (WeaponType) weapon.getType();
+            if ((weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA))
+                    && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
+                //TODO: Rules are unclear how to deal with an S damage value of 0*
+                if (finalSDamage.damage < 1) {
+                    report.addLine("No S damage", "No HT", "");
+                } else {
+                    report.addLine(weapon.getName(), "(has heat damage)", "");
+                    ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0, 0);
+                    element.getSpecialAbilities().addSPA(HT, finalHtValue);
+                    report.addLine("Final Ability", "", "HT" + finalHtValue);
+                }
+                report.endTentativeSection();
+                return;
+            }
         }
+        report.discardTentativeSection();
     }
 }

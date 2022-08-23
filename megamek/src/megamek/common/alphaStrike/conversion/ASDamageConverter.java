@@ -51,8 +51,8 @@ public final class ASDamageConverter {
         Entity entity = conversionData.entity;
         AlphaStrikeElement element = conversionData.element;
         CalculationReport report = conversionData.conversionReport;
-        report.addEmptyLine();
-        report.addSubHeader("Damage:");
+        //report.addEmptyLine();
+        //report.addSubHeader("Damage:");
 
         double[] baseDamage = new double[element.getRangeBands()];
         boolean hasTC = entity.hasTargComp();
@@ -355,8 +355,8 @@ public final class ASDamageConverter {
                 for (int r = 0; r < element.getRangeBands(); r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
                     if (dam > 0) {
-                        report.addLine(element.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": ",
-                                " Mul: " + damageModifier, "", dam);
+                        //report.addLine(element.locationNames[loc] + ": " + mount.getName() + " " + "SMLE".charAt(r) + ": ",
+//                                " Mul: " + damageModifier, "", dam);
                     }
                     if (!weapon.isCapital() && weapon.getBattleForceClass() != WeaponType.BFCLASS_TORP) {
                         // Standard Damage
@@ -645,12 +645,12 @@ public final class ASDamageConverter {
         }
         int totalFrontHeat = getHeatGeneration(entity, element, false, false);
         int heatCapacity = getHeatCapacity(entity, element);
-        report.addEmptyLine();
-        report.addSubHeader("Heat Adjustment:");
-        report.addLine("Heat Capacity: ", "", heatCapacity);
-        report.addLine("Total Heat M: ", "", totalFrontHeat);
+        //report.addEmptyLine();
+        //report.addSubHeader("Heat Adjustment:");
+        //report.addLine("Heat Capacity: ", "", heatCapacity);
+        //report.addLine("Total Heat M: ", "", totalFrontHeat);
         if (totalFrontHeat - 4 <= heatCapacity) {
-            report.addLine("", "No adjustment needed", "");
+            //report.addLine("", "No adjustment needed", "");
             return;
         }
 
@@ -662,21 +662,21 @@ public final class ASDamageConverter {
         double nonRounded = element.weaponLocations[0].standardDamage.get(RANGE_BAND_MEDIUM);
         element.setOverheat(Math.min(heatDelta(nonRounded, heatCapacity, totalFrontHeat), 4));
 
-        report.addLine("Total Raw Dmg M: ", "", formatForReport(nonRounded));
-        report.addLine("Total Adjusted Dmg M: ",
-                formatForReport(nonRounded) + " x " + heatCapacity + " / (" + totalFrontHeat + " - 4)",
-                formatForReport(nonRounded * heatCapacity / (totalFrontHeat - 4)));
-        report.addLine("Resulting Overheat", "OV " + element.getOverheat());
+        //report.addLine("Total Raw Dmg M: ", "", formatForReport(nonRounded));
+        //report.addLine("Total Adjusted Dmg M: ",
+//                formatForReport(nonRounded) + " x " + heatCapacity + " / (" + totalFrontHeat + " - 4)",
+//                formatForReport(nonRounded * heatCapacity / (totalFrontHeat - 4)));
+        //report.addLine("Resulting Overheat", "OV " + element.getOverheat());
 
         // Determine OVL from long range damage and heat
         if (element.getOverheat() > 0 && element.usesOV()) {
             double heatLong = getHeatGeneration(entity, element, false, true);
-            report.addLine("Total Heat L:", "", heatLong);
+            //report.addLine("Total Heat L:", "", heatLong);
             if (heatLong - 4 > heatCapacity) {
                 double nonRoundedL = element.weaponLocations[0].standardDamage.get(RANGE_BAND_LONG);
-                report.addLine("Total Damage L before Adjustment: ", "", nonRoundedL);
+                //report.addLine("Total Damage L before Adjustment: ", "", nonRoundedL);
                 if (heatDelta(nonRoundedL, heatCapacity, heatLong) >= 1) {
-                    report.addLine("Resulting SPA", "OVL", "");
+                    //report.addLine("Resulting SPA", "OVL", "");
                     element.addSPA(OVL);
                 }
             }

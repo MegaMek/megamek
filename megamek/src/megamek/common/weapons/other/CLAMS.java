@@ -14,6 +14,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.AmmoWeapon;
 
@@ -58,5 +59,10 @@ public class CLAMS extends AmmoWeapon {
 		        .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
 		        .setProductionFactions(F_CSA).setStaticTechLevel(SimpleTechLevel.STANDARD);
+	}
+
+	@Override
+	public double getBattleForceDamage(int range, Mounted fcs) {
+		return 0;
 	}
 }

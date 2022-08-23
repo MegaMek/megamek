@@ -32,10 +32,6 @@ public class TextCalculationReport implements CalculationReport {
 
     private final static int LINE_START_SPACER = 3;
 
-    private enum LineType {
-        LINE, HEADER, SUBHEADER, RESULT_LINE
-    }
-
     private static class ReportLine {
 
         ReportLine(String c1, String c2, String c3, LineType lt) {
@@ -77,27 +73,55 @@ public class TextCalculationReport implements CalculationReport {
      */
     private final List<ReportLine> reportLines = new ArrayList<>();
 
+    /** Tentative Section lines are kept in their own list. */
+    private final List<ReportLine> tentativeLines = new ArrayList<>();
+
+    private boolean tentativeSectionActive = false;
+
+
+    @Override
+    public void startTentativeSection() {
+        tentativeSectionActive = true;
+    }
+
+    @Override
+    public void endTentativeSection() {
+        reportLines.addAll(tentativeLines);
+        tentativeLines.clear();
+        tentativeSectionActive = false;
+    }
+
+    @Override
+    public void discardTentativeSection() {
+        tentativeLines.clear();
+        tentativeSectionActive = false;
+    }
+
+    private List<ReportLine> listToWrite() {
+        return tentativeSectionActive ? tentativeLines : reportLines;
+    }
+
     @Override
     public CalculationReport addLine(String type, String calculation, String result) {
-        reportLines.add(new ReportLine(type, calculation, result, LineType.LINE));
+        listToWrite().add(new ReportLine(type, calculation, result, LineType.LINE));
         return this;
     }
 
     @Override
     public CalculationReport addSubHeader(String text) {
-        reportLines.add(new ReportLine(text, "", "", LineType.SUBHEADER));
+        listToWrite().add(new ReportLine(text, "", "", LineType.SUBHEADER));
         return this;
     }
 
     @Override
     public CalculationReport addHeader(String text) {
-        reportLines.add(new ReportLine(text, "", "", LineType.HEADER));
+        listToWrite().add(new ReportLine(text, "", "", LineType.HEADER));
         return this;
     }
 
     @Override
     public CalculationReport addResultLine(String type, String calculation, String result) {
-        reportLines.add(new ReportLine("", "", "", LineType.RESULT_LINE));
+        listToWrite().add(new ReportLine("", "", "", LineType.RESULT_LINE));
         addLine(type, calculation, result);
         return this;
     }

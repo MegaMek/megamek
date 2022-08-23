@@ -22,6 +22,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -103,13 +104,16 @@ final class ASSpecialAbilityConverter {
                 element.getSpecialAbilities().addSPA(MHQ, 1.5);
             } else if (m.getType().hasFlag(MiscType.F_ECM)) {
                 if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
-                    report.addLine("Angel ECM", "AECM");
+//                    report.addLine(m.getType().getName(), "AECM");
+                    addReportLine(m, "AECM", report);
                     element.getSpecialAbilities().addSPA(AECM);
                 } else if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
-                    report.addLine("Single-Hex ECM", "LECM");
+                    addReportLine(m, "LECM", report);
+//                    report.addLine("Single-Hex ECM", "LECM");
                     element.getSpecialAbilities().addSPA(LECM);
                 } else {
-                    report.addLine("General ECM", "ECM");
+//                    report.addLine("General ECM", "ECM");
+                    addReportLine(m, "ECM", report);
                     element.getSpecialAbilities().addSPA(ECM);
                 }
             } else if (m.getType().hasFlag(MiscType.F_BOOBY_TRAP) && !element.isType(PM, CI, BA)) {
@@ -602,7 +606,8 @@ final class ASSpecialAbilityConverter {
         }
 
         if (entity instanceof Infantry) {
-            element.getSpecialAbilities().addSPA(CAR, (int)Math.ceil(entity.getWeight()));
+            element.getSpecialAbilities().addSPA(CAR, (int) Math.ceil(entity.getWeight()));
+            report.addLine("Infantry transport weight", "CAR" + (int) Math.ceil(entity.getWeight()));
             if (entity.getMovementMode().equals(EntityMovementMode.INF_UMU)) {
                 report.addLine("UMU Gear", "UMU");
                 element.getSpecialAbilities().addSPA(UMU);
@@ -664,7 +669,8 @@ final class ASSpecialAbilityConverter {
                     element.getSpecialAbilities().addSPA(BFC);
                 }
             } else {
-                report.addLine("BattleMek", "SOA, SRCH");
+                report.addLine("BattleMek", "(hidden)", "SOA");
+                report.addLine("BattleMek", "(hidden)", "SRCH");
                 element.getSpecialAbilities().addSPA(SOA);
                 element.getSpecialAbilities().addSPA(SRCH);
             }
@@ -879,6 +885,15 @@ final class ASSpecialAbilityConverter {
         }
 
     }
+
+    private static void addReportLine(Mounted m, String abilityText, CalculationReport report) {
+        report.addLine(m.getType().getName(), abilityText);
+    }
+
+    private static void addReportLineHidden(Mounted m, String abilityText, CalculationReport report) {
+        report.addLine(m.getType().getName(), "(hidden)", abilityText);
+    }
+
 
     // Make non-instantiable
     private ASSpecialAbilityConverter() { }

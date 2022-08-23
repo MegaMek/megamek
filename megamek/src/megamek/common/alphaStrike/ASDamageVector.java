@@ -23,6 +23,7 @@ package megamek.common.alphaStrike;
 import megamek.client.ui.SharedUtility;
 import megamek.common.annotations.Nullable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -41,7 +42,7 @@ import java.util.function.Function;
  * 
  * @author Simon (Juliez)
  */
-public class ASDamageVector {
+public class ASDamageVector implements Serializable {
 
     /**
      * A constant that represents zero damage, written as 0/0/0/0 in toString(). May be used

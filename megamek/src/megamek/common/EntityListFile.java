@@ -715,6 +715,10 @@ public class EntityListFile {
             output.write(String.valueOf(entity.getDeployRound()));
             output.write("\" deploymentZone=\"");
             output.write(String.valueOf(entity.getStartingPos(false)));
+            output.write("\" deploymentZoneWidth=\"");
+            output.write(String.valueOf(entity.getStartingWidth(false)));
+            output.write("\" deploymentZoneOffset=\"");
+            output.write(String.valueOf(entity.getStartingOffset(false)));
             output.write("\" neverDeployed=\"");
             output.write(String.valueOf(entity.wasNeverDeployed()));
             if (entity.isAero()) {

@@ -65,4 +65,9 @@ public class CLAMS extends AmmoWeapon {
 	public double getBattleForceDamage(int range, Mounted fcs) {
 		return 0;
 	}
+
+	@Override
+	public boolean isAlphaStrikePointDefense() {
+		return true;
+	}
 }

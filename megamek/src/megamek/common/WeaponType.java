@@ -806,7 +806,7 @@ public class WeaponType extends EquipmentType {
      * Returns true if this weapon type contributes to the AlphaStrike IF ability. This
      * is identical to TW indirect fire for most but not all weapons (see e.g. IATMS)
      */
-    public boolean hasAlphaStrikeIndirectFire() {
+    public boolean isAlphaStrikeIndirectFire() {
         return hasIndirectFire();
     }
 

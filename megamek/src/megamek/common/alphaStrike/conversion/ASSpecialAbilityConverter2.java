@@ -141,16 +141,14 @@ public class ASSpecialAbilityConverter2 {
         } else if (miscType.hasFlag(F_C3SBS)) {
             assign(misc, C3BSS, 1);
             assign(misc, MHQ, 2);
+        } else if (miscType.hasFlag(F_NAVAL_C3)) {
+            assign(misc, NC3);
         } else if (miscType.hasFlag(F_C3I)) {
-            if ((entity.getEntityType() & Entity.ETYPE_AERO) == Entity.ETYPE_AERO) {
-                assign(misc, NC3);
+            assign(misc, C3I);
+            if (miscType.hasFlag(F_BA_EQUIPMENT)) {
+                assign(misc, MHQ, 2);
             } else {
-                assign(misc, C3I);
-                if (miscType.hasFlag(F_BA_EQUIPMENT)) {
-                    assign(misc, MHQ, 2);
-                } else {
-                    assign(misc, MHQ, 2.5);
-                }
+                assign(misc, MHQ, 2.5);
             }
         } else if (miscType.hasFlag(F_CASE) && eligibleForCASE()) {
             assign(misc, CASE);
@@ -165,6 +163,9 @@ public class ASSpecialAbilityConverter2 {
                 || miscType.hasFlag(F_CASPAR)
                 || miscType.hasFlag(F_CASPARII)) {
             assign(misc, RBT);
+            if (miscType.hasFlag(F_CASPAR)) {
+                assign(misc, SDCS);
+            }
         } else if (miscType.hasFlag(F_DRONE_CARRIER_CONTROL)) {
             assign(misc, DCC, (int) misc.getSize());
         } else if (miscType.hasFlag(F_REMOTE_DRONE_COMMAND_CONSOLE)) {
@@ -411,10 +412,6 @@ public class ASSpecialAbilityConverter2 {
     }
 
     protected void processTransports() {
-        //TODO: Eagre Firefighting ATV - CT0
-        //TODO: Sarissa MN2A should have Advanced Fire Control (in TW) - Data Error
-        //TODO: LG, SLG, VLG for support vehicles
-        //TODO: Gulltoppr omni: too much armor for card
         for (Transporter t : entity.getTransports()) {
             if (t instanceof ASFBay) {
                 assign("Fighter Bay", AT, (int) ((ASFBay) t).getCapacity());

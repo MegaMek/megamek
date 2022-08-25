@@ -72,7 +72,7 @@ public abstract class LRTWeapon extends MissileWeapon {
     }
     
     @Override
-    public boolean hasAlphaStrikeIndirectFire() {
+    public boolean isAlphaStrikeIndirectFire() {
         return false;
     }
 

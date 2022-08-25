@@ -84,7 +84,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     }
     
     @Override
-    public boolean hasAlphaStrikeIndirectFire() {
+    public boolean isAlphaStrikeIndirectFire() {
         return false;
     }
 

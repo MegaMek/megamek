@@ -22,7 +22,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -867,20 +866,20 @@ final class ASSpecialAbilityConverter {
         }
 
         // Round up fractional PNT values in arcs
-        if (element.getFrontArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getFrontArc().getSPA(PNT);
+        if (element.getFrontArc().hasSUA(PNT)) {
+            double pntValue = (double) element.getFrontArc().getSUA(PNT);
             element.getFrontArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
         }
-        if (element.getLeftArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getLeftArc().getSPA(PNT);
+        if (element.getLeftArc().hasSUA(PNT)) {
+            double pntValue = (double) element.getLeftArc().getSUA(PNT);
             element.getLeftArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
         }
-        if (element.getRightArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getRightArc().getSPA(PNT);
+        if (element.getRightArc().hasSUA(PNT)) {
+            double pntValue = (double) element.getRightArc().getSUA(PNT);
             element.getRightArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
         }
-        if (element.getRearArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getRearArc().getSPA(PNT);
+        if (element.getRearArc().hasSUA(PNT)) {
+            double pntValue = (double) element.getRearArc().getSUA(PNT);
             element.getRearArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
         }
 

@@ -30,7 +30,6 @@ import megamek.common.weapons.other.CLFussilade;
 
 import java.util.*;
 
-import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
@@ -377,7 +376,7 @@ public final class ASDamageConverter {
                             element.weaponLocations[loc].addDamage(weapon.getBattleForceClass(), r, dam);
                         }
                     }
-                    if ((r == RANGE_BAND_LONG) && !(entity instanceof Aero) && weapon.hasAlphaStrikeIndirectFire()) {
+                    if ((r == RANGE_BAND_LONG) && !(entity instanceof Aero) && weapon.isAlphaStrikeIndirectFire()) {
                         element.weaponLocations[loc].addIF(baseIFDamage * damageModifier * locMultiplier);
                     }
                 }
@@ -690,20 +689,20 @@ public final class ASDamageConverter {
         // No special treatment for the rear arc of Large Aero units
         if (element.usesArcs()) {
             rearAdjustment = frontadjustment;
-            if (element.getFrontArc().hasSPA(PNT)) {
-                double pntValue = (Double) element.getFrontArc().getSPA(PNT);
+            if (element.getFrontArc().hasSUA(PNT)) {
+                double pntValue = (Double) element.getFrontArc().getSUA(PNT);
                 element.getFrontArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
             }
-            if (element.getLeftArc().hasSPA(PNT)) {
-                double pntValue = (Double) element.getLeftArc().getSPA(PNT);
+            if (element.getLeftArc().hasSUA(PNT)) {
+                double pntValue = (Double) element.getLeftArc().getSUA(PNT);
                 element.getLeftArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
             }
-            if (element.getRightArc().hasSPA(PNT)) {
-                double pntValue = (Double) element.getRightArc().getSPA(PNT);
+            if (element.getRightArc().hasSUA(PNT)) {
+                double pntValue = (Double) element.getRightArc().getSUA(PNT);
                 element.getRightArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
             }
-            if (element.getRearArc().hasSPA(PNT)) {
-                double pntValue = (Double) element.getRearArc().getSPA(PNT);
+            if (element.getRearArc().hasSUA(PNT)) {
+                double pntValue = (Double) element.getRearArc().getSUA(PNT);
                 element.getRearArc().getSpecials().replaceSPA(PNT, pntValue / frontadjustment);
             }
         }

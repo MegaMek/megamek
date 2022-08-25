@@ -71,4 +71,9 @@ public class ISLaserAMS extends LaserWeapon {
     public double getBattleForceDamage(int range, Mounted fcs) {
         return 0;
     }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

@@ -34,6 +34,8 @@ import java.awt.image.BufferedImage;
 import java.time.LocalDate;
 import java.util.Locale;
 
+import static java.awt.Color.WHITE;
+
 /**
  * This class represents the (graphical) card of an AlphaStrike element as available on the MUL. The unit cards have a
  * standard size of 1050 x 750 but can be resized without loss of quality to any size. A card is created by
@@ -208,7 +210,7 @@ public class ASCard {
         alphaStrikeStatsFont = blackFont.deriveFont(44f);
 
         valueConfig = new StringDrawer.StringDrawerConfig().centerY().color(Color.BLACK).font(valueFont)
-                .outline(Color.BLACK, 0.95f).dualOutline(Color.WHITE, 3.5f);
+                .outline(Color.BLACK, 0.95f).dualOutline(WHITE, 3.5f);
 
         hitsTitleConfig = new StringDrawer.StringDrawerConfig().rightAlign().centerY()
                 .color(Color.BLACK).font(hitsTitleFont).outline(Color.BLACK, 0.4f);
@@ -344,26 +346,35 @@ public class ASCard {
             g.setFont(headerFont);
             int headerWidth = new StringDrawer("A:").at(44, upperY).centerY().draw(g).width + 12;
             new StringDrawer("S:").at(44, lowerY).centerY().draw(g);
+            paintPipLines(g, 44 + headerWidth, upperY, WHITE, element.getFullArmor());
+            paintPipLines(g, 44 + headerWidth, lowerY, DARKGRAY, element.getFullStructure());
+        }
+    }
 
-            // Armor Pips
-            int cx = 44 + headerWidth;
-            g.setStroke(new BasicStroke(1.5f));
-            for (int i = 0; i < element.getFullArmor(); i++) {
-                g.setColor(Color.WHITE);
-                g.fillOval(cx, upperY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
+    protected void paintPipLines(Graphics2D g, int leftX, int y, Color fillColor, int pipCount) {
+        int x = leftX;
+        int pipsPerLine = (armorBoxWidth - leftX) / ARMOR_PIP_SIZE;
+        int pipSize = ARMOR_PIP_SIZE;
+        if (pipCount > pipsPerLine) {
+            pipSize = ARMOR_PIP_SIZE - 2;
+            y -= ARMOR_PIP_SIZE / 2;
+        }
+        for (int i = 0; i < Math.min(pipsPerLine, pipCount); i++) {
+            g.setColor(fillColor);
+            g.fillOval(x, y - pipSize / 2, pipSize, pipSize);
+            g.setColor(Color.BLACK);
+            g.drawOval(x, y - pipSize / 2, pipSize, pipSize);
+            x += ARMOR_PIP_SIZE + 1;
+        }
+        if (pipCount > pipsPerLine) {
+            y += ARMOR_PIP_SIZE;
+            x = leftX;
+            for (int i = 0; i < pipCount - pipsPerLine; i++) {
+                g.setColor(fillColor);
+                g.fillOval(x, y - pipSize / 2, pipSize, pipSize);
                 g.setColor(Color.BLACK);
-                g.drawOval(cx, upperY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
-                cx += ARMOR_PIP_SIZE + 1;
-            }
-
-            // Structure Pips
-            cx = 44 + headerWidth;
-            for (int i = 0; i < element.getFullStructure(); i++) {
-                g.setColor(DARKGRAY);
-                g.fillOval(cx, lowerY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
-                g.setColor(Color.BLACK);
-                g.drawOval(cx, lowerY - ARMOR_PIP_SIZE / 2, ARMOR_PIP_SIZE, ARMOR_PIP_SIZE);
-                cx += ARMOR_PIP_SIZE + 1;
+                g.drawOval(x, y - pipSize / 2, pipSize, pipSize);
+                x += ARMOR_PIP_SIZE + 1;
             }
         }
     }
@@ -441,7 +452,7 @@ public class ASCard {
      */
     protected void drawDamagePip(Graphics2D g, int x, int y) {
         g.setStroke(new BasicStroke(3f));
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fillOval(x, y - DAMAGE_PIP_SIZE / 2, DAMAGE_PIP_SIZE, DAMAGE_PIP_SIZE);
         g.setColor(Color.BLACK);
         g.drawOval(x, y - DAMAGE_PIP_SIZE / 2, DAMAGE_PIP_SIZE, DAMAGE_PIP_SIZE);
@@ -456,7 +467,7 @@ public class ASCard {
      * @param isFlipSide True for the card backside (Large Aerospace units)
      */
     protected void paintCardBackground(Graphics2D g, boolean isFlipSide) {
-        g.setColor(Color.WHITE);
+        g.setColor(WHITE);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
         // Alpha Strike Stats box
@@ -541,5 +552,4 @@ public class ASCard {
             return null;
         }
     }
-
 }

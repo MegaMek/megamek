@@ -929,20 +929,4 @@ public class SharedUtility {
         // Should never get here!
         return null;
     }
-
-    /**
-     *  Returns the inputValue if it is inside the range given by the limits (inclusive);
-     *  the lower limit if the inputValue is below that range and the higher limit if the
-     *  inputValue is above that range. firstLimit may be higher, lower or equal to secondLimit.
-     *  between(2, 6, 8) returns 6, between(7, 8, 6) returns 7, between(12, 4, 3) returns 4.
-     */
-    public static int keepBetween(int inputValue, int firstLimit, int secondLimit) {
-        int max = Math.max(firstLimit, secondLimit);
-        int min = Math.min(firstLimit, secondLimit);
-        if (inputValue > max) {
-            return max;
-        } else {
-            return Math.max(inputValue, min);
-        }
-    }
 }

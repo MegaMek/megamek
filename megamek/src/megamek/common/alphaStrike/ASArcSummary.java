@@ -20,13 +20,14 @@ package megamek.common.alphaStrike;
 
 import java.io.Serializable;
 
+import static megamek.common.alphaStrike.BattleForceSUA.*;
+
 /**
  * This class holds the AlphaStrike information for one arc of a multi-arc unit such as a
  * Dropship or Warship as well as for a turret of a ground unit.
- * It includes an ASDamageVector that holds the standard damage of the turret
- * or the STD damage of the arc, three more ASDamageVectors for CAP, SCAP and MSL damages,
- * and an ASSpecialAbilityCollection that includes everything that can occur in an arc
- * or turret such as PNT#, IF#, AC#/#/#/#, TSEMP etc.
+ * It includes an ASSpecialAbilityCollection that includes everything that can occur in an arc
+ * or turret such as PNT#, IF#, AC#/#/#/#, TSEMP etc. as well as the standard damage (which is stored
+ * as a special ability STD) and the MSL, SCAP and CAP damages, also stored as special abilities.
  * 
  * @author Simon (Juliez)
  */
@@ -34,18 +35,6 @@ public class ASArcSummary implements Serializable {
 
     /** When true, this doesn't use the CAP, SCAP and MSL damages. */
     private final boolean isTurret;
-
-    /** Represents the standard-type, non-special damage of this arc or turret, including arc STD damage. */
-    private ASDamageVector stdDamage = ASDamageVector.ZERO;
-
-    /** Represents the Capital Weapon (CAP) damage of this arc on a multi-arc element. */
-    private ASDamageVector CAPDamage = ASDamageVector.ZEROSPECIAL;
-
-    /** Represents the Subcapital Weapon (SCAP) damage of this arc on a multi-arc element. */
-    private ASDamageVector SCAPDamage = ASDamageVector.ZEROSPECIAL;
-
-    /** Represents the Capital Missile Weapon (MSL) damage of this arc on a multi-arc element. */
-    private ASDamageVector MSLDamage = ASDamageVector.ZEROSPECIAL;
 
     /** Contains all Special Abilities such as PNT, TELE or LRM of this arc or turret. */
     private ASSpecialAbilityCollection arcSpecials;
@@ -72,59 +61,58 @@ public class ASArcSummary implements Serializable {
 
     /** @return The standard damage of this turret or the STD damage of this arc. */
     public ASDamageVector getStdDamage() {
-        return stdDamage;
+        return hasSUA(STD) ? (ASDamageVector) getSUA(STD) : ASDamageVector.ZERO;
     }
 
     /** @return The capital weapon (CAP) damage of this arc. */
     public ASDamageVector getCAPDamage() {
-        return CAPDamage;
+        return hasSUA(CAP) ? (ASDamageVector) getSUA(CAP) : ASDamageVector.ZERO;
     }
 
     /** @return The sub-capital weapon (SCAP) damage of this arc. */
     public ASDamageVector getSCAPDamage() {
-        return SCAPDamage;
+        return hasSUA(SCAP) ? (ASDamageVector) getSUA(SCAP) : ASDamageVector.ZERO;
     }
 
     /** @return The capital missile weapon (MSL) damage of this arc. */
     public ASDamageVector getMSLDamage() {
-        return MSLDamage;
+        return hasSUA(MSL) ? (ASDamageVector) getSUA(MSL) : ASDamageVector.ZERO;
     }
 
     public void setStdDamage(ASDamageVector stdDamage) {
-        this.stdDamage = stdDamage;
+        arcSpecials.replaceSPA(STD, stdDamage);
     }
 
     public void setCAPDamage(ASDamageVector capDamage) {
-        this.CAPDamage = capDamage;
+        arcSpecials.replaceSPA(CAP, capDamage);
     }
 
     public void setSCAPDamage(ASDamageVector scapDamage) {
-        this.SCAPDamage = scapDamage;
+        arcSpecials.replaceSPA(SCAP, scapDamage);
     }
 
     public void setMSLDamage(ASDamageVector mslDamage) {
-        this.MSLDamage = mslDamage;
+        arcSpecials.replaceSPA(MSL, mslDamage);
     }
 
     public boolean isEmpty() {
-        return arcSpecials.isEmpty() && !stdDamage.hasDamage() && !SCAPDamage.hasDamage()
-                && !CAPDamage.hasDamage() && !MSLDamage.hasDamage();
+        return arcSpecials.isEmpty();
     }
 
-    public boolean hasSPA(BattleForceSUA spa) {
-        return arcSpecials.hasSPA(spa);
+    public boolean hasSUA(BattleForceSUA sua) {
+        return arcSpecials.hasSPA(sua);
     }
 
-    public Object getSPA(BattleForceSUA spa) {
-        return arcSpecials.getSPA(spa);
+    public Object getSUA(BattleForceSUA sua) {
+        return arcSpecials.getSPA(sua);
     }
 
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         if (isTurret) {
-            if (stdDamage.hasDamage()) {
-                result.append(stdDamage);
+            if (getStdDamage().hasDamage()) {
+                result.append(getStdDamage());
             }
             if (!arcSpecials.isEmpty()) {
                 if (result.length() > 0) {
@@ -133,10 +121,10 @@ public class ASArcSummary implements Serializable {
                 result.append(arcSpecials.getSpecialsString());
             }
         } else {
-            result.append(stdDamage).append(", ");
-            result.append("CAP").append(CAPDamage).append(", ");
-            result.append("SCAP").append(SCAPDamage).append(", ");
-            result.append("MSL").append(MSLDamage);
+            result.append(getStdDamage()).append(", ");
+            result.append("CAP").append(getCAPDamage()).append(", ");
+            result.append("SCAP").append(getSCAPDamage()).append(", ");
+            result.append("MSL").append(getMSLDamage());
             if (!arcSpecials.isEmpty()) {
                 result.append(", ").append(arcSpecials.getSpecialsString());
             }

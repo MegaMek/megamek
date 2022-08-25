@@ -22,11 +22,10 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.weapons.bayweapons.BayWeapon;
+import megamek.common.alphaStrike.BattleForceSUA;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.alphaStrike.AlphaStrikeElement.EXTREME_RANGE;
-import static megamek.common.alphaStrike.AlphaStrikeElement.LONG_RANGE;
+import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 class ASAeroDamageConverter extends ASDamageConverter2 {
@@ -46,6 +45,8 @@ class ASAeroDamageConverter extends ASDamageConverter2 {
         processSpecialDamage(REAR, rearLocation);
         processFrontSpecialDamage(TOR);
         processFrontSpecialDamage(REL);
+        processFrontSpecialDamage(PNT);
+        processFrontSpecialDamage(FLK);
     }
 
     @Override
@@ -67,9 +68,19 @@ class ASAeroDamageConverter extends ASDamageConverter2 {
     }
 
     @Override
-    protected void processAMS(Mounted weapon, WeaponType weaponType) {
-        if (weaponType.hasFlag(WeaponType.F_AMS)) {
-            assignToLocations(weapon, PNT, 0.3);
+    protected void processAMS(Mounted weapon, WeaponType weaponType) { }
+
+    @Override
+    protected double determineDamage(Mounted weapon, int range) {
+        return ((WeaponType) weapon.getType()).getBattleForceDamage(range, weapon.getLinkedBy());
+    }
+
+    @Override
+    protected double determineSpecialsDamage(WeaponType weaponType, Mounted linked, int range, BattleForceSUA dmgType) {
+        if ((dmgType == PNT) && weaponType.hasFlag(WeaponType.F_AMS)) {
+            return range == SHORT_RANGE ? 0.3 : 0;
+        } else {
+            return super.determineSpecialsDamage(weaponType, linked, range, dmgType);
         }
     }
 

@@ -83,10 +83,10 @@ public class AlphaStrikeElement implements Serializable {
     private int overheat;
 
     // The arcs of Large Aerospace units. Other units use standardDamage instead
-    private final ASArcSummary frontArc = ASArcSummary.createArcSummary(this);
-    private final ASArcSummary leftArc = ASArcSummary.createArcSummary(this);
-    private final ASArcSummary rightArc = ASArcSummary.createArcSummary(this);
-    private final ASArcSummary rearArc = ASArcSummary.createArcSummary(this);
+    private ASArcSummary frontArc = ASArcSummary.createArcSummary(this);
+    private ASArcSummary leftArc = ASArcSummary.createArcSummary(this);
+    private ASArcSummary rightArc = ASArcSummary.createArcSummary(this);
+    private ASArcSummary rearArc = ASArcSummary.createArcSummary(this);
 
     public ASArcSummary getFrontArc() {
         return frontArc;
@@ -127,7 +127,7 @@ public class AlphaStrikeElement implements Serializable {
      * with standard damage at least.
      * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
      */
-    private final ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection(this);
+    private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection(this);
 
     /**
      * AlphaStrike Quirks.
@@ -388,6 +388,26 @@ public class AlphaStrikeElement implements Serializable {
         }
     }
 
+    /** Sets the AS element's special ability collection to the given one, if it is not null. */
+    public void setSpecialAbilities(ASSpecialAbilityCollection newAbilities) {
+        specialAbilities = Objects.requireNonNull(newAbilities);
+    }
+
+    /** Sets the AS element's special ability collection to the given one, if it is not null. */
+    public void setArc(ASArcs arc, ASArcSummary arcSummary) {
+        Objects.requireNonNull(arc);
+        Objects.requireNonNull(arcSummary);
+        if (arc == ASArcs.FRONT) {
+            frontArc = arcSummary;
+        } else if (arc == ASArcs.LEFT) {
+            leftArc = arcSummary;
+        } else if (arc == ASArcs.RIGHT) {
+            rightArc = arcSummary;
+        } else {
+            rearArc = arcSummary;
+        }
+    }
+
     /** Resets the AS element's conversion report to an empty DummyCalculationReport. */
     public void clearConversionReport() {
         conversionReport = new DummyCalculationReport();
@@ -397,31 +417,7 @@ public class AlphaStrikeElement implements Serializable {
         
     }
     
-//    public AlphaStrikeElement(Entity en) {
-//        name = en.getShortName();
-//        size = en.getBattleForceSize();
-//        computeMovement(en);
-//        armor = en.getBattleForceArmorPointsRaw();
-//        if (en instanceof Aero) {
-//            threshold = armor / 10.0;
-//        }
-//        structure = en.getBattleForceStructurePoints();
-//        if (en instanceof Aero) {
-//        	rangeBands = RANGEBANDS_SMLE;
-//        }
-//        initWeaponLocations(en);
-//        heat = new int[rangeBands];
-//        computeDamage(en);
-//        points = calculatePointValue(en);
-//        en.addBattleForceSpecialAbilities(specialAbilities);
-//        asUnitType = ASUnitType.getUnitType(en);
-//        if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
-//            double divisor = ((Infantry) en).calcDamageDivisor();
-//            if (((Infantry)en).isMechanized()) {
-//                divisor /= 2.0;
-//            }
-//            armor *= divisor;
-//        }
+
 //        //Armored Glove counts as an additional AP mounted weapon
 //        if (en instanceof BattleArmor && en.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) {
 //            double apDamage = AP_MOUNT_DAMAGE * (TROOP_FACTOR[Math.min(((BattleArmor)en).getShootingStrength(), 30)] + 0.5);
@@ -589,6 +585,8 @@ public class AlphaStrikeElement implements Serializable {
      */
     public boolean showSpecial(BattleForceSUA spa) {
         return !(spa.isDoor()
+                || (isLargeAerospace() && (spa == STD))
+                || (isType(JS, SS, WS) && spa.isAnyOf(MSL, SCAP, CAP))
                 || (isType(BM, PM) && (spa == SOA))
                 || (isType(CV, BM) && (spa == SRCH))
                 || (!isLargeAerospace() && spa.isDoor())

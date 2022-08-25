@@ -20,6 +20,7 @@ package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -48,10 +49,8 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
     @Override
     protected void processENE() {
         Arrays.fill(hasExplosiveArcComponent, false);
-
         for (Mounted equipment : entity.getEquipment()) {
             processArcENE(equipment);
-
             if (equipment.getType() instanceof BayWeapon) {
                 var bayEquipmentList = new ArrayList<>(equipment.getBayWeapons());
                 bayEquipmentList.addAll(equipment.getBayAmmo());
@@ -62,26 +61,19 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
             }
         }
 
-        if (!hasExplosiveArcComponent[0]) {
-            element.getFrontArc().getSpecials().addSPA(ENE);
+        for (ASArcs arc : ASArcs.values()) {
+            if (!hasExplosiveArcComponent[arc.toInt()]) {
+                report.addLine("No Explosive Component", arc + "", "ENE");
+                element.getArc(arc).getSpecials().addSPA(ENE);
+            }
         }
-        if (!hasExplosiveArcComponent[1]) {
-            element.getLeftArc().getSpecials().addSPA(ENE);
-        }
-        if (!hasExplosiveArcComponent[2]) {
-            element.getRightArc().getSpecials().addSPA(ENE);
-        }
-        if (!hasExplosiveArcComponent[3]) {
-            element.getRearArc().getSpecials().addSPA(ENE);
-        }
-
     }
 
     private void processArcENE(Mounted equipment) {
         if (isExplosive(equipment)) {
-            for (int arc = 0; arc < 4; arc++) {
-                if (ASLocationMapper.damageLocationMultiplier(entity, arc, equipment) > 0) {
-                    hasExplosiveArcComponent[arc] = true;
+            for (ASArcs arc : ASArcs.values()) {
+                if (ASLocationMapper.damageLocationMultiplier(entity, arc.toInt(), equipment) > 0) {
+                    hasExplosiveArcComponent[arc.toInt()] = true;
                 }
             }
         }
@@ -122,34 +114,6 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
             }
         }
 
-        if (entity.getAmmo().stream().map(m -> (AmmoType) m.getType())
-                .anyMatch(at -> at.hasFlag(AmmoType.F_TELE_MISSILE))) {
-            assign("Tele-Missile", TELE);
-        }
-
         assign("Space capable", SPC);
-    }
-
-    @Override
-    protected void finalizeSpecials() {
-        super.finalizeSpecials();
-
-        // Round up fractional PNT values in arcs
-        if (element.getFrontArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getFrontArc().getSPA(PNT);
-            element.getFrontArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
-        }
-        if (element.getLeftArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getLeftArc().getSPA(PNT);
-            element.getLeftArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
-        }
-        if (element.getRightArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getRightArc().getSPA(PNT);
-            element.getRightArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
-        }
-        if (element.getRearArc().hasSPA(PNT)) {
-            double pntValue = (double) element.getRearArc().getSPA(PNT);
-            element.getRearArc().getSpecials().replaceSPA(PNT, ASConverter.roundUp(pntValue));
-        }
     }
 }

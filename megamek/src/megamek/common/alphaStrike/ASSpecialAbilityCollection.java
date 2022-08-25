@@ -111,6 +111,10 @@ public class ASSpecialAbilityCollection implements Serializable {
         Object spaObject = getSPA(sua);
         if (sua == TUR) {
             return "TUR(" + spaObject + ")";
+        } else if (sua == STD) {
+            return spaObject + "";
+        } else if (sua.isAnyOf(MSL, SCAP, CAP)) {
+            return sua + "";
         } else if (sua == BIM || sua == LAM) {
             return lamString(sua, spaObject);
         } else if ((sua == C3BSS) || (sua == C3M) || (sua == C3BSM) || (sua == C3EM)

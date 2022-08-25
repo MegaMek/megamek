@@ -21,6 +21,7 @@
 package megamek.common.alphaStrike;
 
 import megamek.client.ui.SharedUtility;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 
 import java.io.Serializable;
@@ -294,9 +295,13 @@ public class ASDamageVector implements Serializable {
         return new ASDamageVector(func.apply(s), func.apply(m), func.apply(l), func.apply(e), ranges, std);
     }
 
-    /** Constructor, only for internal use. Damage is set to 0 for unused ranges. */
-    private ASDamageVector(ASDamage s, ASDamage m, ASDamage l, ASDamage e, int ranges, boolean std) {
-        rangeBands = SharedUtility.keepBetween(ranges, 1, 4);
+    /**
+     * Construct an ASDamageVector from ASDamage values. Damage is set to 0 for unused ranges.
+     * When std is true, creates a standard damage type vector that uses "0" for zero damage,
+     * otherwise prints "-" for zero damage.
+     */
+    public ASDamageVector(ASDamage s, ASDamage m, ASDamage l, ASDamage e, int ranges, boolean std) {
+        rangeBands = MathUtility.clamp(ranges, 1, 4);
         S = (s == null) ? new ASDamage(0) : s;
         M = (rangeBands < 2) || (m == null) ? new ASDamage(0) : m;
         L = (rangeBands < 3) || (l == null) ? new ASDamage(0) : l;

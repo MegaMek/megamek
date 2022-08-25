@@ -38,6 +38,13 @@ import java.util.*;
  */
 public final class ASConverter {
 
+    //TODO: Eagre Firefighting ATV - CT0
+    //TODO: Sarissa MN2A should have Advanced Fire Control (in TW) - Data Error
+    //TODO: LG, SLG, VLG for support vehicles
+    //TODO: Long Tom Cannon may not be counted to damage for ground units
+    //TODO: BattleArmor AP Mounts gloves
+    //TODO: Haw Moth II MML Gunship: turret can't count for REAR, FR cant count for TUR specials
+
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport());
     }
@@ -136,14 +143,7 @@ public final class ASConverter {
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
         initWeaponLocations(entity, element);
         element.heat = new int[element.getRangeBands()];
-        ASDamageConverter.convertDamage(conversionData);
-
-        var dc = ASDamageConverter2.getASDamageConverter(entity, element, conversionReport);
-        dc.convert();
-
-//        ASSpecialAbilityConverter.convertSpecialUnitAbilities(conversionData);
-//        ASSpecialAbilityConverter.finalizeSpecials(element);
-
+        ASDamageConverter2.getASDamageConverter(entity, element, conversionReport).convert();
         ASSpecialAbilityConverter2.getConverter(entity, element, conversionReport).processAbilities();
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
         element.setPointValue(pvConverter.getSkillAdjustedPointValue());

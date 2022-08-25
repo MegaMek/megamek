@@ -157,8 +157,8 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
     protected void processDefensiveSUAMods() {
         for (ASArcs arc : ASArcs.values()) {
             ASArcSummary arcSummary = element.getArc(arc);
-            if (arcSummary.hasSPA(PNT)) {
-                int pntValue = (int) arcSummary.getSPA(PNT);
+            if (arcSummary.hasSUA(PNT)) {
+                int pntValue = (int) arcSummary.getSUA(PNT);
                 defensiveValue += pntValue;
                 report.addLine("Defensive SPA",
                         "+ " + pntValue + " (PNT, " + arc + ")",

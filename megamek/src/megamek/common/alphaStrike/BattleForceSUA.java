@@ -42,13 +42,13 @@ public enum BattleForceSUA {
     TELE, TSM, TUR, TOR, UMU, VRT, VTM, VTMxD, VTH, VTHxD, VTS, VTSxD, VLG, VSTOL, WAT,
     ABA, BRA, BHJ2, BHJ3, BIM, DN, GLD, IRA, LAM, MCS, UCS, NOVA, CASEP, QV, RHS,
     RAMS, ECS, DJ, HJ, RBT, JAM, TSEMP, TSEMPO, TSI, VR,
-    ATAC, DB, PL, TCP,
+    ATAC, DB, PL, TCP, SDCS,
     //TODO: PL, DB do not exist, TCP = Triple-Core Processor?
     // AlphaStrike only (this may be incorrect, WIP)
     CRW, CR, DUN, EE, FC, FF, MTN, OVL, PARA, TSMX, RCA, RFA, HTC, TRN, SUBS, SUBW, JMPS, JMPW,
     CAP, SCAP, FUEL, MSL,
     // SBF
-    AC3, COM, SDCS,
+    AC3, COM,
     // Placeholder for STD (Standard) damage on large AS elements with firing arcs:
     STD
     ;

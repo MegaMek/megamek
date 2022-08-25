@@ -261,14 +261,14 @@ public class ASLocationMapper {
     }
 
     private static double getVTOLLocationMultiplier(int index, int location) {
-        if (index == 1 && location == VTOL.LOC_REAR) {
+        if ((index == 0) && (location != VTOL.LOC_REAR)) {
             return 1;
-        } else if (location == VTOL.LOC_REAR || location == VTOL.LOC_BODY || location == VTOL.LOC_ROTOR
-                || (index == 0 && location >= VTOL.LOC_TURRET)
-                || (index == 1 && location < VTOL.LOC_TURRET)) {
-            return 0;
+        } else if ((index == 1) && (location == VTOL.LOC_REAR)) {
+            return 1;
+        } else if ((index == 2) && ((location == VTOL.LOC_TURRET) || (location == VTOL.LOC_TURRET_2))) {
+            return 1;
         }
-        return 1;
+        return 0;
     }
 
     private static double getTripodMekLocationMultiplier(int index, int location, boolean rearMounted) {

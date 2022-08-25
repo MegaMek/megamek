@@ -54,6 +54,12 @@ public class MathUtility {
     //endregion Linear Interpolation
 
     //region Clamp
+    /**
+     *  @return The value if it is inside the range given by the limits (inclusive);
+     *  the min value if value is below that range and the max value if
+     *  value is above that range.
+     *  clamp(2, 6, 8) returns 6, clamp(7, 6, 8) returns 7, clamp(12, 3, 5) returns 5.
+     */
     public static int clamp(final int value, final int min, final int max) {
         return Math.min(Math.max(value, min), max);
     }

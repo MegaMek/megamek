@@ -2012,15 +2012,15 @@
 		</model>
 	</chassis>
 	<chassis name='Heavy Strike Fighter' unitType='Conventional Fighter'>
-		<availability>General:5</availability>
+		<availability>CS:3,PP:2,IS:3,MERC:2,DC:4,Periphery:4</availability>
 		<model name='Inseki'>
-			<availability>DC:2</availability>
+			<availability>DC:7-</availability>
 		</model>
 		<model name='Inseki II'>
-			<availability>DC:3</availability>
+			<availability>DC:5</availability>
 		</model>
 		<model name='Meteor'>
-			<availability>CC:4,MOC:5,OA:5,LA:2,General:4,FWL:5,FS:3,MERC:4,CIR:4,TC:5</availability>
+			<availability>CS:4,PP:2,IS:5,MERC:2,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Heavy Tracked APC' unitType='Tank'>
@@ -2505,22 +2505,22 @@
 		</model>
 	</chassis>
 	<chassis name='Light Strike Fighter' unitType='Conventional Fighter'>
-		<availability>General:6</availability>
+		<availability>LA:8-,IS:8,MERC:6-,DC:7-,Periphery:8</availability>
 		<model name='Angel'>
 			<roles>recon</roles>
-			<availability>CC:2,Periphery.MW:3,Periphery.ME:3,FWL:5,DC:2,Periphery:4</availability>
+			<availability>CC:2,LA:2-,Periphery.MW:3,Periphery.ME:3,IS:8,MERC:6,Periphery:6,DC:2</availability>
 		</model>
 		<model name='Comet'>
-			<availability>FS:5,MERC:1</availability>
+			<availability>FS:8</availability>
 		</model>
 		<model name='Owl'>
-			<availability>LA:3</availability>
+			<availability>LA:8</availability>
 		</model>
 		<model name='Owl II'>
-			<availability>Periphery.R:4,LA:4</availability>
+			<availability>LA:7-</availability>
 		</model>
 		<model name='Suzume (&apos;Sparrow&apos;)'>
-			<availability>Periphery.DD:1,DC:4</availability>
+			<availability>DC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Lightning Attack Hovercraft' unitType='Tank'>
@@ -2857,6 +2857,15 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Steinadler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:1,LA:4,MERC:1</availability>
+	</chassis>
+	<chassis name='Medium Strike Fighter' unitType='Conventional Fighter'>
+		<availability>CC:4,CS:5,LA:5-,IS:5,MERC:4,Periphery:4</availability>
+		<model name='Defender'>
+			<availability>CS:5,IS:5,MERC:4,Periphery:5</availability>
+		</model>
+		<model name='Steinadler (Golden Eagle)'>
+			<availability>LA:5-</availability>
+		</model>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>CS:5,CLAN:4,IS:5,Periphery.Deep:2,NIOPS:5,MERC:3,Periphery:4</availability>
@@ -3275,13 +3284,9 @@
 		</model>
 	</chassis>
 	<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-		<availability>FWL:8,IS:3,Periphery:3</availability>
-		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
-			<roles>cargo</roles>
-			<availability>FS:4</availability>
-		</model>
+		<availability>CS:6,IS:6,FS:5,MERC:4,Periphery:5</availability>
 		<model name='(Standard)'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -3491,8 +3496,9 @@
 		</model>
 	</chassis>
 	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-		<availability>FS:4</availability>
+		<availability>FS:4-</availability>
 		<model name='(Standard)'>
+			<roles>civilian</roles>
 			<availability>General:5</availability>
 		</model>
 	</chassis>
@@ -3846,9 +3852,6 @@
 		<model name='STU-K5'>
 			<availability>PP:8,IS:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>
-		<model name='STU-K5b'>
-			<availability>PP:2,CLAN:8</availability>
-		</model>
 		<model name='STU-K5b2'>
 			<availability>PP:4,CLAN:6,CGS:6</availability>
 		</model>
@@ -4020,9 +4023,11 @@
 	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
 		<availability>MOC:4,OA:4,CLAN:3-,IS:4-,CIR:6,MERC:2,TC:4</availability>
 		<model name='(Original)'>
+			<roles>bomber</roles>
 			<availability>General:4</availability>
 		</model>
 		<model name='(Standard)'>
+			<roles>bomber</roles>
 			<availability>General:5</availability>
 		</model>
 	</chassis>

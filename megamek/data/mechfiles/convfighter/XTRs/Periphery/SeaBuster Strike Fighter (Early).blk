@@ -13,11 +13,11 @@ ConvFighter
 </UnitType>
 
 <Name>
-SeaBuster Early Strike Fighter
+Seabuster Strike Fighter
 </Name>
 
 <Model>
-(Standard)
+(Early)
 </Model>
 
 <mul id:>
@@ -33,7 +33,7 @@ SeaBuster Early Strike Fighter
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>

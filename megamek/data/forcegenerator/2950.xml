@@ -11,6 +11,7 @@
 	<faction key='BoS'>
 		<salvage pct='10'></salvage>
 	</faction>
+	<faction key='BH'/>
 	<faction key='CC'>
 		<salvage pct='5'>FWL:4,FS:10,TC:1,DC:1</salvage>
 	</faction>
@@ -242,6 +243,7 @@
 		<pctSL>90,90,90,90,90</pctSL>
 		<salvage pct='5'>FWL:10,MH:1</salvage>
 	</faction>
+	<faction key='OC'/>
 	<faction key='OA'>
 		<salvage pct='5'>FS:10,DC:8</salvage>
 		<weightDistribution era='2950' unitType='Mek'>6,6,3,1</weightDistribution>
@@ -364,6 +366,7 @@
 	</faction>
 	<faction key='LA.HG'/>
 	<faction key='Periphery.HR'/>
+	<faction key='MERC.KH'/>
 	<faction key='CFM.BG'>
 		<pctOmni>0,0,3,35,70</pctOmni>
 		<pctClan>15,15,30,80,90</pctClan>
@@ -426,6 +429,7 @@
 		<pctSL unitType='Vehicle'>100,100,70,70,70</pctSL>
 		<salvage pct='10'>CCC:1,CHH:3,CSR:3,CIH:8,CSV:6,CCO:4,CGS:7,CSA:10,CDS:2,CW:4,CNC:2,CSJ:5,CFM.P:8,CJF:9,CGB:1,CB:1</salvage>
 	</faction>
+	<faction key='DC.LV'/>
 	<faction key='CC.LL'>
 		<salvage pct='5'></salvage>
 	</faction>
@@ -459,6 +463,7 @@
 	<faction key='FWL.OG'>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='DC.O'/>
 	<faction key='Periphery.OS'/>
 	<faction key='DC.PR'>
 		<salvage pct='5'></salvage>
@@ -475,6 +480,7 @@
 	<faction key='DC.PH'>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='FWL.PG'/>
 	<faction key='DC.RR'>
 		<salvage pct='5'></salvage>
 	</faction>
@@ -495,6 +501,7 @@
 	<faction key='CC.SD'>
 		<salvage pct='5'>FWL:4,FS:10,DC:1,TC:1</salvage>
 	</faction>
+	<faction key='FWL.SHI'/>
 	<faction key='FWL.SL'>
 		<salvage pct='5'></salvage>
 	</faction>
@@ -527,6 +534,7 @@
 	<faction key='CC.WHO'>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='MERC.WD'/>
 	<faction key='LA.YR'/>
 </factions>
 <units>
@@ -2447,10 +2455,10 @@
 		</model>
 	</chassis>
 	<chassis name='Guardian Fighter' unitType='Conventional Fighter'>
-		<availability>CC:3,MOC:1,IS:1,FWL:1,MERC:1,TC:1,Periphery:1</availability>
+		<availability>IS:5,MERC:5,Periphery:3</availability>
 		<model name='(Standard)'>
 			<roles>ground_support</roles>
-			<availability>General:6</availability>
+			<availability>IS:5,Periphery:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Guillotine IIC' unitType='Mek'>
@@ -2576,18 +2584,18 @@
 		</model>
 	</chassis>
 	<chassis name='Heavy Strike Fighter' unitType='Conventional Fighter'>
-		<availability>General:5</availability>
+		<availability>CS:3,MERC.KH:2,MERC.WD:2,IS:4,MERC:2,DC:4,Periphery:3,TC:2,BAN:2</availability>
 		<model name='Bat Hawk'>
-			<availability>CC:2,MOC:3,Periphery.CM:4,Periphery.HR:4,Periphery.ME:3,TC:5</availability>
+			<availability>CC:2,MOC:7,TC:7,Periphery:5</availability>
 		</model>
 		<model name='Inseki'>
-			<availability>DC:2</availability>
+			<availability>DC:5-</availability>
 		</model>
 		<model name='Inseki II'>
-			<availability>DC:3</availability>
+			<availability>DC:7</availability>
 		</model>
 		<model name='Meteor'>
-			<availability>CC:4,MOC:5,OA:5,LA:2,General:4,FWL:5,FS:3,MERC:4,CIR:4,TC:1</availability>
+			<availability>CS:4,IS:5,MERC:2,Periphery:3,BAN:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Heavy Tracked APC' unitType='Tank'>
@@ -3123,6 +3131,13 @@
 			<availability>CLAN:1</availability>
 		</model>
 	</chassis>
+	<chassis name='King Karnov Transport' unitType='Conventional Fighter'>
+		<availability>LA:2</availability>
+		<model name='KC-6'>
+			<roles>cargo</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Kingfisher' unitType='Mek' omni='Clan'>
 		<availability>CSJ:5,CGB:6</availability>
 		<model name='A'>
@@ -3279,22 +3294,22 @@
 		</model>
 	</chassis>
 	<chassis name='Light Strike Fighter' unitType='Conventional Fighter'>
-		<availability>General:6</availability>
+		<availability>CC:5-,LA:8-,FWL:5-,BAN:2,DC:7-</availability>
 		<model name='Angel'>
 			<roles>recon</roles>
-			<availability>CC:2,Periphery.MW:3,Periphery.ME:3,FWL:5,DC:2,Periphery:4</availability>
+			<availability>CC:2,LA:2-,Periphery.MW:3,Periphery.ME:3,FWL:6,Periphery:4,DC:2,BAN:2</availability>
 		</model>
 		<model name='Comet'>
-			<availability>FS:5,MERC:1</availability>
+			<availability>FS:8</availability>
 		</model>
 		<model name='Owl'>
-			<availability>LA:1</availability>
+			<availability>LA:8</availability>
 		</model>
 		<model name='Owl II'>
-			<availability>Periphery.R:5,HL:4,LA:5</availability>
+			<availability>LA:7-</availability>
 		</model>
 		<model name='Suzume (&apos;Sparrow&apos;)'>
-			<availability>Periphery.DD:1,DC:5</availability>
+			<availability>DC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Lightning Attack Hovercraft' unitType='Tank'>
@@ -3743,6 +3758,21 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Steinadler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:2,LA:5,MERC:1</availability>
+	</chassis>
+	<chassis name='Medium Strike Fighter' unitType='Conventional Fighter'>
+		<availability>CC:6,CS:6,LA:5-,IS:5,MERC:4,Periphery:4</availability>
+		<model name='Crane'>
+			<availability>CC:8-</availability>
+		</model>
+		<model name='Defender'>
+			<availability>CS:6,IS:5,MERC:4,Periphery:5</availability>
+		</model>
+		<model name='Kaiseradler (Imperial Eagle)'>
+			<availability>LA:5-</availability>
+		</model>
+		<model name='Steinadler (Golden Eagle)'>
+			<availability>LA:5-</availability>
+		</model>
 	</chassis>
 	<chassis name='Merchant Jumpship' unitType='Jumpship'>
 		<availability>CS:5,HL:4,CLAN:5,IS:5,Periphery.Deep:2,NIOPS:5,MERC:3,Periphery:4</availability>
@@ -4324,13 +4354,9 @@
 		</model>
 	</chassis>
 	<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-		<availability>FWL:8,IS:3,Periphery:3</availability>
-		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
-			<roles>cargo</roles>
-			<availability>FS:4</availability>
-		</model>
+		<availability>CS:7,MERC.WD:6,IS:6,FS:5,MERC:4,Periphery:5</availability>
 		<model name='(Standard)'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -4590,8 +4616,9 @@
 		</model>
 	</chassis>
 	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
-		<availability>FS:2</availability>
+		<availability>FS:2-</availability>
 		<model name='(Standard)'>
+			<roles>civilian</roles>
 			<availability>General:2</availability>
 		</model>
 	</chassis>
@@ -5097,9 +5124,6 @@
 		<model name='STU-K5'>
 			<availability>HL:6,IS:8,Periphery.Deep:7,BAN:8,Periphery:8</availability>
 		</model>
-		<model name='STU-K5b'>
-			<availability>CLAN:8,BAN:3</availability>
-		</model>
 		<model name='STU-K5b2'>
 			<availability>CGS:2</availability>
 		</model>
@@ -5380,6 +5404,7 @@
 	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
 		<availability>CC:4-,MOC:1,OA:1,CLAN:2-,CIR:1,TC:1,BAN:2-</availability>
 		<model name='(Original)'>
+			<roles>bomber</roles>
 			<availability>General:4</availability>
 		</model>
 	</chassis>

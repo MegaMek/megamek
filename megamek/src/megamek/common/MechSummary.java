@@ -52,6 +52,7 @@ public class MechSummary implements Serializable {
     private String level;
     private int advTechYear; // year after which the unit is advanced level
     private int stdTechYear; // year after which the unit is standard level
+    private String extinctRange;
     private boolean canon;
     private boolean clan;
     private boolean support;
@@ -259,7 +260,7 @@ public class MechSummary implements Serializable {
             return String.valueOf(TechConstants.T_SIMPLE_EXPERIMENTAL + 1);
         }
     }
-
+    
     public void setFullAccurateUnitType(String type) {
         fullAccurateUnitType = type;
     }
@@ -347,7 +348,7 @@ public class MechSummary implements Serializable {
     public void setStandardYear(int year) {
         stdTechYear = year;
     }
-
+    
     public void setCanon(boolean canon) {
         this.canon = canon;
     }
@@ -532,6 +533,14 @@ public class MechSummary implements Serializable {
     public void setSuitWeight(double suitWeight) {
         this.suitWeight = suitWeight;
     }
+    
+	public String getExtinctRange() {
+		return extinctRange;
+	}
+
+	public void setExtinctRange(String extinctRange) {
+		this.extinctRange = extinctRange;
+	}
 
     @Override
     public boolean equals(Object obj) {
@@ -551,4 +560,6 @@ public class MechSummary implements Serializable {
     public int hashCode() {
         return Objects.hash(chassis, model, unitType, sourceFile);
     }
+
+
 }

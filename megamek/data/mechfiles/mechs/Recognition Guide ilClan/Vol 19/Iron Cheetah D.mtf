@@ -1,9 +1,8 @@
-Version:1.0
+Version:1.3
 Iron Cheetah
 D
 mul id:8323
-
-Config:Biped
+Config:Biped Omnimech
 techbase:Clan
 era:3054
 source:Rec Guide:ilClan #19 - Clan Invasion
@@ -15,6 +14,7 @@ structure:Clan Endo Steel
 myomer:Standard
 
 heat sinks:16 Clan Double
+base chassis heat sinks:16
 walk mp:4
 jump mp:0
 
@@ -35,16 +35,16 @@ Weapons:6
 ER Large Laser, Left Arm
 ER Large Laser, Left Arm
 ER Medium Laser, Left Arm
-ER Small Laser, Right Torso
-Gauss Rifle, Left Torso
 LB 20-X AC, Right Arm
+Gauss Rifle, Left Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLERLargeLaser
-CLERMediumLaser
+CLERLargeLaser (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLERMediumLaser (OMNIPOD)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -56,26 +56,26 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
+CLLBXAC20 (OMNIPOD)
 Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
+CLGaussRifle (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -84,12 +84,12 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser (R)
-Clan LB 20-X AC Ammo
-Clan LB 20-X AC Ammo
-Clan LB 20-X Cluster Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
+CLERSmallLaser (R) (OMNIPOD)
+Clan LB 20-X AC Ammo (OMNIPOD)
+Clan LB 20-X AC Ammo (OMNIPOD)
+Clan LB 20-X Cluster Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
+Clan Gauss Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLECMSuite
+CLECMSuite (OMNIPOD)
 Clan Ferro-Fibrous
 
 Head:
@@ -151,12 +151,15 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-overview:The final OmniMech of Clan Smoke Jaguar. Designed to represent the pinnacle of 3050's technology. 
+overview:The final OmniMech of Clan Smoke Jaguar. Designed to represent the pinnacle of 3050's technology.
+capabilities:Designed to improve upon the Dire Wolf, the Iron Cheetah mounts a 400-rated XL engine. This enables to the 'Mech to reach speeds of 64 km/h. While designers feared the increased engine mass would excessively reduce the 'Mech's payload, the increased cooling efficiency meant little impact to the 'Mech's practical punch. Both Endo Steel and ferro-fibrous armor were used to save additional weight.
+deployment:Configuration D mounts an eclectic assortment of weapons that manage to complement each other fairly well. A single Gauss rifle and paired ER Large Lasers let this configuration punch holes in the enemy. Once the target's armor is in tatters, the D-Configuration can bring its massive LB 20-X AC into play, where its cluster ammunition can devastate internal components. An ECM Suite provides defense against enemy electronics.
+history:Even though the Smoke Jaguars were running into issues of limited resources, they were still able to develop one last OmniMech. The Iron Cheetah was designed to supplement the Dire Wolf and represented the pinnacle of 3050's BattleMech technology. The lack of sufficient resources precluded the Jaguar ability to field more than a handful of these machines before their Annihilation at the hands of the Inner Sphere. The Draconis Combine was able to salvage a few chassis, which were assigned to the most prestigious of MechWarriors. The plans for the Iron Cheetah managed to find their way to Clan Diamond Shark but it wasn't until 3080s that the Diamond Sharks were able to put the OmniMech into production. The Republic of the Sphere purchased an exclusivity contract, thus preventing widespread dissemination of the Iron Cheetah. The Republic concentrated its machines in Stone's Brigade and the Fidelis. With the death of the Republic, Clan Sea Fox began selling the Iron Cheetah on the open market, mostly to House Steiner, Marik, and Davion. Only Clan Snow Raven and Clan Wolf-in-Exile have shown interest in the 'Mech.
 manufacturer:Manufacturing Plant SFF
 primaryfactory:Itabaiana
 systemmanufacturer:CHASSIS:DSAM Endo 4
 systemmanufacturer:ENGINE:400 Model SF-3 XL
 systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
-systemmanufacturer:COMMUNICATIONS:TJ6 “Bell” Integrated Communication System
+systemmanufacturer:COMMUNICATIONS:TJ6 â€œBellâ€? Integrated Communication System
 systemmanufacturer:TARGETING:Series III OPT
 

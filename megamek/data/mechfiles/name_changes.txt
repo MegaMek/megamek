@@ -6,6 +6,8 @@
 
 #Aerospace
 Persepolis 2 (Standard)|Persepolis 2
+MechBuster|Mechbuster
+SeaBuster Early Strike Fighter (Standard)|Seabuster Strike Fighter (Early)
 
 #Battle Armor
 Achileus Light Battle Armor (WoB) [David]|Achileus Light Battle Armor [David](Sqd6)

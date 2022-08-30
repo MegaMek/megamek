@@ -1,49 +1,48 @@
-Version:1.1
+Version:1.3
 Mackie
 MSK-5S
 mul id:1972
-
 Config:Biped
-TechBase:Inner Sphere
-Era:2439
-Source:XTRO Primitives I - Age of War
-Rules Level:4
+techbase:Inner Sphere
+era:2439
+source:XTRO Primitives I - Age of War
+rules level:4
 
-Mass:100
-Engine:360 Fusion Engine(IS)
-Structure:IS Standard
-Myomer:Standard
-Cockpit:Primitive Cockpit
-Gyro:Standard Gyro
+mass:100
+engine:360 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+cockpit:Primitive Cockpit
+gyro:Standard Gyro
 
-Heat Sinks:17 Single
-Walk MP:3
-Jump MP:0
+heat sinks:17 Single
+walk mp:3
+jump mp:0
 
-Armor:Primitive(Inner Sphere)
-LA Armor:24
-RA Armor:24
-LT Armor:20
-RT Armor:20
-CT Armor:31
-HD Armor:9
-LL Armor:28
-RL Armor:28
-RTL Armor:10
-RTR Armor:10
-RTC Armor:10
+armor:Primitive(Inner Sphere)
+LA armor:24
+RA armor:24
+LT armor:20
+RT armor:20
+CT armor:31
+HD armor:9
+LL armor:28
+RL armor:28
+RTL armor:10
+RTR armor:10
+RTC armor:10
 
 Weapons:3
-PPC, Left Arm
 AC/5, Right Arm
 Large Laser, Center Torso
+Primitive Prototype PPC, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-PPC
-PPC
-PPC
+Primitive Prototype PPC
+Primitive Prototype PPC
+Primitive Prototype PPC
 -Empty-
 -Empty-
 -Empty-

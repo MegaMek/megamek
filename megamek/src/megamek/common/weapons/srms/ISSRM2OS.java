@@ -57,8 +57,10 @@ public class ISSRM2OS extends SRMWeapon {
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-            .setISAdvancement(2665, 2676, 3045, 2800, 3030)
+            .setAvailability(RATING_C, RATING_C, RATING_D, RATING_C)
+            //From TM pg 230 - "curious concept that did not so much go extinct in the 
+            //Succession Wars as fall into general disuse"
+            .setISAdvancement(2665, 2676, 3045, DATE_NONE, 3030)
             .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)

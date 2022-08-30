@@ -77,6 +77,9 @@
 		<salvage pct='6'>CC:6,SL:10,FS:10</salvage>
 		<weightDistribution era='2780' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
+	<faction key='TH'>
+		<salvage pct='5'>CC:16,LA:20,FWL:14,FS:8,DC:12</salvage>
+	</faction>
 	<faction key='TD'>
 		<salvage pct='10'>FS:10</salvage>
 	</faction>
@@ -2750,18 +2753,21 @@
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
-		<availability>SL:4,IS:2+</availability>
+		<availability>PP:1,SLIE:2+,SL:4,IS:2+,SL.R:3</availability>
 		<model name='PHX-HK1'>
-			<availability>SL:5,IS:4</availability>
+			<roles>raider</roles>
+			<availability>PP:1,SLIE:2+,SL:6,IS:4,SL.R:3</availability>
 		</model>
 		<model name='PHX-HK1R'>
-			<availability>SL:3,IS:2+</availability>
+			<roles>recon,raider</roles>
+			<availability>PP:1,SLIE:2+,SL:3,IS:2+,SL.R:3-</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
-		<availability>IS:4</availability>
+		<availability>CS:4,SLIE:2+,SL:5,IS:2,SL.R:6+</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:4</availability>
+			<roles>raider</roles>
+			<availability>CS:4,PP:1+,SLIE:2+,SL:2,IS:4,SL.R:4+</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -3286,12 +3292,17 @@
 		</model>
 	</chassis>
 	<chassis name='Stinger LAM Mk I' unitType='Mek'>
-		<availability>SL:1+,IS:1</availability>
+		<availability>PP:2+,SLIE:2,IS:2,SL.R:2</availability>
+		<model name='STG-A1'>
+			<roles>raider</roles>
+			<availability>PP:2+,SLIE:2+,IS:2,SL.R:2+</availability>
+		</model>
 	</chassis>
 	<chassis name='Stinger LAM' unitType='Mek'>
-		<availability>IS:2</availability>
+		<availability>CS:2,SL:2+,IS:2,SL.R:2</availability>
 		<model name='STG-A5'>
-			<availability>IS:2</availability>
+			<roles>raider</roles>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger' unitType='Mek'>
@@ -3715,21 +3726,22 @@
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
-		<availability>SL:3,IS:2</availability>
+		<availability>PP:1+,SLIE:1+,SL:3,IS:2,SL.R:3</availability>
 		<model name='WSP-100'>
-			<availability>SL:5,IS:4</availability>
+			<availability>PP:1+,SLIE:1+,SL:5,IS:4,SL.R:3</availability>
 		</model>
 		<model name='WSP-100A'>
-			<availability>SL:4,IS:3</availability>
+			<availability>PP:1+,SLIE:1+,SL:3,IS:2,SL.R:3</availability>
 		</model>
 		<model name='WSP-100b'>
-			<availability>SL:2+,IS:1+</availability>
+			<roles>ew_support</roles>
+			<availability>PP:1+,SLIE:1+,SL.R:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
-		<availability>SL:2,IS:2</availability>
+		<availability>CS:3,PP:1+,SLIE:1+,SL:4+,IS:3,SL.R:4</availability>
 		<model name='WSP-105'>
-			<availability>SL:4,IS:4</availability>
+			<availability>CS:3,SLIE:1+,SL:4+,IS:3,SL.R:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

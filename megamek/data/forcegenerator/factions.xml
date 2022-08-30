@@ -560,11 +560,12 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
-	<faction key='TH' name='Terran Hegemony' minor='false' clan='false' periphery='false'>
+	<faction key='TH' name='Terran Hegemony' minor='false' clan='true' periphery='false'>
 		<nameChange year='2767'>Amaris Empire</nameChange>
-		<years>2315-2779</years>
+		<nameChange year='2779'>Terran Hegemony</nameChange>
+		<years>2315-2788</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+		<parentFaction>SL,SL.R</parentFaction>
 	</faction>
 	<faction key='TB' name='The Barrens' minor='false' clan='false' periphery='false'>
 		<years>3100-</years>

@@ -3374,13 +3374,15 @@
 	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
 		<availability>IS:2+</availability>
 		<model name='PHX-HK1'>
+			<roles>raider</roles>
 			<availability>IS:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
-		<availability>IS:4</availability>
+		<availability>CS:2+,IS:2</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:4</availability>
+			<roles>raider</roles>
+			<availability>CS:2+,IS:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -3990,15 +3992,21 @@
 		</model>
 	</chassis>
 	<chassis name='Stinger LAM Mk I' unitType='Mek'>
-		<availability>IS:1</availability>
+		<availability>IS:2</availability>
+		<model name='STG-A1'>
+			<roles>raider</roles>
+			<availability>IS:2</availability>
+		</model>
 	</chassis>
 	<chassis name='Stinger LAM' unitType='Mek'>
-		<availability>IS:1</availability>
+		<availability>CS:2,IS:2</availability>
 		<model name='STG-A10'>
+			<roles>raider</roles>
 			<availability>DC:1</availability>
 		</model>
 		<model name='STG-A5'>
-			<availability>IS:2</availability>
+			<roles>raider</roles>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger' unitType='Mek'>
@@ -4529,19 +4537,16 @@
 	<chassis name='Wasp LAM Mk I' unitType='Mek'>
 		<availability>IS:2</availability>
 		<model name='WSP-100'>
-			<availability>IS:1</availability>
+			<availability>IS:4</availability>
 		</model>
 		<model name='WSP-100A'>
-			<availability>IS:3</availability>
-		</model>
-		<model name='WSP-100b'>
-			<availability>IS:1+</availability>
+			<availability>IS:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
-		<availability>IS:2</availability>
+		<availability>CS:3,IS:3</availability>
 		<model name='WSP-105'>
-			<availability>IS:4</availability>
+			<availability>CS:3,IS:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

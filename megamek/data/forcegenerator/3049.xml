@@ -6069,19 +6069,15 @@
 			<availability>CHH:3,CLAN:2,CJF:3</availability>
 		</model>
 	</chassis>
-	<chassis name='Phoenix Hawk LAM Mk I' unitType='Mek'>
-		<availability>IS:2+</availability>
-		<model name='PHX-HK1'>
-			<availability>IS:2</availability>
-		</model>
-	</chassis>
 	<chassis name='Phoenix Hawk LAM' unitType='Mek'>
-		<availability>IS:3</availability>
+		<availability>CS:2+,MERC.WD:1,IS:2+</availability>
 		<model name='PHX-HK2'>
-			<availability>IS:2</availability>
+			<roles>raider</roles>
+			<availability>CS:2+,MERC.WD:1,IS:2+</availability>
 		</model>
 		<model name='PHX-HK2M'>
-			<availability>IS:1,FWL:2</availability>
+			<roles>raider</roles>
+			<availability>CS:1+,IS:1+</availability>
 		</model>
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
@@ -7180,19 +7176,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
-	<chassis name='Stinger LAM Mk I' unitType='Mek'>
-		<availability>IS:2+</availability>
-		<model name='STG-A1'>
-			<availability>General:4</availability>
-		</model>
-	</chassis>
 	<chassis name='Stinger LAM' unitType='Mek'>
-		<availability>IS:1</availability>
+		<availability>CS:2,IS:2,WOB:2:3050,DC:2</availability>
 		<model name='STG-A10'>
-			<availability>IS:1,DC:2</availability>
+			<roles>raider</roles>
+			<availability>CS:1,WOB:1:3050,DC:3</availability>
 		</model>
 		<model name='STG-A5'>
-			<availability>IS:2</availability>
+			<roles>raider</roles>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Stinger' unitType='Mek'>
@@ -8182,25 +8174,16 @@
 			<availability>HL:2,IS:4,Periphery:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Wasp LAM Mk I' unitType='Mek'>
-		<availability>IS:1</availability>
-		<model name='WSP-100'>
-			<availability>IS:2</availability>
-		</model>
-		<model name='WSP-100A'>
-			<availability>IS:1</availability>
-		</model>
-		<model name='WSP-100b'>
-			<availability>IS:1+</availability>
-		</model>
-	</chassis>
 	<chassis name='Wasp LAM' unitType='Mek'>
-		<availability>IS:1</availability>
+		<availability>CS:3,MERC.WD:2,IS:3,WOB:4</availability>
 		<model name='WSP-105'>
-			<availability>IS:2</availability>
+			<availability>CS:3,MERC.WD:2,IS:3,WOB:4</availability>
 		</model>
 		<model name='WSP-105M'>
-			<availability>IS:1</availability>
+			<availability>FWL:1,WOB:1</availability>
+		</model>
+		<model name='WSP-110'>
+			<availability>WOB:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Wasp' unitType='Mek'>

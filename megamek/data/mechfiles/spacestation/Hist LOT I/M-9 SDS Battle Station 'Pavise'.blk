@@ -46,21 +46,21 @@ artsasfbay:144.0:21:2
 artsnavalrepairpressurized:800000.0:1:3:f3
 artsnavalrepairpressurized:100000.0:1:4:f0
 cargobay:50000.0:2:5
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
-Docking Collar
 1stclassquarters:200.0:0
-2ndclassquarters:3150.0:0
-cargobay:160118.0:1:6
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+dockingcollar
+2ndclassquarters:4606.0:0
+cargobay:158662.0:1:6
 </transporters>
 
 <SafeThrust>
@@ -832,6 +832,10 @@ Hist:LoT1 - Star League
 450
 450
 </grav_decks>
+
+<designtype>
+1
+</designtype>
 
 <crew>
 683

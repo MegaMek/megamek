@@ -18,7 +18,7 @@
  */
 package megamek.client.ui.swing.alphaStrike;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.cardDrawer.ASCard;
 import megamek.common.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public final class ASCardPanel extends JComponent {
     private float scale = 1;
     private Font cardFont;
     private Image cardImage;
-    private AlphaStrikeElement element;
+    private ASCardDisplayable element;
 
     /**
      * Construct a card panel without an AlphaStrike element to display. The created card will show
@@ -49,7 +49,7 @@ public final class ASCardPanel extends JComponent {
      *
      * @param element The AlphaStrike element to display
      */
-    public ASCardPanel(@Nullable AlphaStrikeElement element) {
+    public ASCardPanel(@Nullable ASCardDisplayable element) {
         setASElement(element);
     }
 
@@ -58,7 +58,7 @@ public final class ASCardPanel extends JComponent {
      *
      * @param element The AlphaStrike element to display
      */
-    public void setASElement(@Nullable AlphaStrikeElement element) {
+    public void setASElement(@Nullable ASCardDisplayable element) {
         this.element = element;
         initialize();
     }

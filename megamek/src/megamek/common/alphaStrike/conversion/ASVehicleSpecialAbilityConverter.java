@@ -24,7 +24,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
-public class ASVehicleSpecialAbilityConverter extends ASSpecialAbilityConverter2 {
+public class ASVehicleSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     /**
      * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
@@ -40,8 +40,6 @@ public class ASVehicleSpecialAbilityConverter extends ASSpecialAbilityConverter2
 
     @Override
     protected void processSEALandSOA(Mounted misc) {
-        super.processSEALandSOA(misc);
-
         MiscType miscType = (MiscType) misc.getType();
         if (miscType.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
             assign(misc, SEAL);

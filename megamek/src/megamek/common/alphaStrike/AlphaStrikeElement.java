@@ -21,14 +21,11 @@ package megamek.common.alphaStrike;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.UnitRole;
-import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.options.Quirks;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.Map.Entry;
 
-import static java.util.stream.Collectors.joining;
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
@@ -39,9 +36,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * @author Neoancient
  * @author Simon (Juliez)
  */
-public class AlphaStrikeElement implements Serializable {
-
-    public static final String INCH = "\"";
+public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
 
     static final int RANGEBANDS_SML = 3;
     static final int RANGEBANDS_SMLE = 4;
@@ -88,22 +83,6 @@ public class AlphaStrikeElement implements Serializable {
     private ASArcSummary rightArc = ASArcSummary.createArcSummary(this);
     private ASArcSummary rearArc = ASArcSummary.createArcSummary(this);
 
-    public ASArcSummary getFrontArc() {
-        return frontArc;
-    }
-
-    public ASArcSummary getLeftArc() {
-        return leftArc;
-    }
-
-    public ASArcSummary getRightArc() {
-        return rightArc;
-    }
-
-    public ASArcSummary getRearArc() {
-        return rearArc;
-    }
-
     private int currentArmor;
     private int currentStructure;
     private int threshold = 0;
@@ -112,7 +91,7 @@ public class AlphaStrikeElement implements Serializable {
     private int fullStructure;
 
     /** Battle Armor squad size. */
-    private int squadSize;
+    private int squadSize = 0;
 
     /**
      * This covers all SpAs, including the damage values such as SRM2/2.
@@ -136,22 +115,17 @@ public class AlphaStrikeElement implements Serializable {
      */
     private Quirks quirks = new Quirks();
 
-    // The following are used during conversion from TW to AS
-    public transient ASConverter.WeaponLocation[] weaponLocations;
-    public transient String[] locationNames;
-    public transient int[] heat;
-
-    /** @return The AS element's chassis, such as "Atlas". */
+    @Override
     public String getChassis() {
         return chassis;
     }
 
-    /** @return The AS element's model, such as "AS7-D". */
+    @Override
     public String getModel() {
         return model;
     }
 
-    /** @return The AS element's battlefield role (ROLE). */
+    @Override
     public UnitRole getRole() {
         return role;
     }
@@ -161,12 +135,12 @@ public class AlphaStrikeElement implements Serializable {
         return name;
     }
 
-    /** @return The AS element's size (SZ). */
+    @Override
     public int getSize() {
         return size;
     }
 
-    /** @return The AS element's Target Movement Modifier (TMM). */
+    @Override
     public int getTMM() {
         return tmm;
     }
@@ -176,57 +150,52 @@ public class AlphaStrikeElement implements Serializable {
         return quirks;
     }
 
-    /** @return The AS element's Pilot Skill (SKILL). Unless another skill has been set, this is 4. */
+    @Override
     public int getSkill() {
         return skill;
     }
 
-    /** @return The AS element's type (TP), e.g. BM or CV. */
-    public ASUnitType getType() {
+    @Override
+    public ASUnitType getASUnitType() {
         return asUnitType;
     }
 
-    /** @return The AS element's extra Overheat Damage capability (OV) (not the current heat buildup). */
-    public int getOverheat() {
+    @Override
+    public int getOV() {
         return overheat;
     }
 
-    /** @return True if this AS element has an OV value other than 0. */
-    public boolean hasOV() {
-        return overheat > 0;
-    }
-
-    /** @return The AS element's Point Value (PV). This is not adjusted for damage. */
+    @Override
     public int getPointValue() {
         return pointValue;
     }
 
-    /** @return The AS element's full (=undamaged) Armor (A).*/
+    @Override
     public int getFullArmor() {
         return fullArmor;
     }
 
-    /** @return The AS element's current Armor (A).*/
+    @Override
     public int getCurrentArmor() {
         return currentArmor;
     }
 
-    /** @return The AS element's Threshold (TH). Returns -1 for elements that don't use Threshold. */
+    @Override
     public int getThreshold() {
         return threshold;
     }
 
-    /** @return The AS element's full (=undamaged) Structure (S).*/
+    @Override
     public int getFullStructure() {
         return fullStructure;
     }
 
-    /** @return The AS element's current Structure (S).*/
+    @Override
     public int getCurrentStructure() {
         return currentStructure;
     }
 
-    /** @return The AS element's entire movement capability (MV). */
+    @Override
     public Map<String, Integer> getMovement() {
         return movement;
     }
@@ -244,8 +213,39 @@ public class AlphaStrikeElement implements Serializable {
         return usesSML() ? RANGEBANDS_SML : RANGEBANDS_SMLE;
     }
 
+    @Override
     public int getSquadSize() {
-        return squadSize;
+        return isBattleArmor() ? squadSize : 0;
+    }
+
+    @Override
+    public ASArcSummary getFrontArc() {
+        return frontArc;
+    }
+
+    @Override
+    public ASArcSummary getLeftArc() {
+        return leftArc;
+    }
+
+    @Override
+    public ASArcSummary getRightArc() {
+        return rightArc;
+    }
+
+    @Override
+    public ASArcSummary getRearArc() {
+        return rearArc;
+    }
+
+    @Override
+    public ASDamageVector getStandardDamage() {
+        return standardDamage;
+    }
+
+    @Override
+    public int getMulId() {
+        return mulId;
     }
 
     /** @return The conversion report for this unit. May be a DummyCalculationReport without information. */
@@ -258,10 +258,12 @@ public class AlphaStrikeElement implements Serializable {
         return !(conversionReport == null) && !(conversionReport instanceof DummyCalculationReport);
     }
 
+    @Override
     public ASSpecialAbilityCollection getSpecialAbilities() {
         return specialAbilities;
     }
 
+    /** @return The ASArcSummary object holding the damage and specials info for the given arc. */
     public ASArcSummary getArc(ASArcs arc) {
         switch (arc) {
             case FRONT:
@@ -414,18 +416,9 @@ public class AlphaStrikeElement implements Serializable {
     }
 
     public AlphaStrikeElement() {
-        
+        // currently unused
     }
-    
 
-//        //Armored Glove counts as an additional AP mounted weapon
-//        if (en instanceof BattleArmor && en.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) {
-//            double apDamage = AP_MOUNT_DAMAGE * (TROOP_FACTOR[Math.min(((BattleArmor)en).getShootingStrength(), 30)] + 0.5);
-//            weaponLocations[0].addDamage(0, apDamage);
-//            weaponLocations[0].addDamage(WeaponType.BFCLASS_STANDARD, 0, apDamage);
-//        }
-//    }
-    
     /** 
      * Adds a Special Unit Ability that is not associated with any additional information or number, e.g. RCN.
      * This is a convenience method for calling {@link #getSpecialAbilities()} and adding the SUA.
@@ -434,24 +427,6 @@ public class AlphaStrikeElement implements Serializable {
      */
     public void addSPA(BattleForceSUA sua) {
         specialAbilities.addSPA(sua);
-    }
-
-    /** @return True if this AS element uses three range bands S, M and L (equivalent to {@link #isGround()}). */
-    public boolean usesSML() {
-        return isGround();
-    }
-
-    /** @return True if this AS element uses four range bands S, M, L and E (equivalent to {@link #isAerospace()}). */
-    public boolean usesSMLE() {
-        return isAerospace();
-    }
-
-    /**
-     * @return The standard damage (SML or SMLE depending on type). This will be empty for
-     * elements that use arcs.
-     */
-    public ASDamageVector getStandardDamage() {
-        return standardDamage;
     }
 
     /**
@@ -500,30 +475,9 @@ public class AlphaStrikeElement implements Serializable {
      * @return A formatted standard movement string, e.g. 4"/6"j.
      */
     public String getMovementAsString() {
-        if (isBattleMek()) {
-            return movement.entrySet().stream()
-                    .filter(e -> !e.getKey().equals("a") && !e.getKey().equals("g"))
-                    .map(this::moveString).collect(joining("/"));
-        } else {
-            return movement.entrySet().stream().map(this::moveString).collect(joining("/"));
-        }
+        return AlphaStrikeHelper.getMovementAsString(this);
     }
     
-    /** @return The formatted String for a single movement mode entry, e.g. 4a or 12"j. */
-    private String moveString(Entry<String, Integer> moveMode) {
-        if (moveMode.getKey().equals("k")) {
-            return "0." + moveMode.getValue() + "k";
-        } else if (moveMode.getKey().equals("a")) {
-            return moveMode.getValue() + "a";
-        } else if (moveMode.getKey().equals("p")) {
-            return moveMode.getValue() + "p";
-        } else if (isType(DS, WS, DA, JS, SS) && moveMode.getKey().isBlank()) {
-            return moveMode.getValue() + "";
-        } else {
-            return moveMode.getValue() + INCH + moveMode.getKey();
-        }
-    }
-
     /**
      * Returns a formatted SUA string for this AS element. The string is formatted in the way SUAs are
      * printed on an AS element's card or summary with a ', ' between SUAs. This does not access
@@ -580,17 +534,17 @@ public class AlphaStrikeElement implements Serializable {
      * This is usually true but false for some, e.g. BM automatically have SOA and do not need to
      * show this on the unit card.
      *
-     * @param spa The Special Unit Ability to check
+     * @param sua The Special Unit Ability to check
      * @return True when the given Special Unit Ability should be listed on the element's card
      */
-    public boolean showSpecial(BattleForceSUA spa) {
-        return !(spa.isDoor()
-                || (isLargeAerospace() && (spa == STD))
-                || (isType(JS, SS, WS) && spa.isAnyOf(MSL, SCAP, CAP))
-                || (isType(BM, PM) && (spa == SOA))
-                || (isType(CV, BM) && (spa == SRCH))
-                || (!isLargeAerospace() && spa.isDoor())
-                || (hasAutoSeal() && (spa == SEAL)));
+    public boolean showSpecial(BattleForceSUA sua) {
+        return !(sua.isDoor()
+                || (isLargeAerospace() && (sua == STD))
+                || (usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
+                || (isType(BM, PM) && (sua == SOA))
+                || (isType(CV, BM) && (sua == SRCH))
+                || (!isLargeAerospace() && sua.isDoor())
+                || (hasAutoSeal() && (sua == SEAL)));
     }
 
     /** @return True when this AS element automatically gets the SEAL Special Unit Ability. */
@@ -610,100 +564,9 @@ public class AlphaStrikeElement implements Serializable {
         return isType(CV) && getPrimaryMovementType().equals("s");
     }
 
-    /**
-     * @return True when this AS element is of a type that tracks heat levels and can have
-     * the OV and OVL abilities (BM, IM and AF).
-     */
-    public boolean usesOV() {
-        return isType(BM, IM, AF);
-    }
-
-    /**
-     * @return True when this AS element is jump-capable. This is the case when its movement modes
-     * contains the "j" movement mode.
-     */
-    public boolean isJumpCapable() {
-        return movement.containsKey("j");
-    }
-
     /** @return This AS element's jump movement (in inches) or 0 if it has no jump movement. */
     public int getJumpMove() {
         return getMovement("j");
-    }
-
-    /** @return True if this AS element is any of the given types. */
-    public boolean isType(ASUnitType type, ASUnitType... furtherTypes) {
-        return asUnitType == type || Arrays.stream(furtherTypes).anyMatch(this::isType);
-    }
-
-    /** @return True if this AS element uses the Threshold value (equivalent to {@link #isAerospace()}). */
-    public boolean usesThreshold() {
-        return isAerospace();
-    }
-    
-    /** 
-     * Returns true if this unit uses the 4 firing arcs of Warships, Dropships and other units.
-     * When this is the case, the standardDamage of this unit is not used and is empty. Instead,
-     * the arcs field is used.
-     *
-     * @return True if this unit uses firing arcs
-     */
-    public boolean usesArcs() {
-        return isType(JS, WS, DA, DS, SS, SC) || (isType(SV) && hasAnySUAOf(LG, SLG, VLG));
-    }
-
-    /** @return True if this AS element is Infantry (BA or CI). */
-    public boolean isInfantry() {
-        return isType(BA, CI);
-    }
-
-    /**
-     * @return True if this AS element is a ground unit. An AS element is a ground unit when it is not
-     * an aerospace unit. See {@link #isAerospace()}
-     */
-    public boolean isGround() {
-        return !isAerospace();
-    }
-
-    /**
-     * Returns true if this AS element is an aerospace unit, i.e. a fighter, a capital aerospace
-     * element or an aerospace SV. See {@link #isAerospaceSV()}.
-     *
-     * @return True if this AS element is an aerospace unit (including aero SV units).
-     */
-    public boolean isAerospace() {
-        return isType(AF, CF, SC, DS, DA, JS, WS, SS) || isAerospaceSV();
-    }
-
-    /**
-     * Returns true if this AS element is an aerospace SV, i.e. an SV with a movement mode of
-     * "a", "k", "i", and "p".
-     *
-     * @return True if this AS element is an aerospace SV.
-     */
-    public boolean isAerospaceSV() {
-        return isType(SV) && (hasMovementMode("a") || hasMovementMode("k")
-                || hasMovementMode("i") || hasMovementMode("p"));
-    }
-
-    /** @return True if this AS element is a support vehicle of any kind (SV). */
-    public boolean isSupportVehicle() {
-        return isType(SV);
-    }
-
-    /** @return True if this AS element is a combat vehicle or ground support vehicle (CV, ground SV incl. VTOL). */
-    public boolean isVehicle() {
-        return isGround() && (isCombatVehicle() || isSupportVehicle());
-    }
-
-    /** @return True if this AS element is a combat vehicle (CV, not support vehicle). */
-    public boolean isCombatVehicle() {
-        return isType(CV);
-    }
-
-    /** @return This AS element's MUL ID if it has one, -1 otherwise. */
-    public int getMulId() {
-        return mulId;
     }
 
     /** @return True if this AS element has a valid MUL ID. */
@@ -739,48 +602,4 @@ public class AlphaStrikeElement implements Serializable {
         return movement.keySet();
     }
 
-    /** @return True if this AS element has the given movement mode, including LAM's a/g modes. */
-    public boolean hasMovementMode(String mode) {
-        return movement.containsKey(mode);
-    }
-
-    /** @return True if this AS element is a fighter (AF, CF). */
-    public boolean isFighter() {
-        return isType(AF, CF);
-    }
-
-    /** @return True if this AS element is a BattleMek or Industrial Mek (BM, IM). */
-    public boolean isMek() {
-        return isType(BM, IM);
-    }
-
-    /** @return True if this AS element is a BattleMek (BM). */
-    public boolean isBattleMek() {
-        return isType(BM);
-    }
-
-    /** @return True if this AS element is a ProtoMek (PM). */
-    public boolean isProtoMek() {
-        return isType(PM);
-    }
-
-    /** @return True if this AS element is a large Aerospace unit, i.e. SC, DS, DA, SS, JS, WS. */
-    public boolean isLargeAerospace() {
-        return isType(SC, DS, DA, SS, JS, WS);
-    }
-
-    /** @return True if this AS element is a BattleArmor unit, i.e. BA. */
-    public boolean isBattleArmor() {
-        return isType(BA);
-    }
-
-    /** @return True if this AS element is a Conventional Infantry unit, i.e. CI. */
-    public boolean isConventionalInfantry() {
-        return isType(CI);
-    }
-
-    /** @return True if this AS element uses CAP weapons in its arcs, i.e. WS, SS or JS. */
-    public boolean usesCapitalWeapons() {
-        return isType(WS, SS, JS);
-    }
 }

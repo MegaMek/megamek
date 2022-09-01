@@ -19,13 +19,14 @@
 package megamek.common.alphaStrike.cardDrawer;
 
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import java.awt.*;
 
 public class ASMekCard extends ASHeatTrackingCard {
 
-    public ASMekCard(AlphaStrikeElement element) {
+    public ASMekCard(ASCardDisplayable element) {
         super(element);
     }
 

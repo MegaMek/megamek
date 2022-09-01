@@ -95,12 +95,12 @@ public class SBFUnitConverter {
         double artTC = elements.stream().filter(e -> e.hasSUA(ARTTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTTC);
         double artLTC = elements.stream().filter(e -> e.hasSUA(ARTLTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTLTC);
         double artSC = elements.stream().filter(e -> e.hasSUA(ARTSC)).count() * SBFFormation.getSbfArtilleryDamage(ARTSC);
-        dmgS += elements.stream().mapToDouble(AlphaStrikeElement::getOverheat).sum() / 2;
+        dmgS += elements.stream().mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
         dmgS += unit.isAnyTypeOf(BA, CI) && unit.hasSPA(AM) ? 1 : 0;
         dmgS += artTC + artLTC + artSC;
-        dmgM += elements.stream().filter(e -> e.getStandardDamage().M.damage >= 1).mapToDouble(AlphaStrikeElement::getOverheat).sum() / 2;
+        dmgM += elements.stream().filter(e -> e.getStandardDamage().M.damage >= 1).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
         dmgM += artTC + artLTC + artSC;
-        dmgL += elements.stream().filter(e -> e.getStandardDamage().L.damage >= 1).mapToDouble(AlphaStrikeElement::getOverheat).sum() / 2;
+        dmgL += elements.stream().filter(e -> e.getStandardDamage().L.damage >= 1).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
         dmgL += artTC + artLTC;
         dmgE += artTC + artLTC;
         if (unit.getType() == AS) {

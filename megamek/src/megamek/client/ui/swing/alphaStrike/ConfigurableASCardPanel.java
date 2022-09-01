@@ -22,6 +22,7 @@ import megamek.MMConstants;
 import megamek.client.ui.dialogs.ASConversionInfoDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +48,7 @@ public class ConfigurableASCardPanel extends JPanel {
     private final JButton mulButton = new JButton("MUL");
     private final JButton conversionButton = new JButton("Conversion Report");
     private final ASCardPanel cardPanel = new ASCardPanel();
-    private AlphaStrikeElement element;
+    private ASCardDisplayable element;
     private int mulId;
     private final JFrame parent;
 
@@ -56,7 +57,7 @@ public class ConfigurableASCardPanel extends JPanel {
      *
      * @param element The AlphaStrike element to display
      */
-    public ConfigurableASCardPanel(@Nullable AlphaStrikeElement element, JFrame parent) {
+    public ConfigurableASCardPanel(@Nullable ASCardDisplayable element, JFrame parent) {
         this.parent = parent;
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
@@ -119,11 +120,12 @@ public class ConfigurableASCardPanel extends JPanel {
      *
      * @param element The AlphaStrike element to display
      */
-    public void setASElement(@Nullable AlphaStrikeElement element) {
+    public void setASElement(@Nullable ASCardDisplayable element) {
         this.element = element;
         cardPanel.setASElement(element);
         mulId = (element != null) ? element.getMulId() : -1;
         mulButton.setEnabled(mulId > 0);
+        conversionButton.setEnabled(element instanceof AlphaStrikeElement);
     }
 
     /** Set the card to use a newly selected font. */
@@ -157,9 +159,11 @@ public class ConfigurableASCardPanel extends JPanel {
     }
 
     private void showConversionReport() {
-        var dialog = new ASConversionInfoDialog(parent, element.getConversionReport(), element);
-        dialog.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
-        dialog.setVisible(true);
+        if (element instanceof AlphaStrikeElement) {
+            var dialog = new ASConversionInfoDialog(parent, ((AlphaStrikeElement) element).getConversionReport(), element);
+            dialog.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+            dialog.setVisible(true);
+        }
     }
 
     // Taken from https://alvinalexander.com/java/java-copy-image-to-clipboard-example/

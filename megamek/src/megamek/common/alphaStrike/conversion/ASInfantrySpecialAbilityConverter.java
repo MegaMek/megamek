@@ -26,7 +26,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.alphaStrike.BattleForceSUA.MEC;
 
-public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter2 {
+public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     private final Infantry infantry = (Infantry) entity;
 
@@ -68,8 +68,6 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
 
     @Override
     protected void processSEALandSOA(Mounted misc) {
-        super.processSEALandSOA(misc);
-
         if (misc.getType().hasFlag(MiscType.F_SPACE_ADAPTATION)) {
             assign(misc, SOA);
         }

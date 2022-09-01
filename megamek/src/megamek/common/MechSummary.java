@@ -16,10 +16,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.alphaStrike.ASArcSummary;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.ASSpecialAbilityCollection;
-import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.*;
 
 import java.io.File;
 import java.io.Serializable;
@@ -28,7 +25,7 @@ import java.util.*;
 /**
  * The MechSummary of a unit offers compiled information about the unit without having to load the file.
  */
-public class MechSummary implements Serializable {
+public class MechSummary implements Serializable, ASCardDisplayable {
 
     private String name;
     private String chassis;
@@ -104,17 +101,16 @@ public class MechSummary implements Serializable {
     private String primaryMovementMode = "";
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;
-//    private ASArcSummary frontArc;
-//    private ASArcSummary leftArc;
-//    private ASArcSummary rightArc;
-//    private ASArcSummary rearArc;
+    private ASArcSummary frontArc;
+    private ASArcSummary leftArc;
+    private ASArcSummary rightArc;
+    private ASArcSummary rearArc;
     private int threshold = 0;
     private int fullArmor;
     private int fullStructure;
     private int squadSize;
     private ASSpecialAbilityCollection specialAbilities;
-
-
+    private UnitRole role;
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();
@@ -283,6 +279,78 @@ public class MechSummary implements Serializable {
         } else {
             return String.valueOf(TechConstants.T_SIMPLE_EXPERIMENTAL + 1);
         }
+    }
+
+    public int getPointValue() {
+        return pointValue;
+    }
+
+    public ASUnitType getASUnitType() {
+        return asUnitType;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getTMM() {
+        return tmm;
+    }
+
+    public Map<String, Integer> getMovement() {
+        return movement;
+    }
+
+    public String getPrimaryMovementMode() {
+        return primaryMovementMode;
+    }
+
+    public ASDamageVector getStandardDamage() {
+        return standardDamage;
+    }
+
+    public int getOV() {
+        return overheat;
+    }
+
+    public ASArcSummary getFrontArc() {
+        return frontArc;
+    }
+
+    public ASArcSummary getLeftArc() {
+        return leftArc;
+    }
+
+    public ASArcSummary getRightArc() {
+        return rightArc;
+    }
+
+    public ASArcSummary getRearArc() {
+        return rearArc;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public int getFullArmor() {
+        return fullArmor;
+    }
+
+    public int getFullStructure() {
+        return fullStructure;
+    }
+
+    public int getSquadSize() {
+        return squadSize;
+    }
+
+    public ASSpecialAbilityCollection getSpecialAbilities() {
+        return specialAbilities;
+    }
+
+    public UnitRole getRole() {
+        return role;
     }
 
     public void setFullAccurateUnitType(String type) {
@@ -586,21 +654,21 @@ public class MechSummary implements Serializable {
         this.overheat = overheat;
     }
 
-//    public void setFrontArc(ASArcSummary frontArc) {
-//        this.frontArc = frontArc;
-//    }
-//
-//    public void setLeftArc(ASArcSummary leftArc) {
-//        this.leftArc = leftArc;
-//    }
-//
-//    public void setRightArc(ASArcSummary rightArc) {
-//        this.rightArc = rightArc;
-//    }
-//
-//    public void setRearArc(ASArcSummary rearArc) {
-//        this.rearArc = rearArc;
-//    }
+    public void setFrontArc(ASArcSummary frontArc) {
+        this.frontArc = frontArc;
+    }
+
+    public void setLeftArc(ASArcSummary leftArc) {
+        this.leftArc = leftArc;
+    }
+
+    public void setRightArc(ASArcSummary rightArc) {
+        this.rightArc = rightArc;
+    }
+
+    public void setRearArc(ASArcSummary rearArc) {
+        this.rearArc = rearArc;
+    }
 
     public void setThreshold(int threshold) {
         this.threshold = threshold;
@@ -620,6 +688,10 @@ public class MechSummary implements Serializable {
 
     public void setSpecialAbilities(ASSpecialAbilityCollection specialAbilities) {
         this.specialAbilities = specialAbilities;
+    }
+
+    public void setUnitRole(UnitRole role) {
+        this.role = role;
     }
 
     @Override

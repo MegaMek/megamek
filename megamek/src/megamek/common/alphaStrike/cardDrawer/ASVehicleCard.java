@@ -19,13 +19,14 @@
 package megamek.common.alphaStrike.cardDrawer;
 
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
 import java.awt.*;
 
 public class ASVehicleCard extends ASCard {
 
-    public ASVehicleCard(AlphaStrikeElement element) {
+    public ASVehicleCard(ASCardDisplayable element) {
         super(element);
     }
 

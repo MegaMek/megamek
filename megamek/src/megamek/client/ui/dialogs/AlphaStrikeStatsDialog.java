@@ -126,13 +126,13 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         StringBuilder dataLine = new StringBuilder();
         dataLine.append("=\"").append(element.getChassis()).append("\"").append(EXPORT_DELIMITER);
         dataLine.append("=\"").append(element.getModel()).append("\"").append(EXPORT_DELIMITER);
-        dataLine.append(element.getType()).append(EXPORT_DELIMITER);
+        dataLine.append(element.getASUnitType()).append(EXPORT_DELIMITER);
         dataLine.append(element.getSize()).append(EXPORT_DELIMITER);
         dataLine.append(element.isAerospace() ? "" : element.getTMM()).append(EXPORT_DELIMITER);
         dataLine.append(element.getMovementAsString()).append(EXPORT_DELIMITER);
         dataLine.append(element.getRole()).append(EXPORT_DELIMITER);
         dataLine.append("=\"").append(element.usesArcs() ? "" : " " + element.getStandardDamage()).append("\"").append(EXPORT_DELIMITER);
-        dataLine.append(element.usesOV() ? element.getOverheat() : "").append(EXPORT_DELIMITER);
+        dataLine.append(element.usesOV() ? element.getOV() : "").append(EXPORT_DELIMITER);
         dataLine.append(element.getFullArmor()).append(EXPORT_DELIMITER);
         dataLine.append(element.getFullStructure()).append(EXPORT_DELIMITER);
         dataLine.append(element.usesThreshold() ? element.getThreshold() : "").append(EXPORT_DELIMITER);

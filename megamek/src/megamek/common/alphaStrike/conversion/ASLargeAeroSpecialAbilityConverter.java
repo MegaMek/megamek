@@ -30,7 +30,7 @@ import java.util.Arrays;
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
-public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverter2 {
+public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     private final boolean[] hasExplosiveArcComponent = new boolean[4];
 

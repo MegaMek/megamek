@@ -99,8 +99,8 @@ public class ASPointValueConverter {
         offensiveValue = dmgS + dmgM * 2 + dmgL;
         report.addLine("Damage", formatForReport(dmgS) + " + 2 x " + formatForReport(dmgM) + " + " + formatForReport(dmgL), formatForReport(offensiveValue));
 
-        if (element.getOverheat() >= 1) {
-            double overheatFactor = 1 + 0.5 * (element.getOverheat() - 1);
+        if (element.getOV() >= 1) {
+            double overheatFactor = 1 + 0.5 * (element.getOV() - 1);
             overheatFactor /= (dmgM + dmgL == 0) ? 2 : 1;
             offensiveValue += overheatFactor;
             report.addLine("Overheat", "+ " + formatForReport(overheatFactor), "= " + formatForReport(offensiveValue));
@@ -175,7 +175,7 @@ public class ASPointValueConverter {
         processOffensiveSUAMod(TSEMPO, e -> Math.min(5.0, (int) element.getSUA(TSEMPO)));
         processOffensiveBT();
         processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L.damage);
-        processOffensiveSUAMod(OVL, e -> 0.25 * element.getOverheat());
+        processOffensiveSUAMod(OVL, e -> 0.25 * element.getOV());
         processOffensiveSUAMod(HT, e -> {
             ASDamageVector ht = (ASDamageVector) element.getSUA(HT);
             return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
@@ -186,7 +186,7 @@ public class ASPointValueConverter {
             if (element.hasSUA(OVL)) {
                 offensiveValue += 1;
                 report.addLine("Offensive SUA", "+ 1 (RHS and OVL)", "");
-            } else if (element.getOverheat() > 0) {
+            } else if (element.getOV() > 0) {
                 offensiveValue += 0.5;
                 report.addLine("Offensive SUA", "+ 0.5 (RHS and OV > 0)", "");
             } else {
@@ -383,7 +383,7 @@ public class ASPointValueConverter {
         }
         if (element.isType(BA, PM)) {
             result += 1;
-            modifierList.add(element.getType().toString());
+            modifierList.add(element.getASUnitType().toString());
         }
         if (!element.isMek() && (element.getMovementModes().contains("g")
                 || element.getMovementModes().contains("v"))) {

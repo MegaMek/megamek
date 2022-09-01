@@ -73,7 +73,10 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
-            return 0.4;
+            //TODO: with corrosive ammo
+            //   return 0.4;
+            // else
+            return 0;
         } else {
             return 0;
         }

@@ -31,7 +31,7 @@ import megamek.common.weapons.InfantryAttack;
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
-public class ASConvInfantryDamageConverter extends ASDamageConverter2 {
+public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
     private final Infantry infantry;
 

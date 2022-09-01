@@ -100,13 +100,13 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
             if (element != null) {
                 boolean oddRow = (row++ % 2) == 1;
                 addGridElementLeftAlign(element.getName(), oddRow);
-                addGridElement(element.getType() + "", oddRow);
+                addGridElement(element.getASUnitType() + "", oddRow);
                 addGridElement(element.getSize() + "", oddRow);
                 addGridElement(element.isAerospace() ? "" : element.getTMM() + "", oddRow);
                 addGridElement(element.getMovementAsString(), oddRow);
                 addGridElement(element.getRole() + "", oddRow);
                 addGridElement(element.usesArcs() ? "" : element.getStandardDamage() + "", oddRow);
-                addGridElement(element.usesOV() ? element.getOverheat() + "" : "", oddRow);
+                addGridElement(element.usesOV() ? element.getOV() + "" : "", oddRow);
                 addGridElement(element.getFullArmor() + "", oddRow);
                 addGridElement(element.getFullStructure() + "", oddRow);
                 addGridElement(element.usesThreshold() ? element.getThreshold() + "" : " ", oddRow);

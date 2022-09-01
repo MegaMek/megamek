@@ -74,6 +74,10 @@ final class ASMovementConverter {
         report.addLine("Base Walking MP", "", Integer.toString(entity.getOriginalWalkMP()));
 
         int jumpMove = entity.getJumpMP() * 2;
+        if (entity instanceof Mech) {
+            jumpMove = ((Mech) entity).getJumpMP(false, true) * 2;
+        }
+
         if (hasSupercharger(entity) && hasMechMASC(entity)) {
             walkMP *= 1.5;
             report.addLine("MASC + Supercharger", "x 1.5", "= ", walkMP);

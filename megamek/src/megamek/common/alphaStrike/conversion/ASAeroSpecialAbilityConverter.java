@@ -25,7 +25,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import static megamek.common.alphaStrike.ASUnitType.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
-public class ASAeroSpecialAbilityConverter extends ASSpecialAbilityConverter2 {
+public class ASAeroSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     private final Aero aero = (Aero) entity;
 

@@ -93,4 +93,9 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         }
         return super.getLongRange();
     }
+
+    @Override
+    public int getAlphaStrikeHeat() {
+        return 18;
+    }
 }

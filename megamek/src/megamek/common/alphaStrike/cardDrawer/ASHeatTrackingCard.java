@@ -19,7 +19,7 @@
 package megamek.common.alphaStrike.cardDrawer;
 
 import megamek.client.ui.swing.util.StringDrawer;
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.ASCardDisplayable;
 
 import java.awt.*;
 
@@ -29,7 +29,7 @@ import java.awt.*;
  */
 public class ASHeatTrackingCard extends ASCard {
 
-    protected ASHeatTrackingCard(AlphaStrikeElement element) {
+    protected ASHeatTrackingCard(ASCardDisplayable element) {
         super(element);
     }
 
@@ -76,7 +76,7 @@ public class ASHeatTrackingCard extends ASCard {
 
         if (element != null) {
             new StringDrawer("OV:").at(49, ym).centerY().font(headerFont).maxWidth(45).draw(g);
-            new StringDrawer(element.getOverheat() + "").at(111, ym).useConfig(valueConfig).maxWidth(54).draw(g);
+            new StringDrawer(element.getOV() + "").at(111, ym).useConfig(valueConfig).maxWidth(54).draw(g);
             new StringDrawer("HEAT SCALE").at(193, ym).centerY().font(headerFont).maxWidth(208).draw(g);
         }
     }

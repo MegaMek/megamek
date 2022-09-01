@@ -26,7 +26,7 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.alphaStrike.BattleForceSUA.GLD;
 
-public class ASProtoMekSpecialAbilityConverter extends ASSpecialAbilityConverter2 {
+public class ASProtoMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     /**
      * Do not call this directly. Use ASSpecialAbilityConverter.getConverter instead.
@@ -54,18 +54,13 @@ public class ASProtoMekSpecialAbilityConverter extends ASSpecialAbilityConverter
     }
 
     @Override
-    protected void processSEALandSOA(Mounted misc) {
-        super.processSEALandSOA(misc);
-
-        assign("ProtoMek", SOA);
-    }
-
-    @Override
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 
         if (entity.getMovementMode().equals(EntityMovementMode.WIGE)) {
             assign("Glider ProtoMek", GLD);
         }
+
+        assign("ProtoMek", SOA);
     }
 }

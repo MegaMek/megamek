@@ -28,7 +28,7 @@ import static megamek.client.ui.swing.calculationReport.CalculationReport.format
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
-public class ASBattleArmorDamageConverter extends ASDamageConverter2 {
+public class ASBattleArmorDamageConverter extends ASDamageConverter {
 
     private static final double AP_MOUNT_DAMAGE = 0.05;
 
@@ -49,15 +49,21 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter2 {
     }
 
     @Override
+    protected double assembleFrontDamage(int range) {
+        double rawDamage = super.assembleFrontDamage(range);
+        int armoredGloveCount = entity.countWorkingMisc(MiscType.F_ARMORED_GLOVE);
+        if ((armoredGloveCount > 0) && (range == SHORT_RANGE)) {
+            rawDamage += armoredGloveCount * AP_MOUNT_DAMAGE;
+            report.addLine(armoredGloveCount + " x " + EquipmentType.get("BAArmoredGlove").getName(),
+                    "+ " + formatForReport(armoredGloveCount * AP_MOUNT_DAMAGE), "= " + rawDamage);
+        }
+        return rawDamage;
+    }
+
+    @Override
     protected double determineDamage(Mounted weapon, int range) {
         if (weapon.isAPMMounted()) {
-            double apDamage = AP_MOUNT_DAMAGE;
-            //TODO: What does the "plus 1" mean in "Battle armor units apply the damage value for Anti-Personnel
-            // weapon once per AP weapon mount on the suit itself, plus 1 if the suit has
-            // at least 1 armored glove manipulator."
-            apDamage += (entity.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) ? AP_MOUNT_DAMAGE : 0;
-            //TODO: To what range are AP mounted weapons effective?
-            return range == 0 ? apDamage : 0;
+            return (range == SHORT_RANGE) ? AP_MOUNT_DAMAGE : 0;
         } else {
             return super.determineDamage(weapon, range);
         }

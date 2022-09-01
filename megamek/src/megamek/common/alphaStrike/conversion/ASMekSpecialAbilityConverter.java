@@ -26,7 +26,7 @@ import java.util.HashMap;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
-public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter2 {
+public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
 
     private final Mech mek = (Mech) entity;
 
@@ -96,15 +96,15 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter2 {
         if (entity instanceof QuadVee) {
             assign("QuadVee", QV);
         }
+
+        if (element.isBattleMek()) {
+            assign("BattleMek", SOA);
+        }
     }
 
     @Override
     protected void processSEALandSOA(Mounted misc) {
-        super.processSEALandSOA(misc);
-
-        if (!mek.isIndustrial()) {
-            assign("BattleMek", SOA);
-        } else {
+        if (mek.isIndustrial()) {
             MiscType miscType = (MiscType) misc.getType();
             if (miscType.hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 assign(misc, SEAL);

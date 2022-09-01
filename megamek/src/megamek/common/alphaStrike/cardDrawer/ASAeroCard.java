@@ -19,8 +19,10 @@
 package megamek.common.alphaStrike.cardDrawer;
 
 import megamek.client.ui.swing.util.StringDrawer;
+import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
 
 import java.awt.*;
 import java.awt.geom.Arc2D;
@@ -28,7 +30,7 @@ import java.awt.geom.Path2D;
 
 public class ASAeroCard extends ASHeatTrackingCard {
 
-    public ASAeroCard(AlphaStrikeElement element) {
+    public ASAeroCard(ASCardDisplayable element) {
         super(element);
     }
 
@@ -47,13 +49,13 @@ public class ASAeroCard extends ASHeatTrackingCard {
             int lowerY = 170 + baseInfoBoxHeight / 2 + 20;
 
             new StringDrawer("TP: ").at(44, upperY).centerY().maxWidth(55).font(headerFont).draw(g);
-            new StringDrawer(element.getType().toString()).at(107, upperY).useConfig(valueConfig).maxWidth(64).draw(g);
+            new StringDrawer(element.getASUnitType().toString()).at(107, upperY).useConfig(valueConfig).maxWidth(64).draw(g);
 
             new StringDrawer("SZ: ").at(182, upperY).centerY().font(headerFont).maxWidth(56).draw(g);
             new StringDrawer(element.getSize() + "").at(244, upperY).useConfig(valueConfig).maxWidth(33).draw(g);
 
             new StringDrawer("THR: ").at(281, upperY).centerY().font(headerFont).maxWidth(94).draw(g);
-            new StringDrawer(element.getMovementAsString()).at(380, upperY).useConfig(valueConfig).maxWidth(44).draw(g);
+            new StringDrawer(AlphaStrikeHelper.getMovementAsString(element)).at(380, upperY).useConfig(valueConfig).maxWidth(44).draw(g);
 
             new StringDrawer("ROLE: ").at(44, lowerY).centerY().font(headerFont).maxWidth(85).draw(g);
             new StringDrawer(element.getRole().toString()).at(138, lowerY).useConfig(valueConfig).maxWidth(250).draw(g);

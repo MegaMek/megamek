@@ -28,7 +28,7 @@ import static megamek.client.ui.swing.calculationReport.CalculationReport.format
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
-class ASAeroDamageConverter extends ASDamageConverter2 {
+class ASAeroDamageConverter extends ASDamageConverter {
 
     ASAeroDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
@@ -58,8 +58,8 @@ class ASAeroDamageConverter extends ASDamageConverter2 {
         if (element.hasSUA(OVL)) {
             report.addLine("Adjusted Damage: ",
                     formatForReport(eDamage) + " x (see M)",
-                    "= " + formatForReport(eDamage * heatAdjustFactorLE));
-            eDamage = eDamage * heatAdjustFactorLE;
+                    "= " + formatForReport(eDamage * heatAdjustFactor));
+            eDamage = eDamage * heatAdjustFactor;
         }
 
         finalEDamage = ASDamage.createDualRoundedUp(eDamage);
@@ -72,6 +72,10 @@ class ASAeroDamageConverter extends ASDamageConverter2 {
 
     @Override
     protected double determineDamage(Mounted weapon, int range) {
+        WeaponType weaponType = (WeaponType) weapon.getType();
+        if (weaponType.getBattleForceClass() == WeaponType.BFCLASS_TORP) {
+            return 0;
+        }
         return ((WeaponType) weapon.getType()).getBattleForceDamage(range, weapon.getLinkedBy());
     }
 

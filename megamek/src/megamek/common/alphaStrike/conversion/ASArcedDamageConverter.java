@@ -41,6 +41,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         for (int index = 0; index < locationNames.length; index++) {
             locations[index] = ASArcSummary.createArcSummary(element);
         }
+        // Flatten the weaponlist as weapon bays are not relevant for AS conversion
         List<Mounted> flattenedWeaponList = new ArrayList<>();
         for (Mounted weapon : entity.getWeaponList()) {
             if (weapon.getType() instanceof BayWeapon) {
@@ -91,9 +92,9 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         report.addLine("Heat Generation", totalHeat + "");
         if (totalHeat - 4 > heatCapacity) {
             needsHeatAdjustment = true;
-            heatAdjustFactorSM = (double) heatCapacity / (totalHeat - 4);
+            heatAdjustFactor = (double) heatCapacity / (totalHeat - 4);
             report.addLine("Adjustment factor", heatCapacity + " / (" + totalHeat + " - 4)",
-                    "= " + formatForReport(heatAdjustFactorSM));
+                    "= " + formatForReport(heatAdjustFactor));
         } else {
             report.addLine("", "No heat adjustment");
         }
@@ -137,10 +138,10 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         String finalText = "Final value:";
         if (needsHeatAdjustment) {
             finalText = "Adjusted final value:";
-            damage[0] *= heatAdjustFactorSM;
-            damage[1] *= heatAdjustFactorSM;
-            damage[2] *= heatAdjustFactorSM;
-            damage[3] *= heatAdjustFactorSM;
+            damage[0] *= heatAdjustFactor;
+            damage[1] *= heatAdjustFactor;
+            damage[2] *= heatAdjustFactor;
+            damage[3] *= heatAdjustFactor;
         }
 
         if (qualifiesForSpecial(damage, dmgType)) {

@@ -64,7 +64,7 @@ public enum SBFElementType {
      * the element's movement modes to distinguish SV elements into AS / V.
      */
     public static SBFElementType getUnitType(AlphaStrikeElement element) {
-        switch (element.getType()) {
+        switch (element.getASUnitType()) {
             case IM:
             case BM:
                 return BM;

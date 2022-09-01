@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
 
@@ -39,6 +40,11 @@ public class ASConversionInfoDialog extends AbstractDialog {
     private final String unitName;
 
     //TODO: Commenting
+
+    public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable ASCardDisplayable element) {
+        this(frame, report, element.getChassis() + " " + element.getModel(), false);
+    }
+
     public ASConversionInfoDialog(final JFrame frame, CalculationReport report, @Nullable AlphaStrikeElement element) {
         this(frame, report, element.getName(), false);
     }

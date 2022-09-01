@@ -15,6 +15,7 @@
 package megamek.client.ui.swing.util;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -127,31 +128,31 @@ public class FluffImageHelper {
      * @param element The AlphaStrike element
      * @return An image or null
      */
-    public static Image loadFluffImageHeuristic(final AlphaStrikeElement element) {
+    public static Image loadFluffImageHeuristic(final ASCardDisplayable element) {
         Image fluff = null;
 
         String dir = DIR_NAME_MECH;
-        if (element.isType(ASUnitType.WS)) {
+        if (element.getASUnitType().isAnyOf(ASUnitType.WS)) {
             dir = DIR_NAME_WARSHIP;
-        } else if (element.isType(ASUnitType.SS)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.SS)) {
             dir = DIR_NAME_SPACESTATION;
-        } else if (element.isType(ASUnitType.JS)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.JS)) {
             dir = DIR_NAME_JUMPSHIP;
-        } else if (element.isType(ASUnitType.CF)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.CF)) {
             dir = DIR_NAME_CONVFIGHTER;
-        } else if (element.isType(ASUnitType.DS, ASUnitType.DA)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.DS, ASUnitType.DA)) {
             dir = DIR_NAME_DROPSHIP;
-        } else if (element.isType(ASUnitType.SC)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.SC)) {
             dir = DIR_NAME_SMALLCRAFT;
-        } else if (element.isAerospace()) {
+        } else if (element.getASUnitType().isFighter()) {
             dir = DIR_NAME_FIGHTER;
-        } else if (element.isType(ASUnitType.BA)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.BA)) {
             dir = DIR_NAME_BA;
-        } else if (element.isType(ASUnitType.CI)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.CI)) {
             dir = DIR_NAME_INFANTRY;
-        } else if (element.isType(ASUnitType.PM)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.PM)) {
             dir = DIR_NAME_PROTOMEK;
-        } else if (element.isType(ASUnitType.CV, ASUnitType.SV)) {
+        } else if (element.getASUnitType().isAnyOf(ASUnitType.CV, ASUnitType.SV)) {
             dir = DIR_NAME_VEHICLE;
         }
 
@@ -171,7 +172,7 @@ public class FluffImageHelper {
      * @param element The AlphaStrike element
      * @return Path to an appropriate file or {@code null} if none is found
      */
-    protected static File findFluffImage(final File directory, final AlphaStrikeElement element) {
+    protected static File findFluffImage(final File directory, final ASCardDisplayable element) {
         return findFluffImage(directory, element.getModel(), element.getChassis());
     }
 

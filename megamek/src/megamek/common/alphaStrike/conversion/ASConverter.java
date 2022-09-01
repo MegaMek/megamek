@@ -28,7 +28,6 @@ import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
-
 /**
  * Static AlphaStrike Conversion class; contains all information for conversion except for some weapon specifics
  * handled in WeaponType/AmmoType/MiscType.
@@ -38,12 +37,7 @@ import java.util.*;
  */
 public final class ASConverter {
 
-    //TODO: Eagre Firefighting ATV - CT0
-    //TODO: Sarissa MN2A should have Advanced Fire Control (in TW) - Data Error
-    //TODO: LG, SLG, VLG for support vehicles
-    //TODO: Long Tom Cannon may not be counted to damage for ground units
-    //TODO: BattleArmor AP Mounts gloves
-    //TODO: Haw Moth II MML Gunship: turret can't count for REAR, FR cant count for TUR specials
+    //TODO: LG, SLG, VLG support vehicles, MS
 
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport());
@@ -113,7 +107,7 @@ public final class ASConverter {
         if ((entity instanceof Mech) && ((Mech) entity).isIndustrial()) {
             unitType += " / Industrial";
         }
-        conversionReport.addLine("Unit Type:", unitType, element.getType().toString());
+        conversionReport.addLine("Unit Type:", unitType, element.getASUnitType().toString());
         if (entity instanceof BattleArmor) {
             element.setSquadSize(((BattleArmor) entity).getSquadSize());
         }
@@ -141,10 +135,8 @@ public final class ASConverter {
         element.setFullArmor(ASArmStrConverter.convertArmor(conversionData));
         element.setFullStructure(ASArmStrConverter.convertStructure(conversionData));
         element.setThreshold(ASArmStrConverter.convertThreshold(conversionData));
-        initWeaponLocations(entity, element);
-        element.heat = new int[element.getRangeBands()];
-        ASDamageConverter2.getASDamageConverter(entity, element, conversionReport).convert();
-        ASSpecialAbilityConverter2.getConverter(entity, element, conversionReport).processAbilities();
+        ASDamageConverter.getASDamageConverter(entity, element, conversionReport).convert();
+        ASSpecialAbilityConverter.getConverter(entity, element, conversionReport).processAbilities();
         ASPointValueConverter pvConverter = ASPointValueConverter.getPointValueConverter(element, conversionReport);
         element.setPointValue(pvConverter.getSkillAdjustedPointValue());
         element.setConversionReport(conversionReport);
@@ -220,88 +212,9 @@ public final class ASConverter {
         }
     }
 
-    private static void initWeaponLocations(Entity entity, AlphaStrikeElement result) {
-        result.weaponLocations = new WeaponLocation[ASLocationMapper.damageLocationsCount(entity)];
-        result.locationNames = new String[result.weaponLocations.length];
-        for (int loc = 0; loc < result.locationNames.length; loc++) {
-            result.weaponLocations[loc] = new WeaponLocation();
-            result.locationNames[loc] = ASLocationMapper.locationName(entity, loc);
-        }
-    }
-
-    /** Returns the given number, rounded up to the nearest integer or x.5, based on the first decimal only. */
-    static double roundUpToHalf(double number) {
-        return 0.5 * Math.round(number * 2 + 0.3);
-    }
-
     /** Returns the given number, rounded up to the nearest integer, based on the first decimal only. */
     public static int roundUp(double number) {
         return (int) Math.round(number + 0.4); 
-    }
-
-    /**
-     * This class is used to gather weapon and damage values for conversion purposes.
-     */
-    public static class WeaponLocation {
-        List<Double> standardDamage = new ArrayList<>();
-        Map<Integer,List<Double>> specialDamage = new HashMap<>();
-        List<Integer> heatDamage = new ArrayList<>();
-        double indirect;
-
-        WeaponLocation() {
-            while (standardDamage.size() < 4) {
-                standardDamage.add(0.0);
-            }
-            while (heatDamage.size() < 4) {
-                heatDamage.add(0);
-            }
-        }
-
-        public boolean hasStandardDamage() {
-            return standardDamage.stream().mapToDouble(Double::doubleValue).sum() > 0;
-        }
-
-        public boolean hasDamage() {
-            return hasStandardDamage()
-                    || specialDamage.keySet().stream().anyMatch(this::hasDamageClass);
-        }
-
-        public boolean hasDamageClass(int damageClass) {
-            if (damageClass == WeaponType.BFCLASS_FLAK) {
-                return specialDamage.containsKey(damageClass)
-                        && specialDamage.get(damageClass).stream().mapToDouble(Double::doubleValue).sum() > 0;
-            } else {
-                return specialDamage.containsKey(damageClass)
-                        && specialDamage.get(damageClass).get(1) >= 1;
-            }
-        }
-
-        public void addDamage(int rangeIndex, double val) {
-            addDamage(standardDamage, rangeIndex, val);
-        }
-
-        public void addDamage(int damageClass, int rangeIndex, double val) {
-            if (!specialDamage.containsKey(damageClass)) {
-                specialDamage.put(damageClass, new ArrayList<>());
-            }
-            addDamage(specialDamage.get(damageClass), rangeIndex, val);
-        }
-
-        public double getIF() {
-            return indirect;
-        }
-
-        public void addIF(double val) {
-            indirect += val;
-        }
-
-        private void addDamage(List<Double> damage, int rangeIndex, double val) {
-            while (damage.size() <= rangeIndex) {
-                damage.add(0.0);
-            }
-            damage.set(rangeIndex, damage.get(rangeIndex) + val);
-        }
-
     }
 
     private ASConverter() { }

@@ -22,8 +22,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.StringDrawer;
 import megamek.common.Configuration;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -39,7 +38,7 @@ import static java.awt.Color.WHITE;
 /**
  * This class represents the (graphical) card of an AlphaStrike element as available on the MUL. The unit cards have a
  * standard size of 1050 x 750 but can be resized without loss of quality to any size. A card is created by
- * calling the static {@link #createCard(AlphaStrikeElement)}. The basic way to obtain a card image after creating
+ * calling the static {@link #createCard(ASCardDisplayable)}. The basic way to obtain a card image after creating
  * the card is calling the card's {@link #getCardImage()} method. Other methods can be used to configure the
  * resulting card image.
  *
@@ -65,7 +64,7 @@ public class ASCard {
     private static final Image btLogo = ImageUtil.loadImageFromFile(
             new MegaMekFile(Configuration.miscImagesDir(), FILENAME_BT_LOGO).toString());
 
-    protected final AlphaStrikeElement element;
+    protected final ASCardDisplayable element;
     protected final Image fluffImage;
 
     protected Font lightFont = new Font(Font.SANS_SERIF, Font.PLAIN, 14);
@@ -102,7 +101,8 @@ public class ASCard {
     protected int fluffHeight = 512; //318;
 
     /**
-     * Creates an ASCard for the given element whih can be used to display a typical AlphaStrike
+     * Creates an ASCard for the given AlphaStrike unit (either an AlphaStrikeElement or a MechSummary)
+     * which can be used to display a typical AlphaStrike
      * element card. The element can be null in which case the card
      * will contain a message instead of the element's values; the card image will still have the correct size.
      *
@@ -112,7 +112,7 @@ public class ASCard {
      * @param element The element to display on the card.
      * @return The element's ASCard
      */
-    public static ASCard createCard(@Nullable AlphaStrikeElement element) {
+    public static ASCard createCard(@Nullable ASCardDisplayable element) {
         if (element != null) {
             if (element.isLargeAerospace()) {
                 return new ASLargeAeroCard(element);
@@ -186,9 +186,9 @@ public class ASCard {
     }
 
     /**
-     * Constructs and initializes the ASCard. Hidden so that the static createCard is used instead.
+     * Constructs and initializes the ASCard. Do not use directly, use createCard instead.
      */
-    protected ASCard(AlphaStrikeElement element) {
+    protected ASCard(ASCardDisplayable element) {
         this.element = element;
         fluffImage = getFluffImage(element);
         initialize();
@@ -269,7 +269,7 @@ public class ASCard {
     protected void drawModelChassis(Graphics2D g) {
         String model = element.getModel();
         // Remove MM's "(SqdX)" addition to the model
-        if (element.isBattleArmor()) {
+        if (element.getASUnitType().isBattleArmor()) {
             model = model.replaceAll("\\(Sqd[0-9]\\)", "");
         }
         new StringDrawer(model).at(36, 44).font(modelFont).centerY()
@@ -278,7 +278,7 @@ public class ASCard {
                 .font(chassisFont).centerY().maxWidth(770).scaleX(0.8f).draw(g);
 
         // Add BA Squad Size
-        if (element.isBattleArmor()) {
+        if (element.getASUnitType().isBattleArmor()) {
             new StringDrawer("Squad " + element.getSquadSize()).at(36, 137).maxWidth(500).scaleX(1.3f)
                     .font(modelFont).centerY().draw(g);
         }
@@ -292,7 +292,7 @@ public class ASCard {
         int lowerY = 170 + baseInfoBoxHeight / 2 + 20;
 
         new StringDrawer("TP: ").at(44, upperY).centerY().maxWidth(55).font(headerFont).draw(g);
-        new StringDrawer(element.getType().toString()).at(107, upperY).useConfig(valueConfig).maxWidth(64).draw(g);
+        new StringDrawer(element.getASUnitType().toString()).at(107, upperY).useConfig(valueConfig).maxWidth(64).draw(g);
 
         new StringDrawer("SZ: ").at(182, upperY).centerY().font(headerFont).maxWidth(56).draw(g);
         new StringDrawer(element.getSize() + "").at(244, upperY).useConfig(valueConfig).maxWidth(33).draw(g);
@@ -301,7 +301,7 @@ public class ASCard {
         new StringDrawer(element.getTMM() + "").at(380, upperY).useConfig(valueConfig).maxWidth(44).draw(g);
 
         new StringDrawer("MV: ").at(438, upperY).centerY().font(headerFont).maxWidth(62).draw(g);
-        new StringDrawer(element.getMovementAsString()).at(505, upperY).useConfig(valueConfig).maxWidth(128).draw(g);
+        new StringDrawer(AlphaStrikeHelper.getMovementAsString(element)).at(505, upperY).useConfig(valueConfig).maxWidth(128).draw(g);
 
         new StringDrawer("ROLE: ").at(44, lowerY).centerY().font(headerFont).maxWidth(85).draw(g);
         new StringDrawer(element.getRole().toString()).at(138, lowerY).useConfig(valueConfig).maxWidth(250).draw(g);
@@ -387,11 +387,11 @@ public class ASCard {
     }
 
     /** Helper method that writes the actual special ability text lines. */
-    protected void paintSpecialTextLines(Graphics2D g, AlphaStrikeElement element, Font font,
+    protected void paintSpecialTextLines(Graphics2D g, ASCardDisplayable element, Font font,
                                          int x, int y, int width, int lineHeight) {
         int headerWidth = new StringDrawer("SPECIAL: ").at(x, y + lineHeight)
                 .maxWidth(width).useConfig(specialsHeaderConfig).draw(g).width + 10;
-        String specials = element.getSpecialsString(", ");
+        String specials = element.getSpecialAbilities().getSpecialsString(", ");
         int specialsWidth = g.getFontMetrics(font).stringWidth(specials);
         int maxWidth = width;
         int firstLineWidth = width - headerWidth;
@@ -545,7 +545,7 @@ public class ASCard {
     }
 
     /** Get the fluff image for the given element. */
-    private Image getFluffImage(AlphaStrikeElement element) {
+    private Image getFluffImage(ASCardDisplayable element) {
         if (element != null) {
             return FluffImageHelper.loadFluffImageHeuristic(element);
         } else {

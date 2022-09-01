@@ -48,8 +48,7 @@ public class AlphaStrikeMassConvert {
             if (!ASConverter.canConvert(entity) || !entity.hasMulId()) {
                 continue;
             }
-            if ((entity instanceof Aero && entity.isFighter()) || entity instanceof Mech
-                    || entity instanceof Tank || entity instanceof Infantry || entity instanceof Protomech) {
+            if (filter(entity)) {
                 System.out.println(entity.getShortName());
                 AlphaStrikeElement ase = ASConverter.convert(entity);
                 table.append(clipboardElementString(ase));
@@ -60,6 +59,10 @@ public class AlphaStrikeMassConvert {
         clipboard.setContents(stringSelection, null);
         System.out.println("Finished.");
         System.exit(0);
+    }
+
+    private static boolean filter(Entity entity) {
+        return entity instanceof Mech;
     }
     
     private static String clipboardHeaderString() {
@@ -88,14 +91,14 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getChassis());
         stats.add(element.getModel());
         stats.add(element.getRole().toString());
-        stats.add(element.getType().toString());
+        stats.add(element.getASUnitType().toString());
         stats.add(element.getSize() + "");
         stats.add(element.getMovementAsString());
         stats.add(element.getFullArmor() + "");
         stats.add(element.getFullStructure() + "");
         stats.add(element.usesThreshold() ? element.getThreshold() + "" : " ");
         stats.add(element.getStandardDamage() + "");
-        stats.add(element.getOverheat() + "");
+        stats.add(element.getOV() + "");
         stats.add(element.getPointValue()+"");
         stats.add(element.getSpecialsString(","));
         stats.add(element.getMulId() + "");

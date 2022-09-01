@@ -289,7 +289,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write("\t");
                         bw.write(element.getRole() + "");
                         bw.write("\t");
-                        bw.write(element.getType() + "");
+                        bw.write(element.getASUnitType() + "");
                         bw.write("\t");
                         bw.write(element.getSize() + "");
                         bw.write("\t");
@@ -319,7 +319,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write("\t");
                         bw.write(element.getStandardDamage().E.minimal ? "TRUE" : "FALSE");
                         bw.write("\t");
-                        bw.write(element.getOverheat() + "");
+                        bw.write(element.getOV() + "");
                         bw.write("\t");
                         bw.write(element.getPointValue() + "");
                         bw.write("\t");

@@ -101,10 +101,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String primaryMovementMode = "";
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;
-    private ASArcSummary frontArc;
-    private ASArcSummary leftArc;
-    private ASArcSummary rightArc;
-    private ASArcSummary rearArc;
+    private ASSpecialAbilityCollection frontArc;
+    private ASSpecialAbilityCollection leftArc;
+    private ASSpecialAbilityCollection rightArc;
+    private ASSpecialAbilityCollection rearArc;
     private int threshold = 0;
     private int fullArmor;
     private int fullStructure;
@@ -281,74 +281,92 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         }
     }
 
+    @Override
     public int getPointValue() {
         return pointValue;
     }
 
+    @Override
     public ASUnitType getASUnitType() {
         return asUnitType;
     }
 
+    @Override
     public int getSize() {
         return size;
     }
 
+    @Override
     public int getTMM() {
         return tmm;
     }
 
+    @Override
     public Map<String, Integer> getMovement() {
         return movement;
     }
 
+    @Override
     public String getPrimaryMovementMode() {
         return primaryMovementMode;
     }
 
+    @Override
     public ASDamageVector getStandardDamage() {
         return standardDamage;
     }
 
+    @Override
     public int getOV() {
         return overheat;
     }
 
-    public ASArcSummary getFrontArc() {
+    @Override
+    public ASSpecialAbilityCollection getFrontArc() {
         return frontArc;
     }
 
-    public ASArcSummary getLeftArc() {
+    @Override
+    public ASSpecialAbilityCollection getLeftArc() {
         return leftArc;
     }
 
-    public ASArcSummary getRightArc() {
+    @Override
+    public ASSpecialAbilityCollection getRightArc() {
         return rightArc;
     }
 
-    public ASArcSummary getRearArc() {
+    @Override
+    public ASSpecialAbilityCollection getRearArc() {
         return rearArc;
     }
 
+    @Override
     public int getThreshold() {
         return threshold;
     }
 
+    @Override
     public int getFullArmor() {
         return fullArmor;
     }
 
+    @Override
     public int getFullStructure() {
         return fullStructure;
     }
 
+    @Override
     public int getSquadSize() {
         return squadSize;
     }
 
+    @Override
     public ASSpecialAbilityCollection getSpecialAbilities() {
         return specialAbilities;
     }
 
+    @Override
     public UnitRole getRole() {
         return role;
     }
@@ -654,19 +672,19 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.overheat = overheat;
     }
 
-    public void setFrontArc(ASArcSummary frontArc) {
+    public void setFrontArc(ASSpecialAbilityCollection frontArc) {
         this.frontArc = frontArc;
     }
 
-    public void setLeftArc(ASArcSummary leftArc) {
+    public void setLeftArc(ASSpecialAbilityCollection leftArc) {
         this.leftArc = leftArc;
     }
 
-    public void setRightArc(ASArcSummary rightArc) {
+    public void setRightArc(ASSpecialAbilityCollection rightArc) {
         this.rightArc = rightArc;
     }
 
-    public void setRearArc(ASArcSummary rearArc) {
+    public void setRearArc(ASSpecialAbilityCollection rearArc) {
         this.rearArc = rearArc;
     }
 

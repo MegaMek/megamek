@@ -139,13 +139,13 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         dataLine.append(element.getSkill()).append(EXPORT_DELIMITER);
         dataLine.append(element.getPointValue()).append(EXPORT_DELIMITER);
         if (element.usesArcs()) {
-            dataLine.append(element.getSpecialsString()).append(EXPORT_DELIMITER);
+            dataLine.append(element.getSpecialsDisplayString(EXPORT_DELIMITER, element)).append(EXPORT_DELIMITER);
             dataLine.append("FRONT(").append(element.getFrontArc().toString()).append(")").append(EXPORT_DELIMITER);
             dataLine.append("LEFT(").append(element.getLeftArc().toString()).append(")").append(EXPORT_DELIMITER);
             dataLine.append("RIGHT(").append(element.getRightArc().toString()).append(")").append(EXPORT_DELIMITER);
             dataLine.append("REAR(").append(element.getRearArc().toString()).append(")");
         } else {
-            dataLine.append(element.getSpecialsString());
+            dataLine.append(element.getSpecialsDisplayString(EXPORT_DELIMITER, element));
         }
         dataLine.append("\n");
         return dataLine;

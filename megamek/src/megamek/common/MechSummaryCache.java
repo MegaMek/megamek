@@ -510,7 +510,7 @@ public class MechSummaryCache {
             ms.setSize(element.getSize());
             ms.setTmm(element.getTMM());
             ms.setMovement(element.getMovement());
-            ms.setPrimaryMovementMode(element.getPrimaryMovementType());
+            ms.setPrimaryMovementMode(element.getPrimaryMovementMode());
             ms.setStandardDamage(element.getStandardDamage());
             ms.setOverheat(element.getOV());
             ms.setFrontArc(element.getFrontArc());

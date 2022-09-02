@@ -19,10 +19,7 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.alphaStrike.ASDamage;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -177,7 +174,7 @@ public class ASPointValueConverter {
         processOffensiveSUAMod(IATM, e -> (double) ((ASDamageVector) element.getSUA(IATM)).L.damage);
         processOffensiveSUAMod(OVL, e -> 0.25 * element.getOV());
         processOffensiveSUAMod(HT, e -> {
-            ASDamageVector ht = (ASDamageVector) element.getSUA(HT);
+            ASDamageVector ht = element.getHT();
             return Math.max(ht.S.damage, Math.max(ht.M.damage, ht.L.damage)) + ((ht.M.damage > 0) ? 0.5 : 0);
         });
         processOffensiveSUAMod(IF,
@@ -228,7 +225,7 @@ public class ASPointValueConverter {
     protected void processOffensiveSUAMod(BattleForceSUA sua, Function<AlphaStrikeElement, Double> suaMod) {
         if (element.hasSUA(sua)) {
             double modifier = suaMod.apply(element);
-            String suaString = element.getSpecialAbilities().formatSUAString(sua);
+            String suaString = AlphaStrikeHelper.formatAbility(sua, element.getSpecialAbilities(), element, ", ");
             offensiveValue += modifier;
             report.addLine("Offensive SUA", "+ " + formatForReport(modifier) + " (" + suaString + ")", "= " + formatForReport(offensiveValue));
         }
@@ -244,7 +241,7 @@ public class ASPointValueConverter {
     protected void processDefensiveSUAMod(BattleForceSUA sua, Function<AlphaStrikeElement, Double> suaMod) {
         if (element.hasSUA(sua)) {
             double modifier = suaMod.apply(element);
-            String suaString = element.getSpecialAbilities().formatSUAString(sua);
+            String suaString = AlphaStrikeHelper.formatAbility(sua, element.getSpecialAbilities(), element, ", ");
             defensiveValue += modifier;
             report.addLine("Defensive SUA", "+ " + formatForReport(modifier) + " (" + suaString + ")", "= " + formatForReport(defensiveValue));
         }
@@ -321,7 +318,7 @@ public class ASPointValueConverter {
         double armorMultiplier = 2;
         List<String> modifierList = new ArrayList<>();
         if (element.isType(CV, SV)) {
-            modifierList.add("MV " + element.getPrimaryMovementType());
+            modifierList.add("MV " + element.getPrimaryMovementMode());
             if (element.getMovementModes().contains("t") || element.getMovementModes().contains("n")
                     || element.getMovementModes().contains("s")) {
                 armorMultiplier = 1.8;

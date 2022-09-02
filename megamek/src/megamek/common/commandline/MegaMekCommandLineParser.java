@@ -323,7 +323,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write("\t");
                         bw.write(element.getPointValue() + "");
                         bw.write("\t");
-                        bw.write(element.getSpecialsString());
+                        bw.write(element.getSpecialsDisplayString(", ", element));
                         bw.write("\t");
                         if (element.usesArcs()) {
                             bw.write("FRONT(" + element.getFrontArc().toString() + ")");

@@ -100,7 +100,7 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getStandardDamage() + "");
         stats.add(element.getOV() + "");
         stats.add(element.getPointValue()+"");
-        stats.add(element.getSpecialsString(","));
+        stats.add(element.getSpecialsDisplayString(",", element));
         stats.add(element.getMulId() + "");
         stats.add("\n");
         return new StringBuilder(String.join("\t", stats));

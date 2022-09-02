@@ -73,6 +73,9 @@ public interface ASCardDisplayable {
     /** @return The AS element's entire movement capability (MV). */
     Map<String, Integer> getMovement();
 
+    /** @return The primary (= first) movement type String, such as "" for some ground units or "s" for submarines. */
+    String getPrimaryMovementMode();
+
     /**
      * @return The standard damage (SML or SMLE depending on type). This will be empty for
      * elements that use arcs.
@@ -96,16 +99,16 @@ public interface ASCardDisplayable {
     }
 
     /** @return The AS element's front arc. Returns an empty arc for elements that don't use arcs. */
-    ASArcSummary getFrontArc();
+    ASSpecialAbilityCollection getFrontArc();
 
     /** @return The AS element's left arc. Returns an empty arc for elements that don't use arcs. */
-    ASArcSummary getLeftArc();
+    ASSpecialAbilityCollection getLeftArc();
 
     /** @return The AS element's right arc. Returns an empty arc for elements that don't use arcs. */
-    ASArcSummary getRightArc();
+    ASSpecialAbilityCollection getRightArc();
 
     /** @return The AS element's rear arc. Returns an empty arc for elements that don't use arcs. */
-    ASArcSummary getRearArc();
+    ASSpecialAbilityCollection getRearArc();
 
     /** @return The AS element's armor threshold (TH), if it uses threshold. */
     int getThreshold();
@@ -246,8 +249,8 @@ public interface ASCardDisplayable {
      */
     default boolean usesArcs() {
         return isLargeAerospace() || (isSupportVehicle() &&
-                (getSpecialAbilities().hasSPA(LG) || getSpecialAbilities().hasSPA(SLG)
-                || getSpecialAbilities().hasSPA(VLG)));
+                (getSpecialAbilities().hasSUA(LG) || getSpecialAbilities().hasSUA(SLG)
+                || getSpecialAbilities().hasSUA(VLG)));
     }
 
     /** @return True if this AS element uses CAP weapons in its arcs, i.e. WS, SS or JS. */
@@ -266,5 +269,15 @@ public interface ASCardDisplayable {
      */
     default boolean isJumpCapable() {
         return getMovement().containsKey("j");
+    }
+
+    /**
+     * Returns true when this AS element is a submarine. This checks if it is a combat vehicle
+     * and has the "s" primary movement type.
+     *
+     * @return True when this AS element is as a submarine
+     */
+    default boolean isSubmarine() {
+        return isCombatVehicle() && getPrimaryMovementMode().equals("s");
     }
 }

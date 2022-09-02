@@ -34,6 +34,9 @@ import static megamek.common.strategicBattleSystems.SBFElementType.*;
 
 public class SBFUnitConverter {
 
+    private SBFUnitConverter() {
+    }
+
     /**
      *  Returns an SBF Unit formed from the given AS elements and having the given name.
      *  Does not check validity of the conversion.
@@ -317,7 +320,7 @@ public class SBFUnitConverter {
                 return new SBFMoveMode("unknown", 0);
             }
         }
-        switch (element.getPrimaryMovementType()) {
+        switch (element.getPrimaryMovementMode()) {
             case "":
                 if (element.isType(ASUnitType.BM, ASUnitType.PM, ASUnitType.IM)) {
                     return new SBFMoveMode("l", 60);

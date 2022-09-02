@@ -35,11 +35,11 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
 
     private final Map<Mounted, Integer> collectedWeapons = new HashMap<>();
 
-
     protected ASArcedDamageConverter(Entity entity, AlphaStrikeElement element, CalculationReport report) {
         super(entity, element, report);
+        locations = new ASSpecialAbilityCollection[ASLocationMapper.damageLocationsCount(entity)];
         for (int index = 0; index < locationNames.length; index++) {
-            locations[index] = ASArcSummary.createArcSummary(element);
+            locations[index] = new ASSpecialAbilityCollection();
         }
         // Flatten the weaponlist as weapon bays are not relevant for AS conversion
         List<Mounted> flattenedWeaponList = new ArrayList<>();
@@ -149,7 +149,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
             if (dmgType == PNT) {
                 int finalPNTDamage = ASConverter.roundUp(roundUpToTenth(damage[0]));
                 report.addLine(finalText, formatForReport(damage[0]) + ", " + rdUp, "PNT" + finalPNTDamage);
-                locations[arc.toInt()].getSpecials().addSPA(PNT, finalPNTDamage);
+                locations[arc.toInt()].mergeSUA(PNT, finalPNTDamage);
             } else {
                 ASDamageVector finalDamage;
                 if (dmgType.isAnyOf(STD, MSL, CAP, SCAP)) {
@@ -160,7 +160,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
                 report.addLine(finalText,
                         formatAsVector(damage[0], damage[1], damage[2], damage[3], dmgType) + ", " + rdUp,
                         "" + dmgType + finalDamage);
-                locations[arc.toInt()].getSpecials().addSPA(dmgType, finalDamage);
+                locations[arc.toInt()].setSUA(dmgType, finalDamage);
             }
             report.endTentativeSection();
         } else {

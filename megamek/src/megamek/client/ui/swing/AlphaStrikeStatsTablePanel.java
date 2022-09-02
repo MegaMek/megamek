@@ -115,7 +115,7 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
                 if (element.usesArcs()) {
                     addGridElementLeftAlign(getArcedSpecials(element), oddRow);
                 } else {
-                    addGridElementLeftAlign(element.getSpecialsString(), oddRow);
+                    addGridElementLeftAlign(element.getSpecialsDisplayString(element), oddRow);
                 }
                 addConversionInfo(oddRow, reports.get(element), element, frame);
             }
@@ -175,7 +175,7 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
     }
    
     private String getArcedSpecials(AlphaStrikeElement element) {
-        return "<HTML>" + element.getSpecialsString() +
+        return "<HTML>" + element.getSpecialsDisplayString(element) +
                 "<BR>FRONT(" + element.getFrontArc().toString() + ")" +
                 "<BR>LEFT(" + element.getLeftArc().toString() + ")" +
                 "<BR>RIGHT(" + element.getRightArc().toString() + ")" +

@@ -64,7 +64,7 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
         for (ASArcs arc : ASArcs.values()) {
             if (!hasExplosiveArcComponent[arc.toInt()]) {
                 report.addLine("No Explosive Component", arc + "", "ENE");
-                element.getArc(arc).getSpecials().addSPA(ENE);
+                element.getArc(arc).setSUA(ENE);
             }
         }
     }

@@ -83,12 +83,12 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
             if (lam.getLAMType() == LandAirMech.LAM_BIMODAL) {
                 lamMoves.put("a", lam.getCurrentThrust());
                 report.addLine("Bimodal Movement", "BIM");
-                element.getSpecialAbilities().addBimSPA(lamMoves);
+                element.getSpecialAbilities().replaceSUA(BIM, lamMoves);
             } else {
                 lamMoves.put("g", lam.getAirMechCruiseMP(false, false) * 2);
                 lamMoves.put("a", lam.getCurrentThrust());
                 report.addLine("LAM Movement", "LAM");
-                element.getSpecialAbilities().addLamSPA(lamMoves);
+                element.getSpecialAbilities().replaceSUA(LAM, lamMoves);
             }
             element.getMovement().putAll(lamMoves);
         }

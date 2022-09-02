@@ -24,10 +24,10 @@ import megamek.common.UnitRole;
 import megamek.common.options.Quirks;
 
 import java.io.Serializable;
-import java.util.*;
-
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.BattleForceSUA.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * This class represents an AlphaStrike Element which is a single unit such as a Mek with
@@ -36,7 +36,8 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * @author Neoancient
  * @author Simon (Juliez)
  */
-public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
+public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
+        ASSpecialAbilityCollector {
 
     static final int RANGEBANDS_SML = 3;
     static final int RANGEBANDS_SMLE = 4;
@@ -78,10 +79,10 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
     private int overheat;
 
     // The arcs of Large Aerospace units. Other units use standardDamage instead
-    private ASArcSummary frontArc = ASArcSummary.createArcSummary(this);
-    private ASArcSummary leftArc = ASArcSummary.createArcSummary(this);
-    private ASArcSummary rightArc = ASArcSummary.createArcSummary(this);
-    private ASArcSummary rearArc = ASArcSummary.createArcSummary(this);
+    private ASSpecialAbilityCollection frontArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection leftArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rightArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rearArc = new ASSpecialAbilityCollection();
 
     private int currentArmor;
     private int currentStructure;
@@ -106,7 +107,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
      * with standard damage at least.
      * BIM and LAM have a Map<String, Integer> as Object similar to the element's movement field.
      */
-    private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection(this);
+    private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
 
     /**
      * AlphaStrike Quirks.
@@ -219,22 +220,22 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
     }
 
     @Override
-    public ASArcSummary getFrontArc() {
+    public ASSpecialAbilityCollection getFrontArc() {
         return frontArc;
     }
 
     @Override
-    public ASArcSummary getLeftArc() {
+    public ASSpecialAbilityCollection getLeftArc() {
         return leftArc;
     }
 
     @Override
-    public ASArcSummary getRightArc() {
+    public ASSpecialAbilityCollection getRightArc() {
         return rightArc;
     }
 
     @Override
-    public ASArcSummary getRearArc() {
+    public ASSpecialAbilityCollection getRearArc() {
         return rearArc;
     }
 
@@ -263,8 +264,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
         return specialAbilities;
     }
 
-    /** @return The ASArcSummary object holding the damage and specials info for the given arc. */
-    public ASArcSummary getArc(ASArcs arc) {
+    /** @return The ASSpecialAbilityCollection object holding the damage and specials info for the given arc. */
+    public ASSpecialAbilityCollection getArc(ASArcs arc) {
         switch (arc) {
             case FRONT:
                 return frontArc;
@@ -396,7 +397,7 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
     }
 
     /** Sets the AS element's special ability collection to the given one, if it is not null. */
-    public void setArc(ASArcs arc, ASArcSummary arcSummary) {
+    public void setArc(ASArcs arc, ASSpecialAbilityCollection arcSummary) {
         Objects.requireNonNull(arc);
         Objects.requireNonNull(arcSummary);
         if (arc == ASArcs.FRONT) {
@@ -419,51 +420,14 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
         // currently unused
     }
 
-    /** 
-     * Adds a Special Unit Ability that is not associated with any additional information or number, e.g. RCN.
-     * This is a convenience method for calling {@link #getSpecialAbilities()} and adding the SUA.
-     *
-     * @param sua The Special Unit Ability to add
-     */
-    public void addSPA(BattleForceSUA sua) {
-        specialAbilities.addSPA(sua);
-    }
-
-    /**
-     * Returns true when this AS element has the given Special Unit Ability. When the element has
-     * the SUA and the SUA is associated with some value, this value can be assumed to be non-empty
-     * or greater than zero. For example, if an element has MHQ, then MHQ >= 1. If it has IF, then
-     * the IF value is at least 0*.
-     * This is a convenience method for calling hasSpA() on {@link #getSpecialAbilities()}.
-     *
-     * @param sua The Special Unit Ability to check
-     * @return True when this AS element has the given Special Unit Ability
-     */
+    @Override
     public boolean hasSUA(BattleForceSUA sua) {
-        return specialAbilities.hasSPA(sua);
+        return specialAbilities.hasSUA(sua);
     }
 
-    /**
-     * Returns true when this AS element has any of the given Special Unit Abilities.
-     * See {@link #hasSUA(BattleForceSUA)}
-     *
-     * @param sua The Special Unit Ability to check
-     * @return True when this AS element has the given Special Unit Ability
-     */
-    public boolean hasAnySUAOf(BattleForceSUA sua, BattleForceSUA... furtherSuas) {
-        return hasSUA(sua) || Arrays.stream(furtherSuas).anyMatch(this::hasSUA);
-    }
-
-    /**
-     * @return The value associated with the given Special Unit Ability. Depending on the given sua, this
-     * value can be null or of different types. Note that this does not get SUAs from the arcs of large
-     * aerospace units.
-     * This is a convenience method for calling getSpA() on {@link #getSpecialAbilities()}.
-     *
-     * @param sua The Special Unit Ability to get the ability value for
-     */
+    @Override
     public Object getSUA(BattleForceSUA sua) {
-        return specialAbilities.getSPA(sua);
+        return specialAbilities.getSUA(sua);
     }
 
     /**
@@ -477,91 +441,10 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
     public String getMovementAsString() {
         return AlphaStrikeHelper.getMovementAsString(this);
     }
-    
-    /**
-     * Returns a formatted SUA string for this AS element. The string is formatted in the way SUAs are
-     * printed on an AS element's card or summary with a ', ' between SUAs. This does not access
-     * arc SUAs of large aerospace units, only the unit SUAs.
-     *
-     * @return A formatted Special Unit Ability string for this AS element
-     */
-    public String getSpecialsString() {
-        return getSpecialsString(", ");
-    }
 
-    /**
-     * Returns a formatted SUA string for this AS element. The given delimiter is inserted between SUAs.
-     * This does not access arc SUAs of large aerospace units, only the unit SUAs.
-     *
-     * @return A formatted Special Unit Ability string for this AS element
-     */
-    public String getSpecialsString(String delimiter) {
-        return specialAbilities.getSpecialsString(delimiter);
-    }
-
-    /**
-     * Convenience method to obtain the element's IF damage.
-     *
-     * @return The ASDamage that represents the element's IF value. If the element does not
-     * have IF, this will return {@link ASDamageVector#ZERO}.
-     */
-    public ASDamage getIF() {
-        return hasSUA(IF) ? (ASDamage) getSUA(IF) : ASDamage.ZERO;
-    }
-
-    /**
-     * Convenience method to obtain the element's LRM ability.
-     *
-     * @return The ASDamageVector that represents the element's LRM ability. If the element does not
-     * have LRM, this will return {@link ASDamageVector#ZERO}.
-     */
-    public ASDamageVector getLRM() {
-        return hasSUA(LRM) ? (ASDamageVector) getSUA(LRM) : ASDamageVector.ZERO;
-    }
-
-    /**
-     * Convenience method to obtain the element's TOR ability.
-     *
-     * @return The ASDamageVector that represents the element's TOR ability. If the element does not
-     * have TOR, this will return {@link ASDamageVector#ZERO}.
-     */
-    public ASDamageVector getTOR() {
-        return hasSUA(TOR) ? (ASDamageVector) getSUA(TOR) : ASDamageVector.ZERO;
-    }
-
-    /**
-     * Returns true if the given Special Unit Ability should be shown on this AS element's card or summary.
-     * This is usually true but false for some, e.g. BM automatically have SOA and do not need to
-     * show this on the unit card.
-     *
-     * @param sua The Special Unit Ability to check
-     * @return True when the given Special Unit Ability should be listed on the element's card
-     */
-    public boolean showSpecial(BattleForceSUA sua) {
-        return !(sua.isDoor()
-                || (isLargeAerospace() && (sua == STD))
-                || (usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
-                || (isType(BM, PM) && (sua == SOA))
-                || (isType(CV, BM) && (sua == SRCH))
-                || (!isLargeAerospace() && sua.isDoor())
-                || (hasAutoSeal() && (sua == SEAL)));
-    }
-
-    /** @return True when this AS element automatically gets the SEAL Special Unit Ability. */
-    public boolean hasAutoSeal() {
-        return isSubmarine()
-                || isType(BM, AF, SC, DS, JS, WS, SS, DA);
-                // TODO               || isType(BA) Exoskeleton??
-    }
-
-    /**
-     * Returns true when this AS element is a submarine. This checks if it is a combat vehicle
-     * and has the "s" primary movement type.
-     *
-     * @return True when this AS element is as a submarine
-     */
-    public boolean isSubmarine() {
-        return isType(CV) && getPrimaryMovementType().equals("s");
+    @Override
+    public String getSpecialsDisplayString(String delimiter, ASCardDisplayable element) {
+        return specialAbilities.getSpecialsDisplayString(delimiter, this);
     }
 
     /** @return This AS element's jump movement (in inches) or 0 if it has no jump movement. */
@@ -587,8 +470,8 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable {
         return getMovement(primaryMovementMode);
     }
 
-    /** @return The primary (= first) movement type String, such as "" for ground units or "s" for submarines. */
-    public String getPrimaryMovementType() {
+    @Override
+    public String getPrimaryMovementMode() {
         return primaryMovementMode;
     }
 

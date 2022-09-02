@@ -21,6 +21,7 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
@@ -86,7 +87,7 @@ public class ASSpecialAbilityConverter {
                 report.addLine(equipment.getName(), "Explosive equipment", "No ENE");
                 if (entity.isClan() && element.isType(BM, IM, SV, CV, MS)) {
                     report.addLine(equipment.getName(), "Explosive equipment", "CASE");
-                    element.getSpecialAbilities().addSPA(CASE);
+                    element.getSpecialAbilities().setSUA(CASE);
                 }
                 return;
             }
@@ -386,7 +387,7 @@ public class ASSpecialAbilityConverter {
         processTransports();
         processARM();
 
-        if (element.hasAutoSeal()) {
+        if (AlphaStrikeHelper.hasAutoSeal(element)) {
             assign("Sealed", SEAL);
         }
     }
@@ -471,24 +472,24 @@ public class ASSpecialAbilityConverter {
         // For MHQ, the values may contain decimals, but the the final MHQ value is rounded down to an int.
         if (element.getSUA(MHQ) instanceof Double) {
             double mhqValue = (double) element.getSUA(MHQ);
-            element.getSpecialAbilities().replaceSPA(MHQ, (int) mhqValue);
+            element.getSpecialAbilities().replaceSUA(MHQ, (int) mhqValue);
         }
 
         // Cannot have both CASEII and CASE
         if (element.hasSUA(CASEII) && element.hasSUA(CASE)) {
-            element.getSpecialAbilities().removeSPA(CASE);
+            element.getSpecialAbilities().removeSUA(CASE);
             report.addLine("Has CASEII", "Remove CASE");
         }
 
         // Implicit rule: XMEC overrides MEC
         if (element.hasSUA(XMEC) && element.hasSUA(MEC)) {
-            element.getSpecialAbilities().removeSPA(MEC);
+            element.getSpecialAbilities().removeSUA(MEC);
             report.addLine("Has XMEC", "Remove MEC");
         }
 
         // Implicit rule: AECM overrides ECM
         if (element.hasSUA(AECM) && element.hasSUA(ECM)) {
-            element.getSpecialAbilities().removeSPA(ECM);
+            element.getSpecialAbilities().removeSUA(ECM);
             report.addLine("Has AECM", "Remove ECM");
         }
 
@@ -501,7 +502,7 @@ public class ASSpecialAbilityConverter {
         if (element.hasSUA(IT) && (element.getSUA(IT) instanceof Double)) {
             double ctValue = (double) element.getSUA(IT);
             if ((int) ctValue == ctValue) {
-                element.getSpecialAbilities().replaceSPA(IT, (int) ctValue);
+                element.getSpecialAbilities().replaceSUA(IT, (int) ctValue);
             }
         }
 
@@ -515,15 +516,17 @@ public class ASSpecialAbilityConverter {
             }
 
             if (ctValue > 1000) {
-                element.getSpecialAbilities().addSPA(CK, (int) Math.round(ctValue / 1000));
-                element.getSpecialAbilities().addSPA(CKxD, (int) element.getSUA(CTxD));
-                element.getSpecialAbilities().removeSPA(CT);
-                element.getSpecialAbilities().removeSPA(CTxD);
-                report.addLine("Replace CT with CK", element.getSpecialAbilities().formatSUAString(CK));
+                element.getSpecialAbilities().mergeSUA(CK, (int) Math.round(ctValue / 1000));
+                element.getSpecialAbilities().mergeSUA(CKxD, (int) element.getSUA(CTxD));
+                element.getSpecialAbilities().removeSUA(CT);
+                element.getSpecialAbilities().removeSUA(CTxD);
+                report.addLine("Replace CT with CK",
+                        AlphaStrikeHelper.formatAbility(CK, element.getSpecialAbilities(), element, ", "));
             } else if (ctValue > 1) {
-                element.getSpecialAbilities().replaceSPA(CT, (int) Math.round(ctValue));
+                element.getSpecialAbilities().replaceSUA(CT, (int) Math.round(ctValue));
                 if (ctValue != (int) ctValue) {
-                    report.addLine("Final CT value", element.getSpecialAbilities().formatSUAString(CT));
+                    report.addLine("Final CT value",
+                            AlphaStrikeHelper.formatAbility(CT, element.getSpecialAbilities(), element, ", "));
                 }
             }
         }
@@ -544,7 +547,7 @@ public class ASSpecialAbilityConverter {
     protected void assign(String text, BattleForceSUA sua) {
         if (!element.hasSUA(sua)) {
             addReportLine(text, sua, "");
-            element.getSpecialAbilities().addSPA(sua);
+            element.getSpecialAbilities().setSUA(sua);
         }
     }
 
@@ -561,7 +564,7 @@ public class ASSpecialAbilityConverter {
     /** Adds the sua with the given value to the element and writes a report line using the given text. */
     protected void assign(String text, BattleForceSUA sua, double doubleAbilityValue) {
         addReportLine(text, sua, formatForReport(doubleAbilityValue));
-        element.getSpecialAbilities().addSPA(sua, doubleAbilityValue);
+        element.getSpecialAbilities().mergeSUA(sua, doubleAbilityValue);
     }
 
     /** Adds the sua with the given value to the element and writes a report line using the name of the given equipment. */
@@ -572,7 +575,7 @@ public class ASSpecialAbilityConverter {
     /** Adds the sua with the given value to the element and writes a report line using the given text. */
     protected void assign(String text, BattleForceSUA sua, int intAbilityValue) {
         addReportLine(text, sua, intAbilityValue + "");
-        element.getSpecialAbilities().addSPA(sua, intAbilityValue);
+        element.getSpecialAbilities().mergeSUA(sua, intAbilityValue);
     }
 
     /** Writes a report line for adding the sua with the given value using the name of the given equipment. */
@@ -582,7 +585,7 @@ public class ASSpecialAbilityConverter {
 
     /** Writes a report line for adding the sua with the given value using the given text. */
     protected void addReportLine(String text, BattleForceSUA sua, String abilityValue) {
-        String hiddenText = element.showSpecial(sua) ? "" : "(hidden)";
+        String hiddenText = AlphaStrikeHelper.hideSpecial(sua, element) ? "(hidden)" : "";
         if (text.length() > 32) {
             text = text.substring(0, 31) + "...";
         }

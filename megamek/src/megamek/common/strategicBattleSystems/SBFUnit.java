@@ -20,10 +20,7 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.alphaStrike.ASArcSummary;
-import megamek.common.alphaStrike.ASDamage;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 
 import java.util.Arrays;
@@ -206,7 +203,7 @@ public class SBFUnit {
      * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
      * that SPA is already present, the new value replaces the former.
      */
-    public void addSPA(BattleForceSUA spa, ASArcSummary value) {
+    public void addSPA(BattleForceSUA spa, ASSpecialAbilityCollection value) {
         specialAbilities.put(spa, value);
     }
 

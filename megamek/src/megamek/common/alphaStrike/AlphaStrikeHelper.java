@@ -18,8 +18,13 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.common.annotations.Nullable;
+
+import java.util.Map;
+
 import static java.util.stream.Collectors.joining;
 import static megamek.common.alphaStrike.ASUnitType.*;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 /**
  * This class contains static helper methods for AlphaStrike
@@ -70,6 +75,81 @@ public class AlphaStrikeHelper {
         } else {
             return moveValue + INCH + moveMode;
         }
+    }
+
+    /**
+     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that
+     * turret. The given collection can be the specials of the AlphaStrikeElement itself, a turret or
+     * an arc of a large aerospace unit.
+     *
+     * @param sua The Special Unit Ability to process
+     * @param collection The SUA collection that the SUA is part of
+     * @param element The AlphaStrikeElement that the collection is part of
+     * @param delimiter The delimiter to insert between entries (only relevant for TUR)
+     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
+     */
+    public static String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollection collection,
+                                       @Nullable ASCardDisplayable element, String delimiter) {
+        Object suaObject = collection.getSUA(sua);
+        if (!sua.isValidAbilityObject(suaObject)) {
+            return "ERROR - wrong ability object (" + sua + ")";
+        }
+        if (sua == TUR) {
+            return "TUR(" + collection.getTUR().getSpecialsDisplayString(delimiter, element) + ")";
+        } else if (sua == BIM) {
+            return lamString(sua, collection.getBIM());
+        } else if (sua == LAM) {
+            return lamString(sua, collection.getLAM());
+        } else if (sua.isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC)) {
+            return sua.toString() + ((int) suaObject == 1 ? "" : (int) suaObject);
+        } else if (sua.isAnyOf(CAP, SCAP, MSL)) {
+            return sua.toString();
+        } else if (sua.isTransport()) {
+            String result = sua + suaObject.toString();
+            BattleForceSUA door = sua.getDoor();
+            if ((element == null || element.isLargeAerospace())
+                    && collection.hasSUA(door) && ((int) collection.getSUA(door) > 0)) {
+                result += door.toString() + collection.getSUA(door);
+            }
+            return result;
+        } else {
+            return sua.toString() + (suaObject != null ? suaObject : "");
+        }
+    }
+
+    /** @return The formatted LAM/BIM Special Ability string such as LAM(36"g/4a). */
+    private static String lamString(BattleForceSUA sua, Map<String, Integer> suaObject) {
+        StringBuilder result = new StringBuilder(sua.toString());
+        result.append("(");
+        if (sua == LAM) {
+            result.append(suaObject.get("g")).append(INCH).append("g/");
+        }
+        return result.append(suaObject.get("a")).append("a)").toString();
+    }
+
+    /**
+     * Returns true if the given Special Unit Ability should be shown on this AS element's card or summary.
+     * This is usually true but false for some, e.g. BM automatically have SOA and do not need to
+     * show this on the unit card.
+     *
+     * @param sua The Special Unit Ability to check
+     * @return True when the given Special Unit Ability should be listed on the element's card
+     */
+    public static boolean hideSpecial(BattleForceSUA sua, ASCardDisplayable element) {
+        return sua.isDoor()
+                || (element.isLargeAerospace() && (sua == STD))
+                || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
+                || (element.isType(BM, PM) && (sua == SOA))
+                || (element.isType(CV, BM) && (sua == SRCH))
+                || (!element.isLargeAerospace() && sua.isDoor())
+                || (hasAutoSeal(element) && (sua == SEAL));
+    }
+
+    /** @return True when this AS element automatically gets the SEAL Special Unit Ability. */
+    public static boolean hasAutoSeal(ASCardDisplayable element) {
+        return element.isSubmarine()
+                || element.isType(BM, AF, SC, DS, JS, WS, SS, DA);
+        // TODO               || isType(BA) Exoskeleton??
     }
 
     // Do not instantiate

@@ -391,7 +391,7 @@ public class ASCard {
                                          int x, int y, int width, int lineHeight) {
         int headerWidth = new StringDrawer("SPECIAL: ").at(x, y + lineHeight)
                 .maxWidth(width).useConfig(specialsHeaderConfig).draw(g).width + 10;
-        String specials = element.getSpecialAbilities().getSpecialsString(", ");
+        String specials = element.getSpecialAbilities().getSpecialsDisplayString(", ", element);
         int specialsWidth = g.getFontMetrics(font).stringWidth(specials);
         int maxWidth = width;
         int firstLineWidth = width - headerWidth;

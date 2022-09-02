@@ -47,7 +47,7 @@ public class ASDamageConverter {
 
     // The locations where damage and special abilities are going to end up in. [0] contains the unit's standard
     // damage and central abilities, the others can be turrets, arcs or rear.
-    protected ASArcSummary[] locations;
+    protected ASSpecialAbilityCollection[] locations;
     protected String[] locationNames;
     protected int rearLocation;
     protected int turretLocation;
@@ -89,11 +89,11 @@ public class ASDamageConverter {
         this.element = element;
         this.entity = entity;
         this.report = report;
-        locations = new ASArcSummary[ASLocationMapper.damageLocationsCount(entity)];
+        locations = new ASTurretSummary[ASLocationMapper.damageLocationsCount(entity)];
         locationNames = new String[locations.length];
         for (int index = 0; index < locationNames.length; index++) {
             locationNames[index] = ASLocationMapper.locationName(entity, index);
-            locations[index] = ASArcSummary.createTurretSummary(element);
+            locations[index] = new ASTurretSummary();
         }
         rearLocation = getRearLocation();
         turretLocation = getTurretLocation();
@@ -124,7 +124,7 @@ public class ASDamageConverter {
     }
 
     private boolean foundNoSpecialAbility() {
-        return Arrays.stream(locations).map(ASArcSummary::getSpecials).allMatch(ASSpecialAbilityCollection::isEmpty);
+        return Arrays.stream(locations).allMatch(ASSpecialAbilityCollection::isEmpty);
     }
 
     protected void processDamage() {
@@ -289,7 +289,7 @@ public class ASDamageConverter {
                                 + formatForReport(longRangeFrontHeat) + " - 4)",
                         "= " + formatForReport(lDamageAdjusted));
                 if (roundedUpAdjusted < roundedUpRaw) {
-                    locations[0].getSpecials().addSPA(OVL);
+                    locations[0].setSUA(OVL);
                     report.addLine("Damage difference",
                             roundedUpRaw + " > " + roundedUpAdjusted,
                             "OVL");
@@ -452,7 +452,7 @@ public class ASDamageConverter {
         for (int loc = 0; loc < locations.length; loc++) {
             if ((ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0)
                     && !locations[loc].hasSUA(sua)) {
-                locations[loc].getSpecials().addSPA(sua);
+                locations[loc].setSUA(sua);
                 reportAssignToLocations(weapon, sua, "", loc);
             }
         }
@@ -470,7 +470,7 @@ public class ASDamageConverter {
     protected void assignToLocations(Mounted weapon, BattleForceSUA sua, int abilityValue) {
         for (int loc = 0; loc < locations.length; loc++) {
             if (ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0) {
-                locations[loc].getSpecials().addSPA(sua, abilityValue);
+                locations[loc].mergeSUA(sua, abilityValue);
                 reportAssignToLocations(weapon, sua, abilityValue + "", loc);
             }
         }
@@ -490,7 +490,7 @@ public class ASDamageConverter {
             if (ASLocationMapper.damageLocationMultiplier(entity, loc, weapon) != 0) {
                 // The location multiplier is always 1 except for some of the large aerospace units, where it affects only PNT
                 abilityValue *= ASLocationMapper.damageLocationMultiplier(entity, loc, weapon);
-                locations[loc].getSpecials().addSPA(sua, abilityValue);
+                locations[loc].mergeSUA(sua, abilityValue);
                 reportAssignToLocations(weapon, sua, formatForReport(abilityValue), loc);
             }
         }
@@ -531,7 +531,7 @@ public class ASDamageConverter {
             int htL = resultingHTValue(totalHeatL);
             if (htS + htM + htL > 0) {
                 ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(htS, htM, htL);
-                locations[0].getSpecials().addSPA(HT, finalHtValue);
+                locations[0].setSUA(HT, finalHtValue);
                 report.addLine("Final Ability", "", "HT" + finalHtValue);
             } else {
                 report.addLine("Final Ability", "No HT", "");
@@ -582,14 +582,14 @@ public class ASDamageConverter {
             if (dmgType == IF) {
                 ASDamage finalIFDamage = ASDamage.createDualRoundedNormal(damage[2]);
                 report.addLine(finalText, formatForReport(damage[2]) + ", " + rdNm, "IF" + finalIFDamage);
-                locations[location].getSpecials().addSPA(IF, finalIFDamage);
+                locations[location].setSUA(IF, finalIFDamage);
             } else if (dmgType == REL) {
                 report.addLine(finalText, formatForReport(damage[1]), "REL");
-                locations[location].getSpecials().addSPA(REL);
+                locations[location].setSUA(REL);
             } else if (dmgType == PNT) {
                 int finalPNTDamage = ASConverter.roundUp(roundUpToTenth(damage[0]));
                 report.addLine(finalText, formatForReport(damage[0]) + ", " + rdUp, "PNT" + finalPNTDamage);
-                locations[location].getSpecials().addSPA(PNT, finalPNTDamage);
+                locations[location].mergeSUA(PNT, finalPNTDamage);
             } else {
                 List<Double> damageList = Arrays.asList(damage[0], damage[1], damage[2], damage[3]);
                 ASDamageVector finalDamage;
@@ -604,7 +604,7 @@ public class ASDamageConverter {
                 report.addLine(finalText,
                         formatAsVector(damage[0], damage[1], damage[2], damage[3], dmgType) + ", " + rdNm,
                         "" + dmgType + finalDamage);
-                locations[location].getSpecials().addSPA(dmgType, finalDamage);
+                locations[location].setSUA(dmgType, finalDamage);
             }
             report.endTentativeSection();
         } else if (damage[0] + damage[1] + damage[2] + damage[3] > 0) {
@@ -999,12 +999,12 @@ public class ASDamageConverter {
     protected void writeLocationsToElement() {
         element.setStandardDamage(new ASDamageVector(finalSDamage, finalMDamage, finalLDamage, finalEDamage,
                 element.getRangeBands(), true));
-        element.setSpecialAbilities(locations[0].getSpecials());
+        element.setSpecialAbilities(locations[0]);
         if ((turretLocation != -1) && !locations[turretLocation].isEmpty()) {
-            element.getSpecialAbilities().replaceSPA(TUR, locations[turretLocation].getSpecials());
+            element.getSpecialAbilities().replaceSUA(TUR, locations[turretLocation]);
         }
-        if ((rearLocation != -1) && locations[rearLocation].getSpecials().hasSPA(REAR)) {
-            element.getSpecialAbilities().replaceSPA(REAR, locations[rearLocation].getSpecials().getSPA(REAR));
+        if ((rearLocation != -1) && locations[rearLocation].hasSUA(REAR)) {
+            element.getSpecialAbilities().replaceSUA(REAR, locations[rearLocation].getSUA(REAR));
         }
     }
 }

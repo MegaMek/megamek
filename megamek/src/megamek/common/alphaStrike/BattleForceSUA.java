@@ -20,7 +20,6 @@ package megamek.common.alphaStrike;
 
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Map;
 
 /**
  * This enum contains AlphaStrike, BattleForce and (some - WIP) Strategic BattleForce Special Unit Abilities
@@ -54,7 +53,6 @@ public enum BattleForceSUA {
     ;
     
     private static final EnumMap<BattleForceSUA, BattleForceSUA> transportBayDoors = new EnumMap<>(BattleForceSUA.class);
-    private static final String INCH = "\"";
 
     static {
         transportBayDoors.put(AT, ATxD);
@@ -67,11 +65,13 @@ public enum BattleForceSUA {
         transportBayDoors.put(VTH, VTHxD);
         transportBayDoors.put(VTS, VTSxD);
     }
-    
+
+    /** @return True when this SUA is an ability that may be associated with a Door value (not IT and DT!). */
     public boolean isTransport() {
         return isAnyOf(AT, CT, CK, MT, PT, ST, VTM, VTH, VTS);
     }
-    
+
+    /** @return True when this SUA is a door ability for a transport ability. */
     public boolean isDoor() {
         return isAnyOf(ATxD, CTxD, CKxD, MTxD, PTxD, STxD, VTMxD, VTHxD, VTSxD);
     }
@@ -81,60 +81,20 @@ public enum BattleForceSUA {
         return transportBayDoors.getOrDefault(this, UNKNOWN);
     }
 
+    /** @return True when this SUA is an artillery SUA such as ARTAIS. */
     public boolean isArtillery() {
         return isAnyOf(ARTAIS, ARTAC, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT, ARTTC, ARTSC, ARTLTC);
     }
 
-    /**
-     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that
-     * turret.
-     *
-     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
-     */
-    public String formatAbility(AlphaStrikeElement element) {
-        Object suaObject = element.getSUA(this);
-        if (!isValidAbilityObject(suaObject)) {
-            return "ERROR - wrong ability object";
-        }
-        if (this == TUR) {
-            return "TUR(" + suaObject + ")";
-            //TODO: make the object a further collection?
-        } else if (isAnyOf(BIM, LAM)) {
-            return lamString(this, (Map) suaObject);
-            //TODO: Add a class for movement codes that contains Map<>?
-        } else if (isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC)) {
-            return toString() + ((int) suaObject == 1 ? "" : (int) suaObject);
-        } else if (isTransport()) {
-            String result = this + suaObject.toString();
-            if (element.isLargeAerospace()
-                    && element.hasSUA(getDoor()) && ((int) element.getSUA(getDoor()) > 0)) {
-                result += getDoor().toString() + element.getSUA(getDoor());
-            }
-            return result;
-        } else {
-            return toString() + (suaObject != null ? suaObject : "");
-        }
-    }
-
-    /** @return The formatted LAM/BIM Special Ability string such as LAM(36"g/4a). */
-    private static String lamString(BattleForceSUA sua, Map suaObject) {
-        if (sua.isAnyOf(LAM, BIM)) {
-            return "ERROR";
-        }
-        StringBuilder result = new StringBuilder(sua.toString());
-        result.append("(");
-        if (sua == LAM) {
-            result.append(suaObject.get("g")).append(INCH).append("g/");
-        }
-        return result.append(suaObject.get("a")).append("a)").toString();
-    }
-
+    /** @return True when the given abilityObject is a valid value for this SUA. E.g. an ASDamageVector is valid for LRM. */
     public boolean isValidAbilityObject(Object abilityObject) {
-        return ((abilityObject instanceof Integer) && usesIntegerObject())
-                || ((abilityObject instanceof ASDamage) && usesASDamageObject())
-                || ((abilityObject instanceof ASDamageVector) && usesASDamageVectorObject());
+        return (((abilityObject instanceof ASDamage) && usesASDamageObject())
+                || ((abilityObject instanceof ASDamageVector) && usesASDamageVectorObject())
+                || (((abilityObject instanceof Double) || (abilityObject instanceof Integer)) && usesDoubleOrIntegerObject())
+                || (abilityObject instanceof Integer) && usesIntegerObject())
+                || (this == TUR && abilityObject instanceof ASSpecialAbilityCollection)
+                || ((abilityObject == null) && usesNoObject());
     }
-
 
     @Override
     public String toString() {
@@ -156,16 +116,32 @@ public enum BattleForceSUA {
         return (this == sua) || Arrays.stream(furtherSuas).anyMatch(furtherSua -> this == furtherSua);
     }
 
+    /** @return True when this SUA uses an Integer as its value. */
     private boolean usesIntegerObject() {
-        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC);
+        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH,
+                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT)
+                || isArtillery();
     }
 
+    /** @return True when this SUA uses an Integer or Double value (the transport SUAs). */
+    private boolean usesDoubleOrIntegerObject() {
+        return isTransport() || this == IT;
+    }
+
+    /** @return True when this SUA uses an ASDamage as its value (only IF). */
     private boolean usesASDamageObject() {
         return this == IF;
     }
 
+    /** @return True when this SUA uses an ASDamageVector as its value, e.g. FLK. */
     private boolean usesASDamageVectorObject() {
-        return isAnyOf(SRM, LRM, FLK, REAR, IATM, AC);
+        return isAnyOf(SRM, LRM, FLK, REAR, IATM, AC, HT, TOR, STD, MSL, CAP, SCAP);
+    }
+
+    /** @return True when this SUA is not accompanied by a value, e.g. TAG. */
+    private boolean usesNoObject() {
+        return !usesASDamageVectorObject() && !usesASDamageObject() && !usesIntegerObject()
+                && !usesDoubleOrIntegerObject() && !(this == TUR);
     }
 
 }

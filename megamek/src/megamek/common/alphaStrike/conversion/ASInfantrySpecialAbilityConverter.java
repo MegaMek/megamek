@@ -77,13 +77,13 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 
-        element.getSpecialAbilities().addSPA(CAR, (int) Math.ceil(entity.getWeight()));
+        element.getSpecialAbilities().mergeSUA(CAR, (int) Math.ceil(entity.getWeight()));
         
         report.addLine("Infantry transport weight", "CAR" + (int) Math.ceil(entity.getWeight()));
         
         if (entity.getMovementMode().equals(EntityMovementMode.INF_UMU)) {
             report.addLine("UMU Gear", "UMU");
-            element.getSpecialAbilities().addSPA(UMU);
+            element.getSpecialAbilities().setSUA(UMU);
         }
         
         if (infantry.hasSpecialization(Infantry.FIRE_ENGINEERS)) {

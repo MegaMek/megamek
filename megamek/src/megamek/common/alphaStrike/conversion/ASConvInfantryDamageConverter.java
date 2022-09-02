@@ -101,7 +101,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
                 } else {
                     report.addLine(weapon.getName(), "(has heat damage)", "");
                     ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0, 0);
-                    element.getSpecialAbilities().addSPA(HT, finalHtValue);
+                    element.getSpecialAbilities().setSUA(HT, finalHtValue);
                     report.addLine("Final Ability", "", "HT" + finalHtValue);
                 }
                 report.endTentativeSection();

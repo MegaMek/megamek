@@ -19,10 +19,7 @@
 package megamek.common.alphaStrike.conversion;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.alphaStrike.ASArcSummary;
-import megamek.common.alphaStrike.ASArcs;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.*;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.ASUnitType.*;
@@ -40,18 +37,18 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
         ASDamageVector ltStd = element.getLeftArc().getStdDamage();
         ASDamageVector rtStd = element.getRightArc().getStdDamage();
         ASDamageVector rrStd = element.getRearArc().getStdDamage();
-        ASDamageVector ftMSL = element.getFrontArc().getMSLDamage();
-        ASDamageVector ltMSL = element.getLeftArc().getMSLDamage();
-        ASDamageVector rtMSL = element.getRightArc().getMSLDamage();
-        ASDamageVector rrMSL = element.getRearArc().getMSLDamage();
-        ASDamageVector ftCAP = element.getFrontArc().getCAPDamage();
-        ASDamageVector ltCAP = element.getLeftArc().getCAPDamage();
-        ASDamageVector rtCAP = element.getRightArc().getCAPDamage();
-        ASDamageVector rrCAP = element.getRearArc().getCAPDamage();
-        ASDamageVector ftSCP = element.getFrontArc().getSCAPDamage();
-        ASDamageVector ltSCP = element.getLeftArc().getSCAPDamage();
-        ASDamageVector rtSCP = element.getRightArc().getSCAPDamage();
-        ASDamageVector rrSCP = element.getRearArc().getSCAPDamage();
+        ASDamageVector ftMSL = element.getFrontArc().getMSL();
+        ASDamageVector ltMSL = element.getLeftArc().getMSL();
+        ASDamageVector rtMSL = element.getRightArc().getMSL();
+        ASDamageVector rrMSL = element.getRearArc().getMSL();
+        ASDamageVector ftCAP = element.getFrontArc().getCAP();
+        ASDamageVector ltCAP = element.getLeftArc().getCAP();
+        ASDamageVector rtCAP = element.getRightArc().getCAP();
+        ASDamageVector rrCAP = element.getRearArc().getCAP();
+        ASDamageVector ftSCP = element.getFrontArc().getSCAP();
+        ASDamageVector ltSCP = element.getLeftArc().getSCAP();
+        ASDamageVector rtSCP = element.getRightArc().getSCAP();
+        ASDamageVector rrSCP = element.getRearArc().getSCAP();
         double stdAndMslDamage = ftStd.S.damage + ftStd.M.damage + ftStd.L.damage;
         report.addLine("STD Damage Front",
                 formatForReport(ftStd.S.damage) + " + " + formatForReport(ftStd.M.damage) + " + " + formatForReport(ftStd.L.damage),
@@ -156,7 +153,7 @@ public class ASLargeAeroPointValueConverter extends ASAeroPointValueConverter {
     @Override
     protected void processDefensiveSUAMods() {
         for (ASArcs arc : ASArcs.values()) {
-            ASArcSummary arcSummary = element.getArc(arc);
+            ASSpecialAbilityCollection arcSummary = element.getArc(arc);
             if (arcSummary.hasSUA(PNT)) {
                 int pntValue = (int) arcSummary.getSUA(PNT);
                 defensiveValue += pntValue;

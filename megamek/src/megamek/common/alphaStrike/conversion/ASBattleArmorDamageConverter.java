@@ -158,7 +158,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         super.processSpecialAbilities();
         if (bombRacks > 0) {
             int bombValue = bombRacks * ((BattleArmor) entity).getShootingStrength() / 5;
-            element.getSpecialAbilities().addSPA(BOMB, bombValue);
+            element.getSpecialAbilities().mergeSUA(BOMB, bombValue);
             report.addLine("BA bomb racks", "", "BOMB" + bombValue);
         }
     }

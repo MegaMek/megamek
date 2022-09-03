@@ -86,17 +86,4 @@ public class ISGaussRifle extends GaussWeapon {
             return 0;
         }
     }
-
-    @Override
-    public BigDecimal getAlphaStrikeDamage(ASRange range) {
-        switch (range) {
-            case SHORT:
-                return new BigDecimal("1.245");
-            case MEDIUM:
-            case LONG:
-                return new BigDecimal("1.5");
-            default:
-                return BigDecimal.ZERO;
-        }
-    }
 }

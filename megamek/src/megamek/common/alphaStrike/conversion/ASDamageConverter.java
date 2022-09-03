@@ -923,11 +923,11 @@ public class ASDamageConverter {
     protected static int weaponHeat(WeaponType weaponType) {
         int ammoType = weaponType.getAmmoType();
         if (ammoType == AmmoType.T_AC_ROTARY) {
-            return weaponType.getHeat() * 6;
+            return weaponType.getAlphaStrikeHeat() * 6;
         } else if ((ammoType == AmmoType.T_AC_ULTRA) || (ammoType == AmmoType.T_AC_ULTRA_THB)) {
-            return weaponType.getHeat() * 2;
+            return weaponType.getAlphaStrikeHeat() * 2;
         } else {
-            return weaponType.getHeat();
+            return weaponType.getAlphaStrikeHeat();
         }
     }
 

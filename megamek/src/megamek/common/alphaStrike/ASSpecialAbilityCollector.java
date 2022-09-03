@@ -28,7 +28,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * This interface is implemented by classes that represent anything that holds AlphaStrike Special
  * Unit Abilities. This is the AlphaStrike element itself (its central abilities such as MHQ, CK23-D2 or
  * ARM). It is also implemented by the ASSpecialAbilityCollection (and subclasses) that represent the
- * abilities inside the TUR special as well as the abilities and damage of large aero's arcs.
+ * abilities inside the TUR special as well as the abilities and damage of a large aero's arcs.
  * The interface contains various methods to retrieve the abilities in a type-safe and convenient way.
  * The default methods should be correct and not be overridden in implementing classes.
  */
@@ -81,123 +81,76 @@ public interface ASSpecialAbilityCollector {
      */
     String getSpecialsDisplayString(String delimiter, ASCardDisplayable element);
 
-    /**
-     * Convenience method to obtain the element's IF damage.
-     *
-     * @return The ASDamage that represents the element's IF value. If the element does not
-     * have IF, this will return {@link ASDamageVector#ZERO}.
-     */
+    /** @return The IF ability value of this collection or {@link ASDamage#ZERO}, if there is no IF. */
     default ASDamage getIF() {
         return hasSUA(IF) ? (ASDamage) getSUA(IF) : ASDamage.ZERO;
     }
 
-    /**
-     * Convenience method to obtain the damage value of the LRM ability. Note that when this is called
-     * on an AlphaStrikeElement directly, it will not obtain the LRM value inside a TUR() ability, only
-     * the central LRM ability.
-     *
-     * @return The ASDamageVector that represents the element's LRM ability. If the element does not
-     * have LRM, this will return {@link ASDamageVector#ZERO}.
-     */
+    /** @return The LRM ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no LRM. */
     default ASDamageVector getLRM() {
-        return hasSUA(LRM) ? (ASDamageVector) getSUA(LRM) : ASDamageVector.ZERO;
+        return hasSUA(LRM) ? (ASDamageVector) getSUA(LRM) : ASDamageVector.ZEROSPECIAL;
     }
 
-    /**
-     * Convenience method to obtain the element's SRM ability. Note that when this is called
-     * on an AlphaStrikeElement directly, it will not obtain the SRM value inside a TUR() ability, only
-     * the central SRM ability.
-     *
-     * @return The ASDamageVector that represents the SRM ability. If the element does not
-     * have SRM, this will return {@link ASDamageVector#ZERO}.
-     */
+    /** @return The SRM ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no SRM. */
     default ASDamageVector getSRM() {
-        return hasSUA(SRM) ? (ASDamageVector) getSUA(SRM) : ASDamageVector.ZERO;
+        return hasSUA(SRM) ? (ASDamageVector) getSUA(SRM) : ASDamageVector.ZEROSPECIAL;
     }
 
-    /**
-     * Convenience method to obtain the element's TOR ability.
-     *
-     * @return The ASDamageVector that represents the element's TOR ability. If the element does not
-     * have TOR, this will return {@link ASDamageVector#ZERO}.
-     */
+    /** @return The TOR ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no TOR. */
     default ASDamageVector getTOR() {
-        return hasSUA(TOR) ? (ASDamageVector) getSUA(TOR) : ASDamageVector.ZERO;
+        return hasSUA(TOR) ? (ASDamageVector) getSUA(TOR) : ASDamageVector.ZEROSPECIAL;
     }
 
-    /**
-     * Convenience method to obtain the element's TOR ability.
-     *
-     * @return The ASDamageVector that represents the element's TOR ability. If the element does not
-     * have TOR, this will return {@link ASDamageVector#ZERO}.
-     */
+    /** @return The HT ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no HT. */
     default ASDamageVector getHT() {
-        return hasSUA(HT) ? (ASDamageVector) getSUA(HT) : ASDamageVector.ZERO;
+        return hasSUA(HT) ? (ASDamageVector) getSUA(HT) : ASDamageVector.ZEROSPECIAL;
     }
 
-    /**
-     * Convenience method to obtain the element's FLK ability.
-     *
-     * @return The ASDamageVector that represents the element's FLK ability. If the element does not
-     * have FLK, this will return {@link ASDamageVector#ZERO}.
-     */
+    /** @return The FLK ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no FLK. */
     default ASDamageVector getFLK() {
-        return hasSUA(FLK) ? (ASDamageVector) getSUA(FLK) : ASDamageVector.ZERO;
+        return hasSUA(FLK) ? (ASDamageVector) getSUA(FLK) : ASDamageVector.ZEROSPECIAL;
     }
 
-    /**
-     * Convenience method to obtain the element's TUR ability. Note that this method will return null
-     * when there is no TUR ability!
-     *
-     * @return The ASDamageVector that represents the element's TUR ability or null.
-     */
+    /** @return The TUR contents of this element (empty if there is no TUR). */
     default ASTurretSummary getTUR() {
         return hasSUA(TUR) ? (ASTurretSummary) getSUA(TUR) : new ASTurretSummary();
     }
 
-    /**
-     * Convenience method to obtain the element's LAM ability.
-     *
-     * @return The Map that contains the element's LAM movement ability or an empty map.
-     */
+    /** @return The Map that contains the element's LAM movement ability (or an empty map). */
     @SuppressWarnings("unchecked")
     default Map<String, Integer> getLAM() {
         return hasSUA(LAM) ? (Map<String, Integer>) getSUA(LAM) : Collections.EMPTY_MAP;
     }
 
-    /** @return The Map that contains the element's LAM movement ability or an empty map. */
+    /** @return The Map that contains the element's BIM movement ability (or an empty map). */
     @SuppressWarnings("unchecked")
     default Map<String, Integer> getBIM() {
         return hasSUA(BIM) ? (Map<String, Integer>) getSUA(BIM) : Collections.EMPTY_MAP;
     }
 
-    /**
-     * Convenience method to obtain the element's MHQ ability.
-     *
-     * @return The MHQ value or 0 if there is no MHQ.
-     */
+    /** @return The MHQ ability value of this element. */
     default int getMHQ() {
         return hasSUA(MHQ) ? (Integer) getSUA(MHQ) : 0;
     }
 
     /** @return The standard damage of this element or turret or the STD damage of this arc. */
     default ASDamageVector getStdDamage() {
-        return hasSUA(STD) ? (ASDamageVector) getSUA(STD) : ASDamageVector.ZERO;
+        return hasSUA(STD) ? (ASDamageVector) getSUA(STD) : ASDamageVector.ZEROSPECIAL;
     }
 
     /** @return The capital weapon (CAP) damage of this arc. */
     default ASDamageVector getCAP() {
-        return hasSUA(CAP) ? (ASDamageVector) getSUA(CAP) : ASDamageVector.ZERO;
+        return hasSUA(CAP) ? (ASDamageVector) getSUA(CAP) : ASDamageVector.ZEROSPECIAL;
     }
 
     /** @return The sub-capital weapon (SCAP) damage of this arc. */
     default ASDamageVector getSCAP() {
-        return hasSUA(SCAP) ? (ASDamageVector) getSUA(SCAP) : ASDamageVector.ZERO;
+        return hasSUA(SCAP) ? (ASDamageVector) getSUA(SCAP) : ASDamageVector.ZEROSPECIAL;
     }
 
     /** @return The capital missile weapon (MSL) damage of this arc. */
     default ASDamageVector getMSL() {
-        return hasSUA(MSL) ? (ASDamageVector) getSUA(MSL) : ASDamageVector.ZERO;
+        return hasSUA(MSL) ? (ASDamageVector) getSUA(MSL) : ASDamageVector.ZEROSPECIAL;
     }
 
 }

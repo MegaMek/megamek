@@ -152,6 +152,21 @@ public class AlphaStrikeHelper {
         // TODO               || isType(BA) Exoskeleton??
     }
 
+    /** @return A string containing the special abilities of the unit for export (including arcs on large aero units). */
+    public static String getSpecialsExportString(String delimiter, ASCardDisplayable element) {
+        StringBuilder dataLine = new StringBuilder();
+        if (element.usesArcs()) {
+            dataLine.append(element.getSpecialAbilities().getSpecialsDisplayString(delimiter, element)).append(delimiter);
+            dataLine.append("FRONT(").append(element.getFrontArc().getSpecialsExportString(delimiter, element)).append(")").append(delimiter);
+            dataLine.append("LEFT(").append(element.getLeftArc().getSpecialsExportString(delimiter, element)).append(")").append(delimiter);
+            dataLine.append("RIGHT(").append(element.getRightArc().getSpecialsExportString(delimiter, element)).append(")").append(delimiter);
+            dataLine.append("REAR(").append(element.getRearArc().getSpecialsExportString(delimiter, element)).append(")");
+        } else {
+            dataLine.append(element.getSpecialAbilities().getSpecialsDisplayString(delimiter, element));
+        }
+        return dataLine.toString();
+    }
+
     // Do not instantiate
     private AlphaStrikeHelper() { }
 }

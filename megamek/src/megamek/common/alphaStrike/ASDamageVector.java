@@ -259,7 +259,7 @@ public class ASDamageVector implements Serializable {
      */
     public static ASDamageVector createUpRndDmgMinus(@Nullable List<Double> values, int ranges) {
         if (values == null) {
-            return ZERO;
+            return ZEROSPECIAL;
         }
         List<Double> copy = new ArrayList<>(values);
         while (copy.size() < 4) {

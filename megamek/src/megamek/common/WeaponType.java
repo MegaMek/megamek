@@ -695,6 +695,7 @@ public class WeaponType extends EquipmentType {
      * @param range The range in hexes
      * @return Damage in BattleForce scale
      */
+    //TODO: the calculations are superseded by the ASC table but correct most of the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
@@ -726,7 +727,7 @@ public class WeaponType extends EquipmentType {
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
      * @return - damage in BattleForce scale
      */
-    public double getBattleForceDamage (int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted fcs) {
         return getBattleForceDamage(range);
     }
 
@@ -753,14 +754,6 @@ public class WeaponType extends EquipmentType {
         return BFCLASS_STANDARD;
     }
 
-    /**
-     *
-     * @return - BattleForce scale damage for weapons that have the HEAT special ability
-     */
-    public int getBattleForceHeatDamage(int range) {
-        return 0;
-    }
-
     /** Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat. */
     public int getAlphaStrikeHeat() {
         return getHeat();
@@ -771,40 +764,14 @@ public class WeaponType extends EquipmentType {
         return 0;
     }
 
-    /**
-     * Returns the AlphaStrike conversion damage value of the weapon for the given range.
-     * See AlphaStrike Companion pp.104-114.
-     *
-     * @param range the range band
-     * @return The AlphaStrike conversion damage
-     */
-    public BigDecimal getAlphaStrikeDamage(ASRange range) {
-        return BigDecimal.ZERO;
-    }
-
-    /**
-     * Returns the AlphaStrike conversion damage value of the weapon for the given range.
-     * May take into account a given linked equipment such as Artemis IV if applicable -
-     * this depends on individual weapon types overriding this method. If not overridden,
-     * will return the value of {@link #getAlphaStrikeDamage(ASRange)}.
-     * See AlphaStrike Companion pp.104-114.
-     *
-     * @param range the range band
-     * @param linkedEquipment a linked equipment influencing the damage (Artemis, PPC Cap)
-     * @return The AlphaStrike conversion damage
-     */
-    public BigDecimal getAlphaStrikeDamage(ASRange range, Mounted linkedEquipment) {
-        return getAlphaStrikeDamage(range);
-    }
-
-    /** Returns true if this weapon type can be used for LRM-type indirect fire. */
+    /** Returns true if this weapon type can be used for Total War LRM-type indirect fire. */
     public boolean hasIndirectFire() {
         return false;
     }
 
     /**
      * Returns true if this weapon type contributes to the AlphaStrike IF ability. This
-     * is identical to TW indirect fire for most but not all weapons (see e.g. IATMS)
+     * is identical to TW indirect fire for most but not all weapons (see e.g. IATMs)
      */
     public boolean isAlphaStrikeIndirectFire() {
         return hasIndirectFire();

@@ -56,14 +56,6 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
     }
 
     @Override
-    public int getBattleForceHeatDamage(int range) {
-        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
-            return 3;
-        }
-        return 0;
-    }
-
-    @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {
         if (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) {
             return 3;

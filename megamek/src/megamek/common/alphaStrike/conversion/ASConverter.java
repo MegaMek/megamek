@@ -66,7 +66,7 @@ public final class ASConverter {
             LogManager.getLogger().error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
         }
-        return performConversion(entity, includePilot, conversionReport);
+        return performConversion(undamagedEntity, includePilot, conversionReport);
     }
 
     private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot, CalculationReport conversionReport) {

@@ -77,14 +77,6 @@ public class ISPlasmaRifle extends AmmoWeapon {
                                               GameManager manager) {
         return new PlasmaRifleHandler(toHit, waa, game, manager);
     }
-    
-    @Override
-    public int getBattleForceHeatDamage(int range) {
-        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
-            return 3;
-        }
-        return 0;
-    }
 
     @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {

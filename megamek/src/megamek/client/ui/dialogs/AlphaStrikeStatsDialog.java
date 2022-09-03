@@ -23,6 +23,7 @@ import megamek.client.ui.swing.AlphaStrikeStatsTablePanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
@@ -45,7 +46,8 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     private final JButton clipBoardButton = new JButton("Copy to Clipboard");
     private JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
-    private static final String EXPORT_DELIMITER = "\t";
+    private static final String COLUMN_SEPARATOR = "\t";
+    private static final String INTERNAL_DELIMITER = ",";
 
     /**
      * Creates a non-modal dialog that shows AlphaStrike stats for the given entities. The
@@ -85,7 +87,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     private void setupTable() {
         centerPanel.remove(scrollPane);
         var asPanel = new AlphaStrikeStatsTablePanel(getFrame(), entities, pilotToggle.isSelected());
-        scrollPane = new JScrollPane(asPanel);
+        scrollPane.setViewportView(asPanel);
         centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
     }
@@ -99,21 +101,21 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     /** Returns a String representing the entities to export to the clipboard. */
     private String clipboardString(Collection<Entity> entities) {
         StringBuilder result = new StringBuilder();
-        result.append("Chassis").append(EXPORT_DELIMITER);
-        result.append("Model").append(EXPORT_DELIMITER);
-        result.append("Type").append(EXPORT_DELIMITER);
-        result.append("SZ").append(EXPORT_DELIMITER);
-        result.append("TMM").append(EXPORT_DELIMITER);
-        result.append("MV (THR)").append(EXPORT_DELIMITER);
-        result.append("Role").append(EXPORT_DELIMITER);
-        result.append("Dmg S/M/L").append(EXPORT_DELIMITER);
-        result.append("OV").append(EXPORT_DELIMITER);
-        result.append("Arm").append(EXPORT_DELIMITER);
-        result.append("Str").append(EXPORT_DELIMITER);
-        result.append("Th").append(EXPORT_DELIMITER);
-        result.append("Skill").append(EXPORT_DELIMITER);
-        result.append("PV").append(EXPORT_DELIMITER);
-        result.append("Specials").append(EXPORT_DELIMITER);
+        result.append("Chassis").append(COLUMN_SEPARATOR);
+        result.append("Model").append(COLUMN_SEPARATOR);
+        result.append("Type").append(COLUMN_SEPARATOR);
+        result.append("SZ").append(COLUMN_SEPARATOR);
+        result.append("TMM").append(COLUMN_SEPARATOR);
+        result.append("MV (THR)").append(COLUMN_SEPARATOR);
+        result.append("Role").append(COLUMN_SEPARATOR);
+        result.append("Dmg S/M/L").append(COLUMN_SEPARATOR);
+        result.append("OV").append(COLUMN_SEPARATOR);
+        result.append("Arm").append(COLUMN_SEPARATOR);
+        result.append("Str").append(COLUMN_SEPARATOR);
+        result.append("Th").append(COLUMN_SEPARATOR);
+        result.append("Skill").append(COLUMN_SEPARATOR);
+        result.append("PV").append(COLUMN_SEPARATOR);
+        result.append("Specials").append(COLUMN_SEPARATOR);
         result.append("\n");
         entities.stream().filter(ASConverter::canConvert)
                 .map(e -> ASConverter.convert(e, pilotToggle.isSelected()))
@@ -124,29 +126,21 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
     /** Returns a StringBuilder containing the data for one AS element. */
     private StringBuilder dataLine(AlphaStrikeElement element) {
         StringBuilder dataLine = new StringBuilder();
-        dataLine.append("=\"").append(element.getChassis()).append("\"").append(EXPORT_DELIMITER);
-        dataLine.append("=\"").append(element.getModel()).append("\"").append(EXPORT_DELIMITER);
-        dataLine.append(element.getASUnitType()).append(EXPORT_DELIMITER);
-        dataLine.append(element.getSize()).append(EXPORT_DELIMITER);
-        dataLine.append(element.isAerospace() ? "" : element.getTMM()).append(EXPORT_DELIMITER);
-        dataLine.append(element.getMovementAsString()).append(EXPORT_DELIMITER);
-        dataLine.append(element.getRole()).append(EXPORT_DELIMITER);
-        dataLine.append("=\"").append(element.usesArcs() ? "" : " " + element.getStandardDamage()).append("\"").append(EXPORT_DELIMITER);
-        dataLine.append(element.usesOV() ? element.getOV() : "").append(EXPORT_DELIMITER);
-        dataLine.append(element.getFullArmor()).append(EXPORT_DELIMITER);
-        dataLine.append(element.getFullStructure()).append(EXPORT_DELIMITER);
-        dataLine.append(element.usesThreshold() ? element.getThreshold() : "").append(EXPORT_DELIMITER);
-        dataLine.append(element.getSkill()).append(EXPORT_DELIMITER);
-        dataLine.append(element.getPointValue()).append(EXPORT_DELIMITER);
-        if (element.usesArcs()) {
-            dataLine.append(element.getSpecialsDisplayString(EXPORT_DELIMITER, element)).append(EXPORT_DELIMITER);
-            dataLine.append("FRONT(").append(element.getFrontArc().toString()).append(")").append(EXPORT_DELIMITER);
-            dataLine.append("LEFT(").append(element.getLeftArc().toString()).append(")").append(EXPORT_DELIMITER);
-            dataLine.append("RIGHT(").append(element.getRightArc().toString()).append(")").append(EXPORT_DELIMITER);
-            dataLine.append("REAR(").append(element.getRearArc().toString()).append(")");
-        } else {
-            dataLine.append(element.getSpecialsDisplayString(EXPORT_DELIMITER, element));
-        }
+        dataLine.append("=\"").append(element.getChassis()).append("\"").append(COLUMN_SEPARATOR);
+        dataLine.append("=\"").append(element.getModel()).append("\"").append(COLUMN_SEPARATOR);
+        dataLine.append(element.getASUnitType()).append(COLUMN_SEPARATOR);
+        dataLine.append(element.getSize()).append(COLUMN_SEPARATOR);
+        dataLine.append(element.isAerospace() ? "" : element.getTMM()).append(COLUMN_SEPARATOR);
+        dataLine.append(element.getMovementAsString()).append(COLUMN_SEPARATOR);
+        dataLine.append(element.getRole()).append(COLUMN_SEPARATOR);
+        dataLine.append("=\"").append(element.usesArcs() ? "" : " " + element.getStandardDamage()).append("\"").append(COLUMN_SEPARATOR);
+        dataLine.append(element.usesOV() ? element.getOV() : "").append(COLUMN_SEPARATOR);
+        dataLine.append(element.getFullArmor()).append(COLUMN_SEPARATOR);
+        dataLine.append(element.getFullStructure()).append(COLUMN_SEPARATOR);
+        dataLine.append(element.usesThreshold() ? element.getThreshold() : "").append(COLUMN_SEPARATOR);
+        dataLine.append(element.getSkill()).append(COLUMN_SEPARATOR);
+        dataLine.append(element.getPointValue()).append(COLUMN_SEPARATOR);
+        dataLine.append(AlphaStrikeHelper.getSpecialsExportString(INTERNAL_DELIMITER, element));
         dataLine.append("\n");
         return dataLine;
     }

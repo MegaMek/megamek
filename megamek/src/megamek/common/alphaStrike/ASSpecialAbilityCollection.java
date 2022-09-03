@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.stream.Collectors;
 
+import static megamek.common.alphaStrike.BattleForceSUA.*;
+
 /**
  * This class encapsulates a block of AlphaStrike or Battleforce or SBF special abilities. Most
  * Alphastrike elements or BF or SBF formations have a single such block of special abilities which
@@ -62,6 +64,23 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
                 .map(sua -> AlphaStrikeHelper.formatAbility(sua, this, element, delimiter))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(delimiter));
+    }
+
+    /** @return A string formatted for export (listing the damage values of STD, SCAP, MSL and CAP for arcs). */
+    public String getSpecialsExportString(String delimiter, ASCardDisplayable element) {
+        if (element.usesArcs()) {
+            String damage = getStdDamage() + delimiter + CAP + getCAP().toString() + delimiter + SCAP + getSCAP() + delimiter
+                    + MSL + getMSL();
+            String specials = specialAbilities.keySet().stream()
+                    .filter(sua -> !AlphaStrikeHelper.hideSpecial(sua, element))
+                    .filter(sua -> !sua.isAnyOf(STD, CAP, SCAP, MSL))
+                    .map(sua -> AlphaStrikeHelper.formatAbility(sua, this, element, delimiter))
+                    .sorted(String.CASE_INSENSITIVE_ORDER)
+                    .collect(Collectors.joining(delimiter));
+            return damage + (!specials.isBlank() ? delimiter + specials : "");
+        } else {
+            return getSpecialsDisplayString(delimiter, element);
+        }
     }
 
     @Override

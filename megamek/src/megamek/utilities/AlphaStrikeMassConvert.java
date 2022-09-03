@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -19,6 +19,7 @@
 package megamek.utilities;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.loaders.EntityLoadingException;
@@ -30,14 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This utility converts all units that can be converted to AlphaStrike elements and outputs the
- * stats to the clipboard. This can be pasted to Excel (best use the Text Import Wizard to set the column
- * spacer to TAB and set the format of the Damage column to "Text").
+ * This utility converts all units that can be converted and for which filter() returns true to AlphaStrike
+ * elements and outputs the stats to the clipboard. This can be pasted to Excel (best use the Text
+ * Import Wizard to set the column spacer to TAB and set the format of the Damage column to "Text").
  */
 public class AlphaStrikeMassConvert {
 
-    private AlphaStrikeMassConvert() {
-    }
+    private static final String COLUMN_SEPARATOR = "\t";
+    private static final String INTERNAL_DELIMITER = ",";
 
     public static void main(String[] args) throws EntityLoadingException {
         System.out.println("Starting AlphaStrike conversion.");
@@ -62,13 +63,14 @@ public class AlphaStrikeMassConvert {
     }
 
     private static boolean filter(Entity entity) {
-        return entity instanceof Mech;
+        return true;
     }
     
     private static String clipboardHeaderString() {
         List<String> headers = new ArrayList<>();
         headers.add("Chassis");
         headers.add("Model");
+        headers.add("MUL ID");
         headers.add("Role");
         headers.add("Type");
         headers.add("SZ");
@@ -80,7 +82,6 @@ public class AlphaStrikeMassConvert {
         headers.add("OV");
         headers.add("PV");
         headers.add("Specials");
-        headers.add("MUL ID");
         headers.add("\n");
         return String.join("\t", headers);
     }
@@ -90,6 +91,7 @@ public class AlphaStrikeMassConvert {
         List<String> stats = new ArrayList<>();
         stats.add(element.getChassis());
         stats.add(element.getModel());
+        stats.add(element.getMulId() + "");
         stats.add(element.getRole().toString());
         stats.add(element.getASUnitType().toString());
         stats.add(element.getSize() + "");
@@ -100,9 +102,10 @@ public class AlphaStrikeMassConvert {
         stats.add(element.getStandardDamage() + "");
         stats.add(element.getOV() + "");
         stats.add(element.getPointValue()+"");
-        stats.add(element.getSpecialsDisplayString(",", element));
-        stats.add(element.getMulId() + "");
+        stats.add(AlphaStrikeHelper.getSpecialsExportString(INTERNAL_DELIMITER, element));
         stats.add("\n");
-        return new StringBuilder(String.join("\t", stats));
+        return new StringBuilder(String.join(COLUMN_SEPARATOR, stats));
     }
+
+    private AlphaStrikeMassConvert() { }
 }

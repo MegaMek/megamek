@@ -176,9 +176,9 @@ public class AlphaStrikeStatsTablePanel extends JPanel {
    
     private String getArcedSpecials(AlphaStrikeElement element) {
         return "<HTML>" + element.getSpecialsDisplayString(element) +
-                "<BR>FRONT(" + element.getFrontArc().toString() + ")" +
-                "<BR>LEFT(" + element.getLeftArc().toString() + ")" +
-                "<BR>RIGHT(" + element.getRightArc().toString() + ")" +
-                "<BR>REAR(" + element.getRearArc().toString() + ")";
+                "<BR>FRONT(" + element.getFrontArc().getSpecialsExportString(", ", element) + ")" +
+                "<BR>LEFT(" + element.getLeftArc().getSpecialsExportString(", ", element) + ")" +
+                "<BR>RIGHT(" + element.getRightArc().getSpecialsExportString(", ", element) + ")" +
+                "<BR>REAR(" + element.getRearArc().getSpecialsExportString(", ", element) + ")";
     }
 }

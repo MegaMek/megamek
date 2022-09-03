@@ -484,5 +484,4 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
     public Set<String> getMovementModes() {
         return movement.keySet();
     }
-
 }

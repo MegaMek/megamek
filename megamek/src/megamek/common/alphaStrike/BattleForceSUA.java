@@ -20,6 +20,7 @@ package megamek.common.alphaStrike;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Map;
 
 /**
  * This enum contains AlphaStrike, BattleForce and (some - WIP) Strategic BattleForce Special Unit Abilities
@@ -86,16 +87,6 @@ public enum BattleForceSUA {
         return isAnyOf(ARTAIS, ARTAC, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT, ARTTC, ARTSC, ARTLTC);
     }
 
-    /** @return True when the given abilityObject is a valid value for this SUA. E.g. an ASDamageVector is valid for LRM. */
-    public boolean isValidAbilityObject(Object abilityObject) {
-        return (((abilityObject instanceof ASDamage) && usesASDamageObject())
-                || ((abilityObject instanceof ASDamageVector) && usesASDamageVectorObject())
-                || (((abilityObject instanceof Double) || (abilityObject instanceof Integer)) && usesDoubleOrIntegerObject())
-                || (abilityObject instanceof Integer) && usesIntegerObject())
-                || (this == TUR && abilityObject instanceof ASSpecialAbilityCollection)
-                || ((abilityObject == null) && usesNoObject());
-    }
-
     @Override
     public String toString() {
         String spaName = super.toString();
@@ -118,8 +109,8 @@ public enum BattleForceSUA {
 
     /** @return True when this SUA uses an Integer as its value. */
     private boolean usesIntegerObject() {
-        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH,
-                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT)
+        return isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC, RSD, MHQ, DCC, MASH, TSEMP, TSEMPO,
+                CAR, MDS, BOMB, FUEL, PNT, CRW, SCR, DT, BTAS, MTAS, JMPW, JMPS, SUBW, SUBS)
                 || isArtillery();
     }
 
@@ -138,10 +129,25 @@ public enum BattleForceSUA {
         return isAnyOf(SRM, LRM, FLK, REAR, IATM, AC, HT, TOR, STD, MSL, CAP, SCAP);
     }
 
+    /** @return True when this SUA uses a Map as its value (LAM and BIM). */
+    private boolean usesMapObject() {
+        return isAnyOf(LAM, BIM);
+    }
+
     /** @return True when this SUA is not accompanied by a value, e.g. TAG. */
     private boolean usesNoObject() {
         return !usesASDamageVectorObject() && !usesASDamageObject() && !usesIntegerObject()
-                && !usesDoubleOrIntegerObject() && !(this == TUR);
+                && !usesDoubleOrIntegerObject() && !(this == TUR) && !usesMapObject();
     }
 
+    /** @return True when the given abilityObject is a valid value for this SUA. E.g. an ASDamageVector is valid for LRM. */
+    public boolean isValidAbilityObject(Object abilityObject) {
+        return (((abilityObject instanceof ASDamage) && usesASDamageObject())
+                || ((abilityObject instanceof ASDamageVector) && usesASDamageVectorObject())
+                || (((abilityObject instanceof Double) || (abilityObject instanceof Integer)) && usesDoubleOrIntegerObject())
+                || (abilityObject instanceof Integer) && usesIntegerObject())
+                || (this == TUR && abilityObject instanceof ASSpecialAbilityCollection)
+                || ((abilityObject == null) && usesNoObject())
+                || ((abilityObject instanceof Map) && usesMapObject());
+    }
 }

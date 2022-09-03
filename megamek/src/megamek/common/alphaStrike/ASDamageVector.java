@@ -1,26 +1,23 @@
 /*
+ * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
- *  * Copyright (c) 28.02.22, 09:35 - The MegaMek Team. All Rights Reserved.
- *  *
- *  * This file is part of MegaMek.
- *  *
- *  * MegaMek is free software: you can redistribute it and/or modify
- *  * it under the terms of the GNU General Public License as published by
- *  * the Free Software Foundation, either version 3 of the License, or
- *  * (at your option) any later version.
- *  *
- *  * MegaMek is distributed in the hope that it will be useful,
- *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  * GNU General Public License for more details.
- *  *
- *  * You should have received a copy of the GNU General Public License
- *  * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of MegaMek.
  *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with MegaMek. If not, see <http://www.gnu.org/licenses/>.
  */
 package megamek.common.alphaStrike;
 
-import megamek.client.ui.SharedUtility;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 
@@ -34,13 +31,11 @@ import java.util.function.Function;
  * typically correspond to S/M/L/E ranges. Each damage value is an ASDamage field and they can be 
  * directly accessed as S, M, L and E. The ASDamage fields store integer damage values
  * with the option of being minimal damage. 
- * <P>The ASDamageVector remembers how many damage values
+ * The ASDamageVector remembers how many damage values
  * are used and if it is special damage (using - for no damage) or standard damage (using 0 for 
  * no damage) and toString() writes the damage values accordingly.
- * <P>Note: The stored ASDamage values need not correspond to S, M, L or E
- * ranges. The single value of the IF special ability is stored in the S field even though
- * it represents a long range damage.
- * 
+ * ASDamageVector is immutable.
+ *
  * @author Simon (Juliez)
  */
 public class ASDamageVector implements Serializable {

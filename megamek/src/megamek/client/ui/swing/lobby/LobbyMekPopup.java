@@ -94,7 +94,6 @@ class LobbyMekPopup {
     static final String LMP_MOVE_UP = "MOVE_UP";
     static final String LMP_PRIO_TARGET = "PRIO_TARGET";
     static final String LMP_ALPHASTRIKE = "ALPHASTRIKE";
-    static final String LMP_SBFFORMATION = "SBFFORMATION";
 
     private static final String NOINFO = "|-1";
     
@@ -208,7 +207,6 @@ class LobbyMekPopup {
 
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHASTRIKE + NOINFO + seIds, true, listener));
-        popup.add(menuItem("Convert to SBF Formation", LMP_SBFFORMATION + "|" + foToken(forces) + eIds, lobby.isForceView(), listener));
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Delete", LMP_DELETE + "|" + foToken(forces) + seIds, !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
 

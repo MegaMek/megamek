@@ -13,23 +13,23 @@ SmallCraft
 </UnitType>
 
 <Name>
-Intrepid Assault Craft
+Ares Close Assault Landing Craft
 </Name>
 
 <Model>
-(2331)
+Mk.II
 </Model>
 
 <mul id:>
-7195
+5804
 </mul id:>
 
 <year>
-2331
+2444
 </year>
 
 <originalBuildYear>
-2331
+2444
 </originalBuildYear>
 
 <type>
@@ -41,18 +41,19 @@ Aerodyne
 </motion_type>
 
 <transporters>
-infantrybay:1.0:2:1:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
+steeragequarters:25.0:0
+cargobay:7.5:1:5
 </transporters>
 
 <SafeThrust>
-5
+3
 </SafeThrust>
 
 <heatsinks>
-22
+38
 </heatsinks>
 
 <sink_type>
@@ -60,7 +61,7 @@ crewquarters:0.0:0
 </sink_type>
 
 <fuel>
-285
+720
 </fuel>
 
 <engine_type>
@@ -76,29 +77,34 @@ crewquarters:0.0:0
 </armor_tech>
 
 <armor>
-73
-64
-64
-34
+76
+75
+75
+55
 </armor>
 
 <Nose Equipment>
-Medium Laser
+Large Laser
 Medium Laser
 Medium Laser
 </Nose Equipment>
 
 <Left Side Equipment>
 Large Laser
-Medium Laser
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
 </Left Side Equipment>
 
 <Right Side Equipment>
 Large Laser
-Medium Laser
+LRM 15
+IS Ammo LRM-15
+IS Ammo LRM-15
 </Right Side Equipment>
 
 <Aft Equipment>
+Medium Laser
 Medium Laser
 </Aft Equipment>
 
@@ -106,15 +112,47 @@ Medium Laser
 </Hull Equipment>
 
 <structural_integrity>
-10
+7
 </structural_integrity>
 
+<manufacturer>
+IncStar Dynamics
+</manufacturer>
+
+<primaryFactory>
+New Rhodes III
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+Stat's adjusted from XTRO to be legal.
+</notes>
+
+<use>
+Combat Landing Craft
+</use>
+
+<length>
+27m
+</length>
+
+<width>
+24m
+</width>
+
 <source>
-XTRO Primitives IV - Age of War
+XTRO Primitives II - Age of War
 </source>
 
 <tonnage>
-150.0
+200.0
 </tonnage>
 
 <designtype>
@@ -122,7 +160,7 @@ XTRO Primitives IV - Age of War
 </designtype>
 
 <crew>
-33
+5
 </crew>
 
 <officers>

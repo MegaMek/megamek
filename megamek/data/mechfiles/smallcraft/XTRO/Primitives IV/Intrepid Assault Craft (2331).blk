@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,23 +13,23 @@ SmallCraft
 </UnitType>
 
 <Name>
-Ares Close Assault Landing Craft
+Intrepid Assault Craft
 </Name>
 
 <Model>
-Mk.II
+(2331)
 </Model>
 
 <mul id:>
-5804
+7195
 </mul id:>
 
 <year>
-2444
+2331
 </year>
 
 <originalBuildYear>
-2444
+2331
 </originalBuildYear>
 
 <type>
@@ -41,19 +41,19 @@ Aerodyne
 </motion_type>
 
 <transporters>
+infantrybay:1.0:2:1:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:25.0:0
-cargobay:12.0:1:5
 </transporters>
 
 <SafeThrust>
-3
+5
 </SafeThrust>
 
 <heatsinks>
-38
+22
 </heatsinks>
 
 <sink_type>
@@ -61,7 +61,7 @@ cargobay:12.0:1:5
 </sink_type>
 
 <fuel>
-720
+285
 </fuel>
 
 <engine_type>
@@ -77,34 +77,29 @@ cargobay:12.0:1:5
 </armor_tech>
 
 <armor>
-76
-75
-75
-55
+72
+65
+65
+35
 </armor>
 
 <Nose Equipment>
-Large Laser
+Medium Laser
 Medium Laser
 Medium Laser
 </Nose Equipment>
 
 <Left Side Equipment>
 Large Laser
-LRM 15
-IS Ammo LRM-15
-IS Ammo LRM-15
+Medium Laser
 </Left Side Equipment>
 
 <Right Side Equipment>
 Large Laser
-LRM 15
-IS Ammo LRM-15
-IS Ammo LRM-15
+Medium Laser
 </Right Side Equipment>
 
 <Aft Equipment>
-Medium Laser
 Medium Laser
 </Aft Equipment>
 
@@ -112,15 +107,51 @@ Medium Laser
 </Hull Equipment>
 
 <structural_integrity>
-7
+10
 </structural_integrity>
 
+<manufacturer>
+Avalon Aerospace Partners
+</manufacturer>
+
+<primaryFactory>
+New Avalon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+Unit is illegal in the XTRO
+</notes>
+
+<use>
+Assault Craft
+</use>
+
+<length>
+21m
+</length>
+
+<width>
+23m
+</width>
+
+<height>
+73
+</height>
+
 <source>
-XTRO Primitives II - Age of War
+XTRO Primitives IV - Age of War
 </source>
 
 <tonnage>
-200.0
+150.0
 </tonnage>
 
 <designtype>
@@ -128,7 +159,7 @@ XTRO Primitives II - Age of War
 </designtype>
 
 <crew>
-5
+33
 </crew>
 
 <officers>
@@ -162,3 +193,4 @@ XTRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
+

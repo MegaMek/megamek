@@ -191,19 +191,21 @@
 		</model>
 	</chassis>
 	<chassis name='Ares Assault Craft' unitType='Small Craft'>
-		<availability>TH:6</availability>
+		<availability>OA:7,IS:7,RWR:7,MERC:7,Periphery:7,TC:7</availability>
 		<model name='Mk.III'>
+			<roles>infantry_carrier</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ares Close Assault Landing Craft' unitType='Small Craft'>
-		<availability>TH:2</availability>
+		<availability>OA:3,IS:4,RWR:3,MERC:3</availability>
 		<model name='Mk.II'>
+			<roles>escort,ground_support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ares Landing Craft' unitType='Small Craft'>
-		<availability>TH:1</availability>
+		<availability>OA:4,IS:5,RWR:4,MERC:4,TC:4</availability>
 		<model name='Mk.I'>
 			<availability>General:8</availability>
 		</model>
@@ -845,10 +847,10 @@
 		</model>
 	</chassis>
 	<chassis name='Intrepid Assault Craft' unitType='Small Craft'>
-		<availability>FS:2</availability>
+		<availability>FS:4</availability>
 		<model name='(2331)'>
 			<roles>assault</roles>
-			<availability>General:4</availability>
+			<availability>General:4-</availability>
 		</model>
 		<model name='(2478)'>
 			<roles>assault</roles>
@@ -935,6 +937,13 @@
 		<availability>TH:6,IS:3</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Life Boat' unitType='Small Craft'>
+		<availability>General:1</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Lightning' unitType='Aero'>

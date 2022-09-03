@@ -161,7 +161,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ares Landing Craft' unitType='Small Craft'>
-		<availability>TH:5</availability>
+		<availability>OA:1,IS:2,RWR:1,MERC:1,TC:1</availability>
 		<model name='Mk.I'>
 			<availability>General:8</availability>
 		</model>

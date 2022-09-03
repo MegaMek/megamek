@@ -1120,6 +1120,13 @@
 	</faction>
 </factions>
 <units>
+	<chassis name='&apos;Astrolux&apos; Staryacht' unitType='Small Craft'>
+		<availability>LA:4</availability>
+		<model name='LC-100'>
+			<roles>civilian</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='&apos;Surat&apos; (Grey Death) Solahma Suit' unitType='BattleArmor'>
 		<availability>CLAN.IS:4-</availability>
 	</chassis>
@@ -1468,14 +1475,14 @@
 		</model>
 	</chassis>
 	<chassis name='Aquarius Escort' unitType='Small Craft'>
-		<availability>FWL:4</availability>
+		<availability>DTA:4,OP:4,RF:4,FWL:4,MSC:4,DA:4,RCM:4</availability>
 		<model name='(Standard)'>
 			<roles>escort</roles>
 			<availability>General:8</availability>
 		</model>
 		<model name='M1'>
 			<roles>escort</roles>
-			<availability>FWL:6</availability>
+			<availability>DTA:6,OP:6,RF:6,FWL:6,MSC:6,DA:6,RCM:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Arbalest' unitType='Mek'>
@@ -1663,18 +1670,35 @@
 		</model>
 	</chassis>
 	<chassis name='Ares Assault Craft' unitType='Small Craft'>
-		<availability>CLAN:4,IS:8,Periphery:6</availability>
+		<availability>MOC:8,MERC.KH:5,MERC.WD:5,CLAN:4,IS:8,MERC:7,Periphery:8,BAN:3</availability>
 		<model name='Mark VII'>
-			<availability>General:8</availability>
+			<availability>IS:8</availability>
 		</model>
 		<model name='Mark VII-C'>
-			<availability>CLAN:8</availability>
+			<availability>CLAN:8,CLAN.IS:8,CLAN.HW:8</availability>
+		</model>
+		<model name='Mk.III'>
+			<roles>infantry_carrier</roles>
+			<availability>BAN:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Ares Attack Craft' unitType='Small Craft'>
-		<availability>MOC:3,LA:5,ROS:5,IS:3,MH:3,FS:5,DA:4,TC:3,CGB:3</availability>
+		<availability>MOC:3,MERC.KH:3,MERC.WD:3,IS:3,MH:2,MERC:3,TC:3</availability>
 		<model name='Mark IX'>
 			<roles>escort</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Ares Close Assault Landing Craft' unitType='Small Craft'>
+		<availability>BAN:1</availability>
+		<model name='Mk.II'>
+			<roles>escort,ground_support</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Ares Landing Craft' unitType='Small Craft'>
+		<availability>BAN:1</availability>
+		<model name='Mk.I'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -2472,7 +2496,7 @@
 		</model>
 	</chassis>
 	<chassis name='Battle Taxi' unitType='Small Craft'>
-		<availability>IS:5,Periphery:4</availability>
+		<availability>MERC.KH:2,MERC.WD:4,IS:5,MERC:4,Periphery:4</availability>
 		<model name='NL-42'>
 			<roles>troop_carrier</roles>
 			<availability>General:8</availability>
@@ -3246,10 +3270,14 @@
 		</model>
 	</chassis>
 	<chassis name='Bus' unitType='Small Craft'>
-		<availability>IS:4,Periphery:4</availability>
+		<availability>MERC.KH:3,MERC.WD:3,CLAN:4,IS:4,MERC:4,Periphery:4</availability>
 		<model name='S-7A'>
 			<roles>cargo,civilian</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='S-7AC'>
+			<roles>cargo,civilian</roles>
+			<availability>CLAN:8,CLAN.IS:8,CLAN.HW:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Bushwacker' unitType='Mek'>
@@ -3280,7 +3308,7 @@
 		</model>
 	</chassis>
 	<chassis name='Caerleon' unitType='Small Craft'>
-		<availability>DTA:4,OP:4,ROS:3,FWL:4,DA:4,MERC:3</availability>
+		<availability>DTA:2,FWL:2,DA:2,MERC:1</availability>
 		<model name='(Standard)'>
 			<roles>assault,ba_carrier</roles>
 			<availability>General:8</availability>
@@ -4270,7 +4298,7 @@
 		</model>
 	</chassis>
 	<chassis name='Condottiere Assault Craft' unitType='Small Craft'>
-		<availability>DTA:4,OP:4,ROS:4,FWL:4,IS:2,MSC:4,FS:4,MERC:3,DC:4</availability>
+		<availability>DTA:4,OP:4,RF:4,ROS:2,FWL:4,MSC:4,FS:2,DA:4,RCM:4,MERC:2,DC:2</availability>
 		<model name='(Standard)'>
 			<roles>assault</roles>
 			<availability>General:8</availability>
@@ -5366,6 +5394,20 @@
 			<availability>General:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Dragonstar Assault Transport' unitType='Small Craft'>
+		<availability>DC:5</availability>
+		<model name='(3060)'>
+			<roles>ba_carrier</roles>
+			<availability>General:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Dragonstar Passenger Transport' unitType='Small Craft'>
+		<availability>FRR:7,DC:7</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Drake Medium Stealth Fighter' unitType='Conventional Fighter'>
 		<availability>FS.CMM:3,FS.DMM:3-,FS.CrMM:3,FS.pm:3</availability>
 		<model name='(Standard)'>
@@ -5405,6 +5447,17 @@
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='DropShuttle' unitType='Small Craft'>
+		<availability>CLAN:2-,IS:2,MERC:2,Periphery:2</availability>
+		<model name='K-1'>
+			<roles>civilian</roles>
+			<availability>General:5-</availability>
+		</model>
+		<model name='K-1C'>
+			<roles>civilian</roles>
+			<availability>CLAN:5-</availability>
 		</model>
 	</chassis>
 	<chassis name='Duan Gung' unitType='Mek'>
@@ -5703,6 +5756,13 @@
 		<model name='ERS-3R'>
 			<roles>spotter</roles>
 			<availability>DTA:1,OP:2,FWL:1,MSC:3,DA:2,RCM:1</availability>
+		</model>
+	</chassis>
+	<chassis name='Escape Pod' unitType='Small Craft'>
+		<availability>General:1</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Essex II Destroyer' unitType='Warship'>
@@ -9716,6 +9776,13 @@
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Life Boat' unitType='Small Craft'>
+		<availability>General:1</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Light SRM Carrier' unitType='Tank'>
 		<availability>MOC:7,CC:3,HL:3,Periphery.OS:5,TC:8,Periphery:4,RA.OA:5,FVC:3,Periphery.CM:7,Periphery.MW:5,Periphery.HR:7,Periphery.ME:7,MH:6</availability>
 		<model name='(Standard)'>
@@ -10006,6 +10073,16 @@
 			<availability>MERC.WD:8,CLAN:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Long-Range Shuttlecraft' unitType='Small Craft'>
+		<availability>CLAN:6,IS:6,Periphery:6</availability>
+		<model name='KR-61'>
+			<roles>civilian</roles>
+			<availability>General:6</availability>
+		</model>
+		<model name='KR-61C'>
+			<availability>CLAN:6-</availability>
+		</model>
+	</chassis>
 	<chassis name='Longbow' unitType='Mek'>
 		<availability>MOC:6,CC:4,HL:6,IS:6,Periphery.Deep:6,FS:5,Periphery:7,TC:6,RA.OA:6,LA:5,CGB.FRR:4,ROS:6,FWL:7,NIOPS:3,DC:6,CGB:3</availability>
 		<model name='LGB-0H'>
@@ -10163,10 +10240,10 @@
 		</model>
 	</chassis>
 	<chassis name='Lyonesse Escort' unitType='Small Craft'>
-		<availability>FWL:3</availability>
+		<availability>DTA:3,OP:3,RF:3,FWL:3,MSC:3,DA:3,RCM:3</availability>
 		<model name='(Standard)'>
 			<roles>escort</roles>
-			<availability>General:8</availability>
+			<availability>General:6</availability>
 		</model>
 		<model name='M1'>
 			<roles>escort</roles>
@@ -11417,7 +11494,11 @@
 		</model>
 	</chassis>
 	<chassis name='Mowang Courier' unitType='Small Craft'>
-		<availability>CC:2</availability>
+		<availability>CC:2,PIR:1</availability>
+		<model name='(Clandestine)'>
+			<roles>ba_carrier</roles>
+			<availability>PIR:4</availability>
+		</model>
 		<model name='(Standard)'>
 			<roles>civilian</roles>
 			<availability>CC:8</availability>
@@ -11458,9 +11539,9 @@
 		</model>
 	</chassis>
 	<chassis name='NL-45 Gunboat' unitType='Small Craft'>
-		<availability>CHH:3,RA:4</availability>
+		<availability>CHH:1,CDS:3,RA:4</availability>
 		<model name='(Standard)'>
-			<roles>assault</roles>
+			<roles>ew_support,assault</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -14756,6 +14837,17 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Shuttle' unitType='Small Craft'>
+		<availability>CLAN:10,IS:10,Periphery:10</availability>
+		<model name='ST-46'>
+			<roles>civilian</roles>
+			<availability>IS:10,Periphery:10</availability>
+		</model>
+		<model name='ST-46C'>
+			<roles>civilian</roles>
+			<availability>CLAN:10</availability>
+		</model>
+	</chassis>
 	<chassis name='Silverback Coastal Cutter' unitType='Naval'>
 		<availability>LA:7</availability>
 		<model name='(Standard)'>
@@ -16233,8 +16325,9 @@
 		</model>
 	</chassis>
 	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
-		<availability>TC:4</availability>
+		<availability>FR:3,TC:4</availability>
 		<model name='TIG-15'>
+			<roles>escort</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

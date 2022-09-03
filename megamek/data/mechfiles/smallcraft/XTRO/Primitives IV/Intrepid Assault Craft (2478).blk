@@ -45,7 +45,7 @@ infantrybay:1.0:2:1:Foot
 2ndclassquarters:0.0:0
 1stclassquarters:0.0:0
 crewquarters:0.0:0
-steeragequarters:15.0:0
+steeragequarters:25.0:0
 </transporters>
 
 <SafeThrust>
@@ -77,10 +77,10 @@ steeragequarters:15.0:0
 </armor_tech>
 
 <armor>
-84
-64
-64
-44
+85
+65
+65
+45
 </armor>
 
 <Nose Equipment>
@@ -108,8 +108,40 @@ Medium Laser
 </Hull Equipment>
 
 <structural_integrity>
-10
+9
 </structural_integrity>
+
+<manufacturer>
+Avalon Aerospace Partners
+</manufacturer>
+
+<primaryFactory>
+New Avalon
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Assault Craft
+</use>
+
+<length>
+21m
+</length>
+
+<width>
+23m
+</width>
+
+<height>
+7m
+</height>
 
 <source>
 XTRO Primitives IV - Age of War

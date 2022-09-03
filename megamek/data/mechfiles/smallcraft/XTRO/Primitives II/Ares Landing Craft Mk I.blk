@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -45,7 +45,7 @@ Aerodyne
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
-cargobay:57.0:2:5
+cargobay:55.0:2:5
 </transporters>
 
 <SafeThrust>
@@ -61,7 +61,7 @@ cargobay:57.0:2:5
 </sink_type>
 
 <fuel>
-480
+400
 </fuel>
 
 <engine_type>
@@ -112,6 +112,34 @@ Medium Laser
 6
 </structural_integrity>
 
+<manufacturer>
+IncStar Dynamics
+</manufacturer>
+
+<primaryFactory>
+New Rhodes III
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<use>
+Armed Cargo Transport
+</use>
+
+<length>
+27m
+</length>
+
+<width>
+24m
+</width>
+
 <source>
 XTRO Primitives II - Age of War
 </source>
@@ -159,3 +187,4 @@ XTRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
+

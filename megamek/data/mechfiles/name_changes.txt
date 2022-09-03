@@ -671,9 +671,9 @@ Man O' War (Gargoyle) A|Gargoyle (Man O' War) A
 Man O' War (Gargoyle) B|Gargoyle (Man O' War) B
 Man O' War (Gargoyle) C|Gargoyle (Man O' War) C
 Man O' War (Gargoyle) D|Gargoyle (Man O' War) D
-Raijin RJN101-A:Raijin RJN-101-A
-Raijin RJN101-C:Raijin RJN-101-C
-'OMEGA' SHP-4X:OMEGA SHP-4X
+Raijin RJN101-A|Raijin RJN-101-A
+Raijin RJN101-C|Raijin RJN-101-C
+'OMEGA' SHP-4X|OMEGA SHP-4X
 
 #Protomechs
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)
@@ -710,8 +710,9 @@ Vargr APC|Vargr APC Tank
 Vargr APC (LRM)| Vargr APC Tank (LRM)
 Sleipnir APC|Sleipnir AP Tank
 Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
-Sturmfeur Heavy Tank (SRM):SturmFeur Heavy Tank (SRM)
-Sturmfeur Heavy Tank (Standard):SturmFeur Heavy Tank (Standard)
+Sturmfeur Heavy Tank (SRM)|SturmFeur Heavy Tank (SRM)
+Sturmfeur Heavy Tank (Standard)|SturmFeur Heavy Tank (Standard)
+Hover Tank (Standard)|LTV-4 Hover Tank
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)

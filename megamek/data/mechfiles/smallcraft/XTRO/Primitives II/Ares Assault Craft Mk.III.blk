@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -33,7 +33,7 @@ Mk.III
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -46,10 +46,11 @@ infantrybay:2.0:1:1:Foot
 1stclassquarters:0.0:0
 crewquarters:0.0:0
 steeragequarters:20.0:0
+cargobay:28.5:1:2
 </transporters>
 
 <SafeThrust>
-6
+3
 </SafeThrust>
 
 <heatsinks>
@@ -73,7 +74,7 @@ steeragequarters:20.0:0
 </armor_type>
 
 <armor_tech>
-7
+1
 </armor_tech>
 
 <armor>
@@ -109,8 +110,40 @@ Medium Laser
 </Hull Equipment>
 
 <structural_integrity>
-9
+7
 </structural_integrity>
+
+<manufacturer>
+IncStar Dynamics
+</manufacturer>
+
+<primaryFactory>
+New Rhodes III
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<notes>
+Modifed from XTRO to be legal.
+</notes>
+
+<use>
+Assault Craft
+</use>
+
+<length>
+27m
+</length>
+
+<width>
+24m
+</width>
 
 <source>
 XTRO Primitives II - Age of War
@@ -159,3 +192,4 @@ XTRO Primitives II - Age of War
 <escape_pod>
 0
 </escape_pod>
+

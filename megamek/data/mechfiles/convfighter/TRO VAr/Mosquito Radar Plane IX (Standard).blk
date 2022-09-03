@@ -13,11 +13,11 @@ FixedWingSupport
 </UnitType>
 
 <Name>
-Mosquito Radar Plane IX
+Mosquito Radar Plane
 </Name>
 
 <Model>
-(Standard)
+IX (Standard)
 </Model>
 
 <mul id:>
@@ -25,11 +25,11 @@ Mosquito Radar Plane IX
 </mul id:>
 
 <year>
-3062
+3064
 </year>
 
 <originalBuildYear>
-3062
+3064
 </originalBuildYear>
 
 <type>

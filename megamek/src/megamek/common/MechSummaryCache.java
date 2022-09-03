@@ -409,6 +409,7 @@ public class MechSummaryCache {
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));
+        ms.setExtinctRange(e.getExtinctionRange());
         ms.setCost((long) e.getCost(false));
         ms.setDryCost((long) e.getCost(true));
         ms.setAlternateCost((int) e.getAlternateCost());

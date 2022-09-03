@@ -17,7 +17,7 @@ Stuka
 </Name>
 
 <Model>
-STU-K5b
+STU-K5b2
 </Model>
 
 <mul id:>
@@ -25,11 +25,11 @@ STU-K5b
 </mul id:>
 
 <year>
-2709
+2751
 </year>
 
 <originalBuildYear>
-2709
+2751
 </originalBuildYear>
 
 <type>

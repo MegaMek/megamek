@@ -13,27 +13,27 @@ ConvFighter
 </UnitType>
 
 <Name>
-Mechbuster
+Seabuster Strike Fighter
 </Name>
 
 <Model>
-(LB-X)
+(Early)
 </Model>
 
 <mul id:>
-2151
+5576
 </mul id:>
 
 <year>
-3063
+3075
 </year>
 
 <originalBuildYear>
-3063
+3075
 </originalBuildYear>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -52,7 +52,7 @@ Aerodyne
 </cockpit_type>
 
 <heatsinks>
-0
+10
 </heatsinks>
 
 <sink_type>
@@ -64,18 +64,27 @@ Aerodyne
 </fuel>
 
 <engine_type>
-1
+0
 </engine_type>
 
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
 <armor>
-18
+19
 10
 10
 10
 </armor>
 
 <Nose Equipment>
-ISLBXAC20
+ISImprovedHeavyGaussRifle
+ISReconCamera
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -91,11 +100,11 @@ ISLBXAC20
 </Wings Equipment>
 
 <Fuselage Equipment>
-IS LB 20-X Cluster Ammo
+ISImprovedHeavyGauss Ammo
 </Fuselage Equipment>
 
 <source>
-TRO 3039 - Civil War
+XTRO Periphery - Jihad
 </source>
 
 <tonnage>

@@ -104,3 +104,35 @@ TRO 3039 - Star League
 <tonnage>
 50.0
 </tonnage>
+
+<capabilities>
+Depending on the variant they Planetlifter may or may not be armed.
+</capabilities>
+
+<overview>
+A typical example of the conventional support aircraft available to planetary garrisons and militias across the Inner Sphere, the Free Worlds League-produced Planetlifter is able to quickly transport combat elements more cheaply than a DropShip flight.
+</overview>
+
+<deployment>
+The Planetlifter features a total cargo capacity of seventy tons. Its forward armored hold can carry up to twenty tons and is able to divide this bay with removable bulkheads to suit various cargoes. The remaining fifty tons can be carried in the unprotected rear bay. Where the Planetlifter differs from other similar aircraft of its size and role is its unique separating fuselage. While Combat Vehicles and Infantry can board via normal cargo ramps at the nose and tail, the Planetlifter can use its variable landing gear to lower itself onto the ground and then detach the lower half of its fuselage and cargo bay. After rolling away, the now exposed cargo bay floor is highly suitable for carrying either one large BattleMech, such as a Warhammer, or a pair of smaller 'Mechs, such as the Wasp and Stinger, who merely lie down on the floor. After the ground crews secure the 'Mech(s) and the Planetlifter returns and reconnects, the combined aircraft is ready for takeoff. An experienced crew can land, load the Planetlifter and take off in under fifteen minutes. This feature makes the Planetlifter highly attractive to buyers. A large number of airmobile militia and front-line 'Mech units in the Free Worlds League utilize the Planetlifter, with "Load Contests" held every few years to see which crew can load them the fastest. A few units went further, the Silver Hawk Irregulars used custom built Planetlifters to transport and airdrop Stinger and Wasp BattleMechs.
+</deployment>
+
+<history>
+For this reason, Planetlifters are placed under the direct command of a planet's garrison commander, allowing for enhanced strategic mobility between battlefields. First produced in 2598 (though similar designs have in fact existed since the early 2300s), the Planetlifter is a very rugged aircraft, though it is only protected by three tons of armor. Its VSTOL capability allows the craft to operate away from established airfields, usually one of the first targets in a planetary invasion. The aircraft can take off and land from any area with at least 400 feet of open space.
+</history>
+
+<manufacturer>
+Imstar Aerospace
+</manufacturer>
+
+<primaryFactory>
+Marik
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Irian UHF
+TARGETING:Unknown
+</systemManufacturers>

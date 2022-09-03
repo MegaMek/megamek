@@ -1,53 +1,53 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!-- Era 3135-->
+<!-- Era 3131-->
 <ratgen>
 <factions>
 	<faction key='AA'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>OP:2,CP:1</salvage>
 	</faction>
 	<faction key='BAN'>
 		<pctOmni>10</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>60</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>CHH:2,RD:2,CDS:2,CW:2,PIR:10,CNC:1,CJF:2,RA:2</salvage>
 	</faction>
 	<faction key='Blessed Order'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='CDP'>
 		<pctClan>0,0,5,10,12</pctClan>
 		<pctSL>0,40,50,60,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>TC:10</salvage>
 	</faction>
 	<faction key='CC'>
 		<pctOmni>0,10,15,16,28</pctOmni>
 		<pctClan>0,0,8,10,18</pctClan>
 		<pctSL>30,52,70,75,82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>OP:1,ROS:6,CLAN:3,FWL:3,DA:1,FS:10</salvage>
 	</faction>
 	<faction key='CI'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='10'>CHH:8,CDS:1,LA:1,CJF:10,TB:10</salvage>
 	</faction>
 	<faction key='CLAN'>
-		<techMargin>13</techMargin>
-		<weightDistribution era='3135' unitType='Mek'>2,3,3,1</weightDistribution>
-		<weightDistribution era='3135' unitType='Tank'>4,1,3,2</weightDistribution>
-		<weightDistribution era='3135' unitType='Aero'>1,1,1</weightDistribution>
+		<techMargin>12</techMargin>
+		<weightDistribution era='3131' unitType='Mek'>2,3,3,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Tank'>4,1,3,2</weightDistribution>
+		<weightDistribution era='3131' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='CHH'>
 		<pctOmni>0,0,10,82,95</pctOmni>
@@ -55,7 +55,7 @@
 		<pctSL>60,60,15,10,0</pctSL>
 		<pctClan unitType='Vehicle'>10,10,40,50,60</pctClan>
 		<pctSL unitType='Vehicle'>90,90,60,50,60</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>RD:4,CW:6,LA:6,CJF:10,TB:4</salvage>
 	</faction>
 	<faction key='CJF'>
@@ -64,7 +64,7 @@
 		<pctSL>40,40,15,0,0</pctSL>
 		<pctClan unitType='Vehicle'>0,0,20,20,20</pctClan>
 		<pctSL unitType='Vehicle'>100,100,80,80,80</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>CHH:4,CW:10,LA:8</salvage>
 	</faction>
 	<faction key='CNC'>
@@ -73,7 +73,7 @@
 		<pctSL>70,70,40,20,0</pctSL>
 		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
 		<pctSL unitType='Vehicle'>90,90,40,60,60</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>LA:2,FS:5</salvage>
 	</faction>
 	<faction key='CP'>
@@ -82,7 +82,7 @@
 		<pctSL>60,60,30,10,0</pctSL>
 		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
 		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>OP:4,RF:2,ROS:4,MSC:6</salvage>
 	</faction>
 	<faction key='CDS'>
@@ -91,7 +91,7 @@
 		<pctSL>0,0,0,0,0</pctSL>
 		<pctClan unitType='Vehicle'>15,15,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='12'>RD:10,DC:6</salvage>
 	</faction>
 	<faction key='CW'>
@@ -100,7 +100,7 @@
 		<pctSL>70,70,40,0,0</pctSL>
 		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
 		<pctSL unitType='Vehicle'>90,90,0,60,60</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>CHH:2,LA:5,CJF:8,DC:1</salvage>
 	</faction>
 	<faction key='CWIE'>
@@ -109,42 +109,42 @@
 		<pctSL>50,50,20,5,0</pctSL>
 		<pctClan unitType='Vehicle'>15,15,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>CW:2,LA:5,CJF:10</salvage>
 	</faction>
 	<faction key='CvW'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>ROS:14,CP:3</salvage>
 	</faction>
 	<faction key='DC'>
 		<pctOmni>0,5,17,30,52</pctOmni>
 		<pctClan>0,6,16,20,26</pctClan>
 		<pctSL>55,70,72,76,74</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CDS:1,LA:2,ROS:6,FS:10,Periphery:1</salvage>
-		<weightDistribution era='3135' unitType='Mek'>4,2,3,1</weightDistribution>
-		<weightDistribution era='3135' unitType='Tank'>4,2,3,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Mek'>4,2,3,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='DA'>
 		<pctOmni>0,8,14,18,28</pctOmni>
 		<pctClan>0,0,5,10,20</pctClan>
 		<pctSL>60,75,84,83,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>MOC:2,CC:10,OP:1,FWL:6</salvage>
 	</faction>
 	<faction key='DTA'>
 		<pctOmni>0,10,16,20,30</pctOmni>
 		<pctClan>0,0,6,12,20</pctClan>
 		<pctSL>60,75,84,83,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>LA:8,MH:1</salvage>
 	</faction>
 	<faction key='CEI'>
@@ -156,167 +156,167 @@
 		<pctSL unitType='Aero'>90,90,40,30,10</pctSL>
 		<pctClan unitType='Vehicle'>10,10,33,33,33</pctClan>
 		<pctSL unitType='Vehicle'>90,90,65,65,65</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>CHH:1,CW:2,HL:2</salvage>
 	</faction>
 	<faction key='FS'>
 		<pctOmni>9,14,20,28,38</pctOmni>
 		<pctClan>0,0,10,16,18</pctClan>
 		<pctSL>70,80,80,84,82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:10,FVC:1,ROS:7,Periphery:3,DC:7,RA:1,TC:3</salvage>
 	</faction>
 	<faction key='FOR'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FVC'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>PIR:5,FS:10,Periphery:5</salvage>
 	</faction>
 	<faction key='FWL'>
 		<pctOmni>0,10,16,20,30</pctOmni>
 		<pctClan>0,0,6,12,20</pctClan>
 		<pctSL>60,75,84,83,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:8,MOC:1,DTA:5,LA:7,MH:1,MSC:10,DA:5,RCM:2</salvage>
 	</faction>
 	<faction key='FR'>
 		<pctOmni>0</pctOmni>
 		<pctClan>5</pctClan>
 		<pctSL>60</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:10,MOC:2</salvage>
 	</faction>
 	<faction key='GL'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='HL'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='IS'>
 		<pctOmni>0,4,8,10,15</pctOmni>
 		<pctClan>0,0,10,12,18</pctClan>
 		<pctSL>15,20,30,50,60</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='0'></salvage>
-		<weightDistribution era='3135' unitType='Mek'>3,4,2,1</weightDistribution>
-		<weightDistribution era='3135' unitType='Tank'>3,4,3,1</weightDistribution>
-		<weightDistribution era='3135' unitType='Aero'>1,1,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Mek'>3,4,2,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LL'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>MH:10</salvage>
 	</faction>
 	<faction key='LA'>
 		<pctOmni>0,16,20,24,28</pctOmni>
 		<pctClan>0,6,10,16,20</pctClan>
 		<pctSL>60,75,84,80,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>DTA:3,RT:1,CDS:1,CW:1,ROS:10,RIM:1,FWL:6,MSC:2,CJF:5,Periphery:1,DC:2</salvage>
-		<weightDistribution era='3135' unitType='Mek'>4,6,7,3</weightDistribution>
-		<weightDistribution era='3135' unitType='Tank'>4,6,7,3</weightDistribution>
+		<weightDistribution era='3131' unitType='Mek'>4,6,7,3</weightDistribution>
+		<weightDistribution era='3131' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC'>
 		<pctOmni>0,8,10,12,20</pctOmni>
 		<pctClan>0,0,5,12,14</pctClan>
 		<pctSL>30,40,56,75,82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>FWL:1,FR:1,DA:2,RCM:1</salvage>
 	</faction>
 	<faction key='MH'>
 		<pctOmni>0,4,8,10,15</pctOmni>
 		<pctClan>0,0,5,10,12</pctClan>
 		<pctSL>30,40,60,65,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MSC'>
 		<pctOmni>0,10,14,18,35</pctOmni>
 		<pctClan>0,0,6,12,20</pctClan>
 		<pctSL>60,75,80,75,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>RF:2,LA:5,ROS:8</salvage>
 	</faction>
 	<faction key='MERC'>
 		<pctOmni>0,12,14,18,28</pctOmni>
 		<pctClan>0,8,10,12,24</pctClan>
 		<pctSL>60,75,78,80,86</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='6'>CC:8,MOC:2,RD:5,CW:5,LA:8,ROS:5,CNC:3,FWL:8,FS:8,CJF:5,TC:2,DC:8</salvage>
 	</faction>
 	<faction key='MM'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MiC'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='NIOPS'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>MH:2,RCM:2</salvage>
 	</faction>
 	<faction key='OP'>
 		<pctOmni>0,10,16,20,30</pctOmni>
 		<pctClan>0,0,6,12,20</pctClan>
 		<pctSL>60,75,86,83,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:10,RF:1,ROS:4,DA:1</salvage>
 	</faction>
 	<faction key='Periphery'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
-		<weightDistribution era='3135' unitType='Mek'>6,5,3,1</weightDistribution>
-		<weightDistribution era='3135' unitType='Tank'>3,4,2,1</weightDistribution>
-		<weightDistribution era='3135' unitType='Aero'>1,1,1</weightDistribution>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
+		<weightDistribution era='3131' unitType='Mek'>6,5,3,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Tank'>3,4,2,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='15'>CC:2,LA:2,FWL:2,FS:2,DC:2,BAN:4</salvage>
 	</faction>
 	<faction key='PC'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>RR:1,LA:6,MSC:5</salvage>
 	</faction>
 	<faction key='RD'>
@@ -325,10 +325,10 @@
 		<pctSL>65,60,20,20,0</pctSL>
 		<pctClan unitType='Vehicle'>15,15,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>CHH:1,CDS:1,CW:9,LA:1,CNC:6,DC:4</salvage>
-		<weightDistribution era='3135' unitType='Mek'>2,3,4,2</weightDistribution>
-		<weightDistribution era='3135' unitType='Tank'>3,1,3,2</weightDistribution>
+		<weightDistribution era='3131' unitType='Mek'>2,3,4,2</weightDistribution>
+		<weightDistribution era='3131' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='RA'>
 		<pctOmni>0,0,0,60,100</pctOmni>
@@ -339,104 +339,104 @@
 		<pctSL unitType='Aero'>20,0,0,0,0</pctSL>
 		<pctClan unitType='Vehicle'>15,0,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,0,55,55,55</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>FS:10,DC:9</salvage>
 	</faction>
 	<faction key='RF'>
 		<pctOmni>0,8,14,18,28</pctOmni>
 		<pctClan>0,0,6,10,20</pctClan>
 		<pctSL>60,75,84,83,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>OP:1,FWL:10,MSC:2</salvage>
 	</faction>
 	<faction key='RR'>
 		<pctOmni>5,10,20,30</pctOmni>
 		<pctClan>0,14,22,30</pctClan>
 		<pctSL>85,85,78,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>FWL:4</salvage>
 	</faction>
 	<faction key='ROS'>
 		<pctOmni>5,10,20,30</pctOmni>
 		<pctClan>0,14,22,30</pctClan>
 		<pctSL>85,85,78,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:8,OP:1,LA:9,MSC:3,FS:10,DC:6</salvage>
 	</faction>
 	<faction key='RIM'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>LA:10</salvage>
 	</faction>
 	<faction key='RCM'>
 		<pctOmni>0,10,16,20,30</pctOmni>
 		<pctClan>0,0,6,12,20</pctClan>
 		<pctSL>60,75,84,82,80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>RF:1,FWL:10</salvage>
 	</faction>
 	<faction key='RT'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>LA:10</salvage>
 	</faction>
 	<faction key='SE'>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 	</faction>
 	<faction key='SA'>
 		<pctOmni>0,10,20,30</pctOmni>
 		<pctClan>0,14,22,30</pctClan>
 		<pctSL>0,85,78,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='ShA'>
 		<pctOmni>0,10,20,30</pctOmni>
 		<pctClan>0,14,22,30</pctClan>
 		<pctSL>0,85,78,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='TTU'>
 		<pctOmni>0,10,20,30</pctOmni>
 		<pctClan>0,14,22,30</pctClan>
 		<pctSL>0,85,78,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='TC'>
 		<pctOmni>0,8,10,12,18</pctOmni>
 		<pctClan>0,0,5,10,12</pctClan>
 		<pctSL>30,45,55,60,70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>FS:10</salvage>
-		<weightDistribution era='3135' unitType='Aero'>1,2,3</weightDistribution>
+		<weightDistribution era='3131' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TB'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CHH:10,RD:2,CI:1,CJF:3</salvage>
 	</faction>
 	<faction key='TD'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='10'>FVC:2,FS:10</salvage>
 	</faction>
 	<faction key='CWE'>
@@ -445,34 +445,34 @@
 		<pctSL>70,70,40,0,0</pctSL>
 		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
 		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='10'>DTA:2,OP:1,CHH:2,RF:2,LA:8,ROS:6,FWL:6,CJF:5</salvage>
 	</faction>
 	<faction key='FS.ACAD'>
 		<pctOmni>20</pctOmni>
 		<pctClan>14</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.AlG'>
 		<pctOmni>28</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.AlJ'>
 		<pctOmni>20</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='RA.OA'>
@@ -482,117 +482,117 @@
 		<pctOmni unitType='Aero'>0,4,8,10,15</pctOmni>
 		<pctClan unitType='Aero'>0,0,0,0,0</pctClan>
 		<pctSL unitType='Aero'>30,40,60,70,90</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='5'></salvage>
-		<weightDistribution era='3135' unitType='Mek'>5,5,3,1</weightDistribution>
-		<weightDistribution era='3135' unitType='Tank'>5,5,2,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Mek'>5,5,3,1</weightDistribution>
+		<weightDistribution era='3131' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='DC.ALAG'>
 		<pctOmni>30</pctOmni>
 		<pctClan>15</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.ATL'>
 		<pctOmni>44</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.AG'>
 		<pctOmni>20</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>90</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.AL'>
 		<pctOmni>10</pctOmni>
 		<pctClan>15</pctClan>
 		<pctSL>60</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MSC.AD'>
 		<pctOmni>30</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>RF:2,LA:5,ROS:8</salvage>
 	</faction>
 	<faction key='FWL.AD'>
 		<pctOmni>30</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>DTA:5,MOC:1,CC:8,LA:7,MH:1,MSC:10,RCM:2,DA:5</salvage>
 	</faction>
 	<faction key='MSC.AH'>
 		<pctOmni>30</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.AH'>
 		<pctOmni>40</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.BR'>
 		<pctOmni>50</pctOmni>
 		<pctClan>26</pctClan>
 		<pctSL>74</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CDS:1,LA:2,ROS:6,FS:10,Periphery:1</salvage>
 	</faction>
 	<faction key='MOC.CF'>
 		<pctOmni>10</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>65</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CB'>
 		<pctOmni>15</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>92</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CC'>
 		<pctOmni>16</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>75</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>OP:1,ROS:6,CLAN:3,FWL:3,FS:10,DA:1</salvage>
 	</faction>
 	<faction key='CC.CDF'>
@@ -601,18 +601,18 @@
 		<pctSL>87</pctSL>
 		<pctSL unitType='Aero'>50</pctSL>
 		<pctSL unitType='Vehicle'>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CHG'>
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>30</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CH'>
@@ -623,66 +623,66 @@
 		<pctSL unitType='Aero'>90</pctSL>
 		<pctClan unitType='Vehicle'>10</pctClan>
 		<pctSL unitType='Vehicle'>90</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.CMB'>
 		<pctOmni>28</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:10,FVC:1,ROS:7,TC:3,RA:1,DC:7,Periphery:3</salvage>
 	</faction>
 	<faction key='FS.CMM'>
 		<pctOmni>14</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='Periphery.CM'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FS.CH'>
 		<pctOmni>26</pctOmni>
 		<pctClan>14</pctClan>
 		<pctSL>86</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MOC.CC'>
 		<pctOmni>10</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>65</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CHO'>
 		<pctOmni>6</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CLAN.IS'>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 	</faction>
 	<faction key='FWL.CP'>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 	</faction>
 	<faction key='CC.CRC'>
 		<pctOmni>8</pctOmni>
@@ -690,199 +690,199 @@
 		<pctSL>85</pctSL>
 		<pctSL unitType='Aero'>50</pctSL>
 		<pctSL unitType='Vehicle'>72</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>OP:1,ROS:6,CLAN:3,FWL:3,FS:10,DA:1</salvage>
 	</faction>
 	<faction key='FWL.CG'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FS.CL'>
 		<pctOmni>40</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.CrMM'>
 		<pctOmni>14</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:10,FVC:1,ROS:7,TC:3,RA:1,DC:7,Periphery:3</salvage>
 	</faction>
 	<faction key='FS.DBG'>
 		<pctOmni>40</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.DC'>
 		<pctOmni>30</pctOmni>
 		<pctClan>15</pctClan>
 		<pctSL>85</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='Periphery.Deep'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='DC.DR'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='LA.DG'>
 		<pctOmni>24</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>DTA:3,RT:1,CDS:1,CW:1,RIM:1,ROS:10,FWL:6,MSC:2,CJF:5,DC:2,Periphery:1</salvage>
 	</faction>
 	<faction key='Periphery.DD'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FS.DMM'>
 		<pctOmni>16</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CS.EC'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='SL3.CSJ'>
 		<pctOmni>50,70</pctOmni>
 		<pctClan>50,70</pctClan>
 		<pctSL>50,30</pctSL>
-		<techMargin>13</techMargin>
+		<techMargin>12</techMargin>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='MSC.FWG'>
 		<pctOmni>30</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.FWG'>
 		<pctOmni>30</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MSC.FWL'>
 		<pctOmni>30</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='OP.FO'>
 		<pctOmni>30</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:10,RF:1,ROS:4,DA:1</salvage>
 	</faction>
 	<faction key='FWL.FO'>
 		<pctOmni>30</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>DTA:5,MOC:1,CC:8,LA:7,MH:1,MSC:10,RCM:2,DA:5</salvage>
 	</faction>
 	<faction key='DC.GR'>
 		<pctOmni>25</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.GEN'>
 		<pctOmni>65</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.GHO'>
 		<pctOmni>24</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='Periphery.HR'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='DC.I'>
 		<pctOmni>60</pctOmni>
 		<pctClan>48</pctClan>
 		<pctSL>52</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MERC.KH'>
 		<pctOmni>30</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='6'>MOC:2,CC:8,RT:1,FS:8,Periphery:1,TC:2,DTA:3,RD:5,CDS:1,CW:6,LA:8,RIM:1,ROS:15,CNC:3,FWL:14,MSC:2,CJF:10,DC:10</salvage>
 	</faction>
 	<faction key='DC.LV'>
 		<pctOmni>17</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>78</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.LCC'>
@@ -891,78 +891,78 @@
 		<pctSL>72</pctSL>
 		<pctSL unitType='Aero'>64</pctSL>
 		<pctSL unitType='Vehicle'>60</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.LG'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='LA.LG'>
 		<pctOmni>24</pctOmni>
 		<pctClan>15</pctClan>
 		<pctSL>85</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.LR'>
 		<pctOmni>20</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MOC.MH'>
 		<pctOmni>8</pctOmni>
 		<pctClan>5</pctClan>
 		<pctSL>60</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MOC.MRG'>
 		<pctOmni>20</pctOmni>
 		<pctClan>15</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='Periphery.MW'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='Periphery.ME'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FWL.MM'>
 		<pctOmni>18</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>83</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MSC.MM'>
 		<pctOmni>18</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>83</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.MAC'>
@@ -973,262 +973,262 @@
 		<pctSL unitType='Aero'>90</pctSL>
 		<pctClan unitType='Vehicle'>10</pctClan>
 		<pctSL unitType='Vehicle'>90</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.NIC'>
 		<pctOmni>20</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>90</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>CC:10,FVC:1,ROS:7,TC:3,RA:1,DC:7,Periphery:3</salvage>
 	</faction>
 	<faction key='DC.NSR'>
 		<pctOmni>40</pctOmni>
 		<pctClan>24</pctClan>
 		<pctSL>75</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.OH'>
 		<pctOmni>18</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>83</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='OP.OH'>
 		<pctOmni>18</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>83</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.OG'>
 		<pctOmni>20</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>83</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='OP.OG'>
 		<pctOmni>20</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>83</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.O'>
 		<pctOmni>50</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='Periphery.OS'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FS.PMG'>
 		<pctOmni>28</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.PMM'>
 		<pctOmni>20</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.PR'>
 		<pctOmni>25</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>88</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='MSC.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FS.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='DA.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='RCM.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FWL.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='RF.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='ROS.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='LA.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='TC.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='IS.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='CC.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='DTA.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='MOC.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='TC.PL'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FWL.PG'>
 		<pctOmni>20</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>83</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MOC.RC'>
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>30</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.M'>
 		<pctOmni>16</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>74</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.RCG'>
 		<pctOmni>16</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'>DTA:5,MOC:1,CC:8,LA:7,MH:1,MSC:10,RCM:2,DA:5</salvage>
 	</faction>
 	<faction key='FS.RMB'>
 		<pctOmni>38</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.RR'>
 		<pctOmni>28</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.RG'>
 		<pctOmni>32</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.RYU'>
 		<pctOmni>30</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>76</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MERC.pm'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='FWL.SHI'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='CC.SIAC'>
 		<pctOmni>16</pctOmni>
@@ -1236,9 +1236,9 @@
 		<pctSL>88</pctSL>
 		<pctSL unitType='Aero'>65</pctSL>
 		<pctSL unitType='Vehicle'>64</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.SIS'>
@@ -1247,68 +1247,68 @@
 		<pctSL>85</pctSL>
 		<pctSL unitType='Aero'>68</pctSL>
 		<pctSL unitType='Vehicle'>60</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.SZC'>
 		<pctOmni>50</pctOmni>
 		<pctClan>22</pctClan>
 		<pctSL>76</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='DC.SL'>
 		<pctOmni>52</pctOmni>
 		<pctClan>28</pctClan>
 		<pctSL>72</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.SF'>
 		<pctOmni>28</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>86</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.TR'>
 		<pctOmni>16</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>84</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='Periphery.R'>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 	</faction>
 	<faction key='CC.TG'>
 		<pctOmni>15</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>70</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.T'>
 		<pctOmni>15</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>75</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.VCR'>
@@ -1317,27 +1317,27 @@
 		<pctSL>93</pctSL>
 		<pctSL unitType='Aero'>85</pctSL>
 		<pctSL unitType='Vehicle'>76</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.WHO'>
 		<pctOmni>16</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>90</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='MERC.WD'>
 		<pctOmni>60</pctOmni>
 		<pctClan>90</pctClan>
 		<pctSL>10</pctSL>
-		<omniMargin>13</omniMargin>
-		<techMargin>13</techMargin>
-		<upgradeMargin>10</upgradeMargin>
+		<omniMargin>12</omniMargin>
+		<techMargin>12</techMargin>
+		<upgradeMargin>9</upgradeMargin>
 		<salvage pct='6'></salvage>
 	</faction>
 </factions>
@@ -2270,6 +2270,13 @@
 		<model name='(Standard)'>
 			<roles>cruiser</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Avanti Aerospace Airliner' unitType='Conventional Fighter'>
+		<availability>LA:4,FS:5</availability>
+		<model name='ACL-800'>
+			<roles>civilian</roles>
+			<availability>General:5-</availability>
 		</model>
 	</chassis>
 	<chassis name='Avar' unitType='Aero' omni='Clan'>
@@ -3439,13 +3446,13 @@
 		</model>
 	</chassis>
 	<chassis name='Bluehawk Combat Support Fighter' unitType='Conventional Fighter'>
-		<availability>MOC:6,RA.OA:5,FS:2,Periphery:4,DC:2</availability>
+		<availability>CC:5,MOC:6,FVC:5,FR:3,DA:2,MERC:4,CDP:4,TC:5</availability>
 		<model name='MSF-42'>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Boeing Jump Bomber' unitType='Conventional Fighter'>
-		<availability>FS:1</availability>
+		<availability>FS:2-</availability>
 		<model name='(Standard)'>
 			<roles>bomber</roles>
 			<availability>General:5</availability>
@@ -3489,10 +3496,10 @@
 		</model>
 	</chassis>
 	<chassis name='Boomerang Spotter Plane' unitType='Conventional Fighter'>
-		<availability>FVC:6,ROS:5,FS:6,MERC:4,Periphery:3</availability>
+		<availability>CC:4,MOC:3,OP:4,MERC.KH:3,FR:2,CP:2,FS:6,MERC:6,Periphery:3,DTA:4,RD:4,MERC.WD:5,RF:4,LA:5,FWL:4,MSC:4,DA:4,RCM:4,DC:4</availability>
 		<model name='(Standard)'>
 			<roles>recon,support</roles>
-			<availability>General:8</availability>
+			<availability>General:8-</availability>
 		</model>
 	</chassis>
 	<chassis name='Boreas' unitType='Mek' omni='Clan'>
@@ -3645,6 +3652,12 @@
 		</model>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Bullet Suicide Drone' unitType='Conventional Fighter'>
+		<availability>CC:2-</availability>
+		<model name='(Standard)'>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Bulwark Assault Vehicle' unitType='Tank'>
@@ -4303,6 +4316,13 @@
 		</model>
 		<model name='CGR-SB &apos;Challenger&apos;'>
 			<availability>LA:2,MERC:2</availability>
+		</model>
+	</chassis>
+	<chassis name='Chariot High-Speed Medevac' unitType='Conventional Fighter'>
+		<availability>CC:4</availability>
+		<model name='(Standard)'>
+			<roles>support</roles>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Cheetah' unitType='Aero'>
@@ -5702,6 +5722,13 @@
 			<availability>General:5</availability>
 		</model>
 	</chassis>
+	<chassis name='Delta Air Cruiser' unitType='Conventional Fighter'>
+		<availability>CC:3,RR:2,ROS:4,FS:4</availability>
+		<model name='MA-80'>
+			<roles>civilian</roles>
+			<availability>General:8-</availability>
+		</model>
+	</chassis>
 	<chassis name='Demolisher Heavy Tank' unitType='Tank'>
 		<availability>MOC:10,CC:7,CHH:5,CLAN:4,IS:7,FS:9,CP:6,CWIE:6,Periphery:10,TC:9,RA.OA:9,FVC:8,LA:4,CNC:5,FWL:8,CJF:2,DC:7</availability>
 		<model name='(Arrow IV)'>
@@ -5986,6 +6013,12 @@
 	</chassis>
 	<chassis name='Drake Medium Stealth Fighter' unitType='Conventional Fighter'>
 		<availability>FS.CMM:6,FS.DMM:4-,FS.CrMM:6,FS.pm:6</availability>
+		<model name='(Standard)'>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Drake Medium Strike Fighter' unitType='Conventional Fighter'>
+		<availability>FS:6</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
@@ -6479,6 +6512,13 @@
 		<model name='Cavalry Point'>
 			<roles>recon</roles>
 			<availability>CLAN:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Federated-Boeing Longhaul' unitType='Conventional Fighter'>
+		<availability>DTA:4,OP:4,RF:4,FWL:4,MSC:4,FS:5,DA:4,RCM:4</availability>
+		<model name='FB-335'>
+			<roles>cargo</roles>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Feng Huang Cruiser' unitType='Warship'>
@@ -7995,19 +8035,19 @@
 		</model>
 	</chassis>
 	<chassis name='Guardian Fighter' unitType='Conventional Fighter'>
-		<availability>CC:3,MOC:2,FVC:1,RF:3,ROS:3,FWL:2,MERC:2,RCM:3,TC:2,Periphery:1</availability>
+		<availability>CC:8,MOC:2,OP:4,MERC.KH:2,CEI:2,FR:6,MERC:7,Periphery:5,DTA:4,MERC.WD:2,RF:6,ROS:4-,FWL:6,MSC:4,DA:6,RCM:6</availability>
 		<model name='(Standard)'>
 			<roles>ground_support</roles>
-			<availability>General:5</availability>
+			<availability>CC:8-,OP:4,MERC.KH:2,CEI:2-,Periphery:5,DTA:4,MERC.WD:2-,RF:6,ROS:4-,FWL:6-,MSC:4,DA:6,RCM:6</availability>
 		</model>
 		<model name='B'>
-			<availability>Periphery:2</availability>
+			<availability>DTA:4,CC:6-,OP:4,RF:6,ROS:4-,FWL:4-,MSC:4,DA:2,RCM:6,MERC:7-,Periphery:5</availability>
 		</model>
 		<model name='C'>
-			<availability>CC:5,MOC:5,RF:3,MERC:3,RCM:3</availability>
+			<availability>CC:8-,MOC:4-,RF:6,FWL:6-,FR:6,DA:6,RCM:6,MERC:7-</availability>
 		</model>
 		<model name='D'>
-			<availability>CC:3,MOC:3,RF:2,MERC:2,RCM:2</availability>
+			<availability>MOC:2,CC:5-,RF:2,FWL:3-,DA:2-,MERC:3-,RCM:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Guillotine IIC' unitType='Mek'>
@@ -8557,24 +8597,24 @@
 		</model>
 	</chassis>
 	<chassis name='Heavy Strike Fighter' unitType='Conventional Fighter'>
-		<availability>General:5</availability>
+		<availability>CC:2,MOC:2,RR:2,MERC.KH:2-,IS:3,FR:2,MERC:2,FS:3,CDP:2,Periphery:4,TC:2,BAN:2,FVC:2,ROS:4-,DA:2,DC:4-</availability>
 		<model name='Bat Hawk'>
-			<availability>CC:2,MOC:3,Periphery.CM:4,Periphery.HR:4,Periphery.ME:3,CDP:5,TC:5</availability>
+			<availability>CC:2,MOC:7,FR:6,DA:2,CDP:5,TC:7,Periphery:6</availability>
 		</model>
 		<model name='Inseki'>
-			<availability>DC:2</availability>
+			<availability>DC:3-</availability>
 		</model>
 		<model name='Inseki II'>
-			<availability>DC:3</availability>
+			<availability>DC:7</availability>
 		</model>
 		<model name='Meteor'>
-			<availability>MOC:4,CC:3,RA.OA:5,LA:2,General:4,FWL:4,MH:5,MERC:4,FS:3,CP:4,TC:1</availability>
+			<availability>MERC.KH:3,MERC.WD:2,IS:5,MERC:3,Periphery:3,BAN:2</availability>
 		</model>
 		<model name='Meteor-G'>
-			<availability>General:3,FWL:4,CP:4</availability>
+			<availability>IS:4,MERC:3,Periphery:3</availability>
 		</model>
 		<model name='Meteor-U'>
-			<availability>ROS:2,FS:3,MERC:2</availability>
+			<availability>RR:5,FVC:3,ROS:5,MERC:3,FS:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Heavy Tracked APC' unitType='Tank'>
@@ -9804,6 +9844,13 @@
 			<availability>DC:5</availability>
 		</model>
 	</chassis>
+	<chassis name='Jetta Coruna 4X' unitType='Conventional Fighter'>
+		<availability>FS:3</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:6-</availability>
+		</model>
+	</chassis>
 	<chassis name='Jifty Transportable Field Repair Unit' unitType='Tank'>
 		<availability>CC:4,FS:6,TC:4</availability>
 		<model name='JI-50'>
@@ -10072,6 +10119,21 @@
 			<availability>DC:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Katya Ground Assault Craft' unitType='Conventional Fighter'>
+		<availability>CC:6-,DTA:3-,OP:3-,RF:3-,ROS:4-,FWL:4,MSC:3-,DA:3-,RCM:3-,MERC:2,CC.CHG:7,Periphery:3</availability>
+		<model name='C-904(RL15)'>
+			<roles>ground_support</roles>
+			<availability>General:6</availability>
+		</model>
+		<model name='C-905(RL20)'>
+			<roles>ground_support</roles>
+			<availability>General:4</availability>
+		</model>
+		<model name='C-906(RL10)'>
+			<roles>ground_support</roles>
+			<availability>General:3</availability>
+		</model>
+	</chassis>
 	<chassis name='Kelswa Assault Tank' unitType='Tank'>
 		<availability>CWE:4,CW:4,LA:5,IS:4,CJF:4</availability>
 		<model name='(Standard)'>
@@ -10131,6 +10193,17 @@
 			<availability>ROS:4</availability>
 		</model>
 	</chassis>
+	<chassis name='King Karnov Transport' unitType='Conventional Fighter'>
+		<availability>LA:4</availability>
+		<model name='KC-6'>
+			<roles>cargo</roles>
+			<availability>General:2-</availability>
+		</model>
+		<model name='KC-9'>
+			<roles>cargo</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Kingfisher' unitType='Mek' omni='Clan'>
 		<availability>RD:6,CDS:3,ROS:3+,CNC:3,CP:2,RA:3</availability>
 		<model name='A'>
@@ -10167,7 +10240,7 @@
 			<availability>SE:3,CEI:4,CNC:4,CP:4,RA:6</availability>
 		</model>
 		<model name='X'>
-			<availability>RD:2,SE:2:3131,CEI:2,ROS:2,CNC:2,CP:2,RA:2</availability>
+			<availability>RD:2,SE:2,CEI:2,ROS:2,CNC:2,CP:2,RA:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Kinnol MBT' unitType='Tank'>
@@ -10756,28 +10829,31 @@
 		</model>
 	</chassis>
 	<chassis name='Light Strike Fighter' unitType='Conventional Fighter'>
-		<availability>General:6</availability>
+		<availability>CC:7-,RR:9-,OP:7,CEI:3-,MERC:8-,BAN:2,Periphery:8-,DTA:7,FVC:7,SE:3-,RF:7,LA:8-,ROS:9-,FWL:7-,MSC:7,DA:7,RCM:7,DC:7-</availability>
+		<model name='Andurien'>
+			<availability>DTA:5,OP:5,RF:5,FWL:5,MSC:5,DA:7,RCM:5</availability>
+		</model>
 		<model name='Angel'>
 			<roles>recon</roles>
-			<availability>CC:2,Periphery.MW:3,General:2,Periphery.ME:3,FWL:1,DC:2,Periphery:4</availability>
+			<availability>SE:6-,LA:2-,CEI:6-,Periphery.MW:3,Periphery.ME:3,Periphery:4,BAN:2</availability>
 		</model>
 		<model name='Angel (Upgrade)'>
-			<availability>MOC:4,FWL:8,IS:4,CP:8</availability>
+			<availability>IS:7-,MERC:7-,Periphery:4</availability>
 		</model>
 		<model name='Comet'>
-			<availability>FVC:5,ROS:2,FS:5,MERC:1</availability>
+			<availability>RR:3,FVC:5,ROS:6,MERC:1,FS:8-</availability>
 		</model>
 		<model name='Owl'>
-			<availability>LA:1,ROS:1,MERC:1</availability>
+			<availability>LA:8,ROS:5-,MERC:2</availability>
 		</model>
 		<model name='Owl II'>
-			<availability>Periphery.R:2,LA:2</availability>
+			<availability>LA:7-</availability>
 		</model>
 		<model name='Owl III'>
-			<availability>LA:4,ROS:3,MERC:3</availability>
+			<availability>RR:2,LA:4,ROS:3,MERC:3</availability>
 		</model>
 		<model name='Suzume (&apos;Sparrow&apos;)'>
-			<availability>Periphery.DD:1,DC:5</availability>
+			<availability>DC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Light Thunderbolt Carrier' unitType='Tank'>
@@ -11933,24 +12009,6 @@
 			<availability>CLAN:8</availability>
 		</model>
 	</chassis>
-	<chassis name='MechBuster' unitType='Conventional Fighter'>
-		<availability>CC:3,FVC:3,MERC:3,DC:4,Periphery:3</availability>
-		<model name='(LB-X)'>
-			<availability>General:5</availability>
-		</model>
-		<model name='(Laser)'>
-			<roles>interceptor</roles>
-			<availability>FVC:1,MERC:1,Periphery:1,DC:1</availability>
-		</model>
-		<model name='(SRM)'>
-			<roles>interceptor</roles>
-			<availability>FVC:1,MERC:1,DC:1,Periphery:1</availability>
-		</model>
-		<model name='(Standard)'>
-			<roles>interceptor</roles>
-			<availability>General:3</availability>
-		</model>
-	</chassis>
 	<chassis name='Mechanized Field Artillery' unitType='Infantry'>
 		<availability>DC:3</availability>
 		<model name='71st Mechanized'>
@@ -12041,6 +12099,24 @@
 			<availability>General:5</availability>
 		</model>
 	</chassis>
+	<chassis name='Mechbuster' unitType='Conventional Fighter'>
+		<availability>CC:3,RD:6-,MERC:3,DC:4,Periphery:3,RA:4-</availability>
+		<model name='(LB-X)'>
+			<availability>CC:6-,RD:4-,DC:6-,Periphery:6,RA:4-</availability>
+		</model>
+		<model name='(Laser)'>
+			<roles>interceptor</roles>
+			<availability>MERC:3,Periphery:3</availability>
+		</model>
+		<model name='(SRM)'>
+			<roles>interceptor</roles>
+			<availability>MERC:4,Periphery:4</availability>
+		</model>
+		<model name='(Standard)'>
+			<roles>interceptor</roles>
+			<availability>CC:3-,MERC:3-,DC:4-,Periphery:3-</availability>
+		</model>
+	</chassis>
 	<chassis name='Medium Strike Fighter Crane' unitType='Conventional Fighter'>
 		<availability>MOC:2,CC:5,Periphery.CM:2,Periphery.ME:2</availability>
 	</chassis>
@@ -12055,6 +12131,24 @@
 	</chassis>
 	<chassis name='Medium Strike Fighter Steinadler' unitType='Conventional Fighter'>
 		<availability>Periphery.R:2,LA:5,MERC:1</availability>
+	</chassis>
+	<chassis name='Medium Strike Fighter' unitType='Conventional Fighter'>
+		<availability>CC:6,MOC:5,CWE:2-,SE:3,CW:2-,LA:5-,CEI:3,IS:5,FR:4,MERC:4,DA:6,Periphery:4</availability>
+		<model name='Crane'>
+			<availability>CC:8-,MOC:6,FR:6,DA:6</availability>
+		</model>
+		<model name='Defender'>
+			<availability>SE:3,CEI:5-,IS:3-,MERC:2,Periphery:3-</availability>
+		</model>
+		<model name='Defender II'>
+			<availability>MERC.WD:5-,IS:7,MERC:5,Periphery:6</availability>
+		</model>
+		<model name='Kaiseradler (Imperial Eagle)'>
+			<availability>LA:5-,MERC:4</availability>
+		</model>
+		<model name='Steinadler (Golden Eagle)'>
+			<availability>LA:5-,MERC:4</availability>
+		</model>
 	</chassis>
 	<chassis name='Men Shen' unitType='Mek' omni='IS'>
 		<availability>CC:7,MOC:5</availability>
@@ -12124,9 +12218,9 @@
 		</model>
 	</chassis>
 	<chassis name='Mercury' unitType='Mek'>
-		<availability>CC:2,LA:2:3131,ROS:4,FWL:2:3131,DC:2:3131</availability>
+		<availability>CC:2,LA:2,ROS:4,FWL:2,DC:2</availability>
 		<model name='MCY-105'>
-			<availability>CC:2,LA:2:3131,ROS:4,FWL:2:3131,DC:2:3131</availability>
+			<availability>CC:2,LA:2,ROS:4,FWL:2,DC:2</availability>
 		</model>
 		<model name='MCY-97'>
 			<roles>recon</roles>
@@ -12435,6 +12529,13 @@
 		</model>
 		<model name='MS-1P'>
 			<availability>CC:4,OP:2,MERC:2</availability>
+		</model>
+	</chassis>
+	<chassis name='Mosquito Radar Plane' unitType='Conventional Fighter'>
+		<availability>IS:3</availability>
+		<model name='IX (Standard)'>
+			<roles>recon</roles>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Motorized Heavy Infantry' unitType='Infantry'>
@@ -14091,21 +14192,21 @@
 		</model>
 	</chassis>
 	<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-		<availability>FWL:8,IS:3,CP:8,Periphery:3</availability>
+		<availability>CC:5,MOC:5,FVC:4,IS:6,FR:5,FS:6,DA:8,MERC:4,DC:5,Periphery:5</availability>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
 			<roles>cargo</roles>
-			<availability>FVC:4,FS:4</availability>
+			<availability>FVC:2,FS:3</availability>
 		</model>
 		<model name='(Standard)'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Planetlifter Support Aircraft' unitType='Conventional Fighter'>
-		<availability>MSC:1</availability>
+		<availability>FWL:1,MSC:1</availability>
 		<model name='(Standard)'>
 			<roles>missile_artillery</roles>
-			<availability>MSC:8</availability>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Planetlifter Tactical Support' unitType='Conventional Fighter'>
@@ -14300,9 +14401,16 @@
 		</model>
 	</chassis>
 	<chassis name='Protector Combat Support Fighter' unitType='Conventional Fighter'>
-		<availability>MOC:5,OA.RA:5,FS:2,Periphery:4,DC:2</availability>
+		<availability>RA.OA:5,Periphery:5</availability>
 		<model name='ASF-23'>
 			<availability>General:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Protector High-Speed Medevac' unitType='Conventional Fighter'>
+		<availability>LA:4,FS:4</availability>
+		<model name='C-790'>
+			<roles>support</roles>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>
@@ -14669,6 +14777,12 @@
 		</model>
 		<model name='RTX1-OU'>
 			<availability>General:2</availability>
+		</model>
+	</chassis>
+	<chassis name='Raubvogel Aerobomber' unitType='Conventional Fighter'>
+		<availability>LA:7</availability>
+		<model name='AB-18C'>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Ravager Assault Battle Armor' unitType='BattleArmor'>
@@ -15107,7 +15221,7 @@
 			<availability>General:4</availability>
 		</model>
 		<model name='TC'>
-			<availability>CHH:1,RD:1,CW:1,CEI:2,CLAN.IS:2:3131,MERC:2,FS:1:3131,CJF:1,DC:2,CWIE:1,RA:1</availability>
+			<availability>CHH:1,RD:1,CW:1,CEI:2,CLAN.IS:2,MERC:2,FS:1,CJF:1,DC:2,CWIE:1,RA:1</availability>
 		</model>
 	</chassis>
 	<chassis name='Ryoken III-XP (Skinwalker)' unitType='Mek' omni='Clan'>
@@ -15144,6 +15258,13 @@
 		<availability>DC:4-</availability>
 		<model name='(Standard)'>
 			<availability>General:6-</availability>
+		</model>
+	</chassis>
+	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
+		<availability>FS:2-</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:2</availability>
 		</model>
 	</chassis>
 	<chassis name='SM1 Tank Destroyer' unitType='Tank'>
@@ -15391,6 +15512,13 @@
 	<chassis name='Sarissa SecurityMech' unitType='Mek'>
 		<availability>RF.pm:5</availability>
 		<model name='MN2-A'>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Saroyan Jump Bomber' unitType='Conventional Fighter'>
+		<availability>CC:4-,MOC:2-,FR:2,DA:2-</availability>
+		<model name='(Standard)'>
+			<roles>spotter</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -15751,8 +15879,11 @@
 	</chassis>
 	<chassis name='SeaBuster Strike Fighter' unitType='Conventional Fighter'>
 		<availability>TC:6</availability>
+	</chassis>
+	<chassis name='Seabuster Strike Fighter' unitType='Conventional Fighter'>
+		<availability>MOC:2,MH:2,FR:2,CDP:2</availability>
 		<model name='(Standard)'>
-			<availability>General:8</availability>
+			<availability>MOC:3,MH:3,FR:4,CDP:4,TC:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Seahorse Cargo Sub' unitType='Naval'>
@@ -16816,7 +16947,7 @@
 		<availability>CC:2</availability>
 		<model name='(Standard)'>
 			<roles>support</roles>
-			<availability>General:8</availability>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Storm Raider' unitType='Mek'>
@@ -16937,9 +17068,6 @@
 		</model>
 		<model name='STU-K5'>
 			<availability>FVC:2-,BAN:8,Periphery:2-</availability>
-		</model>
-		<model name='STU-K5b'>
-			<availability>ROS:6,CLAN:8,FS:4,MERC:4,BAN:2</availability>
 		</model>
 	</chassis>
 	<chassis name='SturmFeur Heavy Tank' unitType='Tank'>
@@ -17956,6 +18084,13 @@
 		<model name='TR-A-1'>
 			<roles>fire_support</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>CC:2-,IS:4-</availability>
+		<model name='(Standard)'>
+			<roles>bomber</roles>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Tortoise II' unitType='BattleArmor'>
@@ -19077,7 +19212,7 @@
 			<availability>RD:8,CNC:7,General:8,CP:7,CJF:7</availability>
 		</model>
 		<model name='S'>
-			<availability>CWE:1:3131,CHH:2,RD:2,CDS:1,CEI:2,ROS:2,MERC:1,CJF:4,DC:1,CWIE:1,RA:1</availability>
+			<availability>CWE:1,CHH:2,RD:2,CDS:1,CEI:2,ROS:2,MERC:1,CJF:4,DC:1,CWIE:1,RA:1</availability>
 		</model>
 		<model name='T'>
 			<availability>General:6</availability>
@@ -19865,6 +20000,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Zanadu Air Bus' unitType='Conventional Fighter'>
+		<availability>LA:2</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:5</availability>
+		</model>
+	</chassis>
 	<chassis name='Zephyr Hovertank' unitType='Tank'>
 		<availability>DC.GHO:2,CLAN:3,MERC:4,DC:2</availability>
 		<model name='(Royal)'>
@@ -20011,7 +20153,7 @@
 		</model>
 	</chassis>
 	<chassis name='Zugvogel Omni Support Aircraft' unitType='Conventional Fighter'>
-		<availability>RD:2,LA:4,IS:2,Periphery:2</availability>
+		<availability>MERC.KH:5,RD:5,MERC.WD:4,IS:6,MERC:5,Periphery:5</availability>
 		<model name='A'>
 			<roles>support,spotter</roles>
 			<availability>General:6</availability>

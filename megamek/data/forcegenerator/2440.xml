@@ -295,6 +295,15 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Colt Medium Fighter' unitType='Conventional Fighter'>
+		<availability>General:6</availability>
+		<model name='(LRM)'>
+			<availability>General:6</availability>
+		</model>
+		<model name='(SRM)'>
+			<availability>General:6</availability>
+		</model>
+	</chassis>
 	<chassis name='Commonwealth Light Cruiser' unitType='Warship'>
 		<availability>LA:5</availability>
 		<model name='(Block I)'>
@@ -816,6 +825,13 @@
 		<availability>CC:7</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>IS:4,MERC:2,Periphery:2</availability>
+		<model name='(Original)'>
+			<roles>bomber</roles>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Tracker Surveillance' unitType='Warship'>

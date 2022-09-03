@@ -53,6 +53,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String level;
     private int advTechYear; // year after which the unit is advanced level
     private int stdTechYear; // year after which the unit is standard level
+    private String extinctRange;
     private boolean canon;
     private boolean clan;
     private boolean support;
@@ -644,6 +645,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.suitWeight = suitWeight;
     }
 
+	public String getExtinctRange() {
+		return extinctRange;
+	}
+
     public void setAsUnitType(ASUnitType asUnitType) {
         this.asUnitType = asUnitType;
     }
@@ -712,6 +717,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.role = role;
     }
 
+	public void setExtinctRange(String extinctRange) {
+		this.extinctRange = extinctRange;
+	}
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -730,4 +739,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int hashCode() {
         return Objects.hash(chassis, model, unitType, sourceFile);
     }
+
+
 }

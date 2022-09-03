@@ -649,13 +649,14 @@ public class RATGeneratorEditor extends JFrame {
         public static final int COL_UNIT_TYPE = 2;
         public static final int COL_WEIGHT = 3;
         public static final int COL_YEAR = 4;
-        public static final int COL_CANON_ROLE = 5;
-        public static final int COL_ROLE = 6;
-        public static final int COL_DEPLOYED_WITH = 7;
-        public static final int COL_EXCLUDE_FACTIONS = 8;
-        public static final int NUM_COLS = 9;
+        public static final int COL_EXTINCT_RANGE = 5;
+        public static final int COL_CANON_ROLE = 6;
+        public static final int COL_ROLE = 7;
+        public static final int COL_DEPLOYED_WITH = 8;
+        public static final int COL_EXCLUDE_FACTIONS = 9;
+        public static final int NUM_COLS = 10;
         public static final String[] colNames = {
-                "Chassis", "Model", "Unit Type", "Weight", "Year", "MUL Role", "Role", "Deployed With", "Exclude Factions"
+                "Chassis", "Model", "Unit Type", "Weight", "Year", "Extinct Years", "MUL Role", "Role", "Deployed With", "Exclude Factions"
         };
 
         private final ArrayList<ModelRecord> data;
@@ -720,6 +721,13 @@ public class RATGeneratorEditor extends JFrame {
                         System.err.println("Could not find mechsummary for " + data.get(row).getKey());
                     }
                     return data.get(row).getMechSummary().getYear();
+                    
+                case COL_EXTINCT_RANGE:
+                    if (data.get(row).getMechSummary() == null) {
+                        System.err.println("Could not find mechsummary for " + data.get(row).getKey());
+                    }
+                    return data.get(row).getMechSummary().getExtinctRange();
+                	
                 case COL_ROLE:
                     return data.get(row).getRoles().stream().map(Object::toString).collect(Collectors.joining(","));
                 case COL_CANON_ROLE:

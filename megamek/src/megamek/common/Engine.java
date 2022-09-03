@@ -800,20 +800,20 @@ public class Engine implements Serializable, ITechnology {
             .setPrototypeFactions(F_CIH).setProductionFactions(F_CHH)
             .setTechRating(RATING_F).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
             .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
-    
+    //Greekfire requested Errata March 2022 for RS Jihad book. 
     private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3055, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setISApproximate(false, true, false, false, false)
             .setPrototypeFactions(F_FS, F_LC).setProductionFactions(F_LC)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3030, 3125, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, true)
             .setPrototypeFactions(F_CSF).setProductionFactions(F_CSF)
             .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2630, 3130, DATE_NONE, DATE_NONE, DATE_NONE)

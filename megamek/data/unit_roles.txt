@@ -4242,11 +4242,11 @@ Mechanized Wheeled Platoon (MG):AMBUSHER
 Mechanized Wheeled Platoon (Rifle AA):NONE
 Mechanized Wheeled Platoon (Rifle):AMBUSHER
 Mechanized Wheeled Platoon (SRM):AMBUSHER
-MechBuster (Laser):ATTACK_FIGHTER
-MechBuster (LB-X):ATTACK_FIGHTER
+Mechbuster (Laser):ATTACK_FIGHTER
+Mechbuster (LB-X):ATTACK_FIGHTER
 Mechbuster (Mary):ATTACK_FIGHTER
-MechBuster (SRM):ATTACK_FIGHTER
-MechBuster (Standard):ATTACK_FIGHTER
+Mechbuster (SRM):ATTACK_FIGHTER
+Mechbuster (Standard):ATTACK_FIGHTER
 Medium Strike Fighter Crane:FIRE_SUPPORT
 Medium Strike Fighter Defender II:FIRE_SUPPORT
 Medium Strike Fighter Defender:FIRE_SUPPORT
@@ -5719,7 +5719,7 @@ Sea Skimmer Hydrofoil (SRM2):SCOUT
 Sea Skimmer Hydrofoil (SRM6):SCOUT
 Sea Skimmer Hydrofoil (Standard):SCOUT
 Sea Skimmer Hydrofoil 'Sniper':SCOUT
-SeaBuster Early Strike Fighter (Standard):ATTACK_FIGHTER
+SeaBuster Strike Fighter (Early):ATTACK_FIGHTER
 SeaBuster Strike Fighter (Standard):ATTACK_FIGHTER
 Seahorse Cargo Sub (Standard):NONE
 Seeker (2815):NONE

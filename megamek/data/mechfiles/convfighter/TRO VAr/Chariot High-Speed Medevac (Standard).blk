@@ -3,17 +3,17 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
 
 <UnitType>
-ConvFighter
+FixedWingSupport
 </UnitType>
 
 <Name>
-SeaBuster Early Strike Fighter
+Chariot High-Speed Medevac
 </Name>
 
 <Model>
@@ -21,19 +21,19 @@ SeaBuster Early Strike Fighter
 </Model>
 
 <mul id:>
-5576
+3945
 </mul id:>
 
 <year>
-3075
+3031
 </year>
 
 <originalBuildYear>
-3075
+3031
 </originalBuildYear>
 
 <type>
-IS Level 4
+IS Level 3
 </type>
 
 <motion_type>
@@ -41,6 +41,7 @@ Aerodyne
 </motion_type>
 
 <transporters>
+troopspace:4.5
 </transporters>
 
 <SafeThrust>
@@ -52,7 +53,7 @@ Aerodyne
 </cockpit_type>
 
 <heatsinks>
-10
+0
 </heatsinks>
 
 <sink_type>
@@ -60,31 +61,21 @@ Aerodyne
 </sink_type>
 
 <fuel>
-320
+460
 </fuel>
 
 <engine_type>
-0
+1
 </engine_type>
 
-<armor_type>
-20
-</armor_type>
-
-<armor_tech>
-1
-</armor_tech>
-
 <armor>
-19
+11
 10
 10
 10
 </armor>
 
 <Nose Equipment>
-ISImprovedHeavyGaussRifle
-ISReconCamera
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -99,14 +90,36 @@ ISReconCamera
 <Wings Equipment>
 </Wings Equipment>
 
-<Fuselage Equipment>
-ISImprovedHeavyGauss Ammo
-</Fuselage Equipment>
+<Body Equipment>
+STOLChassisMod
+MASH Equipment:SIZE:1.0
+</Body Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<notes>
+Based on Fluff.
+</notes>
 
 <source>
-XTRO Periphery - Jihad
+TRO Vehicle Annex (r) - Succession Wars
 </source>
 
 <tonnage>
-50.0
+90.0
 </tonnage>
+

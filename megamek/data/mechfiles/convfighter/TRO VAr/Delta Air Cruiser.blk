@@ -9,27 +9,27 @@ MAM0
 </Version>
 
 <UnitType>
-ConvFighter
+FixedWingSupport
 </UnitType>
 
 <Name>
-Mechbuster
+Delta Air Cruiser
 </Name>
 
 <Model>
-(LB-X)
+MA-80
 </Model>
 
 <mul id:>
-2151
+4635
 </mul id:>
 
 <year>
-3063
+3037
 </year>
 
 <originalBuildYear>
-3063
+3037
 </originalBuildYear>
 
 <type>
@@ -41,10 +41,13 @@ Aerodyne
 </motion_type>
 
 <transporters>
+cargobay:6.0:1:1
+1stclassquarters:20.0:2
+troopspace:9.0
 </transporters>
 
 <SafeThrust>
-5
+4
 </SafeThrust>
 
 <cockpit_type>
@@ -60,7 +63,7 @@ Aerodyne
 </sink_type>
 
 <fuel>
-320
+750
 </fuel>
 
 <engine_type>
@@ -68,20 +71,27 @@ Aerodyne
 </engine_type>
 
 <armor>
-18
-10
-10
-10
+28
+19
+19
+12
 </armor>
 
 <Nose Equipment>
-ISLBXAC20
 </Nose Equipment>
 
 <Left Wing Equipment>
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
 </Left Wing Equipment>
 
 <Right Wing Equipment>
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -90,14 +100,29 @@ ISLBXAC20
 <Wings Equipment>
 </Wings Equipment>
 
-<Fuselage Equipment>
-IS LB 20-X Cluster Ammo
-</Fuselage Equipment>
+<Body Equipment>
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+</Body Equipment>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <source>
-TRO 3039 - Civil War
+TRO Vehicle Annex (r) - Succession Wars
 </source>
 
 <tonnage>
-50.0
+180.0
 </tonnage>

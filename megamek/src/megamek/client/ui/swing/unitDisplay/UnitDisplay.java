@@ -41,7 +41,6 @@ public class UnitDisplay extends JPanel {
     private MechPanelTabStrip tabStrip;
     private JPanel displayP;
     private SummaryPanel mPan;
-    private MovementPanel dPan;
     private PilotPanel pPan;
     private ArmorPanel aPan;
     public WeaponPanel wPan;
@@ -84,8 +83,6 @@ public class UnitDisplay extends JPanel {
         displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
         ePan = new ExtraPanel(this);
         displayP.add(MechPanelTabStrip.EXTRAS, ePan);
-        dPan = new MovementPanel();
-        displayP.add(MechPanelTabStrip.DETAILS, dPan);
 
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
@@ -132,8 +129,8 @@ public class UnitDisplay extends JPanel {
                     @Override
                     public void performAction() {
                         ((CardLayout) displayP.getLayout()).show(displayP,
-                                "movement");
-                        tabStrip.setTab(0);
+                                MechPanelTabStrip.SUMMARY);
+                        tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
                     }
 
                 });
@@ -154,8 +151,8 @@ public class UnitDisplay extends JPanel {
                     @Override
                     public void performAction() {
                         ((CardLayout) displayP.getLayout()).show(displayP,
-                                "pilot");
-                        tabStrip.setTab(1);
+                                MechPanelTabStrip.PILOT);
+                        tabStrip.setTab(MechPanelTabStrip.PILOT_INDEX);
                     }
 
                 });
@@ -176,8 +173,8 @@ public class UnitDisplay extends JPanel {
                     @Override
                     public void performAction() {
                         ((CardLayout) displayP.getLayout()).show(displayP,
-                                "armor");
-                        tabStrip.setTab(2);
+                                MechPanelTabStrip.ARMOR);
+                        tabStrip.setTab(MechPanelTabStrip.ARMOR_INDEX);
                     }
 
                 });
@@ -198,8 +195,8 @@ public class UnitDisplay extends JPanel {
                     @Override
                     public void performAction() {
                         ((CardLayout) displayP.getLayout()).show(displayP,
-                                "systems");
-                        tabStrip.setTab(3);
+                                MechPanelTabStrip.SYSTEMS);
+                        tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
                     }
 
                 });
@@ -220,8 +217,8 @@ public class UnitDisplay extends JPanel {
                     @Override
                     public void performAction() {
                         ((CardLayout) displayP.getLayout()).show(displayP,
-                                "weapons");
-                        tabStrip.setTab(4);
+                                MechPanelTabStrip.WEAPONS);
+                        tabStrip.setTab(MechPanelTabStrip.WEAPONS_INDEX);
                     }
 
                 });
@@ -242,8 +239,8 @@ public class UnitDisplay extends JPanel {
                     @Override
                     public void performAction() {
                         ((CardLayout) displayP.getLayout()).show(displayP,
-                                "extras");
-                        tabStrip.setTab(5);
+                                MechPanelTabStrip.EXTRAS);
+                        tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
                     }
 
                 });
@@ -302,7 +299,6 @@ public class UnitDisplay extends JPanel {
         wPan.displayMech(en);
         sPan.displayMech(en);
         ePan.displayMech(en);
-        dPan.displayMech(en);
     }
 
     /**
@@ -329,8 +325,6 @@ public class UnitDisplay extends JPanel {
             tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
         } else if (MechPanelTabStrip.EXTRAS.equals(s)) {
             tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
-        } else if (MechPanelTabStrip.DETAILS.equals(s)) {
-            tabStrip.setTab(MechPanelTabStrip.DETAILS_INDEX);
         }
     }
 
@@ -339,8 +333,8 @@ public class UnitDisplay extends JPanel {
      * @param loc
      */
     public void showSpecificSystem(int loc) {
-        ((CardLayout) displayP.getLayout()).show(displayP, "systems");
-        tabStrip.setTab(3);
+        ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
+        tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
         sPan.selectLocation(loc);
     }
 

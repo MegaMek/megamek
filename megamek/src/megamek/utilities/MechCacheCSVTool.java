@@ -44,7 +44,7 @@ public class MechCacheCSVTool {
             StringBuilder csvLine = new StringBuilder();
 
             csvLine.append("Chassis,Model,MUL ID,Combined,Clan,Source,Weight,Intro Date,Experimental year,Advanced year," +
-                    "Standard year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure,Myomer," +
+                    "Standard year,Extinct Year,Unit Type,Role,BV,Cost,Rules,Engine Name,Internal Structure,Myomer," +
                     "Cockpit Type,Gyro Type,Armor Types,Equipment (multiple entries)\n");
             bw.write(csvLine.toString());
 
@@ -80,12 +80,20 @@ public class MechCacheCSVTool {
                     csvLine.append(unit.getStandardTechYear());
                 }
                 csvLine.append(",");
-
+                
+                // Extinct Tech Year
+               	csvLine.append(unit.getExtinctRange()).append(",");
+               	// Unit Type.
                 csvLine.append(unit.getFullAccurateUnitType()).append(",");
+                // Unit Role
                 csvLine.append(UnitRoleHandler.getRoleFor(unit)).append(",");
+                // Unit BV
                 csvLine.append(unit.getBV()).append(",");
+                // Unit Dry Cost
                 csvLine.append(unit.getDryCost()).append(",");
+                // Unit Tech Level
                 csvLine.append(unit.getLevel()).append(",");
+                //Engine Type
                 csvLine.append(unit.getEngineName()).append(",");
 
                 // Internals Type

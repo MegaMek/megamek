@@ -619,6 +619,15 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='Colt Medium Fighter' unitType='Conventional Fighter'>
+		<availability>General:6</availability>
+		<model name='(LRM)'>
+			<availability>General:6</availability>
+		</model>
+		<model name='(SRM)'>
+			<availability>General:6</availability>
+		</model>
+	</chassis>
 	<chassis name='Commando' unitType='Mek'>
 		<availability>LA:9,RWR:3,MERC:5</availability>
 		<model name='COM-1A'>
@@ -1487,10 +1496,13 @@
 		</model>
 	</chassis>
 	<chassis name='Light Strike Fighter' unitType='Conventional Fighter'>
-		<availability>General:6</availability>
+		<availability>TH:6-,LA:2-,IS:8,MERC:2-,Periphery:2</availability>
 		<model name='Angel'>
 			<roles>recon</roles>
-			<availability>FWL:4</availability>
+			<availability>TH:6,LA:2-,IS:8,MERC:6,Periphery:6</availability>
+		</model>
+		<model name='Owl'>
+			<availability>LA:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Lightning' unitType='Aero'>
@@ -1994,13 +2006,13 @@
 		</model>
 	</chassis>
 	<chassis name='Planetlifter Air Transport' unitType='Conventional Fighter'>
-		<availability>FWL:8</availability>
+		<availability>FWL:8,FS:2</availability>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
 			<roles>cargo</roles>
 			<availability>FS:2</availability>
 		</model>
 		<model name='(Standard)'>
-			<roles>cargo</roles>
+			<roles>cargo,support</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -2119,6 +2131,13 @@
 		</model>
 		<model name='RGU-133F'>
 			<availability>General:6,SL.R:6</availability>
+		</model>
+	</chassis>
+	<chassis name='S 2772 Airplane' unitType='Conventional Fighter'>
+		<availability>FS:5-</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>
@@ -2281,10 +2300,6 @@
 	</chassis>
 	<chassis name='Stork Light Refueling Craft' unitType='Conventional Fighter'>
 		<availability>CC:4</availability>
-		<model name='(Standard)'>
-			<roles>support</roles>
-			<availability>General:6</availability>
-		</model>
 	</chassis>
 	<chassis name='Strike Falcon Attack VTOL' unitType='VTOL'>
 		<availability>CC:1</availability>
@@ -2378,6 +2393,17 @@
 		<model name='TR-A-6'>
 			<roles>fire_support</roles>
 			<availability>General:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Torrent Heavy Bomber' unitType='Conventional Fighter'>
+		<availability>SL:5,IS:4,MERC:2,Periphery:2</availability>
+		<model name='(Original)'>
+			<roles>bomber</roles>
+			<availability>General:5</availability>
+		</model>
+		<model name='(Standard)'>
+			<roles>bomber</roles>
+			<availability>General:3</availability>
 		</model>
 	</chassis>
 	<chassis name='Tracker Surveillance' unitType='Warship'>

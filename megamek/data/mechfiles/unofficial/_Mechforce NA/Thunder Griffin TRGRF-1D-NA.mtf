@@ -1,0 +1,147 @@
+Version:1.0
+Thunder Griffin
+TRGRF-1D-NA
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:55
+Engine:275 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:18
+RA Armor:18
+LT Armor:18
+RT Armor:18
+CT Armor:25
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:2
+1 ISERPPC, Right Arm
+1 ISLRM20, Left Torso, Ammo:18
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISArtemisIV
+Endo-Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

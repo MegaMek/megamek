@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+San-Ku-Chu Light Mobile Tactical Vehicle
+</Name>
+
+<Model>
+Mk IB-FC
+</Model>
+
+<year>
+3035
+</year>
+
+<originalBuildYear>
+3035
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+30
+22
+22
+18
+28
+</armor>
+
+<Body Equipment>
+ISAMS Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Large Laser
+ISAntiMissileSystem
+</Turret Equipment>
+
+<source>
+RS 3063 - Succession Wars
+</source>
+
+<tonnage>
+35.0
+</tonnage>

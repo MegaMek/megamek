@@ -1,0 +1,151 @@
+Version:1.0
+Crusader
+CRD-4D-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3060
+Rules Level:5
+
+Mass:65
+Engine:260 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:29
+HD Armor:9
+LL Armor:27
+RL Armor:27
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:6
+1 ISLRM15, Right Arm, Ammo:32
+1 ISMediumLaser, Right Arm
+1 ISLRM15, Left Arm
+1 ISMediumLaser, Left Arm
+1 ISStreakSRM4, Left Leg, Ammo:25
+1 ISStreakSRM4, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLRM15
+ISLRM15
+ISLRM15
+ISArtemisIV
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLRM15
+ISLRM15
+ISLRM15
+ISArtemisIV
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+ISCASE
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISStreakSRM4 Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISCASE
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM4
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM4
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

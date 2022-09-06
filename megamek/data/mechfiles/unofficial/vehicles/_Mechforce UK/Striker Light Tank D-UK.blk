@@ -1,0 +1,90 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Striker Light Tank
+</Name>
+
+<Model>
+D-UK
+</Model>
+
+<year>
+3025
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
+24
+20
+20
+18
+22
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-10:OMNI
+IS Ammo LRM-10:OMNI
+IS Ammo SRM-2:OMNI
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 10:OMNI
+SRM 2:OMNI
+SRM 2:OMNI
+SRM 2:OMNI
+</Turret Equipment>
+
+<tonnage>
+35.0
+</tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>

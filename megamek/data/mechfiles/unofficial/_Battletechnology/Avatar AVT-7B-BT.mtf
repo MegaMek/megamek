@@ -1,0 +1,149 @@
+Version:1.0
+Avatar
+AVT-7B-BT
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:80
+Engine:320 Fusion Engine
+Structure:Standard
+Myomer:Triple-Strength
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:20
+RA Armor:20
+LT Armor:17
+RT Armor:17
+CT Armor:25
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:6
+RTR Armor:6
+RTC Armor:10
+
+Weapons:4
+1 ISMediumLaser, Right Arm
+1 ISERPPC, Left Arm
+1 ISThumperArtillery, Right Torso, Ammo:120
+2 ISMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISThumper Ammo
+ISThumper Ammo
+ISThumper Ammo
+ISThumper Ammo
+ISThumper Ammo
+ISThumper Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+ISThumperArtillery (Split)
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

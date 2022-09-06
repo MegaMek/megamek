@@ -1,0 +1,149 @@
+Version:1.0
+Horned Owl
+HDOL-SRM-UK
+
+Config:Biped
+TechBase:Clan
+Era:3055
+Rules Level:5
+
+Mass:35
+Engine:210 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:9
+RA Armor:9
+LT Armor:10
+RT Armor:10
+CT Armor:13
+HD Armor:9
+LL Armor:11
+RL Armor:11
+RTL Armor:4
+RTR Armor:4
+RTC Armor:6
+
+Weapons:4
+1 CLERMediumLaser, Right Torso
+1 CLStreakSRM6, Right Torso, Ammo:30
+1 CLERMediumLaser, Left Torso
+1 CLStreakSRM6, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+CLStreakSRM6 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+Ferro-Fibrous
+CLStreakSRM6 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+CLERMediumLaser
+CLStreakSRM6
+CLStreakSRM6
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+CLERMediumLaser
+CLStreakSRM6
+CLStreakSRM6
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

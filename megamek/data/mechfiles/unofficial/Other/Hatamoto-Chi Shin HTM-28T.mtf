@@ -1,0 +1,149 @@
+Version:1.0
+Hatamoto-Chi Shin
+HTM-28T
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Rules Level:5
+
+Mass:80
+Engine:320 Light Engine
+Structure:Standard
+Myomer:Triple-Strength
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:26
+RT Armor:26
+CT Armor:38
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:4
+1 ISGaussRifle, Left Arm, Ammo:16
+1 ISGuardianECM, Right Torso
+1 ISStreakSRM6, Left Torso, Ammo:15
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+Sword
+Sword
+Sword
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6 Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISCASE
+Triple Strength Myomer
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISGuardianECM
+ISGuardianECM
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

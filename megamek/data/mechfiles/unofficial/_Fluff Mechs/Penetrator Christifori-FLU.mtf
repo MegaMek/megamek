@@ -1,0 +1,150 @@
+Version:1.0
+Penetrator
+(Christifori)
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3060
+Rules Level:5
+
+Mass:75
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:21
+RA Armor:21
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:7
+RTR Armor:7
+RTC Armor:9
+
+Weapons:5
+1 CLERLargeLaser, Right Arm
+1 CLERLargeLaser, Left Arm
+3 CLMediumPulseLaser, Right Torso
+3 CLMediumPulseLaser, Left Torso
+1 CLAntiMissileSystem, Center Torso, Ammo:24
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLAntiMissileSystem
+CLAMS Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

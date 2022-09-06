@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Hessian Hovertank
+</Name>
+
+<Model>
+(Infantry)-FC
+</Model>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+15
+11
+11
+10
+15
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-2
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+SRM 2
+SRM 2
+SRM 2
+ISSmallPulseLaser
+</Turret Equipment>
+
+<source>
+RS 3063 - Civil War
+</source>
+
+<tonnage>
+30.0
+</tonnage>

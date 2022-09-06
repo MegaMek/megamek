@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Percival Assault Tank
+</Name>
+
+<Model>
+Type A-FC
+</Model>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+53
+40
+40
+23
+50
+</armor>
+
+<Body Equipment>
+ISCASE
+ISC3SlaveUnit
+IS Ammo LRM-10
+IS Ammo LRM-10
+IS Streak SRM 4 Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+PPC
+LRM 10
+LRM 10
+LRM 10
+ISStreakSRM4
+ISStreakSRM4
+ISStreakSRM4
+</Turret Equipment>
+
+<source>
+TRO 3063 - Civil War
+</source>
+
+<tonnage>
+80.0
+</tonnage>

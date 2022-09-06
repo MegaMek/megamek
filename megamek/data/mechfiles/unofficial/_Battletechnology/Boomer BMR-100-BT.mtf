@@ -1,0 +1,154 @@
+Version:1.0
+Boomer
+BMR-100-BT
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:100
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:31
+RT Armor:31
+CT Armor:45
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:11
+RTR Armor:11
+RTC Armor:16
+
+Weapons:9
+1 ISGaussRifle, Right Arm, Ammo:64
+1 ISGaussRifle, Left Arm
+1 ISMediumLaser, Right Torso (R)
+3 ISMediumLaser, Right Torso
+1 ISMediumLaser, Left Torso (R)
+1 ISMediumLaser, Left Torso
+1 ISGuardianECM, Left Torso
+1 ISMediumLaser, Center Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser (R)
+ISMediumLaser
+ISGuardianECM
+ISGuardianECM
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser (R)
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

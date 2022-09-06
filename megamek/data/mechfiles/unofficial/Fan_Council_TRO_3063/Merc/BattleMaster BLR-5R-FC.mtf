@@ -1,0 +1,155 @@
+Version:1.0
+BattleMaster
+BLR-5R-FC
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3061
+Source:TRO 3063 - Clan Invasion
+Rules Level:5
+
+Mass:85
+Engine:340 Large XL Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:25
+RA Armor:25
+LT Armor:27
+RT Armor:27
+CT Armor:40
+HD Armor:9
+LL Armor:33
+RL Armor:33
+RTL Armor:9
+RTR Armor:9
+RTC Armor:11
+
+Weapons:8
+ER Large Laser, Left Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+LB 10-X AC, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERLargeLaser
+ISERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

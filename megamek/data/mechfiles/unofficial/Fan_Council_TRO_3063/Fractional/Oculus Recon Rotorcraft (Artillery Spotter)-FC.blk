@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Oculus Recon Rotorcraft
+</Name>
+
+<Model>
+(Artillery Spotter)-FC
+</Model>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+25
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+7
+3
+3
+2
+2
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+ISTAG
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+RS 3063 - Civil War
+</source>
+
+<tonnage>
+5.0
+</tonnage>
+
+<history>This unit makes use of fractional accounting. MegaMek does not currently support this feature, thus this unit will appear overweight.</history>

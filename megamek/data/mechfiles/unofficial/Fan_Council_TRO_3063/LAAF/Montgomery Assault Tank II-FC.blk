@@ -1,0 +1,106 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Montgomery Assault Tank
+</Name>
+
+<Model>
+II-FC
+</Model>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+75
+48
+48
+40
+75
+</armor>
+
+<Body Equipment>
+ISCASE
+ISGuardianECMSuite
+IS Streak SRM 4 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISStreakSRM4
+ISStreakSRM4
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+</Rear Equipment>
+
+<Turret Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISUltraAC10
+ISUltraAC10
+</Turret Equipment>
+
+<source>
+TRO 3063 - Civil War
+</source>
+
+<tonnage>
+85.0
+</tonnage>

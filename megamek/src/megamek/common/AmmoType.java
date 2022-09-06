@@ -10026,6 +10026,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Barracuda (Tele-Operated) Ammo";
         ammo.setInternalName("Ammo Barracuda-T");
         ammo.addLookupName("BarracudaT Ammo");
+        ammo.shortName = "Barracuda-T";
         ammo.damagePerShot = 2;
         ammo.ammoType = AmmoType.T_BARRACUDA_T;
         ammo.shots = 1;
@@ -10050,6 +10051,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "White Shark (Tele-Operated) Ammo";
         ammo.setInternalName("Ammo White Shark-T");
         ammo.addLookupName("WhiteSharkT Ammo");
+        ammo.shortName = "White Shark-T";
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_WHITE_SHARK_T;
         ammo.shots = 1;
@@ -10073,6 +10075,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Killer Whale (Tele-Operated) Ammo";
         ammo.setInternalName("Ammo Killer Whale-T");
         ammo.addLookupName("KillerWhaleT Ammo");
+        ammo.shortName = "Killer Whale-T";
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_KILLER_WHALE_T;
         ammo.shots = 1;
@@ -10096,6 +10099,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Kraken (Tele-Operated) Ammo";
         ammo.setInternalName("Ammo KrakenT");
         ammo.addLookupName("KrakenT Ammo");
+        ammo.shortName = "Kraken-T";
         ammo.damagePerShot = 10;
         ammo.ammoType = AmmoType.T_KRAKEN_T;
         ammo.shots = 1;
@@ -10386,6 +10390,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 Barracuda Ammo";
         ammo.setInternalName("Ammo AR10 Barracuda");
         ammo.addLookupName("AR10 Barracuda Ammo");
+        ammo.shortName = "Barracuda";
         ammo.damagePerShot = 2;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -10413,6 +10418,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 Killer Whale Ammo";
         ammo.setInternalName("Ammo AR10 Killer Whale");
         ammo.addLookupName("AR10 KillerWhale Ammo");
+        ammo.shortName = "Killer Whale";
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -10439,6 +10445,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 White Shark Ammo";
         ammo.setInternalName("Ammo AR10 White Shark");
         ammo.addLookupName("AR10 WhiteShark Ammo");
+        ammo.shortName = "White Shark";
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -10467,6 +10474,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 Barracuda (Tele-Operated) Ammo";
         ammo.setInternalName("Ammo AR10 Barracuda-T");
         ammo.addLookupName("AR10 BarracudaT Ammo");
+        ammo.shortName = "Barracuda-T";
         ammo.damagePerShot = 2;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -10492,6 +10500,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 Killer Whale (Tele-Operated) Ammo";
         ammo.setInternalName("Ammo AR10 Killer Whale-T");
         ammo.addLookupName("AR10 KillerWhaleT Ammo");
+        ammo.shortName = "Killer Whale-T";
         ammo.damagePerShot = 4;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -10516,6 +10525,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 White Shark (Tele-Operated) Ammo";
         ammo.setInternalName("Ammo AR10 White Shark-T");
         ammo.addLookupName("AR10 WhiteSharkT Ammo");
+        ammo.shortName = "White Shark-T";
         ammo.damagePerShot = 3;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.shots = 1;
@@ -11051,7 +11061,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Prototype Arrow IV Ammo";
-        ammo.shortName = "ProtoType Arrow IV";
+        ammo.shortName = "pArrow IV";
         ammo.setInternalName("ProtoTypeArrowIVAmmo");
         ammo.addLookupName("ProtoArrowIV Ammo");
         ammo.damagePerShot = 1;
@@ -11073,7 +11083,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved Autocannon/2 Ammo";
-        ammo.shortName = "Improved Autocannon/2 Ammo";
+        ammo.shortName = "iAC/2 Ammo";
         ammo.setInternalName("CLIMPAmmoAC2");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
@@ -11094,7 +11104,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved Autocannon/5 Ammo";
-        ammo.shortName = "Improved Autocannon/5 Ammo";
+        ammo.shortName = "iAC/5 Ammo";
         ammo.setInternalName("CLIMPAmmoAC5");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
@@ -11115,7 +11125,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved Autocannon/10 Ammo";
-        ammo.shortName = "Improved Autocannon/10 Ammo";
+        ammo.shortName = "iAC/10 Ammo";
         ammo.setInternalName("CLIMPAmmoAC10");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
@@ -11136,7 +11146,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved Autocannon/20 Ammo";
-        ammo.shortName = "Improved Autocannon/20 Ammo";
+        ammo.shortName = "iAC/20 Ammo";
         ammo.setInternalName("CLIMPAmmoAC20");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
@@ -11158,7 +11168,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved LRM 5 Ammo";
-        ammo.shortName = "Improved LRM 5";
+        ammo.shortName = "iLRM 5";
         ammo.setInternalName("ClanImprovedLRM5Ammo");
         ammo.addLookupName("CLImpLRM5Ammo");
         ammo.damagePerShot = 1;
@@ -11182,7 +11192,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved LRM 10 Ammo";
-        ammo.shortName = "Improved LRM 10";
+        ammo.shortName = "iLRM 10";
         ammo.setInternalName("ClanImprovedLRM10Ammo");
         ammo.addLookupName("CLImpLRM10Ammo");
         ammo.damagePerShot = 1;
@@ -11205,10 +11215,10 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLImprovedLRM15Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.shortName = "Improved LRM 15";
         ammo.name = "Improved LRM 15 Ammo";
         ammo.setInternalName("ClanImprovedLRM15Ammo");
         ammo.addLookupName("CLImpLRM15Ammo");
+        ammo.shortName = "iLRM 15";
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_LRM_IMP;
@@ -11230,7 +11240,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved LRM 20 Ammo";
-        ammo.shortName = "Improved LRM 20";
+        ammo.shortName = "iLRM 20";
         ammo.setInternalName("ClanImprovedLRM20Ammo");
         ammo.addLookupName("CLImpLRM20Ammo");
         ammo.damagePerShot = 1;
@@ -11254,7 +11264,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved Gauss Rifle Ammo";
-        ammo.shortName = "Improved Gauss";
+        ammo.shortName = "iGauss";
         ammo.setInternalName("CLImpGaussAmmo");
         ammo.damagePerShot = 15;
         ammo.explosive = false;
@@ -11276,7 +11286,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved SRM 2 Ammo";
-        ammo.shortName = "Improved SRM 2";
+        ammo.shortName = "iSRM 2";
         ammo.setInternalName("ClanImpAmmoSRM2");
         ammo.addLookupName("CLImpSRM2 Ammo");
         ammo.damagePerShot = 2;
@@ -11299,7 +11309,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved SRM 4 Ammo";
-        ammo.shortName = "Improved SRM 4";
+        ammo.shortName = "iSRM 4";
         ammo.setInternalName("ClImpAmmoSRM4");
         ammo.addLookupName("CLImpSRM4 Ammo");
         ammo.damagePerShot = 2;
@@ -11322,7 +11332,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Improved SRM 6 Ammo";
-        ammo.shortName = "Improved SRM 6";
+        ammo.shortName = "iSRM 6";
         ammo.setInternalName("CLImpAmmoSRM6");
         ammo.addLookupName("CLImpSRM6 Ammo");
         ammo.damagePerShot = 2;
@@ -12418,6 +12428,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Anti-BattleArmor Pods (B-Pods) Ammo";
         ammo.setInternalName("ISBPodAmmo");
+        ammo.shortName = "B-Pod";
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_BPOD;
@@ -13249,7 +13260,7 @@ public class AmmoType extends EquipmentType {
                     nameBuf.insert(index, ' ');
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = munition.name;
+                    munition.shortName = munition.name.replace(base.name, base.shortName);
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case AmmoType.T_ARROWIV_PROTO:
@@ -13277,7 +13288,7 @@ public class AmmoType extends EquipmentType {
                     index = base.internalName.lastIndexOf("Ammo");
                     nameBuf.insert(index, name);
                     munition.setInternalName(nameBuf.toString());
-                    munition.shortName = munition.name;
+                    munition.shortName = munition.name.replace("Prototype ", "p");
 
                     munition.addBeforeString(base, "Ammo", name + " ");
                     munition.addToEnd(base, " - " + name);
@@ -13312,7 +13323,10 @@ public class AmmoType extends EquipmentType {
                     munition.subMunitionLength = name.length();
                     nameBuf.insert(index, name);
                     munition.name = nameBuf.toString();
-                    munition.shortName = munition.name;
+                    nameBuf = new StringBuilder(base.shortName);
+                    nameBuf.append(' ');
+                    nameBuf.append(name.replace("-capable", ""));
+                    munition.shortName = nameBuf.toString();
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case AmmoType.T_VGL:
@@ -13374,6 +13388,8 @@ public class AmmoType extends EquipmentType {
                 default:
                     throw new IllegalArgumentException("Don't know how to create munitions for " + base.ammoType);
             }
+
+            munition.shortName = munition.shortName.replace("(Clan) ", "");
 
             // Assign our munition type.
             munition.munitionType = type;

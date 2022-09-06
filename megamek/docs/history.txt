@@ -75,6 +75,7 @@ VERSION HISTORY:
 + PR #3840: BV calculation report for BA
 + PR #3823: Consolidate MASC/SC Target Number lookup
 + PR #3879 (MML Issue #1165): Improve handling of illegal armor on BA units in the TRO View
++ Data: New Camos, New Sprites, updated unit files, adding the buildable Boondoggles units, Tech Progression adjustments. 
 + Updating to Gradle 7.5.1 from 6.7
 + Updating to grgit 5.0.0 from 4.1.1
 + Updating to FlatLAF 2.4 from 2.2

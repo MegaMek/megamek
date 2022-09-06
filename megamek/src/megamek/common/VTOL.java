@@ -47,6 +47,13 @@ public class VTOL extends Tank implements IBomber {
     public static final int CRIT_ROTOR_DESTROYED = 18;
     public static final int CRIT_FLIGHT_STABILIZER = 19;
 
+    public VTOL() {
+        super();
+        // need to set elevation to something different than entity
+        elevation = 1;
+    }
+    
+    
     @Override
     public int getUnitType() {
         return UnitType.VTOL;

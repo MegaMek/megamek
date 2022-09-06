@@ -233,8 +233,9 @@ public class Aero extends Entity implements IAero, IBomber {
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2520)
-            .setISApproximate(false, true, false).setProductionFactions(F_TA)
+    		//Per MUL team and per availability codes should exist to around 2781
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2781, DATE_NONE)
+            .setISApproximate(false, true, false, true, false).setProductionFactions(F_TA)
             .setTechRating(RATING_D).setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 

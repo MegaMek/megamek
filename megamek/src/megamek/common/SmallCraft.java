@@ -53,8 +53,9 @@ public class SmallCraft extends Aero {
             .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2400)
-            .setISApproximate(false, true, false, false)
+    		//Per MUL team and per availability codes should exist to around 2781
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2781, DATE_NONE)
+            .setISApproximate(false, true, false, true, false)
             .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
             .setStaticTechLevel(SimpleTechLevel.STANDARD);

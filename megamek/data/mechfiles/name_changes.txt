@@ -519,6 +519,7 @@ Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Caval
 Ceremonial Guard Caesar's Royal Guard, Marion Hegemony|Ceremonial Guard Caesar's Royal Guard; Marion Hegemony
 Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT|Combat Engineer Royal Engineers; 1st Lyran Royal Guards RCT
 Minesweepers Thirty-fifth Cluster Support Force, Red Chasseurs|Minesweepers Thirty-fifth Cluster Support Force; Red Chasseurs
+Autocannon/10 Field Gun Infantry|Field Gun Infantry Platoon (AC/10)
 
 #Jumpships
 Comitatus JumpShip (Standard)|Comitatus JumpShip (2995)

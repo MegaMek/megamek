@@ -26,7 +26,7 @@ import java.time.LocalDate;
 public abstract class SuiteConstants {
     //region General Constants
     public static final String PROJECT_NAME = "MegaMek Suite";
-    public static final Version VERSION = new Version("0.49.9-SNAPSHOT");
+    public static final Version VERSION = new Version("0.49.9");
     public static final int MAXIMUM_D6_VALUE = 6;
 
     // This is used in creating the name of save files, e.g. the MekHQ campaign file

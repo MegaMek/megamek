@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-0.49.9-SNAPSHOT
+0.49.9 (2022-09-06 2100 UTC)
 + Data: Updating Tags on Board Files
 + Issue #3662: Draw "Target Movement Modifier" on final legal step of current movement path
 + PR #3672: Removed No Torso Twist & updated quirks per BMM v6 errata

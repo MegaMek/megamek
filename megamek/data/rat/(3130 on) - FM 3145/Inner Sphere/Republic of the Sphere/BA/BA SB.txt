@@ -1,0 +1,15 @@
+Republic of the Sphere Battle Armor Stone's Brigade - 3145
+Cavalier Battle Armor [Laser],1
+Angerona Scout Suit (Standard),2
+Quirinus Battle Armor (MG),3
+Purifier Adaptive Battle Armor (RAF)[Laser],4
+Purifier Adaptive Battle Armor (RAF)[Narc],1
+Purifier Adaptive Battle Armor (RAF)[PPC],3
+Purifier Adaptive Battle Armor (RAF)[TAG],1
+Grenadier Battle Armor [SL],5
+Taranis Battle Armor (Standard),6
+Hauberk Battle Armor (Standard),5
+Infiltrator Mk. II Battle Armor 'Puma',4
+Kopis Assault Battle Armor 'The Dark Alley',3
+Phalanx Battle Armor (A),2
+Clan Medium Battle Armor (Rabid),1

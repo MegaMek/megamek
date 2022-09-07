@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Battle Armor - Second Line
+Resgate PA(L) (Standard),1
+Thunderbird Battle Armor [Pulse Laser],2
+Rogue Bear Heavy Battle Armor (Hybrid),3
+Clan Medium Battle Armor (Bär),4
+Kobold Battle Armor (GB) [GL/Flamer],5
+Constable Pacification Suit (SRM),6
+Rogue Bear Heavy Battle Armor (Standard),5
+Wraith Battle Armor (Anti-Infantry),4
+Golem Assault Armor (Standard),3
+Elemental Battle Armor [MicroPL],2
+Golem Assault Armor (Support),1

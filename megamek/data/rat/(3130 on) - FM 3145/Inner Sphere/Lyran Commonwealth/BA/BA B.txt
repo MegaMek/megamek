@@ -1,0 +1,12 @@
+Lyran Commonwealth Battle Armor B - 3145
+Infiltrator Mk. I Battle Armor 'Waddle',1
+GD Infiltrator Suit (Firedrake),2
+Rottweiler Battle Armor (Close Combat),3
+IS Standard Battle Armor [Laser],4
+Fenrir Battle Armor [SL],5
+Gray Death Standard Suit [Laser],6
+Rottweiler Battle Armor (Standard),5
+Fenrir II Assault Battle Armor (Med. Laser),4
+Gray Death Heavy Suit (Standard),3
+Gray Death Strike Armor (Standard),2
+Sloth Battle Armor (Interdictor),1

@@ -1,0 +1,12 @@
+Taurian Concordat Assault Mechs D
+Banshee BNC-3Mr,1
+Zeus ZEU-9T,2
+Longbow LGB-8V,3
+Stalker STK-5M,4
+BattleMaster BLR-10S2,5
+Emperor EMP-6A,6
+Albatross ALB-3Ur,5
+Emperor EMP-6A,4
+Yu Huang Y-H9G,3
+Devastator DVS-1D,2
+Banshee BNC-3Mr,1

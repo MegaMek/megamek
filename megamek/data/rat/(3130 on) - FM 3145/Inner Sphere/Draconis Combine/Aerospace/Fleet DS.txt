@@ -1,0 +1,15 @@
+3145 Draconis Combine Fleet Dropships
+Excalibur 'Pocket Warship',1
+Union (3055),2
+Nekohono'o (Standard),3
+Union C (2829),2
+Union C (2829) (Tank),1
+Union C (2840) (Cargo),1
+Nagumo (3056),5
+Overlord (3056),6
+Overlord C (2818),3
+Overlord C (2818) (Tank),2
+Nekohono'o (SCL),4
+Taihou Assault Dropship (Standard),3
+Nekohono'o (HQ),2
+Taihou Assault Dropship (Standard),1

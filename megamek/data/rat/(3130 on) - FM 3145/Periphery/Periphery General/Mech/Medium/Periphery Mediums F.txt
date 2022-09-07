@@ -1,0 +1,12 @@
+Periphery Medium Mechs F
+Buster BC XV-M HaulerMech MOD,1
+Quasit MilitiaMech QUA-51T,2
+Dervish DV-1S,3
+Gladiator GLD-1R,4
+Clint CLNT-3-3T,5
+Griffin GRF-1N,6
+Centurion CN9-Ar,5
+Phoenix Hawk PXH-4W,4
+Lineholder KW1-LH2,3
+Vulcan VT-5M,2
+Shadow Hawk SHD-7M,1

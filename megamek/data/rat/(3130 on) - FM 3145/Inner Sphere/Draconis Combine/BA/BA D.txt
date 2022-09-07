@@ -1,0 +1,12 @@
+Draconis Combine Battle Armor D - 3145
+Void Medium Battle Armor (DCA),1
+Kage Light Battle Armor (Vibro-Claw),2
+Raiden Battle Armor [Laser],3
+Raiden Battle Armor (Anti-Infantry),4
+Void Medium Battle Armor (Minelayer),5
+Kage Light Battle Armor [Laser],6
+Void Medium Battle Armor (Standard),5
+Raiden Battle Armor [Laser],4
+Void Medium Battle Armor (Standard),3
+Oni Battle Armor [PPC],2
+Kanazuchi Assault Battle Armor (Upgrade) [Battle Claw],1

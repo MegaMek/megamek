@@ -1,0 +1,12 @@
+Hell's Horses Second Line Heavy Mechs
+Thresher 2,1
+Bowman (Standard),2
+Bowman 2,3
+Thresher (Standard),4
+Bowman 3,5
+Ryoken II (Standard),6
+Ha Otoko 3,5
+Ryoken II 3,4
+Arcas (Standard),3
+Tundra Wolf (Standard),2
+Blood Reaper (Standard),1

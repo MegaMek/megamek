@@ -1,0 +1,15 @@
+Republic of the Sphere Battle Armor Principes Guards - 3145
+Achileus Light Battle Armor [Laser],1
+Angerona Scout Suit (Recon),2
+Centaur Battle Armor (Standard),3
+Simian Battle Armor (SL),4
+Cavalier Battle Armor [Laser],5
+Angerona Scout Suit (Standard),6
+Quirinus Battle Armor (MG),5
+Purifier Adaptive Battle Armor (RAF)[Laser],4
+Purifier Adaptive Battle Armor (RAF)[Narc],1
+Purifier Adaptive Battle Armor (RAF)[PPC],3
+Purifier Adaptive Battle Armor (RAF)[TAG],1
+Grenadier Battle Armor [SL],3
+Taranis Battle Armor (Standard),2
+Hauberk Battle Armor (Standard),1

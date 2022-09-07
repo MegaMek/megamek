@@ -1,0 +1,12 @@
+Capellan Confederation Heavy Mechs D
+Catapult CPLT-C5A,1
+Warhammer WHM-5L,2
+Ti Ts'ang TSG-9H,3
+Cataphract CTF-3LL,4
+Thunder THR-2L,5
+Shen Yi SHY-3B,6
+Cataphract CTF-4L,5
+Crusader CRD-8L,4
+Thunder THR-C4,3
+Warhammer WHD-10CT,2
+Lao Hu LHU-4E,1

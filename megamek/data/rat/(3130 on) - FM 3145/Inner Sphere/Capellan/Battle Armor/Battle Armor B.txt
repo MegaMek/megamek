@@ -1,0 +1,12 @@
+Capellan Confederation Battle Armor B - 3145
+Trinity Medium Battle Armor (Theseus)[MRR],1
+IS Standard Battle Armor [Laser],2
+Trinity Medium Battle Armor (Theseus RL)[LRR],3
+Amazon Battle Armor [MRR],4
+Fa Shih Battle Armor [Laser],5
+Fa Shih Battle Armor (Support) [Plasma],6
+Trinity Medium Battle Armor (Ying Long)(Plasma),5
+Shen Long Battle Armor [MG],4
+Fa Shih Battle Armor (Support) [Plasma],3
+Shen Long Battle Armor [MG],2
+Achileus Light Battle Armor [Laser],1

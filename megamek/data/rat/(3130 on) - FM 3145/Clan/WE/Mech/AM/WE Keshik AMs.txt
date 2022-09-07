@@ -1,0 +1,12 @@
+Wolf Empire Keshik Assault Mechs
+Warhammer IIC 8,1
+Night Wolf (Standard),2
+Marauder IIC 6,3
+Night Wolf (Standard),4
+Mad Cat Mk II Enhanced,5
+Gladiator (Executioner) Prime,6
+Man O' War (Gargoyle) Prime,5
+Man O' War (Gargoyle) Prime,4
+Turkina Prime,3
+Daishi (Dire Wolf) Prime,2
+Masakari (Warhawk) Prime,1

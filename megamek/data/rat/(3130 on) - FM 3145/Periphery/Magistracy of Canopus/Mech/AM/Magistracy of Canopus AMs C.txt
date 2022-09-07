@@ -1,0 +1,12 @@
+Magistracy of Canopus Assault Mechs C
+Victor VTR-10L,1
+Longbow LGB-12C,2
+Yu Huang Y-H9GB,3
+BattleMaster BLR-4L,4
+Xanthos XNT-4O,5
+Longbow LGB-14C,6
+Trebaruna TR-XL,5
+Emperor EMP-6A,4
+Stalker STK-3Fb,3
+Xanthos XNT-5O,2
+Yu Huang Y-H11G,1

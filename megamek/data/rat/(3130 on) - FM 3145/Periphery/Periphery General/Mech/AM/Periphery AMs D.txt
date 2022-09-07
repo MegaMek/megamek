@@ -1,0 +1,12 @@
+Periphery Assault Mechs D
+Charger CGR-1A1,1
+Victor VTR-9B,2
+Zeus ZEU-6S,3
+Awesome AWS-8Q,4
+Longbow LGB-0W,5
+Stalker STK-3F,6
+Awesome AWS-9M,5
+Stalker STK-5M,4
+Awesome AWS-9Q,3
+Victor VTR-9K,2
+Longbow LGB-13C,1

@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Medium Fighters - Front Line
+Ammon 2,1
+Tyre 3,2
+Ammon 2,3
+Turk Prime,4
+Tyre 3,5
+Ammon XR,6
+Wusun Prime,5
+Jagatai Prime,4
+Jagatai Prime,3
+Visigoth Prime,2
+Turk Prime,1

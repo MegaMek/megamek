@@ -14,9 +14,10 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.alphaStrike.*;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASUnitType;
 
 import java.io.File;
 import java.io.Serializable;
@@ -102,15 +103,15 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String primaryMovementMode = "";
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;
-    private ASSpecialAbilityCollection frontArc;
-    private ASSpecialAbilityCollection leftArc;
-    private ASSpecialAbilityCollection rightArc;
-    private ASSpecialAbilityCollection rearArc;
-    private int threshold = 0;
+    private ASSpecialAbilityCollection frontArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection leftArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rightArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rearArc = new ASSpecialAbilityCollection();
+    private int threshold;
     private int fullArmor;
     private int fullStructure;
     private int squadSize;
-    private ASSpecialAbilityCollection specialAbilities;
+    private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private UnitRole role;
 
     public MechSummary() {
@@ -707,6 +708,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setSquadSize(int squadSize) {
         this.squadSize = squadSize;
+    }
+
+    public void setPointValue(int pointValue) {
+        this.pointValue = pointValue;
     }
 
     public void setSpecialAbilities(ASSpecialAbilityCollection specialAbilities) {

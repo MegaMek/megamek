@@ -69,6 +69,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         }
     }
 
+    @Override
     protected void processSDamage() {
         report.addLine("--- Short Range Damage:", "");
         double sDamage = assembleFrontDamage(SHORT_RANGE);
@@ -94,6 +95,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         }
     }
 
+    @Override
     protected void processMDamage() {
         report.addEmptyLine();
         report.addLine("--- Medium Range Damage:", "");
@@ -110,6 +112,7 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         }
     }
 
+    @Override
     protected void processLDamage() {
         report.addEmptyLine();
         report.addLine("--- Long Range Damage:", "");

@@ -84,6 +84,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         processArcs();
     }
 
+    @Override
     protected void calculateHeatAdjustment() {
         report.addLine("--- Heat Adjustment", "", "");
         int heatCapacity = getHeatCapacity();
@@ -206,6 +207,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         return rawDmg;
     }
 
+    @Override
     protected void assembleAmmoCounts() { }
 
     @Override

@@ -524,6 +524,7 @@ public class MechSummaryCache {
             ms.setSquadSize(element.getSquadSize());
             ms.setSpecialAbilities(element.getSpecialAbilities());
             ms.setUnitRole(element.getRole());
+            ms.setPointValue(element.getPointValue());
         } else {
             ms.setAsUnitType(ASUnitType.UNKNOWN);
         }

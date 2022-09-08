@@ -280,4 +280,9 @@ public interface ASCardDisplayable {
     default boolean isSubmarine() {
         return isCombatVehicle() && getPrimaryMovementMode().equals("s");
     }
+
+    /** @return True when this element uses TMM; equivalent to !{@link #isAerospace()}. */
+    default boolean usesTMM() {
+        return !isAerospace();
+    }
 }

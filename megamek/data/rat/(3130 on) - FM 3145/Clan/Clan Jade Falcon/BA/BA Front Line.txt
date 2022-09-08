@@ -1,0 +1,12 @@
+3145 Clan Jade Falcon Battle Armor - Front Line
+Elemental Battle Armor [Laser],1
+Afreet Medium Battle Armor (Jade Falcon),2
+Salamander Battle Armor (Standard),3
+Elemental Battle Armor [AP Gauss],4
+Salamander Battle Armor (Anti-Infantry),5
+Elemental Battle Armor (Fire) [AP Gauss],6
+Ironhold Assault Battle Armor (Standard),5
+Ironhold Assault Battle Armor (Fire),4
+Elemental Battle Armor (Fire) [AP Gauss],3
+Ironhold Assault Battle Armor (Fire),2
+Ironhold Assault Battle Armor (Standard),1

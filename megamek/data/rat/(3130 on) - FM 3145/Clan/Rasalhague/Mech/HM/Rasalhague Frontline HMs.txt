@@ -1,0 +1,12 @@
+Rasalhague Dominion Frontline Heavy Mechs
+Arcas 2, 1
+Vulture (Mad Dog) Prime,2
+Arcas (Standard),3
+Vulture Mk IV (Mad Dog Mk IV) Prime,4
+Vulture Mk III (Mad Dog Mk III) (Prime),5
+Karhu Prime,6
+Mad Cat Mk IV (Savage Wolf) (Prime),5
+Karhu Prime,4
+Vulture (Mad Dog) Prime,3
+Mad Cat (Timber Wolf) Prime,2
+Nova Cat Prime,1

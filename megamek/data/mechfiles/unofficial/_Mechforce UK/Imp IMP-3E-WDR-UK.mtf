@@ -1,0 +1,153 @@
+Version:1.0
+Imp
+IMP-3E-WDR-UK
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3050
+Rules Level:5
+
+Mass:100
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:22 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:32
+RA Armor:32
+LT Armor:30
+RT Armor:30
+CT Armor:40
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:12
+RTR Armor:12
+RTC Armor:22
+
+Weapons:8
+2 CLLRM15, Right Arm, Ammo:16
+2 CLLargePulseLaser, Left Arm
+1 CLERPPC, Right Torso
+2 CLERMediumLaser, Right Torso
+1 ISC3SlaveUnit, Right Torso
+1 CLERSmallLaser, Right Torso
+1 CLERPPC, Left Torso
+2 CLMediumPulseLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERPPC
+CLERPPC
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERPPC
+CLERPPC
+CLERMediumLaser
+CLERMediumLaser
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLERSmallLaser
+ISC3SlaveUnit
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLMediumPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Armored Cowl
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

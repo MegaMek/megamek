@@ -1,0 +1,179 @@
+Version:1.0
+Atlas
+AS7-DTA Tomahawk Antony
+
+Config:Biped
+techbase:Inner Sphere
+era:3029
+source:TeamTrueborn
+rules level:5
+
+mass:100
+engine:300 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:17 Single
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:30
+RA armor:30
+LT armor:32
+RT armor:32
+CT armor:47
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:19
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Small Laser, Right Torso
+Small Laser, Right Torso
+Small Laser, Right Torso
+Small Laser, Right Torso
+AC/10, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+IS Machine Gun Ammo - Half
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+IS Ammo AC/10
+
+Left Torso:
+Heat Sink
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Machine Gun
+Medium Laser
+
+Right Torso:
+Medium Laser
+Small Laser
+Small Laser
+Small Laser
+Small Laser
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+Medium Laser
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Ammo AC/10
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview: With a reputation few MechWarriors choose to test, the Atlas is a true king of the battlefield. Its design specifications were laid down by Aleksandr Kerensky himself, the massive 'Mech and its famous death's head easily able to change the tide of a battle with its sheer presence alone. The 'Mech was originally requesitioned in an attempt to maintain SLDF superiority over the House Lords, where it achieved its task admirably. The fall of the Star League saw the Successor States scramble to lay their hands on as many of the BattleMech as possible, leading to the rapid spread of the Atlas throughout the Inner Sphere and periphery.
+capabilities: Carrying the largest LRM launcher, the largest autocannon, and the largest SRM launcher possible, the Atlas can deal frightening amounts of damage in short amounts of time. Often used as a command vehicle, the Atlas mounts an advanced antenna and communications array, allowing it to engage in surface-to space communications in real time. The massive 19-ton hide of armor that protects the Atlas makes it a difficult foe to take down. Indeed, most MechWarriors choose to fall back rather than face one head-one, as its lumbering gait mean it can rarely catch up to other 'Mechs that choose to flee it.
+deployment: Every Successor State and periphery nation fields numbers of the Atlas, though only the Lyran Commonwealth, Draconis Combine, and occasionally the Federated Suns can claim to produce it. They are often prized, and are rarely seen outside the hands of prominent commanders or nobles. It is a testament to the legacy of the AS7-D that many remain in every military, even after the events of Gray Monday and the ensuing Blackout.
+systemmanufacturer:CHASSIS:Foundation
+systemmode:CHASSIS:Type 10X
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Special Heavy
+systemmanufacturer:COMMUNICATIONS:Angst
+systemmode:COMMUNICATIONS:Discom
+systemmanufacturer:TARGETING:Angst
+systemmode:TARGETING:Accuracy
+

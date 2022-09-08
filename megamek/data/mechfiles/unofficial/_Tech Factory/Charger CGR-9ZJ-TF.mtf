@@ -1,0 +1,152 @@
+Version:1.0
+Charger
+CGR-9ZJ-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Rules Level:5
+
+Mass:80
+Engine:400 XL Engine
+Structure:Endo Steel
+Myomer:Triple-Strength
+
+Heat Sinks:14 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:24
+RT Armor:24
+CT Armor:35
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:7
+1 ISMediumLaser, Left Arm
+1 ISMediumLaser, Right Torso
+1 ISERPPC, Left Torso
+2 ISMediumLaser, Left Torso
+2 ISSmallLaser, Left Torso
+1 ISMediumLaser, Center Torso
+1 ISMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+Sword
+Sword
+Sword
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+Jump Jet
+Jump Jet
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+Jump Jet
+Jump Jet
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

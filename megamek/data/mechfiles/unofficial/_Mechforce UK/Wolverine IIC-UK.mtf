@@ -1,0 +1,150 @@
+Version:1.0
+Wolverine IIC
+WVR-IIC-UK
+
+Config:Biped
+TechBase:Clan
+Era:3050
+Rules Level:5
+
+Mass:55
+Engine:275 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:13 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:27
+HD Armor:9
+LL Armor:26
+RL Armor:26
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:5
+1 CLLargePulseLaser, Right Arm
+2 CLMediumPulseLaser, Right Torso
+1 CLMediumPulseLaser, Left Torso
+1 CLStreakSRM6, Left Torso, Ammo:30
+1 CLMediumPulseLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMASC
+CLMASC
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLMediumPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,12 @@
+3145 Clan Sea Fox Battle Armor - Front Line
+Clan Medium Battle Armor (Volk),1
+Clan Medium Battle Armor (Rabid),2
+Constable Pacification Suit (LMG),3
+Elemental II Battle Armor (Standard),4
+Thunderbird Battle Armor [ER Laser],5
+Elemental Battle Armor [Laser],6
+Elemental Battle Armor (Fire) [Flamer],5
+Elemental Battle Armor [Laser],4
+Gnome Battle Armor (Standard),3
+Golem Assault Armor (Standard),2
+Warg Assault Battle Armor (Standard),1

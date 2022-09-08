@@ -1,0 +1,150 @@
+Version:1.0
+BattleMaster
+BLR-1J-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3025
+Rules Level:5
+
+Mass:85
+Engine:255 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:23 Single
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:28
+RA Armor:28
+LT Armor:28
+RT Armor:28
+CT Armor:42
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:5
+2 ISPPC, Right Arm
+2 ISSmallLaser, Left Arm
+3 ISMediumLaser, Right Torso
+3 ISMediumLaser, Left Torso
+1 ISSRM6, Left Torso, Ammo:15
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSmallLaser
+ISSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+Heat Sink
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+
+Left Torso:
+Jump Jet
+Heat Sink
+Heat Sink
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+Jump Jet
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

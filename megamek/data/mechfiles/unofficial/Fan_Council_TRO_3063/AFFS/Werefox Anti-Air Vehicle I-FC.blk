@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Werefox Anti-Air Vehicle
+</Name>
+
+<Model>
+I-FC
+</Model>
+
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+40
+32
+32
+26
+40
+</armor>
+
+<Body Equipment>
+ISCASE
+ISGuardianECMSuite
+BeagleActiveProbe
+ISTargeting Computer
+IS Ultra AC/5 Ammo
+IS Ultra AC/5 Ammo
+IS Ultra AC/5 Ammo
+IS Ultra AC/5 Ammo
+ISC3SlaveUnit
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Hitch
+</Rear Equipment>
+
+<Turret Equipment>
+ISUltraAC5
+ISUltraAC5
+</Turret Equipment>
+
+<source>
+TRO 3063 - Civil War
+</source>
+
+<tonnage>
+65.0
+</tonnage>

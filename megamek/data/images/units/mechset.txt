@@ -124,6 +124,7 @@ exact "Centurion CNT-2D" "fighter/centurion.png"
 exact "Centurion CNT-3S" "fighter/centurion.png"
 chassis "Chaeronea" "fighter/Chaeronea.png"
 chassis "Cheetah" "fighter/cheetah.png"
+chassis "Cheetah II" "fighter/cheetah.png"
 chassis "Chippewa" "fighter/chippewa.png"
 chassis "Chippewa IIC" "fighter/chippewa_iic.png"
 chassis "Corax" "fighter/corax.png"
@@ -275,7 +276,7 @@ chassis "Guardian Fighter" "convfighter/Guardian.png"
 chassis "Heavy Strike Fighter" "convfighter/heavystrikefighter.png"
 chassis "Hurricane Conventional Fighter" "convfighter/Hurricane Conventional Fighter.png"
 chassis "Light Strike Fighter" "convfighter/lightstrikefighter.png"
-chassis "MechBuster" "convfighter/mechbuster.png"
+chassis "Mechbuster" "convfighter/mechbuster.png"
 chassis "Medium Strike Fighter" "convfighter/mediumstrikefighter.png"
 chassis "Mosquito Light Fighter" "convfighter/Mosquito Light Fighter.png"
 chassis "Mustang Fighter" "convfighter/Mustang Fighter.png"
@@ -2339,9 +2340,9 @@ exact "Daedalus DAD-DX" "mechs/Daedalus_DX.png"
 exact "Daedalus GTX2 (Militarized)" "mechs/DaedalusGTX_2M.png"
 exact "Daedalus GTX2A 'Stevedore'" "mechs/DaedalusGTX.png"
 exact "Daedalus GTX2B 'Navvy'" "mechs/DaedalusGTX_2B.png"
-chassis "Daikyu" "mechs/Daikyu.png"
-exact "Daikyu DAI-02" "mechs/Daikyu DAI-02.png"
-exact "Daikyu DAI-03" "mechs/Daikyu DAI-03.png"
+chassis "Daikyu" "mechs/Daikyu.png
+exact "Daikyu DAI-02" "mechs/Daikyu_02.png
+exact "Daikyu DAI-03" "mechs/Daikyu_03.png
 chassis "Daimyo" "mechs/Daimyo.png"
 exact "Daimyo DMO-2K" "mechs/Daimyo_2K.png"
 exact "Daimyo DMO-4K" "mechs/Daimyo_4K.png"
@@ -2614,11 +2615,12 @@ exact "Eyleuka EYL-4A" "mechs/Eyleuka ELY-4A.png"
 exact "Eyleuka EYL-35A" "mechs/Eyleuka ELY-35A.png"
 exact "Eyleuka EYL-45B" "mechs/Eyleuka ELY-45B.png"
 chassis "Eyrie" "mechs/Eyrie.png"
-chassis "Fafnir" "mechs/Fafnir.png"
-exact "Fafnir FNR-5B" "mechs/Fafnir FNR-5B.png"
-exact "Fafnir FNR-5WB" "mechs/Fafnir FNR-5WB.png"
-exact "Fafnir FNR-5X" "mechs/Fafnir FNR-5X.png"
-exact "Fafnir FNR-6U" "mechs/Fafnir FNR-6U.png"
+chassis "Fafnir" "mechs/Fafnir.png
+exact "Fafnir FNR-5B" "mechs/Fafnir_5B.png
+exact "Fafnir FNR-5WB" "mechs/Fafnir_5WB.png
+exact "Fafnir FNR-5X" "mechs/Fafnir_5X.png
+exact "Fafnir FNR-6U" "mechs/Fafnir_6U.png
+exact "Fafnir FNR-4A (Peter)" "mechs/Fafnir_Peter.png
 chassis "Falcon" "mechs/Falcon.png"
 exact "Falcon FLC-4Nb" "mechs/Falcon_4NB.png"
 exact "Falcon FLC-4Nb-PP" "mechs/Falcon_4NBPP.png"
@@ -2769,9 +2771,10 @@ exact "Fox (Standard)" "mechs/FoxCS_Standard.png"
 chassis "Fujin" "mechs/Fujin.png"
 chassis "Fwltur" "mechs/Fwltur.png"
 exact "Fwltur FWL-3R SalvageMech" "mechs/Fwltur_3r.png"
-chassis "Galahad" "mechs/Galahad.png"
-exact "Galahad GLH-1D" "mechs/Galahad GLH-1D.png"
-exact "Galahad GLH-3D" "mechs/Galahad GLH-3D.png"
+chassis "Galahad" "mechs/Galahad.png
+exact "Galahad GLH-1D" "mechs/Galahad_1D.png
+exact "Galahad GLH-3D" "mechs/Galahad_3D.png
+exact "Galahad GLH-3D (Laodices)" "mechs/Galahad_Laodices.png
 chassis "Galahad (Glass Spider)" "mechs/GalahadGS.png"
 exact "Galahad (Glass Spider) 2" "mechs/GalahadGS_2.png"
 exact "Galahad (Glass Spider) 3" "mechs/GalahadGS_2.png"
@@ -3484,8 +3487,8 @@ exact "Kodiak II 3" "mechs/KodiakII_3-CO.png"
 #exact "Kodiak II 2" "mechs/KodiakII_2.png"
 #exact "Kodiak II 3" "mechs/KodiakII_3.png"
 chassis "Komodo IIC" "mechs/Komodo.png"
-chassis "Komodo" "mechs/Komodo.png"
-exact "Komodo KIM-2A" "mechs/Komodo KIM-2A.png"
+chassis "Komodo" "mechs/Komodo.png
+exact "Komodo KIM-2A" "mechs/Komodo_2A.png
 chassis "Kontio" "mechs/Kontio.png"
 chassis "Koschei" "mechs/Koschei.png"
 exact "Koschei KSC-3L" "mechs/Koschei KSC-3L.png"
@@ -3584,6 +3587,7 @@ exact "Legionnaire LGN-2XA" "mechs/Legionnaire_2XA.png"
 exact "Legionnaire LGN-2XU" "mechs/Legionnaire_2XU.png"
 exact "Legionnaire LGN-2D (Raul)" "mechs/Legionnaire_Raul.png"
 exact "Legionnaire LGN-2X1 MUSE FIRE" "mechs/Legionnaire_2X1.png"
+chassis "Liberator" "mechs/Liberator.png
 chassis "Lich" "mechs/Lich.png"
 exact "Lightning LHN-C5" "mechs/Lightning_MECH.png"
 exact "Lightning Prime-UK" "defaults/default_light.png"
@@ -4207,6 +4211,7 @@ exact "Ostscout OTT-9S" "mechs/Ostscout_9S.png"
 exact "Ostscout OTT-10CS" "mechs/Ostscout_10CS.png"
 exact "Ostscout OTT-11J" "mechs/Ostscout_11J.png"
 exact "Ostscout OTT-12R" "mechs/Ostscout_12R.png"
+chassis "Ostscout IIC" "mechs/OstscoutIIC.png
 chassis "Ostsol" "mechs/Ostsol.png"
 exact "Ostsol OTL-4F" "mechs/Ostsol_4F.png"
 exact "Ostsol OTL-5M" "mechs/Ostsol_5M.png"
@@ -4441,9 +4446,9 @@ chassis "Powerman SC XI-M LoaderMech" "mechs/Powerman_XIM.png"
 chassis "Powerman SC XVI HaulerMech" "mechs/Powerman.png"
 chassis "Predator" "mechs/Predator.png"
 exact "Predator 2" "mechs/Predator 2.png"
-chassis "Prefect" "mechs/Prefect.png"
-exact "Prefect PRF-2R" "mechs/Prefect PRF-2R.png"
-exact "Prefect PRF-3R" "mechs/Prefect PRF-3R.png"
+chassis "Prefect" "mechs/Prefect.png
+exact "Prefect PRF-2R" "mechs/Prefect_2R.png
+exact "Prefect PRF-3R" "mechs/Prefect_3R.png
 chassis "Preta" "mechs/Preta.png"
 exact "Preta C-PRT-OA Dominus" "mechs/Preta_Dominus.png"
 exact "Preta C-PRT-OB Infernus" "mechs/Preta_Infernus.png"
@@ -7033,6 +7038,7 @@ exact "Triton 3" "protomechs/Triton_3.png"
 exact "Triton 4" "protomechs/Triton_4.png"
 
 # Vehicles
+chassis "Auxiliary Defense Tank" "vehicles/ADT1.png
 chassis "Aeron Strike VTOL" "vehicles/aeron.png"
 chassis "Aesir Medium AA Vehicle" "vehicles/AesirAA.png"
 exact "Aesir Medium AA Vehicle (HAG)" "vehicles/AesirAA_HAG.png"

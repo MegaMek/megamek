@@ -1,0 +1,83 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Behemoth Belfry
+</Name>
+<Model>
+BT
+</Model>
+<Tonnage>
+80
+</Tonnage>
+<cruiseMP>
+2
+</cruiseMP>
+<Armor>
+80
+60
+60
+40
+60
+</Armor>
+<Turret Equipment>
+ISAC20
+</Turret Equipment>
+<Front Equipment>
+ISSRM6
+ISSRM6
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Right Equipment>
+ISSRM6
+ISMachine Gun
+ISMachine Gun
+</Right Equipment>
+<Left Equipment>
+ISSRM6
+ISMachine Gun
+ISMachine Gun
+</Left Equipment>
+<Rear Equipment>
+ISSmallLaser
+ISSmallLaser
+ISFlamer
+</Rear Equipment>
+<Body Equipment>
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISAC20 Ammo
+ISSRM6 Ammo
+ISSRM6 Ammo
+ISMG Ammo (200)
+</Body Equipment>
+<type>
+IS Level 5
+</type>
+<year>
+3025
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

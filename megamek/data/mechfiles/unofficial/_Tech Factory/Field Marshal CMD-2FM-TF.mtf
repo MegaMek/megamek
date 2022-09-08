@@ -1,0 +1,153 @@
+Version:1.0
+Field Marshal
+CMD-2FM-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3058
+Rules Level:5
+
+Mass:75
+Engine:375 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:8
+1 ISERPPC, Right Arm
+2 ISMediumLaser, Right Torso
+1 ISC3MasterComputer, Right Torso
+2 ISMediumLaser, Left Torso
+1 ISGuardianECM, Left Torso
+1 ISC3MasterComputer, Left Torso
+1 ISMediumLaser, Center Torso
+1 ISSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISMediumLaser
+ISGuardianECM
+ISGuardianECM
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISMediumLaser
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+Endo-Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

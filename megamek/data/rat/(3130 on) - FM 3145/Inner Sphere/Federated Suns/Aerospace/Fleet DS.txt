@@ -1,0 +1,12 @@
+3145 Federated Suns Fleet Dropships
+Aurora (Standard),1
+Overlord (3056),2
+Vengeance (3056),3
+Arondight Pocket Warship (Standard),4
+Union (3055),5
+Arondight Pocket Warship (SCC),6
+Conquistador (3063),5
+Excalibur 'Pocket Warship',4
+Arondight Pocket Warship (SCC),3
+Overlord A3,2
+Conquistador 'Blockade Runner',1

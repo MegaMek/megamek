@@ -1,0 +1,155 @@
+Version:1.1
+Centurion
+CN11-O TT
+
+Config:Biped Omnimech
+techbase:Inner Sphere
+era:3111
+source:TeamTrueborn
+rules level:5
+
+mass:50
+engine:250 XL Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:Compact Gyro
+
+heat sinks:10 IS Double
+base chassis heat sinks:10
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:16
+RT armor:16
+CT armor:21
+HD armor:9
+LL armor:20
+RL armor:20
+RTL armor:6
+RTR armor:6
+RTC armor:6
+
+Weapons:5
+ER Large Laser, Right Arm
+LRM 20, Left Torso
+TAG, Center Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERLargeLaser (OMNIPOD)
+ISERLargeLaser (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+LRM 20 (OMNIPOD)
+ISArtemisIV (OMNIPOD)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo LRM-20 Artemis-capable (OMNIPOD)
+IS Ammo LRM-20 Artemis-capable (OMNIPOD)
+IS Ammo LRM-20 Artemis-capable (OMNIPOD)
+ISCASEII (OMNIPOD)
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISC3SlaveUnit (OMNIPOD)
+ISTAG (OMNIPOD)
+Medium Laser (OMNIPOD)
+Medium Laser (OMNIPOD)
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,157 @@
+Version:1.0
+Vulture (Mad Dog)
+J-Batchall
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3050
+Rules Level:5
+
+Mass:60
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:16
+RT Armor:16
+CT Armor:23
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:10
+ER Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Small Laser, Left Arm
+ER Micro Laser, Left Arm
+LB 20-X AC, Right Arm
+LRM 10, Left Torso
+Machine Gun, Left Torso
+LRM 10, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERMicroLaser (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM10 (omnipod)
+CLMG (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Machine Gun Ammo - Half (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM10 (omnipod)
+CLMG (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMG (omnipod)
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

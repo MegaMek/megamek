@@ -1,0 +1,15 @@
+Republic of the Sphere Battle Armor Hastati Sentinels - 3145
+Centaur Battle Armor (Standard),1
+Simian Battle Armor (SL),2
+Cavalier Battle Armor [Laser],3
+Angerona Scout Suit (Standard),4
+Quirinus Battle Armor (MG),5
+Purifier Adaptive Battle Armor (RAF)[Laser],6
+Purifier Adaptive Battle Armor (RAF)[Narc],2
+Purifier Adaptive Battle Armor (RAF)[PPC],5
+Purifier Adaptive Battle Armor (RAF)[TAG],2
+Grenadier Battle Armor [SL],5
+Taranis Battle Armor (Standard),4
+Hauberk Battle Armor (Standard),3
+Infiltrator Mk. II Battle Armor 'Puma',2
+Kopis Assault Battle Armor 'The Dark Alley',1

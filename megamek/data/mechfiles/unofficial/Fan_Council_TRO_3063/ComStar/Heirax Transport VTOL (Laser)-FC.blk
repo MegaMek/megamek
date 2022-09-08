@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Heirax Transport VTOL
+</Name>
+
+<Model>
+(Laser)-FC
+</Model>
+
+<year>
+3064
+</year>
+
+<originalBuildYear>
+3064
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+troopspace:6.0
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+30
+23
+23
+20
+2
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+</Body Equipment>
+
+<Front Equipment>
+Large Laser
+RL10
+RL10
+RL10
+RL10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+TRO 3063 - Civil War
+</source>
+
+<tonnage>
+30.0
+</tonnage>

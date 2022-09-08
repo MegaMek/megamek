@@ -1,0 +1,56 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Gausspanzer
+</Name>
+<Model>
+Mk III-NA
+</Model>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+7
+</cruiseMP>
+<Armor>
+31
+27
+27
+27
+31
+</Armor>
+<Turret Equipment>
+ISGaussRifle
+</Turret Equipment>
+<Body Equipment>
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+</Body Equipment>
+<type>
+IS Level 5
+</type>
+<year>
+3056
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

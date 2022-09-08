@@ -1,0 +1,151 @@
+Version:1.0
+Inferno
+Prime-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:5
+
+Mass:35
+Engine:280 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:8
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:15
+HD Armor:9
+LL Armor:13
+RL Armor:13
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:6
+1 CLERMediumLaser, Right Arm
+3 CLFlamer, Right Arm
+1 CLERMediumLaser, Left Arm
+3 CLFlamer, Left Arm
+2 CLERMediumLaser, Center Torso
+1 CLFlamer, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumLaser
+CLFlamer
+CLFlamer
+CLFlamer
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERMediumLaser
+CLFlamer
+CLFlamer
+CLFlamer
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLFlamer
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

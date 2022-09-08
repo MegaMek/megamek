@@ -176,19 +176,21 @@
 		</model>
 	</chassis>
 	<chassis name='Ares Assault Craft' unitType='Small Craft'>
-		<availability>TH:2</availability>
+		<availability>OA:3,IS:3,RWR:3,MERC:3,Periphery:3,TC:3</availability>
 		<model name='Mk.III'>
+			<roles>infantry_carrier</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ares Close Assault Landing Craft' unitType='Small Craft'>
-		<availability>TH:4</availability>
+		<availability>OA:1,IS:1,RWR:1,MERC:1</availability>
 		<model name='Mk.II'>
+			<roles>escort,ground_support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ares Landing Craft' unitType='Small Craft'>
-		<availability>TH:5</availability>
+		<availability>OA:2,IS:3,RWR:2,MERC:2,TC:2</availability>
 		<model name='Mk.I'>
 			<availability>General:8</availability>
 		</model>

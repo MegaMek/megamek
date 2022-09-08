@@ -309,8 +309,22 @@
 		</model>
 	</chassis>
 	<chassis name='Ares Assault Craft' unitType='Small Craft'>
-		<availability>TH:7,SL:8,IS:5,Periphery:4</availability>
+		<availability>MOC:7,OA:7,SL:8,IS:7,RWR:7,MERC:7,Periphery:7,TC:7</availability>
 		<model name='Mk.III'>
+			<roles>infantry_carrier</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Ares Close Assault Landing Craft' unitType='Small Craft'>
+		<availability>MOC:3,OA:3,SL:5,IS:4,RWR:3,MERC:3,TC:3</availability>
+		<model name='Mk.II'>
+			<roles>escort,ground_support</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Ares Landing Craft' unitType='Small Craft'>
+		<availability>MOC:5,OA:5,SL:6,IS:6,RWR:5,MERC:5,TC:5</availability>
+		<model name='Mk.I'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -492,7 +506,7 @@
 		</model>
 	</chassis>
 	<chassis name='Bus' unitType='Small Craft'>
-		<availability>IS:4,Periphery:4</availability>
+		<availability>SL:6,IS:4,MERC:4,Periphery:4</availability>
 		<model name='S-7A'>
 			<roles>cargo,civilian</roles>
 			<availability>General:8</availability>
@@ -790,6 +804,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Dragonstar Passenger Transport' unitType='Small Craft'>
+		<availability>DC:3</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Dreadnought Battleship' unitType='Warship'>
 		<availability>TH:1,SL:1</availability>
 		<model name='(2330)'>
@@ -817,6 +838,13 @@
 		<model name='(Standard)'>
 			<roles>support</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='DropShuttle' unitType='Small Craft'>
+		<availability>IS:6,MERC:6,Periphery:6</availability>
+		<model name='K-1'>
+			<roles>civilian</roles>
+			<availability>General:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Du Shi Wang Battleship' unitType='Warship'>
@@ -869,6 +897,13 @@
 		<model name='(Standard)'>
 			<roles>support,engineer</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Escape Pod' unitType='Small Craft'>
+		<availability>General:1</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:1-</availability>
 		</model>
 	</chassis>
 	<chassis name='Essex I Destroyer' unitType='Warship'>
@@ -1312,7 +1347,11 @@
 		</model>
 	</chassis>
 	<chassis name='Intrepid Assault Craft' unitType='Small Craft'>
-		<availability>FS:1</availability>
+		<availability>FS:3-</availability>
+		<model name='(2331)'>
+			<roles>assault</roles>
+			<availability>General:2-</availability>
+		</model>
 		<model name='(2478)'>
 			<roles>assault</roles>
 			<availability>General:8</availability>
@@ -1495,6 +1534,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Life Boat' unitType='Small Craft'>
+		<availability>General:1</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>General:1-</availability>
+		</model>
+	</chassis>
 	<chassis name='Light Strike Fighter' unitType='Conventional Fighter'>
 		<availability>TH:6-,LA:2-,IS:8,MERC:2-,Periphery:2</availability>
 		<model name='Angel'>
@@ -1541,6 +1587,13 @@
 		<model name='(2345)'>
 			<roles>destroyer</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Long-Range Shuttlecraft' unitType='Small Craft'>
+		<availability>SL:8,IS:5,Periphery:5</availability>
+		<model name='KR-61'>
+			<roles>civilian</roles>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Longbow' unitType='Mek'>
@@ -2218,6 +2271,13 @@
 		<availability>SL:3,SL.R:5</availability>
 		<model name='ST-8A'>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Shuttle' unitType='Small Craft'>
+		<availability>IS:10,Periphery:10</availability>
+		<model name='ST-46'>
+			<roles>civilian</roles>
+			<availability>IS:10,Periphery:10</availability>
 		</model>
 	</chassis>
 	<chassis name='Silverfin Coastal Cutter' unitType='Naval'>

@@ -1,0 +1,12 @@
+Federated Suns Assault Mechs C
+Warlord BLR-2G,1
+Stalker STK-7D,2
+Sunder SD1-O,3
+Atlas III AS7-D3,4
+Longbow LGB-13C,5
+Pendragon PDG-1R,6
+Sagittaire SGT-10X,5
+Templar TLR1-O,4
+Devastator DVS-2,3
+Orochi OR-2I,2
+Nightstar NSR-9FC,1

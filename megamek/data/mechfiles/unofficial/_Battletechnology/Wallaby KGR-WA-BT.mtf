@@ -1,0 +1,155 @@
+Version:1.0
+Wallaby
+KGR-WA-BT
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:85
+Engine:340 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:21 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:28
+RT Armor:28
+CT Armor:42
+HD Armor:9
+LL Armor:33
+RL Armor:33
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:10
+1 ISERLargeLaser, Right Torso
+1 ISLargeLaser, Right Torso
+1 ISMediumLaser, Right Torso (R)
+1 ISSmallLaser, Right Torso (R)
+1 ISERLargeLaser, Left Torso
+1 ISLargeLaser, Left Torso
+1 ISSmallLaser, Left Torso (R)
+1 ISMediumLaser, Left Torso (R)
+1 ISGuardianECM, Center Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser (R)
+ISMediumLaser (R)
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser (R)
+ISSmallLaser (R)
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECM
+ISGuardianECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

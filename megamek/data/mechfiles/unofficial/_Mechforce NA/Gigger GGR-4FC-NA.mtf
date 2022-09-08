@@ -1,0 +1,150 @@
+Version:1.0
+Gigger
+GGR-4FC-NA
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3057
+Rules Level:5
+
+Mass:40
+Engine:280 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:7
+
+Armor:Ferro-Fibrous
+LA Armor:8
+RA Armor:8
+LT Armor:10
+RT Armor:10
+CT Armor:12
+HD Armor:7
+LL Armor:14
+RL Armor:14
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:5
+1 ISMediumLaser, Right Arm
+1 ISStreakSRM4, Right Arm, Ammo:25
+1 ISMediumLaser, Left Arm
+1 ISStreakSRM4, Left Arm
+1 ISBloodhoundActiveProbe, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Ferro-Fibrous
+Endo-Steel
+Endo-Steel
+ISMediumLaser
+ISStreakSRM4
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Ferro-Fibrous
+Endo-Steel
+Endo-Steel
+ISMediumLaser
+ISStreakSRM4
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+ISBloodhoundActiveProbe
+ISBloodhoundActiveProbe
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM4 Ammo
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

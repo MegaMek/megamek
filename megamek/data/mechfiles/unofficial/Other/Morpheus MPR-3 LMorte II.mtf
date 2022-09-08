@@ -1,0 +1,133 @@
+Version:1.1
+Morpheus
+MPR-3 L'Morte II
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Rules Level:5
+
+Mass:65
+Engine:390 XL Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:20
+RA Armor:20
+LT Armor:23
+RT Armor:23
+CT Armor:34
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:7
+1 ISERMediumLaser, Head
+1 ISERMediumLaser, Left Arm
+1 ISERMediumLaser, Right Arm
+1 ISMagshotGR, Center Torso, Ammo:50
+1 Claw, Left Arm
+1 Spikes, Left Arm
+1 Spikes, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Claw
+Claw
+Claw
+Claw
+Claw
+ISERMediumLaser
+Spikes
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+Spikes
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+Jump Jet
+IS Magshot GR Ammo
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISMagshotGR
+ISMagshotGR
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERMediumLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet

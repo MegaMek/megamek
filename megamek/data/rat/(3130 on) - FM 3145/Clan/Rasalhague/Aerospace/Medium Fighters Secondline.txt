@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Medium Fighters - Second Line
+Shilone SL-17R,1
+Lucifer III LCR-3,2
+Shilone SL-17R,3
+Tyre (Standard),4
+Tyre 3,5
+Ammon 2,6
+Tyre 3,5
+Ammon (Standard),4
+Ammon 2,3
+Tyre 3,2
+Ammon 2,1

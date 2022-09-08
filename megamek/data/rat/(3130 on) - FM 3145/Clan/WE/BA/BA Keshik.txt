@@ -1,0 +1,12 @@
+3145 Wolf Empire Battle Armor - Keshik
+Elemental Battle Armor [Laser],1
+Clan Medium Battle Armor (Rache),2
+Elemental II Battle Armor (Standard),3
+Black Wolf Battle Armor [ERSPL],4
+Warg Assault Battle Armor (Standard),5
+Elemental Battle Armor [Laser],6
+Elemental Battle Armor [Laser],5
+Warg Assault Battle Armor (Standard),4
+Wraith Battle Armor (Anti-Infantry),3
+Ironhold Assault Battle Armor (Standard),2
+Warg Assault Battle Armor (Standard),1

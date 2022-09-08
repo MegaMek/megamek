@@ -324,13 +324,7 @@ public class AmmoType extends EquipmentType {
 
     // ratio for capital ammo
     private double ammoRatio;
-    /**
-     * Used for returning the submunition name for a submunition, such as precision
-     * AC-10. The submunition name is pre-pended onto the <code>shortName</code> and
-     * this variable keeps track of the index of the end of the submunition name.
-     */
-    public int subMunitionBegin = 0;
-    public int subMunitionLength = 0;
+    private String subMunitionName = "";
 
     // Short name of Ammo or RS Printing
     protected String shortName = "";
@@ -3600,8 +3594,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.shortName = "LB-2X Cluster";
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 2-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -3629,8 +3621,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.shortName = "LB-5X Cluster";
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 5-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -3658,8 +3648,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.shortName = "LB-10X Cluster";
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 10-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -3688,8 +3676,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.shortName = "LB-20X Cluster";
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("Clan LB 20-X Cluster Ammo");
         ammo.addLookupName("Clan Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -3717,8 +3703,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.shortName = "LB 2-X Cluster";
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 2-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 2-X (CL)");
         // this isn't a true mtf code
@@ -3746,8 +3730,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.shortName = "LB 5-X Cluster";
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 5-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 5-X (CL)");
         // this isn't a true mtf code
@@ -3775,8 +3757,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.shortName = "LB 10-X Cluster";
-        ammo.subMunitionBegin = 8;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 10-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 10-X (CL)");
         // this isn't a true mtf code
@@ -3803,8 +3783,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.shortName = "LB 20-X Cluster";
-        ammo.subMunitionBegin = 8;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 20-X Cluster Ammo");
         ammo.addLookupName("IS Ammo 20-X (CL)");
         // this isn't a true mtf code
@@ -4851,8 +4829,6 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Fragmentation Grenades [VGL]";
-        ammo.subMunitionBegin = 4;
-        ammo.subMunitionLength = 13;
         ammo.shortName = "VGL Fragmentation";
         ammo.setInternalName("IS Ammo VGL");
         ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
@@ -4880,8 +4856,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLVGLAmmo() {
         AmmoType ammo = new AmmoType();
         ammo.name = "Fragmentation Grenades [VGL]";
-        ammo.subMunitionBegin = 4;
-        ammo.subMunitionLength = 13;
         ammo.shortName = "VGL Fragmentation";
         ammo.setInternalName("CL Ammo VGL");
         ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
@@ -5337,8 +5311,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
@@ -5365,8 +5337,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
@@ -5393,8 +5363,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
@@ -5421,8 +5389,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
@@ -5450,8 +5416,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
@@ -5476,8 +5440,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
@@ -5502,8 +5464,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
@@ -5528,8 +5488,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
@@ -5658,8 +5616,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 21;
         ammo.cost = 75000;
@@ -5686,8 +5642,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 39;
         ammo.cost = 75000;
@@ -5713,8 +5667,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 54;
         ammo.cost = 75000;
@@ -5741,8 +5693,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
-        ammo.subMunitionBegin = 8;
-        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 78;
         ammo.cost = 75000;
@@ -5770,8 +5720,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 21;
         ammo.cost = 75000;
@@ -5798,8 +5746,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 39;
         ammo.cost = 75000;
@@ -5826,8 +5772,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 54;
         ammo.cost = 75000;
@@ -5854,8 +5798,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
-        ammo.subMunitionBegin = 8;
-        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 78;
         ammo.cost = 75000;
@@ -5884,8 +5826,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 3;
         ammo.shots = 20;
         ammo.bv = 27; // 21 * 1.3 = 27.3, round down (?)
         ammo.cost = 75000;
@@ -5913,8 +5853,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 3;
         ammo.shots = 10;
         ammo.bv = 51; // 50.7 round up (?)
         ammo.cost = 75000;
@@ -5942,8 +5880,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 3;
         ammo.shots = 7;
         ammo.bv = 70; // 54 * 1.3 = 70.2, round down (?)
         ammo.cost = 75000;
@@ -5971,8 +5907,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
-        ammo.subMunitionBegin = 8;
-        ammo.subMunitionLength = 3;
         ammo.shots = 5;
         ammo.bv = 101; // 78 * 1.3 = 101.4, round down (?)
         ammo.cost = 75000;
@@ -6001,8 +5935,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 3;
         ammo.shots = 20;
         ammo.bv = 42; // 21 * 2 = 42
         ammo.cost = 75000;
@@ -6030,8 +5962,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 3;
         ammo.shots = 10;
         ammo.bv = 78; // 39 * 2 = 78
         ammo.cost = 75000;
@@ -6059,8 +5989,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 3;
         ammo.shots = 7;
         ammo.bv = 108; // 54 * 2 = 108
         ammo.cost = 75000;
@@ -6088,8 +6016,6 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
-        ammo.subMunitionBegin = 8;
-        ammo.subMunitionLength = 3;
         ammo.shots = 5;
         ammo.bv = 156; // 78 * 2 = 156
         ammo.cost = 75000;
@@ -8325,8 +8251,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Narc Explosive Pods";
         ammo.shortName = "Narc Explosive";
-        ammo.subMunitionBegin = 5;
-        ammo.subMunitionLength = 9;
         ammo.setInternalName("ISNarc ExplosivePods");
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
@@ -8349,8 +8273,6 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
         ammo.name = "Narc Explosive Pods";
         ammo.shortName = "Narc Explosive";
-        ammo.subMunitionBegin = 5;
-        ammo.subMunitionLength = 9;
         ammo.setInternalName("CLNarc Explosive Pods");
         ammo.damagePerShot = 4;
         ammo.rackSize = 1;
@@ -8400,8 +8322,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "iNarc ECM Pods";
         ammo.shortName = "iNarc ECM";
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 3;
         ammo.setInternalName("ISiNarc ECM Pods");
         ammo.addLookupName("iNarc ECM Ammo");
         ammo.damagePerShot = 3; // only used for ammo crits
@@ -8425,8 +8345,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "iNarc Explosive Pods";
         ammo.shortName = "iNarc Explosive";
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 9;
         ammo.setInternalName("ISiNarc Explosive Pods");
         ammo.addLookupName("iNarc Explosive Ammo");
         ammo.damagePerShot = 6; // only used for ammo crits
@@ -8450,8 +8368,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "iNarc Haywire Pods";
         ammo.shortName = "iNarc Haywire";
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("ISiNarc Haywire Pods");
         ammo.addLookupName("iNarc Haywire Ammo");
         ammo.damagePerShot = 3; // only used for ammo crits
@@ -8475,8 +8391,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "iNarc Nemesis Pods";
         ammo.shortName = "iNarc Nemesis";
-        ammo.subMunitionBegin = 6;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("ISiNarc Nemesis Pods");
         ammo.addLookupName("iNarc Nemesis Ammo");
         ammo.damagePerShot = 3; // only used for ammo crits
@@ -12552,8 +12466,6 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS LB 2-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 2-X (CL) (THB)");
         ammo.shortName = "LB 2-X Cluster";
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 7;
         // this isn't a true mtf code
         ammo.addLookupName("ISLBXAC2 CL Ammo (THB)");
         ammo.addLookupName("IS LB 2-X AC Ammo - Cluster (THB)");
@@ -12584,8 +12496,6 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS LB 5-X AC Ammo - Cluster (THB)");
         ammo.name = "LB 5-X Cluster Ammo (THB)";
         ammo.shortName = "LB 5-X Cluster";
-        ammo.subMunitionBegin = 7;
-        ammo.subMunitionLength = 7;
         ammo.damagePerShot = 1;
         ammo.toHitModifier = -1;
         ammo.rackSize = 5;
@@ -12608,8 +12518,6 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "LB 20-X Cluster Ammo (THB)";
         ammo.shortName = "LB 20-X Cluster";
-        ammo.subMunitionBegin = 8;
-        ammo.subMunitionLength = 7;
         ammo.setInternalName("IS LB 20-X Cluster Ammo (THB)");
         ammo.addLookupName("IS Ammo 20-X (CL) (THB)");
         // this isn't a true mtf code
@@ -12986,8 +12894,6 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Ammo AR10 Peacemaker");
         ammo.addLookupName("AR10 Peacemaker Ammo");
         ammo.shortName = "Peacemaker";
-        ammo.subMunitionBegin = 0;
-        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 50.0;
@@ -13012,8 +12918,6 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("CLPeacemaker Ammo");
         ammo.addLookupName("Ammo Clan Peacemaker");
         ammo.shortName = "Peacemaker";
-        ammo.subMunitionBegin = 0;
-        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 1000;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.tonnage = 50.0;
@@ -13036,8 +12940,6 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Ammo AR10 Santa Anna");
         ammo.addLookupName("AR10 SantaAnna Ammo");
         ammo.shortName = "Santa Anna";
-        ammo.subMunitionBegin = 0;
-        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.tonnage = 40.0;
@@ -13061,8 +12963,6 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("SantaAnna Ammo");
         ammo.addLookupName("CLSantaAnna Ammo");
         ammo.shortName = "Santa Anna";
-        ammo.subMunitionBegin = 0;
-        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_WHITE_SHARK;
         ammo.tonnage = 40.0;
@@ -13117,7 +13017,6 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName(EquipmentTypeLookup.INFANTRY_INFERNO_AMMO);
         ammo.ammoType = AmmoType.T_INFANTRY;
         ammo.munitionType = M_INFERNO;
-        ammo.subMunitionLength = ammo.name.indexOf(" ");
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_A)
                 .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
@@ -13233,6 +13132,7 @@ public class AmmoType extends EquipmentType {
             // Create an uninitialized munition object.
             AmmoType munition = new AmmoType();
             munition.setTonnage(base.getTonnage(null));
+            munition.subMunitionName = name;
 
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
@@ -13244,8 +13144,6 @@ public class AmmoType extends EquipmentType {
                     // Add the munition name to the beginning of the display name.
                     nameBuf = new StringBuilder(name);
                     nameBuf.append(" ");
-                    munition.subMunitionBegin = 0;
-                    munition.subMunitionLength = nameBuf.length();
                     nameBuf.append(base.name);
                     munition.name = nameBuf.toString();
 
@@ -13274,12 +13172,8 @@ public class AmmoType extends EquipmentType {
                     if (name.endsWith("-IV")) {
                         StringBuilder tempName = new StringBuilder(name);
                         tempName.setLength(tempName.length() - 3);
-                        munition.subMunitionBegin = nameBuf.length();
-                        munition.subMunitionLength = tempName.length();
                         nameBuf.insert(index, tempName);
                     } else {
-                        munition.subMunitionBegin = nameBuf.length();
-                        munition.subMunitionLength = name.length();
                         nameBuf.insert(index, name);
                     }
                     munition.name = nameBuf.toString();
@@ -13319,8 +13213,6 @@ public class AmmoType extends EquipmentType {
                     nameBuf = new StringBuilder(base.name);
                     index = base.name.lastIndexOf("Ammo");
                     nameBuf.insert(index, ' ');
-                    munition.subMunitionBegin = index;
-                    munition.subMunitionLength = name.length();
                     nameBuf.insert(index, name);
                     munition.name = nameBuf.toString();
                     nameBuf = new StringBuilder(base.shortName);
@@ -13332,8 +13224,6 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_VGL:
                     // Replace "Fragmentation" with the submunition name
                     munition.name = base.name.replace("Fragmentation", name);
-                    munition.subMunitionBegin = base.subMunitionBegin;
-                    munition.subMunitionLength = name.length();
 
                     munition.shortName = base.shortName.replace("Fragmentation", name);
                     internalName = new StringBuilder(base.getInternalName());
@@ -13343,8 +13233,6 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_MEK_MORTAR:
                     // Replace "Shaped Charge" with the submunition name
                     munition.name = base.name.replace("Shaped Charge", name);
-                    munition.subMunitionBegin = base.subMunitionBegin;
-                    munition.subMunitionLength = name.length();
                     String abr = "SC";
                     if (type == AmmoType.M_AIRBURST) {
                         abr = "AB";
@@ -13372,8 +13260,6 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_HEAVY_FLAMER:
                 case AmmoType.T_FLUID_GUN:
                     // Add the munition name to the beginning of the display name.
-                    munition.subMunitionBegin = 0;
-                    munition.subMunitionLength = name.length();
                     nameBuf = new StringBuilder(name);
                     nameBuf.append(" ");
                     nameBuf.append(base.name);
@@ -13647,11 +13533,7 @@ public class AmmoType extends EquipmentType {
     }
 
     public String getSubMunitionName() {
-        if (ammoType == T_MEK_MORTAR) {
-            return name.substring(subMunitionBegin, subMunitionBegin + subMunitionLength);
-        } else {
-            return getShortName().substring(subMunitionBegin, subMunitionBegin + subMunitionLength);
-        }
+        return subMunitionName;
     }
 
     /**

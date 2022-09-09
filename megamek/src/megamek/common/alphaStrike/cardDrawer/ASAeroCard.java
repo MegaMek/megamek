@@ -145,6 +145,7 @@ public class ASAeroCard extends ASHeatTrackingCard {
         }
     }
 
+    @Override
     protected void paintDamage(Graphics2D g) {
         drawBox(g, 36, damageBoxY, BOX_WIDTH_WIDE, damageBoxHeight, BACKGROUND_GRAY, BOX_STROKE);
 

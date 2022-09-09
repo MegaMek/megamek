@@ -26,6 +26,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+/**
+ * This is a (new) dialog for advanced unit filtering, mostly for the unit selector. It contains the old
+ * TW advanced search in one tab and the new AlphaStrike search in another tab. Both searches can be used
+ * simultaneously.
+ */
 public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     final int year;
@@ -73,6 +78,7 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
         return advancedSearchPane;
     }
 
+    /** Deactivates the search fields in both search tabs so that no units are filtered out. */
     public void clearSearches() {
         totalWarTab.clearValues();
         alphaStrikeTab.clearValues();

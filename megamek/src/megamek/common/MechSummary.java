@@ -122,14 +122,17 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return name;
     }
 
+    @Override
     public String getChassis() {
         return chassis;
     }
 
+    @Override
     public String getModel() {
         return model;
     }
 
+    @Override
     public int getMulId() {
         return mulId;
     }

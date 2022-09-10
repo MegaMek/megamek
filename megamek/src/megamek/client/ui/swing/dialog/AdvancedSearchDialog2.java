@@ -39,11 +39,11 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
     private final JTabbedPane advancedSearchPane = new JTabbedPane();
 
     public AdvancedSearchDialog2(JFrame parent, int allowedYear) {
-        super(parent, true, "AdvancedSearchDialog", "AlphaStrikeStatsDialog.title");
+        super(parent, true, "AdvancedSearchDialog", "AdvancedSearchDialog.title");
         year = allowedYear;
         totalWarTab = new TWAdvancedSearchPanel(year);
-        advancedSearchPane.addTab("Total War", totalWarTab);
-        advancedSearchPane.addTab("AlphaStrike", alphaStrikeTab);
+        advancedSearchPane.addTab("Total Warfare", totalWarTab);
+        advancedSearchPane.addTab("Alpha Strike", alphaStrikeTab);
         initialize();
     }
 

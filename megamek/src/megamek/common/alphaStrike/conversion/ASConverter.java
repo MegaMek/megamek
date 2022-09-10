@@ -88,9 +88,9 @@ public final class ASConverter {
         element.setRole(UnitRoleHandler.getRoleFor(entity));
 
         if (entity.getShortName().length() < 15) {
-            conversionReport.addHeader("AlphaStrike Conversion for " + entity.getShortName());
+            conversionReport.addHeader("Alpha Strike Conversion for " + entity.getShortName());
         } else {
-            conversionReport.addHeader("AlphaStrike Conversion for");
+            conversionReport.addHeader("Alpha Strike Conversion for");
             conversionReport.addHeader(entity.getShortName());
         }
         conversionReport.addEmptyLine();

@@ -70,6 +70,13 @@ public class ASAdvancedSearchPanel extends JPanel {
     JToggleButton tmm4 = new JToggleButton(" 4 ");
     JToggleButton tmm5 = new JToggleButton(" 5 ");
 
+    JCheckBox useOV = new JCheckBox("OV");
+    JToggleButton ov0 = new JToggleButton(" 0 ");
+    JToggleButton ov1 = new JToggleButton(" 1 ");
+    JToggleButton ov2 = new JToggleButton(" 2 ");
+    JToggleButton ov3 = new JToggleButton(" 3 ");
+    JToggleButton ov4 = new JToggleButton(" 4 ");
+
     JCheckBox useArmor = new JCheckBox("Armor");
     JLabel armorBetween = new JLabel(BETWEEN);
     IntRangeTextField armorFrom = new IntRangeTextField();
@@ -154,6 +161,8 @@ public class ASAdvancedSearchPanel extends JPanel {
         add(simplePanel(useDamageL, damageLBetween, damageLFrom, damageLAnd, damageLTo));
         add(simplePanel(useDamageE, damageEBetween, damageEFrom, damageEAnd, damageETo));
         add(new DottedSeparator());
+        add(simplePanel(useOV, ov0, ov1, ov2, ov3, ov4));
+        add(new DottedSeparator());
         add(simplePanel(useAbility1, ability1));
         add(simplePanel(useAbility2, ability2));
         initializeCombos();
@@ -205,6 +214,9 @@ public class ASAdvancedSearchPanel extends JPanel {
         if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null) && (damageETo.getSelectedItem() != null)
                 && !(stdDamage.E.asDoubleValue() >= damageEFrom.getSelectedItem().asDoubleValue()
                         && stdDamage.E.asDoubleValue() <= damageETo.getSelectedItem().asDoubleValue())) {
+            return false;
+        }
+        if (useOV.isSelected() && !(selectedOVs().contains(mechSummary.getOV()) && mechSummary.usesOV())) {
             return false;
         }
         if (usePV.isSelected() && !(mechSummary.getPointValue() >= pvFrom.getIntVal(-1)
@@ -337,6 +349,17 @@ public class ASAdvancedSearchPanel extends JPanel {
         return result;
     }
 
+    /** @return The currently selected OV values as a List of Integer. */
+    private List<Integer> selectedOVs() {
+        List<Integer> result = new ArrayList<>();
+        addIfSelected(ov0.isSelected(), result, 0);
+        addIfSelected(ov1.isSelected(), result, 1);
+        addIfSelected(ov2.isSelected(), result, 2);
+        addIfSelected(ov3.isSelected(), result, 3);
+        addIfSelected(ov4.isSelected(), result, 4);
+        return result;
+    }
+
     /** Updates the enabled status of fields based on the checkboxes. */
     private void updateEnabled() {
         unitTypeBM.setEnabled(useUnitType.isSelected());
@@ -361,6 +384,12 @@ public class ASAdvancedSearchPanel extends JPanel {
         tmm3.setEnabled(useTMM.isSelected());
         tmm4.setEnabled(useTMM.isSelected());
         tmm5.setEnabled(useTMM.isSelected());
+
+        ov0.setEnabled(useOV.isSelected());
+        ov1.setEnabled(useOV.isSelected());
+        ov2.setEnabled(useOV.isSelected());
+        ov3.setEnabled(useOV.isSelected());
+        ov4.setEnabled(useOV.isSelected());
 
         armorBetween.setEnabled(useArmor.isSelected());
         armorFrom.setEnabled(useArmor.isSelected());
@@ -433,6 +462,7 @@ public class ASAdvancedSearchPanel extends JPanel {
         useMV.setSelected(false);
         useAbility1.setSelected(false);
         useAbility2.setSelected(false);
+        useOV.setSelected(false);
     }
 
     /** Saves the current field settings and contents to restore them when user-canceled. */
@@ -452,7 +482,7 @@ public class ASAdvancedSearchPanel extends JPanel {
         return useUnitType.isSelected() || useSize.isSelected() || useTMM.isSelected() || useArmor.isSelected()
                 || useStructure.isSelected() || useThreshold.isSelected() || useDamageS.isSelected() || useDamageM.isSelected()
                 || useDamageL.isSelected() || useDamageE.isSelected() || usePV.isSelected() || useMV.isSelected()
-                || useAbility1.isSelected() || useAbility2.isSelected();
+                || useAbility1.isSelected() || useAbility2.isSelected() || useOV.isSelected();
     }
 
     private static class SectionPanel extends UIUtil.FixedYPanel {
@@ -495,6 +525,9 @@ public class ASAdvancedSearchPanel extends JPanel {
 
         boolean tmmUse;
         List<Integer> tmmSelected = new ArrayList<>();
+
+        boolean ovUse;
+        List<Integer> ovSelected = new ArrayList<>();
 
         boolean armorUse;
         String armorFromText = "";
@@ -548,6 +581,9 @@ public class ASAdvancedSearchPanel extends JPanel {
 
             tmmUse = useTMM.isSelected();
             tmmSelected = selectedTMMs();
+
+            ovUse = useOV.isSelected();
+            ovSelected = selectedOVs();
 
             armorUse = useArmor.isSelected();
             armorFromText = armorFrom.getText();
@@ -618,6 +654,13 @@ public class ASAdvancedSearchPanel extends JPanel {
             tmm3.setSelected(tmmSelected.contains(3));
             tmm4.setSelected(tmmSelected.contains(4));
             tmm5.setSelected(tmmSelected.contains(5));
+
+            useOV.setSelected(ovUse);
+            ov0.setSelected(ovSelected.contains(0));
+            ov1.setSelected(ovSelected.contains(1));
+            ov2.setSelected(ovSelected.contains(2));
+            ov3.setSelected(ovSelected.contains(3));
+            ov4.setSelected(ovSelected.contains(4));
 
             useArmor.setSelected(armorUse);
             armorFrom.setText(armorFromText);

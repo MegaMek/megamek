@@ -941,7 +941,7 @@ public class ASDamageConverter {
         }
         long coolantPodCount = entity.getEquipment().stream().filter(Mounted::isCoolantPod).count();
         if (coolantPodCount > 0) {
-            heatCapacity += coolantPodCount;
+            heatCapacity += (int) coolantPodCount;
         }
         if (entity.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             heatCapacity += 3;

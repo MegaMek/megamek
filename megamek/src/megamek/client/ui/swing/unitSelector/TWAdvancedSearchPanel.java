@@ -648,21 +648,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     }
 
     private boolean matchTechLvl(int t1, int t2) {
-        return ((t1 == TechConstants.T_ALL)
-                || (t1 == t2)
-                || ((t1 == TechConstants.T_IS_TW_ALL)
-                && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
-                || ((t2) == TechConstants.T_INTRO_BOXSET))))
-                || ((t1 == TechConstants.T_TW_ALL)
-                && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
-                || (t2 <= TechConstants.T_INTRO_BOXSET)
-                || (t2 <= TechConstants.T_CLAN_TW)))
-                || ((t1 == TechConstants.T_ALL_IS)
-                && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
-                || (t2 == TechConstants.T_INTRO_BOXSET)
+        return ((t1 == TechConstants.T_ALL) || (t1 == t2)
+                || ((t1 == TechConstants.T_IS_TW_ALL) && (t2 <= TechConstants.T_IS_TW_NON_BOX)))
+
+                || ((t1 == TechConstants.T_TW_ALL) && (t2 <= TechConstants.T_CLAN_TW))
+
+                || ((t1 == TechConstants.T_ALL_IS) && ((t2 <= TechConstants.T_IS_TW_NON_BOX)
                 || (t2 == TechConstants.T_IS_ADVANCED)
                 || (t2 == TechConstants.T_IS_EXPERIMENTAL)
                 || (t2 == TechConstants.T_IS_UNOFFICIAL)))
+
                 || ((t1 == TechConstants.T_ALL_CLAN)
                 && ((t2 == TechConstants.T_CLAN_TW)
                 || (t2 == TechConstants.T_CLAN_ADVANCED)

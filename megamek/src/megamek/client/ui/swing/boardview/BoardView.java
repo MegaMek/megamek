@@ -4881,6 +4881,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     @Override
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
+        game.getBoard().initializeAllAutomaticTerrain(GUIPreferences.getInstance().getHexInclines());
         clearHexImageCache();
         clearShadowMap();
         repaint();
@@ -5020,6 +5021,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     }
                 }
             }
+            game.getBoard().initializeAllAutomaticTerrain(GUIPreferences.getInstance().getHexInclines());
             clearHexImageCache();
             updateBoard();
             clearShadowMap();

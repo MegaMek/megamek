@@ -1791,8 +1791,8 @@ exact "Black Hawk (Nova) S" "mechs/Blackhawk_S-CO.png"
 exact "Black Hawk (Nova) U" "mechs/Blackhawk_U-CO.png"
 exact "Black Hawk (Nova) X" "mechs/Blackhawk_X-CO.png"
 #STANDARD
-chassis "Black Hawk" "mechs/BlackhawkSTD.png"
-exact "Black Hawk 3" "mechs/BlackhawkSTD_3.png"
+chassis "Black Hawk (Standard)" "mechs/BlackhawkSTD.png"
+exact "Black Hawk (Standard) 3" "mechs/BlackhawkSTD_3.png"
 #IS Version
 chassis "Black Hawk-KU" "mechs/BlackhawkKU.png"
 exact "Black Hawk-KU BHKU-OA" "mechs/BlackhawkKU_A.png"
@@ -3499,8 +3499,8 @@ exact "Koschei KSC-5MC" "mechs/Koschei KSC-5MC.png"
 exact "Koschei KSC-5X" "mechs/Koschei KSC-5X.png"
 exact "Koschei KSC-6L" "mechs/Koschei KSC-6L.png"
 #Koshi (Standard)
-chassis "Koshi" "mechs/KoshiSTD.png"
-exact "Koshi 3" "mechs/KoshiSTD_3.png"
+chassis "Koshi (Standard)" "mechs/KoshiSTD.png"
+exact "Koshi (Standard) 3" "mechs/KoshiSTD_3.png"
 #Kishi (Omni)
 #chassis "Koshi (Mist Lynx)" "mechs/Koshi.png"
 #exact "Koshi (Mist Lynx) A" "mechs/Koshi_A.png"

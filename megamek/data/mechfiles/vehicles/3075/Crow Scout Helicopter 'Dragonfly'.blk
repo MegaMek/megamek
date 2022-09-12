@@ -1,60 +1,55 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 VTOL
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Crow Scout Helicopter
 </Name>
 
 <Model>
-(C3)
+'Dragonfly'
 </Model>
 
 <mul id:>
-745
+8411
 </mul id:>
 
 <year>
 3070
 </year>
 
-<source>
-TRO 3075 - Jihad
-</source>
+<originalBuildYear>
+3070
+</originalBuildYear>
 
 <type>
 IS Level 2
 </type>
 
-<tonnage>
-15.0
-</tonnage>
-
 <motion_type>
 VTOL
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
+<transporters>
+</transporters>
 
 <cruiseMP>
 13
 </cruiseMP>
 
-<internal_type>
--1
-</internal_type>
+<engine_type>
+0
+</engine_type>
 
 <armor>
 8
@@ -71,8 +66,7 @@ ISC3SlaveUnit
 </Body Equipment>
 
 <Front Equipment>
-ISERSmallLaser
-ISERSmallLaser
+ISTAG
 </Front Equipment>
 
 <Right Equipment>
@@ -87,10 +81,6 @@ ISERSmallLaser
 <Rotor Equipment>
 </Rotor Equipment>
 
-<armor_type>
-0
-</armor_type>
-
 <capabilities>
 The most obvious advantage of the Crow is its 216 km/h top speed. The incredibly fast vehicle can often get in and out of trouble spots before its enemies can effectively bring their weapons to bear. In order to fulfill its duties as a scout, the Crow carries a suite of advanced electronics, though the cost of those pushed the vehicle's price tag far above what Procurement officials expect out of a fifteen-ton VTOL. For scout duties, it has a Wunderland Beagle Active Probe, while a Forward-1 TAG allows the Crow to spot for indirect bombardments. An Apple-Churchill Guardian ECM Suite protects it from enemy spotting devices. The Crow's speed is its best armor. It mounts a meager one and a half tons of standard armor.
 </capabilities>
@@ -100,7 +90,7 @@ The Crow Scout VTOL is a military-grade, scout combat vehicle that is based upon
 </overview>
 
 <deployment>
-Due to shortage of TAGs, some Crows come equipped with a C3 slave unit instead
+The Dragonfly variant carries no weapons. It is equipped with a Beagle Probe, Guardian ECM suite, C3 Slave, and a TAG unit to designate targets.
 </deployment>
 
 <history>
@@ -126,3 +116,8 @@ TARGETING:Skyhunter IV with Forward-1 TAG and Wunderland Beagle Active Probe
 <source>
 TRO 3075 - Jihad
 </source>
+
+<tonnage>
+15.0
+</tonnage>
+

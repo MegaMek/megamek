@@ -1,6 +1,5 @@
 VERSION HISTORY:
 ----------------
-+ Issue #3776 - Add ability to filter out mechs with specified equipment.
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145
 + PR #3887 - Excised Rumble Seat and move to Legacy quirk.

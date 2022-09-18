@@ -27,6 +27,8 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+
 public class InfantryBVCalculator {
 
     public static int calculateBV(Infantry infantry, boolean ignoreSkill, CalculationReport bvReport) {
@@ -212,7 +214,25 @@ public class InfantryBVCalculator {
                 "" + (int) Math.round(bv * utm));
         bv *= utm;
 
-        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(infantry);
-        return (int) Math.round(bv * pilotFactor);
+        // Force Bonuses
+        double tagBonus = BVCalculator.bvTagBonus(infantry);
+        if (tagBonus > 0) {
+            bv += tagBonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (TAG):",
+                    "+ " + formatForReport(tagBonus), "= " + formatForReport(bv));
+        }
+
+        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(infantry);
+        if (pilotFactor != 1) {
+            bv *= pilotFactor;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Pilot Modifier:",
+                    "x " + formatForReport(pilotFactor), "= " + formatForReport(bv));
+        }
+
+        int finalAdjustedBV = (int) Math.round(bv);
+        bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
+        return finalAdjustedBV;
     }
 }

@@ -24,6 +24,8 @@ import megamek.common.weapons.ppc.PPCWeapon;
 
 import java.util.*;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+
 public class AeroBVCalculator {
 
     public static int calculateBV(Aero aero, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
@@ -680,19 +682,33 @@ public class AeroBVCalculator {
             bvReport.addResultLine("Final BV", "", finalBV);
         }
 
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        xbv += tagBV;
-        // extra from c3 networks. a valid network requires at least 2 members
-        // some hackery and magic numbers here. could be better
-        // also, each 'has' loops through all equipment. inefficient to do it 3 times
-        if (!ignoreC3 && (aero.getGame() != null)) {
-            xbv += aero.getExtraC3BV((int) Math.round(finalBV));
+        // Force Bonuses
+        double tagBonus = BVCalculator.bvTagBonus(aero);
+        if (tagBonus > 0) {
+            finalBV += tagBonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (TAG):",
+                    "+ " + formatForReport(tagBonus), "= " + formatForReport(finalBV));
         }
-        finalBV += xbv;
 
-        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(aero);
-        return (int) Math.round(finalBV * pilotFactor);
+        double c3Bonus = ignoreC3 ? 0 : aero.getExtraC3BV((int) Math.round(finalBV));
+        if (c3Bonus > 0) {
+            finalBV += c3Bonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (C3):",
+                    "+ " + formatForReport(c3Bonus), "= " + formatForReport(finalBV));
+        }
+
+        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(aero);
+        if (pilotFactor != 1) {
+            finalBV *= pilotFactor;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Pilot Modifier:",
+                    "x " + formatForReport(pilotFactor), "= " + formatForReport(finalBV));
+        }
+
+        int finalAdjustedBV = (int) Math.round(finalBV);
+        bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
+        return finalAdjustedBV;
     }
 }

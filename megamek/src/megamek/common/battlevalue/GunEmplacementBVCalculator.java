@@ -18,126 +18,89 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 
-public class GunEmplacementBVCalculator {
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
-    public static int calculateBV(GunEmplacement gunEmplacement, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
-        bvReport.addHeader("Battle Value Calculations For");
-        bvReport.addHeader(gunEmplacement.getChassis() + " " + gunEmplacement.getModel());
-        bvReport.addLine("There is currently no report available for Gun Emplacements.");
+public class GunEmplacementBVCalculator extends BVCalculator {
 
-        // using structures BV rules from MaxTech
-        double dbv = 0; // defensive battle value
-        double obv = 0; // offensive bv
+    private final GunEmplacement gunEmplacement;
 
-        // total armor points
-        dbv += gunEmplacement.getTotalArmor();
+    GunEmplacementBVCalculator(Entity entity) {
+        super(entity);
+        gunEmplacement = (GunEmplacement) entity;
+    }
 
-        // add defensive equipment
-        double dEquipmentBV = 0;
-        for (Mounted mounted : gunEmplacement.getEquipment()) {
-            EquipmentType etype = mounted.getType();
+    @Override
+    protected void processDefensiveValue() {
+        defensiveValue = gunEmplacement.getTotalArmor();
+        bvReport.addLine("Total Armor:", "", "= " + formatForReport(defensiveValue));
 
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
+        for (Mounted equipment : gunEmplacement.getEquipment()) {
+            if (equipment.isDestroyed()) {
                 continue;
             }
 
-            if (((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_AMS))
-                    || ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS))
-                    || etype.hasFlag(MiscType.F_ECM)) {
-                dEquipmentBV += etype.getBV(gunEmplacement);
+            EquipmentType eType = equipment.getType();
+            boolean isAMS = (eType instanceof WeaponType) && eType.hasFlag(WeaponType.F_AMS);
+            boolean isAMSAmmo = (eType instanceof AmmoType) && (((AmmoType) eType).getAmmoType() == AmmoType.T_AMS);
+
+            if (isAMS || isAMSAmmo || eType.hasFlag(MiscType.F_ECM)) {
+                double equipmentBV = eType.getBV(gunEmplacement);
+                defensiveValue += equipmentBV;
+                bvReport.addLine(equipment.getDesc(), "+ " + formatForReport(equipmentBV),
+                        "= " + formatForReport(defensiveValue));
             }
         }
-        dbv += dEquipmentBV;
-        dbv *= 0.5; // structure modifier
-        double weaponBV = 0;
+        bvReport.addLine("Structure Modifier:", formatForReport(defensiveValue) + " x 0.5",
+                "= " + formatForReport(defensiveValue * 0.5));
+        defensiveValue *= 0.5;
+    }
 
-        // figure out base weapon bv
+    @Override
+    protected void processOffensiveValue() {
         boolean hasTargComp = gunEmplacement.hasTargComp();
-        for (Mounted mounted : gunEmplacement.getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            double dBV = wtype.getBV(gunEmplacement);
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
+        for (Mounted weapon : gunEmplacement.getWeaponList()) {
+            WeaponType weaponType = (WeaponType) weapon.getType();
+            if (weapon.isDestroyed() || (weaponType.hasFlag(WeaponType.F_AMS))) {
                 continue;
             }
 
             // artemis bumps up the value
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                    dBV *= 1.1;
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                    dBV *= 1.3;
-                }
-                if ((mLinker.getType() instanceof MiscType)
-                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
-                    dBV *= 1.15;
-                }
-            }
-
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if ((mLinker.getType() instanceof MiscType) && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
-                    dBV *= 1.15;
+            double weaponBV = weaponType.getBV(gunEmplacement);
+            String calculation = "+ " + formatForReport(weaponBV);
+            if ((weapon.getLinkedBy() != null) && (weapon.getLinkedBy().getType() instanceof MiscType)) {
+                Mounted linkedBy = weapon.getLinkedBy();
+                if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    weaponBV *= 1.2;
+                    calculation += " x 1.2 (Artemis)";
+                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    weaponBV *= 1.1;
+                    calculation += " x 1.1 (P-Artemis)";
+                } else if (linkedBy.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
+                    weaponBV *= 1.3;
+                    calculation += " x 1.3 (Artemis V)";
+                } else if (linkedBy.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                        || linkedBy.getType().hasFlag(MiscType.F_APOLLO)) {
+                    weaponBV *= 1.15;
+                    calculation += " x 1.15 (" + (linkedBy.getType().hasFlag(MiscType.F_APOLLO) ? "Apollo)" : "RISC LPM)");
                 }
             }
 
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
-                dBV *= 1.2;
+            if (weaponType.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                weaponBV *= 1.2;
+                calculation += " x 1.2 (TC)";
             }
 
-            weaponBV += dBV;
-        }
-        obv += weaponBV;
-
-        // add ammo bv
-        double ammoBV = 0;
-        for (Mounted mounted : gunEmplacement.getAmmo()) {
-            AmmoType atype = (AmmoType) mounted.getType();
-
-            // don't count depleted ammo
-            if (mounted.getUsableShotsLeft() == 0) {
-                continue;
-            }
-
-            // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
-                continue;
-            }
-
-            ammoBV += atype.getBV(gunEmplacement);
-        }
-        obv += ammoBV;
-
-        // structure modifier
-        obv *= 0.44;
-        double finalBV = obv + dbv;
-        double xbv = 0.0;
-        if (!ignoreC3 && (gunEmplacement.getGame() != null)) {
-            xbv += gunEmplacement.getExtraC3BV((int) Math.round(finalBV));
+            offensiveValue += weaponBV;
+            bvReport.addLine(weapon.getDesc(), calculation, "= " + formatForReport(offensiveValue));
         }
 
-        finalBV += xbv;
+        processAmmoValue();
 
-        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(gunEmplacement);
-        return (int) Math.round(finalBV * pilotFactor);
+//        bvReport.addEmptyLine();
+        bvReport.addLine("Structure Modifier:", formatForReport(offensiveValue) + " x 0.44",
+                "= " + formatForReport(offensiveValue * 0.44));
+        offensiveValue *= 0.44;
     }
 }

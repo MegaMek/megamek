@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+
 public class DropShipBVCalculator {
 
     public static int calculateBV(Dropship dropShip, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
@@ -472,19 +474,34 @@ public class DropShipBVCalculator {
         finalBV = Math.round(finalBV);
         bvReport.addResultLine("Final BV", "", finalBV);
 
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-
-        // extra from c3 networks. a valid network requires at least 2 members
-        // some hackery and magic numbers here. could be better
-        // also, each 'has' loops through all equipment. inefficient to do it 3 times
-        if (!ignoreC3 && (dropShip.getGame() != null)) {
-            xbv += dropShip.getExtraC3BV((int) Math.round(finalBV));
+        // Force Bonuses
+        double tagBonus = BVCalculator.bvTagBonus(dropShip);
+        if (tagBonus > 0) {
+            finalBV += tagBonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (TAG):",
+                    "+ " + formatForReport(tagBonus), "= " + formatForReport(finalBV));
         }
-        finalBV += xbv;
 
-        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(dropShip);
-        return (int) Math.round(finalBV * pilotFactor);
+        double c3Bonus = ignoreC3 ? 0 : dropShip.getExtraC3BV((int) Math.round(finalBV));
+        if (c3Bonus > 0) {
+            finalBV += c3Bonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (C3):",
+                    "+ " + formatForReport(c3Bonus), "= " + formatForReport(finalBV));
+        }
+
+        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(dropShip);
+        if (pilotFactor != 1) {
+            finalBV *= pilotFactor;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Pilot Modifier:",
+                    "x " + formatForReport(pilotFactor), "= " + formatForReport(finalBV));
+        }
+
+        int finalAdjustedBV = (int) Math.round(finalBV);
+        bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
+        return finalAdjustedBV;
     }
 
     private static String getArcName(Dropship dropShip, int loc) {

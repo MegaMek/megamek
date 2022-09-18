@@ -274,19 +274,33 @@ public class BattleArmorBVCalculator {
                 "x " + squadFactor, "= " + formatForReport(squadBV * squadFactor));
         squadBV *= squadFactor;
 
-        if (!ignoreC3) {
-            double c3Bonus = battleArmor.getExtraC3BV((int) Math.round(squadBV));
-            squadBV += c3Bonus;
-            if (c3Bonus > 0) {
-                bvReport.addLine("C3 Bonus", "+ " + formatForReport(c3Bonus),
-                        "= " + formatForReport(squadBV));
-            }
+        // Force Bonuses
+        double tagBonus = BVCalculator.bvTagBonus(battleArmor);
+        if (tagBonus > 0) {
+            squadBV += tagBonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (TAG):",
+                    "+ " + formatForReport(tagBonus), "= " + formatForReport(squadBV));
         }
 
-        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(battleArmor);
-        String pilotCalculation = ignoreSkill ? "" : "x " + formatForReport(pilotFactor) + " (Skill/Implants), ";
-        bvReport.addResultLine("Final BV:",
-                pilotCalculation + "round normal", "= " + Math.round(squadBV * pilotFactor));
-        return (int) Math.round(squadBV * pilotFactor);
+        double c3Bonus = ignoreC3 ? 0 : battleArmor.getExtraC3BV((int) Math.round(squadBV));
+        if (c3Bonus > 0) {
+            squadBV += c3Bonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (C3):",
+                    "+ " + formatForReport(c3Bonus), "= " + formatForReport(squadBV));
+        }
+
+        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(battleArmor);
+        if (pilotFactor != 1) {
+            squadBV *= pilotFactor;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Pilot Modifier:",
+                    "x " + formatForReport(pilotFactor), "= " + formatForReport(squadBV));
+        }
+
+        int finalAdjustedBV = (int) Math.round(squadBV);
+        bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
+        return finalAdjustedBV;
     }
 }

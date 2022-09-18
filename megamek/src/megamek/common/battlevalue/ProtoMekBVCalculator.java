@@ -22,9 +22,10 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 public class ProtoMekBVCalculator {
 
@@ -190,7 +191,6 @@ public class ProtoMekBVCalculator {
 
         double ammoBV = 0;
         // extra BV for when we have semiguided LRMs and someone else has TAG on our team
-        double tagBV = 0;
         Map<String, Double> ammo = new HashMap<>();
         ArrayList<String> keys = new ArrayList<>();
         for (Mounted mounted : protoMek.getAmmo()) {
@@ -211,28 +211,7 @@ public class ProtoMekBVCalculator {
                 // assumption: ammo without a location is for a oneshot weapon
                 continue;
             }
-            // semiguided or homing ammo might count double
-            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                Player tmpP = protoMek.getOwner();
-                // Okay, actually check for friendly TAG.
-                if (tmpP.hasTAG()) {
-                    tagBV += atype.getBV(protoMek);
-                } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (protoMek.getGame() != null)) {
-                    for (Enumeration<Team> e = protoMek.getGame().getTeams(); e.hasMoreElements();) {
-                        Team m = e.nextElement();
-                        if (m.getId() == tmpP.getTeam()) {
-                            if (m.hasTAG(protoMek.getGame())) {
-                                tagBV += atype.getBV(protoMek);
-                            }
-                            // A player can't be on two teams.
-                            // If we check his team and don't give the penalty,
-                            // that's it.
-                            break;
-                        }
-                    }
-                }
-            }
+
             String key = atype.getAmmoType() + ":" + atype.getRackSize();
             if (!keys.contains(key)) {
                 keys.add(key);
@@ -299,25 +278,33 @@ public class ProtoMekBVCalculator {
         bvReport.addEmptyLine();
         bvReport.addSubHeader("Extra Battle Rating Calculation:");
 
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        xbv += tagBV;
-        bvReport.addLine("Tag BV", "", tagBV);
-        bvReport.addResultLine("Extra Battle Value", "= ", xbv);
         bvReport.addEmptyLine();
         bvReport.addSubHeader("Final BV Calculation:");
         bvReport.addLine("Defensive BV", "", dbv);
         bvReport.addLine("Offensive BV", "", obv);
-        bvReport.addLine("Extra BV", "", xbv);
 
-        int finalBV = (int) Math.round(dbv + obv + xbv);
+        double finalBV = dbv + obv;
         bvReport.addResultLine("Sum", "= ", finalBV);
 
-        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(protoMek);
-        bvReport.addLine("Multiply by Pilot Factor of ", "" + pilotFactor, "x ", pilotFactor);
-        int retVal = (int) Math.round(finalBV * pilotFactor);
-        bvReport.addResultLine("Final Battle Value", "= ", retVal);
-        return retVal;
+        // Force Bonuses
+        double tagBonus = BVCalculator.bvTagBonus(protoMek);
+        if (tagBonus > 0) {
+            finalBV += tagBonus;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Force Bonus (TAG):",
+                    "+ " + formatForReport(tagBonus), "= " + formatForReport(finalBV));
+        }
+
+        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(protoMek);
+        if (pilotFactor != 1) {
+            finalBV *= pilotFactor;
+            bvReport.addEmptyLine();
+            bvReport.addLine("Pilot Modifier:",
+                    "x " + formatForReport(pilotFactor), "= " + formatForReport(finalBV));
+        }
+
+        int finalAdjustedBV = (int) Math.round(finalBV);
+        bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
+        return finalAdjustedBV;
     }
 }

@@ -21,10 +21,9 @@ package megamek.common.battlevalue;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
 public class CombatVehicleBVCalculator {
 
@@ -341,55 +340,18 @@ public class CombatVehicleBVCalculator {
         bvReport.addLine("", "", "= ", weaponBV);
         bvReport.addLine("Ammo BV", "", "");
 
-        // add ammo bv
         double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on our team
-        double tagBV = 0;
-        String tagText = "";
         Map<String, Double> ammo = new HashMap<>();
-        ArrayList<String> keys = new ArrayList<>();
+        List<String> keys = new ArrayList<>();
         for (Mounted mounted : combatVee.getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
 
-            // don't count depleted ammo
-            if (mounted.getUsableShotsLeft() == 0) {
+            // don't count depleted ammo, AMS and oneshot ammo
+            if ((mounted.getUsableShotsLeft() == 0)
+                    || (atype.getAmmoType() == AmmoType.T_AMS)
+                    || (atype.getAmmoType() == AmmoType.T_APDS)
+                    || mounted.isOneShotAmmo()) {
                 continue;
-            }
-
-            // don't count AMS, it's defensive
-            if ((atype.getAmmoType() == AmmoType.T_AMS) || (atype.getAmmoType() == AmmoType.T_APDS)) {
-                continue;
-            }
-
-            // don't count oneshot ammo, it's considered part of the launcher.
-            if (mounted.getLocation() == Entity.LOC_NONE) {
-                // assumption: ammo without a location is for a oneshot weapon
-                continue;
-            }
-
-            // semiguided or homing ammo might count double
-            if ((atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    || (atype.getMunitionType() == AmmoType.M_HOMING)) {
-                Player tmpP = combatVee.getOwner();
-                // Okay, actually check for friendly TAG.
-                if (tmpP != null) {
-                    if (tmpP.hasTAG()) {
-                        tagBV += atype.getBV(combatVee);
-                    } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (combatVee.getGame() != null)) {
-                        for (Enumeration<Team> e = combatVee.getGame().getTeams(); e.hasMoreElements();) {
-                            Team m = e.nextElement();
-                            if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(combatVee.getGame())) {
-                                    tagBV += atype.getBV(combatVee);
-                                    tagText = "Tag: ";
-                                }
-                                // A player can't be on two teams.
-                                // If we check his team and don't give the penalty, that's it.
-                                break;
-                            }
-                        }
-                    }
-                }
             }
             String key = atype.getAmmoType() + ":" + atype.getRackSize();
             if (!keys.contains(key)) {
@@ -400,7 +362,6 @@ public class CombatVehicleBVCalculator {
             } else {
                 ammo.put(key, atype.getBV(combatVee) + ammo.get(key));
             }
-            bvReport.addLine(atype.getName(), tagText, "BV: ", atype.getBV(combatVee));
         }
         // excessive ammo rule:
         // only count BV for ammo for a weapontype until the BV of all weapons of that
@@ -488,21 +449,32 @@ public class CombatVehicleBVCalculator {
             finalBV = Math.round(finalBV);
             bvReport.addLine("Total BV * Drone Operating System Modifier", totalBV + " x 0.95", "= ", finalBV);
         }
-        bvReport.addResultLine("Final BV", "", finalBV);
+        bvReport.addResultLine("Base BV", "", finalBV);
 
-        // we get extra bv from some stuff
-        double xbv = 0.0;
-        // extra BV for semi-guided lrm when TAG in our team
-        xbv += tagBV;
-        if (!ignoreC3) {
-            xbv += combatVee.getExtraC3BV((int) Math.round(finalBV));
+        // Force Bonuses
+        double tagBonus = BVCalculator.bvTagBonus(combatVee);
+        if (tagBonus > 0) {
+            finalBV += tagBonus;
+            bvReport.addLine("Force Bonus (TAG):",
+                    "+ " + formatForReport(tagBonus), "= " + formatForReport(finalBV));
         }
 
-        finalBV = Math.round(finalBV + xbv);
+        double c3Bonus = ignoreC3 ? 0 : combatVee.getExtraC3BV((int) Math.round(finalBV));
+        if (c3Bonus > 0) {
+            finalBV += c3Bonus;
+            bvReport.addLine("Force Bonus (C3):",
+                    "+ " + formatForReport(c3Bonus), "= " + formatForReport(finalBV));
+        }
 
-        double pilotFactor = ignoreSkill ? 1 : BvMultiplier.bvMultiplier(combatVee);
-        int finalAdjustedBV = (int) Math.round(finalBV * pilotFactor);
-        bvReport.addResultLine("Final Adjusted BV", "= ", finalAdjustedBV);
+        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(combatVee);
+        if (pilotFactor != 1) {
+            finalBV *= pilotFactor;
+            bvReport.addLine("Pilot Modifier:",
+                    "x " + formatForReport(pilotFactor), "= " + formatForReport(finalBV));
+        }
+
+        int finalAdjustedBV = (int) Math.round(finalBV);
+        bvReport.addResultLine("Final BV", "", "= " + finalAdjustedBV);
         return finalAdjustedBV;
     }
 }

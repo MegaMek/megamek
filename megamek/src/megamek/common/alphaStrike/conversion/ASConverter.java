@@ -40,7 +40,7 @@ public final class ASConverter {
     //TODO: LG, SLG, VLG support vehicles, MS
 
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
-        return performConversion(entity, false, new DummyCalculationReport());
+        return performConversion(entity, false, new DummyCalculationReport(), entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
@@ -66,10 +66,11 @@ public final class ASConverter {
             LogManager.getLogger().error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
         }
-        return performConversion(undamagedEntity, includePilot, conversionReport);
+        return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
     }
 
-    private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot, CalculationReport conversionReport) {
+    private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot,
+                                                        CalculationReport conversionReport, Crew originalCrew) {
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
             LogManager.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
@@ -117,12 +118,11 @@ public final class ASConverter {
 
         // Skill
         if (includePilot) {
-            if ((entity instanceof Infantry) && element.isConventionalInfantry()) {
-                // CI only use their Gunnery skill, as there is no piloting (only Anti-Mek at a base of 8)
-                element.setSkill(entity.getCrew().getGunnery());
+            if (element.isConventionalInfantry() || element.isProtoMek()) {
+                // CI and PM have no Piloting skill and so use only their Gunnery
+                element.setSkill(originalCrew.getGunnery());
             } else {
-                //TODO: multi-crew units
-                element.setSkill((entity.getCrew().getPiloting() + entity.getCrew().getGunnery()) / 2);
+                element.setSkill((originalCrew.getPiloting() + originalCrew.getGunnery()) / 2);
             }
         }
         conversionReport.addLine("Skill:", Integer.toString(element.getSkill()));

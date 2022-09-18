@@ -695,7 +695,7 @@ public class WeaponType extends EquipmentType {
      * @param range The range in hexes
      * @return Damage in BattleForce scale
      */
-    //TODO: the calculations are superseded by the ASC table but correct most of the time, ideally should be replaced
+    // TODO : the calculations are superseded by the ASC table but correct most of the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {

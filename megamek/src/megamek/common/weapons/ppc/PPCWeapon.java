@@ -59,18 +59,18 @@ public abstract class PPCWeapon extends EnergyWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
-            if (getDamage() == DAMAGE_VARIABLE
-                    && range == AlphaStrikeElement.MEDIUM_RANGE
-                    && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
+            if ((getDamage() == DAMAGE_VARIABLE)
+                    && (range == AlphaStrikeElement.MEDIUM_RANGE)
+                    && (getLongRange() < AlphaStrikeElement.LONG_RANGE)) {
                 damage = getDamage(AlphaStrikeElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
             }
-            if (capacitor != null && capacitor.getType() instanceof MiscType
+            if ((capacitor != null) && (capacitor.getType() instanceof MiscType)
                     && capacitor.getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 damage = (damage + 5) / 2;
             }
-            if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
             if (getToHitModifier() != 0) {

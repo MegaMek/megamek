@@ -76,7 +76,7 @@ public class CLBALBX extends Weapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getDamage());
             damage *= 1.05; // -1 to hit
-            if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }
@@ -89,7 +89,7 @@ public class CLBALBX extends Weapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getDamage() * baSquadSize);
             damage *= 1.05; // -1 to hit
-            if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

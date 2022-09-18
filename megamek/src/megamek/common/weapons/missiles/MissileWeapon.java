@@ -83,7 +83,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
             }
         }
         double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
@@ -95,7 +95,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(7, getRackSize() * baSquadSize);
-        if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;

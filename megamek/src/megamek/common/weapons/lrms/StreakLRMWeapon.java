@@ -63,11 +63,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= AlphaStrikeElement.LONG_RANGE) {
-            return 0.1 * getRackSize();
-        } else {
-            return 0;
-        }
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.1 * getRackSize() : 0;
     }
     
     @Override

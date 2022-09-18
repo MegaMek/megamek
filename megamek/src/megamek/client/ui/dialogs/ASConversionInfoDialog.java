@@ -22,6 +22,7 @@ import megamek.client.ui.baseComponents.AbstractDialog;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.Entity;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -76,7 +77,7 @@ public class ASConversionInfoDialog extends AbstractDialog {
     protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
         UIUtil.adjustDialog(getContentPane());
-        if (unitName != null && !unitName.isBlank()) {
+        if (!StringUtility.isNullOrBlank(unitName)) {
             setTitle(getTitle() + " (" + unitName + ")");
         }
         pack();

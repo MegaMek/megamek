@@ -56,10 +56,6 @@ public class CLBAFlamer extends BAFlamerWeapon {
 
     @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {
-        if (rangeband <= AlphaStrikeElement.RANGE_BAND_SHORT) {
-            return 2;
-        } else {
-            return 0;
-        }
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_SHORT) ? 2 : 0;
     }
 }

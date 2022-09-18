@@ -99,7 +99,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private ASUnitType asUnitType = ASUnitType.UNKNOWN;
     private int size = 0;
     private int tmm = 0;
-    private Map<String,Integer> movement = new LinkedHashMap<>();
+    private Map<String, Integer> movement = new LinkedHashMap<>();
     private String primaryMovementMode = "";
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;

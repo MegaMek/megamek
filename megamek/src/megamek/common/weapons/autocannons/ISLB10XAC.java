@@ -56,10 +56,6 @@ public class ISLB10XAC extends LBXACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= AlphaStrikeElement.LONG_RANGE) {
-            return 0.63;
-        } else {
-            return 0;
-        }
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.63 : 0;
     }
 }

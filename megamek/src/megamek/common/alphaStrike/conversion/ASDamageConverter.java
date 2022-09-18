@@ -939,7 +939,7 @@ public class ASDamageConverter {
         } else if (entity.isFighter() || element.usesArcs()) {
             heatCapacity = entity.getHeatCapacity(false);
         }
-        long coolantPodCount = entity.getEquipment().stream().filter(Mounted::isCoolantPod).count();
+        long coolantPodCount = entity.getEquipment().stream().filter(MountedHelper::isCoolantPod).count();
         if (coolantPodCount > 0) {
             heatCapacity += (int) coolantPodCount;
         }

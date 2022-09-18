@@ -56,10 +56,6 @@ public class CLLB20XAC extends LBXACWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
-            return 1.26;
-        } else {
-            return 0;
-        }
+        return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.26 : 0;
     }
 }

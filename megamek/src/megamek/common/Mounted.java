@@ -2053,11 +2053,4 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return ammoType.getMunitionType() == AmmoType.M_HOMING &&
                 curMode().equals("Homing");
     }
-    
-    /** Returns true if this Mounted is a Coolant Pod. */
-    public boolean isCoolantPod() {
-        return (getType() instanceof AmmoType)
-                && ((AmmoType) getType()).getAmmoType() == AmmoType.T_COOLANT_POD;
-    }
-
 }

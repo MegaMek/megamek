@@ -18,24 +18,32 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.client.ui.dialogs.ASConversionInfoDialog;
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.SpringUtilities;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SBFViewPanel extends JPanel {
 
     public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
-    public static final int COLS = 12;
+    public static final int COLS = 13;
     
     private int elements = 0;
+    private final JFrame parent;
+    private final Map<AlphaStrikeElement, FlexibleCalculationReport> reports = new HashMap<>();
 
-    public SBFViewPanel(Collection<SBFFormation> formations) {
+    public SBFViewPanel(JFrame parent, Collection<SBFFormation> formations) {
+        this.parent = parent;
         setLayout(new SpringLayout());
 
         for (SBFFormation formation : formations) {
@@ -52,6 +60,7 @@ public class SBFViewPanel extends JPanel {
             addGridElement(formation.getSkill() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getPointValue() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getSpecialsString() + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+            addConversionInfo((FlexibleCalculationReport) formation.getConversionReport(), null, parent);
 
             addUnitHeaders();
             int row = 1;
@@ -61,7 +70,7 @@ public class SBFViewPanel extends JPanel {
                 addGridElement("  " + unit.getName(), bgColor, FlowLayout.LEFT);
                 addGridElement(unit.getType().toString(), bgColor);
                 addGridElement(unit.getSize() + "", bgColor);
-                addGridElement(unit.getMovement() + unit.getMoveType(), bgColor);
+                addGridElement(unit.getMovement() + unit.getMovementMode(), bgColor);
                 addGridElement(unit.getJumpMove() + "", bgColor);
                 addGridElement(unit.getTrspMovement() + "", bgColor);
                 addGridElement(unit.getTmm() + "", bgColor);
@@ -69,12 +78,23 @@ public class SBFViewPanel extends JPanel {
                 addGridElement(unit.getDamage() + "", bgColor);
                 addGridElement(unit.getSkill() + "", bgColor);
                 addGridElement(unit.getPointValue() + "", bgColor);
-                addGridElement(unit.getSpecialsString(), bgColor, FlowLayout.LEFT);
+                addGridElement(unit.getSpecialsDisplayString(", ", null), bgColor, FlowLayout.LEFT);
+                addGridElement("", bgColor);
             }
             addSpacer();
         }
 
         SpringUtilities.makeCompactGrid(this, elements / COLS, COLS, 5, 5, 1, 5);
+    }
+
+    private void addConversionInfo(FlexibleCalculationReport conversionReport,
+                                   AlphaStrikeElement element, JFrame frame) {
+        var panel = new UIUtil.FixedYPanel();
+        JButton button = new JButton("?");
+        button.setEnabled(conversionReport != null);
+        button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport).setVisible(true));
+        panel.add(button);
+        add(panel);
     }
 
     private void addGridElement(String text) {
@@ -129,6 +149,7 @@ public class SBFViewPanel extends JPanel {
         addHeader("Skill");
         addHeader("PV");
         addHeader("Specials");
+        addHeader("Conversion");
     }
 
     private void addUnitHeaders() {
@@ -141,6 +162,7 @@ public class SBFViewPanel extends JPanel {
         addHeader(" ");
         addHeader("Arm");
         addHeader("Dmg");
+        addHeader(" ");
         addHeader(" ");
         addHeader(" ");
         addHeader(" ");

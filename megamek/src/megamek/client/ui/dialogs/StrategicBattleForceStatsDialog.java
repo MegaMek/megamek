@@ -30,6 +30,7 @@ import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class StrategicBattleForceStatsDialog extends AbstractDialog {
@@ -74,10 +75,10 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
     private void setupTable() {
         centerPanel.remove(scrollPane);
         formations = forceList.stream()
-                .map(f -> SBFFormationConverter.convert(f, game, pilotToggle.isSelected()))
-                .filter(fo -> fo != null)
+                .map(f -> new SBFFormationConverter(f, game, pilotToggle.isSelected()).convert())
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        scrollPane = new JScrollPane(new SBFViewPanel(formations));
+        scrollPane = new JScrollPane(new SBFViewPanel(getFrame(), formations));
         centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
     }

@@ -38,6 +38,7 @@ import java.util.*;
 public final class ASConverter {
 
     //TODO: LG, SLG, VLG support vehicles, MS
+    //TODO: pilot skill not working
 
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
         return performConversion(entity, false, new DummyCalculationReport());

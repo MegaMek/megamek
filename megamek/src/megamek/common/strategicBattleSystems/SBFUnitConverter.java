@@ -18,88 +18,137 @@
  */
 package megamek.common.strategicBattleSystems;
 
-import megamek.common.alphaStrike.*;
+import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.codeUtilities.MathUtility;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.options.OptionsConstants;
-import org.apache.logging.log4j.LogManager;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.*;
+import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.*;
 
 public class SBFUnitConverter {
 
-    private SBFUnitConverter() {
+    //TODO: How do MAS/LMAS/STL work? If all have a mix of them, the unit gets all?
+
+    private final Collection<AlphaStrikeElement> elements;
+    private final Collection<AlphaStrikeElement> elementsBaseSkill;
+    private final SBFUnit unit = new SBFUnit();
+    private final CalculationReport report;
+    private int roundedAverageMove = 0;
+
+    SBFUnitConverter(Collection<AlphaStrikeElement> elements, String name,
+                     Collection<AlphaStrikeElement> elementsBaseSkill, CalculationReport report) {
+        this.elements = elements;
+        unit.setName(Objects.requireNonNullElse(name, "Unknown"));
+        this.elementsBaseSkill = elementsBaseSkill;
+        this.report = report;
+
     }
 
     /**
      *  Returns an SBF Unit formed from the given AS elements and having the given name.
      *  Does not check validity of the conversion.
      */
-    public static SBFUnit createSbfUnit(Collection<AlphaStrikeElement> elements, String name,
-                                        Collection<AlphaStrikeElement> elementsBaseSkill) {
-        var result = new SBFUnit();
-        result.setName(name);
-        result.setType(getUnitType(elements));
-        result.setSize(getUnitSize(elements));
-        result.setArmor(calcUnitArmor(elements));
-        result.setMovement(calcUnitMove(elements));
-        result.setJumpMove(getUnitJumpMove(elements));
-        result.setTmm(getUnitTMM(elements, result));
-        calcUnitSpecialAbilities(elements, result);
-        setMovementMode(result, elements);
-        result.setDamage(calcUnitDamage(elements, result));
-        result.setSkill(calcUnitSkill(elements, result));
-        result.setPointValue(calcUnitPointValue(elementsBaseSkill, result));
-        return result;
-    }
-    private static SBFElementType getUnitType(Collection<AlphaStrikeElement> elements) {
-        if (elements.isEmpty()) {
-            LogManager.getLogger().error("Cannot determine SBF Element Type for an empty list of AS Elements.");
-            return null;
+    public SBFUnit createSbfUnit() {
+        report.addEmptyLine();
+        report.addSubHeader("Unit \"" + unit.getName() + "\":");
+
+        if ((elements == null) || (elementsBaseSkill == null) || (elements.isEmpty()) || (elementsBaseSkill.isEmpty())) {
+            report.addLine("Error: No elements.", "");
+            return unit;
         }
-        int majority = (int) Math.round(2.0 / 3 * elements.size());
+
+        calcUnitType();
+        calcUnitSize();
+        calcUnitArmor();
+        calcUnitMove();
+        setMovementMode();
+        calcTransportMove();
+        calcUnitJumpMove();
+        calcUnitSpecialAbilities();
+        calcUnitTMM();
+
+        unit.setDamage(calcUnitDamage(elements, unit));
+        calcUnitSkill();
+        calcUnitPointValue();
+        return unit;
+    }
+
+    private void calcUnitType() {
+        int majorityCount = (int) Math.round(2.0 / 3 * elements.size());
         List<SBFElementType> types = elements.stream().map(SBFElementType::getUnitType).collect(toList());
-        Map<SBFElementType, Long> frequencies = types.stream().collect(groupingBy(Function.identity(), counting()));
-        long highestOccurrence = frequencies.values().stream().max(Long::compare).orElse(0L);
-        if (highestOccurrence < majority) {
-            return SBFElementType.MX;
+        Map<SBFElementType, Long> occurrenceCount = types.stream().collect(groupingBy(Function.identity(), counting()));
+        long highestCount = occurrenceCount.values().stream().max(Long::compare).orElse(0L);
+        SBFElementType highestType = types.stream()
+                .filter(e -> Collections.frequency(types, e) == highestCount)
+                .findFirst().orElse(SBFElementType.UNKNOWN);
+
+        if (highestCount < majorityCount) {
+            unit.setType(SBFElementType.MX);
         } else {
-            return types.stream()
-                    .filter(e -> Collections.frequency(types, e) == highestOccurrence)
-                    .findFirst()
-                    .orElse(null);
+            unit.setType(highestType);
         }
+        report.addLine("Type:",
+                "Most frequent: " + highestType + ", " + highestCount + " of " + elements.size(),
+                unit.getType().toString());
     }
 
-    private static int getUnitSize(Collection<AlphaStrikeElement> elements) {
-        return (int) Math.round(elements.stream().mapToInt(AlphaStrikeElement::getSize).average().orElse(0));
+    private void calcUnitSize() {
+        int size = (int) Math.round(elements.stream().mapToInt(AlphaStrikeElement::getSize).average().orElse(0));
+        report.addLine("Size:",
+                "Average of " + elements.stream().map(u -> u.getSize() + "").collect(joining(", ")),
+                size + "");
+        unit.setSize(size);
     }
 
-    private static int getUnitTMM(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        int avgMove = (int)Math.round(elements.stream()
-                .mapToInt(AlphaStrikeElement::getPrimaryMovementValue).average().orElse(0)) / 2;
-        int result = getTmmFromMove(avgMove);
-        result += (unit.getType() == BA) || (unit.getType() == PM) ? 1 : 0;
-        // TODO: movement type?
-        return result;
+    private void calcUnitTMM() {
+        int tmm = getTmmFromMove(roundedAverageMove);
+        String calculation = "Average Movement " + roundedAverageMove;
+        String moveMode = unit.getMovementMode();
+        if (unit.isAnyTypeOf(BA, PM)
+                || (unit.isType(V) && (moveMode.equals("v") || moveMode.equals("g")))) {
+            tmm += 1;
+            calculation += " + 1 (";
+            if (unit.isAnyTypeOf(BA, PM)) {
+                calculation += unit.getType() + ")";
+            } else {
+                calculation += moveMode.equals("v") ? "VTOL)" : "WiGE)";
+            }
+        }
+        if (elements.stream().anyMatch(e -> e.hasSUA(LG))) {
+            tmm -= 1;
+            calculation += " - 1 (LG)";
+        }
+        if (elements.stream().anyMatch(e -> e.hasAnySUAOf(SLG, VLG))) {
+            tmm -= 2;
+            calculation += " - 1 (SLG/VLG)";
+        }
+        if (unit.hasAnySUAOf(STL, MAS)) {
+            tmm += 2;
+            calculation += " + 2 (STL/MAS)";
+        }
+        report.addLine("TMM:", calculation, "= " + tmm);
+        unit.setTmm(tmm);
     }
 
     private static ASDamageVector calcUnitDamage(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        double dmgS = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> sbfDamage(d.S)).sum();
-        double dmgM = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> sbfDamage(d.M)).sum();
-        double dmgL = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> sbfDamage(d.L)).sum();
-        double dmgE = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> sbfDamage(d.E)).sum();
+        double dmgS = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.S.asDoubleValue()).sum();
+        double dmgM = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.M.asDoubleValue()).sum();
+        double dmgL = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.L.asDoubleValue()).sum();
+        double dmgE = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.E.asDoubleValue()).sum();
         double artTC = elements.stream().filter(e -> e.hasSUA(ARTTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTTC);
         double artLTC = elements.stream().filter(e -> e.hasSUA(ARTLTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTLTC);
         double artSC = elements.stream().filter(e -> e.hasSUA(ARTSC)).count() * SBFFormation.getSbfArtilleryDamage(ARTSC);
         dmgS += elements.stream().mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
-        dmgS += unit.isAnyTypeOf(BA, CI) && unit.hasSPA(AM) ? 1 : 0;
+        dmgS += unit.isAnyTypeOf(BA, CI) && unit.hasSUA(AM) ? 1 : 0;
         dmgS += artTC + artLTC + artSC;
         dmgM += elements.stream().filter(e -> e.getStandardDamage().M.damage >= 1).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
         dmgM += artTC + artLTC + artSC;
@@ -115,136 +164,240 @@ public class SBFUnitConverter {
         }
     }
 
-    private static void calcUnitSpecialAbilities(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        addUnitSpasIfAny(elements, unit, PRB, AECM, BHJ2, BHJ3, BH, BT, ECM, HPG, LPRB, LECM, TAG);
-        addUnitSpasIfHalf(elements, unit, AMS, ARM, ARS, BAR, BFC, CR, ENG, RCN, RBT, SRCH, SHLD);
-        addUnitSpasIfAll(elements, unit, AMP, AM, BHJ, XMEC, MCS, UCS, MEC, PARA, SAW, TRN);
-        sumUnitSpas(elements, unit, OMNI, CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
-                VTS, AT, DT, MT, PT, ST, SCR, PNT);
-        sumUnitSpasDivideBy3(elements, unit, ATAC, BOMB, IF);
-        sumUnitArtillery(elements, unit, ARTLT, ARTS, ARTT, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12);
-        calcUnitMhq(elements, unit);
-        calcUnitRcn(elements, unit);
+    private void calcUnitSpecialAbilities() {
+        report.addLine("Special Abilites:", "");
+        addUnitSUAsIfAny(WAT, PRB, AECM, BHJ2, BHJ3, BH, BT, ECM, HPG, LPRB, LECM, TAG);
+        addUnitSUAsIfHalf(AMS, ARM, ARS, BAR, BFC, CR, ENG, RBT, SRCH, SHLD);
+        addUnitSUAsIfAll(AMP, AM, BHJ, XMEC, MCS, UCS, MEC, PARA, SAW, TRN);
+        sumUnitSUAs(CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
+                VTS, AT, DT, MT, PT, ST, SCR);
+        sumUnitSUAsDivideBy3(ATAC, BOMB, PNT, IF);
+        sumUnitArtillery(ARTLT, ARTS, ARTT, ARTBA, ARTCM5, ARTCM7, ARTCM9, ARTCM12);
+        calcMHQ();
+        calcRCN();
+        calcSTL();
+        calcOMNI();
 
-        double flkMSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> sbfDamage(dv.M)).sum();
+        double flkMSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> dv.M.asDoubleValue()).sum();
         int flkM = (int) Math.round(flkMSum / 3);
-        double flkLSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> sbfDamage(dv.L)).sum();
+        double flkLSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> dv.L.asDoubleValue()).sum();
         int flkL = (int) Math.round(flkLSum / 3);
         if (flkM + flkL > 0) {
-            unit.addSPA(FLK, ASDamageVector.createNormRndDmgNoMin(0, flkM, flkL));
+            unit.getSpecialAbilities().setSUA(FLK, ASDamageVector.createNormRndDmgNoMin(0, flkM, flkL));
         }
 
-        if (((spaCount(elements, C3M) >= 1) || (spaCount(elements, C3BSM) >= 1))
-                && (spaCount(elements, C3M) + spaCount(elements, C3S) + spaCount(elements, C3BSS) >= elements.size() / 2)) {
-            unit.addSPA(AC3);
+        if (((suaCount(elements, C3M) >= 1) || (suaCount(elements, C3BSM) >= 1))
+                && (suaCount(elements, C3M) + suaCount(elements, C3S) + suaCount(elements, C3BSS) >= elements.size() / 2)) {
+            unit.getSpecialAbilities().setSUA(AC3);
         }
 
-        if (spaCount(elements, C3I) >= elements.size() / 2) {
-            unit.addSPA(AC3);
+        if (suaCount(elements, C3I) > 0) {
+            String calculation = "C3I: " + suaCount(elements, C3I) + " of " + elements.size() + ", minimum " + (elements.size() / 2);
+            String result = "--";
+            if (suaCount(elements, C3I) >= elements.size() / 2) {
+                unit.getSpecialAbilities().setSUA(AC3);
+                result = "C3I";
+            }
+            report.addLine("", calculation, result);
         }
 
-        if (unit.hasSPA(ATAC)) {
-            unit.replaceSPA(ATAC, Math.round(1.0d / 3 * (int) unit.getSPA(ATAC)));
+        if (unit.hasSUA(ATAC)) {
+            unit.getSpecialAbilities().replaceSUA(ATAC, Math.round(1.0d / 3 * (int) unit.getSUA(ATAC)));
+        }
+
+        finalizeSpecials();
+    }
+
+    private void finalizeSpecials() {
+        if (unit.hasSUA(PRB)) {
+            unit.getSpecialAbilities().removeSUA(LPRB);
+        }
+        if (unit.hasSUA(AECM)) {
+            unit.getSpecialAbilities().removeSUA(LECM);
+            unit.getSpecialAbilities().removeSUA(ECM);
+        }
+        if (unit.hasSUA(ECM)) {
+            unit.getSpecialAbilities().removeSUA(LECM);
         }
     }
 
 
     /**
-     * Returns the number of the given AlphaStrike elements that have the given spa (regardless of its
+     * Returns the number of the given AlphaStrike elements that have the given SUA (regardless of its
      * associated objects)
      */
-    private static int spaCount(Collection<AlphaStrikeElement> elements, BattleForceSUA spa) {
-        return (int)elements.stream().filter(e -> e.hasSUA(spa)).count();
+    private int suaCount(Collection<AlphaStrikeElement> elements, BattleForceSUA SUA) {
+        return (int)elements.stream().filter(e -> e.hasSUA(SUA)).count();
     }
 
-    private static void addUnitSpasIfAny(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
-        addUnitSpas(elements, unit, 1, spas);
+    private void addUnitSUAsIfAny(BattleForceSUA... SUAs) {
+        addUnitSUAs(1, SUAs);
     }
 
-    private static void addUnitSpasIfHalf(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
-        addUnitSpas(elements, unit, Math.max(1, elements.size() / 2), spas);
+    private void addUnitSUAsIfHalf(BattleForceSUA... SUAs) {
+        addUnitSUAs(Math.max(1, elements.size() / 2), SUAs);
     }
 
-    private static void addUnitSpasIfAll(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
-        addUnitSpas(elements, unit, elements.size(), spas);
+    private void addUnitSUAsIfAll(BattleForceSUA... SUAs) {
+        addUnitSUAs(elements.size(), SUAs);
     }
 
-    private static void addUnitSpas(Collection<AlphaStrikeElement> elements, SBFUnit unit,
-                                    int threshold, BattleForceSUA[] spas) {
-        for (BattleForceSUA spa : spas) {
-            if (spaCount(elements, spa) >= threshold) {
-                unit.addSPA(spa);
+    private void addUnitSUAs(int minimumCount, BattleForceSUA[] SUAs) {
+        for (BattleForceSUA sua : SUAs) {
+            int count = suaCount(elements, sua);
+            if (count >= minimumCount) {
+                report.addLine("",
+                        sua + ": " + count + " of " + elements.size() + ", minimum " + minimumCount,
+                        sua.toString());
+                unit.getSpecialAbilities().setSUA(sua);
+            } else if (count > 0) {
+                report.addLine("",
+                        sua + ": " + count + " of " + elements.size() + ", minimum " + minimumCount,
+                        "--");
             }
         }
     }
 
-    private static void sumUnitSpas(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
-        for (BattleForceSUA spa : spas) {
+    private void calcOMNI() {
+        long omni = elements.stream().filter(e -> e.hasSUA(OMNI)).count();
+        if (omni > 0) {
+            report.addLine("",
+                    "OMNI: " + omni + " of " + elements.size(),
+                    "OMNI" + formatForReport(omni));
+            unit.getSpecialAbilities().mergeSUA(SBF_OMNI, (int) omni);
+        }
+    }
+
+    private void sumUnitSUAs(BattleForceSUA... suas) {
+        for (BattleForceSUA sua : suas) {
+            List<String> summands = new ArrayList<>();
+            double sum = 0;
             for (AlphaStrikeElement element : elements) {
-                if (element.hasSUA(spa)) {
-                    if (element.getSUA(spa) == null) {
-                        unit.addSPA(spa, 1);
-                    } else if (element.getSUA(spa) instanceof Integer) {
-                        unit.addSPA(spa, (Integer) element.getSUA(spa));
-                    } else if (element.getSUA(spa) instanceof Double) {
-                        unit.addSPA(spa, (Double) element.getSUA(spa));
-                    } else if (element.getSUA(spa) instanceof ASDamageVector
-                            && ((ASDamageVector)element.getSUA(spa)).rangeBands == 1) {
-                        unit.addSPA(spa, sbfDamage(((ASDamageVector) element.getSUA(spa)).S));
+                if (element.hasSUA(sua)) {
+                    if (element.getSUA(sua) == null) {
+                        unit.getSpecialAbilities().mergeSUA(sua, 1);
+                        summands.add("1");
+                        sum += 1;
+                    } else if (element.getSUA(sua) instanceof Integer) {
+                        unit.getSpecialAbilities().mergeSUA(sua, (Integer) element.getSUA(sua));
+                        summands.add(formatForReport((Integer) element.getSUA(sua)));
+                        sum += (Integer) element.getSUA(sua);
+                    } else if (element.getSUA(sua) instanceof Double) {
+                        unit.getSpecialAbilities().mergeSUA(sua, (Double) element.getSUA(sua));
+                        summands.add(formatForReport((Double) element.getSUA(sua)));
+                        sum += (Double) element.getSUA(sua);
+                    } else if (element.getSUA(sua) instanceof ASDamageVector
+                            && ((ASDamageVector)element.getSUA(sua)).rangeBands == 1) {
+                        unit.getSpecialAbilities().mergeSUA(sua, ((ASDamageVector) element.getSUA(sua)).S.asDoubleValue());
+                        summands.add(formatForReport(((ASDamageVector) element.getSUA(sua)).S.asDoubleValue()));
+                        sum += ((ASDamageVector) element.getSUA(sua)).S.asDoubleValue();
                     }
                 }
             }
+            if (!summands.isEmpty()) {
+                report.addLine("",
+                        sua + ": " + String.join(" + ", summands),
+                        sua + formatForReport(sum));
+            }
         }
     }
 
-    private static void sumUnitArtillery(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
-        for (BattleForceSUA spa : spas) {
-            double artSum = elements.stream().filter(e -> e.hasSUA(spa)).count() * SBFFormation.getSbfArtilleryDamage(spa);
+    private void sumUnitArtillery(BattleForceSUA... suas) {
+        for (BattleForceSUA sua : suas) {
+            int count = 0;
+            List<String> summands = new ArrayList<>();
+            for (AlphaStrikeElement element : elements) {
+                count += element.hasSUA(sua) ? (int) element.getSUA(sua) : 0;
+            }
+            summands.add(count + " x " + SBFFormation.getSbfArtilleryDamage(sua));
+            double artSum = count * SBFFormation.getSbfArtilleryDamage(sua);
             int value = (int) Math.round(artSum / 3);
+            if (artSum > 0) {
+                String result = value > 0 ? sua.toString() + value : "--";
+                report.addLine("",
+                        sua + ": (" + String.join(" + ", summands) + ") / 3, rn",
+                        result);
+            }
             if (value > 0) {
-                unit.addSPA(spa, value);
+                unit.getSpecialAbilities().mergeSUA(sua, value);
             }
         }
     }
 
-    private static void sumUnitSpasDivideBy3(Collection<AlphaStrikeElement> elements, SBFUnit unit, BattleForceSUA... spas) {
-        for (BattleForceSUA spa : spas) {
+    private void sumUnitSUAsDivideBy3(BattleForceSUA... suas) {
+        for (BattleForceSUA sua : suas) {
+            List<String> summands = new ArrayList<>();
             for (AlphaStrikeElement element : elements) {
-                if (element.hasSUA(spa)) {
-                    if (element.getSUA(spa) == null) {
-                        unit.addSPA(spa, 1);
-                    } else if (element.getSUA(spa) instanceof Integer) {
-                        unit.addSPA(spa, (Integer) element.getSUA(spa));
-                    } else if (element.getSUA(spa) instanceof Double) {
-                        unit.addSPA(spa, (Double) element.getSUA(spa));
-                    } else if (element.getSUA(spa) instanceof ASDamageVector
-                            && ((ASDamageVector)element.getSUA(spa)).rangeBands == 1) {
-                        unit.addSPA(spa, sbfDamage(((ASDamageVector) element.getSUA(spa)).S));
+                if (element.hasSUA(sua)) {
+                    if (element.getSUA(sua) == null) {
+                        unit.getSpecialAbilities().mergeSUA(sua, 1);
+                        summands.add("1");
+                    } else if (element.getSUA(sua) instanceof Integer) {
+                        unit.getSpecialAbilities().mergeSUA(sua, (Integer) element.getSUA(sua));
+                        summands.add(formatForReport((Integer) element.getSUA(sua)));
+                    } else if (element.getSUA(sua) instanceof Double) {
+                        unit.getSpecialAbilities().mergeSUA(sua, (Double) element.getSUA(sua));
+                        summands.add(formatForReport((Double) element.getSUA(sua)));
+                    } else if (element.getSUA(sua) instanceof ASDamageVector
+                            && ((ASDamageVector)element.getSUA(sua)).rangeBands == 1) {
+                        unit.getSpecialAbilities().mergeSUA(sua, ((ASDamageVector) element.getSUA(sua)).S.asDoubleValue());
+                        summands.add(formatForReport(((ASDamageVector) element.getSUA(sua)).S.asDoubleValue()));
                     }
                 }
             }
-            if (unit.hasSPA(spa)) {
-                int oneThird = (int) Math.round(1.0d / 3 * (double) unit.getSPA(spa));
+            if (unit.hasSUA(sua)) {
+                int oneThird = (int) Math.round((double) unit.getSUA(sua) / 3);
+                String result = oneThird > 0 ? sua.toString() + oneThird : "--";
+                report.addLine("",
+                        sua + ": (" + String.join(" + ", summands) + ") / 3, rn",
+                        result);
                 if (oneThird == 0) {
-                    unit.removeSPA(spa);
+                    unit.getSpecialAbilities().removeSUA(sua);
                 } else {
-                    unit.replaceSPA(spa, oneThird);
+                    unit.getSpecialAbilities().replaceSUA(sua, oneThird);
                 }
             }
         }
     }
 
-    private static void calcUnitMhq(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        double mhq = elements.stream().filter(e -> e.hasSUA(MHQ)).mapToInt(e -> Math.max(0, (int) e.getSUA(MHQ) - 1)).sum();
-        int oneThird = (int) Math.round(mhq / 3);
+    private void calcMHQ() {
+        if (elements.stream().noneMatch(e -> e.hasSUA(MHQ))) {
+            return;
+        }
+        int totalMHQ = 0;
+        List<String> summands = new ArrayList<>();
+        for (AlphaStrikeElement element : elements) {
+            if (element.hasSUA(MHQ)) {
+                int mhqValue = (int) element.getSUA(MHQ) - 1;
+                summands.add(mhqValue + "");
+                totalMHQ += mhqValue;
+            }
+        }
+        int oneThird = (int) Math.round((double) totalMHQ / 3);
+        String calculation = "MHQ: (" + String.join(" + ", summands) + ") / 3 = "
+                + formatForReport((double) totalMHQ / 3) + ", rn";
+        String result = oneThird > 0 ? "MHQ" + oneThird : "--";
         if (oneThird > 0) {
-            unit.addSPA(MHQ, oneThird);
+            unit.getSpecialAbilities().mergeSUA(MHQ, oneThird);
+            report.addLine("", calculation, result);
         }
     }
 
-    private static void calcUnitRcn(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        if (elements.stream().filter(e -> e.hasSUA(RCN) || isConsideredRcn(e)).count() >= 2) {
-            unit.addSPA(RCN);
+    private void calcRCN() {
+        long rcnCount = elements.stream().filter(e -> e.hasSUA(RCN) || isConsideredRcn(e)).count();
+        if (rcnCount >= 2) {
+            unit.getSpecialAbilities().setSUA(RCN);
+            report.addLine("",
+                    "RCN: " + rcnCount + " of " + elements.size() + ", minimum 2",
+                    "RCN");
+        }
+    }
+
+    private void calcSTL() {
+        if (elements.stream().filter(e -> e.hasAnySUAOf(STL, MAS, LMAS)).count() == elements.size()) {
+            unit.getSpecialAbilities().setSUA(STL);
+            unit.getSpecialAbilities().setSUA(MAS);
+            unit.getSpecialAbilities().setSUA(LMAS);
         }
     }
 
@@ -256,11 +409,6 @@ public class SBFUnitConverter {
                 || el.getName().contains("Recon")
                 || el.getName().contains("Sensor")
                 || el.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS);
-    }
-
-    /** Returns the SBF damage of an AlphaStrike damage (0.5 for minimal damage, the AS damage otherwise). */
-    private static double sbfDamage(ASDamage asDamage) {
-        return asDamage.minimal ? 0.5 : asDamage.damage;
     }
 
     private static int getTmmFromMove(int move) {
@@ -281,34 +429,66 @@ public class SBFUnitConverter {
         }
     }
 
-    private static int calcUnitMove(Collection<AlphaStrikeElement> elements) {
-        double result = elements.stream().mapToInt(AlphaStrikeElement::getPrimaryMovementValue).average().orElse(0);
+    /** Determine the Unit's movement value. Must come before TMM. */
+    private void calcUnitMove() {
+        double averageMove = elements.stream().mapToInt(AlphaStrikeElement::getPrimaryMovementValue).average().orElse(0);
+        roundedAverageMove = (int) Math.round(averageMove / 2);
         if (elements.stream().anyMatch(AlphaStrikeElement::isInfantry)) {
             int minInfantryMove = elements.stream()
                     .filter(AlphaStrikeElement::isInfantry)
                     .mapToInt(AlphaStrikeElement::getPrimaryMovementValue)
                     .min()
-                    .orElse(0);
-            result = Math.min(result, minInfantryMove);
+                    .orElse(0) / 2;
+            int finalMove = Math.min(roundedAverageMove, minInfantryMove);
+            report.addLine("Movement:", "");
+            String elementsSum = elements.stream().map(e -> e.getPrimaryMovementValue() + "").collect(joining(" + "));
+            report.addLine("- Average Move", "(" + elementsSum + ") / " + elements.size() + " / 2, rn",
+                    "= " + formatForReport(averageMove));
+            report.addLine("- Minimum Infantry Move", "", minInfantryMove + "");
+            report.addLine("Final Movement Value", "", finalMove + "");
+            unit.setMovement(finalMove);
+        } else {
+            report.addLine("Movement:",
+                    "(Average of "
+                            + elements.stream().map(e -> e.getPrimaryMovementValue() + "").collect(joining(", "))
+                            + ") / 2, rn",
+                    formatForReport(roundedAverageMove));
+            unit.setMovement(roundedAverageMove);
         }
-        return (int) Math.round(result / 2);
     }
 
-    private static int getUnitJumpMove(Collection<AlphaStrikeElement> elements) {
-        return (int) Math.round(elements.stream().mapToInt(AlphaStrikeElement::getJumpMove).average().orElse(0) / 4);
+    private void calcTransportMove() {
+        int transportMove = unit.getMovement();
+        if (elements.stream().anyMatch(AlphaStrikeElement::isInfantry)) {
+            //stub
+        }
+        unit.setTrspMovement(transportMove);
     }
 
-    private static void setMovementMode(SBFUnit unit, Collection<AlphaStrikeElement> elements) {
+    private void calcUnitJumpMove() {
+        double averageJump = elements.stream().mapToInt(AlphaStrikeElement::getJumpMove).average().orElse(0);
+        int jump = (int) Math.round(averageJump / 4);
+        report.addLine("Jump:",
+                "(Average of "
+                        + elements.stream().map(e -> e.getJumpMove() + "").collect(joining(", "))
+                        + ") / 4, rn",
+                jump + "");
+        unit.setJumpMove(jump);
+    }
+
+    private void setMovementMode() {
         SBFMoveMode currentMode = new SBFMoveMode("", Integer.MAX_VALUE);
         for (AlphaStrikeElement element : elements) {
-            if (restrictionLevel(unit, element).rank < currentMode.rank) {
-                currentMode = restrictionLevel(unit, element);
+            SBFMoveMode newMode = modeForElement(element);
+            if (newMode.rank < currentMode.rank) {
+                currentMode = newMode;
             }
         }
-        unit.setMoveType(currentMode.key);
+        report.addLine("Movement Mode:", currentMode.key);
+        unit.setMovementMode(currentMode.key);
     }
 
-    private static SBFMoveMode restrictionLevel(SBFUnit unit, AlphaStrikeElement element) {
+    private SBFMoveMode modeForElement(AlphaStrikeElement element) {
         if (unit.isAerospace() && element.isGround()) {
             if (element.hasSUA(BIM)) {
                 return new SBFMoveMode("l", 50);
@@ -393,35 +573,97 @@ public class SBFUnitConverter {
         }
     }
 
-    private static int calcUnitArmor(Collection<AlphaStrikeElement> elements) {
+    private void calcUnitArmor() {
+        report.addLine("Armor:", "");
         double result = 0;
         for (AlphaStrikeElement element : elements) {
-            result += element.getFullArmor() + element.getFullStructure();
-            result += (element.getFullStructure() >= 3 || element.hasAnySUAOf(AMS, CASE)) ? 0.5 : 0;
-            result += (element.hasAnySUAOf(ENE, CASEII, CR, RAMS)) ? 1 : 0;
+            String modifier = "";
+            double delta = 0;
+            double elementArmorValue = element.getFullArmor() + element.getFullStructure();
+            String calculation = element.getFullArmor() + " + " + element.getFullStructure();
+            if (element.getFullStructure() >= 3 || element.hasAnySUAOf(AMS, CASE)) {
+                delta = 0.5;
+                if (element.getFullStructure() >= 3) {
+                    modifier = "Str3+";
+                } else {
+                    modifier = element.hasSUA(AMS) ? "AMS" : "CASE";
+                }
+            }
+            if (element.hasAnySUAOf(ENE, CASEII, CR, RAMS)) {
+                delta = 1;
+                if (element.hasSUA(ENE)) {
+                    modifier = "ENE";
+                } else if (element.hasSUA(CASEII)) {
+                    modifier = "CASEII";
+                } else {
+                    modifier = element.hasSUA(CR) ? "CR" : "RAMS";
+                }
+            }
+            if (delta > 0) {
+                calculation += " + " + formatForReport(delta) + " (" + modifier + ")";
+                elementArmorValue += delta;
+            }
+            report.addLine("- " + element.getName(), calculation, "= " + formatForReport(elementArmorValue));
+            result += elementArmorValue;
         }
-        return (int)Math.round(result / 3);
+        int armor = (int) Math.round(result / 3);
+        report.addLine("- Armor:",
+                formatForReport(result) + " / 3, rn",
+                "= " + formatForReport(armor));
+        unit.setArmor(armor);
     }
 
-    private static int calcUnitPointValue(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        int intermediate = (int) Math.round( 1.0d / 3 * elements.stream().mapToInt(AlphaStrikeElement::getPointValue).sum());
+    private void calcUnitPointValue() {
+        double sum = (double) elementsBaseSkill.stream().mapToInt(AlphaStrikeElement::getPointValue).sum() / 3;
+        int intermediate = (int) Math.round(sum);
+        String calculation = "(" + elementsBaseSkill.stream().map(e -> e.getPointValue() + "")
+                .collect(joining(" + ")) + ") / 3 = " + formatForReport(sum) + ", rn";
         double result = intermediate;
+        String skillCalculation = "";
         if (unit.getSkill() > 4) {
-            result = (1.0d + (unit.getSkill() - 4) * 0.1) * intermediate;
+            result = (1.0d - (unit.getSkill() - 4) * 0.1) * intermediate;
+            skillCalculation += intermediate + " x (1 - (" + unit.getSkill() + " - 4) x 0.1) = " + result + ", rn";
         } else if (unit.getSkill() < 4) {
             result = (1.0d + (4 - unit.getSkill()) * 0.2) * intermediate;
+            skillCalculation += intermediate + " x (1 + (4 - " + unit.getSkill() + ") x 0.2) = " + result + ", rn, Min "
+                    + (intermediate + 4 - unit.getSkill());
             result = Math.max(intermediate + 4 - unit.getSkill(), result);
         }
-        return (int) Math.round(result);
+        int pointValue = Math.max(1, (int) Math.round(result));
+        if (unit.getSkill() == 4) {
+            report.addLine("Point Value:", calculation, "= " + intermediate);
+        } else {
+            report.addLine("Point Value:", "");
+            report.addLine("- PV Sum", calculation, "= " + intermediate);
+            report.addLine("- Skill Modifier", skillCalculation, "= " + pointValue);
+        }
+        unit.setPointValue(pointValue);
     }
 
-    private static int calcUnitSkill(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
+    private void calcUnitSkill() {
         int skill = (int) Math.round(elements.stream().mapToInt(AlphaStrikeElement::getSkill).average().orElse(4));
-        skill -= unit.hasSPA(DN) ? 1 : 0;
-        skill += unit.hasAnySPAOf(BFC, DRO, RBT) ? 1 : 0;
-        skill = Math.min(skill, 7);
-        skill = Math.max(skill, 0);
-        return skill;
+        String calculation = "(" + elements.stream().map(e -> e.getSkill() + "").collect(joining(" + ")) + ") / " + elements.size();
+        List<String> modifiers = new ArrayList<>();
+        if (unit.hasSUA(DN)) {
+            skill -= 1;
+            calculation += " - 1";
+            modifiers.add("DN");
+        }
+        if (unit.hasAnySUAOf(BFC, DRO, RBT)) {
+            skill += 1;
+            calculation += " + 1";
+            if (unit.hasSUA(BFC)) {
+                modifiers.add("BFC");
+            } else {
+                modifiers.add(unit.hasSUA(DRO) ? "DRO" : "RBT");
+            }
+        }
+        if (!modifiers.isEmpty()) {
+            calculation += "(" + String.join(", ", modifiers) + ")";
+        }
+        calculation += ", rn, [0, 7]";
+        skill = MathUtility.clamp(skill, 0, 7);
+        report.addLine("Skill:", calculation, skill + "");
+        unit.setSkill(skill);
     }
-
 }

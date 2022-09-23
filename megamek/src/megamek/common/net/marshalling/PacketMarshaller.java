@@ -1,17 +1,16 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.common.net.marshalling;
 
 import java.io.ByteArrayInputStream;
@@ -19,7 +18,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.net.packets.Packet;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Generic marshaller that [un]marshalls the <code>Packet</code>
@@ -37,14 +38,14 @@ public abstract class PacketMarshaller {
      * @param packet packet to marshall
      * @return marshalled representation of the given <code>Packet</code>
      */
-    public byte[] marshall(Packet packet) {
+    public @Nullable byte[] marshall(Packet packet) {
         ByteArrayOutputStream bo = new ByteArrayOutputStream();
         try {
             marshall(packet, bo);
             bo.flush();
             return bo.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return null;
         }
     }
@@ -57,8 +58,7 @@ public abstract class PacketMarshaller {
      *            <code>Packet</code> to
      * @throws Exception
      */
-    public abstract void marshall(Packet packet, OutputStream stream)
-            throws Exception;
+    public abstract void marshall(Packet packet, OutputStream stream) throws Exception;
 
     /**
      * Unmarshalls the packet data from the given <code>byte[]</code> array
@@ -67,14 +67,13 @@ public abstract class PacketMarshaller {
      * @return the new <code>Packet</code>unmarshalled from the given
      *         <code>byte[]</code> array
      */
-    public Packet unmarshall(byte[] data) {
+    public @Nullable Packet unmarshall(byte... data) {
         try {
             return unmarshall(new ByteArrayInputStream(data));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
             return null;
         }
-
     }
 
     /**
@@ -86,5 +85,4 @@ public abstract class PacketMarshaller {
      * @throws Exception
      */
     public abstract Packet unmarshall(InputStream stream) throws Exception;
-
 }

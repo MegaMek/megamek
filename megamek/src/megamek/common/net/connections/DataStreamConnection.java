@@ -14,6 +14,7 @@
 package megamek.common.net.connections;
 
 import megamek.common.net.enums.PacketReadState;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.*;
 import java.net.Socket;
@@ -67,12 +68,12 @@ public class DataStreamConnection extends AbstractConnection {
 
     @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
-        NetworkPacket packet = null;
+        NetworkPacket packet;
         if (in == null) {
-            in = new DataInputStream(new BufferedInputStream(
-                    getInputStream(), getReceiveBufferSize()));
+            in = new DataInputStream(new BufferedInputStream(getInputStream(), getReceiveBufferSize()));
             state = PacketReadState.HEADER;
         }
+
         synchronized (in) {
             switch (state) {
                 case HEADER:
@@ -94,13 +95,11 @@ public class DataStreamConnection extends AbstractConnection {
     }
 
     @Override
-    protected void sendNetworkPacket(byte[] data, boolean iszipped)
-            throws Exception {
-
+    protected void sendNetworkPacket(byte[] data, boolean iszipped) throws Exception {
         if (out == null) {
-            out = new DataOutputStream(new BufferedOutputStream(
-                    getOutputStream(), getSendBufferSize()));
+            out = new DataOutputStream(new BufferedOutputStream(getOutputStream(), getSendBufferSize()));
         }
+
         synchronized (out) {
             out.writeBoolean(iszipped);
             out.writeInt(marshallingType);
@@ -123,15 +122,14 @@ public class DataStreamConnection extends AbstractConnection {
                     out.flush();
                 }
             }
-        } catch (SocketException se) {
+        } catch (SocketException ignored) {
             // close this connection, because it's broken
             // This can happen if the connection is closed while being written
             // to, and it's not a big deal, since the connection is being broken
             // anyways
             close();
-        } catch (IOException ioe) {
-            // Log non-SocketException IOExceptions
-            ioe.printStackTrace();
+        } catch (IOException ex) {
+            LogManager.getLogger().error("", ex);
             // close this connection, because it's broken
             close();
         }

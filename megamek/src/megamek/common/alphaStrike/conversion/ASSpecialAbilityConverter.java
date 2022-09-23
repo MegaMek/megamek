@@ -223,56 +223,56 @@ public class ASSpecialAbilityConverter {
             assign(misc, HJ);
         } else if (miscType.hasFlag(F_CARGO)) {
             assign(misc, CT, (int) misc.getTonnage());
-        } else if (miscType.hasFlag(MiscType.F_HARJEL)) {
+        } else if (miscType.hasFlag(F_HARJEL)) {
             assign(misc, BHJ);
-        } else if (miscType.hasFlag(MiscType.F_HARJEL_II)) {
+        } else if (miscType.hasFlag(F_HARJEL_II)) {
             assign(misc, BHJ2);
-        } else if (miscType.hasFlag(MiscType.F_HARJEL_III)) {
+        } else if (miscType.hasFlag(F_HARJEL_III)) {
             assign(misc, BHJ3);
         } else if (miscType.isShield()) {
             assign(misc, SHLD);
-        } else if (miscType.hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
+        } else if (miscType.hasFlag(F_INDUSTRIAL_TSM)) {
             assign(misc, ITSM);
-        } else if (miscType.hasFlag(MiscType.F_TSM)) {
+        } else if (miscType.hasFlag(F_TSM)) {
             assign(misc, TSM);
-        } else if (miscType.hasFlag(MiscType.F_VOIDSIG)) {
+        } else if (miscType.hasFlag(F_VOIDSIG)) {
             assign(misc, MAS);
-        } else if (miscType.hasFlag(MiscType.F_NULLSIG)
-                || miscType.hasFlag(MiscType.F_CHAMELEON_SHIELD)) {
+        } else if (miscType.hasFlag(F_NULLSIG)
+                || miscType.hasFlag(F_CHAMELEON_SHIELD)) {
             assign(misc, STL);
             assign(misc, ECM);
-        } else if (miscType.hasFlag(MiscType.F_UMU)) {
+        } else if (miscType.hasFlag(F_UMU)) {
             assign(misc, UMU);
-        } else if (miscType.hasFlag(MiscType.F_EW_EQUIPMENT)) {
+        } else if (miscType.hasFlag(F_EW_EQUIPMENT)) {
             assign(misc, ECM);
-        } else if (miscType.hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+        } else if (miscType.hasFlag(F_ADVANCED_FIRECONTROL)) {
             assign(misc, AFC);
-        } else if (miscType.hasFlag(MiscType.F_BASIC_FIRECONTROL)) {
+        } else if (miscType.hasFlag(F_BASIC_FIRECONTROL)) {
             assign(misc, BFC);
-        } else if (miscType.hasFlag(MiscType.F_AMPHIBIOUS) || miscType.hasFlag(MiscType.F_FULLY_AMPHIBIOUS)
-                || miscType.hasFlag(MiscType.F_LIMITED_AMPHIBIOUS)) {
+        } else if (miscType.hasFlag(F_AMPHIBIOUS) || miscType.hasFlag(F_FULLY_AMPHIBIOUS)
+                || miscType.hasFlag(F_LIMITED_AMPHIBIOUS)) {
             assign(misc, AMP);
-        } else if (miscType.hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+        } else if (miscType.hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
             assign(misc, ARS);
-        } else if (miscType.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
+        } else if (miscType.hasFlag(F_VEHICLE_MINE_DISPENSER)) {
             assign(misc, MDS, 2);
-        } else if (miscType.hasFlag(MiscType.F_MINESWEEPER)) {
+        } else if (miscType.hasFlag(F_MINESWEEPER)) {
             assign(misc, MSW);
-        } else if (miscType.hasFlag(MiscType.F_MASH)) {
+        } else if (miscType.hasFlag(F_MASH)) {
             assign(misc, MASH, (int) misc.getSize());
-        } else if (miscType.hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+        } else if (miscType.hasFlag(F_MOBILE_FIELD_BASE)) {
             assign(misc, MFB);
-        } else if (miscType.hasFlag(MiscType.F_OFF_ROAD)) {
+        } else if (miscType.hasFlag(F_OFF_ROAD)) {
             assign(misc, ORO);
-        } else if (miscType.hasFlag(MiscType.F_DUNE_BUGGY)) {
+        } else if (miscType.hasFlag(F_DUNE_BUGGY)) {
             assign(misc, DUN);
-        } else if (miscType.hasFlag(MiscType.F_TRACTOR_MODIFICATION)
-                || miscType.hasFlag(MiscType.F_TRAILER_MODIFICATION)
-                || miscType.hasFlag(MiscType.F_HITCH)) {
+        } else if (miscType.hasFlag(F_TRACTOR_MODIFICATION)
+                || miscType.hasFlag(F_TRAILER_MODIFICATION)
+                || miscType.hasFlag(F_HITCH)) {
             assign(misc, HTC);
-        } else if (miscType.hasFlag(MiscType.F_COMMAND_CONSOLE)) {
+        } else if (miscType.hasFlag(F_COMMAND_CONSOLE)) {
             assign(misc, MHQ, 1);
-        } else if (miscType.hasFlag(MiscType.F_SPACE_MINE_DISPENSER)) {
+        } else if (miscType.hasFlag(F_SPACE_MINE_DISPENSER)) {
             assign(misc, MDS, 2);
         }
 

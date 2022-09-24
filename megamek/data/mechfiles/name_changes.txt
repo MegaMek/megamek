@@ -541,13 +541,56 @@ Tramp JumpShip (Lithium-Fusion)|Tramp JumpShip (3071)
 
 #Mechs
 Atlas AS7-D(C)|Atlas C
-Jagermech JM6-DG|JagerMech JM6-DG
-Mad Cat III (Eve)|Mad Cat III 3 (Eve)
-Puma (Adder) A|Adder (Puma) A
-Puma (Adder) B|Adder (Puma) B
-Puma (Adder) C|Adder (Puma) C
-Puma (Adder) D|Adder (Puma) D
-Puma (Adder) Prime|Adder (Puma) Prime
+Baboon (Howler) (Standard)|Howler (Baboon)
+Behemoth (Stone Rhino) (Standard)|Stone Rhino (Behemoth)
+Behemoth (Stone Rhino) 4|Stone Rhino (Behemoth) 4
+Behemoth (Stone Rhino) 5|Stone Rhino (Behemoth) 5
+Behemoth (Stone Rhino) 6|Stone Rhino (Behemoth) 6
+Black Hawk (Nova) A|Nova (Black Hawk) A
+Black Hawk (Nova) B|Nova (Black Hawk) B
+Black Hawk (Nova) C|Nova (Black Hawk) C
+Black Hawk (Nova) D|Nova (Black Hawk) D
+Black Hawk (Nova) Prime|Nova (Black Hawk) Prime
+Black Hawk (Nova) S|Nova (Black Hawk) S
+Black Hawk (Standard)|Black Hawk (Standard)
+Black Hawk 2|Black Hawk (Standard) 2
+Black Hawk 3|Black Hawk (Standard) 3
+Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
+Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
+Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C
+Cauldron-Born (Ebon Jaguar) Prime|Ebon Jaguar (Cauldron-Born) Prime
+Daishi (Dire Wolf) A|Dire Wolf (Daishi) A
+Daishi (Dire Wolf) B|Dire Wolf (Daishi) B
+Daishi (Dire Wolf) Prime|Dire Wolf (Daishi) Prime
+Daishi (Dire Wolf) S|Dire Wolf (Daishi) S
+Daishi (Dire Wolf) W|Dire Wolf (Daishi) W
+Dasher (Fire Moth) A|Fire Moth (Dasher) A
+Dasher (Fire Moth) B|Fire Moth (Dasher) B
+Dasher (Fire Moth) C|Fire Moth (Dasher) C
+Dasher (Fire Moth) D|Fire Moth (Dasher) D
+Dasher (Fire Moth) Prime|Fire Moth (Dasher) Prime
+Dragonfly (Viper) A|Viper (Dragonfly) A
+Dragonfly (Viper) B|Viper (Dragonfly) B
+Dragonfly (Viper) C|Viper (Dragonfly) C
+Dragonfly (Viper) D|Viper (Dragonfly) D
+Dragonfly (Viper) Prime|Viper (Dragonfly) Prime
+Fenris (Ice Ferret) A|Ice Ferret (Fenris) A
+Fenris (Ice Ferret) B|Ice Ferret (Fenris) B
+Fenris (Ice Ferret) C|Ice Ferret (Fenris) C
+Fenris (Ice Ferret) D|Ice Ferret (Fenris) D
+Fenris (Ice Ferret) Prime|Ice Ferret (Fenris) Prime
+Gladiator (Executioner) A|Executioner (Gladiator) A
+Gladiator (Executioner) B|Executioner (Gladiator) B
+Gladiator (Executioner) C|Executioner (Gladiator) C
+Gladiator (Executioner) D|Executioner (Gladiator) D
+Gladiator (Executioner) Prime|Executioner (Gladiator) Prime
+Goshawk (Vapor Eagle) (Standard)|Vapor Eagle (Goshawk)
+Goshawk (Vapor Eagle) 2|Vapor Eagle (Goshawk) 2
+Grendel (Mongrel) A|Mongrel (Grendel) A
+Grendel (Mongrel) B|Mongrel (Grendel) B
+Grendel (Mongrel) C|Mongrel (Grendel) C
+Grendel (Mongrel) D|Mongrel (Grendel) D
+Grendel (Mongrel) Prime|Mongrel (Grendel) Prime
 Hankyu (Arctic Cheetah) A|Arctic Cheetah (Hankyu) A
 Hankyu (Arctic Cheetah) B|Arctic Cheetah (Hankyu) B
 Hankyu (Arctic Cheetah) C|Arctic Cheetah (Hankyu) C
@@ -555,126 +598,91 @@ Hankyu (Arctic Cheetah) D|Arctic Cheetah (Hankyu) D
 Hankyu (Arctic Cheetah) Prime|Arctic Cheetah (Hankyu) Prime
 Hellhound (Conjurer) (Standard)|Conjurer (Hellhound)
 Hellhound (Conjurer) 2|Conjurer (Hellhound) 2
-Daishi (Dire Wolf) A|Dire Wolf (Daishi) A
-Daishi (Dire Wolf) B|Dire Wolf (Daishi) B
-Daishi (Dire Wolf) Prime|Dire Wolf (Daishi) Prime
-Daishi (Dire Wolf) S|Dire Wolf (Daishi) S
-Daishi (Dire Wolf) W|Dire Wolf (Daishi) W
-Cauldron-Born (Ebon Jaguar) A|Ebon Jaguar (Cauldron-Born) A
-Cauldron-Born (Ebon Jaguar) B|Ebon Jaguar (Cauldron-Born) B
-Cauldron-Born (Ebon Jaguar) C|Ebon Jaguar (Cauldron-Born) C
-Cauldron-Born (Ebon Jaguar) Prime|Ebon Jaguar (Cauldron-Born) Prime
-Gladiator (Executioner) A|Executioner (Gladiator) A
-Gladiator (Executioner) B|Executioner (Gladiator) B
-Gladiator (Executioner) C|Executioner (Gladiator) C
-Gladiator (Executioner) D|Executioner (Gladiator) D
-Gladiator (Executioner) Prime|Executioner (Gladiator) Prime
-Dasher (Fire Moth) A|Fire Moth (Dasher) A
-Dasher (Fire Moth) B|Fire Moth (Dasher) B
-Dasher (Fire Moth) C|Fire Moth (Dasher) C
-Dasher (Fire Moth) D|Fire Moth (Dasher) D
-Dasher (Fire Moth) Prime|Fire Moth (Dasher) Prime
-Iron Cheetah Prime-NA|Iron Cheetah Prime.png
+Hunchback IIC (Standard)|Hunchback IIC
 Iron Cheetah A-NA|Iron Cheetah A
 Iron Cheetah B-NA|Iron Cheetah B
 Iron Cheetah C-NA|Iron Cheetah C
 Iron Cheetah D-NA|Iron Cheetah D
 Iron Cheetah E-NA|Iron Cheetah E
 Iron Cheetah F-NA|Iron Cheetah L
+Iron Cheetah Prime-NA|Iron Cheetah Prime.png
+Jagermech JM6-DG|JagerMech JM6-DG
+Kodiak (Standard)|Kodiak
+Koshi (Mist Lynx) A|Mist Lynx (Koshi) A
+Koshi (Mist Lynx) B|Mist Lynx (Koshi) B
+Koshi (Mist Lynx) C|Mist Lynx (Koshi) C
+Koshi (Mist Lynx) D|Mist Lynx (Koshi) D
+Koshi (Mist Lynx) Prime|Mist Lynx (Koshi) Prime
+Koshi (Standard)|Koshi (Standard)
+Koshi 2|Koshi (Standard) 2
+Koshi 3|Koshi (Standard) 3
 Loki (Hellbringer) A|Hellbringer (Loki) A
 Loki (Hellbringer) B|Hellbringer (Loki) B
 Loki (Hellbringer) Prime|Hellbringer (Loki) Prime
-Peregrine (Horned Owl) (Standard)|Horned Owl (Peregrine)
-Peregrine (Horned Owl) 2|Horned Owl (Peregrine) 2
-Baboon (Howler) (Standard)|Howler (Baboon)
-Hunchback IIC (Standard)|Hunchback IIC
+Mad Cat (Timber Wolf) A|Timber Wolf (Mad Cat) A
+Mad Cat (Timber Wolf) B|Timber Wolf (Mad Cat) B
+Mad Cat (Timber Wolf) C|Timber WOlf (Mad Cat) C
+Mad Cat (Timber WOlf) D|Timber Wolf (Mad Cat) D
+Mad Cat (Timber Wolf) Prime|Timber Wolf (Mad Cat) Prime
+Mad Cat (Timber Wolf) S|Timber Wolf (Mad Cat) S
+Mad Cat III (Eve)|Mad Cat III 3 (Eve)
+Man O' War (Gargoyle) A|Gargoyle (Man O' War) A
+Man O' War (Gargoyle) B|Gargoyle (Man O' War) B
+Man O' War (Gargoyle) C|Gargoyle (Man O' War) C
+Man O' War (Gargoyle) D|Gargoyle (Man O' War) D
+Man O' War (Gargoyle) Prime|Gargoyle (Man O' War) Prime
+Marauder IIC (Standard)|Marauder IIC
+Masakari (Warhawk) A|Warhawk (Masakari) A
+Masakari (Warhawk) B|Warhawk (Masakari) B
+Masakari (Warhawk) C|Warhawk (Masakari) C
+Masakari (Warhawk) Prime|Warhawk (Masakari) Prime
 Nobori-nin (Huntsman) A|Huntsman (Nobori-nin) A
 Nobori-nin (Huntsman) B|Huntsman (Nobori-nin) B
 Nobori-nin (Huntsman) C|Huntsman (Nobori-nin) C
 Nobori-nin (Huntsman) Prime|Huntsman (Nobori-nin) Prime
-Fenris (Ice Ferret) A|Ice Ferret (Fenris) A
-Fenris (Ice Ferret) B|Ice Ferret (Fenris) B
-Fenris (Ice Ferret) C|Ice Ferret (Fenris) C
-Fenris (Ice Ferret) D|Ice Ferret (Fenris) D
-Fenris (Ice Ferret) Prime|Ice Ferret (Fenris) Prime
-Vixen (Incubus) 2|Incubus (Vixen) 2
-Vixen (Incubus) 3|Incubus (Vixen) 3
-Vixen (Incubus) (Standard)|Incubus (Vixen)
+'OMEGA' SHP-4X|OMEGA SHP-4X
+Peregrine (Horned Owl) (Standard)|Horned Owl (Peregrine)
+Peregrine (Horned Owl) 2|Horned Owl (Peregrine) 2
+Phoenix Hawk LAM PXH-HK2|Phoenix Hawk LAM PHX-HK2
+Piranha (Standard)|Piranha
+Puma (Adder) A|Adder (Puma) A
+Puma (Adder) B|Adder (Puma) B
+Puma (Adder) C|Adder (Puma) C
+Puma (Adder) D|Adder (Puma) D
+Puma (Adder) Prime|Adder (Puma) Prime
+Raijin RJN101-A|Raijin RJN-101-A
+Raijin RJN101-C|Raijin RJN-101-C
+Ryoken (Stormcrow) A|Stormcrow (Ryoken) A
+Ryoken (Stormcrow) B|Stormcrow (Ryoken) B
+Ryoken (Stormcrow) C|Stormcrow (Ryoken) C
+Ryoken (Stormcrow) D|Stormcrow (Ryoken) D
+Ryoken (Stormcrow) Prime|Stormcrow (Ryoken) Prime
+Supernova (Standard)|Supernova
+Thor (Summoner) A|Summoner (Thor) A
+Thor (Summoner) B|Summoner (Thor) B
+Thor (Summoner) C|Summoner (Thor) C
+Thor (Summoner) D|Summoner (Thor) D
+Thor (Summoner) M|Summoner (Thor) M
+Thor (Summoner) Prime|Summoner (Thor) Prime
+Timber Wolf (Mad Cat) M|Mad Cat (Timber Wolf) M
+Timber Wolf (Mad Cat) N|Mad Cat (Timber Wolf) N
+Timber Wolf (Mad Cat) T|Mad Cat (Timber Wolf) T
+Timber Wolf (Mad Cat) W|Mad Cat (Timber Wolf) W
 Uller (Kit Fox) A|Kit Fox (Uller) A
 Uller (Kit Fox) B|Kit Fox (Uller) B
 Uller (Kit Fox) C|Kit Fox (Uller) C
 Uller (Kit Fox) D|Kit Fox (Uller) D
 Uller (Kit Fox) Prime|Kit Fox (Uller) Prime
 Uller (Kit Fox) S|Kit Fox (Uller) S
-Kodiak (Standard)|Kodiak
+Vixen (Incubus) (Standard)|Incubus (Vixen)
+Vixen (Incubus) 2|Incubus (Vixen) 2
+Vixen (Incubus) 3|Incubus (Vixen) 3
 Vulture (Mad Dog) A|Mad Dog (Vulture) A
 Vulture (Mad Dog) B|Mad Dog (Vulture) B
 Vulture (Mad Dog) C|Mad Dog (Vulture) C
 Vulture (Mad Dog) Prime|Mad Dog (Vulture) Prime
-Marauder IIC (Standard)|Marauder IIC
-Koshi (Mist Lynx) Prime|Mist Lynx (Koshi) Prime
-Koshi (Mist Lynx) A|Mist Lynx (Koshi) A
-Koshi (Mist Lynx) B|Mist Lynx (Koshi) B
-Koshi (Mist Lynx) C|Mist Lynx (Koshi) C
-Koshi (Mist Lynx) D|Mist Lynx (Koshi) D
-Grendel (Mongrel) Prime|Mongrel (Grendel) Prime
-Grendel (Mongrel) A|Mongrel (Grendel) A
-Grendel (Mongrel) B|Mongrel (Grendel) B
-Grendel (Mongrel) C|Mongrel (Grendel) C
-Grendel (Mongrel) D|Mongrel (Grendel) D
-Black Hawk (Nova) Prime|Nova (Black Hawk) Prime
-Black Hawk (Nova) A|Nova (Black Hawk) A
-Black Hawk (Nova) B|Nova (Black Hawk) B
-Black Hawk (Nova) C|Nova (Black Hawk) C
-Black Hawk (Nova) D|Nova (Black Hawk) D
-Black Hawk (Nova) S|Nova (Black Hawk) S
-Piranha (Standard)|Piranha
-Behemoth (Stone Rhino) (Standard)|Stone Rhino (Behemoth)
-Behemoth (Stone Rhino) 4|Stone Rhino (Behemoth) 4
-Behemoth (Stone Rhino) 5|Stone Rhino (Behemoth) 5
-Behemoth (Stone Rhino) 6|Stone Rhino (Behemoth) 6
-Ryoken (Stormcrow) Prime|Stormcrow (Ryoken) Prime
-Ryoken (Stormcrow) A|Stormcrow (Ryoken) A
-Ryoken (Stormcrow) B|Stormcrow (Ryoken) B
-Ryoken (Stormcrow) C|Stormcrow (Ryoken) C
-Ryoken (Stormcrow) D|Stormcrow (Ryoken) D
-Thor (Summoner) Prime|Summoner (Thor) Prime
-Thor (Summoner) A|Summoner (Thor) A
-Thor (Summoner) B|Summoner (Thor) B
-Thor (Summoner) C|Summoner (Thor) C
-Thor (Summoner) D|Summoner (Thor) D
-Thor (Summoner) M|Summoner (Thor) M
-Supernova (Standard)|Supernova
-Mad Cat (Timber Wolf) Prime|Timber Wolf (Mad Cat) Prime
-Mad Cat (Timber Wolf) A|Timber Wolf (Mad Cat) A
-Mad Cat (Timber Wolf) B|Timber Wolf (Mad Cat) B
-Mad Cat (Timber Wolf) C|Timber WOlf (Mad Cat) C
-Mad Cat (Timber WOlf) D|Timber Wolf (Mad Cat) D
-Mad Cat (Timber Wolf) S|Timber Wolf (Mad Cat) S
-Timber Wolf (Mad Cat) M|Mad Cat (Timber Wolf) M
-Timber Wolf (Mad Cat) N|Mad Cat (Timber Wolf) N
-Timber Wolf (Mad Cat) T|Mad Cat (Timber Wolf) T
-Timber Wolf (Mad Cat) W|Mad Cat (Timber Wolf) W
-Goshawk (Vapor Eagle) 2|Vapor Eagle (Goshawk) 2
-Goshawk (Vapor Eagle) (Standard)|Vapor Eagle (Goshawk)
-Dragonfly (Viper) Prime|Viper (Dragonfly) Prime
-Dragonfly (Viper) A|Viper (Dragonfly) A
-Dragonfly (Viper) B|Viper (Dragonfly) B
-Dragonfly (Viper) C|Viper (Dragonfly) C
-Dragonfly (Viper) D|Viper (Dragonfly) D
 Warhammer IIC (Standard)|Warhammer IIC
-Masakari (Warhawk) Prime|Warhawk (Masakari) Prime
-Masakari (Warhawk) A|Warhawk (Masakari) A
-Masakari (Warhawk) B|Warhawk (Masakari) B
-Masakari (Warhawk) C|Warhawk (Masakari) C
-Man O' War (Gargoyle) Prime|Gargoyle (Man O' War) Prime
-Man O' War (Gargoyle) A|Gargoyle (Man O' War) A
-Man O' War (Gargoyle) B|Gargoyle (Man O' War) B
-Man O' War (Gargoyle) C|Gargoyle (Man O' War) C
-Man O' War (Gargoyle) D|Gargoyle (Man O' War) D
-Raijin RJN101-A|Raijin RJN-101-A
-Raijin RJN101-C|Raijin RJN-101-C
-'OMEGA' SHP-4X|OMEGA SHP-4X
+
 
 #Protomechs
 Boggart (Quad) 1|Boggart Ultraheavy ProtoMech (Standard)
@@ -714,6 +722,10 @@ Sleipnir APC (SRM)|Sleipnir AP Tank (SRM)
 Sturmfeur Heavy Tank (SRM)|SturmFeur Heavy Tank (SRM)
 Sturmfeur Heavy Tank (Standard)|SturmFeur Heavy Tank (Standard)
 Hover Tank (Standard)|LTV-4 Hover Tank
+Vector (Attack)|Vector Combat Support VTOL (Attack)
+Vector (EW)|Vector Combat Support VTOL (EW)
+Vector (Scout)|Vector Combat Support VTOL (Scout)
+Vector (Transport)|Vector Combat Support VTOL (Transport)
 
 #Warships
 Aegis Heavy Cruiser (Clan)|Aegis Heavy Cruiser (2843)

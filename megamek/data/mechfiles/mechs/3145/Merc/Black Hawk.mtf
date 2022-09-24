@@ -1,16 +1,15 @@
 Version:1.0
-Black Hawk
-2
-mul id:6555
+Black Hawk (Standard)
 
+mul id:6554
 Config:Biped
 TechBase:Clan
-Era:3092
-Source:TRO 3145 Mercenaries - Early Republic
+Era:3073
+Source:TRO 3145 Mercenaries - Jihad
 Rules Level:2
 
 Mass:50
-Engine:250 XL Engine
+Engine:250 XL (Clan) Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
@@ -18,35 +17,37 @@ Heat Sinks:14 Double
 Walk MP:5
 Jump MP:5
 
-Armor:Standard Armor
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:20
+Armor:Standard(Clan)
+LA Armor:13
+RA Armor:13
+LT Armor:14
+RT Armor:14
+CT Armor:19
 HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+LL Armor:19
+RL Armor:19
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
 
-Weapons:4
-1 CLATM6, Right Arm, Ammo:40
-1 CLATM6, Left Arm
-1 CLERLargeLaser, Right Torso
-1 CLERLargeLaser, Left Torso
+Weapons:6
+Streak SRM 4, Left Arm
+Streak SRM 4, Left Arm
+Streak SRM 4, Right Arm
+Streak SRM 4, Right Arm
+ER Large Laser, Left Torso
+ER Large Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLATM6
-CLATM6
-CLATM6
-CLATM6 ER Ammo
-CLATM6 Ammo
+CLStreakSRM4
+CLStreakSRM4
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +57,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLATM6
-CLATM6
-CLATM6
-CLATM6 HE Ammo
-CLATM6 Ammo
+CLStreakSRM4
+CLStreakSRM4
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -68,13 +69,13 @@ CLATM6 Ammo
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLERLargeLaser
--Empty-
--Empty-
+Clan Streak SRM 4 Ammo
+Clan Streak SRM 4 Ammo
 Endo Steel
 Endo Steel
 Endo Steel
@@ -82,13 +83,13 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLERLargeLaser
--Empty-
--Empty-
+Clan Streak SRM 4 Ammo
+Clan Streak SRM 4 Ammo
 Endo Steel
 Endo Steel
 Endo Steel
@@ -148,4 +149,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

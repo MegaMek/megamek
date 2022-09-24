@@ -829,6 +829,10 @@ public class Board implements Serializable {
      * Can the given entity be deployed at these coordinates
      */
     public boolean isLegalDeployment(Coords c, Entity e) {
+        if (e == null) {
+            return false;
+        }
+        
         return isLegalDeployment(c, e.getStartingPos(), e.getStartingWidth(), e.getStartingOffset());
     }
     

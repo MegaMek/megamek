@@ -379,11 +379,26 @@ public class MechSearchFilter {
                     LogManager.getLogger().debug("ExpNode n is null");
                 }
 
-                if (currEq.equals(n.name) && currQty >= n.qty) {
+                // If the name matches, that means this is the weapon/equipment we are checking for.
+                // If the requested quantity is greater than 0, then the unit quantity must equal or exceed it.
+                // However, if the requested quantity is 0, then the simple fact that the weapon/equipment matches
+                // means that the unit isn't a match for the filter, as it has a weapon/equipment that is required to
+                // NOT be there.
+                if (currEq.equals(n.name) && n.qty > 0 && currQty >= n.qty) {
                     return true;
+                } else if (currEq.equals(n.name) && n.qty == 0) {
+                    return false;
                 }
             }
-            return false;
+
+            // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
+            // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
+            // a match.
+            if (n.qty == 0) {
+                return true;
+            } else {
+                return false;
+            }
         }
         // Otherwise, recurse on all the children and either AND the results
         // or OR them, based upon the operation in this node

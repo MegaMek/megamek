@@ -217,7 +217,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cbxEnableArmorSearch.addItemListener(this);
 
 
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 0; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
         }
         cboQty.setSelectedIndex(0);

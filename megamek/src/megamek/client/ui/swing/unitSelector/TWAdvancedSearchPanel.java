@@ -46,9 +46,8 @@ import java.util.Vector;
 public class TWAdvancedSearchPanel extends JPanel implements ActionListener, ItemListener,
         KeyListener, ListSelectionListener {
 
-    private static final long serialVersionUID = 1L;
     private boolean isCanceled = true;
-    public MechSearchFilter mechFilter = null;
+    public MechSearchFilter mechFilter;
     private Vector<FilterTokens> filterToks;
 
     private JButton btnLeftParen = new JButton("(");
@@ -114,14 +113,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     private JComboBox<String> cboQty = new JComboBox<>();
 
-    /**
-     * Stores the games current year.
-     */
+    /** The game's current year. */
     private int gameYear;
 
     /**
-     * Constructs a new 
-     *
+     * Constructs a new advanced search panel for Total Warfare values
      */
     public TWAdvancedSearchPanel(int year) {
         mechFilter = new MechSearchFilter();
@@ -129,7 +125,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         filterToks = new Vector<>(30);
 
-        //Initialize Items
+        // Initialize Items
         btnAnd.addActionListener(this);
         btnAdd.addActionListener(this);
         btnLeftParen.addActionListener(this);
@@ -185,7 +181,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
         cboQty.setSelectedIndex(0);
 
-        //Setup table filter combo boxes
+        // Setup table filter combo boxes
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.All"));
         unitTypeModel.addElement(UnitType.getTypeDisplayableName(UnitType.MEK));
@@ -218,7 +214,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboTechClass.addActionListener(this);
 
 
-        //Setup Weapons Table
+        // Setup Weapons Table
         scrTableWeapons.setMinimumSize(new Dimension(850, 150));
         scrTableWeapons.setPreferredSize(new Dimension(850, 150));
         weaponsModel = new WeaponsTableModel();
@@ -230,16 +226,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponsSorter = new TableRowSorter<>(weaponsModel);
         tblWeapons.setRowSorter(weaponsSorter);
         tblWeapons.addKeyListener(this);
-        TableColumn column = null;
         for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
-            column = tblWeapons.getColumnModel().getColumn(i);
-            if ((i == WeaponsTableModel.COL_QTY)) {
+            TableColumn column = tblWeapons.getColumnModel().getColumn(i);
+            if (i == WeaponsTableModel.COL_QTY) {
                 column.setPreferredWidth(40);
-            } else if ( i == WeaponsTableModel.COL_IS_CLAN) {
+            } else if (i == WeaponsTableModel.COL_IS_CLAN) {
                 column.setPreferredWidth(75);
-            } else if ( i == WeaponsTableModel.COL_NAME) {
+            } else if (i == WeaponsTableModel.COL_NAME) {
                 column.setPreferredWidth(310);
-            } else if ( i == WeaponsTableModel.COL_LEVEL) {
+            } else if (i == WeaponsTableModel.COL_LEVEL) {
                 column.setPreferredWidth(100);
             } else {
                 column.setPreferredWidth(50);
@@ -249,7 +244,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tblWeapons.getSelectionModel().addListSelectionListener(this);
         scrTableWeapons.setViewportView(tblWeapons);
 
-        //Setup Equipment Table
+        // Setup Equipment Table
         scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
         scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
@@ -262,16 +257,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         equipmentSorter = new TableRowSorter<>(equipmentModel);
         tblEquipment.setRowSorter(equipmentSorter);
         tblEquipment.addKeyListener(this);
-        column = null;
         for (int i = 0; i < EquipmentTableModel.N_COL; i++) {
-            column = tblEquipment.getColumnModel().getColumn(i);
+            TableColumn column = tblEquipment.getColumnModel().getColumn(i);
             if (i == EquipmentTableModel.COL_NAME) {
                 column.setPreferredWidth(400);
             } else if (i == EquipmentTableModel.COL_COST) {
                 column.setPreferredWidth(175);
             } else if (i == EquipmentTableModel.COL_LEVEL) {
                 column.setPreferredWidth(100);
-            } else if ((i == EquipmentTableModel.COL_QTY)) {
+            } else if (i == EquipmentTableModel.COL_QTY) {
                 column.setPreferredWidth(40);
             } else {
                 column.setPreferredWidth(75);
@@ -281,17 +275,17 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tblEquipment.getSelectionModel().addListSelectionListener(this);
         scrTableEquipment.setViewportView(tblEquipment);
 
-        //Populate Tables
+        // Populate Tables
         populateWeaponsAndEquipmentChoices();
 
-        //initialize with the weapons sorted alphabetically by name
+        // initialize with the weapons sorted alphabetically by name
         ArrayList<RowSorter.SortKey> sortlist = new ArrayList<>();
         sortlist.add(new RowSorter.SortKey(WeaponsTableModel.COL_NAME,SortOrder.ASCENDING));
         tblWeapons.getRowSorter().setSortKeys(sortlist);
         ((DefaultRowSorter<?, ?>) tblWeapons.getRowSorter()).sort();
         tblWeapons.invalidate(); // force re-layout of window
 
-        //initialize with the equipment sorted alphabetically by chassis
+        // initialize with the equipment sorted alphabetically by chassis
         sortlist = new ArrayList<>();
         sortlist.add(new RowSorter.SortKey(EquipmentTableModel.COL_NAME,SortOrder.ASCENDING));
         tblEquipment.getRowSorter().setSortKeys(sortlist);
@@ -337,7 +331,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(cockpitPanel, c);
         c.insets = new Insets(0, 0, 0, 0);
         c.weighty = 0;
-
 
         c.gridx = 0; c.gridy = 1;
         c.anchor = GridBagConstraints.WEST;
@@ -401,13 +394,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 0; c.gridy++;
         this.add(lblWeapons, c);
 
-
         c.insets = new Insets(0, 0, 0, 0);
         c.gridwidth = 4;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeapons, c);
         c.gridwidth = 1;
-
 
         c.gridwidth = 1;
         c.insets = new Insets(16, 0, 0, 0);
@@ -435,7 +426,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridwidth = 1;
 
         // Filter Expression
-        // c.insets = new Insets(50, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblEqExpTxt, c);
         c.fill = GridBagConstraints.BOTH;
@@ -482,7 +472,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         boolean lastTokIsOperation;
         int tokSize = filterToks.size();
         lastTokIsOperation = ((tokSize == 0) ||
-                (filterToks.elementAt(tokSize-1) instanceof OperationFT));
+                (filterToks.elementAt(tokSize - 1) instanceof OperationFT));
         if (evt.getSource().equals(tblWeapons.getSelectionModel())) {
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblEquipment.clearSelection();
@@ -682,7 +672,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
 
         switch (unitTypeFilter) {
-            case 5: //UnitType.AERO: the aero index is out of order
+            case 5:
                 if (eq.hasFlag(WeaponType.F_AERO_WEAPON)
                         || eq.hasFlag(MiscType.F_FIGHTER_EQUIPMENT)) {
                     return true;
@@ -729,7 +719,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         final int techLevel = cboTechLevel.getSelectedIndex();
         final String techClass = (String) cboTechClass.getSelectedItem();
         final int unitType = cboUnitType.getSelectedIndex() - 1;
-        //If current expression doesn't parse, don't update.
+        // If current expression doesn't parse, don't update.
         try {
             weaponFilter = new RowFilter<>() {
                 @Override
@@ -744,7 +734,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                     return techLvlMatch && techClassMatch && unitTypeMatch;
                 }
             };
-        } catch (java.util.regex.PatternSyntaxException e) {
+        } catch (java.util.regex.PatternSyntaxException ignored) {
             return;
         }
         weaponsSorter.setRowFilter(weaponFilter);
@@ -762,14 +752,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                     return techLvlMatch && techClassMatch && unitTypeMatch;
                 }
             };
-        } catch (java.util.regex.PatternSyntaxException e) {
+        } catch (java.util.regex.PatternSyntaxException ignored) {
             return;
         }
         equipmentSorter.setRowFilter(equipmentFilter);
     }
 
     private String filterExpressionString() {
-        //Build the string representation of the new expression
+        // Build the string representation of the new expression
         StringBuilder filterExp = new StringBuilder();
         for (int i = 0; i < filterToks.size(); i++) {
             filterExp.append(" ").append(filterToks.elementAt(i).toString()).append(" ");
@@ -778,13 +768,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     }
 
     /**
-     * Show the dialog.  setVisible(true) blocks until setVisible(false).
+     * Show the dialog. setVisible(true) blocks until setVisible(false).
      *
      * @return Return the filter that was created with this dialog.
      */
     public MechSearchFilter showDialog() {
-        //We need to save a copy since the user can alter the filter state
-        // and then click on the cancel button.  We want to make sure the
+        // We need to save a copy since the user can alter the filter state
+        // and then click on the cancel button. We want to make sure the
         // original filter state is saved.
         MechSearchFilter currFilter = mechFilter;
         mechFilter = new MechSearchFilter(currFilter);
@@ -833,7 +823,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     /**
      * Creates collections for all the possible <code>WeaponType</code>s and
-     * <code>EquipmentType</code>s.  These are used to populate the weapons
+     * <code>EquipmentType</code>s. These are used to populate the weapons
      * and equipment tables.
      */
     private void populateWeaponsAndEquipmentChoices() {
@@ -842,14 +832,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             EquipmentType et = e.nextElement();
-            if ((et instanceof WeaponType)) {
+            if (et instanceof WeaponType) {
                 weapons.add((WeaponType) et);
-                //Check for C3+Tag and C3 Master Booster
+                // Check for C3+Tag and C3 Master Booster
                 if (et.hasFlag(WeaponType.F_C3M) || et.hasFlag(WeaponType.F_C3MBS)) {
                     equipment.add(et);
                 }
-            }
-            if ((et instanceof MiscType)) {
+            } else if (et instanceof MiscType) {
                 equipment.add(et);
             }
         }
@@ -897,7 +886,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
      * A table model for displaying weapons
      */
     public class WeaponsTableModel extends AbstractTableModel {
-        private static final long serialVersionUID = 1L;
 
         private static final int COL_QTY = 0;
         private static final int COL_NAME = 1;
@@ -910,7 +898,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         private static final int COL_LEVEL = 8;
         private static final int N_COL = 9;
         private static final int COL_INTERNAL_NAME = 9;
-
 
         private int[] qty;
 
@@ -1031,7 +1018,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
      * A table model for displaying equipment
      */
     public class EquipmentTableModel extends AbstractTableModel {
-        private static final long serialVersionUID = 1L;
 
         private static final int COL_QTY = 0;
         private static final int COL_NAME = 1;
@@ -1151,7 +1137,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     @Override
     public void keyTyped(KeyEvent evt) {
         char keyChar = evt.getKeyChar();
-        //Ensure we've got a number or letter pressed
+        // Ensure we've got a number or letter pressed
         if (!(((keyChar >= '0') && (keyChar <= '9')) ||
                 ((keyChar >= 'a') && (keyChar <='z')) || (keyChar == ' '))) {
             return;
@@ -1207,18 +1193,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         @Override
         public String toString() {
-            if (qty == 1) {
-                return qty + " " + fullName;
-            } else {
-                return qty + " " + fullName + "s";
-            }
+            return qty + " " + fullName + ((qty != 1) ? "s" : "");
         }
     }
 
     /**
      * FilterTokens subclass that represents a boolean operation.
      * @author Arlith
-     *
      */
     public static class OperationFT extends FilterTokens {
         public MechSearchFilter.BoolOp op;

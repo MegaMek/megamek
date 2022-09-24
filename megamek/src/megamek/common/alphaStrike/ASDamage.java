@@ -132,11 +132,7 @@ public class ASDamage implements Serializable {
     }
     
     public String toStringWithZero() {
-        if (minimal) {
-            return "0*";
-        } else {
-            return damage + "";
-        }
+        return minimal ? "0*" : damage + "";
     }
 
     public double asDoubleValue() {

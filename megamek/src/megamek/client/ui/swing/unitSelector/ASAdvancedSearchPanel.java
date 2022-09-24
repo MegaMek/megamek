@@ -171,73 +171,63 @@ public class ASAdvancedSearchPanel extends JPanel {
 
     /** @return True when the given MechSummary matches the active search filters or true when no filters are active. */
     public boolean matches(MechSummary mechSummary) {
-        if (isActive() && mechSummary.getASUnitType() == ASUnitType.UNKNOWN) {
+        if (isActive() && (mechSummary.getASUnitType() == ASUnitType.UNKNOWN)) {
+            return false;
+        } else if (useUnitType.isSelected() && !selectedTypes().contains(mechSummary.getASUnitType())) {
+            return false;
+        } else if (useSize.isSelected() && !selectedSizes().contains(mechSummary.getSize())) {
+            return false;
+        } else if (useTMM.isSelected() && !(selectedTMMs().contains(mechSummary.getTMM()) && mechSummary.usesTMM())) {
+            return false;
+        } else if (useArmor.isSelected() && !((mechSummary.getFullArmor() >= armorFrom.getIntVal(-1))
+                && (mechSummary.getFullArmor() <= armorTo.getIntVal(-1)))) {
+            return false;
+        } else if (useStructure.isSelected() && !((mechSummary.getFullStructure() >= structureFrom.getIntVal(-1))
+                && (mechSummary.getFullStructure() <= structureTo.getIntVal(-1)))) {
+            return false;
+        } else if (useThreshold.isSelected() && !((mechSummary.getThreshold() >= thresholdFrom.getIntVal(-1))
+                && (mechSummary.getThreshold() <= thresholdTo.getIntVal(-1)))) {
             return false;
         }
-        if (useUnitType.isSelected() && !selectedTypes().contains(mechSummary.getASUnitType())) {
-            return false;
-        }
-        if (useSize.isSelected() && !selectedSizes().contains(mechSummary.getSize())) {
-            return false;
-        }
-        if (useTMM.isSelected() && !(selectedTMMs().contains(mechSummary.getTMM()) && mechSummary.usesTMM())) {
-            return false;
-        }
-        if (useArmor.isSelected() && !(mechSummary.getFullArmor() >= armorFrom.getIntVal(-1)
-                && mechSummary.getFullArmor() <= armorTo.getIntVal(-1))) {
-            return false;
-        }
-        if (useStructure.isSelected() && !(mechSummary.getFullStructure() >= structureFrom.getIntVal(-1)
-                && mechSummary.getFullStructure() <= structureTo.getIntVal(-1))) {
-            return false;
-        }
-        if (useThreshold.isSelected() && !(mechSummary.getThreshold() >= thresholdFrom.getIntVal(-1)
-                && mechSummary.getThreshold() <= thresholdTo.getIntVal(-1))) {
-            return false;
-        }
+
         ASDamageVector stdDamage = mechSummary.getStandardDamage();
         if (useDamageS.isSelected() && (damageSFrom.getSelectedItem() != null) && (damageSTo.getSelectedItem() != null)
-                && !(stdDamage.S.asDoubleValue() >= damageSFrom.getSelectedItem().asDoubleValue()
-                        && stdDamage.S.asDoubleValue() <= damageSTo.getSelectedItem().asDoubleValue())) {
+                && !((stdDamage.S.asDoubleValue() >= damageSFrom.getSelectedItem().asDoubleValue())
+                        && (stdDamage.S.asDoubleValue() <= damageSTo.getSelectedItem().asDoubleValue()))) {
+            return false;
+        } else if (useDamageM.isSelected() && (damageMFrom.getSelectedItem() != null) && (damageMTo.getSelectedItem() != null)
+                && !((stdDamage.M.asDoubleValue() >= damageMFrom.getSelectedItem().asDoubleValue())
+                        && (stdDamage.M.asDoubleValue() <= damageMTo.getSelectedItem().asDoubleValue()))) {
+            return false;
+        } else if (useDamageL.isSelected() && (damageLFrom.getSelectedItem() != null) && (damageLTo.getSelectedItem() != null)
+                && !((stdDamage.L.asDoubleValue() >= damageLFrom.getSelectedItem().asDoubleValue())
+                        && (stdDamage.L.asDoubleValue() <= damageLTo.getSelectedItem().asDoubleValue()))) {
+            return false;
+        } else if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null) && (damageETo.getSelectedItem() != null)
+                && !((stdDamage.E.asDoubleValue() >= damageEFrom.getSelectedItem().asDoubleValue())
+                        && (stdDamage.E.asDoubleValue() <= damageETo.getSelectedItem().asDoubleValue()))) {
+            return false;
+        } else if (useOV.isSelected() && !(selectedOVs().contains(mechSummary.getOV()) && mechSummary.usesOV())) {
+            return false;
+        } else if (usePV.isSelected() && !((mechSummary.getPointValue() >= pvFrom.getIntVal(-1))
+                && (mechSummary.getPointValue() <= pvTo.getIntVal(-1)))) {
             return false;
         }
-        if (useDamageM.isSelected() && (damageMFrom.getSelectedItem() != null) && (damageMTo.getSelectedItem() != null)
-                && !(stdDamage.M.asDoubleValue() >= damageMFrom.getSelectedItem().asDoubleValue()
-                        && stdDamage.M.asDoubleValue() <= damageMTo.getSelectedItem().asDoubleValue())) {
-            return false;
-        }
-        if (useDamageL.isSelected() && (damageLFrom.getSelectedItem() != null) && (damageLTo.getSelectedItem() != null)
-                && !(stdDamage.L.asDoubleValue() >= damageLFrom.getSelectedItem().asDoubleValue()
-                        && stdDamage.L.asDoubleValue() <= damageLTo.getSelectedItem().asDoubleValue())) {
-            return false;
-        }
-        if (useDamageE.isSelected() && (damageEFrom.getSelectedItem() != null) && (damageETo.getSelectedItem() != null)
-                && !(stdDamage.E.asDoubleValue() >= damageEFrom.getSelectedItem().asDoubleValue()
-                        && stdDamage.E.asDoubleValue() <= damageETo.getSelectedItem().asDoubleValue())) {
-            return false;
-        }
-        if (useOV.isSelected() && !(selectedOVs().contains(mechSummary.getOV()) && mechSummary.usesOV())) {
-            return false;
-        }
-        if (usePV.isSelected() && !(mechSummary.getPointValue() >= pvFrom.getIntVal(-1)
-                && mechSummary.getPointValue() <= pvTo.getIntVal(-1))) {
-            return false;
-        }
+
         String moveMode = mvMode.getSelectedItem();
         if (useMV.isSelected() && !(mechSummary.hasMovementMode(moveMode)
-                && mechSummary.getMovement().get(moveMode) >= mvFrom.getIntVal(-1)
-                && mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(-1))) {
+                && (mechSummary.getMovement().get(moveMode) >= mvFrom.getIntVal(-1))
+                && (mechSummary.getMovement().get(moveMode) <= mvTo.getIntVal(-1)))) {
             return false;
-        }
-        if (useAbility1.isSelected() &&
+        } else if (useAbility1.isSelected() &&
                 !mechSummary.getSpecialAbilities().hasSUA(ability1.getSelectedItem())) {
             return false;
-        }
-        if (useAbility2.isSelected() &&
+        } else if (useAbility2.isSelected() &&
                 !mechSummary.getSpecialAbilities().hasSUA(ability2.getSelectedItem())) {
             return false;
+        } else {
+            return true;
         }
-        return true;
     }
 
     private JComponent unitTypePanel() {
@@ -505,7 +495,7 @@ public class ASAdvancedSearchPanel extends JPanel {
             Graphics2D g2 = (Graphics2D) g.create();
             try {
                 Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-                        0, new float[]{9}, 0);
+                        0, new float[] { 9 }, 0);
                 g2.setStroke(dashed);
                 g2.drawLine(5, 0, getWidth() * 9 / 10, 0);
             } finally {

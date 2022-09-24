@@ -39,7 +39,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  */
 public interface ASCardDisplayable {
 
-    //TODO: Must also be able to return more "current" values for MV, Dmg, crits etc.
+    // TODO : Must also be able to return more "current" values for MV, Dmg, crits etc.
 
     /** @return The AS element's model, such as "AS7-D". */
     String getModel();
@@ -195,7 +195,6 @@ public interface ASCardDisplayable {
     default boolean isSupportVehicle() {
         return getASUnitType().isSupportVehicle();
     }
-
 
     /** @return True if this AS element is Infantry (BA or CI). */
     default boolean isInfantry() {

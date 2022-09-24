@@ -16,6 +16,7 @@ package megamek.client.ui.swing.util;
 
 import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -78,7 +79,7 @@ public class FluffImageHelper {
      * @param unit The unit.
      * @return An image or {@code null}.
      */
-    public static Image loadFluffImageHeuristic(final Entity unit) {
+    public static @Nullable Image loadFluffImageHeuristic(final Entity unit) {
         Image fluff = null;
         var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(unit)).getFile();
         File fluff_image_file = findFluffImage(file, unit.getModel(), unit.getChassis());
@@ -93,7 +94,7 @@ public class FluffImageHelper {
      * @param element The AlphaStrikeElement or MechSummary
      * @return An image or null
      */
-    public static Image loadFluffImageHeuristic(final ASCardDisplayable element) {
+    public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
         Image fluff = null;
         var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element)).getFile();
         File fluff_image_file = findFluffImage(file, element.getModel(), element.getChassis());
@@ -111,7 +112,7 @@ public class FluffImageHelper {
      * @param origChassis The chassis name of the unit
      * @return Path to an appropriate file or {@code null} if none is found
      */
-    protected static File findFluffImage(final File directory, String origModel, String origChassis) {
+    protected static @Nullable File findFluffImage(final File directory, String origModel, String origChassis) {
         // Search for a file in the specified directory.
         // Searches for each supported extension on each of the following
         // combinations:

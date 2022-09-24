@@ -34,17 +34,4 @@ public enum ASArcs {
                 return "Front Arc";
         }
     }
-
-    public int toInt() {
-        switch (this) {
-            case LEFT:
-                return 1;
-            case RIGHT:
-                return 2;
-            case REAR:
-                return 3;
-            default:
-                return 0;
-        }
-    }
 }

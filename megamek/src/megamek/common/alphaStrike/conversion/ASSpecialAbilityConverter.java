@@ -276,7 +276,7 @@ public class ASSpecialAbilityConverter {
             assign(misc, MDS, 2);
         }
 
-        //TODO: Variable Range targeting (VRT) is not implemented: assign(misc, VRT);
+        // TODO : Variable Range targeting (VRT) is not implemented: assign(misc, VRT);
 
         processSEALandSOA(misc);
     }
@@ -298,8 +298,7 @@ public class ASSpecialAbilityConverter {
     }
 
     protected void processUnitFeatures() {
-        // TODO: why doesnt this work?
-        if (element.hasQuirk(OptionsConstants.QUIRK_POS_TRAILER_HITCH)) {
+        if (entity.hasQuirk(OptionsConstants.QUIRK_POS_TRAILER_HITCH)) {
             assign("Trailer Hitch Quirk", HTC);
         }
 

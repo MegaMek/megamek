@@ -21,6 +21,7 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
@@ -65,6 +66,9 @@ public final class ASConverter {
         if (undamagedEntity == null) {
             LogManager.getLogger().error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
+        }
+        if (entity.getGame() != null) {
+            undamagedEntity.setGame(entity.getGame());
         }
         return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
     }
@@ -202,7 +206,7 @@ public final class ASConverter {
     }
 
     /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
-    private static Entity getUndamagedEntity(Entity entity) {
+    private static @Nullable Entity getUndamagedEntity(Entity entity) {
         try {
             MechSummary ms = MechSummaryCache.getInstance().getMech(entity.getShortNameRaw());
             return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -215,6 +219,19 @@ public final class ASConverter {
     /** Returns the given number, rounded up to the nearest integer, based on the first decimal only. */
     public static int roundUp(double number) {
         return (int) Math.round(number + 0.4); 
+    }
+
+    public static int toInt(ASArcs arc) {
+        switch (arc) {
+            case LEFT:
+                return 1;
+            case RIGHT:
+                return 2;
+            case REAR:
+                return 3;
+            default:
+                return 0;
+        }
     }
 
     private ASConverter() { }

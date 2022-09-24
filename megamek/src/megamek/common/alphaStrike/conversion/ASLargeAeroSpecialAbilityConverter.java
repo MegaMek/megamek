@@ -62,7 +62,7 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
         }
 
         for (ASArcs arc : ASArcs.values()) {
-            if (!hasExplosiveArcComponent[arc.toInt()]) {
+            if (!hasExplosiveArcComponent[ASConverter.toInt(arc)]) {
                 report.addLine("No Explosive Component", arc + "", "ENE");
                 element.getArc(arc).setSUA(ENE);
             }
@@ -72,8 +72,8 @@ public class ASLargeAeroSpecialAbilityConverter extends ASSpecialAbilityConverte
     private void processArcENE(Mounted equipment) {
         if (isExplosive(equipment)) {
             for (ASArcs arc : ASArcs.values()) {
-                if (ASLocationMapper.damageLocationMultiplier(entity, arc.toInt(), equipment) > 0) {
-                    hasExplosiveArcComponent[arc.toInt()] = true;
+                if (ASLocationMapper.damageLocationMultiplier(entity, ASConverter.toInt(arc), equipment) > 0) {
+                    hasExplosiveArcComponent[ASConverter.toInt(arc)] = true;
                 }
             }
         }

@@ -18,6 +18,8 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.common.annotations.Nullable;
+
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -52,7 +54,7 @@ public class IntRangeTextField extends JTextField {
     /**
      * @return The minimum legal value
      */
-    public Integer getMinimum() {
+    public @Nullable Integer getMinimum() {
         return minimum;
     }
 
@@ -60,14 +62,14 @@ public class IntRangeTextField extends JTextField {
      * Sets the minimum value for the field.
      * @param min the minimum value
      */
-    public void setMinimum(Integer min) {
+    public void setMinimum(@Nullable Integer min) {
         minimum = min;
     }
 
     /**
      * @return The maximum legal value
      */
-    public Integer getMaximum() {
+    public @Nullable Integer getMaximum() {
         return maximum;
     }
 
@@ -75,7 +77,7 @@ public class IntRangeTextField extends JTextField {
      * Sets the maximum legal value
      * @param max the maximum value
      */
-    public void setMaximum(Integer max) {
+    public void setMaximum(@Nullable Integer max) {
         maximum = max;
     }
 
@@ -83,9 +85,9 @@ public class IntRangeTextField extends JTextField {
         @Override
         public boolean verify(JComponent input) {
             try {
-                return ((minimum == null || (getIntVal() >= minimum))
-                        && (maximum == null || (getIntVal() <= maximum)));
-            } catch (NumberFormatException ex) {
+                return (((minimum == null) || (getIntVal() >= minimum))
+                        && ((maximum == null) || (getIntVal() <= maximum)));
+            } catch (NumberFormatException ignored) {
                 return false;
             }
         }
@@ -94,9 +96,9 @@ public class IntRangeTextField extends JTextField {
         public boolean shouldYieldFocus(JComponent input, JComponent target) {
             if (!verify(input)) {
                 int val = getIntVal();
-                if (minimum != null && val < minimum) {
+                if ((minimum != null) && (val < minimum)) {
                     setIntVal(minimum);
-                } else if (maximum != null && val > maximum) {
+                } else if ((maximum != null) && (val > maximum)) {
                     setIntVal(maximum);
                 }
             }
@@ -124,7 +126,7 @@ public class IntRangeTextField extends JTextField {
 
         // Allow digits and, if the minimum is below zero or not set, a minus sign
         private boolean isCharValid(int chr) {
-            return Character.isDigit(chr) || ((chr == '-') && (minimum == null || minimum < 0));
+            return Character.isDigit(chr) || ((chr == '-') && ((minimum == null) || (minimum < 0)));
         }
 
     };
@@ -145,7 +147,7 @@ public class IntRangeTextField extends JTextField {
     public int getIntVal(int defaultVal) {
         try {
             return Integer.parseInt(getText());
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException ignored) {
             return defaultVal;
         }
     }

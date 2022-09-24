@@ -22,6 +22,7 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.options.OptionsConstants;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.alphaStrike.BattleForceSUA.MEC;
@@ -56,7 +57,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
             } else if (misc.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
                 assign("Vehicle Mine Dispenser", MDS, 1);
             } else if (misc.getType().hasFlag(MiscType.F_TOOLS)
-                    && (misc.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER) {
+                    && ((misc.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER)) {
                 assign("Minesweeper", MSW);
             } else if (misc.getType().hasFlag(MiscType.F_PARAFOIL)) {
                 assign(misc, PARA);
@@ -81,7 +82,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
         
         report.addLine("Infantry transport weight", "CAR" + (int) Math.ceil(entity.getWeight()));
         
-        if (entity.getMovementMode().equals(EntityMovementMode.INF_UMU)) {
+        if (entity.getMovementMode().isUMUInfantry()) {
             report.addLine("UMU Gear", "UMU");
             element.getSpecialAbilities().setSUA(UMU);
         }
@@ -105,7 +106,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
             assign("Trench Engineers", TRN);
         }
         
-        if (entity.hasAbility("tsm_implant")) {
+        if (entity.hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             assign("TSM implants", TSI);
         }
         

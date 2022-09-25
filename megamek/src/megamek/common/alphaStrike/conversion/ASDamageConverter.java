@@ -724,12 +724,12 @@ public class ASDamageConverter {
         switch (dmgType) {
             case LRM:
                 return !MountedHelper.isAnyArtemis(weapon.getLinkedBy())
-                        && (weaponType.getBattleForceClass() == WeaponType.BFCLASS_LRM)
-                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML);
+                        && ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_LRM)
+                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
             case SRM:
                 return !MountedHelper.isAnyArtemis(weapon.getLinkedBy())
-                        && (weaponType.getBattleForceClass() == WeaponType.BFCLASS_SRM)
-                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML);
+                        && ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_SRM)
+                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
             case FLK:
                 return weaponType.getBattleForceClass() == WeaponType.BFCLASS_FLAK;
             case AC:

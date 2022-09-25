@@ -53,25 +53,9 @@ public class TAGHandler extends WeaponHandler {
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         } else {
-            int priority = 1;
-            EquipmentMode mode = (weapon.curMode());
-            if (mode != null) {
-                if (mode.getName() == "1-shot") {
-                    priority = 1;
-                } else if (mode.getName() == "2-shot") {
-                    priority = 2;
-                } else if (mode.getName() == "3-shot") {
-                    priority = 3;
-                } else if (mode.getName() == "4-shot") {
-                    priority = 4;
-                }
-            }
-            if (priority < 1) {
-                priority = 1;
-            }
-            // it is possible for 2 or more tags to hit the same entity
+
             TagInfo info = new TagInfo(ae.getId(), Targetable.TYPE_ENTITY,
-                    entityTarget, priority, false);
+                    entityTarget, false);
             game.addTagInfo(info);
             entityTarget.setTaggedBy(ae.getId());
             
@@ -88,25 +72,8 @@ public class TAGHandler extends WeaponHandler {
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget, boolean bldgDamagedOnMiss,
                                         Building bldg, Vector<Report> vPhaseReport) {
-        int priority = 1;
-        EquipmentMode mode = (weapon.curMode());
-        if (mode != null) {
-            switch (mode.getName()) {
-                case "2-shot":
-                    priority = 2;
-                    break;
-                case "3-shot":
-                    priority = 3;
-                    break;
-                case "4-shot":
-                    priority = 4;
-                    break;
-                default:
-                    break;
-            }
-        }
         // add even misses, as they waste homing missiles.
-        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), target, priority, true);
+        TagInfo info = new TagInfo(ae.getId(), target.getTargetType(), target, true);
         game.addTagInfo(info);
         return false;
     }

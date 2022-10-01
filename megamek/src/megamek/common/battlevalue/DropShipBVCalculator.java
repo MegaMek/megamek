@@ -22,115 +22,239 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.Predicate;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
-public class DropShipBVCalculator {
+public class DropShipBVCalculator extends AeroBVCalculator {
+
+    private static final int BVLOC_NOSE = 0;
+    private static final int BVLOC_LEFT = 1;
+    private static final int BVLOC_LEFT_AFT = 2;
+    private static final int BVLOC_AFT = 3;
+    private static final int BVLOC_RIGHT_AFT = 4;
+    private static final int BVLOC_RIGHT = 5;
+    private final Dropship dropship;
+    private int nominalNoseLocation;
+    private int nominalLeftLocation;
+    private int nominalRightLocation;
+
+    DropShipBVCalculator(Entity entity) {
+        super(entity);
+        dropship = (Dropship) entity;
+    }
+
+    @Override
+    protected boolean usesWeaponHeat() {
+        return false;
+    }
+
+    @Override
+    protected void processExplosiveEquipment() { }
+
+    @Override
+    protected int heatEfficiency() {
+        bvReport.addLine("Heat Efficiency:", " = " + aero.getHeatCapacity(), "");
+        return aero.getHeatCapacity();
+    }
+
+    @Override
+    protected Predicate<Mounted> rearWeaponFilter() {
+        return weapon -> (weapon.getLocation() == Dropship.LOC_AFT);
+    }
+
+    protected Predicate<Mounted> leftWeaponFilter() {
+        return weapon -> (weapon.getLocation() == Dropship.LOC_LWING) && !weapon.isRearMounted();
+    }
+
+    protected Predicate<Mounted> leftAftWeaponFilter() {
+        return weapon -> (weapon.getLocation() == Dropship.LOC_LWING) && weapon.isRearMounted();
+    }
+
+    protected Predicate<Mounted> rightWeaponFilter() {
+        return weapon -> (weapon.getLocation() == Dropship.LOC_RWING) && !weapon.isRearMounted();
+    }
+
+    protected Predicate<Mounted> rightAftWeaponFilter() {
+        return weapon -> (weapon.getLocation() == Dropship.LOC_RWING) && weapon.isRearMounted();
+    }
+
+    protected double arcFactor(Mounted equipment) {
+        if (!frontAndRearDecided) {
+            return 1;
+        } else if (isNominalArc(nominalNoseLocation, equipment)) {
+            return 1;
+        } else if (isNominalArc(nominalLeftLocation, equipment)) {
+            return heatEfficiencyExceeded ? 0.5 : 1;
+        } else if (isNominalArc(nominalRightLocation, equipment)) {
+            return heatEfficiencyExceeded ? 0.25 : 0.5;
+        } else {
+            return 0.25;
+        }
+    }
+
+    @Override
+    protected boolean isNominalRear(Mounted weapon) {
+        return false;
+    }
+
+    @Override
+    protected boolean isNominalRearArc(Mounted weapon) {
+        return super.isNominalRearArc(weapon);
+    }
+
+    @Override
+    protected boolean isNominalSideArc(Mounted weapon) {
+        return heatEfficiencyExceeded;
+    }
+
+    protected boolean isNominalArc(int nominalBvLocation, Mounted equipment) {
+        switch (nominalBvLocation) {
+            case BVLOC_NOSE:
+                return equipment.getLocation() == Dropship.LOC_NOSE;
+            case BVLOC_LEFT:
+                return (equipment.getLocation() == Dropship.LOC_LWING) && !equipment.isRearMounted();
+            case BVLOC_LEFT_AFT:
+                return (equipment.getLocation() == Dropship.LOC_LWING) && equipment.isRearMounted();
+            case BVLOC_AFT:
+                return equipment.getLocation() == Dropship.LOC_AFT;
+            case BVLOC_RIGHT_AFT:
+                return (equipment.getLocation() == Dropship.LOC_RWING) && equipment.isRearMounted();
+            case BVLOC_RIGHT:
+                return (equipment.getLocation() == Dropship.LOC_RWING) && !equipment.isRearMounted();
+        }
+        return false;
+    }
+
+    @Override
+    protected void determineFront() {
+        Predicate<Mounted> frontFilter = frontWeaponFilter();
+        Predicate<Mounted> rearFilter = rearWeaponFilter();
+        Predicate<Mounted> leftFilter = leftWeaponFilter();
+        Predicate<Mounted> rightFilter = rightWeaponFilter();
+        Predicate<Mounted> leftAftFilter = leftAftWeaponFilter();
+        Predicate<Mounted> rightAftFilter = rightAftWeaponFilter();
+        Map<Integer, Double> bvPerArc = new HashMap<>();
+        double weaponsBVFront = processWeaponSection(false, frontFilter, false);
+        double weaponsBVRear = processWeaponSection(false, rearFilter, false);
+        double weaponsBVLeft = processWeaponSection(false, leftFilter, false);
+        double weaponsBVRight = processWeaponSection(false, rightFilter, false);
+        double weaponsBVAftLeft = processWeaponSection(false, leftAftFilter, false);
+        double weaponsBVAftRight = processWeaponSection(false, rightAftFilter, false);
+        bvPerArc.put(BVLOC_NOSE, weaponsBVFront);
+        bvPerArc.put(BVLOC_LEFT, weaponsBVLeft);
+        bvPerArc.put(BVLOC_RIGHT, weaponsBVRight);
+        bvPerArc.put(BVLOC_AFT, weaponsBVRear);
+        bvPerArc.put(BVLOC_LEFT_AFT, weaponsBVAftLeft);
+        bvPerArc.put(BVLOC_RIGHT_AFT, weaponsBVAftRight);
+        final double maxBV = bvPerArc.values().stream().mapToDouble(bv -> bv).max().orElse(0);
+        for (Map.Entry<Integer, Double> entry : bvPerArc.entrySet()) {
+            if (entry.getValue() == maxBV) {
+                nominalNoseLocation = entry.getKey();
+                break;
+            }
+        }
+        int firstAdjacentArc = getAdjacentLocationCCW(nominalNoseLocation);
+        int secondAdjacentArc = getAdjacentLocationCW(nominalNoseLocation);
+        if (bvPerArc.get(firstAdjacentArc) > bvPerArc.get(secondAdjacentArc)) {
+            nominalLeftLocation = firstAdjacentArc;
+            nominalRightLocation = secondAdjacentArc;
+        } else {
+            nominalLeftLocation = secondAdjacentArc;
+            nominalRightLocation = firstAdjacentArc;
+        }
+
+        bvReport.addLine("Nominal Nose Location",
+                arcName(nominalNoseLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalNoseLocation)),
+                "");
+        bvReport.addLine("Nominal Left Location",
+                arcName(nominalLeftLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalLeftLocation)),
+                "");
+        bvReport.addLine("Nominal Right Location",
+                arcName(nominalRightLocation) + ", Weapon BV: " + formatForReport(bvPerArc.get(nominalRightLocation)),
+                "");
+        frontAndRearDecided = true;
+    }
+
+    @Override
+    protected void processWeapons() {
+        int heatEfficiency = heatEfficiency();
+
+        double totalHeatSum = processArc(nominalNoseLocation);
+        bvReport.addLine("Total \"Nose\" Heat", formatForReport(totalHeatSum), "");
+        heatEfficiencyExceeded = totalHeatSum > heatEfficiency;
+        if (heatEfficiencyExceeded) {
+            bvReport.addLine("Heat Efficiency Exceeded", "", "");
+        }
+
+        totalHeatSum += processArc(nominalLeftLocation);
+        bvReport.addLine("Total \"Left\" Heat", formatForReport(totalHeatSum), "");
+        heatEfficiencyExceeded = totalHeatSum > heatEfficiency;
+
+        processArc(nominalRightLocation);
+        processArc(getOppositeLocation(nominalNoseLocation));
+        processArc(getOppositeLocation(nominalLeftLocation));
+        processArc(getOppositeLocation(nominalRightLocation));
+    }
+
+    protected double processArc(final int bvNominalLocation) {
+        double arcHeat = 0;
+        bvReport.addLine(arcName(bvNominalLocation) + ":", "", "");
+        for (Mounted weapon: dropship.getTotalWeaponList()) {
+            if (isNominalArc(bvNominalLocation, weapon) && countAsOffensiveWeapon(weapon)) {
+                arcHeat += weaponHeat(weapon);
+            }
+        }
+        processWeaponSection(true, weapon -> isNominalArc(bvNominalLocation, weapon), true);
+//        for (Mounted ammo: dropship.getAmmo()) {
+//            if (isNominalArc(bvNominalLocation, ammo) && ammoCounts(ammo)) {
+//                AmmoType ammoType = (AmmoType) ammo.getType();
+//                String key = ammoType.getAmmoType() + ":" + ammoType.getRackSize();
+//                offensiveValue += weaponsForExcessiveAmmo.get(key);
+//                bvReport.addLine("- " + names.get(key), "", "= " + formatForReport(offensiveValue));
+//            }
+//        }
+        return arcHeat;
+    }
+
+//    protected void processAmmo() {
+//        bvReport.startTentativeSection();
+//        bvReport.addLine("Ammo:", "", "");
+//        boolean hasAmmo = false;
+//        for (String key : keys) {
+//            if (!weaponsForExcessiveAmmo.containsKey(key)) {
+//                // Coolant Pods have no matching weapon
+//                if (key.equals(Integer.valueOf(AmmoType.T_COOLANT_POD).toString() + "1")) {
+//                    offensiveValue += ammoMap.get(key);
+//                }
+//                continue;
+//            }
+//            if (!ammoMap.containsKey(key)) {
+//                continue;
+//            }
+//            String calculation = "+ ";
+//
+//            if (ammoMap.get(key) > weaponsForExcessiveAmmo.get(key)) {
+//                offensiveValue += weaponsForExcessiveAmmo.get(key) * fireControlModifier();
+//                calculation += formatForReport(weaponsForExcessiveAmmo.get(key)) + " (Excessive)";
+//            } else {
+//                offensiveValue += ammoMap.get(key) * fireControlModifier();
+//                calculation += formatForReport(ammoMap.get(key));
+//            }
+//            calculation += (fireControlModifier() != 1) ? " x " + formatForReport(fireControlModifier()) : "";
+//            bvReport.addLine("- " + names.get(key), calculation, "= " + formatForReport(offensiveValue));
+//            hasAmmo = true;
+//        }
+//        if (hasAmmo) {
+//            bvReport.endTentativeSection();
+//        } else {
+//            bvReport.discardTentativeSection();
+//        }
+//    }
 
     public static int calculateBV(Dropship dropShip, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
-        bvReport.addHeader("Battle Value Calculations For");
-        bvReport.addHeader(dropShip.getChassis() + " " + dropShip.getModel());
 
-        bvReport.addSubHeader("Defensive Battle Rating Calculation:");
-        double dbv = 0; // defensive battle value
-        int modularArmor = 0;
-        for (Mounted mounted : dropShip.getEquipment()) {
-            if ((mounted.getType() instanceof MiscType) && mounted.getType().hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                modularArmor += mounted.getBaseDamageCapacity() - mounted.getDamageTaken();
-            }
-        }
-
-        dbv += dropShip.getTotalArmor() + modularArmor;
-        dbv *= 2.5;
-        bvReport.addLine("Total Armor Factor x 2.5 ",
-                (dropShip.getTotalArmor() + modularArmor) + " x 2.5", "= ", dbv);
-        double dbvSI = dropShip.getSI() * 2.0;
-        dbv += dbvSI;
-        bvReport.addLine("Total SI x 2", dropShip.getSI() + " x 2", "= ", dbvSI);
-
-        // add defensive equipment
-        double amsBV = 0;
-        double amsAmmoBV = 0;
-        double screenBV = 0;
-        double screenAmmoBV = 0;
-        double defEqBV = 0;
-        for (Mounted mounted : dropShip.getEquipment()) {
-            EquipmentType etype = mounted.getType();
-
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
-            if (etype instanceof BayWeapon) {
-                continue;
-            }
-            if (((etype instanceof WeaponType) && (etype.hasFlag(WeaponType.F_AMS)))) {
-                amsBV += etype.getBV(dropShip);
-                bvReport.addLine(etype.getName(), "+ " + etype.getBV(dropShip), "");
-            } else if ((etype instanceof AmmoType) && (((AmmoType) etype).getAmmoType() == AmmoType.T_AMS)) {
-                // we need to deal with cases where ammo is loaded in multi-ton increments
-                // (on dropships and jumpships) - lets take the ratio of shots to shots left
-                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
-
-                // if the ratio is less than one, we will treat as a full ton
-                // since we don't make that adjustment elsewhere
-                if (ratio < 1.0) {
-                    ratio = 1.0;
-                }
-                amsAmmoBV += ratio * etype.getBV(dropShip);
-                bvReport.addLine(etype.getName(), "+ " + (ratio * etype.getBV(dropShip)), "");
-            } else if ((etype instanceof AmmoType)
-                    && (((AmmoType) etype).getAmmoType() == AmmoType.T_SCREEN_LAUNCHER)) {
-                // we need to deal with cases where ammo is loaded in multi-ton increments
-                // (on dropships and jumpships) - lets take the ratio of shots to shots left
-                double ratio = mounted.getUsableShotsLeft() / ((AmmoType) etype).getShots();
-
-                // if the ratio is less than one, we will treat as a full ton
-                // since we don't make that adjustment elsewhere
-                if (ratio < 1.0) {
-                    ratio = 1.0;
-                }
-                screenAmmoBV += ratio * etype.getBV(dropShip);
-                bvReport.addLine(etype.getName(), "+ " + (ratio * etype.getBV(dropShip)), "");
-            } else if ((etype instanceof WeaponType)
-                    && (((WeaponType) etype).getAtClass() == WeaponType.CLASS_SCREEN)) {
-                screenBV += etype.getBV(dropShip);
-                bvReport.addLine(etype.getName(), "+ " + etype.getBV(dropShip), "");
-            } else if ((etype instanceof MiscType)
-                    && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_BAP))) {
-                defEqBV += etype.getBV(dropShip);
-                bvReport.addLine(mounted.getName(), "+ " + etype.getBV(dropShip), "");
-            }
-        }
-        if (amsBV > 0) {
-            dbv += amsBV;
-            bvReport.addLine("Total AMS BV:", "", amsBV);
-        }
-        if (screenBV > 0) {
-            dbv += screenBV;
-            bvReport.addLine("Total Screen BV:", "", screenBV);
-        }
-        if (amsAmmoBV > 0) {
-            dbv += Math.min(amsBV, amsAmmoBV);
-            bvReport.addLine("Total AMS Ammo BV (to a maximum of AMS BV):", "", Math.min(amsBV, amsAmmoBV));
-        }
-        if (screenAmmoBV > 0) {
-            dbv += Math.min(screenBV, screenAmmoBV);
-            bvReport.addLine("Total Screen Ammo BV (to a maximum of Screen BV):", "", Math.min(screenBV, screenAmmoBV));
-        }
-        if (defEqBV > 0) {
-            dbv += defEqBV;
-            bvReport.addLine("Total misc defensive equipment BV:", "", defEqBV);
-        }
-        bvReport.addResultLine("", dbv);
-        dbv *= dropShip.getBVTypeModifier();
-        bvReport.addLine("Multiply by Unit type Modifier", "" + dropShip.getBVTypeModifier(),
-                "x ", dropShip.getBVTypeModifier());
-        bvReport.addResultLine("", dbv);
 
         bvReport.addSubHeader("Offensive Battle Rating Calculation:");
         // calculate heat efficiency
@@ -347,8 +471,8 @@ public class DropShipBVCalculator {
         if (highArc > Integer.MIN_VALUE) {
             heatUsed += arcHeats[highArc];
             // now get the BV and heat for the two adjacent arcs
-            int adjArcCW = dropShip.getAdjacentLocCW(highArc);
-            int adjArcCCW = dropShip.getAdjacentLocCCW(highArc);
+            int adjArcCW = 0;//= getAdjacentLocCW(highArc);
+            int adjArcCCW = 0;//dropShip.getAdjacentLocCCW(highArc);
             double adjArcCWBV = 0.0;
             double adjArcCWHeat = 0.0;
             if (adjArcCW > Integer.MIN_VALUE) {
@@ -396,8 +520,8 @@ public class DropShipBVCalculator {
         if (highArc > Integer.MIN_VALUE) {
             // ok now add the BV from this arc and reset to zero
             totalHeat = arcHeats[highArc];
-            bvReport.addLine("Highest BV Arc (" + getArcName(dropShip, highArc) + ")" + arcBVs[highArc] + "*1.0",
-                    "+ " + arcBVs[highArc], "Total Heat: " + totalHeat);
+//            bvReport.addLine("Highest BV Arc (" + getArcName(dropShip, highArc) + ")" + arcBVs[highArc] + "*1.0",
+//                    "+ " + arcBVs[highArc], "Total Heat: " + totalHeat);
             weaponBV += arcBVs[highArc];
             arcBVs[highArc] = 0.0;
 
@@ -407,9 +531,9 @@ public class DropShipBVCalculator {
                 if (totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";
                 }
-                bvReport.addLine("Adjacent High BV Arc (" + getArcName(dropShip, adjArcH) + ") " + arcBVs[adjArcH] + "*" + adjArcHMult,
-                        "+ " + (arcBVs[adjArcH] * adjArcHMult),
-                        "Total Heat: " + totalHeat + over);
+//                bvReport.addLine("Adjacent High BV Arc (" + getArcName(dropShip, adjArcH) + ") " + arcBVs[adjArcH] + "*" + adjArcHMult,
+//                        "+ " + (arcBVs[adjArcH] * adjArcHMult),
+//                        "Total Heat: " + totalHeat + over);
                 weaponBV += adjArcHMult * arcBVs[adjArcH];
                 arcBVs[adjArcH] = 0.0;
             }
@@ -420,9 +544,9 @@ public class DropShipBVCalculator {
                 if (totalHeat > aeroHeatEfficiency) {
                     over = " (Greater than heat efficiency)";
                 }
-                bvReport.addLine("Adjacent Low BV Arc (" + getArcName(dropShip, adjArcL) + ") " + arcBVs[adjArcL] + "*" + adjArcLMult,
-                        "+ " + (adjArcLMult * arcBVs[adjArcL]),
-                        "Total Heat: " + totalHeat + over);
+//                bvReport.addLine("Adjacent Low BV Arc (" + getArcName(dropShip, adjArcL) + ") " + arcBVs[adjArcL] + "*" + adjArcLMult,
+//                        "+ " + (adjArcLMult * arcBVs[adjArcL]),
+//                        "Total Heat: " + totalHeat + over);
                 weaponBV += adjArcLMult * arcBVs[adjArcL];
                 arcBVs[adjArcL] = 0.0;
             }
@@ -432,82 +556,53 @@ public class DropShipBVCalculator {
                 if (arcBVs[loc] <= 0) {
                     continue;
                 }
-                bvReport.addLine(getArcName(dropShip, loc) + " " + arcBVs[loc] + "*0.25",
-                        "+" + (0.25 * arcBVs[loc]), "");
+//                bvReport.addLine(getArcName(dropShip, loc) + " " + arcBVs[loc] + "*0.25",
+//                        "+" + (0.25 * arcBVs[loc]), "");
                 weaponBV += (0.25 * arcBVs[loc]);
             }
         }
+
+
+
+
+
         bvReport.addLine("Total Weapons BV Adjusted For Heat:", "", weaponBV);
-        // add offensive misc. equipment BV
-        double oEquipmentBV = 0;
-        for (Mounted mounted : dropShip.getMisc()) {
-            MiscType mtype = (MiscType) mounted.getType();
 
-            // don't count destroyed equipment
-            if (mounted.isDestroyed()) {
-                continue;
-            }
 
-            if (mtype.hasFlag(MiscType.F_TARGCOMP)) {
-                continue;
-            }
-            double bv = mtype.getBV(dropShip);
-            if (bv > 0) {
-                bvReport.addLine(mounted.getName(), "", bv);
-            }
-            oEquipmentBV += bv;
-        }
-        bvReport.addLine("Total Misc Offensive Equipment BV: ", "", oEquipmentBV);
-        weaponBV += oEquipmentBV;
-
-        // adjust further for speed factor
-        double speedFactor = Math.pow(1 + (((double) dropShip.getRunMP() - 5) / 10), 1.2);
-        speedFactor = Math.round(speedFactor * 100) / 100.0;
-        bvReport.addLine("Final Speed Factor: ", "", speedFactor);
-        double obv; // offensive bv
-        obv = weaponBV * speedFactor;
-        bvReport.addLine("Weapons BV * Speed Factor ",
-                weaponBV + " x " + speedFactor, "= ", obv);
-
-        double finalBV = dbv + obv;
-        bvReport.addLine("Offensive BV + Defensive BV", obv + " + " + dbv, "= ", finalBV);
-        finalBV = Math.round(finalBV);
-        bvReport.addResultLine("Final BV", "", finalBV);
-
-        // Force Bonuses
-        double tagBonus = BVCalculator.bvTagBonus(dropShip);
-        if (tagBonus > 0) {
-            finalBV += tagBonus;
-            bvReport.addEmptyLine();
-            bvReport.addLine("Force Bonus (TAG):",
-                    "+ " + formatForReport(tagBonus), "= " + formatForReport(finalBV));
-        }
-
-        double c3Bonus = ignoreC3 ? 0 : dropShip.getExtraC3BV((int) Math.round(finalBV));
-        if (c3Bonus > 0) {
-            finalBV += c3Bonus;
-            bvReport.addEmptyLine();
-            bvReport.addLine("Force Bonus (C3):",
-                    "+ " + formatForReport(c3Bonus), "= " + formatForReport(finalBV));
-        }
-
-        double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(dropShip);
-        if (pilotFactor != 1) {
-            finalBV *= pilotFactor;
-            bvReport.addEmptyLine();
-            bvReport.addLine("Pilot Modifier:",
-                    "x " + formatForReport(pilotFactor), "= " + formatForReport(finalBV));
-        }
-
-        int finalAdjustedBV = (int) Math.round(finalBV);
-        bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
-        return finalAdjustedBV;
+        return 0;
     }
 
-    private static String getArcName(Dropship dropShip, int loc) {
-        if (loc < dropShip.locations()) {
-            return dropShip.getLocationName(loc);
+
+    private String arcName(int bvLocation) {
+        switch (bvLocation) {
+            case BVLOC_NOSE:
+                return dropship.getLocationAbbr(Dropship.LOC_NOSE);
+            case BVLOC_LEFT:
+                return dropship.getLocationAbbr(Dropship.LOC_LWING);
+            case BVLOC_LEFT_AFT:
+                return dropship.getLocationAbbr(Dropship.LOC_LWING) + " (R)";
+            case BVLOC_AFT:
+                return dropship.getLocationAbbr(Dropship.LOC_AFT);
+            case BVLOC_RIGHT_AFT:
+                return dropship.getLocationAbbr(Dropship.LOC_RWING) + " (R)";
+            case BVLOC_RIGHT:
+                return dropship.getLocationAbbr(Dropship.LOC_RWING);
         }
-        return dropShip.getLocationName(loc - 3) + " (R)";
+        return "Error: Unexpected location value.";
+    }
+
+    /** @return The adjacent firing arc location, counter-clockwise */
+    public int getAdjacentLocationCCW(int bvLocation) {
+        return (bvLocation + 1) % 6;
+    }
+
+    /** @return The adjacent firing arc location, clockwise */
+    public int getAdjacentLocationCW(int bvLocation) {
+        return (bvLocation + 5) % 6;
+    }
+
+    /** @return The opposite firing arc location, counter-clockwise */
+    public int getOppositeLocation(int bvLocation) {
+        return (bvLocation + 3) % 6;
     }
 }

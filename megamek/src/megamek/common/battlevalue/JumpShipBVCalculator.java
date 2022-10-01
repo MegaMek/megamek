@@ -29,7 +29,11 @@ import java.util.TreeMap;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
-public class JumpShipBVCalculator {
+public class JumpShipBVCalculator extends BVCalculator {
+
+    JumpShipBVCalculator(Entity entity) {
+        super(entity);
+    }
 
     public static int calculateBV(Jumpship jumpShip, boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
         bvReport.addHeader("Battle Value Calculations For");
@@ -470,13 +474,13 @@ public class JumpShipBVCalculator {
         bvReport.addResultLine("Final BV", "", finalBV);
 
         // Force Bonuses
-        double tagBonus = BVCalculator.bvTagBonus(jumpShip);
-        if (tagBonus > 0) {
-            finalBV += tagBonus;
-            bvReport.addEmptyLine();
-            bvReport.addLine("Force Bonus (TAG):",
-                    "+ " + formatForReport(tagBonus), "= " + formatForReport(finalBV));
-        }
+//        double tagBonus = BVCalculator.bvTagBonus(jumpShip);
+//        if (tagBonus > 0) {
+//            finalBV += tagBonus;
+//            bvReport.addEmptyLine();
+//            bvReport.addLine("Force Bonus (TAG):",
+//                    "+ " + formatForReport(tagBonus), "= " + formatForReport(finalBV));
+//        }
 
         double c3Bonus = ignoreC3 ? 0 : jumpShip.getExtraC3BV((int) Math.round(finalBV));
         if (c3Bonus > 0) {
@@ -497,5 +501,10 @@ public class JumpShipBVCalculator {
         int finalAdjustedBV = (int) Math.round(finalBV);
         bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
         return finalAdjustedBV;
+    }
+
+    @Override
+    protected int speedFactorMP() {
+        return 0;
     }
 }

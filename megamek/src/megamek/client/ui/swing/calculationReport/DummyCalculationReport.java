@@ -94,6 +94,15 @@ public class DummyCalculationReport implements CalculationReport {
     }
 
     @Override
+    public void startTentativeSection() { }
+
+    @Override
+    public void endTentativeSection() { }
+
+    @Override
+    public void discardTentativeSection() { }
+
+    @Override
     public String toString() {
         return "This is an intentionally empty calculation report.";
     }

@@ -8279,6 +8279,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createHarJelII() {
         MiscType misc = new MiscType();
+        misc.shortName = "HarJel II";
         misc.name = "HarJel Repair Systems (HarJel II)";
         misc.setInternalName(misc.name);
         misc.addLookupName("HarJel II Self-Repair System");
@@ -8303,6 +8304,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createHarJelIII() {
         MiscType misc = new MiscType();
+        misc.shortName = "HarJel III";
         misc.name = "HarJel Repair Systems (HarJel III)";
         misc.addLookupName("HarJel III Self-Repair System");
         misc.setInternalName(misc.name);

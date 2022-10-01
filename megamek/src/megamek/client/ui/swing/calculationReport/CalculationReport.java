@@ -25,17 +25,25 @@ import java.util.Locale;
 
 /**
  * This represents a report for any typical MegaMek suite calculation such as BV, cost or AS conversion.
- * It assumes that each line will have at most three entries, a sort of header text ("Damage:"), a calculation
- * ("5 + 5 + 7 * 0.2") and a result on the right side ("11.4").
- *
+ * It assumes that each line will have at most three entries, a sort of header text (Damage:), a calculation
+ * (5 + 5 + 7 * 0.2) and a result on the right side (11.4).
+ * <BR><BR>
  * The result can be given as a String or as a double value with a prefix String. When a double value is
  * given, it will be rounded to one decimal digit. Since the second entry (the calculation text) can
  * be more complicated than a single number, it can only be passed as a String and rounding must be
  * performed by the caller if needed.
+ * <BR><BR>
+ * Classes that implement this interface ideally provide a runtime representation of the resulting report when
+ * overriding toJComponent(). This should be displayable in a Swing Panel and not be null. At the worst,
+ * a text explaining that the report is not available in this format should be given.
  *
  * @author Simon (Juliez)
  */
 public interface CalculationReport {
+
+    enum LineType {
+        LINE, HEADER, SUBHEADER, RESULT_LINE, EMPTY
+    }
 
     /**
      * Adds a single line to the CalculationReport.
@@ -218,6 +226,51 @@ public interface CalculationReport {
             return String.format(Locale.US, "%1$.2f", d);
         } else {
             return String.format(Locale.US, "%1$.3f", d);
+        }
+    }
+
+    /**
+     * Starts a report section that is tentative, i.e. that may be added or discarded depending
+     * on whether {@link #endTentativeSection()} or {@link #discardTentativeSection()} is called
+     * at a later point.
+     * All lines added to the report after calling this method are kept separate until either
+     * {@link #endTentativeSection()} or {@link #discardTentativeSection()} is called.
+     * When subsequently {@link #endTentativeSection()} is called, the lines of the section are
+     * written to the report normally.
+     * When subsequently {@link #discardTentativeSection()} is called, all lines in the section
+     * are discarded (not written to the report).
+     * Note that calling this method multiple times has no further effect. The first consecutive
+     * call of this method stays the one that marks the start of the section. Not more than a
+     * single section is maintained at any time.
+     */
+    void startTentativeSection();
+
+    /**
+     * End the current section of lines, writing them to the report normally.
+     * Note that when a section has been ended and no new section begun, calling this method again
+     * has no effect.
+     */
+    void endTentativeSection();
+
+    /**
+     * Discard all lines written to this section (all lines added to the report after calling
+     * {@link #startTentativeSection()}).
+     * Note that when a section has been ended and no new section begun, calling this method again
+     * has no effect.
+     */
+    void discardTentativeSection();
+
+    /**
+     * End the current section of lines, keeping or discarding the section depending on the given
+     * keepSection. Calls either {@link #endTentativeSection()} or {@link #discardTentativeSection()}.
+     *
+     * @param keepSection When true, keeps the current section, otherwise discards it.
+     */
+    default void finalizeTentativeSection(boolean keepSection) {
+        if (keepSection) {
+            endTentativeSection();
+        } else {
+            discardTentativeSection();
         }
     }
 }

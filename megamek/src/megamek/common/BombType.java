@@ -15,7 +15,10 @@
 package megamek.common;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 public class BombType extends AmmoType {
 
@@ -190,6 +193,17 @@ public class BombType extends AmmoType {
         EquipmentType.addType(BombType.createSmallFuelAirBomb());
         EquipmentType.addType(BombType.createLargeFuelAirBomb());
     }
+
+    /** @return All BombType equipment types as a List. The list is a copy and can safely be modified. */
+    public static List<BombType> allBombTypes() {
+        if (EquipmentType.allTypes == null) {
+            EquipmentType.initializeTypes();
+        }
+        return EquipmentType.allTypes.stream()
+                .filter(eType -> eType instanceof BombType)
+                .map(eType -> (BombType) eType)
+                .collect(toList());
+    }
     
     public static BombType createBombByType(int bType)    {
         switch (bType) {
@@ -340,7 +354,7 @@ public class BombType extends AmmoType {
         bomb.munitionType = AmmoType.M_HOMING;
         // Allow Homing munitions to instantly switch between modes
         bomb.instantModeSwitch = true;
-        bomb.setModes(new String[] { "Homing", "Non-Homing" });
+        bomb.setModes("Homing", "Non-Homing");
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;
@@ -650,6 +664,7 @@ public class BombType extends AmmoType {
         return bomb;
     }
 
+    /** Thunder Standard Bombs, TO:AUE pg. 172, 197 */
     private static BombType createThunderBomb() {
         BombType bomb = new BombType();
 
@@ -662,9 +677,9 @@ public class BombType extends AmmoType {
         bomb.bombType = BombType.B_THUNDER;
         bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 112;
         bomb.cost = 12000;
-        bomb.rulesRefs = "360, TO";
+        bomb.rulesRefs = "172, TO:AUE";
         bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_C).setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
                 .setISAdvancement(2600, 2623, DATE_NONE, 2850, 3052).setISApproximate(true, false, false, false, false)

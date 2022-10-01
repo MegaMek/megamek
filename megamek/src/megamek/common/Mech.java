@@ -5427,26 +5427,18 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public boolean hasCASEII(int location) {
-        for (Mounted mount : getEquipment()) {
-            if ((mount.getLocation() == location)
-                    && (mount.getType() instanceof MiscType)
-                    && mount.getType().hasFlag(MiscType.F_CASEII)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean hasCASEII() {
+        return getMisc().stream()
+                .filter(m -> m.getType() instanceof MiscType)
+                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
     }
 
-    /* Check to see if case II exists anywhere on the mech */
-    public boolean hasCASEIIAnywhere() {
-        for (Mounted mount : getEquipment()) {
-            if ((mount.getType() instanceof MiscType)
-                    && mount.getType().hasFlag(MiscType.F_CASEII)) {
-                return true;
-            }
-        }
-        return false;
+    @Override
+    public boolean hasCASEII(int location) {
+        return getMisc().stream()
+                .filter(m -> m.getLocation() == location)
+                .filter(m -> m.getType() instanceof MiscType)
+                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
     }
 
     @Override

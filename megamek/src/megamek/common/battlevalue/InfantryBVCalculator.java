@@ -20,6 +20,7 @@ package megamek.common.battlevalue;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -29,7 +30,11 @@ import java.util.Locale;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
-public class InfantryBVCalculator {
+public class InfantryBVCalculator extends BVCalculator {
+
+    InfantryBVCalculator(Entity entity) {
+        super(entity);
+    }
 
     public static int calculateBV(Infantry infantry, boolean ignoreSkill, CalculationReport bvReport) {
         NumberFormat df = NumberFormat.getNumberInstance(Locale.US);
@@ -215,13 +220,13 @@ public class InfantryBVCalculator {
         bv *= utm;
 
         // Force Bonuses
-        double tagBonus = BVCalculator.bvTagBonus(infantry);
-        if (tagBonus > 0) {
-            bv += tagBonus;
-            bvReport.addEmptyLine();
-            bvReport.addLine("Force Bonus (TAG):",
-                    "+ " + formatForReport(tagBonus), "= " + formatForReport(bv));
-        }
+//        double tagBonus = bvTagBonus(infantry);
+//        if (tagBonus > 0) {
+//            bv += tagBonus;
+//            bvReport.addEmptyLine();
+//            bvReport.addLine("Force Bonus (TAG):",
+//                    "+ " + formatForReport(tagBonus), "= " + formatForReport(bv));
+//        }
 
         double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(infantry);
         if (pilotFactor != 1) {
@@ -234,5 +239,10 @@ public class InfantryBVCalculator {
         int finalAdjustedBV = (int) Math.round(bv);
         bvReport.addResultLine("Final BV", "= ", finalAdjustedBV);
         return finalAdjustedBV;
+    }
+
+    @Override
+    protected int speedFactorMP() {
+        return 0;
     }
 }

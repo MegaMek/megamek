@@ -15,6 +15,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.AeroBVCalculator;
+import megamek.common.battlevalue.BVCalculator;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -1337,7 +1338,7 @@ public class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return AeroBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
+        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     public double getBVTypeModifier() {
@@ -1821,6 +1822,21 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
         return hasCase;
+    }
+
+    @Override
+    public boolean hasCASEII() {
+        return getMisc().stream()
+                .filter(m -> m.getType() instanceof MiscType)
+                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
+    }
+
+    @Override
+    public boolean hasCASEII(int location) {
+        return getMisc().stream()
+                .filter(m -> m.getLocation() == location)
+                .filter(m -> m.getType() instanceof MiscType)
+                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
     }
 
     /**

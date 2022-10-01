@@ -15,6 +15,7 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.battlevalue.BVCalculator;
 import megamek.common.battlevalue.BattleArmorBVCalculator;
 import megamek.common.cost.BattleArmorCostCalculator;
 import megamek.common.enums.AimingMode;
@@ -869,7 +870,7 @@ public class BattleArmor extends Infantry {
 
     @Override
     public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
+        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**
@@ -886,13 +887,13 @@ public class BattleArmor extends Infantry {
      * @param singleTrooper When true, returns the BV of a single trooper of this BA, otherwise of the full unit
      * @return The Battle Value of this BattleArmor
      */
-    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
-        if (useManualBV) {
-            return manualBV; // TODO : divide by the number of troopers when singleTrooper is true?
-        }
-        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill,
-                new DummyCalculationReport(), singleTrooper);
-    }
+//    public int calculateBattleValue(boolean ignoreC3, boolean ignoreSkill, boolean singleTrooper) {
+//        if (useManualBV) {
+//            return manualBV; // TODO : divide by the number of troopers when singleTrooper is true?
+//        }
+//        return BattleArmorBVCalculator.calculateBV(this, ignoreC3, ignoreSkill,
+//                new DummyCalculationReport(), singleTrooper);
+//    }
 
     /**
      * Prepare the entity for a new round of action.

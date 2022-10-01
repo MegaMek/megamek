@@ -12,7 +12,7 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.DropShipBVCalculator;
+import megamek.common.battlevalue.BVCalculator;
 import megamek.common.cost.DropShipCostCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -383,7 +383,7 @@ public class Dropship extends SmallCraft {
 
     @Override
     public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return DropShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
+        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**
@@ -423,72 +423,6 @@ public class Dropship extends SmallCraft {
         // large craft are considered to have > 7 tons comm equipment
         // hence they get +2 ini bonus as a mobile hq
         return 2;
-    }
-
-    /**
-     * find the adjacent firing arc location on this vessel clockwise
-     */
-    public int getAdjacentLocCW(int loc) {
-        switch (loc) {
-            case LOC_NOSE:
-                return LOC_RWING;
-            case LOC_LWING:
-                return LOC_NOSE;
-            case LOC_RWING:
-                return (LOC_RWING + 3);
-            case LOC_AFT:
-                return (LOC_LWING + 3);
-            case 4:
-                return LOC_LWING;
-            case 5:
-                return LOC_AFT;
-            default:
-                return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
-     * find the adjacent firing arc on this vessel counter-clockwise
-     */
-    public int getAdjacentLocCCW(int loc) {
-        switch (loc) {
-            case LOC_NOSE:
-                return LOC_LWING;
-            case LOC_LWING:
-                return (LOC_LWING + 3);
-            case LOC_RWING:
-                return LOC_NOSE;
-            case LOC_AFT:
-                return (LOC_RWING + 3);
-            case 4:
-                return LOC_AFT;
-            case 5:
-                return LOC_RWING;
-            default:
-                return Integer.MIN_VALUE;
-        }
-    }
-
-    /**
-     * find the adjacent firing arc location on this vessel clockwise
-     */
-    public int getOppositeLoc(int loc) {
-        switch (loc) {
-            case LOC_NOSE:
-                return LOC_AFT;
-            case LOC_LWING:
-                return (LOC_RWING + 3);
-            case LOC_RWING:
-                return (LOC_LWING + 3);
-            case LOC_AFT:
-                return LOC_NOSE;
-            case 4:
-                return LOC_RWING;
-            case 5:
-                return LOC_LWING;
-            default:
-                return Integer.MIN_VALUE;
-        }
     }
 
     /**

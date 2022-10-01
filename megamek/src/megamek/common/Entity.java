@@ -23,6 +23,7 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
+import megamek.common.battlevalue.BVCalculator;
 import megamek.common.enums.*;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.force.Force;
@@ -807,6 +808,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * The location the unit is bracing as per TacOps:AR page 82
      */
     private int braceLocation = Entity.LOC_NONE;
+
+    /**
+     * The persistent (except for client/server-transmission) battle value calculator for this entity.
+     */
+    private transient BVCalculator bvCalculator = BVCalculator.getBVCalculator(this);
     
     /**
      * Generates a new, blank, entity.
@@ -5579,19 +5585,21 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * Only Meks can have CASE II so all other entities return false.
+     * True if the unit has CASE II (on any location in the case of Meks).
+     * Only Meks and Fighters can have CASE II so all other entities return false by default.
      *
-     * @return true iff the mech has CASE II.
+     * @return True if the unit has CASE II
      */
     public boolean hasCASEII() {
         return false;
     }
 
     /**
-     * Only Meks have CASE II so all other entities return false.
+     * True if the unit has CASE II in the given location.
+     * Only Meks and Fighters can have CASE II so all other entities return false by default.
      *
-     * @param location
-     * @return true iff the mech has CASE II at this location.
+     * @param location The location to check
+     * @return True if the unit has CASE II in the location
      */
     public boolean hasCASEII(int location) {
         return false;
@@ -16086,4 +16094,17 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <P>This method does nothing by default and must be overridden for unit types that get Clan CASE.
      */
     public void addClanCase() { }
+
+    /**
+     * Returns the persistent BV Calculator object for this entity. When transmitted bertween server and
+     * client, the calculator is discarded and a new one is created by this method call.
+     *
+     * @return The BVCalculator for this entity.
+     */
+    public BVCalculator getBvCalculator() {
+        if (bvCalculator == null) {
+            bvCalculator = BVCalculator.getBVCalculator(this);
+        }
+        return bvCalculator;
+    }
 }

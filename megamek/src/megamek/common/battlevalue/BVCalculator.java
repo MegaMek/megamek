@@ -32,7 +32,9 @@ import java.util.*;
 import java.util.function.Predicate;
 
 /**
- * Utility class for obtaining BV Skill Multipliers (TM p.315).
+ * Base class for battle value calculators for all units. The subclasses implement overrides
+ * as necessary for the bv calculation process that all unit types follow. To obtain the correct
+ * BVCalculator, use {@link #getBVCalculator(Entity)}.
  */
 public abstract class BVCalculator {
 
@@ -60,6 +62,7 @@ public abstract class BVCalculator {
     protected boolean switchRearAndFront = false;
     protected boolean heatEfficiencyExceeded = false;
     protected int heatSum;
+    private final Map<Mounted, Integer> collectedDefensiveEquipment = new HashMap<>();
 
     /** The unit's BV without any force adjustments */
     protected double baseBV = -1;
@@ -83,8 +86,10 @@ public abstract class BVCalculator {
             return new BattleArmorBVCalculator(entity);
 //        } else if (entity instanceof Infantry) {
 //            return new InfantryBVCalculator();
-//        } else if (entity instanceof Jumpship) {
-//            return new JumpShipBVCalculator();
+        } else if (entity instanceof Warship) {
+            return new WarShipBVCalculator(entity);
+        } else if (entity instanceof Jumpship) {
+            return new JumpShipBVCalculator(entity);
         } else if (entity instanceof Dropship) {
             return new DropShipBVCalculator(entity);
         } else if (entity instanceof Aero) {
@@ -134,8 +139,9 @@ public abstract class BVCalculator {
     protected void processPreparation() {
         reset();
         assembleAmmo();
+        assembleMovementValues();
 
-        String header = "Battle Value Calculation For";
+        String header = "Battle Value Calculation for ";
         String fullName = entity.getChassis() + " " + entity.getModel();
         if (fullName.length() < 20) {
             bvReport.addHeader(header + fullName);
@@ -193,6 +199,12 @@ public abstract class BVCalculator {
         names.clear();
         weaponsForExcessiveAmmo.clear();
         heatEfficiencyExceeded = false;
+    }
+
+    protected void assembleMovementValues() {
+        runMP = entity.getRunMP(false, true, true);
+        jumpMP = entity.getJumpMP(false);
+        umuMP = entity.getActiveUMUCount();
     }
 
     protected void processTypeModifier() { }
@@ -257,8 +269,9 @@ public abstract class BVCalculator {
                         + " (" + entity.getLocationAbbr(loc) + ")";
                 bvReport.addLine(type, "+ " + calculation + " = " + formatForReport(totalArmorBV), "");
             }
-            defensiveValue += totalArmorBV * 2.5;
-            bvReport.addLine("Armor BV:", formatForReport(totalArmorBV) + " x 2.5",
+            defensiveValue += totalArmorBV * armorFactor();
+            bvReport.addLine("Armor BV:",
+                    formatForReport(totalArmorBV) + " x " + formatForReport(armorFactor()),
                     "= " + formatForReport(defensiveValue));
         } else {
             // Units without Patchwork armor can use the (simpler) total armor value
@@ -279,15 +292,23 @@ public abstract class BVCalculator {
                 calculation = "(" + calculation + ")";
             }
 
-            calculation += " x 2.5";
+            calculation += " x " + formatForReport(armorFactor());
             calculation += (armorMultiplier != 1) ?
                     " x " + formatForReport(armorMultiplier) + " ("
                             + EquipmentType.armorNames[entity.getArmorType(0)] + ")" : "";
             calculation += (barRating != 1) ?
                     " x " + formatForReport(barRating) + " (BAR)" : "";
-            defensiveValue += totalArmorBV * 2.5;
+            defensiveValue += totalArmorBV * armorFactor();
             bvReport.addLine("Armor:", calculation, "= " + formatForReport(defensiveValue));
         }
+    }
+
+    /**
+     * @return The base factor to multiply armor by, i.e. 25 for capital aerosapce, 1 for support
+     * vehicles and 2.5 for all others.
+     */
+    protected double armorFactor() {
+        return entity.isSupportVehicle() ? 1 : 2.5;
     }
 
     protected String equipmentDescriptor(Mounted mounted) {
@@ -343,44 +364,20 @@ public abstract class BVCalculator {
         bvReport.addLine("Internal Structure:", calculation, "= " + formatForReport(defensiveValue));
     }
 
-    protected void processDefensiveEquipment() {
-        bvReport.startTentativeSection();
-        bvReport.addLine("Defensive Equipment:", "", "");
-        double amsBV = 0;
-        double amsAmmoBV = 0;
-        double screenBV = 0;
-        double screenAmmoBV = 0;
-        boolean hasDefensiveEquipment = false;
-        for (Mounted ammo : entity.getAmmo()) {
-            AmmoType ammoType = (AmmoType) ammo.getType();
-            // we need to deal with cases where ammo is loaded in multi-ton increments
-            // (on dropships and jumpships) - lets take the ratio of shots to shots left
-            double ratio = (double) ammo.getUsableShotsLeft() / ammoType.getShots();
-
-            // if the ratio is less than one, we will treat as a full ton
-            // since we don't make that adjustment elsewhere
-            if ((ratio < 1.0) && (ratio > 0)) {
-                ratio = 1.0;
-            }
-            if ((ammoType.getAmmoType() == T_AMS) || (ammoType.getAmmoType() == T_APDS)) {
-                amsAmmoBV += ratio * ammoType.getBV(entity);
-            } else if (ammoType.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
-                screenAmmoBV += ratio * ammoType.getBV(entity);
-
-            }
+    protected boolean countsAsDefensiveEquipment(Mounted equipment) {
+        if (equipment.isDestroyed() || equipment.isWeaponGroup()
+                || (equipment.getType() instanceof BayWeapon)) {
+            return false;
         }
-        for (Mounted equipment : entity.getEquipment()) {
-            if (equipment.isDestroyed() || equipment.isWeaponGroup()
-                    || (equipment.getType() instanceof BayWeapon)) {
-                continue;
-            }
 
-            EquipmentType eType = equipment.getType();
-            if (((eType instanceof WeaponType) && (eType.hasFlag(WeaponType.F_AMS)
+        EquipmentType eType = equipment.getType();
+        if (eType instanceof WeaponType) {
+            return eType.hasFlag(WeaponType.F_AMS)
                     || eType.hasFlag(WeaponType.F_M_POD)
                     || eType.hasFlag(WeaponType.F_B_POD)
-                    || (((WeaponType) eType).getAtClass() == WeaponType.CLASS_SCREEN)))
-                    || ((eType instanceof MiscType) && (eType.hasFlag(MiscType.F_ECM)
+                    || (((WeaponType) eType).getAtClass() == WeaponType.CLASS_SCREEN);
+        } else if (eType instanceof MiscType) {
+            return eType.hasFlag(MiscType.F_ECM)
                     || eType.hasFlag(MiscType.F_BAP)
                     || eType.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
                     || eType.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
@@ -395,41 +392,83 @@ public abstract class BVCalculator {
                     || eType.hasFlag(MiscType.F_HARJEL_III)
                     || eType.hasFlag(MiscType.F_SPIKES)
                     || eType.hasFlag(MiscType.F_MINESWEEPER)
-                    || (eType.hasFlag(MiscType.F_CLUB) && (eType.hasSubType(MiscType.S_SHIELD_LARGE)
-                    || eType.hasSubType(MiscType.S_SHIELD_MEDIUM)
-                    || eType.hasSubType(MiscType.S_SHIELD_SMALL)))))) {
-                double equipmentBV = eType.getBV(entity);
-                if (eType instanceof MiscType) {
-                    equipmentBV = ((MiscType) eType).getBV(entity, equipment.getLocation());
-                }
-                defensiveValue += equipmentBV;
-                String calculation = ((equipmentBV > 0) ? "+ " : "- ") + formatForReport(Math.abs(equipmentBV));
-                bvReport.addLine("- " + equipmentDescriptor(equipment), calculation,
-                        "= " + formatForReport(defensiveValue));
-                hasDefensiveEquipment = true;
+                    || ((MiscType) eType).isShield();
+        } else {
+            return false;
+        }
+    }
+
+    protected void processDefensiveEquipment() {
+        bvReport.startTentativeSection();
+        bvReport.addLine("Defensive Equipment:", "", "");
+        double amsBV = 0;
+        double amsAmmoBV = 0;
+        double screenBV = 0;
+        double screenAmmoBV = 0;
+        boolean hasDefensiveEquipment = false;
+        for (Mounted ammo : entity.getAmmo()) {
+            if (ammo.getUsableShotsLeft() == 0) {
+                continue;
             }
+            // Ammo may be loaded in multi-ton increments on large aerospace
+            AmmoType ammoType = (AmmoType) ammo.getType();
+            int ratio = Math.max(1, ammo.getUsableShotsLeft() / ammoType.getShots());
+
+            if ((ammoType.getAmmoType() == T_AMS) || (ammoType.getAmmoType() == T_APDS)) {
+                amsAmmoBV += ammoType.getBV(entity) * ratio;
+            } else if (ammoType.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) {
+                screenAmmoBV += ammoType.getBV(entity) * ratio;
+            }
+        }
+
+        for (Mounted equipment : entity.getEquipment()) {
+            if (countsAsDefensiveEquipment(equipment)) {
+                Mounted key = collectedDefensiveEquipment.keySet().stream()
+                        .filter(p -> equipment.getType() == p.getType()).findFirst().orElse(equipment);
+                collectedDefensiveEquipment.merge(key, 1, Integer::sum);
+            }
+        }
+
+        for (Map.Entry<Mounted, Integer> equipmentEntry : collectedDefensiveEquipment.entrySet()) {
+            Mounted equipment = equipmentEntry.getKey();
+            EquipmentType eType = equipment.getType();
+            double equipmentBV = eType.getBV(entity);
+            if (eType instanceof MiscType) {
+                equipmentBV = ((MiscType) eType).getBV(entity, equipment.getLocation());
+            }
+            String multiplier = (equipmentEntry.getValue() > 1) ? equipmentEntry.getValue() + " x " : "";
+            defensiveValue += equipmentBV * equipmentEntry.getValue();
+            String calculation = ((equipmentBV > 0) ? "+ " : "- ");
+            calculation += multiplier + formatForReport(Math.abs(equipmentBV));
+            bvReport.addLine("- " + multiplier + equipmentDescriptor(equipment), calculation,
+                    "= " + formatForReport(defensiveValue));
+            hasDefensiveEquipment = true;
+
             if (eType instanceof WeaponType) {
                 WeaponType wtype = (WeaponType) eType;
                 if (wtype.hasFlag(WeaponType.F_AMS)
                         && ((wtype.getAmmoType() == T_AMS) || (wtype.getAmmoType() == T_APDS))) {
-                    amsBV += eType.getBV(entity);
+                    amsBV += eType.getBV(entity) * equipmentEntry.getValue();
                 }
             }
             if ((eType instanceof WeaponType)
                     && (((WeaponType) eType).getAtClass() == WeaponType.CLASS_SCREEN)) {
-                screenBV += eType.getBV(entity);
+                screenBV += eType.getBV(entity) * equipmentEntry.getValue();
             }
         }
+
         if (amsAmmoBV > 0) {
-            defensiveValue += Math.min(amsBV, amsAmmoBV);
-            bvReport.addLine("- AMS Ammo", "+ " + formatForReport(Math.min(amsBV, amsAmmoBV)),
-                    "= " + formatForReport(defensiveValue));
+            double nonExcessiveBV = Math.min(amsBV, amsAmmoBV);
+            String calculation = "+ " + formatForReport(nonExcessiveBV) + ((amsAmmoBV > amsBV) ? " (Excessive)" : "");
+            defensiveValue += nonExcessiveBV;
+            bvReport.addLine("- AMS Ammo", calculation, "= " + formatForReport(defensiveValue));
             hasDefensiveEquipment = true;
         }
         if (screenAmmoBV > 0) {
-            defensiveValue += Math.min(screenBV, screenAmmoBV);
-            bvReport.addLine("- Screen Launcher Ammo", "+ " + formatForReport(Math.min(screenBV, screenAmmoBV)),
-                    "= " + formatForReport(defensiveValue));
+            double nonExcessiveBV = Math.min(screenBV, screenAmmoBV);
+            String calculation = "+ " + formatForReport(nonExcessiveBV) + ((screenAmmoBV > screenBV) ? " (Excessive)" : "");
+            defensiveValue += nonExcessiveBV;
+            bvReport.addLine("- Screen Launcher Ammo", calculation, "= " + formatForReport(defensiveValue));
             hasDefensiveEquipment = true;
         }
         bvReport.finalizeTentativeSection(hasDefensiveEquipment);
@@ -450,19 +489,16 @@ public abstract class BVCalculator {
     }
 
     protected int getRunningTMM() {
-        runMP = entity.getRunMP(false, true, true);
         return Compute.getTargetMovementModifier(runMP, false, false, entity.getGame()).getValue();
     }
 
     protected int getJumpingTMM() {
-        jumpMP = entity.getJumpMP(false);
         return (jumpMP == 0) ?
                 0 :
                 Compute.getTargetMovementModifier(jumpMP, true, false, entity.getGame()).getValue();
     }
 
     protected int getUmuTMM() {
-        umuMP = entity.getActiveUMUCount();
         return (umuMP == 0) ?
                 0 :
                 Compute.getTargetMovementModifier(umuMP, false, false, entity.getGame()).getValue();
@@ -513,22 +549,6 @@ public abstract class BVCalculator {
                 .sum();
     }
 
-    protected double reportWeaponSection(Predicate<Mounted> weaponFilter, String sectionName) {
-        bvReport.startTentativeSection();
-        bvReport.addLine(sectionName + ":", "", "");
-        double weaponsBV = processWeaponSection(true, weaponFilter, true);
-        if (weaponsBV > 0) {
-            bvReport.addLine(sectionName + " BV:", "","= " + formatForReport(weaponsBV));
-            bvReport.addEmptyLine();
-            bvReport.endTentativeSection();
-        } else {
-            bvReport.discardTentativeSection();
-            bvReport.addLine(sectionName + ":", "None", "= 0");
-            bvReport.addEmptyLine();
-        }
-        return weaponsBV;
-    }
-
     /**
      * Returns true when a weapon is to be counted and calculated as a rear weapon.
      * For units that deal with rear weapons this is usually true when the weapon is actually
@@ -539,7 +559,8 @@ public abstract class BVCalculator {
      * {@link #determineFront()}.
      * By default, this returns false which is correct for units that do not deal with rear
      * weapons such as ProtoMeks.
-     * This is overridden as necessary for units that deal with rear weapons (Mek, Aero, Tanks).
+     * This is overridden as necessary for units that deal with rear weapons (Mek, Aero, Tanks,
+     * but not large aerospace that use arcs).
      *
      * @param weapon The Mounted equipment to check
      * @return True when the weapon is to be counted as if it was rear-facing
@@ -561,18 +582,6 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Returns true when a weapon is to be counted and calculated as a "rear" arc weapon in
-     * large aerospace units. The nominal rear arcs are those that are valued at 25% only.
-     * By default, this returns false. This is overridden for large aerospace units.
-     *
-     * @param weapon The Mounted equipment to check
-     * @return True when the weapon is to be counted as in a "rear" arc
-     */
-    protected boolean isNominalSideArc(Mounted weapon) {
-        return false;
-    }
-
-    /**
      * @return True when rear and front weapon switching has been decided and
      * the given weapon is to be counted as rear-facing.
      */
@@ -581,43 +590,49 @@ public abstract class BVCalculator {
     }
 
     /**
-     * @return True when rear and front weapon switching has been decided and
-     * the given weapon is to be counted as rear-facing.
+     * @return When true, will show individual weapon heat sums. Used in Meks, AF, CF, and SC.
      */
-    private boolean isDecidedAsNominalRearArc(Mounted weapon) {
-        return frontAndRearDecided && isNominalRearArc(weapon);
-    }
-
-    /**
-     * @return True when rear and front weapon switching has been decided and
-     * the given weapon is to be counted as rear-facing.
-     */
-    private boolean isDecidedAsNominalSideArc(Mounted weapon) {
-        return frontAndRearDecided && isNominalSideArc(weapon);
-    }
-
     protected boolean usesWeaponHeat() {
         return false;
     }
 
+    /**
+     * @return The multiplier for the arc that the given equipment is in (1, 0.5, or 0.25).
+     * Overridden for large aerospace units. When not 1, the factor is shown in the report
+     * and multiplied into the resulting BV.
+     */
     protected double arcFactor(Mounted equipment) {
         return 1;
     }
 
     /**
-     * Determines the BV for a single weapon which may include a WeaponType, MiscType or AmmoType.
+     * Forwards to {@link #processWeapon(Mounted, boolean, boolean, int)} with a weaponCount
+     * parameter of 1 (single weapon).
+     */
+    protected double processWeapon(Mounted weapon, boolean showInReport,
+                                   boolean addToOffensiveValue) {
+        return processWeapon(weapon, showInReport, addToOffensiveValue, 1);
+    }
+
+    /**
+     * Determines the BV for one or more weapons of a single type which may include
+     * a WeaponType, MiscType or AmmoType.
      * When showInReport is false, nothing is written to the report. Otherwise, a line
      * with the weapon's name and (if it has a WeaponType) location as well as the calculation
      * and modifiers is shown.
      *
      * @param weapon The Mounted to process - may include a WeaponType, MiscType or AmmoType
      * @param showInReport When true, will write a line for this weapon to the report.
+     * @param weaponCount The number of this particular type of weapon (multiplies the BV)
+     * @param addToOffensiveValue When true, will add the result to offensiveValue and show the result
      * @return The BV for this weapon
      */
     protected double processWeapon(Mounted weapon, boolean showInReport,
-                                   boolean addToOffensiveValue) {
+                                   boolean addToOffensiveValue, int weaponCount) {
         double weaponBV = weapon.getType().getBV(entity);
-        String calculation = "+ " + formatForReport(weaponBV);
+        String multiplier = (weaponCount > 1) ? weaponCount + " x " : "";
+        String calculation = "+ " + multiplier + formatForReport(weaponBV);
+        weaponBV *= weaponCount;
 
         if (entity.hasFunctionalArmAES(weapon.getLocation())) {
             weaponBV *= 1.25;
@@ -707,7 +722,7 @@ public abstract class BVCalculator {
         }
 
         if (showInReport) {
-            bvReport.addLine("- " + equipmentDescriptor(weapon), calculation, result);
+            bvReport.addLine("- " + multiplier + equipmentDescriptor(weapon), calculation, result);
         }
         return weaponBV;
     }
@@ -740,13 +755,24 @@ public abstract class BVCalculator {
         return weapon -> false;
     }
 
-    protected boolean countAsOffensiveWeapon(Mounted weapon) {
-        WeaponType weaponType = (WeaponType) weapon.getType();
-        return !weaponType.hasFlag(WeaponType.F_AMS) && !weaponType.hasFlag(WeaponType.F_B_POD)
-                && !weaponType.hasFlag(WeaponType.F_M_POD) && (weaponType.getBV(entity) > 0)
-                && !weapon.isMissing() && !weapon.isHit() && !weapon.isDestroyed()
-                && !weapon.isWeaponGroup() && !(weaponType.getAtClass() == WeaponType.CLASS_SCREEN)
-                && !weapon.isBreached() && !(weaponType instanceof BayWeapon);
+    protected boolean countAsOffensiveWeapon(Mounted equipment) {
+        if (equipment.getType() instanceof MiscType) {
+            return countMiscAsOffensiveWeapon(equipment);
+        } else {
+            WeaponType weaponType = (WeaponType) equipment.getType();
+            return !weaponType.hasFlag(WeaponType.F_AMS) && !weaponType.hasFlag(WeaponType.F_B_POD)
+                    && !weaponType.hasFlag(WeaponType.F_M_POD) && (weaponType.getBV(entity) > 0)
+                    && !equipment.isMissing() && !equipment.isHit() && !equipment.isDestroyed()
+                    && !equipment.isWeaponGroup() && !(weaponType.getAtClass() == WeaponType.CLASS_SCREEN)
+                    && !equipment.isBreached() && !(weaponType instanceof BayWeapon);
+        }
+    }
+
+    protected boolean countMiscAsOffensiveWeapon(Mounted misc) {
+        MiscType miscType = (MiscType) misc.getType();
+        return (miscType.getBV(entity) > 0)
+                && !misc.isMissing() && !misc.isHit() && !misc.isDestroyed()
+                && !misc.isWeaponGroup() && !misc.isBreached();
     }
 
     /** @return The BV modifier for AFC or BFC. Override as necessary. */
@@ -862,7 +888,7 @@ public abstract class BVCalculator {
     protected void processWeight() { }
 
     protected void processSpeedFactor() {
-        double speedFactor = speedFactor(speedFactorMP());
+        double speedFactor = offensiveSpeedFactor(offensiveSpeedFactorMP());
         bvReport.addLine("Speed Factor:",
                 formatForReport(offensiveValue) + " x " + speedFactor,
                 "= " + formatForReport(offensiveValue * speedFactor));
@@ -874,13 +900,14 @@ public abstract class BVCalculator {
      * @param mp The MP value for the unit (base value: Walk + 1/2 Jump/UMU)
      * @return The Speed Factor as a two-digit-rounded double such as 1.76
      */
-    protected double speedFactor(int mp) {
+    protected double offensiveSpeedFactor(int mp) {
         return Math.round(Math.pow(1 + ((mp - 5) / 10.0), 1.2) * 100.0) / 100.0;
     }
 
-    /** @return the MP value to use for the Speed Factor for this unit. Override as necessary for unit types. */
-    protected abstract int speedFactorMP();
+    /** @return the MP value to use for the Offensive Speed Factor (TM p.316) for this unit. */
+    protected abstract int offensiveSpeedFactorMP();
 
+    /** Processes unit type modifiers of TM, p.316. */
     protected void processOffensiveTypeModifier() { }
 
     /** @return true when the given ammo (must be AmmoType) counts towards offensive ammo BV calculation. */
@@ -893,6 +920,7 @@ public abstract class BVCalculator {
                 && !ammo.isOneShotAmmo();
     }
 
+    /** Processes the sum of offensive and defensive battle rating and modifiers that affect this sum. */
     protected void processSummarize() {
         baseBV = defensiveValue + offensiveValue;
         bvReport.addEmptyLine();
@@ -908,33 +936,25 @@ public abstract class BVCalculator {
 
             // don't count depleted ammo, AMS and oneshot ammo
             if (ammoCounts(ammo)) {
-                // we need to deal with cases where ammo is loaded in multi-ton increments
-                // (on dropships and jumpships) - lets take the ratio of shots to shots left
-                double ratio = ammo.getUsableShotsLeft() / ammoType.getShots();
-
-                // if the ratio is less than one, we will treat as a full ton
-                // since we don't make that adjustment elsewhere
-                if (ratio < 1.0) {
-                    ratio = 1.0;
-                }
                 String key = ammoType.getAmmoType() + ":" + ammoType.getRackSize();
                 if (!keys.contains(key)) {
                     keys.add(key);
                     names.put(key, equipmentDescriptor(ammo));
                 }
                 if (!ammoMap.containsKey(key)) {
-                    ammoMap.put(key, ratio * getAmmoBV(ammo));
+                    ammoMap.put(key, getAmmoBV(ammo));
                 } else {
-                    ammoMap.put(key, ratio * getAmmoBV(ammo) + ammoMap.get(key));
+                    ammoMap.put(key, getAmmoBV(ammo) + ammoMap.get(key));
                 }
             }
         }
 
-        for (Mounted mounted : entity.getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
+        for (Mounted weapon : entity.getTotalWeaponList()) {
+            WeaponType wtype = (WeaponType) weapon.getType();
 
-            if (mounted.isDestroyed() || wtype.hasFlag(WeaponType.F_AMS)
-                    || wtype.hasFlag(WeaponType.F_B_POD) || wtype.hasFlag(WeaponType.F_M_POD)) {
+            if (weapon.isDestroyed() //|| wtype.hasFlag(WeaponType.F_AMS)
+                    || wtype.hasFlag(WeaponType.F_B_POD) || wtype.hasFlag(WeaponType.F_M_POD)
+                    || wtype instanceof BayWeapon || weapon.isWeaponGroup()) {
                 continue;
             }
 

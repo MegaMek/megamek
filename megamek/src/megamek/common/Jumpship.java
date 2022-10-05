@@ -12,6 +12,7 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
+import megamek.common.battlevalue.BVCalculator;
 import megamek.common.battlevalue.JumpShipBVCalculator;
 import megamek.common.cost.JumpShipCostCalculator;
 import megamek.common.options.OptionsConstants;
@@ -1110,7 +1111,7 @@ public class Jumpship extends Aero {
 
     @Override
     public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return JumpShipBVCalculator.calculateBV(this, ignoreC3, ignoreSkill, calculationReport);
+        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     public int getArcswGuns() {

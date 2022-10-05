@@ -429,7 +429,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected int speedFactorMP() {
+    protected int offensiveSpeedFactorMP() {
         return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
     }
 

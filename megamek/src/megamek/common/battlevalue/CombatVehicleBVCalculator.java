@@ -123,7 +123,7 @@ public class CombatVehicleBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected int speedFactorMP() {
+    protected int offensiveSpeedFactorMP() {
         int runMP = entity.getRunMP(false, true, true);
         int jumpMP = entity.getJumpMP(false);
         if (entity.getMovementMode().isTrain()) {

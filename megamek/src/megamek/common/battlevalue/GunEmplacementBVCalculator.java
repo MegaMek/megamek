@@ -36,7 +36,7 @@ public class GunEmplacementBVCalculator extends BVCalculator {
     protected void processStructure() { }
 
     @Override
-    protected int speedFactorMP() {
+    protected int offensiveSpeedFactorMP() {
         return 0;
     }
 

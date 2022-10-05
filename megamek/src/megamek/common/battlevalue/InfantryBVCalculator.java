@@ -242,7 +242,7 @@ public class InfantryBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected int speedFactorMP() {
+    protected int offensiveSpeedFactorMP() {
         return 0;
     }
 }

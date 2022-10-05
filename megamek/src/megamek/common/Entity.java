@@ -2772,6 +2772,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
+     * Returns the running MP as used for battle value calculations. This value should not factor
+     * in gravity or weather (as these aren't well visible in the calculation and may change over
+     * the course of a battle). It also should not factor in player-controlled transients such as
+     * cargo, trailers, bombs, heat, movement mode changes (LAM, WiGE, QuadVees), grounded/landed
+     * status (Aero) as these would also change BV in battle in strange ways.
+     *
+     * It should factor in intransient modifiers such as TSM, modular or hardened armor as well as
+     * damage to the unit (engine hits, motive damage, immobile status).
+     */
+    public int getRunMPForBV() {
+        return getRunMP(false, true, false);
+    }
+
+    /**
      * Returns run MP with only one MASC system
      */
     public int getRunMPwithOneMASC() {

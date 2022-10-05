@@ -49,7 +49,7 @@ public class ProtoMekBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected int speedFactorMP() {
+    protected int offensiveSpeedFactorMP() {
         Protomech protoMek = (Protomech) entity;
         int mp = protoMek.getRunMPwithoutMyomerBooster(false, true, true);
         mp += (int) Math.round(Math.max(jumpMP, umuMP) / 2.0);

@@ -92,12 +92,6 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
             typeModifier = 1;
         } else if (entity instanceof ConvFighter) {
             typeModifier = 1.1;
-        } else if (entity instanceof Warship) {
-            typeModifier = 0.8;
-        } else if (entity instanceof SpaceStation) {
-            typeModifier = 0.7;
-        } else if (entity instanceof Jumpship) {
-            typeModifier = 0.75;
         }
         String calculation = formatForReport(typeModifier);
         if (aero.hasStealth()) {
@@ -158,7 +152,7 @@ public class AeroBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected int speedFactorMP() {
+    protected int offensiveSpeedFactorMP() {
         return aero.getRunMP();
     }
 }

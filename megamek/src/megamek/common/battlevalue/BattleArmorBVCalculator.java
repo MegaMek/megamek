@@ -88,8 +88,8 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected boolean countAsOffensiveWeapon(Mounted weapon) {
-        return super.countAsOffensiveWeapon(weapon) && !weapon.getType().hasFlag(WeaponType.F_INFANTRY);
+    protected boolean countAsOffensiveWeapon(Mounted equipment) {
+        return super.countAsOffensiveWeapon(equipment) && !equipment.getType().hasFlag(WeaponType.F_INFANTRY);
     }
 
     @Override
@@ -298,7 +298,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected int speedFactorMP() {
+    protected int offensiveSpeedFactorMP() {
         return Math.max(battleArmor.getWalkMP(false, false, true, true, false),
                 Math.max(battleArmor.getJumpMP(false, true, true), battleArmor.getActiveUMUCount()));
     }

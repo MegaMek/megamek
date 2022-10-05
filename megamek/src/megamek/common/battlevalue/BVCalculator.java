@@ -412,7 +412,10 @@ public abstract class BVCalculator {
             }
             // Ammo may be loaded in multi-ton increments on large aerospace
             AmmoType ammoType = (AmmoType) ammo.getType();
-            int ratio = Math.max(1, ammo.getUsableShotsLeft() / ammoType.getShots());
+            int ratio = 1;
+            if (ammoType.getShots() > 0) {
+                ratio = Math.max(1, ammo.getUsableShotsLeft() / ammoType.getShots());
+            }
 
             if ((ammoType.getAmmoType() == T_AMS) || (ammoType.getAmmoType() == T_APDS)) {
                 amsAmmoBV += ammoType.getBV(entity) * ratio;

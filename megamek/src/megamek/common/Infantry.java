@@ -949,16 +949,28 @@ public class Infantry extends Entity {
         return 1;
     }
 
-    /**
-     * Update the platoon to reflect damages taken in this phase.
-     */
+    /** Update the platoon to reflect damage taken in this phase. */
     @Override
     public void applyDamage() {
         super.applyDamage();
         menShooting = men;
+        applyDamageToFieldGuns();
     }
 
-    // The methods below aren't in the Entity interface.
+    /**
+     * Marks field guns and artillery as destroyed according to crew requirement when losing troopers.
+     * Also restores them when troopers are regained (lobby). (TO:AUE p.123)
+     */
+    private void applyDamageToFieldGuns() {
+        int totalCrewNeeded = 0;
+        for (Mounted weapon : weaponList) {
+            if (weapon.getLocation() == LOC_FIELD_GUNS) {
+                totalCrewNeeded += Math.max(2, (int) Math.ceil(weapon.getType().getTonnage(this)));
+                weapon.setDestroyed(totalCrewNeeded > men);
+                weapon.setHit(totalCrewNeeded > men);
+            }
+        }
+    }
 
     /**
      * Get the number of men in the platoon (before damage is applied).

@@ -1182,14 +1182,17 @@ public class UnitEditorDialog extends JDialog {
                 entity.setArmor(rear, i, true);
             }
         }
-        for (Mounted m : entity.getEquipment()) {
-            int eqNum = entity.getEquipmentNum(m);
-            CheckCritPanel crit = equipCrits.get(eqNum);
-            if (null != crit) {
-                int hits = crit.getHits();
-                m.setDestroyed(hits > 0);
-                m.setHit(hits > 0);
-                entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
+        // CI internally updates equipment and uses no equipment checkboxes, prevent overwriting this
+        if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
+            for (Mounted m : entity.getEquipment()) {
+                int eqNum = entity.getEquipmentNum(m);
+                CheckCritPanel crit = equipCrits.get(eqNum);
+                if (null != crit) {
+                    int hits = crit.getHits();
+                    m.setDestroyed(hits > 0);
+                    m.setHit(hits > 0);
+                    entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
+                }
             }
         }
 

@@ -804,8 +804,10 @@ public class Infantry extends Entity {
      */
     @Override
     public void initializeInternal(int val, int loc) {
-        menStarting = val;
-        menShooting = val;
+        if (loc == LOC_INFANTRY) {
+            menStarting = val;
+            menShooting = val;
+        }
         super.initializeInternal(val, loc);
     }
 
@@ -842,10 +844,7 @@ public class Infantry extends Entity {
      */
     @Override
     public boolean isSecondaryArcWeapon(int wn) {
-        if ((getEquipment(wn).getLocation() == LOC_FIELD_GUNS) && !hasActiveFieldArtillery()) {
-            return true;
-        }
-        return false;
+        return (getEquipment(wn).getLocation() == LOC_FIELD_GUNS) && !hasActiveFieldArtillery();
     }
 
     /**

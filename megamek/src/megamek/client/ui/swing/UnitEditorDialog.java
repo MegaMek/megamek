@@ -1182,7 +1182,7 @@ public class UnitEditorDialog extends JDialog {
                 entity.setArmor(rear, i, true);
             }
         }
-        // CI internally updates equipment and uses no equipment checkboxes, prevent overwriting this
+        // CI internally updates field guns and uses no equipment checkboxes here
         if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
             for (Mounted m : entity.getEquipment()) {
                 int eqNum = entity.getEquipmentNum(m);

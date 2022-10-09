@@ -173,6 +173,16 @@ public final class UnitToolTip {
         return result;
     }
 
+    private static boolean hideArmorLocation(Entity entity, int location) {
+        return ((entity.getOArmor(location) <= 0) && (entity.getOInternal(location) <= 0) && !entity.hasRearArmor(location))
+                || (entity.isConventionalInfantry() && (location != Infantry.LOC_INFANTRY));
+    }
+
+    private static String locationHeader(Entity entity, int location) {
+        return entity.isConventionalInfantry() ?
+                ((Infantry) entity).getShootingStrength() + " Active Troopers" : entity.getLocationAbbr(location);
+    }
+
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
         GUIPreferences guip = GUIPreferences.getInstance();
@@ -186,7 +196,7 @@ public final class UnitToolTip {
         result.append("<TABLE CELLSPACING=0 CELLPADDING=0><TBODY>");
         for (int loc = 0 ; loc < entity.locations(); loc++) {
             // do not show locations that do not support/have armor/internals like HULL on Aero
-            if (entity.getOArmor(loc) <= 0 && entity.getOInternal(loc) <= 0 && !entity.hasRearArmor(loc)) {
+            if (hideArmorLocation(entity, loc)) {
                 continue;
             }
             result.append("<TR><TD>");
@@ -195,7 +205,7 @@ public final class UnitToolTip {
                 // Destroyed location
                 result.append("</TD><TD></TD><TD>");
                 result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
-                result.append("&nbsp;&nbsp;" + entity.getLocationAbbr(loc)+ ":&nbsp;");
+                result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + ":&nbsp;");
                 result.append("</FONT></TD><TD>");
                 result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
                 result.append(destroyedLocBar(entity.getOArmor(loc, true)));
@@ -204,7 +214,7 @@ public final class UnitToolTip {
                 // Rear armor
                 if (entity.hasRearArmor(loc)) {
                     result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
-                    result.append("&nbsp;&nbsp;" + entity.getLocationAbbr(loc)+ "R:&nbsp;");
+                    result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + "R:&nbsp;");
                     result.append("</FONT></TD><TD>");
                     result.append(intactLocBar(entity.getOArmor(loc, true), entity.getArmor(loc, true), armorChar));
                     result.append("</TD><TD>");
@@ -217,7 +227,7 @@ public final class UnitToolTip {
                 }
                 // Front armor
                 result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
-                result.append("&nbsp;&nbsp;" + entity.getLocationAbbr(loc)+ ":&nbsp;");
+                result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + ":&nbsp;");
                 result.append("</FONT></TD><TD>");
                 result.append(intactLocBar(entity.getOInternal(loc), entity.getInternal(loc), internalChar));
                 result.append(intactLocBar(entity.getOArmor(loc), entity.getArmor(loc), armorChar));
@@ -784,7 +794,9 @@ public final class UnitToolTip {
         }
 
         // Armor and Internals
-        if (!isGunEmplacement) {
+        if (entity.isConventionalInfantry()) {
+            result.append("<BR>");
+        } else if (!isGunEmplacement) {
             String armorType = TROView.formatArmorType(entity, true).replace("UNKNOWN", "");
             if (!armorType.isBlank()) {
                 armorType = (entity.isCapitalScale() ? getString("BoardView1.Tooltip.ArmorCapital") + " " : "") + armorType;

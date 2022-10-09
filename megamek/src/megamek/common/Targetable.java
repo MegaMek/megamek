@@ -89,9 +89,7 @@ public interface Targetable extends Serializable {
     /** @return if this is off the board */
     boolean isOffBoard();
 
-    /**
-     * @return true if this is an entity subject to rules for conventional infantry
-     */
+    /** @return True if this is a conventional infantry unit (not BattleArmor) and may safely be cast to (Infantry). */
     default boolean isConventionalInfantry() {
         return false;
     }

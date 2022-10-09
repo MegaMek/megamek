@@ -811,13 +811,9 @@ public class Infantry extends Entity {
         super.initializeInternal(val, loc);
     }
 
-    /**
-     * Set the men in the platoon based on squad size and number
-     */
     @Override
     public void autoSetInternal() {
-        //TODO: put checks here on size
-        initializeInternal(squadsize*squadn, LOC_INFANTRY);
+        initializeInternal(squadsize * squadn, LOC_INFANTRY);
     }
 
     /**
@@ -965,8 +961,8 @@ public class Infantry extends Entity {
         for (Mounted weapon : weaponList) {
             if (weapon.getLocation() == LOC_FIELD_GUNS) {
                 totalCrewNeeded += Math.max(2, (int) Math.ceil(weapon.getType().getTonnage(this)));
-                weapon.setDestroyed(totalCrewNeeded > men);
                 weapon.setHit(totalCrewNeeded > men);
+                weapon.setDestroyed(totalCrewNeeded > men);
             }
         }
     }

@@ -4,6 +4,8 @@ VERSION HISTORY:
 + Issue #3776 - Add 0 as a selectable weapon/equipment quantity in advanced search
 + PR #3908: Connections Rework: Logging Modernization
 + PR #3910: Remove unused modes from TAG weapons
++ PR #3929: Fix slots used by engines in Conventional Fighters
++ PR #3927: Improve the info shown in the unit tooltip for Conventional Infantry 
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

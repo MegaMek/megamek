@@ -783,6 +783,7 @@ public class Infantry extends Entity {
         super.setInternal(val, loc);
         if (loc == LOC_INFANTRY) {
             men = val;
+            damageFieldGuns();
         }
     }
 
@@ -944,27 +945,56 @@ public class Infantry extends Entity {
         return 1;
     }
 
-    /** Update the platoon to reflect damage taken in this phase. */
     @Override
     public void applyDamage() {
         super.applyDamage();
         menShooting = men;
-        applyDamageToFieldGuns();
+    }
+
+    /** Destroys field guns and artillery according to their crew requirement when losing troopers. */
+    private void damageFieldGuns() {
+        updateFieldGunsForActiveTrooperCount(false, false);
     }
 
     /**
-     * Marks field guns and artillery as destroyed according to crew requirement when losing troopers.
-     * Also restores them when troopers are regained (lobby). (TO:AUE p.123)
+     * Destroys and restores field guns and artillery according to their crew requirements. This method is intended
+     * for any place where damage can be assigned and removed without cost (lobby).
      */
-    private void applyDamageToFieldGuns() {
+    public void damageOrRestoreFieldGuns() {
+        updateFieldGunsForActiveTrooperCount(true, true);
+    }
+
+    /**
+     * Marks field guns and artillery as hit (= destroyed after the phase ends) or destroyed according to crew
+     * requirement (TO:AUE p.123).
+     * @param allowRestore When true, also restores guns/arty when damage from the platoon is removed (useful in the lobby).
+     * @param destroyAtOnce When true, marks the weapon as destroyed immediately
+     */
+    private void updateFieldGunsForActiveTrooperCount(boolean allowRestore, boolean destroyAtOnce) {
         int totalCrewNeeded = 0;
         for (Mounted weapon : weaponList) {
-            if (weapon.getLocation() == LOC_FIELD_GUNS) {
-                totalCrewNeeded += Math.max(2, (int) Math.ceil(weapon.getType().getTonnage(this)));
-                weapon.setHit(totalCrewNeeded > men);
-                weapon.setDestroyed(totalCrewNeeded > men);
+            if ((weapon.getLocation() == LOC_FIELD_GUNS) && (weapon.getType() instanceof WeaponType)) {
+                totalCrewNeeded += requiredCrewForFieldGun((WeaponType) weapon.getType());
+                if (totalCrewNeeded > men) {
+                    weapon.setHit(true);
+                    if (destroyAtOnce) {
+                        weapon.setDestroyed(true);
+                    }
+                } else if (allowRestore) {
+                    weapon.setHit(false);
+                    weapon.setDestroyed(false);
+                }
             }
         }
+    }
+
+    /**
+     * @return The crew required to operate the given field gun or field artillery weapon, TO:AUE p.123.
+     * The rules are silent on rounding for the weight of artillery, therefore adopting that of field guns.
+     */
+    public int requiredCrewForFieldGun(WeaponType weaponType) {
+        int roundedWeight = (int) Math.ceil(weaponType.getTonnage(this));
+        return weaponType.hasFlag(WeaponType.F_ARTILLERY) ? roundedWeight : Math.max(2, roundedWeight);
     }
 
     /**
@@ -1917,25 +1947,12 @@ public class Infantry extends Entity {
         }
     }
 
+    /** @return True if this infantry has a field artillery weapon that is not destroyed. */
     public boolean hasActiveFieldArtillery() {
-        boolean hasArtillery = false;
-        double smallestGun = 100.0;
-        for (Mounted wpn : getWeaponList()) {
-            if (wpn.getLocation() != LOC_FIELD_GUNS) {
-                continue;
-            }
-
-            if (wpn.getType().hasFlag(WeaponType.F_ARTILLERY)) {
-                hasArtillery = true;
-                if (wpn.getTonnage() < smallestGun) {
-                    smallestGun = wpn.getTonnage();
-                }
-            }
-        }
-
-        //you must have enough men to fire at least the smallest piece
-        return hasArtillery && (getShootingStrength() >= smallestGun);
-
+        return getWeaponList().stream()
+                .filter(weapon -> weapon.getLocation() == LOC_FIELD_GUNS)
+                .filter(weapon -> weapon.getType().hasFlag(WeaponType.F_ARTILLERY))
+                .anyMatch(weapon -> !weapon.isDestroyed());
     }
 
     /**

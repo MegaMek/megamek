@@ -1164,7 +1164,7 @@ public class UnitEditorDialog extends JDialog {
                     entity.setInternal(internal, i);
                 }
                 if (entity.isConventionalInfantry()) {
-                    entity.applyDamage();
+                    ((Infantry) entity).damageOrRestoreFieldGuns();
                 }
             }
             if (null != spnArmor[i]) {

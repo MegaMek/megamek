@@ -1163,7 +1163,7 @@ public class UnitEditorDialog extends JDialog {
                 } else {
                     entity.setInternal(internal, i);
                 }
-                if (entity.isConventionalInfantry()) {
+                if (entity instanceof Infantry) {
                     entity.applyDamage();
                 }
             }

@@ -632,7 +632,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      */
     private void enableSelectionButtons() {
         if ((tblWeapons.getSelectedRow() != -1) ||
-                (tblEquipment.getSelectedRow() != -1)) {
+                (tblEquipment.getSelectedRow() != -1) ||
+                (tblWeaponType.getSelectedRow() != -1)) {
             btnAdd.setEnabled(true);
         }
         btnLeftParen.setEnabled(true);

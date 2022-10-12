@@ -410,10 +410,12 @@ public class MechSearchFilter {
 
                     if (null == currEq) {
                         LogManager.getLogger().debug("List<String> currEq is null");
+                        continue;
                     }
 
                     if (null == n) {
                         LogManager.getLogger().debug("ExpNode n is null");
+                        continue;
                     }
 
                     // If the name matches, that means this is the weapon/equipment we are checking for.

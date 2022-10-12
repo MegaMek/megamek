@@ -395,7 +395,7 @@ public class MechSearchFilter {
                 {
                     return false;
                 }
-                else if (mechQuantity >= n.qty)
+                else if (mechQuantity != null && mechQuantity >= n.qty)
                 {
                     return true;
                 }

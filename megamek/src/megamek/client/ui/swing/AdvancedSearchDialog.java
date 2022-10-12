@@ -275,10 +275,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             column = tblWeaponType.getColumnModel().getColumn(i);
             if ((i == WeaponClassTableModel.COL_QTY)) {
                 column.setPreferredWidth(40);
-            } else if ( i == WeaponClassTableModel.COL_NAME) {
-                column.setPreferredWidth(310);
             } else {
-                column.setPreferredWidth(25);
+                column.setPreferredWidth(310);
             }
         }
         tblWeaponType.setFont(new Font("Monospaced", Font.PLAIN, 12));

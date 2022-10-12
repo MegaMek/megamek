@@ -1449,12 +1449,8 @@ public class MULParser {
                 }
             } else if (type.equals(INTERNAL)) {
                 if (entity.getOInternal(loc) < pointsVal) {
-                    warning.append("The entity, ")
-                            .append(entity.getShortName())
-                            .append(" does not start with ")
-                            .append(pointsVal)
-                            .append(" points of internal structure for " +
-                                    "location: ")
+                    warning.append("The entity, ").append(entity.getShortName()).append(" does not start with ")
+                            .append(pointsVal).append(" points of internal structure for location: ")
                             .append(loc).append(".\n");
                 } else {
                     entity.setInternal(pointsVal, loc);

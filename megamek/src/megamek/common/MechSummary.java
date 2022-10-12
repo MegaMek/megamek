@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
+import java.util.HashMap;
 
 /**
  * The MechSummary of a unit offers compiled information about the unit without having to load the file.
@@ -91,6 +92,8 @@ public class MechSummary implements Serializable {
 
     /** The number of times the piece of equipment in the corresponding equipmentNames list appears. */
     private Vector<Integer> equipmentQuantities;
+
+    private HashMap<String, Integer> weaponClassQtys;
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();
@@ -412,8 +415,14 @@ public class MechSummary implements Serializable {
     {
         equipmentNames = new Vector<>(mountedList.size());
         equipmentQuantities = new Vector<>(mountedList.size());
+        weaponClassQtys = new HashMap<>();
         for (Mounted mnt : mountedList)
         {
+            if (mnt.getType() instanceof WeaponType)
+            {
+                int wc = ((WeaponType) mnt.getType()).getAtClass();
+                weaponClassQtys.put(WeaponType.classNames[wc], weaponClassQtys.getOrDefault(WeaponType.classNames[wc], 0) + 1);
+            }
             // Ignore weapon groups, as they aren't actually real equipment
             if (mnt.isWeaponGroup()) {
                 continue;

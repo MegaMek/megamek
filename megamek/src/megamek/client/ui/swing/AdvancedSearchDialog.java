@@ -723,9 +723,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             }
             row = tblWeaponType.getSelectedRow();
             if (row >= 0) {
-                String name = (String)tblWeaponType.getModel().getValueAt(tblWeaponType.convertRowIndexToModel(row), WeaponClassTableModel.COL_NAME);
                 int qty = Integer.parseInt((String)tblWeaponType.getValueAt(row, WeaponClassTableModel.COL_QTY));
-                filterToks.add(new EquipmentFT(name, "", qty));
+                filterToks.add(new WeaponClassFT((Integer)tblWeaponType.getModel().getValueAt(tblWeaponType.convertRowIndexToModel(row), WeaponClassTableModel.COL_VAL), qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
@@ -1186,6 +1185,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         private static final int COL_QTY = 0;
         private static final int COL_NAME = 1;
         private static final int N_COL = 2;
+        private static final int COL_VAL = 2;
 
 
         private int[] qty;
@@ -1252,6 +1252,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                     return qty[row] + "";
                 case COL_NAME:
                     return WeaponType.classNames[weaponClasses.elementAt(row)];
+                case COL_VAL:
+                    return weaponClasses.elementAt(row);
                 default:
                     return "?";
             }
@@ -1455,6 +1457,25 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 return qty + " " + fullName;
             } else {
                 return qty + " " + fullName + "s";
+            }
+        }
+    }
+
+    public class WeaponClassFT extends FilterTokens {
+        public int weaponClass;
+        public int qty;
+
+        public WeaponClassFT(int in_class, int in_qty) {
+            weaponClass = in_class;
+            qty = in_qty;
+        }
+
+        @Override
+        public String toString() {
+            if (qty == 1) {
+                return qty + " " + WeaponType.classNames[weaponClass];
+            } else {
+                return qty + " " + WeaponType.classNames[weaponClass] + "s";
             }
         }
     }

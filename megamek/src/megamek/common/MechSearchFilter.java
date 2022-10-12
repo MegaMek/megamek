@@ -21,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -178,6 +179,16 @@ public class MechSearchFilter {
           return createFTFromTokensRecursively(toks, currNode);
 
         }
+
+        if (filterTok instanceof AdvancedSearchDialog.WeaponClassFT) {
+            if (currNode == null) {
+                currNode = new ExpNode();
+            }
+            AdvancedSearchDialog.WeaponClassFT ft = (AdvancedSearchDialog.WeaponClassFT) filterTok;
+            ExpNode newChild = new ExpNode(ft.weaponClass, ft.qty);
+            currNode.children.add(newChild);
+            return createFTFromTokensRecursively(toks, currNode);
+        }
         return null;
     }
 
@@ -312,8 +323,9 @@ public class MechSearchFilter {
 
         List<String> eqNames = mech.getEquipmentNames();
         List<Integer> qty = mech.getEquipmentQuantities();
+        Map<Integer, Integer> weaponClasses = mech.getWeaponClasses();
         //Evaluate the expression tree, if there's not a match, return false
-        if (f.checkEquipment && !f.evaluate(eqNames, qty)) {
+        if (f.checkEquipment && !f.evaluate(eqNames, qty, weaponClasses)) {
             return false;
         }
 
@@ -345,10 +357,11 @@ public class MechSearchFilter {
      *
      * @param eq    Collection of equipment names
      * @param qty   The number of each piece of equipment
+     * @param weaponClasses The various weapon classes and the number of each class in a HashMap
      * @return      True if the provided lists satisfy the expression tree
      */
-    public boolean evaluate(List<String> eq, List<Integer> qty) {
-        return evaluate(eq, qty, equipmentCriteria.root);
+    public boolean evaluate(List<String> eq, List<Integer> qty, Map<Integer, Integer> weaponClasses) {
+        return evaluate(eq, qty, weaponClasses, equipmentCriteria.root);
     }
 
     /**
@@ -357,47 +370,72 @@ public class MechSearchFilter {
      *
      * @param eq    A collection of equipment names
      * @param qty   The number of occurrences of each piece of equipment
+     * @param weaponClasses The various weapon classes and the number of each class in a HashMap
      * @param n     The current node in the ExpressionTree
      * @return      True if the tree evaluates successfully, else false
      */
-    private boolean evaluate(List<String> eq, List<Integer> qty, ExpNode n) {
+    private boolean evaluate(List<String> eq, List<Integer> qty, Map<Integer, Integer> weaponClasses, ExpNode n) {
         //Base Case: See if any of the equipment matches the leaf node in
         // sufficient quantity
         if (n.children.isEmpty()) {
-            Iterator<String> eqIter = eq.iterator();
-            Iterator<Integer> qtyIter = qty.iterator();
-            while (eqIter.hasNext()) {
-                String currEq = eqIter.next();
 
-                int currQty = qtyIter.next();
-
-                if (null == currEq) {
-                    LogManager.getLogger().debug("List<String> currEq is null");
-                }
-
-                if (null == n) {
-                    LogManager.getLogger().debug("ExpNode n is null");
-                }
-
-                // If the name matches, that means this is the weapon/equipment we are checking for.
-                // If the requested quantity is greater than 0, then the unit quantity must equal or exceed it.
-                // However, if the requested quantity is 0, then the simple fact that the weapon/equipment matches
-                // means that the unit isn't a match for the filter, as it has a weapon/equipment that is required to
-                // NOT be there.
-                if (currEq.equals(n.name) && n.qty > 0 && currQty >= n.qty) {
+            if (n.weaponClass != null)
+            {
+                Integer mechQuantity = weaponClasses.get(n.weaponClass);
+                
+                if (mechQuantity == null && n.qty == 0)
+                {
                     return true;
-                } else if (currEq.equals(n.name) && n.qty == 0) {
+                }
+                else if (mechQuantity == null && n.qty > 0)
+                {
                     return false;
                 }
+                else if (mechQuantity != null && n.qty == 0)
+                {
+                    return false;
+                }
+                else if (mechQuantity >= n.qty)
+                {
+                    return true;
+                }
             }
+            else {
+                Iterator<String> eqIter = eq.iterator();
+                Iterator<Integer> qtyIter = qty.iterator();
+                while (eqIter.hasNext()) {
+                    String currEq = eqIter.next();
 
-            // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
-            // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
-            // a match.
-            if (n.qty == 0) {
-                return true;
-            } else {
-                return false;
+                    int currQty = qtyIter.next();
+
+                    if (null == currEq) {
+                        LogManager.getLogger().debug("List<String> currEq is null");
+                    }
+
+                    if (null == n) {
+                        LogManager.getLogger().debug("ExpNode n is null");
+                    }
+
+                    // If the name matches, that means this is the weapon/equipment we are checking for.
+                    // If the requested quantity is greater than 0, then the unit quantity must equal or exceed it.
+                    // However, if the requested quantity is 0, then the simple fact that the weapon/equipment matches
+                    // means that the unit isn't a match for the filter, as it has a weapon/equipment that is required to
+                    // NOT be there.
+                    if (currEq.equals(n.name) && n.qty > 0 && currQty >= n.qty) {
+                        return true;
+                    } else if (currEq.equals(n.name) && n.qty == 0) {
+                        return false;
+                    }
+                }
+
+                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
+                // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
+                // a match.
+                if (n.qty == 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
         // Otherwise, recurse on all the children and either AND the results
@@ -409,9 +447,9 @@ public class MechSearchFilter {
         while (childIter.hasNext()) {
             ExpNode child = childIter.next();
             if (n.operation == BoolOp.AND) {
-                retVal = retVal && evaluate(eq, qty, child);
+                retVal = retVal && evaluate(eq, qty, weaponClasses, child);
             } else {
-                retVal = retVal || evaluate(eq, qty, child);
+                retVal = retVal || evaluate(eq, qty, weaponClasses, child);
             }
         }
         return retVal;
@@ -457,6 +495,7 @@ public class MechSearchFilter {
         public ExpNode parent;
         public BoolOp operation;
         public String name;
+        public Integer weaponClass;
         public int qty;
         public List<ExpNode> children;
 
@@ -488,6 +527,16 @@ public class MechSearchFilter {
         public ExpNode(String n, int q) {
             parent = null;
             name = n;
+            weaponClass = null;
+            qty = q;
+            operation = BoolOp.NOP;
+            children = new LinkedList<>();
+        }
+
+        public ExpNode(Integer n, int q) {
+            parent = null;
+            weaponClass = n;
+            name = null;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();

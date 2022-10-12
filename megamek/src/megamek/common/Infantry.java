@@ -783,7 +783,7 @@ public class Infantry extends Entity {
         super.setInternal(val, loc);
         if (loc == LOC_INFANTRY) {
             men = val;
-            damageFieldGuns();
+            damageFieldGunsAndArty();
         }
     }
 
@@ -951,39 +951,38 @@ public class Infantry extends Entity {
         menShooting = men;
     }
 
-    /** Destroys field guns and artillery according to their crew requirement when losing troopers. */
-    private void damageFieldGuns() {
-        updateFieldGunsForActiveTrooperCount(false, false);
+    /**
+     * Marks field guns and artillery as hit according to their crew requirement when losing troopers. Having
+     * them destroyed requires a later call of {@link #applyDamage()}. This method does not restore FG/FA when
+     * damage is removed from the unit.
+     * Only affects Conventional Infantry, not BattleArmor (can be called safely on BA).
+     */
+    protected void damageFieldGunsAndArty() {
+        int totalCrewNeeded = 0;
+        List<Mounted> filteredWeaponList = new ArrayList<>(weaponList);
+        filteredWeaponList.removeIf(weapon -> weapon.getLocation() != LOC_FIELD_GUNS);
+        filteredWeaponList.removeIf(weapon -> !(weapon.getType() instanceof WeaponType));
+        filteredWeaponList.removeIf(Mounted::isDestroyed);
+        for (Mounted weapon : filteredWeaponList) {
+            totalCrewNeeded += requiredCrewForFieldGun((WeaponType) weapon.getType());
+            if (totalCrewNeeded > men) {
+                weapon.setHit(true);
+            }
+        }
     }
 
     /**
      * Destroys and restores field guns and artillery according to their crew requirements. This method is intended
-     * for any place where damage can be assigned and removed without cost (lobby).
+     * for any place where damage can be assigned and removed without cost (lobby). Only affects Conventional Infantry,
+     * not BattleArmor (can be called safely on BA).
      */
-    public void damageOrRestoreFieldGuns() {
-        updateFieldGunsForActiveTrooperCount(true, true);
-    }
-
-    /**
-     * Marks field guns and artillery as hit (= destroyed after the phase ends) or destroyed according to crew
-     * requirement (TO:AUE p.123).
-     * @param allowRestore When true, also restores guns/arty when damage from the platoon is removed (useful in the lobby).
-     * @param destroyAtOnce When true, marks the weapon as destroyed immediately
-     */
-    private void updateFieldGunsForActiveTrooperCount(boolean allowRestore, boolean destroyAtOnce) {
+    public void damageOrRestoreFieldGunsAndArty() {
         int totalCrewNeeded = 0;
         for (Mounted weapon : weaponList) {
             if ((weapon.getLocation() == LOC_FIELD_GUNS) && (weapon.getType() instanceof WeaponType)) {
                 totalCrewNeeded += requiredCrewForFieldGun((WeaponType) weapon.getType());
-                if (totalCrewNeeded > men) {
-                    weapon.setHit(true);
-                    if (destroyAtOnce) {
-                        weapon.setDestroyed(true);
-                    }
-                } else if (allowRestore) {
-                    weapon.setHit(false);
-                    weapon.setDestroyed(false);
-                }
+                weapon.setHit(totalCrewNeeded > men);
+                weapon.setDestroyed(totalCrewNeeded > men);
             }
         }
     }

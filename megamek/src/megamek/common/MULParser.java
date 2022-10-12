@@ -1458,6 +1458,10 @@ public class MULParser {
                             .append(loc).append(".\n");
                 } else {
                     entity.setInternal(pointsVal, loc);
+                    if (entity instanceof Infantry) {
+                        ((Infantry) entity).damageOrRestoreFieldGunsAndArty();
+                        entity.applyDamage();
+                    }
                 }
             } else if (type.equals(REAR)) {
                 if (!entity.hasRearArmor(loc)) {
@@ -2689,6 +2693,10 @@ public class MULParser {
         // mark armor, internal as destroyed
         en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
         en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
+        if (en instanceof Infantry) {
+            ((Infantry) en).damageOrRestoreFieldGunsAndArty();
+            en.applyDamage();
+        }
         if (en.hasRearArmor(loc)) {
             en.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
         }

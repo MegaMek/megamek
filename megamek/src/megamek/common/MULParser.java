@@ -827,7 +827,7 @@ public class MULParser {
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
             if (!infSquadNum.isBlank()) {
-                inf.setSquadN(Integer.parseInt(infSquadNum));
+                inf.setSquadCount(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }
         }

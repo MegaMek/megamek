@@ -342,7 +342,7 @@ public class BattleArmor extends Infantry {
         setArmorType(EquipmentType.T_ARMOR_BA_STANDARD);
 
         // BA are always one squad
-        squadn = 1;
+        squadCount = 1;
 
         // All Battle Armor squads are Clan until specified otherwise.
         setTechLevel(TechConstants.T_CLAN_TW);
@@ -735,16 +735,6 @@ public class BattleArmor extends Infantry {
 
         // No surviving troopers, so we're toast.
         return new HitData(Entity.LOC_DESTROYED);
-    }
-
-    /**
-     * Battle Armor units use default behavior for armor and internals.
-     *
-     * @see megamek.common.Infantry#isPlatoon()
-     */
-    @Override
-    protected boolean isPlatoon() {
-        return false;
     }
 
     /**

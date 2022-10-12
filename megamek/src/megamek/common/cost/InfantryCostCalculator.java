@@ -40,7 +40,7 @@ public class InfantryCostCalculator {
         }
 
         // Determining Break down of who would have primary and secondary weapons.
-        double primarySquad = (infantry.getSquadSize() - infantry.getSecondaryN()) * infantry.getSquadN();
+        double primarySquad = (infantry.getSquadSize() - infantry.getSecondaryWeaponsPerSquad()) * infantry.getSquadCount();
         double secondSquad = infantry.getOInternal(0) - primarySquad; // OInternal = menStarting
 
         // Squad Cost with just the weapons.

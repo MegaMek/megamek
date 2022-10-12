@@ -403,7 +403,7 @@ public class BattleForceElement {
         
         if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
             int baseRange = 0;
-            if (((Infantry) en).getSecondaryWeapon() != null && ((Infantry) en).getSecondaryN() >= 2) {
+            if (((Infantry) en).getSecondaryWeapon() != null && ((Infantry) en).getSecondaryWeaponsPerSquad() >= 2) {
                 baseRange = ((Infantry) en).getSecondaryWeapon().getInfantryRange();
             } else if (((Infantry) en).getPrimaryWeapon() != null) {
                 baseRange = ((Infantry) en).getPrimaryWeapon().getInfantryRange();

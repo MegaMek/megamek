@@ -112,7 +112,7 @@ public final class InfantryBay extends Bay {
     public double spaceForUnit(Entity unit) {
         PlatoonType type = PlatoonType.getPlatoonType(unit);
         if ((unit instanceof Infantry) && (type == PlatoonType.MECHANIZED)) {
-            return type.getWeight() * ((Infantry) unit).getSquadN();
+            return type.getWeight() * ((Infantry) unit).getSquadCount();
         } else {
             return type.getWeight();
         }

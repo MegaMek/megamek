@@ -1888,12 +1888,11 @@ public class Infantry extends Entity {
 
         double ton = men * mult;
         
-        // add in field gun weight
-        for (Mounted mounted : getEquipment()) {
-            if (mounted.getLocation() == LOC_FIELD_GUNS) {
-                ton += mounted.getTonnage();
-            }
-        }
+        // Add field gun weight
+        ton += getEquipment().stream()
+                .filter(e -> e.getLocation() == LOC_FIELD_GUNS)
+                .filter(e -> !e.isDestroyed())
+                .mapToDouble(Mounted::getTonnage).sum();
 
         return RoundWeight.nearestHalfTon(ton);
     }

@@ -1163,10 +1163,6 @@ public class UnitEditorDialog extends JDialog {
                 } else {
                     entity.setInternal(internal, i);
                 }
-                if (entity instanceof Infantry) {
-                    ((Infantry) entity).damageOrRestoreFieldGunsAndArty();
-                    entity.applyDamage();
-                }
             }
             if (null != spnArmor[i]) {
                 int armor = (Integer) spnArmor[i].getModel().getValue();
@@ -1183,18 +1179,19 @@ public class UnitEditorDialog extends JDialog {
                 entity.setArmor(rear, i, true);
             }
         }
-        // CI internally updates field guns and uses no equipment checkboxes here
-        if (!(entity instanceof Infantry) || (entity instanceof BattleArmor)) {
-            for (Mounted m : entity.getEquipment()) {
-                int eqNum = entity.getEquipmentNum(m);
-                CheckCritPanel crit = equipCrits.get(eqNum);
-                if (null != crit) {
-                    int hits = crit.getHits();
-                    m.setDestroyed(hits > 0);
-                    m.setHit(hits > 0);
-                    entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
-                }
+        for (Mounted m : entity.getEquipment()) {
+            int eqNum = entity.getEquipmentNum(m);
+            CheckCritPanel crit = equipCrits.get(eqNum);
+            if (null != crit) {
+                int hits = crit.getHits();
+                m.setDestroyed(hits > 0);
+                m.setHit(hits > 0);
+                entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
             }
+        }
+        if (entity instanceof Infantry) {
+            ((Infantry) entity).damageOrRestoreFieldGunsAndArty();
+            entity.applyDamage();
         }
 
         // now systems

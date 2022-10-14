@@ -2144,7 +2144,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return Messages.getString("WeaponAttackAction.CantMoveAndFieldGun");
                 }
                 // check for mixing infantry and field gun attacks
-                double fieldGunWeight = 0.0;
                 for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
                     EntityAction ea = i.nextElement();
                     if (!(ea instanceof WeaponAttackAction)) {
@@ -2159,16 +2158,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                                         && (prevWeapon.getLocation() == Infantry.LOC_FIELD_GUNS))) {
                             return Messages.getString("WeaponAttackAction.FieldGunOrSAOnly");
                         }
-                        if ((weapon.getLocation() == Infantry.LOC_FIELD_GUNS) && (weaponId != prevAttack.getWeaponId())) {
-                            fieldGunWeight += prevWeapon.getTonnage();
-                        }
-                    }
-                }
-                // the total tonnage of field guns fired has to be less than or
-                // equal to the men in the platoon
-                if (weapon.getLocation() == Infantry.LOC_FIELD_GUNS) {
-                    if (((Infantry) ae).getShootingStrength() < Math.ceil(fieldGunWeight + weapon.getTonnage())) {
-                        return Messages.getString("WeaponAttackAction.NoFieldGunCrew");
                     }
                 }
             }

@@ -783,6 +783,7 @@ public class Infantry extends Entity {
         super.setInternal(val, loc);
         if (loc == LOC_INFANTRY) {
             men = val;
+            damageFieldGunsAndArty();
         }
     }
 
@@ -804,18 +805,16 @@ public class Infantry extends Entity {
      */
     @Override
     public void initializeInternal(int val, int loc) {
-        menStarting = val;
-        menShooting = val;
+        if (loc == LOC_INFANTRY) {
+            menStarting = val;
+            menShooting = val;
+        }
         super.initializeInternal(val, loc);
     }
 
-    /**
-     * Set the men in the platoon based on squad size and number
-     */
     @Override
     public void autoSetInternal() {
-        //TODO: put checks here on size
-        initializeInternal(squadsize*squadn, LOC_INFANTRY);
+        initializeInternal(squadsize * squadn, LOC_INFANTRY);
     }
 
     /**
@@ -842,10 +841,7 @@ public class Infantry extends Entity {
      */
     @Override
     public boolean isSecondaryArcWeapon(int wn) {
-        if ((getEquipment(wn).getLocation() == LOC_FIELD_GUNS) && !hasActiveFieldArtillery()) {
-            return true;
-        }
-        return false;
+        return (getEquipment(wn).getLocation() == LOC_FIELD_GUNS) && !hasActiveFieldArtillery();
     }
 
     /**
@@ -949,16 +945,56 @@ public class Infantry extends Entity {
         return 1;
     }
 
-    /**
-     * Update the platoon to reflect damages taken in this phase.
-     */
     @Override
     public void applyDamage() {
         super.applyDamage();
         menShooting = men;
     }
 
-    // The methods below aren't in the Entity interface.
+    /**
+     * Marks field guns and artillery as hit according to their crew requirement when losing troopers. Having
+     * them destroyed requires a later call of {@link #applyDamage()}. This method does not restore FG/FA when
+     * damage is removed from the unit.
+     * Only affects Conventional Infantry, not BattleArmor (can be called safely on BA).
+     */
+    protected void damageFieldGunsAndArty() {
+        int totalCrewNeeded = 0;
+        List<Mounted> filteredWeaponList = new ArrayList<>(weaponList);
+        filteredWeaponList.removeIf(weapon -> weapon.getLocation() != LOC_FIELD_GUNS);
+        filteredWeaponList.removeIf(weapon -> !(weapon.getType() instanceof WeaponType));
+        filteredWeaponList.removeIf(Mounted::isDestroyed);
+        for (Mounted weapon : filteredWeaponList) {
+            totalCrewNeeded += requiredCrewForFieldGun((WeaponType) weapon.getType());
+            if (totalCrewNeeded > men) {
+                weapon.setHit(true);
+            }
+        }
+    }
+
+    /**
+     * Destroys and restores field guns and artillery according to their crew requirements. This method is intended
+     * for any place where damage can be assigned and removed without cost (lobby). Only affects Conventional Infantry,
+     * not BattleArmor (can be called safely on BA).
+     */
+    public void damageOrRestoreFieldGunsAndArty() {
+        int totalCrewNeeded = 0;
+        for (Mounted weapon : weaponList) {
+            if ((weapon.getLocation() == LOC_FIELD_GUNS) && (weapon.getType() instanceof WeaponType)) {
+                totalCrewNeeded += requiredCrewForFieldGun((WeaponType) weapon.getType());
+                weapon.setHit(totalCrewNeeded > men);
+                weapon.setDestroyed(totalCrewNeeded > men);
+            }
+        }
+    }
+
+    /**
+     * @return The crew required to operate the given field gun or field artillery weapon, TO:AUE p.123.
+     * The rules are silent on rounding for the weight of artillery, therefore adopting that of field guns.
+     */
+    public int requiredCrewForFieldGun(WeaponType weaponType) {
+        int roundedWeight = (int) Math.ceil(weaponType.getTonnage(this));
+        return weaponType.hasFlag(WeaponType.F_ARTILLERY) ? roundedWeight : Math.max(2, roundedWeight);
+    }
 
     /**
      * Get the number of men in the platoon (before damage is applied).
@@ -1852,12 +1888,11 @@ public class Infantry extends Entity {
 
         double ton = men * mult;
         
-        // add in field gun weight
-        for (Mounted mounted : getEquipment()) {
-            if (mounted.getLocation() == LOC_FIELD_GUNS) {
-                ton += mounted.getTonnage();
-            }
-        }
+        // Add field gun weight
+        ton += getEquipment().stream()
+                .filter(e -> e.getLocation() == LOC_FIELD_GUNS)
+                .filter(e -> !e.isDestroyed())
+                .mapToDouble(Mounted::getTonnage).sum();
 
         return RoundWeight.nearestHalfTon(ton);
     }
@@ -1910,25 +1945,12 @@ public class Infantry extends Entity {
         }
     }
 
+    /** @return True if this infantry has a field artillery weapon that is not destroyed. */
     public boolean hasActiveFieldArtillery() {
-        boolean hasArtillery = false;
-        double smallestGun = 100.0;
-        for (Mounted wpn : getWeaponList()) {
-            if (wpn.getLocation() != LOC_FIELD_GUNS) {
-                continue;
-            }
-
-            if (wpn.getType().hasFlag(WeaponType.F_ARTILLERY)) {
-                hasArtillery = true;
-                if (wpn.getTonnage() < smallestGun) {
-                    smallestGun = wpn.getTonnage();
-                }
-            }
-        }
-
-        //you must have enough men to fire at least the smallest piece
-        return hasArtillery && (getShootingStrength() >= smallestGun);
-
+        return getWeaponList().stream()
+                .filter(weapon -> weapon.getLocation() == LOC_FIELD_GUNS)
+                .filter(weapon -> weapon.getType().hasFlag(WeaponType.F_ARTILLERY))
+                .anyMatch(weapon -> !weapon.isDestroyed());
     }
 
     /**

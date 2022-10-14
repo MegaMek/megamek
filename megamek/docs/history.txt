@@ -7,6 +7,7 @@ VERSION HISTORY:
 + PR #3929: Fix slots used by engines in Conventional Fighters
 + PR #3927: Improve the info shown in the unit tooltip for Conventional Infantry 
 + PR #3925: Fix loading damaged CI and BA from a .MUL file
++ PR #3932: Advanced search can now filter on weapon class
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

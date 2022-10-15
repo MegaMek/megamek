@@ -115,6 +115,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private JComboBox<String> cboTechClass = new JComboBox<>();
     private JComboBox<String> cboTechLevel = new JComboBox<>();
 
+    private JLabel lblWeaponClass = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponClass"));
+    private JScrollPane scrTableWeaponType = new JScrollPane();
+    private MegamekTable tblWeaponType;
+    private WeaponClassTableModel weaponTypesModel;
+    private TableRowSorter<WeaponClassTableModel> weaponTypesSorter;
+
     private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
     private JScrollPane scrTableWeapons = new JScrollPane();
     private MegamekTable tblWeapons;
@@ -253,6 +259,29 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cboTechClass.setModel(techClassModel);
         cboTechClass.addActionListener(this);
 
+        // Set up Weapon Class table
+        scrTableWeaponType.setMinimumSize(new Dimension(850, 850));
+        scrTableWeaponType.setPreferredSize(new Dimension(850, 150));
+        weaponTypesModel = new WeaponClassTableModel();
+        tblWeaponType = new MegamekTable(weaponTypesModel,WeaponClassTableModel.COL_NAME);
+        TableColumn wpsTypeCol = tblWeaponType.getColumnModel().getColumn(WeaponClassTableModel.COL_QTY);
+        wpsTypeCol.setCellEditor(new DefaultCellEditor(cboQty));
+        tblWeaponType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        weaponTypesSorter = new TableRowSorter<>(weaponTypesModel);
+        tblWeaponType.setRowSorter(weaponTypesSorter);
+        tblWeaponType.addKeyListener(this);
+        TableColumn column = null;
+        for (int i = 0; i < WeaponClassTableModel.N_COL; i++) {
+            column = tblWeaponType.getColumnModel().getColumn(i);
+            if ((i == WeaponClassTableModel.COL_QTY)) {
+                column.setPreferredWidth(40);
+            } else {
+                column.setPreferredWidth(310);
+            }
+        }
+        tblWeaponType.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeaponType.getSelectionModel().addListSelectionListener(this);
+        scrTableWeaponType.setViewportView(tblWeaponType);
 
         //Setup Weapons Table
         scrTableWeapons.setMinimumSize(new Dimension(850, 150));
@@ -266,7 +295,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         weaponsSorter = new TableRowSorter<>(weaponsModel);
         tblWeapons.setRowSorter(weaponsSorter);
         tblWeapons.addKeyListener(this);
-        TableColumn column = null;
+        column = null;
         for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
             column = tblWeapons.getColumnModel().getColumn(i);
             if ((i == WeaponsTableModel.COL_QTY)) {
@@ -443,6 +472,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
+        this.add(lblWeaponClass, c);
+
+        c.insets = new Insets(0, 0, 0, 0);
+        c.gridwidth = 4;
+        c.gridx = 0; c.gridy++;
+        this.add(scrTableWeaponType, c);
+        c.gridwidth = 1;
+
+        c.insets = new Insets(0, 0, 0, 0);
+        c.gridx = 0; c.gridy++;
         this.add(lblWeapons, c);
 
 
@@ -557,16 +596,30 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         if (evt.getSource().equals(tblWeapons.getSelectionModel())) {
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblEquipment.clearSelection();
+                tblWeaponType.clearSelection();
                 btnAdd.setEnabled(true);
             } else if (tblWeapons.getSelectedRow() >= 0) {
                 tblEquipment.clearSelection();
+                tblWeaponType.clearSelection();
             }
         } else if (evt.getSource().equals(tblEquipment.getSelectionModel())) {
             if ((tblEquipment.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblWeapons.clearSelection();
+                tblWeaponType.clearSelection();
                 btnAdd.setEnabled(true);
             } else if (tblEquipment.getSelectedRow() >= 0) {
                 tblWeapons.clearSelection();
+                tblWeaponType.clearSelection();
+            }
+        }
+        else if (evt.getSource().equals(tblWeaponType.getSelectionModel())) {
+            if ((tblWeaponType.getSelectedRow() >= 0) && lastTokIsOperation) {
+                tblWeapons.clearSelection();
+                tblEquipment.clearSelection();
+                btnAdd.setEnabled(true);
+            } else if (tblWeaponType.getSelectedRow() >= 0) {
+                tblWeapons.clearSelection();
+                tblEquipment.clearSelection();
             }
         }
     }
@@ -577,7 +630,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      */
     private void enableSelectionButtons() {
         if ((tblWeapons.getSelectedRow() != -1) ||
-                (tblEquipment.getSelectedRow() != -1)) {
+                (tblEquipment.getSelectedRow() != -1) ||
+                (tblWeaponType.getSelectedRow() != -1)) {
             btnAdd.setEnabled(true);
         }
         btnLeftParen.setEnabled(true);
@@ -661,6 +715,15 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 int qty = Integer.parseInt((String)
                     tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
                 filterToks.add(new EquipmentFT(internalName, fullName, qty));
+                txtEqExp.setText(filterExpressionString());
+                btnBack.setEnabled(true);
+                enableOperationButtons();
+                disableSelectionButtons();
+            }
+            row = tblWeaponType.getSelectedRow();
+            if (row >= 0) {
+                int qty = Integer.parseInt((String)tblWeaponType.getValueAt(row, WeaponClassTableModel.COL_QTY));
+                filterToks.add(new WeaponClassFT((Integer)tblWeaponType.getModel().getValueAt(tblWeaponType.convertRowIndexToModel(row), WeaponClassTableModel.COL_VAL), qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
@@ -916,11 +979,16 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private void populateWeaponsAndEquipmentChoices() {
         Vector<WeaponType> weapons = new Vector<>();
         Vector<EquipmentType> equipment = new Vector<>();
+        Vector<Integer> weaponClass = new Vector<>();
 
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             EquipmentType et = e.nextElement();
             if ((et instanceof WeaponType)) {
                 weapons.add((WeaponType) et);
+                if (!weaponClass.contains(((WeaponType)et).getAtClass()) && ((WeaponType)et).getAtClass() != 0)
+                {
+                    weaponClass.add(((WeaponType)et).getAtClass());
+                }
                 //Check for C3+Tag and C3 Master Booster
                 if (et.hasFlag(WeaponType.F_C3M) || et.hasFlag(WeaponType.F_C3MBS)) {
                     equipment.add(et);
@@ -932,6 +1000,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         }
         weaponsModel.setData(weapons);
         equipmentModel.setData(equipment);
+        weaponTypesModel.setData(weaponClass);
     }
 
 
@@ -1087,6 +1156,103 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                                         .getTechLevel(gameYear)));
                 case COL_INTERNAL_NAME:
                     return wp.getInternalName();
+                default:
+                    return "?";
+            }
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int col) {
+            switch (col) {
+                case COL_QTY:
+                    qty[row] = Integer.parseInt((String) value);
+                    fireTableCellUpdated(row, col);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
+        /**
+     * A table model for displaying weapon types
+     */
+    public class WeaponClassTableModel extends AbstractTableModel {
+        private static final long serialVersionUID = 1L;
+
+        private static final int COL_QTY = 0;
+        private static final int COL_NAME = 1;
+        private static final int N_COL = 2;
+        private static final int COL_VAL = 2;
+
+
+        private int[] qty;
+
+        private Vector<Integer> weaponClasses = new Vector<>();
+
+        @Override
+        public int getRowCount() {
+            return weaponClasses.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return N_COL;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case COL_QTY:
+                    return "Qty";
+                case COL_NAME:
+                    return "Weapon Class";
+                default:
+                    return "?";
+            }
+        }
+
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            switch (col) {
+                case COL_QTY:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // fill table with values
+        public void setData(Vector<Integer> wps) {
+            weaponClasses = wps;
+            qty = new int[wps.size()];
+            Arrays.fill(qty, 1);
+            fireTableDataChanged();
+        }
+
+        public int getWeaponTypeAt(int row) {
+            return weaponClasses.elementAt(row);
+        }
+
+        @Override
+        public Object getValueAt(int row, int col) {
+            if (row >= weaponClasses.size()) {
+                return null;
+            }
+            
+            switch (col) {
+                case COL_QTY:
+                    return qty[row] + "";
+                case COL_NAME:
+                    return WeaponType.classNames[weaponClasses.elementAt(row)];
+                case COL_VAL:
+                    return weaponClasses.elementAt(row);
                 default:
                     return "?";
             }
@@ -1290,6 +1456,25 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 return qty + " " + fullName;
             } else {
                 return qty + " " + fullName + "s";
+            }
+        }
+    }
+
+    public class WeaponClassFT extends FilterTokens {
+        public int weaponClass;
+        public int qty;
+
+        public WeaponClassFT(int in_class, int in_qty) {
+            weaponClass = in_class;
+            qty = in_qty;
+        }
+
+        @Override
+        public String toString() {
+            if (qty == 1) {
+                return qty + " " + WeaponType.classNames[weaponClass];
+            } else {
+                return qty + " " + WeaponType.classNames[weaponClass] + "s";
             }
         }
     }

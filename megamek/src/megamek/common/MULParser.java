@@ -1455,6 +1455,7 @@ public class MULParser {
                 } else {
                     entity.setInternal(pointsVal, loc);
                     if (entity instanceof Infantry) {
+                        ((Infantry) entity).damageOrRestoreFieldGunsAndArty();
                         entity.applyDamage();
                     }
                 }
@@ -2689,6 +2690,7 @@ public class MULParser {
         en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
         en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
         if (en instanceof Infantry) {
+            ((Infantry) en).damageOrRestoreFieldGunsAndArty();
             en.applyDamage();
         }
         if (en.hasRearArmor(loc)) {

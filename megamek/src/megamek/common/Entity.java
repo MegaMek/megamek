@@ -3396,10 +3396,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setInternal(val, loc);
     }
 
-    /**
-     * Set the internal structure to the appropriate value for the mech's weight
-     * class
-     */
+    /** Sets the internal structure for every location to appropriate undamaged values for the unit and location. */
     public abstract void autoSetInternal();
 
     /**

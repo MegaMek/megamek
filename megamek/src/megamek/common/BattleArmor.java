@@ -2282,4 +2282,10 @@ public class BattleArmor extends Infantry {
     public int getSpriteDrawPriority() {
         return 2;
     }
+
+    @Override
+    public void damageOrRestoreFieldGunsAndArty() { }
+
+    @Override
+    protected void damageFieldGunsAndArty() { }
 }

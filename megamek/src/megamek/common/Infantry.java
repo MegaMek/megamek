@@ -75,8 +75,10 @@ public class Infantry extends Entity {
 
     // Information on primary and secondary weapons. This must be kept separate from the equipment array
     // because they are not fired as separate weapons
-    private transient InfantryWeapon primaryWeapon;
-    private transient InfantryWeapon secondaryWeapon;
+    private InfantryWeapon primaryWeapon;
+    private String primaryName;
+    private InfantryWeapon secondaryWeapon;
+    private String secondName;
     private int secondaryWeaponsPerSquad = 0;
 
     // Armor
@@ -813,17 +815,18 @@ public class Infantry extends Entity {
         return weaponType.hasFlag(WeaponType.F_ARTILLERY) ? roundedWeight : Math.max(2, roundedWeight);
     }
 
-    /** @return All field guns and artillery of this infantry including destroyed ones. */
-    public List<Mounted> originalFieldWeapons() {
-        return getEquipment().stream().filter(this::isFieldWeapon).collect(toList());
-    }
-
-    /** @return Active field guns and artillery of this infantry (= not including destroyed ones). */
+    /** @return Active field guns and artillery of this infantry (= not including destroyed ones). Empty on BA. */
     public List<Mounted> activeFieldWeapons() {
         return originalFieldWeapons().stream().filter(e -> !e.isDestroyed()).collect(toList());
     }
 
-    private boolean isFieldWeapon(Mounted equipment) {
+    /** @return All field guns and artillery of this infantry including destroyed ones. Empty on BA. */
+    public List<Mounted> originalFieldWeapons() {
+        return getEquipment().stream().filter(this::isFieldWeapon).collect(toList());
+    }
+
+    /** @return True when the given Mounted is a Field Gun or Artillery. On BA, always returns false. */
+    protected boolean isFieldWeapon(Mounted equipment) {
         return (equipment.getType() instanceof WeaponType) && (equipment.getLocation() == LOC_FIELD_GUNS);
     }
 
@@ -1428,6 +1431,7 @@ public class Infantry extends Entity {
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryWeapon = w;
+        primaryName = w.getName();
     }
 
     public InfantryWeapon getPrimaryWeapon() {
@@ -1436,6 +1440,11 @@ public class Infantry extends Entity {
 
     public void setSecondaryWeapon(InfantryWeapon w) {
         secondaryWeapon = w;
+        if (null == w) {
+            secondName = null;
+        } else {
+            secondName = w.getName();
+        }
     }
 
     public InfantryWeapon getSecondaryWeapon() {
@@ -1654,6 +1663,19 @@ public class Infantry extends Entity {
         }
 
         return sArmor.toString();
+    }
+
+    @Override
+    public void restore() {
+        super.restore();
+
+        if (null != primaryName) {
+            primaryWeapon = (InfantryWeapon) EquipmentType.get(primaryName);
+        }
+
+        if (null != secondName) {
+            secondaryWeapon = (InfantryWeapon) EquipmentType.get(secondName);
+        }
     }
 
     /** @return True if this infantry has a field artillery weapon that is not destroyed. */

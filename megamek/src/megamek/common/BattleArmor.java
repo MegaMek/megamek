@@ -24,9 +24,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
 import org.apache.logging.log4j.LogManager;
 
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class represents a squad or point of battle armor equipped infantry,
@@ -2284,8 +2282,7 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    public void damageOrRestoreFieldWeapons() { }
-
-    @Override
-    protected void damageFieldWeapons() { }
+    protected boolean isFieldWeapon(Mounted equipment) {
+        return false;
+    }
 }

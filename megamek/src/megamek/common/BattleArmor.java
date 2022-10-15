@@ -2284,8 +2284,8 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    public void damageOrRestoreFieldGunsAndArty() { }
+    public void damageOrRestoreFieldWeapons() { }
 
     @Override
-    protected void damageFieldGunsAndArty() { }
+    protected void damageFieldWeapons() { }
 }

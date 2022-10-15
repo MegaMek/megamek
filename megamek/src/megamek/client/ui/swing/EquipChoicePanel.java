@@ -244,7 +244,7 @@ public class EquipChoicePanel extends JPanel {
         
         // Can't set up munitions on infantry.
         if (!((entity instanceof Infantry) && !((Infantry) entity)
-                .hasFieldGun()) || (entity instanceof BattleArmor)) {
+                .hasFieldWeapon()) || (entity instanceof BattleArmor)) {
             setupMunitions();
             panMunitions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),
                     Messages.getString("CustomMechDialog.MunitionsPanelTitle"),

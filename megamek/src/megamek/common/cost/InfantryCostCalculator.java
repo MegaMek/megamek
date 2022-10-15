@@ -21,7 +21,6 @@ package megamek.common.cost;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.EquipmentType;
 import megamek.common.Infantry;
-import megamek.common.Mounted;
 
 public class InfantryCostCalculator {
 
@@ -93,13 +92,9 @@ public class InfantryCostCalculator {
         costs[idx++] = -infantry.getPriceMultiplier();
 
         // add in field gun costs
-        double fieldGunCost = 0;
-        for (Mounted mounted : infantry.getEquipment()) {
-            if (mounted.getLocation() == Infantry.LOC_FIELD_GUNS) {
-                fieldGunCost += Math.floor(mounted.getType().getCost(infantry, false, mounted.getLocation()));
-            }
-        }
-        costs[idx] = fieldGunCost;
+        costs[idx] = infantry.originalFieldWeapons().stream()
+                .mapToDouble(m -> m.getType().getCost(infantry, false, m.getLocation())).sum();
+
         double cost = CostCalculator.calculateCost(costs);
         String[] systemNames = { "Weapons", "Armor", "Multiplier", "Field Gun" };
         CostCalculator.fillInReport(costReport, infantry, ignoreAmmo, systemNames, -1, cost, costs);

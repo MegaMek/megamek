@@ -494,7 +494,7 @@ public class Infantry extends Entity {
             return true;
         }
 
-        if (getMovementMode() == EntityMovementMode.WHEELED) {
+        if (getMovementMode().isWheeled()) {
             if (hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.ROUGH)
                     || hex.containsTerrain(Terrains.RUBBLE)
@@ -505,7 +505,7 @@ public class Infantry extends Entity {
             }
         }
 
-        if (getMovementMode() == EntityMovementMode.TRACKED) {
+        if (getMovementMode().isTracked()) {
             if ((hex.terrainLevel(Terrains.WOODS) > 1)
                     || hex.containsTerrain(Terrains.JUNGLE)
                     || (hex.terrainLevel(Terrains.ROUGH) > 1)
@@ -514,7 +514,7 @@ public class Infantry extends Entity {
             }
         }
 
-        if (getMovementMode() == EntityMovementMode.HOVER) {
+        if (getMovementMode().isHover()) {
             if (hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.JUNGLE)
                     || (hex.terrainLevel(Terrains.ROUGH) > 1)
@@ -523,17 +523,13 @@ public class Infantry extends Entity {
             }
         }
 
-        if (hex.terrainLevel(Terrains.WATER) <= 0
-                && getMovementMode() == EntityMovementMode.SUBMARINE) {
+        if ((hex.terrainLevel(Terrains.WATER) <= 0) && getMovementMode().isSubmarine()) {
             return true;
         }
 
-        if ((hex.terrainLevel(Terrains.WATER) > 0)
-                && !hex.containsTerrain(Terrains.ICE)) {
-            return (getMovementMode() != EntityMovementMode.HOVER)
-                    && (getMovementMode() != EntityMovementMode.INF_UMU)
-                    && (getMovementMode() != EntityMovementMode.SUBMARINE)
-                    && (getMovementMode() != EntityMovementMode.VTOL);
+        if ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE)) {
+            return !getMovementMode().isHover() && !getMovementMode().isUMUInfantry()
+                    && !getMovementMode().isSubmarine() && !getMovementMode().isVTOL();
         }
         return false;
     }

@@ -18,10 +18,8 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
-import java.util.HashMap;
 
 /**
  * The MechSummary of a unit offers compiled information about the unit without having to load the file.
@@ -93,8 +91,6 @@ public class MechSummary implements Serializable {
 
     /** The number of times the piece of equipment in the corresponding equipmentNames list appears. */
     private Vector<Integer> equipmentQuantities;
-
-    private HashMap<Integer, Integer> weaponClassQtys;
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();
@@ -416,20 +412,12 @@ public class MechSummary implements Serializable {
     {
         equipmentNames = new Vector<>(mountedList.size());
         equipmentQuantities = new Vector<>(mountedList.size());
-        weaponClassQtys = new HashMap<>();
         for (Mounted mnt : mountedList)
         {
             // Ignore weapon groups, as they aren't actually real equipment
             if (mnt.isWeaponGroup()) {
                 continue;
             }
-
-            if (mnt.getType() instanceof WeaponType)
-            {
-                int wc = ((WeaponType) mnt.getType()).getAtClass();
-                weaponClassQtys.put(wc, weaponClassQtys.getOrDefault(wc, 0) + 1);
-            }
-
             String eqName = mnt.getType().getInternalName();
             int index = equipmentNames.indexOf(eqName);
             if (index == -1) { // We haven't seen this piece of equipment before
@@ -447,10 +435,6 @@ public class MechSummary implements Serializable {
     
     public Vector<Integer> getEquipmentQuantities() {
         return equipmentQuantities;
-    }
-
-    public Map<Integer, Integer> getWeaponClasses() {
-        return weaponClassQtys;
     }
 
     public void setTotalArmor(int totalArmor) {

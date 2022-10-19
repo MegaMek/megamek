@@ -357,6 +357,16 @@
 	<faction key='DC.GR'>
 		<salvage pct='6'></salvage>
 	</faction>
+	<faction key='CLAN.GC'>
+		<pctOmni>0</pctOmni>
+		<pctClan>0</pctClan>
+		<pctSL>0</pctSL>
+		<pctOmni unitType='Aero'>0</pctOmni>
+		<pctClan unitType='Aero'>0</pctClan>
+		<pctSL unitType='Aero'>0</pctSL>
+		<pctClan unitType='Vehicle'>0</pctClan>
+		<pctSL unitType='Vehicle'>0</pctSL>
+	</faction>
 	<faction key='LA.HG'>
 		<salvage pct='6'></salvage>
 	</faction>
@@ -399,6 +409,7 @@
 	<faction key='FWL.OG'>
 		<salvage pct='6'>CC:8,LA:10</salvage>
 	</faction>
+	<faction key='DC.O'/>
 	<faction key='Periphery.OS'/>
 	<faction key='DC.PR'>
 		<salvage pct='6'></salvage>
@@ -916,6 +927,12 @@
 			<availability>General:8,FWL:8,Periphery.Deep:8,FS:8,MERC:8,Periphery:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Ceremonial Guard' unitType='Infantry'>
+		<availability>DC.O:2</availability>
+		<model name='Otomo Guard'>
+			<availability>DC.O:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Cestus' unitType='Mek'>
 		<availability>PP:4,CS:4,LA:4+,CLAN:4,NIOPS:4,IS:4+,FS:6</availability>
 		<model name='CTS-6Y'>
@@ -1002,22 +1019,19 @@
 	<chassis name='Clan Foot Point' unitType='Infantry'>
 		<availability>CIH:5,CLAN:10</availability>
 		<model name='(Flamer)'>
-			<availability>CLAN:8</availability>
-		</model>
-		<model name='(LRM)'>
-			<availability>CLAN:5</availability>
+			<availability>CLAN:4</availability>
 		</model>
 		<model name='(Laser)'>
-			<availability>CLAN:6</availability>
-		</model>
-		<model name='(MG)'>
-			<availability>CLAN:7</availability>
-		</model>
-		<model name='(Rifle)'>
 			<availability>CLAN:8</availability>
 		</model>
+		<model name='(MG)'>
+			<availability>CLAN:4</availability>
+		</model>
+		<model name='(Rifle)'>
+			<availability>CLAN:9-</availability>
+		</model>
 		<model name='(SRM)'>
-			<availability>CLAN:5</availability>
+			<availability>CLAN:2</availability>
 		</model>
 	</chassis>
 	<chassis name='Clan Jump Point' unitType='Infantry'>
@@ -1138,18 +1152,21 @@
 		</model>
 	</chassis>
 	<chassis name='Cobra Transport VTOL' unitType='VTOL'>
-		<availability>PP:8,CS:8,CLAN:8,IS:6</availability>
+		<availability>CS:4,PP:2,CLAN:5,IS:4</availability>
 		<model name='(Command)'>
 			<roles>support</roles>
-			<availability>CS:4,General:4,NIOPS:4</availability>
+			<availability>CS:4,IS:4</availability>
 		</model>
 		<model name='(MASH)'>
 			<roles>support</roles>
-			<availability>IS:2</availability>
+			<availability>CS:4,IS:4</availability>
+		</model>
+		<model name='(Original)'>
+			<availability>CLAN:5,IS:4</availability>
 		</model>
 		<model name='(Standard)'>
 			<roles>cargo</roles>
-			<availability>General:8</availability>
+			<availability>CS:8,CLAN:7,IS:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Commando' unitType='Mek'>
@@ -1330,14 +1347,17 @@
 		</model>
 	</chassis>
 	<chassis name='Cyrano Gunship' unitType='VTOL'>
-		<availability>PP:7,CC:5,MOC:5,IS:4,FS:5,CIR:4,TC:5,Periphery:3,CS:6,OA:5,LA:5,FWL:5,NIOPS:6,DC:5</availability>
+		<availability>PP:7,CC:2,CS:6,IS:4,NIOPS:6,TC:5,Periphery:3</availability>
+		<model name='(Fury)'>
+			<availability>PP:1</availability>
+		</model>
 		<model name='(Royal)'>
 			<roles>spotter</roles>
-			<availability>PP:4,CLAN:8</availability>
+			<availability>PP:4,CC:4,CLAN:6</availability>
 		</model>
 		<model name='(Standard)'>
 			<roles>recon,escort</roles>
-			<availability>CC:8,CS:8,General:8,NIOPS:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
+			<availability>CS:6,PP:2,IS:5,MERC:5,Periphery:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Daedalus' unitType='Mek'>
@@ -1670,6 +1690,13 @@
 			<availability>IS:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Field Medic' unitType='Infantry'>
+		<availability>IS:4,Periphery:4</availability>
+		<model name='Magistracy Medical Corp'>
+			<roles>inf_support</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Firebee' unitType='Mek'>
 		<availability>CC:4</availability>
 		<model name='FRB-2E'>
@@ -1763,6 +1790,12 @@
 		</model>
 		<model name='FLE-4'>
 			<availability>MOC:8,OA:8,FWL:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Foot Ballistic Rifle' unitType='Infantry'>
+		<availability>IS:10-,Periphery:10-</availability>
+		<model name='Hastati V'>
+			<availability>General:10-</availability>
 		</model>
 	</chassis>
 	<chassis name='Foot Platoon' unitType='Infantry'>
@@ -2401,7 +2434,7 @@
 		</model>
 	</chassis>
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
-		<availability>PIR:2,IS:4,Periphery.Deep:4,Periphery:4</availability>
+		<availability>CS:6,CLAN:3,IS:4,MERC:4,Periphery:3</availability>
 		<model name='(Standard)'>
 			<roles>cargo</roles>
 			<availability>General:8</availability>
@@ -3733,6 +3766,13 @@
 		<availability>LA:6</availability>
 		<model name='(Standard)'>
 			<availability>LA:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Skaret Assassins' unitType='Infantry'>
+		<availability>PIR:1</availability>
+		<model name='JàrnFòlk'>
+			<roles>specops</roles>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Skulker Wheeled Scout Tank' unitType='Tank'>

@@ -1,11 +1,11 @@
 Version:1.3
 Tiburon
-(Standard)
-mul id:6552
+2
+mul id:9252
 Config:Biped
 techbase:Clan
-era:3099
-source:TRO 3145 Mercenaries - Early Republic
+era:3113
+source:Shrapnel 10 - Late Republic
 rules level:2
 
 mass:35
@@ -31,13 +31,13 @@ RTR armor:4
 RTC armor:5
 
 Weapons:8
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
+ER Small Laser, Right Torso
 ER Small Laser, Left Torso
 SRM 2, Left Torso
-ER Small Laser, Right Torso
 SRM 2, Right Torso
 
 Left Arm:
@@ -47,12 +47,12 @@ Lower Arm Actuator
 Hand Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLERMediumLaser
-CLERMediumLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
--Empty-
--Empty-
 
 Right Arm:
 Shoulder
@@ -61,12 +61,12 @@ Lower Arm Actuator
 Hand Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLERMediumLaser
-CLERMediumLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
-CLDoubleHeatSink
-CLDoubleHeatSink
 
 Left Torso:
 Fusion Engine
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-

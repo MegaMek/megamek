@@ -13,8 +13,6 @@
  */
 package megamek.common;
 
-import java.util.Map;
-
 /**
  * This is a support vehicle
  *
@@ -466,106 +464,7 @@ public class SupportTank extends Tank {
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK;
     }
-    
-    
-    //START OF BATTLEFORCE STUFF.
-    @Override
-    public int getBattleForceSize() {
-        //The tables are on page 356 of StartOps
-        if (getWeight() < 5) {
-            return 1;
-        }
-        int mediumCeil= 0;
-        int largeCeil=0;
-        int veryLargeCeil = 0;
-        switch (movementMode) {
-            case TRACKED:
-                mediumCeil = 100;
-                largeCeil = 200;
-                break;
-            case WHEELED:
-                mediumCeil = 80;
-                largeCeil = 160;
-                break;
-            case HOVER:
-                mediumCeil = 50;
-                largeCeil = 100;
-                break;
-            case NAVAL:
-            case HYDROFOIL:
-            case SUBMARINE:
-                mediumCeil = 300;
-                largeCeil = 6000;
-                veryLargeCeil = 30000;
-                break;
-            case WIGE:
-                mediumCeil = 80;
-                largeCeil = 240;
-                break;
-            default:
-                break;
-        }
-        if (getWeight() < mediumCeil) {
-            return 2;
-        }
-        if (getWeight() < largeCeil) {
-            return 3;
-        }
-        if ((getWeight() < veryLargeCeil) || (veryLargeCeil == 0)) {
-            return 4;
-        }
-        return 5;
-    }
 
-    @Override
-    /*
-     * returns the battle force structure points for a mech
-     */
-    public int getBattleForceStructurePoints() {
-        switch (movementMode) {
-            case NAVAL:
-            case HYDROFOIL:
-            case SUBMARINE:
-                if (getWeight() <= 300) {
-                    return 10;
-                }
-                if (getWeight() <= 500) {
-                    return 15;
-                }
-                if (getWeight() <= 6000) {
-                    return 20;
-                }
-                if (getWeight() <= 12000) {
-                    return 25;
-                }
-                if (getWeight() <= 30000) {
-                    return 30;
-                }
-                if (getWeight() <= 100000) {
-                    return 35;
-                }
-            default:
-                //TODO add rail in here when ready
-                return super.getBattleForceStructurePoints();
-        }
-    }
-    
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        switch (getBattleForceSize()) {
-            case 3:
-                specialAbilities.put(BattleForceSPA.LG, null);
-                break;
-            case 4:
-                specialAbilities.put(BattleForceSPA.VLG, null);
-                break;
-            case 5:
-                specialAbilities.put(BattleForceSPA.SLG, null);
-                break;
-        }
-    }
-    
     @Override
     public boolean isSupportVehicle() {
         return true;

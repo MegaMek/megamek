@@ -14,7 +14,9 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Jay Lawson
@@ -52,5 +54,10 @@ public class MassDriverLight extends MassDriverWeapon {
                 .setPrototypeFactions(F_TH)
                 .setReintroductionFactions(F_WB)
                 .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 54 : 0;
     }
 }

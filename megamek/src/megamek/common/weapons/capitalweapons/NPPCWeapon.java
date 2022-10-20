@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.lasers.EnergyWeapon;
 
 /**
@@ -38,5 +40,11 @@ public abstract class NPPCWeapon extends EnergyWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        int maxRange = damage == 7 ? AlphaStrikeElement.LONG_RANGE : AlphaStrikeElement.EXTREME_RANGE;
+        return (range <= maxRange) ? damage : 0;
     }
 }

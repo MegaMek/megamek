@@ -25,6 +25,7 @@ import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.AlphaStrikeStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
 import megamek.client.ui.swing.CustomMechDialog;
 import megamek.client.ui.swing.GUIPreferences;
@@ -49,10 +50,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
-import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isBlindDrop;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isRealBlindDrop;
-import static megamek.client.ui.swing.lobby.LobbyUtility.sameNhC3System;
+import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 
 /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
 public class LobbyActions {
@@ -1040,7 +1038,12 @@ public class LobbyActions {
         return entities.stream().map(Entity::getOwner).findAny().get();
     }
 
-    /** 
+    /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */
+    void showAlphaStrikeView(Collection<Entity> en) {
+        new AlphaStrikeStatsDialog(frame(), en).setVisible(true);
+    }
+
+    /**
      * Performs standard checks for updates (units must be present, visible and editable)
      * and returns false if that's not the case. Also shows an error message dialog.
      */

@@ -245,6 +245,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ENEMY_UNIT_COLOR = "EnemyUnitColor";
     public static final String SHOW_KEYBINDS_OVERLAY = "ShowKeybindsOverlay";
     public static final String UNIT_LABEL_STYLE = "UnitLabelStyle";
+    public static final String AS_CARD_FONT = "AsCardFont";
+    public static final String AS_CARD_SIZE = "AsCardSize";
 
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -523,6 +525,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(TEAM_COLORING, true);
 
         setDefault(SHOW_KEYBINDS_OVERLAY, true);
+
+        setDefault(AS_CARD_FONT, "");
+        setDefault(AS_CARD_SIZE, 0.75f);
     }
 
     public void setDefault(String name, Color color) {
@@ -1007,6 +1012,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return WeaponSortOrder.valueOf(store.getString(DEFAULT_WEAPON_SORT_ORDER));
     }
 
+    public String getAsCardFont() {
+        return store.getString(AS_CARD_FONT);
+    }
+
+    public float getAsCardSize() {
+        return store.getFloat(AS_CARD_SIZE);
+    }
+
     public void setDefaultWeaponSortOrder(final WeaponSortOrder weaponSortOrder) {
         store.setValue(DEFAULT_WEAPON_SORT_ORDER, weaponSortOrder.name());
     }
@@ -1465,6 +1478,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUITheme(String s) {
         store.setValue(UI_THEME, s);
+    }
+
+    public void setAsCardFont(String asCardFont) {
+        store.setValue(AS_CARD_FONT, asCardFont);
+    }
+
+    public void setAsCardSize(float size) {
+        store.setValue(AS_CARD_SIZE, size);
     }
 
     public int getRATTechLevel() {

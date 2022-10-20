@@ -63,4 +63,9 @@ public class ISLaserAMSTHB extends LaserWeapon {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS);
     }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

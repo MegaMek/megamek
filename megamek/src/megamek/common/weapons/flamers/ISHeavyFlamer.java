@@ -16,6 +16,7 @@ package megamek.common.weapons.flamers;
 import megamek.common.AmmoType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Andrew Hunter
@@ -62,5 +63,10 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
                 .setPrototypeFactions(F_LC)
                 .setProductionFactions(F_LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband == AlphaStrikeElement.RANGE_BAND_SHORT) ? 4 : 0;
     }
 }

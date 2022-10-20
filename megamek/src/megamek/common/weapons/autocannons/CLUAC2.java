@@ -13,6 +13,9 @@
  */
 package megamek.common.weapons.autocannons;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
+
 /**
  * @author Andrew Hunter
  * @since Oct 2, 2004
@@ -54,5 +57,10 @@ public class CLUAC2 extends UACWeapon {
                 .setClanApproximate(true, true, false, false, false)
                 .setPrototypeFactions(F_CLAN)
                 .setProductionFactions(F_CLAN);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return range == AlphaStrikeElement.SHORT_RANGE ? 0.249 : 0.3;
     }
 }

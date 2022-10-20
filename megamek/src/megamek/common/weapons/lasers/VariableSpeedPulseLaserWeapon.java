@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.BattleForceElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -25,6 +24,7 @@ import megamek.server.GameManager;
  * @author Jason Tighe
  */
 public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
+
     private static final long serialVersionUID = -731162221147163665L;
 
     public VariableSpeedPulseLaserWeapon() {
@@ -34,26 +34,12 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
         infDamageClass = WEAPON_DIRECT_FIRE;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               GameManager manager) {
         return new VariableSpeedPulseLaserWeaponHandler(toHit, waa, game, manager);
     }
 
-    /*
-     * 
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.WeaponType#getDamage(int)
-     */
     @Override
     public int getDamage(int range) {
         if (range <= shortRange) {
@@ -67,29 +53,4 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
         return damageLong;
     }
 
-    @Override
-    public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
-            if (range == BattleForceElement.MEDIUM_RANGE
-                    && getLongRange() < BattleForceElement.LONG_RANGE) {
-                damage = getDamage(BattleForceElement.LONG_RANGE);
-            } else {
-                damage = getDamage(range);
-            }
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
-            }
-            //To hit mods vary with range
-            if (range <= getShortRange()) {
-                damage *= 1.15;
-            } else if (range <= getMediumRange()) {
-                damage *= 1.10;
-            } else {
-                damage *= 1.05;
-            }
-        }
-        return damage / 10.0;
-    }
 }

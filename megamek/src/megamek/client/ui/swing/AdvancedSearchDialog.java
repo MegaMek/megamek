@@ -59,6 +59,7 @@ import javax.swing.table.TableRowSorter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
+import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MechSearchFilter;
@@ -78,7 +79,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private static final long serialVersionUID = 1L;
     private boolean isCanceled = true;
     public MechSearchFilter mechFilter = null;
-    private Vector<FilterTokens> filterToks;
+    private Vector<TWAdvancedSearchPanel.FilterTokens> filterToks;
     private JButton btnOkay = new JButton(Messages.getString("Okay"));
     private JButton btnCancel = new JButton(Messages.getString("Cancel"));
 
@@ -553,7 +554,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         boolean lastTokIsOperation;
         int tokSize = filterToks.size();
         lastTokIsOperation = ((tokSize == 0) ||
-                (filterToks.elementAt(tokSize-1) instanceof OperationFT));
+                (filterToks.elementAt(tokSize-1) instanceof TWAdvancedSearchPanel.OperationFT));
         if (evt.getSource().equals(tblWeapons.getSelectionModel())) {
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblEquipment.clearSelection();
@@ -645,7 +646,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 String fullName = (String) tblEquipment.getValueAt(row, EquipmentTableModel.COL_NAME);
                 int qty = Integer.parseInt((String)
                     tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
-                filterToks.add(new EquipmentFT(internalName, fullName, qty));
+                filterToks.add(new TWAdvancedSearchPanel.EquipmentFT(internalName, fullName, qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
@@ -660,14 +661,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 String fullName = (String) tblWeapons.getValueAt(row, WeaponsTableModel.COL_NAME);
                 int qty = Integer.parseInt((String)
                     tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
-                filterToks.add(new EquipmentFT(internalName, fullName, qty));
+                filterToks.add(new TWAdvancedSearchPanel.EquipmentFT(internalName, fullName, qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
                 disableSelectionButtons();
             }
         } else if (ev.getSource().equals(btnLeftParen)) {
-            filterToks.add(new ParensFT("("));
+            filterToks.add(new TWAdvancedSearchPanel.ParensFT("("));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
@@ -675,7 +676,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             btnLeftParen.setEnabled(false);
             btnRightParen.setEnabled(false);
         } else if (ev.getSource().equals(btnRightParen)) {
-            filterToks.add(new ParensFT(")"));
+            filterToks.add(new TWAdvancedSearchPanel.ParensFT(")"));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             enableOperationButtons();
@@ -683,13 +684,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             btnLeftParen.setEnabled(false);
             btnRightParen.setEnabled(false);
         } else if (ev.getSource().equals(btnAnd)) {
-            filterToks.add(new OperationFT(MechSearchFilter.BoolOp.AND));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.AND));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
             enableSelectionButtons();
         } else if (ev.getSource().equals(btnOr)) {
-            filterToks.add(new OperationFT(MechSearchFilter.BoolOp.OR));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.OR));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
@@ -702,7 +703,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                     btnBack.setEnabled(false);
                 }
 
-                if ((filterToks.isEmpty()) || (filterToks.lastElement() instanceof OperationFT)) {
+                if ((filterToks.isEmpty()) || (filterToks.lastElement() instanceof TWAdvancedSearchPanel.OperationFT)) {
                     disableOperationButtons();
                     enableSelectionButtons();
                 } else {
@@ -867,7 +868,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mechFilter = new MechSearchFilter(currFilter);
         txtEqExp.setText(mechFilter.getEquipmentExpression());
         if ((filterToks == null) || filterToks.isEmpty()
-                || (filterToks.lastElement() instanceof OperationFT)) {
+                || (filterToks.lastElement() instanceof TWAdvancedSearchPanel.OperationFT)) {
             disableOperationButtons();
             enableSelectionButtons();
         } else {
@@ -1240,81 +1241,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             tblWeapons.keyTyped(evt);
         } else if (evt.getComponent().equals(tblEquipment)) {
             tblEquipment.keyTyped(evt);
-        }
-    }
-
-
-    /**
-     * Base class for different tokens that can be in a filter expression.
-     * @author Arlith
-     */
-    public class FilterTokens {
-
-    }
-
-    /**
-     * FilterTokens subclass that represents parenthesis.
-     * @author Arlith
-     */
-    public class ParensFT extends FilterTokens {
-        public String parens;
-
-        public ParensFT(String p) {
-            parens = p;
-        }
-
-        @Override
-        public String toString() {
-            return parens;
-        }
-    }
-
-    /**
-     * FilterTokens subclass that represents equipment.
-     * @author Arlith
-     */
-    public class EquipmentFT extends FilterTokens {
-        public String internalName;
-        public String fullName;
-        public int qty;
-
-        public EquipmentFT(String in, String fn, int q) {
-            internalName = in;
-            fullName = fn;
-            qty = q;
-        }
-
-        @Override
-        public String toString() {
-            if (qty == 1) {
-                return qty + " " + fullName;
-            } else {
-                return qty + " " + fullName + "s";
-            }
-        }
-    }
-
-    /**
-     * FilterTokens subclass that represents a boolean operation.
-     * @author Arlith
-     *
-     */
-    public class OperationFT extends FilterTokens {
-        public MechSearchFilter.BoolOp op;
-
-        public OperationFT(MechSearchFilter.BoolOp o) {
-            op = o;
-        }
-
-        @Override
-        public String toString() {
-            if (op == MechSearchFilter.BoolOp.AND) {
-                return "And";
-            } else if (op == MechSearchFilter.BoolOp.OR) {
-                return "Or";
-            } else {
-                return "";
-            }
         }
     }
 }

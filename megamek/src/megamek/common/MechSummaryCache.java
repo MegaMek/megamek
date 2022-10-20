@@ -15,6 +15,9 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -500,6 +503,30 @@ public class MechSummaryCache {
             }
         } else {
             ms.setMyomerName("None");
+        }
+
+        if (ASConverter.canConvert(e)) {
+            AlphaStrikeElement element = ASConverter.convertForMechCache(e);
+            ms.setAsUnitType(element.getASUnitType());
+            ms.setSize(element.getSize());
+            ms.setTmm(element.getTMM());
+            ms.setMovement(element.getMovement());
+            ms.setPrimaryMovementMode(element.getPrimaryMovementMode());
+            ms.setStandardDamage(element.getStandardDamage());
+            ms.setOverheat(element.getOV());
+            ms.setFrontArc(element.getFrontArc());
+            ms.setLeftArc(element.getLeftArc());
+            ms.setRightArc(element.getRightArc());
+            ms.setRearArc(element.getRearArc());
+            ms.setThreshold(element.getThreshold());
+            ms.setFullArmor(element.getFullArmor());
+            ms.setFullStructure(element.getFullStructure());
+            ms.setSquadSize(element.getSquadSize());
+            ms.setSpecialAbilities(element.getSpecialAbilities());
+            ms.setUnitRole(element.getRole());
+            ms.setPointValue(element.getPointValue());
+        } else {
+            ms.setAsUnitType(ASUnitType.UNKNOWN);
         }
 
         return ms;

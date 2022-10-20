@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -60,7 +60,7 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize();
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

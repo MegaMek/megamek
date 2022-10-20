@@ -60,12 +60,4 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         }
     }
 
-    @Override
-    public int getBattleForceHeatDamage(int range) {
-        //Clan ER Flamer does damage at medium
-        if (getMediumRange() > range) {
-            return getDamage();
-        }
-        return 0;
-    }
 }

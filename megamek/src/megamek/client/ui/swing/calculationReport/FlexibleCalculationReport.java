@@ -76,6 +76,27 @@ public class FlexibleCalculationReport implements CalculationReport {
     }
 
     @Override
+    public void startTentativeSection() {
+        htmlReport.startTentativeSection();
+        swingReport.startTentativeSection();
+        textReport.startTentativeSection();
+    }
+
+    @Override
+    public void endTentativeSection() {
+        htmlReport.endTentativeSection();
+        swingReport.endTentativeSection();
+        textReport.endTentativeSection();
+    }
+
+    @Override
+    public void discardTentativeSection() {
+        htmlReport.discardTentativeSection();
+        swingReport.discardTentativeSection();
+        textReport.discardTentativeSection();
+    }
+
+    @Override
     public String toString() {
         return textReport.toString();
     }

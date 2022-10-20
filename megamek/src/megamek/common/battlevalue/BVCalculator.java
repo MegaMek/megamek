@@ -84,8 +84,8 @@ public abstract class BVCalculator {
             return new ProtoMekBVCalculator(entity);
         } else if (entity instanceof BattleArmor) {
             return new BattleArmorBVCalculator(entity);
-//        } else if (entity instanceof Infantry) {
-//            return new InfantryBVCalculator();
+        } else if (entity instanceof Infantry) {
+            return new InfantryBVCalculator(entity);
         } else if (entity instanceof Warship) {
             return new WarShipBVCalculator(entity);
         } else if (entity instanceof Jumpship) {
@@ -202,8 +202,20 @@ public abstract class BVCalculator {
     }
 
     protected void assembleMovementValues() {
-        runMP = entity.getRunMP(false, true, true);
+        setRunMP();
+        setJumpMP();
+        setUmuMP();
+    }
+
+    protected void setRunMP() {
+        runMP = (int) Math.ceil(entity.getOriginalWalkMP() * 1.5);
+    }
+
+    protected void setJumpMP() {
         jumpMP = entity.getJumpMP(false);
+    }
+
+    protected void setUmuMP() {
         umuMP = entity.getActiveUMUCount();
     }
 
@@ -231,9 +243,7 @@ public abstract class BVCalculator {
                     continue;
                 }
                 double armorMultiplier = armorMultiplier(loc);
-
-                // for example torso mounted cockpit
-                double unitSpecific = addUnitSpecificArmor(loc);
+                double torsoMountedCockpit = addTorsoMountedCockpit();
 
                 // Rear Armor
                 int rearArmor = entity.hasRearArmor(loc) ? entity.getArmor(loc, true) : 0;
@@ -263,7 +273,7 @@ public abstract class BVCalculator {
                     calculation += " x " + formatForReport(armorMultiplier) + armorMultiplierText(loc);
                 }
 
-                double armorBV = (armor + modularArmor + unitSpecific) * armorMultiplier * barRating;
+                double armorBV = (armor + modularArmor + torsoMountedCockpit) * armorMultiplier * barRating;
                 totalArmorBV += armorBV;
                 String type = "- " + EquipmentType.getArmorTypeName(entity.getArmorType(loc))
                         + " (" + entity.getLocationAbbr(loc) + ")";
@@ -281,13 +291,13 @@ public abstract class BVCalculator {
                     .sum();
             double armorMultiplier = armorMultiplier(0);
             double barRating = entity.getBARRating(0) / 10.0;
-            double unitSpecific = addUnitSpecificArmor(0);
+            double torsoMountedCockpit = addTorsoMountedCockpit();
 
-            double totalArmor = entity.getTotalArmor() + modularArmor + unitSpecific;
+            double totalArmor = entity.getTotalArmor() + modularArmor + torsoMountedCockpit;
             totalArmorBV = totalArmor * armorMultiplier * barRating;
             String calculation = entity.getTotalArmor() + "";
             calculation += (modularArmor > 0) ? " + " + modularArmor + " (Mod.)" : "";
-            calculation += (unitSpecific > 0) ? " + " + unitSpecific + " (" + unitSpecificName(0) + ")" : "";
+            calculation += (torsoMountedCockpit > 0) ? " + " + torsoMountedCockpit + " (Torso-m. Cockpit)" : "";
             if (totalArmor > entity.getTotalArmor()) {
                 calculation = "(" + calculation + ")";
             }
@@ -332,12 +342,8 @@ public abstract class BVCalculator {
         }
     }
 
-    protected double addUnitSpecificArmor(int location) {
+    protected double addTorsoMountedCockpit() {
         return 0;
-    }
-
-    protected String unitSpecificName(int location) {
-        return "";
     }
 
     protected void processStructure() {
@@ -492,19 +498,27 @@ public abstract class BVCalculator {
     }
 
     protected int getRunningTMM() {
-        return Compute.getTargetMovementModifier(runMP, false, false, entity.getGame()).getValue();
+        if (runMP == 0) {
+            return 0;
+        } else {
+            return Compute.getTargetMovementModifier(runMP, false, false, entity.getGame()).getValue();
+        }
     }
 
     protected int getJumpingTMM() {
-        return (jumpMP == 0) ?
-                0 :
-                Compute.getTargetMovementModifier(jumpMP, true, false, entity.getGame()).getValue();
+        if (jumpMP == 0) {
+            return 0;
+        } else {
+            return Compute.getTargetMovementModifier(jumpMP, true, false, entity.getGame()).getValue();
+        }
     }
 
     protected int getUmuTMM() {
-        return (umuMP == 0) ?
-                0 :
-                Compute.getTargetMovementModifier(umuMP, false, false, entity.getGame()).getValue();
+        if (umuMP == 0) {
+            return 0;
+        } else {
+            return Compute.getTargetMovementModifier(umuMP, false, false, entity.getGame()).getValue();
+        }
     }
 
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
@@ -545,7 +559,7 @@ public abstract class BVCalculator {
 
     protected double processWeaponSection(boolean showInReport, Predicate<Mounted> weaponFilter,
                                           boolean addToOffensiveValue) {
-        return entity.getTotalWeaponList().stream()
+        return entity.getEquipment().stream()
                 .filter(this::countAsOffensiveWeapon)
                 .filter(weaponFilter)
                 .mapToDouble(weapon -> processWeapon(weapon, showInReport, addToOffensiveValue))
@@ -666,7 +680,7 @@ public abstract class BVCalculator {
             if ((weapon.getLinkedBy() != null) && (weaponType.hasFlag(WeaponType.F_PPC))) {
                 double capBV = ((MiscType) weapon.getLinkedBy().getType()).getBV(entity, weapon);
                 weaponBV += capBV;
-                calculation += "+ " + formatForReport(capBV) + " (Cap)";
+                calculation += " + " + formatForReport(capBV) + " (Cap)";
             }
 
             // MG Array
@@ -759,7 +773,9 @@ public abstract class BVCalculator {
     }
 
     protected boolean countAsOffensiveWeapon(Mounted equipment) {
-        if (equipment.getType() instanceof MiscType) {
+        if (equipment.getType() instanceof AmmoType) {
+            return false;
+        } else if (equipment.getType() instanceof MiscType) {
             return countMiscAsOffensiveWeapon(equipment);
         } else {
             WeaponType weaponType = (WeaponType) equipment.getType();
@@ -825,11 +841,12 @@ public abstract class BVCalculator {
                     || mtype.hasFlag(MiscType.F_HARJEL_II)
                     || mtype.hasFlag(MiscType.F_HARJEL_III)
                     || mtype.hasFlag(MiscType.F_MASS)
+                    || mtype.hasFlag(MiscType.F_MINE)
                     || mtype.isShield()
-                    || mtype.getBV(entity, misc.getLocation()) == 0) {
+                    || offensiveEquipmentBV(mtype, misc.getLocation()) == 0) {
                 continue;
             }
-            double bv = mtype.getBV(entity, misc.getLocation());
+            double bv = offensiveEquipmentBV(mtype, misc.getLocation());
             if ((mtype.hasFlag(MiscType.F_CLUB) || mtype.hasFlag(MiscType.F_HAND_WEAPON))
                     && entity.hasFunctionalArmAES(misc.getLocation())) {
                 bv *= 1.25;
@@ -841,11 +858,11 @@ public abstract class BVCalculator {
                     "= " + formatForReport(offensiveValue));
             hasOffensiveEquipment = true;
         }
-        if (hasOffensiveEquipment) {
-            bvReport.endTentativeSection();
-        } else {
-            bvReport.discardTentativeSection();
-        }
+        bvReport.finalizeTentativeSection(hasOffensiveEquipment);
+    }
+
+    protected double offensiveEquipmentBV(MiscType misc, int location) {
+        return misc.getBV(entity, location);
     }
 
     protected void processAmmo() {
@@ -908,7 +925,9 @@ public abstract class BVCalculator {
     }
 
     /** @return the MP value to use for the Offensive Speed Factor (TM p.316) for this unit. */
-    protected abstract int offensiveSpeedFactorMP();
+    protected int offensiveSpeedFactorMP() {
+        return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
+    };
 
     /** Processes unit type modifiers of TM, p.316. */
     protected void processOffensiveTypeModifier() { }

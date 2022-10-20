@@ -1517,6 +1517,29 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
+    public int getRunMPForBV() {
+        int j = getOriginalWalkMP();
+        // adjust for engine hits
+        if (engineHits >= getMaxEngineHits()) {
+            return 0;
+        }
+        int engineLoss = 2;
+        if ((this instanceof SmallCraft) || (this instanceof Jumpship)) {
+            engineLoss = 1;
+        }
+        j = Math.max(0, j - (engineHits * engineLoss));
+        if (hasModularArmor()) {
+            j--;
+        }
+        // partially repaired engine
+        if (getPartialRepairs().booleanOption("aero_engine_crit")) {
+            j--;
+        }
+
+        return (int) Math.ceil(j * 1.5);
+    }
+
+    @Override
     public int getHeatCapacity(boolean includeRadicalHeatSink) {
         int capacity = (getHeatSinks() * (getHeatType() + 1));
         if (includeRadicalHeatSink && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {

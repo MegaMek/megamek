@@ -21,6 +21,7 @@ package megamek.common.battlevalue;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.MPBoosters;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
@@ -50,7 +51,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected double addUnitSpecificArmor(int location) {
+    protected double addTorsoMountedCockpit() {
         if (mek.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             return entity.getArmor(Mech.LOC_CT) + entity.getArmor(Mech.LOC_CT, true);
         } else {
@@ -262,42 +263,97 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
     }
 
     @Override
-    protected int getRunningTMM() {
-        int bvWalk = entity.getWalkMP(false, true, true);
+    protected void setRunMP() {
+        int wmp = entity.getOriginalWalkMP();
+        int legsDestroyed = 0;
+        int hipHits = 0;
+        int actuatorHits = 0;
+        Mech mek = (Mech) entity;
+
+        // A Mech using tracks has its movement reduced by 50% per leg or track destroyed;
+        if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
+            for (Mounted m : entity.getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                    if (m.isHit() || entity.isLocationBad(m.getLocation())) {
+                        legsDestroyed++;
+                    }
+                }
+            }
+            wmp = (wmp * (2 - legsDestroyed)) / 2;
+        } else {
+            for (int i = 0; i < entity.locations(); i++) {
+                if (entity.locationIsLeg(i)) {
+                    if (!entity.isLocationBad(i)) {
+                        if (mek.legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((entity.getGame() == null) || !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                continue;
+                            }
+                        }
+                        actuatorHits += mek.countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
+                }
+            }
+
+            // leg damage effects
+            if (legsDestroyed > 0) {
+                wmp = (legsDestroyed == 1) ? 1 : 0;
+            } else {
+                if (hipHits > 0) {
+                    if ((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                        wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
+                    } else {
+                        wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
+                    }
+                }
+                wmp -= actuatorHits;
+            }
+        }
+
+        if (entity.hasShield()) {
+            wmp -= entity.getNumberOfShields(MiscType.S_SHIELD_LARGE);
+            wmp -= entity.getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+        }
+
+        if (entity.hasModularArmor()) {
+            wmp--;
+        }
+
+        // For sanity sake...
+        wmp = Math.max(0, wmp);
         if (((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0)) {
-            bvWalk = ((LandAirMech) mek).getBVWalkMP();
+            wmp = ((LandAirMech) mek).getBVWalkMP();
         } else if (((entity.getEntityType() & Entity.ETYPE_QUADVEE) != 0)
                 && (entity.getMovementMode() == EntityMovementMode.WHEELED)) {
             // Don't use bonus cruise MP in calculating BV
-            bvWalk = Math.max(0, entity.getOriginalWalkMP());
+            wmp = Math.max(0, entity.getOriginalWalkMP());
         }
         if (mek.hasTSM(false)) {
-            bvWalk++;
+            wmp++;
         }
         MPBoosters mpBooster = entity.getMPBoosters();
         if (mpBooster.isMASCAndSupercharger()) {
-            runMP = (int) Math.ceil(bvWalk * 2.5);
+            runMP = (int) Math.ceil(wmp * 2.5);
         } else if (mpBooster.isMASCXorSupercharger()) {
-            runMP = bvWalk * 2;
+            runMP = wmp * 2;
         } else {
-            runMP = (int) Math.ceil(bvWalk * 1.5);
+            runMP = (int) Math.ceil(wmp * 1.5);
         }
         if (mek.hasMPReducingHardenedArmor()) {
             runMP--;
         }
-        return Compute.getTargetMovementModifier(runMP, false, false, entity.getGame()).getValue();
+        runMP = Math.max(runMP, 0);
     }
 
     @Override
-    protected int getJumpingTMM() {
+    protected void setJumpMP() {
         int airmechMP = 0;
         if ((entity instanceof LandAirMech) && ((LandAirMech) mek).getLAMType() == LandAirMech.LAM_STANDARD) {
             airmechMP = ((LandAirMech) mek).getAirMechFlankMP();
         }
         jumpMP = Math.max(mek.getJumpMP(false, true), airmechMP);
-        return (jumpMP == 0) ?
-                0 :
-                Compute.getTargetMovementModifier(jumpMP, true, false, entity.getGame()).getValue();
     }
 
     @Override
@@ -357,6 +413,11 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
         if (mek.hasVoidSig()) {
             mechHeatEfficiency -= 10;
             calculation += " - 10 (Void Sig.)";
+        }
+        if (mek.hasEngine() && (mek.getEngineHits() > 0)
+                && (mek.getEngine().isFusion() || mek.getEngine().isFission())) {
+            mechHeatEfficiency -= mek.getEngineHits() * 5;
+            calculation += " - " + mek.getEngineHits() * 5 + " (Engine Hits)";
         }
         bvReport.addLine("Heat Efficiency:", calculation + " = " + mechHeatEfficiency, "");
         return mechHeatEfficiency;
@@ -426,11 +487,6 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
             offensiveValue += weight;
         }
         bvReport.addLine("Weight:", calculation, "= " + formatForReport(offensiveValue));
-    }
-
-    @Override
-    protected int offensiveSpeedFactorMP() {
-        return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
     }
 
     @Override

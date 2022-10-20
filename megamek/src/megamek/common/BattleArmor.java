@@ -460,6 +460,32 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
+    public int getRunMPForBV() {
+        int j = getOriginalWalkMP();
+        if (hasMyomerBooster()) {
+            if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
+                j++;
+            } else {
+                j += 2;
+            }
+        } else if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+            // mechanical jump booster gives an extra MP
+            j++;
+        }
+        if (hasDWP()) {
+            if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                j -= 3;
+            } else if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
+                j -= 2;
+            }
+            if (j == 0) {
+                j++;
+            }
+        }
+        return (int) Math.ceil(j * 1.5);
+    }
+
+    @Override
     public int getRunMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         boolean fastMove = (game != null) &&

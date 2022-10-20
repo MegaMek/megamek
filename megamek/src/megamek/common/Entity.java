@@ -2696,8 +2696,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
         mp = Math.max(mp - getCargoMpReduction(this), 0);
         if (null != game) {
-            int weatherMod = game.getPlanetaryConditions()
-                                 .getMovementMods(this);
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
             if (weatherMod != 0) {
                 mp = Math.max(mp + weatherMod, 0);
             }
@@ -2767,8 +2766,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getRunMP(boolean gravity, boolean ignoreHeat,
                         boolean ignoreModularArmor) {
-        return (int) Math.ceil(getWalkMP(gravity, ignoreHeat,
-                                         ignoreModularArmor) * 1.5);
+        return (int) Math.ceil(getWalkMP(gravity, ignoreHeat, ignoreModularArmor) * 1.5);
     }
 
     /**
@@ -2782,7 +2780,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * damage to the unit (engine hits, motive damage, immobile status).
      */
     public int getRunMPForBV() {
-        return getRunMP(false, true, false);
+        return (int) Math.ceil(getOriginalWalkMP() * 1.5);
     }
 
     /**

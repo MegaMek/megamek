@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 
@@ -58,7 +59,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
     @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
         List<String> modifierList = new ArrayList<>();
-        double tmmFactor = 1 + (Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu)) / 10.0) + 0.1;
+        double tmmFactor = 1 + (Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu)) / 10.0);
         double tmmBonus = 0.1;
         modifierList.add("BA");
         if (battleArmor.hasCamoSystem()) {
@@ -80,7 +81,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
         String calculation = formatForReport(tmmFactor);
         if (tmmBonus > 0) {
             String modifiers = " (" + String.join(", ", modifierList) + ")";
-            calculation += " + " + tmmBonus + modifiers;
+            calculation += " + " + formatForReport(tmmBonus) + modifiers;
             tmmFactor += tmmBonus;
         }
         bvReport.addLine("TMM Factor:", calculation, "");
@@ -89,55 +90,45 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected boolean countAsOffensiveWeapon(Mounted equipment) {
-        return super.countAsOffensiveWeapon(equipment) && !equipment.getType().hasFlag(WeaponType.F_INFANTRY);
+        // see https://bg.battletech.com/forums/ground-combat/battle-armor-bv/
+        return super.countAsOffensiveWeapon(equipment) && !equipment.getType().isAnyOf(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
     }
+
+    protected void reportPossibleWeaponSection(String name, Predicate<Mounted> weaponFilter) {
+        bvReport.startTentativeSection();
+        bvReport.addLine(name, "", "");
+        double resultingBV = processWeaponSection(true, weaponFilter, true);
+        bvReport.finalizeTentativeSection(resultingBV > 0);
+    }
+
+    Predicate<Mounted> weaponFilter = m -> (m.getLocation() == BattleArmor.LOC_SQUAD)
+            && !m.isSquadSupportWeapon();
+
+    Predicate<Mounted> supportFilter = m -> (m.getLocation() == currentTrooper) && !m.getType().hasFlag(WeaponType.F_INFANTRY)
+            && ((m.getLocation() != BattleArmor.LOC_SQUAD) || m.isSquadSupportWeapon());
+
+    Predicate<Mounted> antiMekClawFilter = m -> (m.getType() instanceof MiscType)
+            && ((m.getLocation() == BattleArmor.LOC_SQUAD) || (m.getLocation() == currentTrooper))
+            && (m.getType().hasFlag(MiscType.F_MAGNET_CLAW) || m.getType().hasFlag(MiscType.F_VIBROCLAW));
+
+    Predicate<Mounted> antiMekWeaponFilter = m -> (m.getType() instanceof WeaponType)
+            && !m.getType().hasFlag(WeaponType.F_INFANTRY) && !m.getType().hasFlag(WeaponType.F_MISSILE)
+            && !m.isBodyMounted();
+
+    Predicate<Mounted> antiMekFilter = m -> antiMekClawFilter.test(m) || antiMekWeaponFilter.test(m);
 
     @Override
     protected void processWeapons() {
-        List<String> modifierList = new ArrayList<>();
-        double antiMek = 0;
-        for (Mounted weapon : battleArmor.getWeaponList()) {
-            if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || !countAsOffensiveWeapon(weapon)) {
-                continue;
-            }
-
-            double weaponBV = weapon.getType().getBV(battleArmor);
-            String name = weapon.getType().getName();
-            modifierList.clear();
-            if ((weapon.getLocation() != BattleArmor.LOC_SQUAD) || (weapon.isSquadSupportWeapon())) {
-                weaponBV /= battleArmor.getTotalOInternal();
-                modifierList.add("Support");
-                name += " (Support)";
-            }
-            if (battleArmor.canMakeAntiMekAttacks() && !weapon.getType().hasFlag(WeaponType.F_MISSILE)
-                    && !weapon.isBodyMounted()) {
-                antiMek += weaponBV;
-                modifierList.add("counts for AM");
-            }
-            offensiveValue += weaponBV;
-            String modifiers = modifierList.isEmpty() ? "" : " (" + String.join(", ", modifierList) + ")";
-            bvReport.addLine(name, "+ " + formatForReport(weaponBV) + modifiers,
-                    "= " + formatForReport(offensiveValue));
-        }
-        for (Mounted misc : battleArmor.getMisc()) {
-            if ((misc.getLocation() == BattleArmor.LOC_SQUAD) || (misc.getLocation() == currentTrooper)) {
-                if (misc.getType().hasFlag(MiscType.F_MAGNET_CLAW) || misc.getType().hasFlag(MiscType.F_VIBROCLAW)) {
-                    antiMek += misc.getType().getBV(battleArmor);
-                    bvReport.addLine(misc.getType().getName(),
-                            "+ " + formatForReport(misc.getType().getBV(battleArmor)) + " (only AM)", "");
-                }
-            }
-        }
-
-        offensiveValue += antiMek;
+        reportPossibleWeaponSection("Weapons:", weaponFilter);
+        reportPossibleWeaponSection("Squad Support:", supportFilter);
         if (battleArmor.canMakeAntiMekAttacks()) {
-            bvReport.addLine("Anti-Mek", "+ " + formatForReport(antiMek), "= " + offensiveValue);
+            reportPossibleWeaponSection("Anti-Mek:", antiMekFilter);
         }
     }
 
     @Override
     protected void processCalculations() {
-        // Test if all troopers are exactly the same
+        // Test if all troopers are exactly the same without writing to the real report
         CalculationReport saveReport = bvReport;
         bvReport = new DummyCalculationReport();
         Set<Double> trooperBVs = new HashSet<>();
@@ -162,43 +153,24 @@ public class BattleArmorBVCalculator extends BVCalculator {
             baseBV = bvSum;
         }
 
-        bvReport.addSubHeader("Squad Result:");
-        bvReport.addLine("Total Squad BV", "", formatForReport(baseBV));
+        bvReport.addEmptyLine();
+        bvReport.addSubHeader("Squad Battle Value:");
+        bvReport.addLine("Total Squad BV:", "", formatForReport(baseBV));
         // we have now added all troopers, divide by current strength, then multiply by the unit size modifier
         baseBV /= battleArmor.getShootingStrength();
         bvReport.addLine("Average BV per Trooper", "/ " + battleArmor.getShootingStrength(),
                 "= " + formatForReport(baseBV));
 
-//        if (singleTrooper) {
-//            return (int) Math.round(squadBV);
-//        }
-
-        double squadFactor = 1;
-        switch (battleArmor.getShootingStrength()) {
-            case 1:
-                break;
-            case 2:
-                squadFactor = 2.2;
-                break;
-            case 3:
-                squadFactor = 3.6;
-                break;
-            case 4:
-                squadFactor = 5.2;
-                break;
-            case 5:
-                squadFactor = 7;
-                break;
-            case 6:
-                squadFactor = 9;
-                break;
-        }
+        double squadFactor = (0.9 + 0.1 * battleArmor.getShootingStrength()) * battleArmor.getShootingStrength();
         bvReport.addLine("Squad Size",
                 "x " + squadFactor, "= " + formatForReport(baseBV * squadFactor));
         baseBV *= squadFactor;
+        bvReport.addLine("--- Base Unit BV:",
+                formatForReport(baseBV) + ", rn",
+                "= " + (int) Math.round(baseBV));
     }
 
-    private double processTrooper() {
+    private void processTrooper() {
         offensiveValue = 0;
         defensiveValue = 0;
         baseBV = 0;
@@ -206,26 +178,24 @@ public class BattleArmorBVCalculator extends BVCalculator {
         if (battleArmor.getInternal(currentTrooper) <= 0) {
             bvReport.addLine("N/A", "", "");
             bvReport.addEmptyLine();
-            return 0;
+        } else {
+            super.processCalculations();
         }
-        super.processCalculations();
+    }
 
-        for (Mounted misc : battleArmor.getMisc()) {
-            if (!misc.getType().hasFlag(MiscType.F_MINE) && !misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                continue;
-            }
+    @Override
+    protected double offensiveEquipmentBV(MiscType misc, int location) {
+        return location == currentTrooper ? super.offensiveEquipmentBV(misc, location) : 0;
+    }
 
-            double miscBV = misc.getType().getBV(battleArmor);
-            String name = misc.getType().getName();
-            if (misc.getLocation() != BattleArmor.LOC_SQUAD) {
-                miscBV /= battleArmor.getTotalOInternal();
-                name += " (Support)";
-            }
-            baseBV += miscBV;
-            bvReport.addLine(name, "+ " + formatForReport(miscBV), "= " + formatForReport(baseBV));
-        }
-
-        return baseBV;
+    @Override
+    protected void processSummarize() {
+        baseBV = defensiveValue + offensiveValue;
+        bvReport.addEmptyLine();
+        bvReport.addSubHeader("Trooper Battle Value:");
+        bvReport.addLine("",
+                formatForReport(defensiveValue) + " + " + formatForReport(offensiveValue) + ", rn",
+                "= " + formatForReport(baseBV));
     }
 
     @Override
@@ -240,7 +210,10 @@ public class BattleArmorBVCalculator extends BVCalculator {
         double armorBV = 2.5;
         if (battleArmor.isFireResistant() || battleArmor.isReflective() || battleArmor.isReactive()) {
             armorBV = 3.5;
-            modifier = " (Fire-Res./Refl./React.)";
+            final String armorName = EquipmentType.getArmorTypeName(battleArmor.getArmorType(BattleArmor.LOC_TROOPER_1),
+                    TechConstants.isClan(battleArmor.getArmorTechLevel(BattleArmor.LOC_TROOPER_1)));
+            final EquipmentType armor = EquipmentType.get(armorName);
+            modifier = " (" + armor.getName().replaceAll("^BA\\s+", "") + ")";
         }
         defensiveValue += battleArmor.getArmor(currentTrooper) * armorBV + 1;
         String calculation = "1 + " + battleArmor.getArmor(currentTrooper) + " x " + formatForReport(armorBV) + modifier;
@@ -275,9 +248,9 @@ public class BattleArmorBVCalculator extends BVCalculator {
             }
         }
         if (bonus > 0) {
-            offensiveValue += bonus;
+            defensiveValue += bonus;
             String calculation = "+ " + bonus + " (" + String.join(", ", modifierList) + ")";
-            bvReport.addLine("Systems:", calculation, "= " + formatForReport(offensiveValue));
+            bvReport.addLine("Systems:", calculation, "= " + formatForReport(defensiveValue));
         }
         double amsBonus = 0;
         for (Mounted weapon : battleArmor.getWeaponList()) {
@@ -291,15 +264,25 @@ public class BattleArmorBVCalculator extends BVCalculator {
             }
         }
         if (amsBonus > 0) {
-            offensiveValue += amsBonus;
+            defensiveValue += amsBonus;
             bvReport.addLine("AMS:", "+ " + formatForReport(amsBonus),
-                    "= " + formatForReport(offensiveValue));
+                    "= " + formatForReport(defensiveValue));
         }
+    }
+
+    @Override
+    protected double getAmmoBV(Mounted ammo) {
+        return ((AmmoType) ammo.getType()).getProtoBV(ammo.getUsableShotsLeft());
     }
 
     @Override
     protected int offensiveSpeedFactorMP() {
         return Math.max(battleArmor.getWalkMP(false, false, true, true, false),
                 Math.max(battleArmor.getJumpMP(false, true, true), battleArmor.getActiveUMUCount()));
+    }
+
+    @Override
+    protected String equipmentDescriptor(Mounted mounted) {
+        return mounted.getType().getShortName();
     }
 }

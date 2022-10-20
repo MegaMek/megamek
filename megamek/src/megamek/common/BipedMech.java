@@ -195,6 +195,70 @@ public class BipedMech extends Mech {
         return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
+    @Override
+    public int getRunMPForBV() {
+        int wmp = getOriginalWalkMP();
+        int legsDestroyed = 0;
+        int hipHits = 0;
+        int actuatorHits = 0;
+
+        //A Mech using tracks has its movement reduced by 50% per leg or track destroyed;
+        if (getMovementMode() == EntityMovementMode.TRACKED) {
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                    if (m.isHit() || isLocationBad(m.getLocation())) {
+                        legsDestroyed++;
+                    }
+                }
+            }
+            wmp = (wmp * (2 - legsDestroyed)) / 2;
+        } else {
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                continue;
+                            }
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
+                }
+            }
+
+            // leg damage effects
+            if (legsDestroyed > 0) {
+                wmp = (legsDestroyed == 1) ? 1 : 0;
+            } else {
+                if (hipHits > 0) {
+                    if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                        wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
+                    } else {
+                        wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
+                    }
+                }
+                wmp -= actuatorHits;
+            }
+        }
+
+        if (hasShield()) {
+            wmp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
+            wmp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+        }
+
+        if (hasModularArmor()) {
+            wmp--;
+        }
+
+        // For sanity sake...
+        wmp = Math.max(0, wmp);
+
+        return (countBadLegs() == 0) ? (int) Math.ceil(wmp * 1.5) : wmp;
+    }
+
     /**
      * Returns run MP without considering MASC modified for leg loss and stuff.
      */

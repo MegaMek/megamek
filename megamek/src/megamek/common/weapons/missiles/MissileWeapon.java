@@ -19,7 +19,7 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.MiscType;
@@ -79,11 +79,11 @@ public abstract class MissileWeapon extends AmmoWeapon {
             } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
                 clusterRoll = 8;
             } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                clusterRoll = 10;
+                clusterRoll = 11;
             }
         }
         double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
@@ -95,7 +95,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(7, getRackSize() * baSquadSize);
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;

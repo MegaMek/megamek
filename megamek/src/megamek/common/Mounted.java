@@ -2053,5 +2053,4 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return ammoType.getMunitionType() == AmmoType.M_HOMING &&
                 curMode().equals("Homing");
     }
-
 }

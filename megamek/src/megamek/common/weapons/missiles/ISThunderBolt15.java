@@ -20,6 +20,8 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -63,5 +65,18 @@ public class ISThunderBolt15 extends ThunderBoltWeapon {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS, F_LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.87;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 1.5;
+        } else if (range == AlphaStrikeElement.LONG_RANGE) {
+            return 1.5;
+        } else {
+            return 0;
+        }
     }
 }

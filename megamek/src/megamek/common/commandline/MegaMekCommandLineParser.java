@@ -17,6 +17,8 @@ import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.*;
+import megamek.common.alphaStrike.conversion.ASConverter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
@@ -108,9 +110,6 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         break;
                     case OUL:
                         processUnitExporter(true);
-                        break;
-                    case BFC:
-                        processUnitBattleForceConverter();
                         break;
                     case ASC:
                         processUnitAlphaStrikeConverter();
@@ -251,45 +250,6 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
         System.exit(0);
     }
 
-    private void processUnitBattleForceConverter() {
-        String filename;
-        if (getTokenType() == TOK_LITERAL) {
-            filename = getTokenValue();
-            nextToken();
-
-            if (!new File("./docs").exists()) {
-                if (!new File("./docs").mkdir()) {
-                    LogManager.getLogger().error(
-                            "Error in creating directory ./docs. We know this is annoying, and apologise. "
-                                    + "Please submit a bug report at https://github.com/MegaMek/megamek/issues "
-                                    + " and we will try to resolve your issue.");
-                }
-            }
-            File file = new File("./docs/" + filename);
-            try (Writer w = new FileWriter(file); BufferedWriter fw = new BufferedWriter(w)) {
-                fw.write("MegaMek Unit BattleForce Converter");
-                fw.newLine();
-                fw.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
-                fw.newLine();
-                fw.write("Element\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilities");
-                fw.newLine();
-
-                MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
-                for (MechSummary unit : units) {
-                    Entity entity = new MechFileParser(unit.getSourceFile(),
-                            unit.getEntryName()).getEntity();
-
-                    BattleForceElement bfe = new BattleForceElement(entity);
-                    bfe.writeCsv(fw);
-                }
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
-            }
-        }
-
-        System.exit(0);
-    }
-
     private void processUnitAlphaStrikeConverter() {
         String filename;
         if (getTokenType() == TOK_LITERAL) {
@@ -311,16 +271,73 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                 bw.newLine();
                 bw.write("This file can be regenerated with java -jar MegaMek.jar -asc filename");
                 bw.newLine();
-                bw.write("Element\tType\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilities");
+                bw.write("MUL ID\tChassis\tModel\tRole\tType\tSize\tMovement\tTMM\tArmor\tStructure\tThreshold\t");
+                bw.write("S\tS*\tM\tM*\tL\tL*\tE\tE*\tOverheat\tPoint Value\tAbilities\t");
+                bw.write("Front Arc\tLeft Arc\tRight Arc\tRear Arc");
                 bw.newLine();
 
                 MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
                 for (MechSummary unit : units) {
-                    Entity entity = new MechFileParser(unit.getSourceFile(),
-                            unit.getEntryName()).getEntity();
-
-                    AlphaStrikeElement ase = new AlphaStrikeElement(entity);
-                    ase.writeCsv(bw);
+                    Entity entity = new MechFileParser(unit.getSourceFile(), unit.getEntryName()).getEntity();
+                    if (ASConverter.canConvert(entity)) {
+                        AlphaStrikeElement element = ASConverter.convert(entity);
+                        bw.write(element.getMulId() + "");
+                        bw.write("\t");
+                        bw.write(element.getChassis());
+                        bw.write("\t");
+                        bw.write(element.getModel());
+                        bw.write("\t");
+                        bw.write(element.getRole() + "");
+                        bw.write("\t");
+                        bw.write(element.getASUnitType() + "");
+                        bw.write("\t");
+                        bw.write(element.getSize() + "");
+                        bw.write("\t");
+                        bw.write(element.getMovementAsString());
+                        bw.write("\t");
+                        bw.write(element.getTMM() + "");
+                        bw.write("\t");
+                        bw.write(element.getFullArmor() + "");
+                        bw.write("\t");
+                        bw.write(element.getFullStructure() + "");
+                        bw.write("\t");
+                        bw.write(element.getThreshold() + "");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().S.damage + "");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().S.minimal ? "TRUE" : "FALSE");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().M.damage + "");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().M.minimal ? "TRUE" : "FALSE");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().L.damage + "");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().L.minimal ? "TRUE" : "FALSE");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().E.damage + "");
+                        bw.write("\t");
+                        bw.write(element.getStandardDamage().E.minimal ? "TRUE" : "FALSE");
+                        bw.write("\t");
+                        bw.write(element.getOV() + "");
+                        bw.write("\t");
+                        bw.write(element.getPointValue() + "");
+                        bw.write("\t");
+                        bw.write(element.getSpecialsDisplayString(", ", element));
+                        bw.write("\t");
+                        if (element.usesArcs()) {
+                            bw.write("FRONT(" + element.getFrontArc().getSpecialsExportString(", ", element) + ")");
+                            bw.write("\t");
+                            bw.write("LEFT(" + element.getLeftArc().getSpecialsExportString(", ", element) + ")");
+                            bw.write("\t");
+                            bw.write("RIGHT(" + element.getRightArc().getSpecialsExportString(", ", element) + ")");
+                            bw.write("\t");
+                            bw.write("REAR(" + element.getRearArc().getSpecialsExportString(", ", element) + ")");
+                        } else {
+                            bw.write("\t\t\t");
+                        }
+                        bw.newLine();
+                    }
                 }
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);

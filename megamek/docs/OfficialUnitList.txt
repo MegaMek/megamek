@@ -6,13 +6,13 @@ Achileus Light Battle Armor [Flamer](Sqd4)|
 Achileus Light Battle Armor [Laser](Sqd4)|
 Achileus Light Battle Armor [MG](Sqd4)|
 Achileus Light Battle Armor [TAG](Sqd4)|
-Achileus Light Battle Armor [IS](Sqd4)|
+Achileus Light Battle Armor (WoB)(Sqd4)|
 Achileus Light Battle Armor [David](Sqd5)|
 Achileus Light Battle Armor [Flamer](Sqd5)|
 Achileus Light Battle Armor [Laser](Sqd5)|
 Achileus Light Battle Armor [MG](Sqd5)|
 Achileus Light Battle Armor [TAG](Sqd5)|
-Achileus Light Battle Armor [WoB](Sqd5)|
+Achileus Light Battle Armor (WoB)(Sqd5)|
 Achileus Light Battle Armor [David](Sqd6)|
 Achileus Light Battle Armor [Flamer](Sqd6)|
 Achileus Light Battle Armor [Laser](Sqd6)|
@@ -114,63 +114,151 @@ Gnome Battle Armor (Upgrade) [MRR](Sqd6)|
 Gnome Battle Armor (Upgrade) [Pulse Laser](Sqd4)|
 Gnome Battle Armor (Upgrade) [Pulse Laser](Sqd5)|
 Gnome Battle Armor (Upgrade) [Pulse Laser](Sqd6)|
-Gray Death Scout Suit (Standard)|
-Gray Death Standard Suit [Flamer]|
-Gray Death Standard Suit [Laser]|
-Gray Death Standard Suit [LRR]|
-Gray Death Standard Suit [MG]|
-Gray Death Standard Suit [SRM]|
-Infiltrator Mk. I Battle Armor (Special Ops)|
-Infiltrator Mk. I Battle Armor 'Waddle'|
-Infiltrator Mk. II Battle Armor (Sensor)|
-Infiltrator Mk. II Battle Armor 'Puma'|
-IS Standard Battle Armor (Level I) [Flamer]|
-IS Standard Battle Armor (Level I) [Laser]|
-IS Standard Battle Armor (Level I) [LRR]|
-IS Standard Battle Armor (Level I) [MG]|
-IS Standard Battle Armor (Level I) [SRM]|
-IS Standard Battle Armor [Flamer]|
-IS Standard Battle Armor [Laser]|
-IS Standard Battle Armor [LRR]|
-IS Standard Battle Armor [MG]|
-IS Standard Battle Armor [SRM]|
-Kage Light Battle Armor (DEST)|
-Kage Light Battle Armor (Vibro-Claw)|
-Kage Light Battle Armor [ECM]|
-Kage Light Battle Armor [Flamer]|
-Kage Light Battle Armor [Laser]|
-Kage Light Battle Armor [MG]|
-Kage Light Battle Armor [TAG]|
-Kanazuchi Assault Battle Armor (Upgrade) [Battle Claw]|
-Kanazuchi Assault Battle Armor [Battle Claw]|
-Kanazuchi Assault Battle Armor [Industrial Drill]|
-Kanazuchi Assault Battle Armor [Salvage Arm]|
-Longinus Battle Armor [David] (WoB)|
-Longinus Battle Armor [David]|
-Longinus Battle Armor [Flamer] (WoB)|
-Longinus Battle Armor [Flamer]|
-Longinus Battle Armor [Laser] (WoB)|
-Longinus Battle Armor [Laser]|
-Longinus Battle Armor [MG] (WoB)|
-Longinus Battle Armor [MG]|
-Purifier Adaptive Battle Armor [Laser]|
-Purifier Adaptive Battle Armor [Narc]|
-Purifier Adaptive Battle Armor [PPC]|
-Purifier Adaptive Battle Armor [TAG]|
-Raiden Battle Armor (Original)|
-Raiden Battle Armor [Flamer]|
-Raiden Battle Armor [Laser]|
-Raiden Battle Armor [MG]|
-Raiden Battle Armor [MRM]|
-Raiden Battle Armor [Tsunami]|
-Salamander Battle Armor (Anti-Infantry)|
-Salamander Battle Armor (Laser)|
-Salamander Battle Armor (Standard)|
-Sloth Battle Armor (Standard)|
-Sylph Battle Armor (Standard)|
-Sylph Battle Armor (Upgrade)|
-Undine Battle Armor (Upgrade)|
-Undine Battle Armor (Standard)|
+Gray Death Scout Suit (Standard)(Sqd4)|
+Gray Death Scout Suit (Standard)(Sqd5)|
+Gray Death Scout Suit (Standard)(Sqd6)|
+Gray Death Standard Suit [Flamer](Sqd4)|
+Gray Death Standard Suit [Flamer](Sqd5)|
+Gray Death Standard Suit [Flamer](Sqd6)|
+Gray Death Standard Suit [Laser](Sqd4)|
+Gray Death Standard Suit [Laser](Sqd5)|
+Gray Death Standard Suit [Laser](Sqd6)|
+Gray Death Standard Suit [LRR](Sqd4)|
+Gray Death Standard Suit [LRR](Sqd5)|
+Gray Death Standard Suit [LRR](Sqd6)|
+Gray Death Standard Suit [MG](Sqd4)|
+Gray Death Standard Suit [MG](Sqd5)|
+Gray Death Standard Suit [MG](Sqd6)|
+Gray Death Standard Suit [SRM](Sqd4)|
+Gray Death Standard Suit [SRM](Sqd5)|
+Gray Death Standard Suit [SRM](Sqd6)|
+Infiltrator Mk. I Battle Armor (Special Ops)(Sqd4)|
+Infiltrator Mk. I Battle Armor (Special Ops)(Sqd5)|
+Infiltrator Mk. I Battle Armor (Special Ops)(Sqd6)|
+Infiltrator Mk. I Battle Armor 'Waddle'(Sqd4)|
+Infiltrator Mk. I Battle Armor 'Waddle'(Sqd5)|
+Infiltrator Mk. I Battle Armor 'Waddle'(Sqd6)|
+Infiltrator Mk. II Battle Armor (Sensor)(Sqd4)|
+Infiltrator Mk. II Battle Armor (Sensor)(Sqd5)|
+Infiltrator Mk. II Battle Armor (Sensor)(Sqd6)|
+Infiltrator Mk. II Battle Armor 'Puma'(Sqd4)|
+Infiltrator Mk. II Battle Armor 'Puma'(Sqd5)|
+Infiltrator Mk. II Battle Armor 'Puma'(Sqd6)|
+IS Standard Battle Armor [Flamer](Sqd4)|
+IS Standard Battle Armor [Flamer](Sqd5)|
+IS Standard Battle Armor [Flamer](Sqd6)|
+IS Standard Battle Armor [Laser](Sqd4)|
+IS Standard Battle Armor [Laser](Sqd5)|
+IS Standard Battle Armor [Laser](Sqd6)|
+IS Standard Battle Armor [LRR](Sqd4)|
+IS Standard Battle Armor [LRR](Sqd5)|
+IS Standard Battle Armor [LRR](Sqd6)|
+IS Standard Battle Armor [MG](Sqd4)|
+IS Standard Battle Armor [MG](Sqd5)|
+IS Standard Battle Armor [MG](Sqd6)|
+IS Standard Battle Armor [SRM](Sqd4)|
+IS Standard Battle Armor [SRM](Sqd5)|
+IS Standard Battle Armor [SRM](Sqd6)|
+Kage Light Battle Armor (DEST)(Sqd4)|
+Kage Light Battle Armor (DEST)(Sqd5)|
+Kage Light Battle Armor (DEST)(Sqd6)|
+Kage Light Battle Armor (Vibro-Claw)(Sqd4)|
+Kage Light Battle Armor (Vibro-Claw)(Sqd5)|
+Kage Light Battle Armor (Vibro-Claw)(Sqd6)|
+Kage Light Battle Armor [ECM](Sqd4)|
+Kage Light Battle Armor [ECM](Sqd5)|
+Kage Light Battle Armor [ECM](Sqd6)|
+Kage Light Battle Armor [Flamer](Sqd4)|
+Kage Light Battle Armor [Flamer](Sqd5)|
+Kage Light Battle Armor [Flamer](Sqd6)|
+Kage Light Battle Armor [Laser](Sqd4)|
+Kage Light Battle Armor [Laser](Sqd5)|
+Kage Light Battle Armor [Laser](Sqd6)|
+Kage Light Battle Armor [MG](Sqd4)|
+Kage Light Battle Armor [MG](Sqd5)|
+Kage Light Battle Armor [MG](Sqd6)|
+Kage Light Battle Armor [TAG](Sqd4)|
+Kage Light Battle Armor [TAG](Sqd5)|
+Kage Light Battle Armor [TAG](Sqd6)|
+Kanazuchi Assault Battle Armor (Upgrade) [Battle Claw](Sqd4)|
+Kanazuchi Assault Battle Armor (Upgrade) [Battle Claw](Sqd5)|
+Kanazuchi Assault Battle Armor (Upgrade) [Battle Claw](Sqd6)|
+Kanazuchi Assault Battle Armor [Battle Claw](Sqd4)|
+Kanazuchi Assault Battle Armor [Battle Claw](Sqd5)|
+Kanazuchi Assault Battle Armor [Battle Claw](Sqd6)|
+Kanazuchi Assault Battle Armor [Industrial Drill](Sqd4)|
+Kanazuchi Assault Battle Armor [Industrial Drill](Sqd5)|
+Kanazuchi Assault Battle Armor [Industrial Drill](Sqd6)|
+Kanazuchi Assault Battle Armor [Salvage Arm](Sqd4)|
+Kanazuchi Assault Battle Armor [Salvage Arm](Sqd5)|
+Kanazuchi Assault Battle Armor [Salvage Arm](Sqd6)|
+Longinus Battle Armor [David](Sqd4)|
+Longinus Battle Armor [David](Sqd5)|
+Longinus Battle Armor [David](Sqd6)|
+Longinus Battle Armor [Flamer](Sqd4)|
+Longinus Battle Armor [Flamer](Sqd5)|
+Longinus Battle Armor [Flamer](Sqd6)|
+Longinus Battle Armor [Laser](Sqd4)|
+Longinus Battle Armor [Laser](Sqd5)|
+Longinus Battle Armor [Laser](Sqd6)|
+Longinus Battle Armor [MG](Sqd4)|
+Longinus Battle Armor [MG](Sqd5)|
+Longinus Battle Armor [MG](Sqd6)|
+Purifier Adaptive Battle Armor [Laser](Sqd4)|
+Purifier Adaptive Battle Armor [Laser](Sqd5)|
+Purifier Adaptive Battle Armor [Laser](Sqd6)|
+Purifier Adaptive Battle Armor [Narc](Sqd4)|
+Purifier Adaptive Battle Armor [Narc](Sqd5)|
+Purifier Adaptive Battle Armor [Narc](Sqd6)|
+Purifier Adaptive Battle Armor [PPC](Sqd4)|
+Purifier Adaptive Battle Armor [PPC](Sqd5)|
+Purifier Adaptive Battle Armor [PPC](Sqd6)|
+Purifier Adaptive Battle Armor [TAG](Sqd4)|
+Purifier Adaptive Battle Armor [TAG](Sqd5)|
+Purifier Adaptive Battle Armor [TAG](Sqd6)|
+Raiden Battle Armor (Original)(Sqd4)|
+Raiden Battle Armor (Original)(Sqd5)|
+Raiden Battle Armor (Original)(Sqd6)|
+Raiden Battle Armor [Flamer](Sqd4)|
+Raiden Battle Armor [Flamer](Sqd5)|
+Raiden Battle Armor [Flamer](Sqd6)|
+Raiden Battle Armor [Laser](Sqd4)|
+Raiden Battle Armor [Laser](Sqd5)|
+Raiden Battle Armor [Laser](Sqd6)|
+Raiden Battle Armor [MG](Sqd4)|
+Raiden Battle Armor [MG](Sqd5)|
+Raiden Battle Armor [MG](Sqd6)|
+Raiden Battle Armor [MRM](Sqd4)|
+Raiden Battle Armor [MRM](Sqd5)|
+Raiden Battle Armor [MRM](Sqd6)|
+Raiden Battle Armor [Tsunami](Sqd4)|
+Raiden Battle Armor [Tsunami](Sqd5)|
+Raiden Battle Armor [Tsunami](Sqd6)|
+Salamander Battle Armor (Anti-Infantry)(Sqd4)|
+Salamander Battle Armor (Anti-Infantry)(Sqd5)|
+Salamander Battle Armor (Anti-Infantry)(Sqd6)|
+Salamander Battle Armor (Laser)(Sqd4)|
+Salamander Battle Armor (Laser)(Sqd5)|
+Salamander Battle Armor (Laser)(Sqd6)|
+Salamander Battle Armor (Standard)(Sqd3)|
+Salamander Battle Armor (Standard)(Sqd4)|
+Salamander Battle Armor (Standard)(Sqd5)|
+Salamander Battle Armor (Standard)(Sqd6)|
+Sloth Battle Armor (Standard)(Sqd4)|
+Sloth Battle Armor (Standard)(Sqd5)|
+Sloth Battle Armor (Standard)(Sqd6)|
+Sylph Battle Armor (Standard)(Sqd4)|
+Sylph Battle Armor (Standard)(Sqd5)|
+Sylph Battle Armor (Standard)(Sqd6)|
+Sylph Battle Armor (Upgrade)(Sqd4)|
+Sylph Battle Armor (Upgrade)(Sqd5)|
+Sylph Battle Armor (Upgrade)(Sqd6)|
+Undine Battle Armor (Standard)(Sqd4)|
+Undine Battle Armor (Standard)(Sqd5)|
+Undine Battle Armor (Standard)(Sqd6)|
+Undine Battle Armor (Upgrade)(Sqd4)|
+Undine Battle Armor (Upgrade)(Sqd5)|
+Undine Battle Armor (Upgrade)(Sqd6)|
 Aerie PA(L) (Salvage)(Sqd4)|
 Aerie PA(L) (Salvage)(Sqd5)|
 Aerie PA(L) (Salvage)(Sqd6)|
@@ -195,15 +283,15 @@ Asura Medium Battle Armor (SRM)(Sqd6)|
 Asura Medium Battle Armor (Standard)(Sqd4)|
 Asura Medium Battle Armor (Standard)(Sqd5)|
 Asura Medium Battle Armor (Standard)(Sqd6)|
-Clan Medium Battle Armor (Naval) "B‰r" (Sqd4)|
-Clan Medium Battle Armor (Naval) "B‰r" (Sqd5)|
-Clan Medium Battle Armor (Naval) "B‰r" (Sqd6)|
+Clan Medium Battle Armor (Naval) 'Bar' (Sqd4)|
+Clan Medium Battle Armor (Naval) 'Bar' (Sqd5)|
+Clan Medium Battle Armor (Naval) 'Bar' (Sqd6)|
 Clan Medium Battle Armor (Rabid)(Sqd4)|
 Clan Medium Battle Armor (Rabid)(Sqd5)|
 Clan Medium Battle Armor (Rabid)(Sqd6)|
-Clan Medium Battle Armor (Laser) "Volk"(Sqd4)|
-Clan Medium Battle Armor (Laser) "Volk"(Sqd5)|
-Clan Medium Battle Armor (Laser) "Volk"(Sqd6)|
+Clan Medium Battle Armor (Laser) 'Volk' (Sqd4)|
+Clan Medium Battle Armor (Laser) 'Volk' (Sqd5)|
+Clan Medium Battle Armor (Laser) 'Volk' (Sqd6)|
 Corona Heavy Battle Armor (Standard) (Sqd4)|
 Corona Heavy Battle Armor (Standard) (Sqd5)|
 Corona Heavy Battle Armor (Standard) (Sqd6)|
@@ -225,115 +313,216 @@ Golem Assault Armor (Rock Golem)(Sqd6)|
 Golem Assault Armor (Standard)(Sqd4)|
 Golem Assault Armor (Standard)(Sqd5)|
 Golem Assault Armor (Standard)(Sqd6)|
-Grenadier Battle Armor (Hunter-Killer) [MagShot]|
-Grenadier Battle Armor (Hunter-Killer) [NARC]|
-Grenadier Battle Armor [Flamer]|
-Grenadier Battle Armor [LRR]|
-Grenadier Battle Armor [MagShot]|
-Grenadier Battle Armor [SL]|
-Grenadier Battle Armor [TAG]|
-Hauberk Battle Armor (Standard)|
-Hauberk II Battle Armor (Standard)|
-Kobold Battle Armor (CS) [GL/Flamer]|
-Kobold Battle Armor (GB) [GL/Flamer]|
-Kobold Battle Armor [GL/Flamer]|
-Kobold Battle Armor (CS) [GL]|
-Kobold Battle Armor (GB) [GL]|
-Kobold Battle Armor [GL]|
-Kobold Battle Armor (CS) [GL/TAG]|
-Kobold Battle Armor (GB) [GL/TAG]|
-Kobold Battle Armor [GL/TAG]|
-Kobold Battle Armor (CS) [SL/Flamer]|
-Kobold Battle Armor (GB) [SL/Flamer]|
-Kobold Battle Armor [SL/Flamer]|
-Kobold Battle Armor (CS) [SL/TAG]|
-Kobold Battle Armor (GB) [SL/TAG]|
-Kobold Battle Armor [SL/TAG]|
-Nephilim Assault Battle Armor (Capture Team)[HMG]|
-Nephilim Assault Battle Armor (Gauss)|
-Nephilim Assault Battle Armor (Narc)|
-Nephilim Assault Battle Armor (Seeker) [MG]|
-Nephilim Assault Battle Armor (Support)|
-Nephilim Assault Battle Armor (Standard)|
-Nighthawk PA(L) Mk. XXI (SE)|
-Nighthawk PA(L) Mk. XXI (WoB)|
-Nighthawk PA(L) Mk. XXI|
-Nighthawk PA(L) Mk. XXII|
-Phalanx Battle Armor (A)|
-Phalanx Battle Armor (B)|
-Phalanx Battle Armor (C)|
-Phalanx Battle Armor (WoB-A)|
-Phalanx Battle Armor (WoB-B)|
-Phalanx Battle Armor (WoB-C)|
-Rogue Bear Heavy Battle Armor (Standard)|
-Rottweiler Battle Armor (Close Combat)|
-Rottweiler Battle Armor (Upgrade)|
-Rottweiler Battle Armor (Standard)|
-Se'irim Medium Battle Armor (Anti-Infantry)|
-Se'irim Medium Battle Armor (Capture Team)|
-Se'irim Medium Battle Armor (Standard)|
-Shedu Assault Battle Armor (Capture Team)|
-Shedu Assault Battle Armor (PPC)|
-Shedu Assault Battle Armor (Recon)|
-Shedu Assault Battle Armor (Support)|
-Shedu Assault Battle Armor (Standard)|
-Tengu Heavy Battle Armor (C3i)|
-Tengu Heavy Battle Armor (ML)|
-Tengu Heavy Battle Armor (RL)|
-Tengu Heavy Battle Armor (Support)|
-Tengu Heavy Battle Armor (VSP)|
-Tengu Heavy Battle Armor (Plasma)|
-Tornado PA(L) G12 (RAF)|
-Tornado PA(L) G12|
-Tornado PA(L) G13 (MH) [David Light Gauss]|
-Tornado PA(L) G13 (MH) [Flamer]|
-Tornado PA(L) G13 (MH) [Grenade Launcher]|
-Tornado PA(L) G13 (MH) [Machine Gun]|
-Tornado PA(L) G13 (MH) [Small Laser]|
-Tornado PA(L) G13 (RAF) [David Light Gauss]|
-Tornado PA(L) G13 (RAF) [Flamer]|
-Tornado PA(L) G13 (RAF) [Grenade Launcher]|
-Tornado PA(L) G13 (RAF) [Machine Gun]|
-Tornado PA(L) G13 (RAF) [Small Laser]|
-Tornado PA(L) G13 [David Light Gauss]|
-Tornado PA(L) G13 [Flamer]|
-Tornado PA(L) G13 [Grenade Launcher]|
-Tornado PA(L) G13 [Machine Gun]|
-Tornado PA(L) G13 [Small Laser]|
-Tornado PA(L) G14 (RAF)|
-Tornado PA(L) G14|
-Tornado PA(L) P12 'Hurricane'|
-Trinity Medium Battle Armor (Asterion) [MH] [MRR]|
-Trinity Medium Battle Armor (Asterion) [MH] [PPC]|
-Trinity Medium Battle Armor (Asterion)[MRR]|
-Trinity Medium Battle Armor (Asterion)[PPC]|
-Trinity Medium Battle Armor (Theseus RL)[LRR]|
-Trinity Medium Battle Armor (Theseus)[MRR]|
-Trinity Medium Battle Armor (Ying Long)(Plasma)|
-Void Medium Battle Armor (DCA)|
-Void Medium Battle Armor (Nova Cat)|
-Void Medium Battle Armor (Standard)|
+Grenadier Battle Armor (Hunter-Killer) [MagShot](Sqd4)|
+Grenadier Battle Armor (Hunter-Killer) [MagShot](Sqd5)|
+Grenadier Battle Armor (Hunter-Killer) [MagShot](Sqd6)|
+Grenadier Battle Armor (Hunter-Killer) [NARC](Sqd4)|
+Grenadier Battle Armor (Hunter-Killer) [NARC](Sqd5)|
+Grenadier Battle Armor (Hunter-Killer) [NARC](Sqd6)|
+Grenadier Battle Armor [Flamer](Sqd4)|
+Grenadier Battle Armor [Flamer](Sqd5)|
+Grenadier Battle Armor [Flamer](Sqd6)|
+Grenadier Battle Armor [LRR](Sqd4)|
+Grenadier Battle Armor [LRR](Sqd5)|
+Grenadier Battle Armor [LRR](Sqd6)|
+Grenadier Battle Armor [MagShot](Sqd4)|
+Grenadier Battle Armor [MagShot](Sqd5)|
+Grenadier Battle Armor [MagShot](Sqd6)|
+Grenadier Battle Armor [SRM/SL](Sqd4)|
+Grenadier Battle Armor [SRM/SL](Sqd5)|
+Grenadier Battle Armor [SRM/SL](Sqd6)|
+Grenadier Battle Armor [TAG](Sqd4)|
+Grenadier Battle Armor [TAG](Sqd5)|
+Grenadier Battle Armor [TAG](Sqd6)|
+Hauberk Battle Armor (Standard)(Sqd4)|
+Hauberk Battle Armor (Standard)(Sqd5)|
+Hauberk Battle Armor (Standard)(Sqd6)|
+Hauberk II Battle Armor (Standard)(Sqd4)|
+Hauberk II Battle Armor (Standard)(Sqd5)|
+Hauberk II Battle Armor (Standard)(Sqd6)|
+Kobold Battle Armor [MicroGL/Flamer](Sqd4)|
+Kobold Battle Armor [MicroGL/Flamer](Sqd5)|
+Kobold Battle Armor [MicroGL/Flamer](Sqd6)|
+Kobold Battle Armor [MicroGL/SPL](Sqd4)|
+Kobold Battle Armor [MicroGL/SPL](Sqd5)|
+Kobold Battle Armor [MicroGL/SPL](Sqd6)|
+Kobold Battle Armor [MicroGL/TAG](Sqd4)|
+Kobold Battle Armor [MicroGL/TAG](Sqd5)|
+Kobold Battle Armor [MicroGL/TAG](Sqd6)|
+Kobold Battle Armor [SL/Flamer](Sqd4)|
+Kobold Battle Armor [SL/Flamer](Sqd5)|
+Kobold Battle Armor [SL/Flamer](Sqd6)|
+Kobold Battle Armor [SL/TAG](Sqd6)|
+Kobold Battle Armor [SL/TAG](Sqd4)|
+Kobold Battle Armor [SL/TAG](Sqd5)|
+Nephilim Assault Battle Armor (Capture Team)[HMG](Sqd4)|
+Nephilim Assault Battle Armor (Capture Team)[HMG](Sqd5)|
+Nephilim Assault Battle Armor (Capture Team)[HMG](Sqd6)|
+Nephilim Assault Battle Armor (Gauss)(Sqd4)|
+Nephilim Assault Battle Armor (Gauss)(Sqd5)|
+Nephilim Assault Battle Armor (Gauss)(Sqd6)|
+Nephilim Assault Battle Armor (Narc)(Sqd4)|
+Nephilim Assault Battle Armor (Narc)(Sqd5)|
+Nephilim Assault Battle Armor (Narc)(Sqd6)|
+Nephilim Assault Battle Armor (Seeker) [MG](Sqd4)|
+Nephilim Assault Battle Armor (Seeker) [MG](Sqd5)|
+Nephilim Assault Battle Armor (Seeker) [MG](Sqd6)|
+Nephilim Assault Battle Armor (Support)(Sqd4)|
+Nephilim Assault Battle Armor (Support)(Sqd5)|
+Nephilim Assault Battle Armor (Support)(Sqd6)|
+Nephilim Assault Battle Armor (Plasma)(Sqd4)|
+Nephilim Assault Battle Armor (Plasma)(Sqd5)|
+Nephilim Assault Battle Armor (Plasma)(Sqd6)|
+Nighthawk PA(L) Mk. XXI(Sqd4)|
+Nighthawk PA(L) Mk. XXI(Sqd5)|
+Nighthawk PA(L) Mk. XXI(Sqd6)|
+Nighthawk PA(L) Mk. XXII(Sqd4)|
+Nighthawk PA(L) Mk. XXII(Sqd5)|
+Nighthawk PA(L) Mk. XXII(Sqd6)|
+Phalanx Battle Armor (A)(Sqd4)|
+Phalanx Battle Armor (A)(Sqd5)|
+Phalanx Battle Armor (A)(Sqd6)|
+Phalanx Battle Armor (B)(Sqd4)|
+Phalanx Battle Armor (B)(Sqd5)|
+Phalanx Battle Armor (B)(Sqd6)|
+Phalanx Battle Armor (C)(Sqd4)|
+Phalanx Battle Armor (C)(Sqd5)|
+Phalanx Battle Armor (C)(Sqd6)|
+Rogue Bear Heavy Battle Armor (Standard)(Sqd4)|
+Rogue Bear Heavy Battle Armor (Standard)(Sqd5)|
+Rogue Bear Heavy Battle Armor (Standard)(Sqd6)|
+Rottweiler Battle Armor (Close Combat)(Sqd4)|
+Rottweiler Battle Armor (Close Combat)(Sqd5)|
+Rottweiler Battle Armor (Close Combat)(Sqd6)|
+Rottweiler Battle Armor (Standard)(Sqd4)|
+Rottweiler Battle Armor (Standard)(Sqd5)|
+Rottweiler Battle Armor (Standard)(Sqd6)|
+Rottweiler Battle Armor (Upgrade)(Sqd4)|
+Rottweiler Battle Armor (Upgrade)(Sqd5)|
+Rottweiler Battle Armor (Upgrade)(Sqd6)|
+Se'irim Medium Battle Armor (Anti-Infantry)(Sqd4)|
+Se'irim Medium Battle Armor (Anti-Infantry)(Sqd5)|
+Se'irim Medium Battle Armor (Anti-Infantry)(Sqd6)|
+Se'irim Medium Battle Armor (Capture Team)(Sqd4)|
+Se'irim Medium Battle Armor (Capture Team)(Sqd5)|
+Se'irim Medium Battle Armor (Capture Team)(Sqd6)|
+Se'irim Medium Battle Armor (Standard)(Sqd4)|
+Se'irim Medium Battle Armor (Standard)(Sqd5)|
+Se'irim Medium Battle Armor (Standard)(Sqd6)|
+Shedu Assault Battle Armor (Capture Team)(Sqd4)|
+Shedu Assault Battle Armor (Capture Team)(Sqd5)|
+Shedu Assault Battle Armor (Capture Team)(Sqd6)|
+Shedu Assault Battle Armor (PPC)(Sqd4)|
+Shedu Assault Battle Armor (PPC)(Sqd5)|
+Shedu Assault Battle Armor (PPC)(Sqd6)|
+Shedu Assault Battle Armor (Recon)(Sqd4)|
+Shedu Assault Battle Armor (Recon)(Sqd5)|
+Shedu Assault Battle Armor (Recon)(Sqd6)|
+Shedu Assault Battle Armor (Standard)(Sqd4)|
+Shedu Assault Battle Armor (Standard)(Sqd5)|
+Shedu Assault Battle Armor (Standard)(Sqd6)|
+Shedu Assault Battle Armor (Support)(Sqd4)|
+Shedu Assault Battle Armor (Support)(Sqd5)|
+Shedu Assault Battle Armor (Support)(Sqd6)|
+Tengu Heavy Battle Armor [C3i](Sqd4)|
+Tengu Heavy Battle Armor [C3i](Sqd5)|
+Tengu Heavy Battle Armor [C3i](Sqd6)|
+Tengu Heavy Battle Armor [ML](Sqd4)|
+Tengu Heavy Battle Armor [ML](Sqd5)|
+Tengu Heavy Battle Armor [ML](Sqd6)|
+Tengu Heavy Battle Armor [Plasma](Sqd4)|
+Tengu Heavy Battle Armor [Plasma](Sqd5)|
+Tengu Heavy Battle Armor [Plasma](Sqd6)|
+Tengu Heavy Battle Armor [RL](Sqd4)|
+Tengu Heavy Battle Armor [RL](Sqd5)|
+Tengu Heavy Battle Armor [RL](Sqd6)|
+Tengu Heavy Battle Armor (Support)[LRR](Sqd4)|
+Tengu Heavy Battle Armor (Support)[LRR](Sqd5)|
+Tengu Heavy Battle Armor (Support)[LRR](Sqd6)|
+Tengu Heavy Battle Armor (SVSP)(Sqd4)|
+Tengu Heavy Battle Armor (SVSP)(Sqd5)|
+Tengu Heavy Battle Armor (SVSP)(Sqd6)|
+Tornado PA(L) G12(Sqd4)|
+Tornado PA(L) G12(Sqd5)|
+Tornado PA(L) G12(Sqd6)|
+Tornado PA(L) G13 [David Light Gauss](Sqd4)|
+Tornado PA(L) G13 [David Light Gauss](Sqd5)|
+Tornado PA(L) G13 [David Light Gauss](Sqd6)|
+Tornado PA(L) G13 [Flamer](Sqd4)|
+Tornado PA(L) G13 [Flamer](Sqd5)|
+Tornado PA(L) G13 [Flamer](Sqd6)|
+Tornado PA(L) G13 [Grenade Launcher](Sqd4)|
+Tornado PA(L) G13 [Grenade Launcher](Sqd5)|
+Tornado PA(L) G13 [Grenade Launcher](Sqd6)|
+Tornado PA(L) G13 [Machine Gun](Sqd4)|
+Tornado PA(L) G13 [Machine Gun](Sqd5)|
+Tornado PA(L) G13 [Machine Gun](Sqd6)|
+Tornado PA(L) G13 [Small Laser](Sqd4)|
+Tornado PA(L) G13 [Small Laser](Sqd5)|
+Tornado PA(L) G13 [Small Laser](Sqd6)|
+Tornado PA(L) G14(Sqd4)|
+Tornado PA(L) G14(Sqd5)|
+Tornado PA(L) G14(Sqd6)|
+Tornado PA(L) P12 'Hurricane'(Sqd4)|
+Tornado PA(L) P12 'Hurricane'(Sqd5)|
+Tornado PA(L) P12 'Hurricane'(Sqd6)|
+Trinity Medium Battle Armor (Asterion)[MRR](Sqd4)|
+Trinity Medium Battle Armor (Asterion)[MRR](Sqd5)|
+Trinity Medium Battle Armor (Asterion)[MRR](Sqd6)|
+Trinity Medium Battle Armor (Asterion)[PPC](Sqd4)|
+Trinity Medium Battle Armor (Asterion)[PPC](Sqd5)|
+Trinity Medium Battle Armor (Asterion)[PPC](Sqd6)|
+Trinity Medium Battle Armor (Theseus RL)[LRR](Sqd4)|
+Trinity Medium Battle Armor (Theseus RL)[LRR](Sqd5)|
+Trinity Medium Battle Armor (Theseus RL)[LRR](Sqd6)|
+Trinity Medium Battle Armor (Theseus)[MRR](Sqd4)|
+Trinity Medium Battle Armor (Theseus)[MRR](Sqd5)|
+Trinity Medium Battle Armor (Theseus)[MRR](Sqd6)|
+Trinity Medium Battle Armor (Ying Long)(Plasma)(Sqd4)|
+Trinity Medium Battle Armor (Ying Long)(Plasma)(Sqd5)|
+Trinity Medium Battle Armor (Ying Long)(Plasma)(Sqd6)|
+Void Medium Battle Armor (DCA)(Sqd4)|
+Void Medium Battle Armor (DCA)(Sqd5)|
+Void Medium Battle Armor (DCA)(Sqd6)|
+Void Medium Battle Armor (Nova Cat)(Sqd4)|
+Void Medium Battle Armor (Nova Cat)(Sqd5)|
+Void Medium Battle Armor (Nova Cat)(Sqd6)|
+Void Medium Battle Armor (Standard)(Sqd4)|
+Void Medium Battle Armor (Standard)(Sqd5)|
+Void Medium Battle Armor (Standard)(Sqd6)|
 Angerona Scout Suit (Recon)(Sqd4)|
 Angerona Scout Suit (Recon)(Sqd5)|
 Angerona Scout Suit (Recon)(Sqd6)|
 Angerona Scout Suit (Standard)(Sqd4)|
 Angerona Scout Suit (Standard)(Sqd5)|
 Angerona Scout Suit (Standard)(Sqd6)|
-Ironhold Assault Battle Armor (Fire)|
-Ironhold Assault Battle Armor (Standard)|
-Kopis Assault Battle Armor (Anti-Infantry)|
-Kopis Assault Battle Armor 'The Dark Alley'|
-Ravager Assault Battle Armor (Level I)|
-Ravager Assault Battle Armor (MH)|
-Ravager Assault Battle Armor (Standard)|
-Thunderbird Battle Armor (DCMS) [AP Gauss]|
-Thunderbird Battle Armor (DCMS) [ER Laser]|
-Thunderbird Battle Armor (DCMS) [Pulse Laser]|
-Thunderbird Battle Armor [AP Gauss]|
-Thunderbird Battle Armor [ER Laser]|
-Thunderbird Battle Armor [Pulse Laser]|
-Thunderbird II Battle Armor (RotS)|
-Warg Assault Battle Armor (Standard)|
+Ironhold Assault Battle Armor (Fire)(Sqd4)|
+Ironhold Assault Battle Armor (Fire)(Sqd5)|
+Ironhold Assault Battle Armor (Fire)(Sqd6)|
+Ironhold Assault Battle Armor (Standard)(Sqd4)|
+Ironhold Assault Battle Armor (Standard)(Sqd5)|
+Ironhold Assault Battle Armor (Standard)(Sqd6)|
+Kopis Assault Battle Armor (Anti-Infantry)(Sqd4)|
+Kopis Assault Battle Armor (Anti-Infantry)(Sqd5)|
+Kopis Assault Battle Armor (Anti-Infantry)(Sqd6)|
+Kopis Assault Battle Armor 'The Dark Alley'(Sqd4)|
+Kopis Assault Battle Armor 'The Dark Alley'(Sqd5)|
+Kopis Assault Battle Armor 'The Dark Alley'(Sqd6)|
+Ravager Assault Battle Armor (Standard)(Sqd4)|
+Ravager Assault Battle Armor (Standard)(Sqd5)|
+Ravager Assault Battle Armor (Standard)(Sqd6)|
+Thunderbird Battle Armor [AP Gauss](Sqd4)|
+Thunderbird Battle Armor [AP Gauss](Sqd5)|
+Thunderbird Battle Armor [AP Gauss](Sqd6)|
+Thunderbird Battle Armor [ER Laser](Sqd4)|
+Thunderbird Battle Armor [ER Laser](Sqd5)|
+Thunderbird Battle Armor [ER Laser](Sqd6)|
+Thunderbird Battle Armor [Pulse Laser](Sqd4)|
+Thunderbird Battle Armor [Pulse Laser](Sqd5)|
+Thunderbird Battle Armor [Pulse Laser](Sqd6)|
+Warg Assault Battle Armor (Standard)(Sqd4)|
+Warg Assault Battle Armor (Standard)(Sqd5)|
+Warg Assault Battle Armor (Standard)(Sqd6)|
 Afreet Medium Battle Armor (Interdictor)(Sqd4)|
 Afreet Medium Battle Armor (Interdictor)(Sqd5)|
 Afreet Medium Battle Armor (Interdictor)(Sqd6)|
@@ -373,22 +562,38 @@ Golem Assault Armor (Support)(Sqd6)|
 Gray Death Heavy Suit (Standard)(Sqd4)|
 Gray Death Heavy Suit (Standard)(Sqd5)|
 Gray Death Heavy Suit (Standard)(Sqd6)|
-Infiltrator Mk. II Battle Armor (Magnetic)|
-Kage Light Battle Armor (Space)|
-Longinus Battle Armor (Magnetic) (WOB)|
-Longinus Battle Armor (Magnetic)|
-Nighthawk PA(L) Mk. XXX (Bounty Hunter)|
-Nighthawk PA(L) Mk. XXX|
-Purifier Adaptive Battle Armor (RAF)[Laser]|
-Purifier Adaptive Battle Armor (RAF)[Narc]|
-Purifier Adaptive Battle Armor (RAF)[PPC]|
-Purifier Adaptive Battle Armor (RAF)[TAG]|
-Raiden Battle Armor (Anti-Infantry)|
-Rottweiler Battle Armor (Firedrake)|
-Sloth Battle Armor (Interdictor)|
-Trinity Medium Battle Armor (Asterion Upgrade)[MRR]|
-Trinity Medium Battle Armor (Asterion Upgrade)[PPC]|
-Trinity Medium Battle Armor (Theseus Support)'Killshot'|
+Infiltrator Mk. II Battle Armor (Magnetic)(Sqd4)|
+Infiltrator Mk. II Battle Armor (Magnetic)(Sqd5)|
+Infiltrator Mk. II Battle Armor (Magnetic)(Sqd6)|
+Kage Light Battle Armor (Space)(Sqd4)|
+Kage Light Battle Armor (Space)(Sqd5)|
+Kage Light Battle Armor (Space)(Sqd6)|
+Longinus Battle Armor (Magnetic)(Sqd4)|
+Longinus Battle Armor (Magnetic)(Sqd5)|
+Longinus Battle Armor (Magnetic)(Sqd6)|
+Nighthawk PA(L) Mk. XXX(Bountry Hunter)(Restored)|
+Nighthawk PA(L) Mk. XXX (Bounty Hunter)(Non-Functional)|
+Nighthawk PA(L) Mk. XXX(Sqd4)|
+Nighthawk PA(L) Mk. XXX(Sqd5)|
+Nighthawk PA(L) Mk. XXX(Sqd6)|
+Raiden Battle Armor (Anti-Infantry)(Sqd4)|
+Raiden Battle Armor (Anti-Infantry)(Sqd5)|
+Raiden Battle Armor (Anti-Infantry)(Sqd6)|
+Rottweiler Battle Armor (Firedrake)(Sqd4)|
+Rottweiler Battle Armor (Firedrake)(Sqd5)|
+Rottweiler Battle Armor (Firedrake)(Sqd6)|
+Sloth Battle Armor (Interdictor)(Sqd4)|
+Sloth Battle Armor (Interdictor)(Sqd5)|
+Sloth Battle Armor (Interdictor)(Sqd6)|
+Trinity Medium Battle Armor (Asterion Upgrade)[MRR](Sqd4)|
+Trinity Medium Battle Armor (Asterion Upgrade)[MRR](Sqd5)|
+Trinity Medium Battle Armor (Asterion Upgrade)[MRR](Sqd6)|
+Trinity Medium Battle Armor (Asterion Upgrade)[PPC](Sqd4)|
+Trinity Medium Battle Armor (Asterion Upgrade)[PPC](Sqd5)|
+Trinity Medium Battle Armor (Asterion Upgrade)[PPC](Sqd6)|
+Trinity Medium Battle Armor (Theseus Support)'Killshot'(Sqd4)|
+Trinity Medium Battle Armor (Theseus Support)'Killshot'(Sqd5)|
+Trinity Medium Battle Armor (Theseus Support)'Killshot'(Sqd6)|
 Black Wolf Battle Armor [ERSPL](Sqd4)|
 Black Wolf Battle Armor [ERSPL](Sqd5)|
 Black Wolf Battle Armor [ERSPL](Sqd6)|
@@ -418,102 +623,202 @@ Constable Pacification Suit [ECM] (Sqd5)|
 Constable Pacification Suit [ECM] (Sqd6)|
 Constable Pacification Suit [Sensor] (Sqd4)|
 Constable Pacification Suit [Sensor] (Sqd5)|
+Constable Pacification Suit [Sensor] (Sqd6)|
 Constable Pacification Suit [LMG] (Sqd4)|
 Constable Pacification Suit [LMG] (Sqd5)|
 Constable Pacification Suit [LMG] (Sqd6)|
-Constable Pacification Suit [ECM] (Sqd4)|
+Constable Pacification Suit [SRM] (Sqd4)|
 Constable Pacification Suit [SRM] (Sqd5)|
 Constable Pacification Suit [SRM] (Sqd6)|
 Constable Pacification Suit [TAG] (Sqd4)|
 Constable Pacification Suit [TAG] (Sqd5)|
 Constable Pacification Suit [TAG] (Sqd6)|
-Wraith Battle Armor (Anti-Infantry)|
-Wraith Battle Armor (Standard)|
+Wraith Battle Armor (Anti-Infantry)(Sqd4)|
+Wraith Battle Armor (Anti-Infantry)(Sqd5)|
+Wraith Battle Armor (Anti-Infantry)(Sqd6)|
+Wraith Battle Armor (Standard)(Sqd4)|
+Wraith Battle Armor (Standard)(Sqd5)|
+Wraith Battle Armor (Standard)(Sqd6)|
 Fusilier Battle Armor (Standard)(Sqd4)|
 Fusilier Battle Armor (Standard)(Sqd5)|
 Fusilier Battle Armor (Standard)(Sqd6)|
 Fusilier Battle Armor (Upgrade)(Sqd4)|
 Fusilier Battle Armor (Upgrade)(Sqd5)|
 Fusilier Battle Armor (Upgrade)(Sqd6)|
-PAB-28 Sniper Suit (Standard)|
-Sea Fox Amphibious Armor [SF] (Standard)|
-Sea Fox Amphibious Armor (Standard)|
-Kishi Ceremonial Armor (Standard)|
-Oni Battle Armor [Narc]|
-Oni Battle Armor [Bearhunter]|
-Oni Battle Armor [MRR]|
-Oni Battle Armor [PPC]|
-Thunderbird Battle Armor (DCMS)(Upgrade)[LBX]|
-Thunderbird Battle Armor (DCMS)[Upgrade](ER Laser)|
-Thunderbird Battle Armor (DCMS)[Upgrade](Pulse Laser)|
-Zou Heavy Battle Armor (C3)|
-Zou Heavy Battle Armor (Standard)|
+PAB-28 Sniper Suit (Standard)(Sqd4)|
+PAB-28 Sniper Suit (Standard)(Sqd5)|
+PAB-28 Sniper Suit (Standard)(Sqd6)|
+Sea Fox Amphibious Armor (Standard)(Sqd4)|
+Sea Fox Amphibious Armor (Standard)(Sqd5)|
+Sea Fox Amphibious Armor (Standard)(Sqd6)|
+Kishi Ceremonial Armor (Standard)(Sqd4)|
+Kishi Ceremonial Armor (Standard)(Sqd5)|
+Kishi Ceremonial Armor (Standard)(Sqd6)|
+Oni Battle Armor [Bearhunter](Sqd4)|
+Oni Battle Armor [Bearhunter](Sqd5)|
+Oni Battle Armor [Bearhunter](Sqd6)|
+Oni Battle Armor [MRR](Sqd4)|
+Oni Battle Armor [MRR](Sqd5)|
+Oni Battle Armor [MRR](Sqd6)|
+Oni Battle Armor [PPC](Sqd4)|
+Oni Battle Armor [PPC](Sqd5)|
+Oni Battle Armor [PPC](Sqd6)|
+Oni Battle Armor [Narc](Sqd4)|
+Oni Battle Armor [Narc](Sqd5)|
+Oni Battle Armor [Narc](Sqd6)|
+Zou Heavy Battle Armor (C3)(Sqd4)|
+Zou Heavy Battle Armor (C3)(Sqd5)|
+Zou Heavy Battle Armor (C3)(Sqd6)|
+Zou Heavy Battle Armor (Standard)(Sqd4)|
+Zou Heavy Battle Armor (Standard)(Sqd5)|
+Zou Heavy Battle Armor (Standard)(Sqd6)|
 Amazon Battle Armor [MRR](Sqd4)|
 Amazon Battle Armor [MRR](Sqd5)|
 Amazon Battle Armor [MRR](Sqd6)|
 Amazon Battle Armor [Support PPC](Sqd4)|
 Amazon Battle Armor [Support PPC](Sqd5)|
 Amazon Battle Armor [Support PPC](Sqd6)|
-Shen Long Battle Armor [David Light Gauss]|
-Shen Long Battle Armor [Interdictor]|
-Shen Long Battle Armor [MG]|
-Shen Long Battle Armor [MRM]|
-Shen Long Battle Armor [Pop-Up Mine]|
-Shen Long Battle Armor [SRM]|
-Leonidas Battle Armor (David)|
-Leonidas Battle Armor (FireDrake)|
-Leonidas Battle Armor (Sensor)|
-Leonidas Battle Armor (TAG)|
-Leonidas Battle Armor (MG)|
-Leonidas Battle Armor [MH] (David)|
-Leonidas Battle Armor [MH] (FireDrake)|
-Leonidas Battle Armor [MH] (MG)|
-Leonidas Battle Armor [MH] (Sensor)|
-Leonidas Battle Armor [MH] (TAG)|
-Ogre Battle Armor (Interdictor)|
-Ogre Battle Armor (Standard)|
-Xiphos Assault Battle Armor (A)|
-Xiphos Assault Battle Armor (B)|
-Xiphos Assault Battle Armor (C)|
-Marauder Battle Armor (MH)|
-Marauder Battle Armor (Standard)|
-Spectre Stealth Battle Armor (RA)|
-Spectre Stealth Battle Armor (Standard)|
-Gray Death Strike Armor (HarJel)|
-Grenadier Battle Armor [Heavy Flamer]|
-Grenadier Battle Armor (Hunter-Killer)[C3/HRR]|
-Grenadier Battle Armor (Hunter-Killer)[SVSP/Magshot]|
-Infiltrator Mk. II Battle Armor (Marine)|
-Ironhold Assault Battle Armor (Anti-Tank)|
-Kobold Battle Armor IIC|
-Kopis Assault Battle Armor (AI Mk II)|
-Kopis Assault Battle Armor (Mortar)|
-Kopis Assault Battle Armor (AI Mk IIr)|
-Phalanx Battle Armor (D)|
-Raiden II Battle Armor (Flamer)|
-Raiden II Battle Armor (HMG)|
-Ravager Assault Battle Armor (LRM) [MH]|
-Ravager Assault Battle Armor (LRM)|
-Rogue Bear Heavy Battle Armor (Upgrade)|
-Sloth Battle Armor (Huntsman)|
-Thunderbird Battle Armor (DCMS) (Upgrade) [ER Laser]|
-Thunderbird Battle Armor (DCMS) (Upgrade) [LBX]|
-Thunderbird Battle Armor (DCMS) (Upgrade) [Pulse Laser]|
-Thunderbird Battle Armor (Upgrade) [ER Laser]|
-Thunderbird Battle Armor (Upgrade) [LBX]|
-Thunderbird Battle Armor (Upgrade) [Pulse Laser]|
-Warg Assault Battle Armor (Reactive)|
+Shen Long Battle Armor [David Light Gauss](Sqd4)|
+Shen Long Battle Armor [David Light Gauss](Sqd5)|
+Shen Long Battle Armor [David Light Gauss](Sqd6)|
+Shen Long Battle Armor [Interdictor](Sqd4)|
+Shen Long Battle Armor [Interdictor](Sqd5)|
+Shen Long Battle Armor [Interdictor](Sqd6)|
+Shen Long Battle Armor [MG](Sqd4)|
+Shen Long Battle Armor [MG](Sqd5)|
+Shen Long Battle Armor [MG](Sqd6)|
+Shen Long Battle Armor [MRM](Sqd4)|
+Shen Long Battle Armor [MRM](Sqd5)|
+Shen Long Battle Armor [MRM](Sqd6)|
+Shen Long Battle Armor [Pop-Up Mine](Sqd4)|
+Shen Long Battle Armor [Pop-Up Mine](Sqd5)|
+Shen Long Battle Armor [Pop-Up Mine](Sqd6)|
+Shen Long Battle Armor [SRM](Sqd4)|
+Shen Long Battle Armor [SRM](Sqd5)|
+Shen Long Battle Armor [SRM](Sqd6)|
+Leonidas Battle Armor (David)(Sqd4)|
+Leonidas Battle Armor (David)(Sqd5)|
+Leonidas Battle Armor (David)(Sqd6)|
+Leonidas Battle Armor (FireDrake)(Sqd4)|
+Leonidas Battle Armor (FireDrake)(Sqd5)|
+Leonidas Battle Armor (FireDrake)(Sqd6)|
+Leonidas Battle Armor (Sensor)(Sqd4)|
+Leonidas Battle Armor (Sensor)(Sqd5)|
+Leonidas Battle Armor (Sensor)(Sqd6)|
+Leonidas Battle Armor (TAG)(Sqd4)|
+Leonidas Battle Armor (TAG)(Sqd5)|
+Leonidas Battle Armor (TAG)(Sqd6)|
+Leonidas Battle Armor (MG)(Sqd4)|
+Leonidas Battle Armor (MG)(Sqd5)|
+Leonidas Battle Armor (MG)(Sqd6)|
+Ogre Battle Armor (Standard)(Sqd5)|
+Ogre Battle Armor (Standard)(Sqd6)|
+Ogre Battle Armor (Interdictor)(Sqd5)|
+Ogre Battle Armor (Interdictor)(Sqd6)|
+Ogre Battle Armor (Interdictor)(Sqd4)|
+Ogre Battle Armor (Standard)(Sqd4)|
+Xiphos Assault Battle Armor A(Sqd4)|
+Xiphos Assault Battle Armor A(Sqd5)|
+Xiphos Assault Battle Armor A(Sqd6)|
+Xiphos Assault Battle Armor B(Sqd4)|
+Xiphos Assault Battle Armor B(Sqd5)|
+Xiphos Assault Battle Armor B(Sqd6)|
+Xiphos Assault Battle Armor C(Sqd4)|
+Xiphos Assault Battle Armor C(Sqd5)|
+Xiphos Assault Battle Armor C(Sqd6)|
+Marauder Battle Armor (Standard)(Sqd4)|
+Marauder Battle Armor (Standard)(Sqd5)|
+Marauder Battle Armor (Standard)(Sqd6)|
+Spectre Stealth Battle Armor (Standard)(Sqd4)|
+Spectre Stealth Battle Armor (Standard)(Sqd5)|
+Spectre Stealth Battle Armor (Standard)(Sqd6)|
+Gray Death Strike Suit (HarJel)(Sqd4)|
+Gray Death Strike Suit (HarJel)(Sqd5)|
+Gray Death Strike Suit (HarJel)(Sqd6)|
+Grenadier Battle Armor [Heavy Flamer](Sqd4)|
+Grenadier Battle Armor [Heavy Flamer](Sqd5)|
+Grenadier Battle Armor [Heavy Flamer](Sqd6)|
+Grenadier Battle Armor (Hunter-Killer) [C3/HRR](Sqd4)|
+Grenadier Battle Armor (Hunter-Killer) [C3/HRR](Sqd5)|
+Grenadier Battle Armor (Hunter-Killer) [C3/HRR](Sqd6)|
+Grenadier Battle Armor (Hunter-Killer) [SVSP/Magshot](Sqd4)|
+Grenadier Battle Armor (Hunter-Killer) [SVSP/Magshot](Sqd5)|
+Grenadier Battle Armor (Hunter-Killer) [SVSP/Magshot](Sqd6)|
+Infiltrator Mk. II Battle Armor (Marine)(Sqd4)|
+Infiltrator Mk. II Battle Armor (Marine)(Sqd5)|
+Infiltrator Mk. II Battle Armor (Marine)(Sqd6)|
+Ironhold Assault Battle Armor (Anti-Tank)(Sqd4)|
+Ironhold Assault Battle Armor (Anti-Tank)(Sqd5)|
+Ironhold Assault Battle Armor (Anti-Tank)(Sqd6)|
+Kobold Battle Armor IIC (Sqd4)|
+Kobold Battle Armor IIC (Sqd5)|
+Kobold Battle Armor IIC (Sqd6)|
+Kopis Assault Battle Armor (AI Mk II)(Sqd4)|
+Kopis Assault Battle Armor (AI Mk II)(Sqd5)|
+Kopis Assault Battle Armor (AI Mk II)(Sqd6)|
+Kopis Assault Battle Armor (Mortar)(Sqd4)|
+Kopis Assault Battle Armor (Mortar)(Sqd5)|
+Kopis Assault Battle Armor (Mortar)(Sqd6)|
+Kopis Assault Battle Armor (AI Mk IIr)(Sqd4)|
+Kopis Assault Battle Armor (AI Mk IIr)(Sqd5)|
+Kopis Assault Battle Armor (AI Mk IIr)(Sqd6)|
+Phalanx Battle Armor (D)(Sqd4)|
+Phalanx Battle Armor (D)(Sqd5)|
+Phalanx Battle Armor (D)(Sqd6)|
+Raiden II Battle Armor [Flamer](Sqd4)|
+Raiden II Battle Armor [Flamer](Sqd5)|
+Raiden II Battle Armor [Flamer](Sqd6)|
+Raiden II Battle Armor [HMG](Sqd4)|
+Raiden II Battle Armor [HMG](Sqd5)|
+Raiden II Battle Armor [HMG](Sqd6)|
+Ravager Assault Battle Armor (LRM)(Sqd4)|
+Ravager Assault Battle Armor (LRM)(Sqd5)|
+Ravager Assault Battle Armor (LRM)(Sqd6)|
+Rogue Bear Heavy Battle Armor (Upgrade)(Sqd4)|
+Rogue Bear Heavy Battle Armor (Upgrade)(Sqd5)|
+Rogue Bear Heavy Battle Armor (Upgrade)(Sqd6)|
+Sloth Battle Armor 'Huntsman'(Sqd4)|
+Sloth Battle Armor 'Huntsman'(Sqd5)|
+Sloth Battle Armor 'Huntsman'(Sqd6)|
+Thunderbird Battle Armor (Upgrade)[ER Laser](Sqd4)|
+Thunderbird Battle Armor (Upgrade)[ER Laser](Sqd5)|
+Thunderbird Battle Armor (Upgrade)[ER Laser](Sqd6)|
+Thunderbird Battle Armor (Upgrade)[LB-X](Sqd4)|
+Thunderbird Battle Armor (Upgrade)[LB-X](Sqd5)|
+Thunderbird Battle Armor (Upgrade)[LB-X](Sqd6)|
+Thunderbird Battle Armor (Upgrade)[Pulse Laser](Sqd4)|
+Thunderbird Battle Armor (Upgrade)[Pulse Laser](Sqd5)|
+Thunderbird Battle Armor (Upgrade)[Pulse Laser](Sqd6)|
+Warg Assault Battle Armor (Reactive)(Sqd4)|
+Warg Assault Battle Armor (Reactive)(Sqd5)|
+Warg Assault Battle Armor (Reactive)(Sqd6)|
 Centaur Battle Armor (Standard)(Sqd4)|
 Centaur Battle Armor (Standard)(Sqd5)|
 Centaur Battle Armor (Standard)(Sqd6)|
-Quirinus Battle Armor (David)|
-Quirinus Battle Armor (GL)|
-Quirinus Battle Armor (MG)|
-Simian Battle Armor (Flamer)|
-Simian Battle Armor (Heavy MG)|
-Simian Battle Armor (LRR)|
-Simian Battle Armor (SL)|
-Taranis Battle Armor (Standard)|
+Quirinus Battle Armor [David](Sqd4)|
+Quirinus Battle Armor [David](Sqd5)|
+Quirinus Battle Armor [David](Sqd6)|
+Quirinus Battle Armor [GL](Sqd4)|
+Quirinus Battle Armor [GL](Sqd5)|
+Quirinus Battle Armor [GL](Sqd6)|
+Quirinus Battle Armor [MG](Sqd4)|
+Quirinus Battle Armor [MG](Sqd5)|
+Quirinus Battle Armor [MG](Sqd6)|
+Simian Battle Armor [Flamer](Sqd4)|
+Simian Battle Armor [Flamer](Sqd5)|
+Simian Battle Armor [Flamer](Sqd6)|
+Simian Battle Armor [Heavy MG](Sqd4)|
+Simian Battle Armor [Heavy MG](Sqd5)|
+Simian Battle Armor [Heavy MG](Sqd6)|
+Simian Battle Armor [LRR](Sqd4)|
+Simian Battle Armor [LRR](Sqd5)|
+Simian Battle Armor [LRR](Sqd6)|
+Simian Battle Armor [SL](Sqd4)|
+Simian Battle Armor [SL](Sqd5)|
+Simian Battle Armor [SL](Sqd6)|
+Taranis Battle Armor (Standard)(Sqd4)|
+Taranis Battle Armor (Standard)(Sqd5)|
+Taranis Battle Armor (Standard)(Sqd6)|
 Cuchulainn Support Armor (Standard) (Sqd4)|
 Cuchulainn Support Armor (Standard) (Sqd5)|
 Cuchulainn Support Armor (Standard) (Sqd6)|
@@ -547,21 +852,60 @@ Gray Death Infiltrator Suit (Mines)(Sqd6)|
 Gray Death Infiltrator Suit (Remote Sensors)(Sqd4)|
 Gray Death Infiltrator Suit (Remote Sensors)(Sqd5)|
 Gray Death Infiltrator Suit (Remote Sensors)(Sqd6)|
-Rhino Battle Armor|
-Water Elemental Mining Suit|
-Machina Domini Interface Armor (Standard)|
-TinStar BattleArmor (Standard)|
+Cavalier II Battle Armor [Flamer](Sqd4)|
+Cavalier II Battle Armor [MRR](Sqd4)|
+Cavalier II Battle Armor [PPC](Sqd4)|
+Cavalier II Battle Armor [SRM](Sqd4)|
+IS Standard Battle Armor (Baka) [LRR](Sqd4)|
+IS Standard Battle Armor (Baka) [LRR](Sqd5)|
+IS Standard Battle Armor (Baka) [LRR](Sqd6)|
+IS Standard Battle Armor (Baka) [SL](Sqd4)|
+IS Standard Battle Armor (Baka) [SL](Sqd5)|
+IS Standard Battle Armor (Baka) [SL](Sqd6)|
+IS Standard Battle Armor (Fa Sure) [David](Sqd4)|
+IS Standard Battle Armor (Fa Sure) [David](Sqd5)|
+IS Standard Battle Armor (Fa Sure) [David](Sqd6)|
+IS Standard Battle Armor (Fa Sure) [MG](Sqd4)|
+IS Standard Battle Armor (Fa Sure) [MG](Sqd5)|
+IS Standard Battle Armor (Fa Sure) [MG](Sqd6)|
+Kanazuchi Assault Battle Armor (Support)(Sqd4)|
+Kanazuchi Assault Battle Armor (Support)(Sqd5)|
+Kanazuchi Assault Battle Armor (Support)(Sqd6)|
+Longinus C Battle Armor [MRR]|
+Longinus C Battle Armor [MRR]|
+Longinus C Battle Armor [PPC]|
+Longinus C Battle Armor [PPC]|
+Rhino Battle Armor (Standard)(Sqd4)|
+Rhino Battle Armor (Standard)(Sqd5)|
+Rhino Battle Armor (Standard)(Sqd6)|
+Water Elemental Mining Suit (Standard)(Sqd4)|
+Water Elemental Mining Suit (Standard)(Sqd5)|
+Water Elemental Mining Suit (Standard)(Sqd6)|
+Machina Domini Interface Armor (Standard)(Sqd1)|
+TinStar BattleArmor (Standard)(Sqd4)|
+TinStar BattleArmor (Standard)(Sqd5)|
+TinStar BattleArmor (Standard)(Sqd6)|
 Elemental II Battle Armor (Standard)(Sqd4)|
 Elemental II Battle Armor (Standard)(Sqd5)|
 Elemental II Battle Armor (Standard)(Sqd6)|
 Gladiator Battle Armor S (Sqd4)|
 Gladiator Battle Armor S (Sqd5)|
 Gladiator Battle Armor S (Sqd6)|
-Gray Death Strike Armor (Standard)|
-Hauberk Battle Armor Commando|
-Rogue Bear Heavy Battle Armor (Hybrid)|
-Sylph Battle Armor (Enhanced)|
-Void Medium Battle Armor (Minelayer)|
+Gray Death Strike Suit (Standard)(Sqd4)|
+Gray Death Strike Suit (Standard)(Sqd5)|
+Gray Death Strike Suit (Standard)(Sqd6)|
+Hauberk Battle Armor Commando(Sqd4)|
+Hauberk Battle Armor Commando(Sqd5)|
+Hauberk Battle Armor Commando(Sqd6)|
+Rogue Bear Heavy Battle Armor (Hybrid)(Sqd4)|
+Rogue Bear Heavy Battle Armor (Hybrid)(Sqd5)|
+Rogue Bear Heavy Battle Armor (Hybrid)(Sqd6)|
+Sylph Battle Armor (Enhanced)(Sqd4)|
+Sylph Battle Armor (Enhanced)(Sqd5)|
+Sylph Battle Armor (Enhanced)(Sqd6)|
+Void Medium Battle Armor (Minelayer)(Sqd4)|
+Void Medium Battle Armor (Minelayer)(Sqd5)|
+Void Medium Battle Armor (Minelayer)(Sqd6)|
 Elemental III Battle Armor [AP Gauss](Sqd4)|
 Elemental III Battle Armor [AP Gauss](Sqd5)|
 Elemental III Battle Armor [AP Gauss](Sqd6)|
@@ -571,9 +915,10 @@ Elemental III Battle Armor [Flamer](Sqd6)|
 Elemental III Battle Armor [MicroPL](Sqd4)|
 Elemental III Battle Armor [MicroPL](Sqd5)|
 Elemental III Battle Armor [MicroPL](Sqd6)|
-Gray Death Scout Suit (Reaper)|
-Hantu AIX-210 (Kandersteg)|
-Hantu AIX-210|
+Gray Death Scout Suit (Reaper)(Sqd4)|
+Hantu AIX-210(Sqd4)|
+Hantu AIX-210(Sqd5)|
+Hantu AIX-210(Sqd6)|
 Ailette Zero-G Engineering Exoskeleton (Standard)(Sqd4)|
 Ailette Zero-G Engineering Exoskeleton (Standard)(Sqd5)|
 Ailette Zero-G Engineering Exoskeleton (Standard)(Sqd6)|
@@ -589,99 +934,215 @@ Gorilla Exoskeleton 'Falcata'(Sqd6)|
 Gorilla Exoskeleton PEX-2B(Sqd4)|
 Gorilla Exoskeleton PEX-2B(Sqd5)|
 Gorilla Exoskeleton PEX-2B(Sqd6)|
-Groundhog Exoskeleton CEX-205 [Armored Glove]|
-Groundhog Exoskeleton CEX-205 [Basic Manipulator]|
-Groundhog Exoskeleton CEX-205 [Cargo Lifter]|
-Groundhog Exoskeleton CEX-205 [Industrial Drill]|
-Groundhog Exoskeleton CEX-205 [Mine Clearance]|
-Groundhog Exoskeleton CEX-205 [Salvage Arm]|
-HeavyHauler Exoskeleton (Standard)|
-Krise PA(L) (Standard)|
-PowerLoader Exoskeleton P-5000|
-Resgate PA(L) (Interdictor)|
-Resgate PA(L) (Scout)|
-Resgate PA(L) (Spotter)|
-Resgate PA(L) (Standard)|
-Resgate PA(L) (Support)|
-Salrilla Exoskeleton [Mine Clearance]|
-Salrilla Exoskeleton [Salvage Arm]|
-Smoothdavid PA(L) II|
-Smoothdavid PA(L) III|
-Smoothgoliath PA(L) II|
-Tunnel Rat I Mining Exoskeleton [Armored Glove]|
-Tunnel Rat I Mining Exoskeleton [Industrial Drill]|
-Tunnel Rat II Mining Exoskeleton [Armored Glove]|
-Tunnel Rat II Mining Exoskeleton [Industrial Drill]|
-Tunnel Rat III Mining Exoskeleton [Armored Glove]|
-Tunnel Rat III Mining Exoskeleton [Industrial Drill]|
-Tunnel Rat IV Mining Exoskeleton [Armored Glove/GL]|
-Tunnel Rat IV Mining Exoskeleton [Armored Glove/LMG]|
-Tunnel Rat IV Mining Exoskeleton [Battle Claw/GL]|
-Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG]|
+Groundhog Exoskeleton CEX-205 [Armored Glove](Sqd4)|
+Groundhog Exoskeleton CEX-205 [Armored Glove](Sqd5)|
+Groundhog Exoskeleton CEX-205 [Armored Glove](Sqd6)|
+Groundhog Exoskeleton CEX-205 [Basic Manipulator](Sqd4)|
+Groundhog Exoskeleton CEX-205 [Basic Manipulator](Sqd5)|
+Groundhog Exoskeleton CEX-205 [Basic Manipulator](Sqd6)|
+Groundhog Exoskeleton CEX-205 [Cargo Lifter](Sqd4)|
+Groundhog Exoskeleton CEX-205 [Cargo Lifter](Sqd5)|
+Groundhog Exoskeleton CEX-205 [Cargo Lifter](Sqd6)|
+Groundhog Exoskeleton CEX-205 [Industrial Drill](Sqd4)|
+Groundhog Exoskeleton CEX-205 [Industrial Drill](Sqd5)|
+Groundhog Exoskeleton CEX-205 [Industrial Drill](Sqd6)|
+Groundhog Exoskeleton CEX-205 [Mine Clearance](Sqd4)|
+Groundhog Exoskeleton CEX-205 [Mine Clearance](Sqd5)|
+Groundhog Exoskeleton CEX-205 [Mine Clearance](Sqd6)|
+Groundhog Exoskeleton CEX-205 [Salvage Arm](Sqd4)|
+Groundhog Exoskeleton CEX-205 [Salvage Arm](Sqd5)|
+Groundhog Exoskeleton CEX-205 [Salvage Arm](Sqd6)|
+HeavyHauler Exoskeleton (Standard)(Sqd4)|
+HeavyHauler Exoskeleton (Standard)(Sqd5)|
+HeavyHauler Exoskeleton (Standard)(Sqd6)|
+Krise PA(L) (Standard)(Sqd4)|
+Krise PA(L) (Standard)(Sqd5)|
+Krise PA(L) (Standard)(Sqd6)|
+PowerLoader Exoskeleton P-5000(Sqd4)|
+PowerLoader Exoskeleton P-5000(Sqd5)|
+PowerLoader Exoskeleton P-5000(Sqd6)|
+Resgate PA(L) (Interdictor)(Sqd4)|
+Resgate PA(L) (Interdictor)(Sqd5)|
+Resgate PA(L) (Interdictor)(Sqd6)|
+Resgate PA(L) (Scout)(Sqd4)|
+Resgate PA(L) (Scout)(Sqd5)|
+Resgate PA(L) (Scout)(Sqd6)|
+Resgate PA(L) (Spotter)(Sqd4)|
+Resgate PA(L) (Spotter)(Sqd5)|
+Resgate PA(L) (Spotter)(Sqd6)|
+Resgate PA(L) (Standard)(Sqd4)|
+Resgate PA(L) (Standard)(Sqd5)|
+Resgate PA(L) (Standard)(Sqd6)|
+Resgate PA(L) (Support)(Sqd4)|
+Resgate PA(L) (Support)(Sqd5)|
+Resgate PA(L) (Support)(Sqd6)|
+Salrilla Exoskeleton [Mine Clearance](Sqd4)|
+Salrilla Exoskeleton [Mine Clearance](Sqd5)|
+Salrilla Exoskeleton [Mine Clearance](Sqd6)|
+Salrilla Exoskeleton [Salvage Arm](Sqd4)|
+Salrilla Exoskeleton [Salvage Arm](Sqd5)|
+Salrilla Exoskeleton [Salvage Arm](Sqd6)|
+Smoothdavid PA(L) II(Sqd4)|
+Smoothdavid PA(L) II(Sqd5)|
+Smoothdavid PA(L) II(Sqd6)|
+Smoothdavid PA(L) III(Sqd4)|
+Smoothdavid PA(L) III(Sqd5)|
+Smoothdavid PA(L) III(Sqd6)|
+Smoothgoliath PA(L) II(Sqd4)|
+Smoothgoliath PA(L) II(Sqd5)|
+Smoothgoliath PA(L) II(Sqd6)|
+Tunnel Rat I Mining Exoskeleton [Armored Glove](Sqd4)|
+Tunnel Rat I Mining Exoskeleton [Armored Glove](Sqd5)|
+Tunnel Rat I Mining Exoskeleton [Armored Glove](Sqd6)|
+Tunnel Rat I Mining Exoskeleton [Industrial Drill](Sqd4)|
+Tunnel Rat I Mining Exoskeleton [Industrial Drill](Sqd5)|
+Tunnel Rat I Mining Exoskeleton [Industrial Drill](Sqd6)|
+Tunnel Rat II Mining Exoskeleton [Armored Glove](Sqd4)|
+Tunnel Rat II Mining Exoskeleton [Armored Glove](Sqd5)|
+Tunnel Rat II Mining Exoskeleton [Armored Glove](Sqd6)|
+Tunnel Rat II Mining Exoskeleton [Industrial Drill](Sqd4)|
+Tunnel Rat II Mining Exoskeleton [Industrial Drill](Sqd5)|
+Tunnel Rat II Mining Exoskeleton [Industrial Drill](Sqd6)|
+Tunnel Rat III Mining Exoskeleton [Armored Glove](Sqd4)|
+Tunnel Rat III Mining Exoskeleton [Armored Glove](Sqd5)|
+Tunnel Rat III Mining Exoskeleton [Armored Glove](Sqd6)|
+Tunnel Rat III Mining Exoskeleton [Industrial Drill](Sqd4)|
+Tunnel Rat III Mining Exoskeleton [Industrial Drill](Sqd5)|
+Tunnel Rat III Mining Exoskeleton [Industrial Drill](Sqd6)|
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/GL](Sqd4)|
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/GL](Sqd5)|
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/GL](Sqd6)|
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/LMG](Sqd4)|
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/LMG](Sqd5)|
+Tunnel Rat IV Mining Exoskeleton [Armored Glove/LMG](Sqd6)|
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/GL](Sqd4)|
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/GL](Sqd5)|
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/GL](Sqd6)|
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd4)|
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd5)|
+Tunnel Rat IV Mining Exoskeleton [Battle Claw/LMG](Sqd6)|
 Elemental II Battle Armor X(Sqd4)|
 Elemental II Battle Armor X(Sqd5)|
 Elemental II Battle Armor X(Sqd6)|
-Rogue Bear Heavy Battle Armor HR|
-Sylph Battle Armor XR|
-Hurricane PA (L) P17|
-Kobold Battle Armor X-C3|
-Hauberk Battle Armor U15|
-Infiltrator Mk. II Battle Armor Coral Intent|
+Rogue Bear Heavy Battle Armor HR(Sqd4)|
+Rogue Bear Heavy Battle Armor HR(Sqd5)|
+Rogue Bear Heavy Battle Armor HR(Sqd6)|
+Sylph Battle Armor XR(Sqd4)|
+Sylph Battle Armor XR(Sqd5)|
+Sylph Battle Armor XR(Sqd6)|
+Tornado PA(L) P17 'Hurricane'(Sqd4)|
+Tornado PA(L) P17 'Hurricane'(Sqd5)|
+Tornado PA(L) P17 'Hurricane'(Sqd6)|
+Kobold Battle Armor X-C3(Sqd4)|
+Kobold Battle Armor X-C3(Sqd5)|
+Kobold Battle Armor X-C3(Sqd6)|
+Hauberk Battle Armor U15(Sqd4)|
+Hauberk Battle Armor U15(Sqd5)|
+Hauberk Battle Armor U15(Sqd6)|
+Infiltrator Mk. II Battle Armor Coral Intent(Sqd4)|
+Infiltrator Mk. II Battle Armor Coral Intent(Sqd5)|
+Infiltrator Mk. II Battle Armor Coral Intent(Sqd6)|
 Gladiator Exoskeleton 'The Spider'(Sqd4)|
 Gladiator Exoskeleton 'The Spider'(Sqd5)|
 Gladiator Exoskeleton 'The Spider'(Sqd6)|
 Gray Death Scout Suit 'The Willow Wisps'(Sqd4)|
 Gray Death Scout Suit 'The Willow Wisps'(Sqd5)|
 Gray Death Scout Suit 'The Willow Wisps'(Sqd6)|
-IS Standard Battle Armor 'Hive'|
-Kanazuchi Assault Battle Armor 'Cyclops'|
-Kage Light Battle Armor C|
-Void Medium Battle Armor Caltrop|
+IS Standard Battle Armor 'Hive'(Sqd4)|
+IS Standard Battle Armor 'Hive'(Sqd5)|
+IS Standard Battle Armor 'Hive'(Sqd6)|
+Kanazuchi Assault Battle Armor 'Cyclops'(Sqd4)|
+Kanazuchi Assault Battle Armor 'Cyclops'(Sqd5)|
+Kanazuchi Assault Battle Armor 'Cyclops'(Sqd6)|
+Kage Light Battle Armor C(Sqd4)|
+Kage Light Battle Armor C(Sqd5)|
+Kage Light Battle Armor C(Sqd6)|
+Void Medium Battle Armor Caltrop(Sqd4)|
+Void Medium Battle Armor Caltrop(Sqd5)|
+Void Medium Battle Armor Caltrop(Sqd6)|
 Fa Shih Battle Armor 2 [MG](Sqd4)|
 Fa Shih Battle Armor 2 [MG](Sqd5)|
 Fa Shih Battle Armor 2 [MG](Sqd6)|
-Trinity Medium Battle Armor (Ying Long BC3)[David]|
-Longinus Battle Armor 'Hacked' [David]|
-Longinus Battle Armor 'Hacked' [MG]|
-Djinn Battle Armor (Reflective) 'Terrorizer' [Flamer] (Sqd6)|
+Trinity Medium Battle Armor (Ying Long BC3)[David](Sqd4)|
+Trinity Medium Battle Armor (Ying Long BC3)[David](Sqd5)|
+Trinity Medium Battle Armor (Ying Long BC3)[David](Sqd6)|
+Longinus Battle Armor 'Hacked' [David](Sqd4)|
+Longinus Battle Armor 'Hacked' [David](Sqd5)|
+Longinus Battle Armor 'Hacked' [David](Sqd6)|
+Longinus Battle Armor 'Hacked' [MG](Sqd4)|
+Longinus Battle Armor 'Hacked' [MG](Sqd5)|
+Longinus Battle Armor 'Hacked' [MG](Sqd6)|
 Djinn Battle Armor (Reflective) 'Terrorizer' [Flamer] (Sqd4)|
 Djinn Battle Armor (Reflective) 'Terrorizer' [Flamer] (Sqd5)|
-Djinn Battle Armor (Reflective) 'Terrorizer' [MG]  (Sqd6)|
-Djinn Battle Armor (Reflective) 'Terrorizer' [MG]  (Sqd4)|
-Djinn Battle Armor (Reflective) 'Terrorizer' [MG]  (Sqd5)|
-Djinn Battle Armor (Reflective) 'Terrorizer' [Laser] (Sqd6)|
+Djinn Battle Armor (Reflective) 'Terrorizer' [Flamer] (Sqd6)|
+Djinn Battle Armor (Reflective) 'Terrorizer' [MG] (Sqd4)|
+Djinn Battle Armor (Reflective) 'Terrorizer' [MG] (Sqd5)|
+Djinn Battle Armor (Reflective) 'Terrorizer' [MG] (Sqd6)|
 Djinn Battle Armor (Reflective) 'Terrorizer' [Laser] (Sqd4)|
 Djinn Battle Armor (Reflective) 'Terrorizer' [Laser] (Sqd5)|
-Groundhog Exoskeleton 'Master Thief'|
+Djinn Battle Armor (Reflective) 'Terrorizer' [Laser] (Sqd6)|
+Groundhog Exoskeleton 'Master Thief'(Sqd1)|
 Ailette Rescue PA(L) (Sqd4)|
 Ailette Rescue PA(L) (Sqd5)|
 Ailette Rescue PA(L) (Sqd6)|
-Purifier Battle Armor Terra [AP Gauss]|
-Purifier Battle Armor Terra [ERSL]|
-Purifier Battle Armor Terra [MRR]|
-Purifier Battle Armor Terra [SPL]|
-Tornado PA(L) G17|
-'Surat' (Grey Death) Solahma Suit (Standard)|
-Thunderbird II Battle Armor (Standard)|
-Tortoise II (aSRM)|
-Tortoise II (C3)|
-Tortoise II (LRM)|
-Tortoise II (SRM)|
+Purifier Battle Armor Terra [AP Gauss](Sqd4)|
+Purifier Battle Armor Terra [AP Gauss](Sqd5)|
+Purifier Battle Armor Terra [AP Gauss](Sqd6)|
+Purifier Battle Armor Terra [ERSL](Sqd4)|
+Purifier Battle Armor Terra [ERSL](Sqd5)|
+Purifier Battle Armor Terra [ERSL](Sqd6)|
+Purifier Battle Armor Terra [MRR](Sqd4)|
+Purifier Battle Armor Terra [MRR](Sqd5)|
+Purifier Battle Armor Terra [MRR](Sqd6)|
+Purifier Battle Armor Terra [SPL](Sqd4)|
+Purifier Battle Armor Terra [SPL](Sqd5)|
+Purifier Battle Armor Terra [SPL](Sqd6)|
+Tornado PA(L) G17(Sqd4)|
+Tornado PA(L) G17(Sqd5)|
+Tornado PA(L) G17(Sqd6)|
+Surat (Gray Death) Solahma Suit (Standard)(Sqd4)|
+Surat (Gray Death) Solahma Suit (Standard)(Sqd5)|
+Surat (Gray Death) Solahma Suit (Standard)(Sqd6)|
+Thunderbird II Battle Armor (Standard)(Sqd4)|
+Thunderbird II Battle Armor (Standard)(Sqd5)|
+Thunderbird II Battle Armor (Standard)(Sqd6)|
+Tortoise II (aSRM)(Sqd4)|
+Tortoise II (aSRM)(Sqd5)|
+Tortoise II (aSRM)(Sqd6)|
+Tortoise II (C3)(Sqd4)|
+Tortoise II (C3)(Sqd5)|
+Tortoise II (C3)(Sqd6)|
+Tortoise II (LRM)(Sqd4)|
+Tortoise II (LRM)(Sqd5)|
+Tortoise II (LRM)(Sqd6)|
+Tortoise II (SRM)(Sqd4)|
+Tortoise II (SRM)(Sqd5)|
+Tortoise II (SRM)(Sqd6)|
 Aegis Point Defense Suit (Standard)(Sqd4)|
 Aegis Point Defense Suit (Standard)(Sqd5)|
 Aegis Point Defense Suit (Standard)(Sqd6)|
 Clan Interface Armor (Standard)(Sqd1)|
-Grenadier II Battle Armor A|
-Grenadier II Battle Armor B|
-Grenadier II Battle Armor C|
-Grenadier II Battle Armor D|
+Grenadier II Battle Armor A(Sqd4)|
+Grenadier II Battle Armor A(Sqd5)|
+Grenadier II Battle Armor A(Sqd6)|
+Grenadier II Battle Armor B(Sqd4)|
+Grenadier II Battle Armor B(Sqd5)|
+Grenadier II Battle Armor B(Sqd6)|
+Grenadier II Battle Armor C(Sqd4)|
+Grenadier II Battle Armor C(Sqd5)|
+Grenadier II Battle Armor C(Sqd6)|
+Grenadier II Battle Armor D(Sqd4)|
+Grenadier II Battle Armor D(Sqd5)|
+Grenadier II Battle Armor D(Sqd6)|
 Gnome Battle Armor 'Dwarf'(Sqd4)|
 Sylph Battle Armor 'TinkerBelle'(Sqd4)|
 Undine Battle Armor 'Sebastian'(Sqd4)|
 Fenrir Battle Armor 'Longshot' (Sqd4)|
 Fenrir Battle Armor 'Longshot' (Sqd5)|
 Fenrir Battle Armor 'Longshot' (Sqd6)|
-Gray Death Strike Armor (Prototype)|
+Gray Death Strike Suit (Prototype)(Sqd4)|
+Gray Death Strike Suit (Prototype)(Sqd5)|
+Gray Death Strike Suit (Prototype)(Sqd6)|
 Boeing Jump Bomber (Standard)|
 Boomerang Spotter Plane (Standard)|
 Guardian Fighter B|
@@ -702,10 +1163,10 @@ Light Strike Fighter Owl II|
 Light Strike Fighter Owl III|
 Light Strike Fighter Owl|
 Light Strike Fighter Suzume ('Sparrow')|
-MechBuster (Laser)|
-MechBuster (LB-X)|
-MechBuster (SRM)|
-MechBuster (Standard)|
+Mechbuster (Laser)|
+Mechbuster (LB-X)|
+Mechbuster (SRM)|
+Mechbuster (Standard)|
 Medium Strike Fighter Crane|
 Medium Strike Fighter Defender II|
 Medium Strike Fighter Defender|
@@ -716,7 +1177,7 @@ Planetlifter Air Transport (Standard)|
 Stork Light Refueling Craft (Original)|
 Stork Light Refueling Craft (Standard)|
 Saroyan Jump Bomber (Standard)|
-Katya Ground Assault Craft (RL10)|
+Katya Ground Assault Craft C-906(RL10)|
 Katya Ground Assault Craft C-904(RL15)|
 Katya Ground Assault Craft C-905(RL20)|
 Raubvogel Aerobomber AB-18C|
@@ -725,19 +1186,23 @@ Protector Combat Support Fighter ASF-23|
 Bullet Suicide Drone (Standard)|
 Drake Medium Stealth Fighter (Standard)|
 Planetlifter Tactical Support (Standard)|
-SeaBuster Strike Fighter (Standard)|
+Seabuster Strike Fighter (Standard)|
 Avanti Aerospace Airliner ACL-800|
+Chariot High-Speed Medevac (Standard)|
+Delta Air Cruiser MA-80|
 Federated-Boeing Longhaul FB-335|
 Jetta Coruna 4X (Standard)|
+King Karnov Transport KC-6|
 King Karnov Transport KC-9|
 Mosquito Radar Plane IX (Standard)|
 Protector High-Speed Medevac C-790|
 S 2772 Airplane (Standard)|
+Torrent Heavy Bomber (Original)|
 Torrent Heavy Bomber (Standard)|
 Zanadu Air Bus (Standard)|
 Drake Medium Strike Fighter (Standard)|
 Planetlifter Support Aircraft (Standard)|
-SeaBuster Early Strike Fighter (Standard)|
+Seabuster Strike Fighter (Early)|
 Hurricane Conventional Fighter (Standard)|
 Vendetta Medium Fighter (Standard)|
 Mustang Fighter (Standard)|
@@ -756,7 +1221,7 @@ Lee (Aerospace Carrier)|
 Lee (Armor Carrier)|
 Lee (BattleMech Carrier)|
 Drone M-3|
-Model 96C ìHowdahî SDS Command Ship|
+Model 96C ‚ÄúHowdah‚Äù SDS Command Ship|
 Pueblo (2673)|
 Jumbo (Standard)|
 Polaris (Standard)|
@@ -947,6 +1412,80 @@ DroST IIb Transport (2445)|
 DroST IIb Transport (2470)|
 Saturn Patrol Ship (Standard)|
 Claymore Interceptor|
+Firebird FR-1|
+Star Dagger S-2B|
+Thrush TR-5|
+Transit TR-9|
+Chippewa IIC 2|
+Chippewa IIC (Standard)|
+Goth A|
+Goth B|
+Goth C|
+Goth D|
+Goth Prime|
+Ironsides IRN-SD1b-EC|
+Issedone A|
+Issedone B|
+Issedone C|
+Issedone D|
+Issedone Prime|
+Kublai E|
+Kublai F|
+Kublai G|
+Ogotai A|
+Ogotai B|
+Ogotai Prime|
+Pella (Standard)|
+Qasar A|
+Qasar B|
+Qasar C|
+Qasar D|
+Qasar Prime|
+Rapier RPR-100b-EC|
+Sabre SB-27b-EC|
+Tomahawk THK-63-EC|
+Voidseeker Mk 39-004 Interceptor|
+Voidseeker Mk 39-007 Striker|
+DragonFly MM-1|
+Blackwasp Mk. 30|
+Aeshna Heavy Drone Fighter (Standard)|
+Scarab Medium Drone Fighter (Standard)|
+Tabanid Light Drone Fighter (Standard)|
+Chippewa CHP-W5b|
+Corsair CSR-V12b|
+Eagle EGL-R6b|
+Hellcat II HCT-213C|
+Lightning LTN-G15b|
+Sabre SB-27b|
+Stuka STU-K5b2|
+Stuka STU-K5b2|
+Thunderbird TRB-D36b|
+Zero ZRO-116b|
+Cheetah OF-17A-R|
+Corax C|
+Corsair CSR-12D|
+Hydaspes 3|
+Lucifer III LCR-3|
+Persepolis (Standard)|
+Rapier RPR-300S|
+Sabre SB-31D|
+Suzaku SU-14|
+Transit TR-13G|
+Tyre 3|
+Umbra RF-1|
+Wildkatze WKT-1S|
+Wildkatze WKT-2S|
+Chippewa CHP-W7 (Manfred)|
+Corsair (Bob) 'Roswell'|
+Hydaspes (Algar)|
+Issus (Erika)|
+Mechbuster (Mary)|
+Seydlitz (Mary) 'Yari'|
+Slayer SL-15 (Eric)|
+Stingray F-92 (Michael)|
+Thrush (Maximilian)'C-1247'|
+Tyre (Michiko)|
+Banshee BSE-X2|
 Cheetah F-10|
 Cheetah F-11-R|
 Cheetah F-11-RR|
@@ -1031,150 +1570,6 @@ Transgressor TR-16|
 Transit TR-10|
 Transit TR-11|
 Transit TR-12|
-Ammon 2|
-Chaeronea 2|
-Chaeronea 3|
-Chaeronea 4|
-Hydaspes 2|
-Issus 2|
-Issus 3|
-Xerxes 2|
-Xerxes 3|
-Xerxes (Standard)|
-Corax CRX-OD|
-Corax CRX-OR|
-Dagger DARO-1C|
-Dagger DARO-1D|
-Defiance DFC-OD|
-Eisensturm EST-OD|
-Huscarl HSCL-1-OD|
-Huscarl HSCL-1-OR|
-Lancer LX-3|
-Shiva SHV-OD|
-Tatsu MIK-OD|
-Tatsu MIK-OE|
-Troika CMT-6T|
-Mengqin MNG-8L|
-Morgenstern MR-1S|
-Morgenstern MR-1SA|
-Morgenstern MR-1SB|
-Morgenstern MR-1SC|
-Morgenstern MR-1SD|
-Ostrogoth A|
-Ostrogoth B|
-Ostrogoth C|
-Ostrogoth Prime|
-Poignard PGD-L3|
-Poignard PGD-R3|
-Poignard PGD-Y3|
-Sagittarii SGT-2R|
-Sagittarii SGT-3R|
-Wusun A|
-Wusun B|
-Wusun C|
-Wusun Prime|
-Cutlass CUT-01D|
-Cutlass CUT-01E|
-Rondel RDL-01C|
-Koroshiya KOS-1A|
-Yun Y-2|
-Aquila AQA-1M|
-Picaroon CSR-F100|
-Shikra SKR-4M|
-Jengiz F|
-Morgenstern MR-1SE|
-Ostrogoth D|
-Sagittarii SGT-4R|
-Scytha F|
-Sparrowhawk SPR-7Dr|
-Stingray F-96R|
-Sulla F|
-Tatsu MIK-OF|
-Troika CMT-7T|
-Wusun D|
-Schrack SCK-O|
-Schrack SCK-OA|
-Schrack SCK-OB|
-Simurgh SMG-O|
-Simurgh SMG-OA|
-Simurgh SMG-OB|
-Sternensturm STM-O|
-Sternensturm STM-OA|
-Sternensturm STM-OB|
-Firebird FR-1|
-Star Dagger S-2B|
-Thrush TR-5|
-Transit TR-9|
-Chippewa IIC 2|
-Chippewa IIC (Standard)|
-Goth A|
-Goth B|
-Goth C|
-Goth D|
-Goth Prime|
-Ironsides IRN-SD1b-EC|
-Issedone A|
-Issedone B|
-Issedone C|
-Issedone D|
-Issedone Prime|
-Kublai E|
-Kublai F|
-Kublai G|
-Ogotai A|
-Ogotai B|
-Ogotai Prime|
-Pella (Standard)|
-Qasar A|
-Qasar B|
-Qasar C|
-Qasar D|
-Qasar Prime|
-Rapier RPR-100b-EC|
-Sabre SB-27b-EC|
-Tomahawk THK-63-EC|
-Voidseeker Mk 39-004 Interceptor|
-Voidseeker Mk 39-007 Striker|
-DragonFly MM-1|
-Blackwasp Mk. 30|
-Aeshna Heavy Drone Fighter (Standard)|
-Scarab Medium Drone Fighter (Standard)|
-Tabanid Light Drone Fighter (Standard)|
-Chippewa CHP-W5b|
-Corsair CSR-V12b|
-Eagle EGL-R6b|
-Hellcat II HCT-213C|
-Lightning LTN-G15b|
-Sabre SB-27b|
-Stuka STU-K5b|
-Stuka STU-K5b2|
-Thunderbird TRB-D36b|
-Zero ZRO-116b|
-Cheetah OF-17A-R|
-Corax C|
-Corsair CSR-12D|
-Hydaspes 3|
-Lucifer III LCR-3|
-Persepolis (Standard)|
-Rapier RPR-300S|
-Sabre SB-31D|
-Suzaku SU-14|
-Transit TR-13G|
-Tyre 3|
-Umbra RF-1|
-Wildkatze WKT-1S|
-Wildkatze WKT-2S|
-Chippewa CHP-W7 (Manfred)|
-Corsair (Bob) 'Roswell'|
-Hydaspes (Algar)|
-Issus (Erika)|
-Mechbuster (Mary)|
-Seydlitz (Mary) 'Yari'|
-Slayer SL-15 (Eric)|
-Stingray F-92 (Michael)|
-Thrush (Maximilian)'C-1247'|
-Tyre (Michiko)|
-Banshee BSE-X2|
 Swift C|
 Tomahawk 'C'|
 Tomahawk CH|
@@ -1339,6 +1734,29 @@ Tatsu MIK-OB|
 Tatsu MIK-OC|
 Troika CMT-3T|
 Troika CMT-4U|
+Ammon 2|
+Chaeronea 2|
+Chaeronea 3|
+Chaeronea 4|
+Hydaspes 2|
+Issus 2|
+Issus 3|
+Xerxes 2|
+Xerxes 3|
+Xerxes (Standard)|
+Corax CRX-OD|
+Corax CRX-OR|
+Dagger DARO-1C|
+Dagger DARO-1D|
+Defiance DFC-OD|
+Eisensturm EST-OD|
+Huscarl HSCL-1-OD|
+Huscarl HSCL-1-OR|
+Lancer LX-3|
+Shiva SHV-OD|
+Tatsu MIK-OD|
+Tatsu MIK-OE|
+Troika CMT-6T|
 Centurion CNT-1A|
 Centurion CNT-1D|
 Centurion CNT-2D|
@@ -1405,10 +1823,58 @@ Typhoon TFN-5H|
 Vulcan VLC-5N|
 Vulcan VLC-6N|
 Vulcan VLC-8N|
+Mengqin MNG-8L|
+Morgenstern MR-1S|
+Morgenstern MR-1SA|
+Morgenstern MR-1SB|
+Morgenstern MR-1SC|
+Morgenstern MR-1SD|
+Ostrogoth A|
+Ostrogoth B|
+Ostrogoth C|
+Ostrogoth Prime|
+Poignard PGD-L3|
+Poignard PGD-R3|
+Poignard PGD-Y3|
+Sagittarii SGT-2R|
+Sagittarii SGT-3R|
+Wusun A|
+Wusun B|
+Wusun C|
+Wusun Prime|
+Cutlass CUT-01D|
+Cutlass CUT-01E|
+Rondel RDL-01C|
+Koroshiya KOS-1A|
+Yun Y-2|
+Aquila AQA-1M|
+Picaroon CSR-F100|
+Shikra SKR-4M|
+Jengiz F|
+Morgenstern MR-1SE|
+Ostrogoth D|
+Sagittarii SGT-4R|
+Scytha F|
+Sparrowhawk SPR-7Dr|
+Stingray F-96R|
+Sulla F|
+Tatsu MIK-OF|
+Troika CMT-7T|
+Wusun D|
+Schrack SCK-O|
+Schrack SCK-OA|
+Schrack SCK-OB|
+Simurgh SMG-O|
+Simurgh SMG-OA|
+Simurgh SMG-OB|
+Sternensturm STM-O|
+Sternensturm STM-OA|
+Sternensturm STM-OB|
 Bashkir Z|
 Batu Z|
 Sabutai Z|
 Sangihe Shrike-Thrush 'Nanook'|
+Cheetah II F-12A|
 Ammon XR|
 Scytha XR|
 Ironsides CX-19|
@@ -1419,7 +1885,7 @@ Sholagar SL-27X|
 Corsair CSR-X12 Rigid Night|
 Dagger DAR4-XP|
 Hellcat II HCT-213BC (Herman)|
-Swift SWF-606 (Aaron)|
+Swift SWF-606CA (Aaron)|
 Oni ON-2X|
 Shilone SL-17X|
 Transit TR-13X 'Glare'|
@@ -2453,7 +2919,7 @@ Assault Commando Ebon Magistrate Shock Troops|
 Field Medic Magistracy Medical Corp|
 Foot Infantry Raventhir's Infantry Guard|
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard; Magistracy Cavaliers|
-Skaret Assassins J‡rnFÚlk|
+Skaret Assassins J√†rnF√≤lk|
 Ceremonial Guard Caesar's Royal Guard; Marion Hegemony|
 Pirate Lady Death's 'Pacification' Squads|
 Foot Ballistic Rifle Hastati V|
@@ -2518,7 +2984,7 @@ Mechanized Wheeled Platoon (Rifle AA)|
 Motorized Platoon (Rifle AA)|
 Foot Platoon (Flechette)|
 Motorized Platoon (Flechette)|
-Autocannon/10 Field Gun Infantry (Standard)|
+Field Gun Infantry Platoon (AC/10) (Standard)|
 Clan Foot Point (Anti-'Mech) (Flamer)|
 Clan Foot Point (Anti-'Mech) (Laser)|
 Clan Foot Point (Anti-'Mech) (LRM)|
@@ -2737,6 +3203,7 @@ Merchant Jumpship (2503)|
 Merchant Jumpship (2602)|
 Merchant Jumpship (2602)(Passenger)|
 Monolith Jumpship (2776)|
+Quetzalcoatl-Scout JumpShip (Standard)|
 Scout JumpShip (2712)|
 Star Lord JumpShip (2590) (LF)|
 Star Lord JumpShip (2590)|
@@ -4444,6 +4911,7 @@ Hammerhands HMH-4D|
 Hammerhands HMH-5D|
 Hammerhands HMH-6D|
 Helepolis HEP-2H|
+Helepolis HEP-2X|
 Helepolis HEP-3H|
 Helepolis HEP-4H|
 Highlander HGN-732b|
@@ -4482,7 +4950,6 @@ Legionnaire LGN-2XU|
 Lumberjack LM1/A|
 Lumberjack LM4/C|
 Lumberjack LM4/P|
-Mackie MSK-5S|
 Mackie MSK-6S|
 Mackie MSK-7A|
 Mackie MSK-8B|
@@ -5095,8 +5562,8 @@ Hatamoto-Godai HTM-30Z|
 Hatamoto-Suna HTM-30S|
 Hitotsume Kozo HKZ-1F|
 Hitotsume Kozo HKZ-1P|
-Phoenix Hawk L PXH-11K|
-Phoenix Hawk L PXH-11K2|
+Phoenix Hawk L 'Fenikkusu Taka' PXH-11K|
+Phoenix Hawk L 'Fenikkusu Taka' PXH-11K2|
 Rokurokubi RK-4K|
 Rokurokubi RK-4T|
 Rokurokubi RK-4X|
@@ -5149,7 +5616,9 @@ Sarath SRTH-1OB|
 Stalker II STK-9A|
 Violator VT-U1|
 Violator VT-U3|
-Black Hawk 3|
+Black Hawk (Standard) 2|
+Black Hawk (Standard) 3|
+Black Hawk (Standard)|
 Cadaver CVR-A1|
 Cadaver CVR-T1|
 HawkWolf HWK-4F|
@@ -5159,8 +5628,8 @@ Jade Hawk 2|
 Jade Hawk 3|
 Jade Hawk JHK-03|
 Jade Hawk JHK-04|
-Koshi 2|
-Koshi 3|
+Koshi (Standard) 2|
+Koshi (Standard) 3|
 Koshi (Standard)|
 Mad Cat Mk IV (Savage Wolf) (Prime)|
 Mad Cat Mk IV (Savage Wolf) A|
@@ -5315,7 +5784,7 @@ Jackalope JLP-BD|
 Jackalope JLP-C|
 Jackalope JLP-KW 'Wolpertinger'|
 Jackalope JLP-KA|
-Kheper KPH-7R|
+Kheper KHP-7R|
 Lament LMT-2R|
 Lament LMT-3C|
 Lament LMT-3R|
@@ -5367,8 +5836,6 @@ Banshee BNC-9S|
 Orion ON1-K (Kerensky)|
 Ti Ts'ang TSG-9 'China Doll'|
 Atlas AS7-K2 (Jedra)|
-Black Hawk 2|
-Black Hawk (Standard)|
 Legionnaire LGN-2D (Raul)|
 Mad Cat III (Eve)|
 Mad Cat III 2 (MWDA)|
@@ -5391,7 +5858,7 @@ Men Shen (Li)|
 Sha Yu (Bulldog)|
 Snake (Arthur)|
 BattleMaster BLR-1Gd|
-BattleMaster BLR-1GHE 'HellSinger'|
+BattleMaster BLR-1GHE 'HellSlinger'|
 Crab CRB-27sl|
 Dervish DV-6Md|
 Hammerhands HMH-3D (Kessem)|
@@ -5567,6 +6034,7 @@ Shadow Hawk LAM SHD-X2|
 Stinger LAM Mk I STG-A1|
 Stinger LAM STG-A10|
 Stinger LAM STG-A5|
+Waneta S-WN-1LAM|
 Waneta S-WN-2LAM|
 Wasp LAM Mk I WSP-100|
 Wasp LAM Mk I WSP-100A|
@@ -5575,31 +6043,6 @@ Wasp LAM WSP-105|
 Wasp LAM WSP-105M|
 Wasp LAM WSP-110|
 Yurei S-YR-1LAM|
-Bull Shark BSK-M3|
-Bull Shark BSK-MAZ|
-Corsair COR-5R|
-Corsair COR-5T|
-Corsair COR-6R|
-Corsair COR-7A|
-Corsair COR-7R|
-Corsair COR-BR Broadside|
-Corsair COR-RA Ravager|
-Roughneck RGH-1A|
-Roughneck RGH-1B|
-Roughneck RGH-1C|
-Roughneck RGH-2A|
-Roughneck RGH-3A|
-Roughneck RGH-BLT Bolt|
-Roughneck RGH-PH Powerhouse|
-Roughneck RGH-R Reaver|
-Sun Spider A|
-Sun Spider Ambush|
-Sun Spider B|
-Sun Spider C|
-Sun Spider D|
-Sun Spider Manul|
-Sun Spider Prime|
-Sun Spider Vanguard|
 Annihilator ANH-1G|
 Annihilator ANH-1X|
 Annihilator C 'Gausszilla'|
@@ -5607,6 +6050,7 @@ Annihilator C 2|
 Carbine CON-1 ConstructionMech (RL)|
 Carbine CON-1 ConstructionMech (Standard)|
 Champion CHP-1Nb|
+Champion CHP-1Nb2|
 Crockett CRK-5003-1b|
 Crosscut ED-X2 (Flamer)|
 Crosscut ED-X2 (RL)|
@@ -5625,6 +6069,7 @@ Firefly FFL-3PP2|
 Firefly FFL-3PP3|
 Firefly FFL-3SLE|
 Griffin GRF-2N|
+Griffin GRF-2N2|
 Harvester Ant KIC-3M AgroMech (MG)|
 Harvester Ant KIC-3M-B AgroMech (LRM)|
 Hermes HER-1Sb|
@@ -5645,6 +6090,7 @@ Sling SL-1H|
 Stalker STK-3Fb|
 Thorn THE-Nb|
 Thunderbolt TDR-5Sb|
+Thunderbolt TDR-5Sb2|
 Apollo APL-4M|
 Axman AXM-6T|
 Barghest BGS-4T|
@@ -6291,6 +6737,12 @@ Gladiator-B (Executioner-B) A|
 Gladiator-B (Executioner-B) B|
 Gladiator-B (Executioner-B) C|
 Gladiator-B (Executioner-B) Prime|
+Longshot LNG-2 (Reskov)|
+Rattlesnake II RSN-1|
+Rattlesnake II RSN-2|
+Rattlesnake JR7-31|
+Rattlesnake JR7-31P|
+Rattlesnake JR7-31R (Gideon)|
 Nightstar NSR-9J (Holt)|
 Avatar AV1-OBLO|
 Doloire DLR-OBLO|
@@ -6468,6 +6920,31 @@ Jenner JR7-F (Smith)|
 Panther PNT-9ALAG|
 Vulcan VL-2T (Timms)|
 Warhammer WHM-6K (Olesko)|
+Bull Shark BSK-M3|
+Bull Shark BSK-MAZ|
+Corsair COR-5R|
+Corsair COR-5T|
+Corsair COR-6R|
+Corsair COR-7A|
+Corsair COR-7R|
+Corsair COR-BR Broadside|
+Corsair COR-RA Ravager|
+Roughneck RGH-1A|
+Roughneck RGH-1B|
+Roughneck RGH-1C|
+Roughneck RGH-2A|
+Roughneck RGH-3A|
+Roughneck RGH-BLT Bolt|
+Roughneck RGH-PH Powerhouse|
+Roughneck RGH-R Reaver|
+Sun Spider A|
+Sun Spider Ambush|
+Sun Spider B|
+Sun Spider C|
+Sun Spider D|
+Sun Spider Manul|
+Sun Spider Prime|
+Sun Spider Vanguard|
 Archangel C-ANG-O (Berith)|
 BattleMaster BLR-4S (Calvin II)|
 BattleMaster BLR-4S (Calvin)|
@@ -6521,6 +6998,8 @@ Talon TLN-5VNO|
 Merlin MLN-SX|
 Spindrift Aquatic SecurityMech SDT-1|
 Whitworth WTH-5S|
+Liberator LIB-4T|
+Ostscout IIC (Standard)|
 Aquagladius AQS-5 MAM|
 Carbine CON-9M-D ConstructionMech MOD|
 Crosscut IIC SolahmaMech|
@@ -6561,11 +7040,11 @@ Spatha SP2-X 'Warlord'|
 Valiant VAL-NT-JX 'Hot Knife'|
 Warhammer WHM-X7 'The Lich'|
 Wraith TR2-X 'Alexander'|
-Exterminator EXT-4DX (Caine)|
-Mongoose MON-66GX (Gunslinger)|
+Exterminator EXT-4DX|
+Mongoose MON-66GX|
 Rifleman III RF2-A|
 Thug THG-11ECX (Jose)|
-Wyvern WVE-5UX (City)|
+Wyvern WVE-5UX|
 Banzai BNZ-X|
 Hatamoto-Kaeru HTM-35X|
 Jenner JR10-X|
@@ -6607,6 +7086,7 @@ Victor VTR-9K2 (St. James)|
 Commando COM-1A|
 Helepolis HEP-1H|
 Kyudo KY2-D-01|
+Mackie MSK-5S|
 Shadow Hawk SHD-1R|
 Banshee BNC-1E|
 BattleAxe BKX-1X|
@@ -6681,7 +7161,6 @@ Hunchback HBK-LGN-Pin 'Drizella'|
 Phoenix Hawk PXH-7KJ 'Jasmine'|
 Tessen TSN-X4R 'Rapunzel'|
 Trebuchet TBT-7MM 'Merida'|
-Undine Battle Armor 'Sebastian'|
 Vulcan VT-5ML 'Aladdin'|
 Vulpes VLP-1DX 'Beast'|
 Watchman WTC-4MB 'Belle'|
@@ -6785,8 +7264,6 @@ Dragonstar Passenger Transport (Standard)|
 Mowang Courier (Standard)|
 'Astrolux' Staryacht LC-100|
 Tigress Close Patrol Craft TIG-15|
-Intrepid Assault Craft (2331)|
-Intrepid Assault Craft (2478)|
 Foxhound Gunboat TIG-40|
 Ares Assault Craft Mark VII-C|
 Ares Assault Craft Mark VII|
@@ -6816,9 +7293,11 @@ NL-45 Gunboat (Standard)|
 Wurger Assault Craft (Standard)|
 Mowang Courier (Clandestine)|
 S7-P Bus 'Scarab'|
+Ares Assault Craft Mk.III|
 Ares Close Assault Landing Craft Mk.II|
 Ares Landing Craft Mk.I|
-Ares Assault Craft Mk.III|
+Intrepid Assault Craft (2331)|
+Intrepid Assault Craft (2478)|
 Crucible Station (Standard)|
 Hong Lung Interdiction Station (Standard)|
 Snowden Mining Station (MK I)|
@@ -6834,24 +7313,24 @@ Bastion System Defense Station (3091)|
 BattleSat System Defense Station (3089)|
 BattleSat System Defense Station (3056)|
 Capitol System Defense Station (3051)|
-Factory - Medium/Large (2400)|
-Factory - Medium/Large (2750)|
-Factory - Small (2300)|
-Habitat - Small (2400)|
-Habitat - Small (2750)|
-Habitat - Large (2500)|
-Habitat - Large (2750)|
+Factory Medium/Large (2400)|
+Factory Medium/Large (2750)|
+Factory Small (2300)|
+Habitat Small (2400)|
+Habitat Small (2750)|
+Habitat Large (2500)|
+Habitat Large (2750)|
 Olympus Recharge Station (2663)|
 Olympus Recharge Station (2942)|
 Olympus Recharge Station (3072)|
-Pressurized Yard - Huge (2450)|
-Pressurized Yard - Large (2400)|
-Pressurized Yard - Medium (2350)|
-Pressurized Yard - Small (2200)|
-Unpressurized Yard - Huge (2350)|
-Unpressurized Yard - Large (2300)|
-Unpressurized Yard - Medium (2250)|
-Unpressurized Yard - Small (2100)|
+Pressurized Yard Huge (2450)|
+Pressurized Yard Large (2400)|
+Pressurized Yard Medium (2350)|
+Pressurized Yard Small (2200)|
+Unpressurized Yard Huge (2350)|
+Unpressurized Yard Large (2300)|
+Unpressurized Yard Medium (2250)|
+Unpressurized Yard Small (2100)|
 Puma Assault Tank PAT-001|
 Puma Assault Tank PAT-002|
 Air Car (Standard)|
@@ -7436,6 +7915,7 @@ Cobra Transport VTOL (Original)|
 Cobra Transport VTOL (Standard)|
 Condor Heavy Hover Tank (Upgrade) (Laser)|
 Condor Heavy Hover Tank (Upgrade) (Standard)|
+Crow Scout Helicopter 'Dragonfly'|
 Crow Scout Helicopter (C3)|
 Crow Scout Helicopter (Export)|
 Crow Scout Helicopter (Standard)|
@@ -7809,6 +8289,11 @@ Schildkrote Line Tank (Standard)|
 Swallow Attack WIGE (Original)|
 Swallow Attack WIGE (Standard)|
 Winterhawk APC (Standard)|
+Fensalir Combat WiGE (3132 Upgrade)|
+Fensalir Combat WiGE (3137 Upgrade)|
+Fensalir Combat WiGE (Stealth)|
+Pandion Combat WiGE (3135 Upgrade)|
+Pandion Combat WiGE (3140 Upgrade)|
 Boreas Cavalry Hovercraft A|
 Boreas Cavalry Hovercraft B|
 Boreas Cavalry Hovercraft (Prime)|
@@ -8018,6 +8503,7 @@ Saurer-Bucher Fire Engine TLF-LL6500|
 Simca Ambulance (Standard)|
 Skoda 'Growler' Service Utility Truck (Standard)|
 Coanda Personal Sports Craft (Standard)|
+Cormorant Medium Cargo Craft (Cargo)|
 Cormorant Medium Cargo Craft (Standard)|
 Fulmar Patrol Craft (Original)|
 Fulmar Patrol Craft (Standard)|

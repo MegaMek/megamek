@@ -1830,7 +1830,6 @@ public class FireControl {
         final FiringPlan swarmAttack = new FiringPlan(target);
         final FiringPlan legAttack = new FiringPlan(target);
         final FiringPlan fieldGuns = new FiringPlan(target);
-        double fieldGunMassAlreadyFired = 0.0; //We need to track the tonnage of field guns being fired, because trying to fire more than the current possible total(# of men left) results in nothing being fired.
         for (final WeaponFireInfo weaponFireInfo : alphaStrike) {
 
             //Leg and swarm attacks can't be mixed with any other attacks, so we have to consider each of those separately.
@@ -1849,17 +1848,7 @@ public class FireControl {
                     continue;
                 } else if (!(shooter instanceof BattleArmor)
                         && (Infantry.LOC_FIELD_GUNS == weaponFireInfo.getWeapon().getLocation())) {
-                    final double fieldGunMass = weaponFireInfo.getWeapon().getTonnage();
-                    // Only fire field guns up until we no longer have the men to fire more, since
-                    // going over that limit results in nothing firing.
-                    // In theory, we could adapt the heat system to handle this (with tonnage as
-                    // heat and shooting strength as heat capacity, no heat tolerance). This would
-                    // behave much better for units with mixed type field guns, but given that those
-                    // are rare, this should serve for now.
-                    if (fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry) shooter).getShootingStrength()) {
-                        fieldGuns.add(weaponFireInfo);
-                        fieldGunMassAlreadyFired += fieldGunMass;
-                    }
+                    fieldGuns.add(weaponFireInfo);
                     continue;
                 }
             }

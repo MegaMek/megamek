@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons.autocannons;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
 /**
  * @author Andrew Hunter
  * @since Oct 15, 2004
@@ -52,5 +54,16 @@ public class ISLB5XAC extends LBXACWeapon {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.236;
+        } else if (range <= AlphaStrikeElement.LONG_RANGE) {
+            return 0.315;
+        } else {
+            return 0;
+        }
     }
 }

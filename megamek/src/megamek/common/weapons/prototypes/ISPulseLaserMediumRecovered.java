@@ -91,4 +91,9 @@ public class ISPulseLaserMediumRecovered extends PulseLaserWeapon {
             WeaponAttackAction waa, Game game, GameManager manager) {
         return new PrototypeLaserHandler(toHit, waa, game, manager);
     }
+
+    @Override
+    public int getAlphaStrikeHeat() {
+        return 7;
+    }
 }

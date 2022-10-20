@@ -14,11 +14,13 @@
  */
 package megamek.common.weapons.primitive;
 
+import megamek.common.*;
 import megamek.common.AmmoType;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrimitiveACWeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
@@ -83,5 +85,10 @@ public class ISAC2Primitive extends ACWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game,
                                               GameManager manager) {
         return new PrimitiveACWeaponHandler(toHit, waa, game, manager);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted ignore) {
+        return range == AlphaStrikeElement.SHORT_RANGE ? 0.132 : 0.2;
     }
 }

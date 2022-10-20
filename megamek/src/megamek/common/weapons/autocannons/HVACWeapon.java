@@ -52,4 +52,9 @@ public abstract class HVACWeapon extends ACWeapon {
         }
         return new HVACWeaponHandler(toHit, waa, game, manager);
     }
+
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_STANDARD;
+    }
 }

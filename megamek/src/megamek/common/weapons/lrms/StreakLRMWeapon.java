@@ -14,10 +14,11 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -61,15 +62,8 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            damage = getRackSize();
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
-            }
-        }
-        return damage / 10.0;
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return (range <= AlphaStrikeElement.LONG_RANGE) ? 0.1 * getRackSize() : 0;
     }
     
     @Override
@@ -84,5 +78,11 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
             oneShotTag = "OSI ";
         }
         return "LRM STREAK " + oneShotTag + ((rackSize < 10) ? "0" + rackSize : rackSize);
+    }
+
+
+    @Override
+    public boolean hasIndirectFire() {
+        return false;
     }
 }

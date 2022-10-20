@@ -83,4 +83,9 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
                                               GameManager manager) {
         return new SmallPulseLaserPrototypeHandler(toHit, waa, game, manager);
     }
+
+    @Override
+    public int getAlphaStrikeHeat() {
+        return 4;
+    }
 }

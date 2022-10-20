@@ -58,4 +58,9 @@ public class CLHeavyLaserSmall extends LaserWeapon {
                 .setProductionFactions(F_CSA)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

@@ -45,7 +45,7 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
         report.addEmptyLine();
         report.addLine("--- Damage:", "");
         int baseRange = 0;
-        if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryN() >= 2)) {
+        if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryWeaponsPerSquad() >= 2)) {
             baseRange = infantry.getSecondaryWeapon().getInfantryRange();
         } else if (infantry.getPrimaryWeapon() != null) {
             baseRange = infantry.getPrimaryWeapon().getInfantryRange();

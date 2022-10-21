@@ -636,7 +636,7 @@ public class Infantry extends Entity {
     public void setInternal(int val, int loc) {
         super.setInternal(val, loc);
         if (loc == LOC_INFANTRY) {
-            activeTroopers = val;
+            activeTroopers = Math.max(val, 0);
             damageFieldWeapons();
         }
     }

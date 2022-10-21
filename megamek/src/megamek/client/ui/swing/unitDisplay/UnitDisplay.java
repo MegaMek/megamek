@@ -27,6 +27,8 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
@@ -37,7 +39,7 @@ import java.util.ArrayList;
 public class UnitDisplay extends JPanel {
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
-
+    private JButton butSwitchView;
     private MechPanelTabStrip tabStrip;
     private JPanel displayP;
     private SummaryPanel mPan;
@@ -88,21 +90,74 @@ public class UnitDisplay extends JPanel {
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 1, 0, 1);
-
         c.weightx = 1.0;
         c.weighty = 0.0;
-
         c.gridwidth = GridBagConstraints.REMAINDER;
-        addBag(tabStrip, c);
+
+        ((GridBagLayout) getLayout()).setConstraints(tabStrip, c);
+        add(tabStrip);
+
         c.insets = new Insets(0, 1, 1, 1);
         c.weighty = 1.0;
-        addBag(displayP, c);
+
+        ((GridBagLayout) getLayout()).setConstraints(displayP, c);
+        add(displayP);
 
         ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SUMMARY);
 
         if (controller != null) {
             registerKeyboardCommands(this, controller);
         }
+
+        butSwitchView = new JButton("switch view");
+        butSwitchView.setPreferredSize(new Dimension(500,20));
+
+        c.fill = GridBagConstraints.BOTH;
+        c.insets = new Insets(0, 1, 1, 1);
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+
+        ((GridBagLayout) getLayout()).setConstraints(butSwitchView, c);
+        add(butSwitchView);
+
+        butSwitchView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (displayP.getLayout().getClass().getTypeName() == "java.awt.GridLayout") {
+                       tabStrip.setVisible(true);
+                       tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
+                       displayP.setLayout(new CardLayout());
+
+                       // tab name is lost when layout changed to GridLayout, remove and add to correct
+                       displayP.remove(0);
+                       displayP.remove(0);
+                       displayP.remove(0);
+                       displayP.remove(0);
+                       displayP.remove(0);
+                       displayP.remove(0);
+
+                       displayP.add(MechPanelTabStrip.SUMMARY, mPan);
+                       displayP.add(MechPanelTabStrip.PILOT, pPan);
+                       displayP.add(MechPanelTabStrip.ARMOR, aPan);
+                       displayP.add(MechPanelTabStrip.WEAPONS, wPan);
+                       displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
+                       displayP.add(MechPanelTabStrip.EXTRAS, ePan);
+                }
+                else {
+                    tabStrip.setVisible(false);
+                    displayP.setLayout(new GridLayout(2, 3, 5, 5));
+
+                    mPan.setVisible(true);
+                    pPan.setVisible(true);
+                    aPan.setVisible(true);
+                    wPan.setVisible(true);
+                    sPan.setVisible(true);
+                    ePan.setVisible(true);
+                }
+
+                displayP.revalidate();
+            }
+        });
     }
 
     /**
@@ -128,8 +183,10 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        ((CardLayout) displayP.getLayout()).show(displayP,
-                                MechPanelTabStrip.SUMMARY);
+                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SUMMARY);
+                        }
+
                         tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
                     }
 
@@ -150,8 +207,10 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        ((CardLayout) displayP.getLayout()).show(displayP,
-                                MechPanelTabStrip.PILOT);
+                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.PILOT);
+                        }
+
                         tabStrip.setTab(MechPanelTabStrip.PILOT_INDEX);
                     }
 
@@ -172,8 +231,10 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        ((CardLayout) displayP.getLayout()).show(displayP,
-                                MechPanelTabStrip.ARMOR);
+                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.ARMOR);
+                        }
+
                         tabStrip.setTab(MechPanelTabStrip.ARMOR_INDEX);
                     }
 
@@ -194,8 +255,10 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        ((CardLayout) displayP.getLayout()).show(displayP,
-                                MechPanelTabStrip.SYSTEMS);
+                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
+                        }
+
                         tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
                     }
 
@@ -216,8 +279,10 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        ((CardLayout) displayP.getLayout()).show(displayP,
-                                MechPanelTabStrip.WEAPONS);
+                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.WEAPONS);
+                        }
+
                         tabStrip.setTab(MechPanelTabStrip.WEAPONS_INDEX);
                     }
 
@@ -238,8 +303,10 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        ((CardLayout) displayP.getLayout()).show(displayP,
-                                MechPanelTabStrip.EXTRAS);
+                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.EXTRAS);
+                        }
+
                         tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
                     }
 
@@ -253,16 +320,6 @@ public class UnitDisplay extends JPanel {
         } else {
             return true;
         }
-    }
-
-    /**
-     *
-     * @param comp
-     * @param c
-     */
-    private void addBag(JComponent comp, GridBagConstraints c) {
-        ((GridBagLayout) getLayout()).setConstraints(comp, c);
-        add(comp);
     }
 
     /**
@@ -312,7 +369,10 @@ public class UnitDisplay extends JPanel {
      * Changes to the specified panel.
      */
     public void showPanel(String s) {
-        ((CardLayout) displayP.getLayout()).show(displayP, s);
+        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+            ((CardLayout) displayP.getLayout()).show(displayP, s);
+        }
+
         if (MechPanelTabStrip.SUMMARY.equals(s)) {
             tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
         } else if (MechPanelTabStrip.PILOT.equals(s)) {
@@ -328,12 +388,16 @@ public class UnitDisplay extends JPanel {
         }
     }
 
+
     /**
      * Used to force the display to the Systems tab, on a specific location
      * @param loc
      */
     public void showSpecificSystem(int loc) {
-        ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
+        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+            ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
+        }
+
         tabStrip.setTab(MechPanelTabStrip.SYSTEMS_INDEX);
         sPan.selectLocation(loc);
     }

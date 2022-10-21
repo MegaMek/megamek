@@ -20,7 +20,6 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -56,17 +55,6 @@ public abstract class ATMWeapon extends MissileWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, GameManager manager) {
         return new ATMHandler(toHit, waa, game, manager);
-    }
-    
-    @Override
-    public double getBattleForceDamage(int range) {
-        double damage = super.getBattleForceDamage(range);
-        if (range < BattleForceElement.MEDIUM_RANGE) {
-            damage *= 3;
-        } else if (range < BattleForceElement.LONG_RANGE) {
-            damage *= 2;
-        }
-        return damage;
     }
 
     @Override

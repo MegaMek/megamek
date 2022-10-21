@@ -14,11 +14,7 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
-import megamek.common.Compute;
 import megamek.common.Game;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -126,32 +122,7 @@ public abstract class MMLWeapon extends MissileWeapon {
 
         return new SRMHandler(toHit, waa, game, manager);
     }
-    
-    
-    @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
-        int clusterRoll = 7;
-        if (fcs != null && fcs.getType() instanceof MiscType) {
-            if (fcs.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                clusterRoll = 9;
-            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
-                clusterRoll = 8;
-            } else if (fcs.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
-                clusterRoll = 10;
-            }
-        }
-        double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-            damage = adjustBattleForceDamageForMinRange(damage);
-        }
-        if (range < BattleForceElement.MEDIUM_RANGE) {
-            damage *= 2;
-        } else if (range < BattleForceElement.LONG_RANGE) {
-            damage *= 1.5;
-        }
-        return damage / 10.0;
-    }
-    
+
     @Override
     public int getBattleForceClass() {
         return BFCLASS_MML;

@@ -14,19 +14,19 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASUnitType;
+
 import java.io.File;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * The MechSummary of a unit offers compiled information about the unit without having to load the file.
  */
-public class MechSummary implements Serializable {
+public class MechSummary implements Serializable, ASCardDisplayable {
 
     private String name;
     private String chassis;
@@ -94,7 +94,25 @@ public class MechSummary implements Serializable {
     /** The number of times the piece of equipment in the corresponding equipmentNames list appears. */
     private Vector<Integer> equipmentQuantities;
 
-    private HashMap<Integer, Integer> weaponClassQtys;
+    // AlphaStrike values
+    private int pointValue = 0;
+    private ASUnitType asUnitType = ASUnitType.UNKNOWN;
+    private int size = 0;
+    private int tmm = 0;
+    private Map<String, Integer> movement = new LinkedHashMap<>();
+    private String primaryMovementMode = "";
+    private ASDamageVector standardDamage = ASDamageVector.ZERO;
+    private int overheat = 0;
+    private ASSpecialAbilityCollection frontArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection leftArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rightArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rearArc = new ASSpecialAbilityCollection();
+    private int threshold;
+    private int fullArmor;
+    private int fullStructure;
+    private int squadSize;
+    private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
+    private UnitRole role;
 
     public MechSummary() {
         armorTypeSet = new HashSet<>();
@@ -104,14 +122,17 @@ public class MechSummary implements Serializable {
         return name;
     }
 
+    @Override
     public String getChassis() {
         return chassis;
     }
 
+    @Override
     public String getModel() {
         return model;
     }
 
+    @Override
     public int getMulId() {
         return mulId;
     }
@@ -264,7 +285,97 @@ public class MechSummary implements Serializable {
             return String.valueOf(TechConstants.T_SIMPLE_EXPERIMENTAL + 1);
         }
     }
-    
+
+    @Override
+    public int getPointValue() {
+        return pointValue;
+    }
+
+    @Override
+    public ASUnitType getASUnitType() {
+        return asUnitType;
+    }
+
+    @Override
+    public int getSize() {
+        return size;
+    }
+
+    @Override
+    public int getTMM() {
+        return tmm;
+    }
+
+    @Override
+    public Map<String, Integer> getMovement() {
+        return movement;
+    }
+
+    @Override
+    public String getPrimaryMovementMode() {
+        return primaryMovementMode;
+    }
+
+    @Override
+    public ASDamageVector getStandardDamage() {
+        return standardDamage;
+    }
+
+    @Override
+    public int getOV() {
+        return overheat;
+    }
+
+    @Override
+    public ASSpecialAbilityCollection getFrontArc() {
+        return frontArc;
+    }
+
+    @Override
+    public ASSpecialAbilityCollection getLeftArc() {
+        return leftArc;
+    }
+
+    @Override
+    public ASSpecialAbilityCollection getRightArc() {
+        return rightArc;
+    }
+
+    @Override
+    public ASSpecialAbilityCollection getRearArc() {
+        return rearArc;
+    }
+
+    @Override
+    public int getThreshold() {
+        return threshold;
+    }
+
+    @Override
+    public int getFullArmor() {
+        return fullArmor;
+    }
+
+    @Override
+    public int getFullStructure() {
+        return fullStructure;
+    }
+
+    @Override
+    public int getSquadSize() {
+        return squadSize;
+    }
+
+    @Override
+    public ASSpecialAbilityCollection getSpecialAbilities() {
+        return specialAbilities;
+    }
+
+    @Override
+    public UnitRole getRole() {
+        return role;
+    }
+
     public void setFullAccurateUnitType(String type) {
         fullAccurateUnitType = type;
     }
@@ -352,7 +463,7 @@ public class MechSummary implements Serializable {
     public void setStandardYear(int year) {
         stdTechYear = year;
     }
-    
+
     public void setCanon(boolean canon) {
         this.canon = canon;
     }
@@ -416,20 +527,12 @@ public class MechSummary implements Serializable {
     {
         equipmentNames = new Vector<>(mountedList.size());
         equipmentQuantities = new Vector<>(mountedList.size());
-        weaponClassQtys = new HashMap<>();
         for (Mounted mnt : mountedList)
         {
             // Ignore weapon groups, as they aren't actually real equipment
             if (mnt.isWeaponGroup()) {
                 continue;
             }
-
-            if (mnt.getType() instanceof WeaponType)
-            {
-                int wc = ((WeaponType) mnt.getType()).getAtClass();
-                weaponClassQtys.put(wc, weaponClassQtys.getOrDefault(wc, 0) + 1);
-            }
-
             String eqName = mnt.getType().getInternalName();
             int index = equipmentNames.indexOf(eqName);
             if (index == -1) { // We haven't seen this piece of equipment before
@@ -447,10 +550,6 @@ public class MechSummary implements Serializable {
     
     public Vector<Integer> getEquipmentQuantities() {
         return equipmentQuantities;
-    }
-
-    public Map<Integer, Integer> getWeaponClasses() {
-        return weaponClassQtys;
     }
 
     public void setTotalArmor(int totalArmor) {
@@ -549,10 +648,82 @@ public class MechSummary implements Serializable {
     public void setSuitWeight(double suitWeight) {
         this.suitWeight = suitWeight;
     }
-    
+
 	public String getExtinctRange() {
 		return extinctRange;
 	}
+
+    public void setAsUnitType(ASUnitType asUnitType) {
+        this.asUnitType = asUnitType;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setTmm(int tmm) {
+        this.tmm = tmm;
+    }
+
+    public void setMovement(Map<String, Integer> movement) {
+        this.movement = movement;
+    }
+
+    public void setPrimaryMovementMode(String primaryMovementMode) {
+        this.primaryMovementMode = primaryMovementMode;
+    }
+
+    public void setStandardDamage(ASDamageVector standardDamage) {
+        this.standardDamage = standardDamage;
+    }
+
+    public void setOverheat(int overheat) {
+        this.overheat = overheat;
+    }
+
+    public void setFrontArc(ASSpecialAbilityCollection frontArc) {
+        this.frontArc = frontArc;
+    }
+
+    public void setLeftArc(ASSpecialAbilityCollection leftArc) {
+        this.leftArc = leftArc;
+    }
+
+    public void setRightArc(ASSpecialAbilityCollection rightArc) {
+        this.rightArc = rightArc;
+    }
+
+    public void setRearArc(ASSpecialAbilityCollection rearArc) {
+        this.rearArc = rearArc;
+    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public void setFullArmor(int fullArmor) {
+        this.fullArmor = fullArmor;
+    }
+
+    public void setFullStructure(int fullStructure) {
+        this.fullStructure = fullStructure;
+    }
+
+    public void setSquadSize(int squadSize) {
+        this.squadSize = squadSize;
+    }
+
+    public void setPointValue(int pointValue) {
+        this.pointValue = pointValue;
+    }
+
+    public void setSpecialAbilities(ASSpecialAbilityCollection specialAbilities) {
+        this.specialAbilities = specialAbilities;
+    }
+
+    public void setUnitRole(UnitRole role) {
+        this.role = role;
+    }
 
 	public void setExtinctRange(String extinctRange) {
 		this.extinctRange = extinctRange;

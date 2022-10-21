@@ -19,6 +19,7 @@ import megamek.common.AmmoType;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FlamerHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
@@ -45,11 +46,12 @@ public abstract class FlamerWeapon extends EnergyWeapon {
     }
     
     @Override
-    public int getBattleForceHeatDamage(int range) {
-        //Clan ER Flamer does damage at medium
-        if (getMediumRange() > range) {
-            return getDamage();
-        }
-        return 0;
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband == AlphaStrikeElement.RANGE_BAND_SHORT) ? 2 : 0;
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

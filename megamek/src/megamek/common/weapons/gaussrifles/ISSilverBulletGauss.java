@@ -14,7 +14,7 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.SimpleTechLevel;
@@ -90,7 +90,7 @@ public class ISSilverBulletGauss extends GaussWeapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) / 10.0;
             damage *= 1.05; // -1 to hit
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

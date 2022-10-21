@@ -61,4 +61,9 @@ public class ISLaserSmall extends LaserWeapon {
                 .setPrototypeFactions(F_TA)
                 .setProductionFactions(F_TA);
     }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

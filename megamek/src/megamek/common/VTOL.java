@@ -19,7 +19,6 @@ import megamek.common.options.OptionsConstants;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
@@ -625,35 +624,6 @@ public class VTOL extends Tank implements IBomber {
         }
     }
 
-    @Override
-    public double getBaseBattleForceMovement() {
-        double move = getOriginalWalkMP();
-
-        if (getMisc().stream().anyMatch(m -> m.getType().hasFlag(MiscType.F_JET_BOOSTER))) {
-            move *= 1.25;
-        }
-
-        return move;
-    }
-    
-    @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (index == 1 && location == LOC_REAR) {
-            return 1.0;
-        } else if (location == LOC_REAR || location == LOC_BODY || location == LOC_ROTOR
-                || (index == 0 && location >= LOC_TURRET)
-                || (index == 1 && location < LOC_TURRET)) {
-            return 0.0;
-        }
-        return 1.0; 
-    }
-
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        specialAbilities.put(BattleForceSPA.ATMO, null);
-    }
-    
     @Override
     public long getEntityType() {
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;

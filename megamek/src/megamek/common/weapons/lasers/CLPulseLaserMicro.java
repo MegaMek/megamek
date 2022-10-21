@@ -59,4 +59,10 @@ public class CLPulseLaserMicro extends PulseLaserWeapon {
                 .setPrototypeFactions(F_CSJ)
                 .setProductionFactions(F_CSJ);
     }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
+
 }

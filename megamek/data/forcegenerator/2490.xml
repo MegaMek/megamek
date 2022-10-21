@@ -597,6 +597,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Field Medic' unitType='Infantry'>
+		<availability>IS:4,Periphery:4</availability>
+		<model name='Magistracy Medical Corp'>
+			<roles>inf_support</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Firebee' unitType='Mek'>
 		<availability>CC:8</availability>
 		<model name='FRB-1E (WAM-B)'>
@@ -607,6 +614,12 @@
 		<availability>FWL:4</availability>
 		<model name='FLE-4'>
 			<availability>FWL:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Foot Ballistic Rifle' unitType='Infantry'>
+		<availability>IS:10-,Periphery:10-</availability>
+		<model name='Hastati V'>
+			<availability>General:10-</availability>
 		</model>
 	</chassis>
 	<chassis name='Foot Platoon' unitType='Infantry'>

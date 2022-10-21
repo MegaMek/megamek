@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import megamek.common.alphaStrike.ASRange;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.*;
 import megamek.common.weapons.artillery.*;
 import megamek.common.weapons.autocannons.*;
@@ -44,6 +46,7 @@ import megamek.common.weapons.tag.CLTAG;
 import megamek.common.weapons.tag.ISTAG;
 import megamek.common.weapons.unofficial.*;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 // TODO add XML support back in.
@@ -246,9 +249,9 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
 
-    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artillery", "Plasma",
-            "AC", "LBX", "LRM", "SRM", "MRM", "MML", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC",
-            "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS", "Tele Missile", "Gauss", "Thunderbolt" };
+    public static String[] classNames = { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS",
+            "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC",
+            "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon", "Capital Mass Driver", "AMS" };
 
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
@@ -692,20 +695,21 @@ public class WeaponType extends EquipmentType {
      * @param range The range in hexes
      * @return Damage in BattleForce scale
      */
+    // TODO : the calculations are superseded by the ASC table but correct most of the time, ideally should be replaced
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
             // Variable damage weapons that cannot reach into the BF long range band use LR damage
             // for the MR band
-            if ((getDamage() == DAMAGE_VARIABLE)
-                    && (range == BattleForceElement.MEDIUM_RANGE)
-                    && (getLongRange() < BattleForceElement.LONG_RANGE)) {
-                damage = getDamage(BattleForceElement.LONG_RANGE);
+            if (getDamage() == DAMAGE_VARIABLE
+                    && range == AlphaStrikeElement.MEDIUM_RANGE
+                    && getLongRange() < AlphaStrikeElement.LONG_RANGE) {
+                damage = getDamage(AlphaStrikeElement.LONG_RANGE);
             } else {
                 damage = getDamage(range);
             }
 
-            if ((range == BattleForceElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
 
@@ -723,7 +727,7 @@ public class WeaponType extends EquipmentType {
      * @param fcs   - linked Artemis or Apollo FCS (null for none)
      * @return - damage in BattleForce scale
      */
-    public double getBattleForceDamage (int range, Mounted fcs) {
+    public double getBattleForceDamage(int range, Mounted fcs) {
         return getBattleForceDamage(range);
     }
 
@@ -750,15 +754,34 @@ public class WeaponType extends EquipmentType {
         return BFCLASS_STANDARD;
     }
 
-    /**
-     *
-     * @return - BattleForce scale damage for weapons that have the HEAT special ability
-     */
-    public int getBattleForceHeatDamage(int range) {
+    /** Returns the weapon's heat for AlphaStrike conversion. Overridden where it differs from TW heat. */
+    public int getAlphaStrikeHeat() {
+        return getHeat();
+    }
+
+    /** Returns the weapon's AlphaStrike heat damage for AlphaStrike conversion. ASC p.124. */
+    public int getAlphaStrikeHeatDamage(int rangeband) {
         return 0;
     }
 
+    /** Returns true if this weapon type can be used for Total War LRM-type indirect fire. */
     public boolean hasIndirectFire() {
+        return false;
+    }
+
+    /**
+     * Returns true if this weapon type contributes to the AlphaStrike IF ability. This
+     * is identical to TW indirect fire for most but not all weapons (see e.g. IATMs)
+     */
+    public boolean isAlphaStrikeIndirectFire() {
+        return hasIndirectFire();
+    }
+
+    /**
+     * Returns true if this weapon type contributes to the AlphaStrike PNT ability. This
+     * is not identical to TW point defense, therefore implemented separately.
+     */
+    public boolean isAlphaStrikePointDefense() {
         return false;
     }
 

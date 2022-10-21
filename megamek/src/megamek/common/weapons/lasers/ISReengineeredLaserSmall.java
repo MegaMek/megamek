@@ -58,4 +58,9 @@ public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {
                 .setProductionFactions(F_FS)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
+    
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
 }

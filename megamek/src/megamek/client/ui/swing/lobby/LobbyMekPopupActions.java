@@ -1,16 +1,16 @@
 /*  
-* MegaMek - Copyright (C) 2021 - The MegaMek Team  
-*  
-* This program is free software; you can redistribute it and/or modify it under  
-* the terms of the GNU General Public License as published by the Free Software  
-* Foundation; either version 2 of the License, or (at your option) any later  
-* version.  
-*  
-* This program is distributed in the hope that it will be useful, but WITHOUT  
-* ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS  
-* FOR A PARTICULAR PURPOSE. See the GNU General Public License for more  
-* details.  
-*/ 
+ * MegaMek - Copyright (C) 2021 - The MegaMek Team
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ */
 package megamek.client.ui.swing.lobby;
 
 import java.awt.event.ActionEvent;
@@ -27,7 +27,7 @@ import static megamek.client.ui.swing.lobby.LobbyMekPopup.*;
 public class LobbyMekPopupActions implements ActionListener {
 
     private ChatLounge lobby;
-    
+
     /** The ActionListener for the lobby popup menu for both the MekTable and MekTrees. */
     LobbyMekPopupActions(ChatLounge cl) {
         lobby = cl;
@@ -41,7 +41,7 @@ public class LobbyMekPopupActions implements ActionListener {
         String info = st.nextToken();
         // The entities list may be empty
         Set<Entity> entities = LobbyUtility.getEntities(lobby.game(), st.nextToken());
-        
+
         switch (command) {
             // Single entity commands
             case LMP_CONFIGURE:
@@ -50,8 +50,9 @@ public class LobbyMekPopupActions implements ActionListener {
                     singleEntityAction(command, randomSelected, info);
                 }
                 break;
-            
-            // Multi entity commands
+
+                // Multi entity commands
+            case LMP_ALPHASTRIKE:
             case LMP_UNLOADALLFROMBAY:
             case LMP_C3CM:
             case LMP_C3LM:
@@ -96,8 +97,8 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_MOVE_DOWN:
                 multiEntityAction(command, entities, info);
                 break;
-            
-            // Force commands
+
+                // Force commands
             case LMP_FCREATESUB:
             case LMP_FADDTO:
             case LMP_FRENAME:
@@ -111,7 +112,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
         }
     }
-    
+
     /** Calls lobby actions for forces. */
     private void forceAction(String command, Set<Entity> entities, String info) {
         switch (command) {
@@ -164,7 +165,7 @@ public class LobbyMekPopupActions implements ActionListener {
                 break;
         }
     }
-    
+
     /** Calls lobby actions for multiple entities. */
     private void multiEntityAction(String command, Set<Entity> entities, String info) {
         switch (command) {
@@ -326,6 +327,10 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_PRIO_TARGET:
                 lobby.lobbyActions.setPrioTarget(info, entities);
                 break;
+
+            case LMP_ALPHASTRIKE:
+                lobby.lobbyActions.showAlphaStrikeView(entities);
+                break;
         }
     }
 
@@ -335,6 +340,8 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_CONFIGURE:
                 lobby.lobbyActions.customizeMech(entity);
                 break;
+
+
         }
     }
 }

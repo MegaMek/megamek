@@ -291,7 +291,16 @@ public final class UIUtil {
     public static Color uiTTWeaponColor() {
         return uiLightBlue();
     }
-    
+
+    /**
+     * Returns a dark blue color suitable as a background color. The supplied
+     * color depends on the UI look and feel and will be darker for a
+     * dark UI LAF than for a light UI LAF.
+     */
+    public static Color uiDarkBlue() {
+        return uiBgBrightness() > 130 ? LIGHTUI_DARKBLUE : DARKUI_DARKBLUE;
+    }
+
     public static int scaleForGUI(int value) {
         return Math.round(scaleForGUI((float) value));
     }
@@ -362,7 +371,7 @@ public final class UIUtil {
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JTextPane)
                     || (comp instanceof JToggleButton)) {
-                comp.setFont(scaledFont);
+                comp.setFont(scaledFont.deriveFont(comp.getFont().getStyle()));
             }
             if (comp instanceof JScrollPane 
                     && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
@@ -385,11 +394,11 @@ public final class UIUtil {
                 adjustDialog(panel);
             } else if (comp instanceof JTabbedPane) {
                 comp.setFont(scaledFont);
-                JTabbedPane tpane = (JTabbedPane) comp;
-                for (int i=0; i<tpane.getTabCount();i++) {
-                    Component sc = tpane.getTabComponentAt(i);
-                    if (sc instanceof JPanel) {
-                        adjustDialog((JPanel) sc);
+                JTabbedPane tabbedPane = (JTabbedPane) comp;
+                for (int i=0; i < tabbedPane.getTabCount();i++) {
+                    Component subComp = tabbedPane.getTabComponentAt(i);
+                    if (subComp instanceof JPanel) {
+                        adjustDialog((JPanel) subComp);
                     }
                 }
                 adjustDialog((JTabbedPane) comp);
@@ -726,7 +735,7 @@ public final class UIUtil {
      * Used in the player settings dialog.
      */
     public static class TipCombo<E> extends MMComboBox<E> {
-        
+
         public TipCombo(String name) {
             super(name);
         }
@@ -1076,7 +1085,9 @@ public final class UIUtil {
     private final static Color DARKUI_LIGHTCYAN = new Color(100, 180, 180);
     private final static Color LIGHTUI_LIGHTGREEN = new Color(80, 180, 80);
     private final static Color DARKUI_LIGHTGREEN = new Color(150, 210, 150);
-    
+    private final static Color LIGHTUI_DARKBLUE = new Color(225, 225, 245);
+    private final static Color DARKUI_DARKBLUE = new Color(50, 50, 80);
+
     /** Returns an HTML FONT Size String, according to GUIScale (e.g. "style=font-size:22"). */
     private static String sizeString() {
         int fontSize = (int) (GUIPreferences.getInstance().getGUIScale() * FONT_SCALE1);

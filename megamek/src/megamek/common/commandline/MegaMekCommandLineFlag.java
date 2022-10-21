@@ -34,7 +34,6 @@ public enum MegaMekCommandLineFlag {
     EXPORT(Messages.getString("MegaMek.Help.UnitExport")),
     VALIDATE(Messages.getString("MegaMek.Help.UnitValidator")),
     OUL(Messages.getString("MegaMek.Help.OfficialUnitList")),
-    BFC(Messages.getString("MegaMek.Help.UnitBattleforceConversion")),
     ASC(Messages.getString("MegaMek.Help.UnitAlphastrikeConversion")),
     EDITRATGEN(Messages.getString("MegaMek.Help.RatgenEdit")),
     DATADIR(Messages.getFormattedString("MegaMek.Help.DataDir", Configuration.dataDir()));

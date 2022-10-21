@@ -2905,6 +2905,8 @@ Heimdall Ground Monitor Tank B:MISSILE_BOAT
 Heimdall Ground Monitor Tank C:JUGGERNAUT
 Heimdall Ground Monitor Tank D:JUGGERNAUT
 Heimdall Ground Monitor Tank Prime:JUGGERNAUT
+Hel HEL-1:SKIRMISHER
+Hel HL-2:SKIRMISHER
 Helepolis HEP-1H:MISSILE_BOAT
 Helepolis HEP-2H:MISSILE_BOAT
 Helepolis HEP-2X:MISSILE_BOAT
@@ -6592,6 +6594,7 @@ Tian-Zong TNZ-N2:SNIPER
 Tian-Zong TNZ-N3 'Jasminda':SNIPER
 Tian-Zong TNZ-N3:SNIPER
 Tiburon (Standard):STRIKER
+Tiburon 2:STRIKER
 Tiger Medium Tank T-12:BRAWLER
 Tigress Close Patrol Craft TIG-15:NONE
 TinStar BattleArmor (Standard)(Sqd4):SCOUT
@@ -6663,6 +6666,8 @@ Tornado PA(L) P17 'Hurricane'(Sqd5):AMBUSHER
 Tornado PA(L) P17 'Hurricane'(Sqd6):AMBUSHER
 Toro TR-A-1:BRAWLER
 Toro TR-A-6:MISSILE_BOAT
+Toro TR-B-9:BRAWLER
+Toro TR-B-12:SKIRMISHER
 Torrent Heavy Bomber (Standard):NONE
 Tortoise II (aSRM)(Sqd4):AMBUSHER
 Tortoise II (aSRM)(Sqd4):AMBUSHER

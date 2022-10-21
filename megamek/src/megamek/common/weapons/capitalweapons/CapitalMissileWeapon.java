@@ -20,6 +20,7 @@ import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
 import megamek.common.weapons.AttackHandler;
@@ -67,5 +68,10 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL_MISSILE;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return damage;
     }
 }

@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
 /**
  * @author Sebastian Brocks
@@ -56,10 +56,7 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
     }
 
     @Override
-    public int getBattleForceHeatDamage(int range) {
-        if (range <= BattleForceElement.MEDIUM_RANGE) {
-            return 3;
-        }
-        return 0;
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 3 : 0;
     }
 }

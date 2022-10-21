@@ -168,6 +168,7 @@
 	<faction key='FWL.OH'>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='DC.O'/>
 	<faction key='Periphery.OS'/>
 	<faction key='DC.PR'>
 		<salvage pct='5'></salvage>
@@ -560,6 +561,12 @@
 			<availability>LA:6,Periphery.HR:6,FS:6,MERC:6,Periphery.OS:6,Periphery:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Ceremonial Guard' unitType='Infantry'>
+		<availability>DC.O:2</availability>
+		<model name='Otomo Guard'>
+			<availability>DC.O:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Cestus' unitType='Mek'>
 		<availability>FS:4</availability>
 		<model name='CTS-6X'>
@@ -620,17 +627,32 @@
 		</model>
 	</chassis>
 	<chassis name='Cobra Transport VTOL' unitType='VTOL'>
-		<availability>TH:6,SL:6</availability>
+		<availability>SL:2+,RWR:2:2765</availability>
 		<model name='(Command)'>
 			<roles>support</roles>
-			<availability>General:4</availability>
+			<availability>SL:2+,RWR:2:2765</availability>
+		</model>
+		<model name='(MASH)'>
+			<roles>support</roles>
+			<availability>SL:2+,RWR:2:2765</availability>
 		</model>
 		<model name='(Original)'>
+			<availability>SL:2+,RWR:6:2765</availability>
+		</model>
+		<model name='(Standard)'>
+			<roles>cargo</roles>
+			<availability>SL:5+,RWR:2:2765</availability>
+		</model>
+	</chassis>
+	<chassis name='Cobra VTOL Transport' unitType='VTOL'>
+		<availability>TH:2,SL:2</availability>
+		<model name='(Fusion)'>
+			<roles>cargo</roles>
 			<availability>General:6</availability>
 		</model>
 		<model name='(Standard)'>
 			<roles>cargo</roles>
-			<availability>General:6</availability>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Colt Medium Fighter' unitType='Conventional Fighter'>
@@ -738,10 +760,10 @@
 		</model>
 	</chassis>
 	<chassis name='Cyrano Gunship' unitType='VTOL'>
-		<availability>CC:4,MOC:4,OA:4,LA:4,SL:6,FWL:4,IS:2,RWR:4,FS:4,DC:4,TC:4</availability>
+		<availability>SL:6,IS:2,SL.R:6,RWR:4,TC:4</availability>
 		<model name='(Standard)'>
 			<roles>recon,escort</roles>
-			<availability>CC:8,General:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
+			<availability>SL:4,IS:2+,MERC:2+,Periphery:1+</availability>
 		</model>
 	</chassis>
 	<chassis name='Czar Dropship' unitType='Dropship'>
@@ -982,6 +1004,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Field Medic' unitType='Infantry'>
+		<availability>IS:4,Periphery:4</availability>
+		<model name='Magistracy Medical Corp'>
+			<roles>inf_support</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Firebee' unitType='Mek'>
 		<availability>CC:7</availability>
 		<model name='FRB-1E (WAM-B)'>
@@ -1037,6 +1066,12 @@
 		</model>
 		<model name='FLE-4'>
 			<availability>FWL:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Foot Ballistic Rifle' unitType='Infantry'>
+		<availability>IS:10-,Periphery:10-</availability>
+		<model name='Hastati V'>
+			<availability>General:10-</availability>
 		</model>
 	</chassis>
 	<chassis name='Foot Platoon' unitType='Infantry'>
@@ -1419,10 +1454,10 @@
 		</model>
 	</chassis>
 	<chassis name='Karnov UR Transport' unitType='VTOL'>
-		<availability>PIR:2,IS:4,Periphery.Deep:4,Periphery:4</availability>
+		<availability>TH:3+,SL:3+,IS:2+,MERC:2+,Periphery:1</availability>
 		<model name='(Standard)'>
 			<roles>cargo</roles>
-			<availability>General:8</availability>
+			<availability>General:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Kimagure Pursuit Cruiser' unitType='Warship'>

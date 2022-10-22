@@ -123,6 +123,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_X = "DisplayPosX";
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_START_TABBED = "DisplayStartTabbed";
+    public static final String DISPLAY_SPLIT_ABC_LOC = "DisplaySplitABCLoc";
+    public static final String DISPLAY_SPLIT_BC_LOC = "DisplaySplitBCLoc";
+    public static final String DISPLAY_SPLIT_B1_LOC = "DisplaySplitB1Loc";
+    public static final String DISPLAY_SPLIT_B2_LOC = "DisplaySplitB2Loc";
+    public static final String DISPLAY_SPLIT_C1_LOC = "DisplaySplitC2Loc";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
@@ -397,6 +402,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(DISPLAY_START_TABBED, true);
+        store.setDefault(DISPLAY_SPLIT_ABC_LOC, 300);
+        store.setDefault(DISPLAY_SPLIT_BC_LOC, 300);
+        store.setDefault(DISPLAY_SPLIT_B1_LOC, 200);
+        store.setDefault(DISPLAY_SPLIT_B2_LOC, 300);
+        store.setDefault(DISPLAY_SPLIT_C1_LOC, 700);
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
@@ -594,6 +604,26 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getDisplayStartTabbed() {
         return store.getBoolean(DISPLAY_START_TABBED);
+    }
+
+    public int getDisplaSplitABCLoc() {
+        return store.getInt(DISPLAY_SPLIT_ABC_LOC);
+    }
+
+    public int getDisplaSplitBCLoc() {
+        return store.getInt(DISPLAY_SPLIT_BC_LOC);
+    }
+
+    public int getDisplaSplitB1Loc() {
+        return store.getInt(DISPLAY_SPLIT_B1_LOC);
+    }
+
+    public int getDisplaSplitB2Loc() {
+        return store.getInt(DISPLAY_SPLIT_B2_LOC);
+    }
+
+    public int getDisplaSplitC1Loc() {
+        return store.getInt(DISPLAY_SPLIT_C1_LOC);
     }
 
     public int getDisplaySizeHeight() {
@@ -1083,6 +1113,26 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDisplayStartTabbed(boolean state) {
         store.setValue(DISPLAY_START_TABBED, state);
+    }
+
+    public void setDisplaySplitABCLoc(int i) {
+        store.setValue(DISPLAY_SPLIT_ABC_LOC, i);
+    }
+
+    public void setDisplaySplitBCLoc(int i) {
+        store.setValue(DISPLAY_SPLIT_BC_LOC, i);
+    }
+
+    public void setDisplaySplitB1Loc(int i) {
+        store.setValue(DISPLAY_SPLIT_B1_LOC, i);
+    }
+
+    public void setDisplaySplitB2Loc(int i) {
+        store.setValue(DISPLAY_SPLIT_B2_LOC, i);
+    }
+
+    public void setDisplaySplitC2Loc(int i) {
+        store.setValue(DISPLAY_SPLIT_C1_LOC, i);
     }
 
     public void setDisplaySizeHeight(int i) {

@@ -145,11 +145,13 @@ public class UnitDisplay extends JPanel {
         splitABC.setLeftComponent(mPanP);
         splitABC.setRightComponent(splitBC);
 
-        splitABC.setDividerLocation(300);
-        splitBC.setDividerLocation(300);
-        splitB1.setDividerLocation(200);
-        splitB2.setDividerLocation(300);
-        splitC1.setDividerLocation(700);
+        splitABC.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitABCLoc());
+        splitBC.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitBCLoc());
+        splitB1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitB1Loc());
+        splitB2.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitB2Loc());
+        splitC1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitC1Loc());
+
+        splitC1.getDividerLocation();
 
         butSwitchView.setPreferredSize(new Dimension(500,20));
 
@@ -251,6 +253,18 @@ public class UnitDisplay extends JPanel {
         displayP.add(splitABC);
 
         GUIPreferences.getInstance().setDisplayStartTabbed(false);
+    }
+
+    /*
+    * Save splitter locations to preferences
+    *
+    */
+    public void saveSpliterLoc() {
+        GUIPreferences.getInstance().setDisplaySplitABCLoc(splitABC.getDividerLocation());
+        GUIPreferences.getInstance().setDisplaySplitBCLoc(splitBC.getDividerLocation());
+        GUIPreferences.getInstance().setDisplaySplitB1Loc(splitB1.getDividerLocation());
+        GUIPreferences.getInstance().setDisplaySplitB2Loc(splitB2.getDividerLocation());
+        GUIPreferences.getInstance().setDisplaySplitC2Loc(splitC1.getDividerLocation());
     }
 
     /**

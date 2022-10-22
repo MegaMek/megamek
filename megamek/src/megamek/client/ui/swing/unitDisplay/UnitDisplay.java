@@ -165,6 +165,7 @@ public class UnitDisplay extends JPanel {
         add(butSwitchView);
 
         butSwitchView.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (!(GUIPreferences.getInstance().getDisplayStartTabbed())) {
                     setDisplayTabbed();

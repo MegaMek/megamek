@@ -164,7 +164,7 @@ public class UnitDisplay extends JPanel {
 
         butSwitchView.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (tabStrip.isVisible() == false) {
+                if (!(GUIPreferences.getInstance().getDisplayStartTabbed())) {
                     setDisplayTabbed();
                 }
                 else {
@@ -276,7 +276,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SUMMARY);
                         }
 
@@ -300,7 +300,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.PILOT);
                         }
 
@@ -324,7 +324,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.ARMOR);
                         }
 
@@ -348,7 +348,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
                         }
 
@@ -372,7 +372,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.WEAPONS);
                         }
 
@@ -396,7 +396,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.EXTRAS);
                         }
 
@@ -462,7 +462,7 @@ public class UnitDisplay extends JPanel {
      * Changes to the specified panel.
      */
     public void showPanel(String s) {
-        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
             ((CardLayout) displayP.getLayout()).show(displayP, s);
         }
 
@@ -486,7 +486,7 @@ public class UnitDisplay extends JPanel {
      * @param loc
      */
     public void showSpecificSystem(int loc) {
-        if (displayP.getLayout().getClass().getTypeName() == "java.awt.CardLayout") {
+        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
         }
 

@@ -17,6 +17,7 @@ package megamek.client.ui.swing.unitDisplay;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -40,6 +41,18 @@ public class UnitDisplay extends JPanel {
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
     private JButton butSwitchView;
+    private JPanel mPanP;
+    private JPanel pPanP;
+    private JPanel aPanP;
+    private JPanel wPanP;
+    private JPanel sPanP;
+    private JPanel ePanP;
+    private JScrollPane pPanSP;
+    private JSplitPane splitABC;
+    private JSplitPane splitBC;
+    private JSplitPane splitB1;
+    private JSplitPane splitB2;
+    private JSplitPane splitC1;
     private MechPanelTabStrip tabStrip;
     private JPanel displayP;
     private SummaryPanel mPan;
@@ -70,21 +83,13 @@ public class UnitDisplay extends JPanel {
         this.clientgui = clientgui;
 
         tabStrip = new MechPanelTabStrip(this);
-
         displayP = new JPanel(new CardLayout());
-
         mPan = new SummaryPanel(this);
-        displayP.add(MechPanelTabStrip.SUMMARY, mPan);
         pPan = new PilotPanel(this);
-        displayP.add(MechPanelTabStrip.PILOT, pPan);
         aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
-        displayP.add(MechPanelTabStrip.ARMOR, aPan);
         wPan = new WeaponPanel(this);
-        displayP.add(MechPanelTabStrip.WEAPONS, wPan);
         sPan = new SystemPanel(this);
-        displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
         ePan = new ExtraPanel(this);
-        displayP.add(MechPanelTabStrip.EXTRAS, ePan);
 
         // layout main panel
         GridBagConstraints c = new GridBagConstraints();
@@ -109,7 +114,43 @@ public class UnitDisplay extends JPanel {
             registerKeyboardCommands(this, controller);
         }
 
+        mPanP = new JPanel(new BorderLayout());
+        pPanP = new JPanel(new BorderLayout());
+        aPanP = new JPanel(new BorderLayout());
+        wPanP = new JPanel(new BorderLayout());
+        sPanP = new JPanel(new BorderLayout());
+        ePanP = new JPanel(new BorderLayout());
+        pPanSP = new JScrollPane(pPanP, 20, 30);
+        splitABC = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitBC = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitB1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitB2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitC1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         butSwitchView = new JButton("switch view");
+
+        splitABC.setResizeWeight(0.3);
+        splitBC.setResizeWeight(0.4);
+        splitB1.setResizeWeight(0.1);
+        splitB2.setResizeWeight(0.5);
+        splitC1.setResizeWeight(0.5);
+
+        splitC1.setTopComponent(wPanP);
+        splitC1.setBottomComponent(sPanP);
+        splitB2.setTopComponent(aPanP);
+        splitB2.setBottomComponent(ePanP);
+        splitB1.setTopComponent(pPanSP);
+        splitB1.setBottomComponent(splitB2);
+        splitBC.setLeftComponent(splitB1);
+        splitBC.setRightComponent(splitC1);
+        splitABC.setLeftComponent(mPanP);
+        splitABC.setRightComponent(splitBC);
+
+        splitABC.setDividerLocation(300);
+        splitBC.setDividerLocation(300);
+        splitB1.setDividerLocation(200);
+        splitB2.setDividerLocation(300);
+        splitC1.setDividerLocation(700);
+
         butSwitchView.setPreferredSize(new Dimension(500,20));
 
         c.fill = GridBagConstraints.BOTH;
@@ -123,41 +164,93 @@ public class UnitDisplay extends JPanel {
 
         butSwitchView.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (displayP.getLayout().getClass().getTypeName() == "java.awt.GridLayout") {
-                       tabStrip.setVisible(true);
-                       tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
-                       displayP.setLayout(new CardLayout());
-
-                       // tab name is lost when layout changed to GridLayout, remove and add to correct
-                       displayP.remove(0);
-                       displayP.remove(0);
-                       displayP.remove(0);
-                       displayP.remove(0);
-                       displayP.remove(0);
-                       displayP.remove(0);
-
-                       displayP.add(MechPanelTabStrip.SUMMARY, mPan);
-                       displayP.add(MechPanelTabStrip.PILOT, pPan);
-                       displayP.add(MechPanelTabStrip.ARMOR, aPan);
-                       displayP.add(MechPanelTabStrip.WEAPONS, wPan);
-                       displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
-                       displayP.add(MechPanelTabStrip.EXTRAS, ePan);
+                if (tabStrip.isVisible() == false) {
+                    setDisplayTabbed();
                 }
                 else {
-                    tabStrip.setVisible(false);
-                    displayP.setLayout(new GridLayout(2, 3, 5, 5));
-
-                    mPan.setVisible(true);
-                    pPan.setVisible(true);
-                    aPan.setVisible(true);
-                    wPan.setVisible(true);
-                    sPan.setVisible(true);
-                    ePan.setVisible(true);
+                    setDisplayNonTabbed();
                 }
 
                 displayP.revalidate();
             }
         });
+
+        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+            setDisplayTabbed();
+        }
+        else {
+            setDisplayNonTabbed();
+        }
+    }
+
+    /**
+     * switch display to the tabbed version
+     *
+     */
+    private void setDisplayTabbed() {
+        tabStrip.setVisible(true);
+
+        if (displayP.getComponentCount() > 0){
+            displayP.removeAll();
+        }
+        if (mPanP.getComponentCount() > 0){
+            mPanP.removeAll();
+        }
+        if (pPanP.getComponentCount() > 0){
+            pPanP.removeAll();
+        }
+        if (aPanP.getComponentCount() > 0){
+            aPanP.removeAll();
+        }
+        if (wPanP.getComponentCount() > 0){
+            wPanP.removeAll();
+        }
+        if (sPanP.getComponentCount() > 0){
+            sPanP.removeAll();
+        }
+        if (ePanP.getComponentCount() > 0){
+            ePanP.removeAll();
+        }
+
+        displayP.add(MechPanelTabStrip.SUMMARY, mPan);
+        displayP.add(MechPanelTabStrip.PILOT, pPan);
+        displayP.add(MechPanelTabStrip.ARMOR, aPan);
+        displayP.add(MechPanelTabStrip.WEAPONS, wPan);
+        displayP.add(MechPanelTabStrip.SYSTEMS, sPan);
+        displayP.add(MechPanelTabStrip.EXTRAS, ePan);
+
+        tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
+
+        GUIPreferences.getInstance().setDisplayStartTabbed(true);
+    }
+
+    /**
+     * switch display to the non tabbed version
+     *
+     */
+    private void setDisplayNonTabbed() {
+        tabStrip.setVisible(false);
+
+        if (displayP.getComponentCount() > 0){
+            displayP.removeAll();
+        }
+
+        mPan.setVisible(true);
+        pPan.setVisible(true);
+        aPan.setVisible(true);
+        wPan.setVisible(true);
+        sPan.setVisible(true);
+        ePan.setVisible(true);
+
+        mPanP.add(mPan, BorderLayout.CENTER);
+        pPanP.add(pPan, BorderLayout.PAGE_START);
+        aPanP.add(aPan, BorderLayout.CENTER);
+        wPanP.add(wPan, BorderLayout.CENTER);
+        sPanP.add(sPan, BorderLayout.CENTER);
+        ePanP.add(ePan, BorderLayout.CENTER);
+        displayP.add(splitABC);
+
+        GUIPreferences.getInstance().setDisplayStartTabbed(false);
     }
 
     /**
@@ -387,7 +480,6 @@ public class UnitDisplay extends JPanel {
             tabStrip.setTab(MechPanelTabStrip.EXTRAS_INDEX);
         }
     }
-
 
     /**
      * Used to force the display to the Systems tab, on a specific location

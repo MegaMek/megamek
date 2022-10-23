@@ -125,8 +125,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_START_TABBED = "DisplayStartTabbed";
     public static final String DISPLAY_SPLIT_ABC_LOC = "DisplaySplitABCLoc";
     public static final String DISPLAY_SPLIT_BC_LOC = "DisplaySplitBCLoc";
+    public static final String DISPLAY_SPLIT_A1_LOC = "DisplaySplitA1Loc";
     public static final String DISPLAY_SPLIT_B1_LOC = "DisplaySplitB1Loc";
-    public static final String DISPLAY_SPLIT_B2_LOC = "DisplaySplitB2Loc";
     public static final String DISPLAY_SPLIT_C1_LOC = "DisplaySplitC2Loc";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
@@ -404,9 +404,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(DISPLAY_START_TABBED, true);
         store.setDefault(DISPLAY_SPLIT_ABC_LOC, 300);
         store.setDefault(DISPLAY_SPLIT_BC_LOC, 300);
-        store.setDefault(DISPLAY_SPLIT_B1_LOC, 200);
-        store.setDefault(DISPLAY_SPLIT_B2_LOC, 300);
-        store.setDefault(DISPLAY_SPLIT_C1_LOC, 700);
+        store.setDefault(DISPLAY_SPLIT_A1_LOC, 900);
+        store.setDefault(DISPLAY_SPLIT_B1_LOC, 500);
+        store.setDefault(DISPLAY_SPLIT_C1_LOC, 500);
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(UNIT_LABEL_BORDER, true);
@@ -614,12 +614,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(DISPLAY_SPLIT_BC_LOC);
     }
 
-    public int getDisplaSplitB1Loc() {
-        return store.getInt(DISPLAY_SPLIT_B1_LOC);
+    public int getDisplaSplitA1Loc() {
+        return store.getInt(DISPLAY_SPLIT_A1_LOC);
     }
 
-    public int getDisplaSplitB2Loc() {
-        return store.getInt(DISPLAY_SPLIT_B2_LOC);
+    public int getDisplaSplitB1Loc() {
+        return store.getInt(DISPLAY_SPLIT_B1_LOC);
     }
 
     public int getDisplaSplitC1Loc() {
@@ -1123,12 +1123,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(DISPLAY_SPLIT_BC_LOC, i);
     }
 
-    public void setDisplaySplitB1Loc(int i) {
-        store.setValue(DISPLAY_SPLIT_B1_LOC, i);
+    public void setDisplaySplitA1Loc(int i) {
+        store.setValue(DISPLAY_SPLIT_A1_LOC, i);
     }
 
-    public void setDisplaySplitB2Loc(int i) {
-        store.setValue(DISPLAY_SPLIT_B2_LOC, i);
+    public void setDisplaySplitB1Loc(int i) {
+        store.setValue(DISPLAY_SPLIT_B1_LOC, i);
     }
 
     public void setDisplaySplitC2Loc(int i) {

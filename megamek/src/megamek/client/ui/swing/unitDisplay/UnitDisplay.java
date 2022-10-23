@@ -50,8 +50,8 @@ public class UnitDisplay extends JPanel {
     private JScrollPane pPanSP;
     private JSplitPane splitABC;
     private JSplitPane splitBC;
+    private JSplitPane splitA1;
     private JSplitPane splitB1;
-    private JSplitPane splitB2;
     private JSplitPane splitC1;
     private MechPanelTabStrip tabStrip;
     private JPanel displayP;
@@ -123,35 +123,43 @@ public class UnitDisplay extends JPanel {
         pPanSP = new JScrollPane(pPanP, 20, 30);
         splitABC = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitBC = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitA1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitB1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        splitB2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitC1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         butSwitchView = new JButton("switch view");
 
+        splitABC.setOneTouchExpandable(true);
+        splitBC.setOneTouchExpandable(true);
+        splitA1.setOneTouchExpandable(true);
+        splitB1.setOneTouchExpandable(true);
+        splitC1.setOneTouchExpandable(true);
+        splitABC.setDividerSize(10);
+        splitBC.setDividerSize(10);
+        splitA1.setDividerSize(10);
+        splitB1.setDividerSize(10);
+        splitC1.setDividerSize(10);
         splitABC.setResizeWeight(0.3);
-        splitBC.setResizeWeight(0.4);
-        splitB1.setResizeWeight(0.1);
-        splitB2.setResizeWeight(0.5);
-        splitC1.setResizeWeight(0.5);
+        splitBC.setResizeWeight(0.7);
+        splitA1.setResizeWeight(0.9);
+        splitB1.setResizeWeight(0.6);
+        splitC1.setResizeWeight(0.6);
 
-        splitC1.setTopComponent(wPanP);
-        splitC1.setBottomComponent(sPanP);
-        splitB2.setTopComponent(aPanP);
-        splitB2.setBottomComponent(ePanP);
-        splitB1.setTopComponent(pPanSP);
-        splitB1.setBottomComponent(splitB2);
+        splitB1.setTopComponent(wPanP);
+        splitB1.setBottomComponent(sPanP);
+        splitA1.setTopComponent(mPanP);
+        splitA1.setBottomComponent(pPanSP);
+        splitC1.setTopComponent(ePanP);
+        splitC1.setBottomComponent(aPanP);
         splitBC.setLeftComponent(splitB1);
         splitBC.setRightComponent(splitC1);
-        splitABC.setLeftComponent(mPanP);
+        splitABC.setLeftComponent(splitA1);
         splitABC.setRightComponent(splitBC);
 
         splitABC.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitABCLoc());
         splitBC.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitBCLoc());
+        splitA1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitA1Loc());
         splitB1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitB1Loc());
-        splitB2.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitB2Loc());
         splitC1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitC1Loc());
-
-        splitC1.getDividerLocation();
 
         butSwitchView.setPreferredSize(new Dimension(500,20));
 
@@ -263,8 +271,8 @@ public class UnitDisplay extends JPanel {
     public void saveSpliterLoc() {
         GUIPreferences.getInstance().setDisplaySplitABCLoc(splitABC.getDividerLocation());
         GUIPreferences.getInstance().setDisplaySplitBCLoc(splitBC.getDividerLocation());
+        GUIPreferences.getInstance().setDisplaySplitA1Loc(splitA1.getDividerLocation());
         GUIPreferences.getInstance().setDisplaySplitB1Loc(splitB1.getDividerLocation());
-        GUIPreferences.getInstance().setDisplaySplitB2Loc(splitB2.getDividerLocation());
         GUIPreferences.getInstance().setDisplaySplitC2Loc(splitC1.getDividerLocation());
     }
 

@@ -15,8 +15,6 @@ package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.battlevalue.BattleArmorBVCalculator;
 import megamek.common.cost.BattleArmorCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.options.OptionsConstants;
@@ -459,32 +457,6 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    public int getRunMPForBV() {
-        int j = getOriginalWalkMP();
-        if (hasMyomerBooster()) {
-            if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
-                j++;
-            } else {
-                j += 2;
-            }
-        } else if (hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
-            // mechanical jump booster gives an extra MP
-            j++;
-        }
-        if (hasDWP()) {
-            if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-                j -= 3;
-            } else if (getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
-                j -= 2;
-            }
-            if (j == 0) {
-                j++;
-            }
-        }
-        return (int) Math.ceil(j * 1.5);
-    }
-
-    @Override
     public int getRunMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         boolean fastMove = (game != null) &&
@@ -891,11 +863,6 @@ public class BattleArmor extends Infantry {
             return false;
         }
         return super.hasHittableCriticals(loc);
-    }
-
-    @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**

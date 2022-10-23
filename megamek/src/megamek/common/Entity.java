@@ -811,7 +811,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     /**
      * The persistent (except for client/server-transmission) battle value calculator for this entity.
      */
-    private transient BVCalculator bvCalculator = BVCalculator.getBVCalculator(this);
+    private BVCalculator bvCalculator = BVCalculator.getBVCalculator(this);
     
     /**
      * Generates a new, blank, entity.
@@ -2766,20 +2766,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public int getRunMP(boolean gravity, boolean ignoreHeat,
                         boolean ignoreModularArmor) {
         return (int) Math.ceil(getWalkMP(gravity, ignoreHeat, ignoreModularArmor) * 1.5);
-    }
-
-    /**
-     * Returns the running MP as used for battle value calculations. This value should not factor
-     * in gravity or weather (as these aren't well visible in the calculation and may change over
-     * the course of a battle). It also should not factor in player-controlled transients such as
-     * cargo, trailers, bombs, heat, movement mode changes (LAM, WiGE, QuadVees), grounded/landed
-     * status (Aero) as these would also change BV in battle in strange ways.
-     *
-     * It should factor in intransient modifiers such as TSM, modular or hardened armor as well as
-     * damage to the unit (engine hits, motive damage, immobile status).
-     */
-    public int getRunMPForBV() {
-        return (int) Math.ceil(getOriginalWalkMP() * 1.5);
     }
 
     /**
@@ -5594,23 +5580,28 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * True if the unit has CASE II (on any location in the case of Meks).
-     * Only Meks and Fighters can have CASE II so all other entities return false by default.
+     * Only Meks and Fighters can have CASE II so all other entities should return false.
      *
      * @return True if the unit has CASE II
      */
     public boolean hasCASEII() {
-        return false;
+        return getMisc().stream()
+                .filter(m -> m.getType() instanceof MiscType)
+                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
     }
 
     /**
      * True if the unit has CASE II in the given location.
-     * Only Meks and Fighters can have CASE II so all other entities return false by default.
+     * Only Meks and Fighters can have CASE II so all other entities should return false.
      *
      * @param location The location to check
-     * @return True if the unit has CASE II in the location
+     * @return True if the unit has CASE II in the given location
      */
     public boolean hasCASEII(int location) {
-        return false;
+        return getMisc().stream()
+                .filter(m -> m.getLocation() == location)
+                .filter(m -> m.getType() instanceof MiscType)
+                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
     }
 
     /**
@@ -6836,7 +6827,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * @param calculationReport A CalculationReport to write the BV calculation to
      * @return The Battle Value of this unit calculated from its current state
      */
-    protected abstract int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport);
+    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+        return getBvCalculator().calculateBV(ignoreC3, ignoreSkill, calculationReport);
+    }
 
     /**
      * Generates a vector containing reports on all useful information about
@@ -15591,16 +15584,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     public void addClanCase() { }
 
-    /**
-     * Returns the persistent BV Calculator object for this entity. When transmitted bertween server and
-     * client, the calculator is discarded and a new one is created by this method call.
-     *
-     * @return The BVCalculator for this entity.
-     */
+    /** @return The persistent BV Calculator object for this entity. */
     public BVCalculator getBvCalculator() {
-        if (bvCalculator == null) {
-            bvCalculator = BVCalculator.getBVCalculator(this);
-        }
         return bvCalculator;
     }
 }

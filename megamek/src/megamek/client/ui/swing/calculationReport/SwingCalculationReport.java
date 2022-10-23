@@ -159,7 +159,7 @@ public class SwingCalculationReport implements CalculationReport {
         } else {
             newLine();
             gbc.gridwidth = 4;
-            JLabel header = new JLabel("<HTML><U>" + text);
+            JLabel header = new JLabel("<HTML><U><FONT SIZE=+2>" + text);
             report.add(header, gbc);
         }
         return this;

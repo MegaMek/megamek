@@ -18,9 +18,8 @@
  */
 package megamek.common.battlevalue;
 
-import megamek.common.Entity;
-import megamek.common.Infantry;
-import megamek.common.Mounted;
+import megamek.common.*;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 import java.util.ArrayList;
@@ -39,7 +38,35 @@ public class InfantryBVCalculator extends BVCalculator {
 
     @Override
     protected void setRunMP() {
-        runMP = infantry.getRunMP(false, true, true);
+        runMP = infantry.getOriginalWalkMP();
+        // encumbering armor reduces MP by 1 to a minimum of one (TacOps, pg. 318)
+        if (infantry.isArmorEncumbering()) {
+            runMP = Math.max(runMP - 1, 1);
+        }
+        if ((infantry.getSecondaryN() > 1)
+                && !infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !infantry.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                && (null != infantry.getSecondaryWeapon()) && infantry.getSecondaryWeapon().hasFlag(WeaponType.F_INF_SUPPORT)
+                && (infantry.getMovementMode() != EntityMovementMode.TRACKED)
+                && (infantry.getMovementMode() != EntityMovementMode.INF_JUMP)) {
+            runMP = Math.max(runMP - 1, 0);
+        }
+        //  PL-MASC IntOps p.84
+        if ((null != infantry.getCrew())
+                && infantry.hasAbility(OptionsConstants.MD_PL_MASC)
+                && infantry.getMovementMode().isLegInfantry()
+                && infantry.isConventionalInfantry()) {
+            runMP += 1;
+        }
+
+        if ((null != infantry.getCrew()) && infantry.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
+                && ((infantry.getMovementMode() == EntityMovementMode.INF_LEG)
+                || (infantry.getMovementMode() == EntityMovementMode.INF_JUMP))) {
+            runMP += 1;
+        }
+        if (infantry.hasActiveFieldArtillery()) {
+            runMP = Math.min(runMP, 1);
+        }
     }
 
     @Override

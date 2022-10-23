@@ -12,7 +12,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.BVCalculator;
 import megamek.common.cost.DropShipCostCalculator;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
@@ -378,11 +377,6 @@ public class Dropship extends SmallCraft {
     @Override
     public double getPriceMultiplier() {
         return isSpheroid() ? 28.0 : 36.0;
-    }
-
-    @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     /**

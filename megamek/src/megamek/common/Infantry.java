@@ -21,7 +21,6 @@ package megamek.common;
 
 import megamek.MMConstants;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.InfantryBVCalculator;
 import megamek.common.cost.InfantryCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -463,41 +462,6 @@ public class Infantry extends Entity {
         return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
-    @Override
-    public int getRunMPForBV() {
-        int mp = getOriginalWalkMP();
-        // encumbering armor reduces MP by 1 to a minimum of one (TacOps, pg. 318)
-        if (encumbering) {
-            mp = Math.max(mp - 1, 1);
-        }
-        if ((getSecondaryN() > 1)
-                && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
-                && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
-                && (getMovementMode() != EntityMovementMode.TRACKED)
-                && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
-            mp = Math.max(mp - 1, 0);
-        }
-        //  PL-MASC IntOps p.84
-        if ((null != getCrew())
-                && hasAbility(OptionsConstants.MD_PL_MASC)
-                && getMovementMode().isLegInfantry()
-                && isConventionalInfantry()) {
-            mp += 1;
-        }
-
-        if ((null != getCrew()) && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
-                && ((getMovementMode() == EntityMovementMode.INF_LEG)
-                || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
-            mp += 1;
-        }
-        if (hasActiveFieldArtillery()) {
-            //mp of 1 at the most
-            mp = Math.min(mp, 1);
-        }
-        return mp;
-    }
-
     /**
      * Infantry don't have MASC
      */
@@ -505,7 +469,6 @@ public class Infantry extends Entity {
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
-
 
     /*
      * (non-Javadoc)
@@ -916,11 +879,6 @@ public class Infantry extends Entity {
      */
     public boolean hasHittableCriticals(int loc) {
         return false;
-    }
-
-    @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return InfantryBVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     @Override

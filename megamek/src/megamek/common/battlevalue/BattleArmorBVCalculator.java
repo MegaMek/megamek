@@ -57,6 +57,32 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
+    protected void setRunMP() {
+        runMP = entity.getOriginalWalkMP();
+        if (battleArmor.hasMyomerBooster()) {
+            if (entity.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
+                runMP++;
+            } else {
+                runMP += 2;
+            }
+        } else if (entity.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+            // mechanical jump booster gives an extra MP
+            runMP++;
+        }
+        if (battleArmor.hasDWP()) {
+            if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+                runMP -= 3;
+            } else if (entity.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY) {
+                runMP -= 2;
+            }
+            if (runMP == 0) {
+                runMP++;
+            }
+        }
+        this.runMP = (int) Math.ceil(runMP * 1.5);
+    }
+
+    @Override
     protected double tmmFactor(int tmmRunning, int tmmJumping, int tmmUmu) {
         List<String> modifierList = new ArrayList<>();
         double tmmFactor = 1 + (Math.max(tmmRunning, Math.max(tmmJumping, tmmUmu)) / 10.0);
@@ -272,7 +298,7 @@ public class BattleArmorBVCalculator extends BVCalculator {
 
     @Override
     protected double getAmmoBV(Mounted ammo) {
-        return ((AmmoType) ammo.getType()).getProtoBV(ammo.getUsableShotsLeft());
+        return ((AmmoType) ammo.getType()).getKgPerShotBV(ammo.getUsableShotsLeft());
     }
 
     @Override

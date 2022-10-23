@@ -14,8 +14,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.AeroBVCalculator;
-import megamek.common.battlevalue.BVCalculator;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
@@ -1335,11 +1333,6 @@ public class Aero extends Entity implements IAero, IBomber {
         return LOC_NONE;
     }
 
-    @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
-    }
-
     public double getBVTypeModifier() {
         return 1.2;
     }
@@ -1513,29 +1506,6 @@ public class Aero extends Entity implements IAero, IBomber {
             return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
         }
         return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-    @Override
-    public int getRunMPForBV() {
-        int j = getOriginalWalkMP();
-        // adjust for engine hits
-        if (engineHits >= getMaxEngineHits()) {
-            return 0;
-        }
-        int engineLoss = 2;
-        if ((this instanceof SmallCraft) || (this instanceof Jumpship)) {
-            engineLoss = 1;
-        }
-        j = Math.max(0, j - (engineHits * engineLoss));
-        if (hasModularArmor()) {
-            j--;
-        }
-        // partially repaired engine
-        if (getPartialRepairs().booleanOption("aero_engine_crit")) {
-            j--;
-        }
-
-        return (int) Math.ceil(j * 1.5);
     }
 
     @Override
@@ -1844,21 +1814,6 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
         return hasCase;
-    }
-
-    @Override
-    public boolean hasCASEII() {
-        return getMisc().stream()
-                .filter(m -> m.getType() instanceof MiscType)
-                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
-    }
-
-    @Override
-    public boolean hasCASEII(int location) {
-        return getMisc().stream()
-                .filter(m -> m.getLocation() == location)
-                .filter(m -> m.getType() instanceof MiscType)
-                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
     }
 
     /**

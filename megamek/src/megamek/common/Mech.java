@@ -16,8 +16,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.battlevalue.MekBVCalculator;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
@@ -3276,11 +3274,6 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
-    }
-
-    @Override
     public double getCost(CalculationReport calcReport, boolean ignoreAmmo) {
         return MekCostCalculator.calculateCost(this, calcReport, ignoreAmmo);
     }
@@ -5419,21 +5412,6 @@ public abstract class Mech extends Entity {
             game.addPSR(new PilotingRollData(getId(),
                     TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
-    }
-
-    @Override
-    public boolean hasCASEII() {
-        return getMisc().stream()
-                .filter(m -> m.getType() instanceof MiscType)
-                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
-    }
-
-    @Override
-    public boolean hasCASEII(int location) {
-        return getMisc().stream()
-                .filter(m -> m.getLocation() == location)
-                .filter(m -> m.getType() instanceof MiscType)
-                .anyMatch(m -> m.getType().hasFlag(MiscType.F_CASEII));
     }
 
     @Override

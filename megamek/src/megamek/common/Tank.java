@@ -14,8 +14,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.battlevalue.CombatVehicleBVCalculator;
 import megamek.common.cost.CombatVehicleCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.MPBoosters;
@@ -1198,11 +1196,6 @@ public class Tank extends Entity {
     @Override
     public int getDependentLocation(int loc) {
         return LOC_NONE;
-    }
-
-    @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     @Override

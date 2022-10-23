@@ -13513,10 +13513,8 @@ public class AmmoType extends EquipmentType {
         }
     } // End private class MunitionMutator
 
-    /**
-     * get bv for ProtoMek loads
-     */
-    public double getProtoBV(int shots) {
+    /** @return The battle value for ProtoMek or BA ammo loads. */
+    public double getKgPerShotBV(int shots) {
         return ((kgPerShot * shots) / 1000) * bv;
     }
 

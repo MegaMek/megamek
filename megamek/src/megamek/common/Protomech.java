@@ -14,8 +14,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.common.battlevalue.BVCalculator;
-import megamek.common.battlevalue.ProtoMekBVCalculator;
 import megamek.common.cost.ProtoMekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.preference.PreferenceManager;
@@ -989,11 +987,6 @@ public class Protomech extends Entity {
             default:
                 return 0;
         }
-    }
-
-    @Override
-    protected int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
-        return BVCalculator.getBVCalculator(this).getBV(ignoreC3, ignoreSkill, calculationReport);
     }
 
     @Override

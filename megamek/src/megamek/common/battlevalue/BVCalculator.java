@@ -96,31 +96,97 @@ public abstract class BVCalculator {
             return new AeroBVCalculator(entity);
         } else if (entity instanceof GunEmplacement) {
             return new GunEmplacementBVCalculator(entity);
-        } else { // if (entity instanceof Tank) {
+        } else { // Tank
             return new CombatVehicleBVCalculator(entity);
         }
     }
 
-    public int getBV(boolean ignoreC3, boolean ignoreSkill) {
-        return getBV(ignoreC3, ignoreSkill, new DummyCalculationReport());
+    /**
+     * Calculate and return the current battle value of the entity of this calculator. Depending
+     * on the parameters C3 bonuses and/or pilot skill may be removed from the calculation.
+     *
+     * @param ignoreC3 When true, the force bonus for C3 connections is not added.
+     * @param ignoreSkill When true, the pilot skill (including MD) is not factored in.
+     * @return The newly calculated battle value.
+     */
+    public int calculateBV(boolean ignoreC3, boolean ignoreSkill) {
+        return calculateBV(ignoreC3, ignoreSkill, new DummyCalculationReport());
     }
 
-    public int getBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
+    /**
+     * Calculate and return the current battle value of the entity of this calculator. Depending
+     * on the parameters C3 bonuses and/or pilot skill may be removed from the calculation. The
+     * given report is filled in.
+     *
+     * @param ignoreC3 When true, the force bonus for C3 connections is not added.
+     * @param ignoreSkill When true, the pilot skill (including MD) is not factored in.
+     * @param bvReport The report to fill in with the calculation.
+     * @return The newly calculated battle value.
+     */
+    public int calculateBV(boolean ignoreC3, boolean ignoreSkill, CalculationReport bvReport) {
         this.ignoreC3 = ignoreC3;
         this.ignoreSkill = ignoreSkill;
-        getBaseBV(bvReport);
+        calculateBaseBV(bvReport);
         adjustBV();
         return (int) Math.round(adjustedBV);
     }
 
-    public int getBaseBV() {
-        return getBaseBV(new DummyCalculationReport());
+    /**
+     * Calculate and return the base battle value of the entity of this calculator. The base BV
+     * does not include any force bonuses, i.e. external stores, C3, pilot skill and TAG bonuses.
+     *
+     * @return The newly calculated base unit battle value.
+     */
+    public int calculateBaseBV() {
+        return calculateBaseBV(new DummyCalculationReport());
     }
 
-    public int getBaseBV(CalculationReport bvReport) {
+    /**
+     * Calculate and return the base battle value of the entity of this calculator. The base BV
+     * does not include any force bonuses, i.e. external stores, C3, pilot skill and TAG bonuses.
+     * The given report is filled in with the calculation.
+     *
+     * @param bvReport The report to fill in with the calculation.
+     * @return The newly calculated base unit battle value.
+     */
+    public int calculateBaseBV(CalculationReport bvReport) {
         this.bvReport = bvReport;
         processBaseBV();
         return (int) Math.round(baseBV);
+    }
+
+    /**
+     * Retrieves a previously calculated base battle value of the unit without re-calculating
+     * it; see {@link #calculateBaseBV()}! This should only be used when it is certain
+     * that the value is still correct. The base BV does not include any force bonuses.
+     *
+     * @return The stored base unit battle value.
+     */
+    public int retrieveBaseBV() {
+        return (int) Math.round(baseBV);
+    }
+
+    /**
+     * Retrieves a previously calculated battle value of the unit without re-calculating
+     * it. This BV includes the Tag force bonus but no other force bonuses! it can be
+     * used as a basis for calculating the C3 bonus without recalculating all units repeatedly.
+     * This should only be used when it is certain that the value is still correct.
+     *
+     * @return The stored unit battle value including Tag bonus.
+     */
+    public int retrieveBVWithTag() {
+        return (int) Math.round(tagBV);
+    }
+
+    /**
+     * Retrieves a previously calculated full battle value of the unit without re-calculating
+     * it; see {@link #calculateBV(boolean, boolean)}! This should only be used when it is certain
+     * that the value is still correct. The full BV includes all force bonuses.
+     *
+     * @return The stored full unit battle value.
+     */
+    public int retrieveBV() {
+        return (int) Math.round(adjustedBV);
     }
 
     /** Calculates the base unit BV (without force and pilot modifiers). */
@@ -207,6 +273,18 @@ public abstract class BVCalculator {
         setUmuMP();
     }
 
+    /**
+     * Sets the running MP as used for battle value calculations. This value should not factor
+     * in gravity or weather (as these aren't well visible in the calculation and may change over
+     * the course of a battle). It also should not factor in player-controlled transients such as
+     * cargo, trailers, bombs, heat, movement mode changes (LAM, WiGE, QuadVees), grounded/landed
+     * status (Aero) as these would also change BV in battle in strange ways. Also, it should
+     * ignore advanced rules such as TO Infantry Fast Movement to prevent BV values
+     * different from those on the MUL.
+     *
+     * It should factor in intransient modifiers such as TSM, modular or hardened armor as well as
+     * damage to the unit (engine hits, motive damage, immobile status).
+     */
     protected void setRunMP() {
         runMP = (int) Math.ceil(entity.getOriginalWalkMP() * 1.5);
     }

@@ -57,4 +57,10 @@ public class CLChemicalLaserSmall extends CLChemicalLaserWeapon {
                 .setProductionFactions(F_CHH)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
+    }
+
 }

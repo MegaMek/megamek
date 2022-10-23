@@ -15,7 +15,7 @@
 */
 package megamek.common;
 
-import megamek.client.ui.swing.AdvancedSearchDialog;
+import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.Iterator;
@@ -86,7 +86,7 @@ public class MechSearchFilter {
     /**
      * Creates an Expressiontree from a collection of tokens.
      */
-    public void createFilterExpressionFromTokens(Vector<AdvancedSearchDialog.FilterTokens> toks)
+    public void createFilterExpressionFromTokens(Vector<TWAdvancedSearchPanel.FilterTokens> toks)
             throws FilterParsingException {
         equipmentCriteria = new ExpressionTree();
         if (!toks.isEmpty()) {
@@ -97,25 +97,25 @@ public class MechSearchFilter {
         }
     }
 
-    private ExpNode createFTFromTokensRecursively(Iterator<AdvancedSearchDialog.FilterTokens> toks,
+    private ExpNode createFTFromTokensRecursively(Iterator<TWAdvancedSearchPanel.FilterTokens> toks,
                                                   ExpNode currNode) {
         // Base case. We're out of tokens, so we're done.
         if (!toks.hasNext()) {
             return currNode;
         }
 
-        AdvancedSearchDialog.FilterTokens filterTok = toks.next();
+        TWAdvancedSearchPanel.FilterTokens filterTok = toks.next();
 
         // Parsing Parenthesis
-        if (filterTok instanceof AdvancedSearchDialog.ParensFT) {
-            if (((AdvancedSearchDialog.ParensFT) filterTok).parens.equals("(")) {
+        if (filterTok instanceof TWAdvancedSearchPanel.ParensFT) {
+            if (((TWAdvancedSearchPanel.ParensFT) filterTok).parens.equals("(")) {
                 if (currNode == null) {
                     return createFTFromTokensRecursively(toks, null);
                 } else {
                     currNode.children.add(createFTFromTokensRecursively(toks, null));
                     return currNode;
                 }
-            } else if (((AdvancedSearchDialog.ParensFT) filterTok).parens.equals(")")) {
+            } else if (((TWAdvancedSearchPanel.ParensFT) filterTok).parens.equals(")")) {
                 ExpNode nextNode = createFTFromTokensRecursively(toks, null);
                 // This right paren is the end of the expression
                 if (nextNode == null) {
@@ -128,8 +128,8 @@ public class MechSearchFilter {
         }
 
         // Parsing an Operation
-        if (filterTok instanceof AdvancedSearchDialog.OperationFT) {
-            AdvancedSearchDialog.OperationFT ft = (AdvancedSearchDialog.OperationFT) filterTok;
+        if (filterTok instanceof TWAdvancedSearchPanel.OperationFT) {
+            TWAdvancedSearchPanel.OperationFT ft = (TWAdvancedSearchPanel.OperationFT) filterTok;
             ExpNode newNode = new ExpNode();
             // If currNode is null, we came from a right paren
             if (currNode == null) {
@@ -171,23 +171,23 @@ public class MechSearchFilter {
         }
 
         //Parsing an Operand
-        if (filterTok instanceof AdvancedSearchDialog.EquipmentFT) {
+        if (filterTok instanceof TWAdvancedSearchPanel.EquipmentFT) {
           if (currNode == null) {
               currNode = new ExpNode();
           }
-          AdvancedSearchDialog.EquipmentFT ft = (AdvancedSearchDialog.EquipmentFT) filterTok;
+          TWAdvancedSearchPanel.EquipmentFT ft = (TWAdvancedSearchPanel.EquipmentFT) filterTok;
           ExpNode newChild = new ExpNode(ft.internalName, ft.qty);
           currNode.children.add(newChild);
           return createFTFromTokensRecursively(toks, currNode);
 
         }
 
-        if (filterTok instanceof AdvancedSearchDialog.WeaponClassFT) {
+        if (filterTok instanceof TWAdvancedSearchPanel.WeaponClassFT) {
             if (currNode == null) {
                 currNode = new ExpNode();
             }
 
-            AdvancedSearchDialog.WeaponClassFT ft = (AdvancedSearchDialog.WeaponClassFT) filterTok;
+            TWAdvancedSearchPanel.WeaponClassFT ft = (TWAdvancedSearchPanel.WeaponClassFT) filterTok;
             ExpNode newChild = new ExpNode(ft.weaponClass, ft.qty);
             currNode.children.add(newChild);
             return createFTFromTokensRecursively(toks, currNode);
@@ -502,7 +502,7 @@ public class MechSearchFilter {
         public ExpNode parent;
         public BoolOp operation;
         public String name;
-        public AdvancedSearchDialog.WeaponClass weaponClass;
+        public TWAdvancedSearchPanel.WeaponClass weaponClass;
         public int qty;
         public List<ExpNode> children;
 
@@ -541,7 +541,7 @@ public class MechSearchFilter {
             children = new LinkedList<>();
         }
 
-        public ExpNode(AdvancedSearchDialog.WeaponClass n, int q) {
+        public ExpNode(TWAdvancedSearchPanel.WeaponClass n, int q) {
             parent = null;
             name = null;
             weaponClass = n;

@@ -14,7 +14,7 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -121,7 +121,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize();
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

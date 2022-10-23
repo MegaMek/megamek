@@ -19,6 +19,9 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
+
 /**
  * @author Sebastian Brocks
  */
@@ -61,5 +64,16 @@ public class CLATM12 extends ATMWeapon {
             .setClanApproximate(true, true, true, false, false)
             .setPrototypeFactions(F_CCY)
             .setProductionFactions(F_CCY);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        if (range <= AlphaStrikeElement.SHORT_RANGE) {
+            return 3;
+        } else if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 }

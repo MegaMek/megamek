@@ -14,7 +14,7 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.ToHitData;
@@ -65,7 +65,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) / 10.0;
             damage *= 1.05; // -1 to hit
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

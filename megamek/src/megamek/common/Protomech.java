@@ -23,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -1306,53 +1305,6 @@ public class Protomech extends Entity {
         return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        double walk = getWalkMP();
-        if (hasMyomerBooster()) {
-            walk *= 1.25;
-        }
-        int baseWalk = (int) Math.round(walk * 2);
-        int baseJump = getJumpMP() * 2;
-        if (baseJump > 0) {
-            if (baseJump != baseWalk) {
-                moves.put("", baseWalk);
-            }
-            moves.put("j", baseJump);
-        } else {
-            moves.put(getMovementModeAsBattleForceString(), baseWalk);
-        }
-    }
-    
-    @Override
-    /*
-     * Each ProtoMech has 1 Structure point
-     */
-    public int getBattleForceStructurePoints() {
-        return 1;
-    }
-
-    @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
-        super.addBattleForceSpecialAbilities(specialAbilities);
-        for (Mounted m : getEquipment()) {
-            if (!(m.getType() instanceof MiscType)) {
-                continue;
-            }
-            if (m.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
-                if (getWeight() < 10) {
-                    specialAbilities.put(BattleForceSPA.MCS, null);
-                } else {
-                    specialAbilities.put(BattleForceSPA.UCS, null);                    
-                }
-            }
-        }
-        specialAbilities.put(BattleForceSPA.SOA, null);
-        if (getMovementMode().equals(EntityMovementMode.WIGE)) {
-            specialAbilities.put(BattleForceSPA.GLD, null);
-        }
-    }
-    
     @Override
     public int getEngineHits() {
         if (this.isEngineHit()) {

@@ -19,6 +19,10 @@
  */
 package megamek.common.weapons.srms;
 
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+
+import static megamek.common.MountedHelper.*;
 /**
  * @author Sebastian Brocks
  */
@@ -61,5 +65,16 @@ public class CLSRM6 extends SRMWeapon {
             .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_CCC)
             .setProductionFactions(F_CCC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (isArtemisIV(fcs) || isArtemisProto(fcs)) {
+            return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1 : 0;
+        } else if (isArtemisV(fcs)) {
+            return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.05 : 0;
+        } else {
+            return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.8 : 0;
+        }
     }
 }

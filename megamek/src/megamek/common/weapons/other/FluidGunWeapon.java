@@ -19,10 +19,12 @@
  */
 package megamek.common.weapons.other;
 
+import megamek.common.*;
 import megamek.common.AmmoType;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.FluidGunCoolHandler;
@@ -66,5 +68,17 @@ public abstract class FluidGunWeapon extends AmmoWeapon {
         }
         return super.getCorrectHandler(toHit, waa, game, manager);
 
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            //TODO: with corrosive ammo
+            //   return 0.4;
+            // else
+            return 0;
+        } else {
+            return 0;
+        }
     }
 }

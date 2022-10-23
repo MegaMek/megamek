@@ -93,6 +93,7 @@ class LobbyMekPopup {
     static final String LMP_VIEW = "VIEW";
     static final String LMP_MOVE_UP = "MOVE_UP";
     static final String LMP_PRIO_TARGET = "PRIO_TARGET";
+    static final String LMP_ALPHASTRIKE = "ALPHASTRIKE";
 
     private static final String NOINFO = "|-1";
     
@@ -204,6 +205,8 @@ class LobbyMekPopup {
         popup.add(c3Menu(hasjoinedEntities, joinedEntities, clientGui, listener));
         popup.add(forceMenu(lobby, entities, forces, listener));
 
+        popup.add(ScalingPopup.spacer());
+        popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHASTRIKE + NOINFO + seIds, true, listener));
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("Delete", LMP_DELETE + "|" + foToken(forces) + seIds, !entities.isEmpty() && forces.isEmpty(), listener, KeyEvent.VK_D));
 

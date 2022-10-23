@@ -14,6 +14,7 @@
 package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.weapons.lasers.LaserWeapon;
 
@@ -63,5 +64,15 @@ public class CLLaserAMS extends LaserWeapon {
                 .setPrototypeFactions(F_CWF)
                 .setProductionFactions(F_CWF)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return 0;
+    }
+
+    @Override
+    public boolean isAlphaStrikePointDefense() {
+        return true;
     }
 }

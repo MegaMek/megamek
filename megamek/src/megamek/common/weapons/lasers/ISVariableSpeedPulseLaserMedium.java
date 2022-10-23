@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons.lasers;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.SimpleTechLevel;
 
 /**
@@ -56,4 +57,20 @@ public class ISVariableSpeedPulseLaserMedium extends VariableSpeedPulseLaserWeap
                 .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(F_FW, F_WB)
                 .setProductionFactions(F_FW, F_WB).setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
+
+    @Override
+    public double getBattleForceDamage(int range) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 1.035;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 0.648;
+        } else {
+            return 0;
+        }
+    }
+
+    public int getAlphaStrikeHeat() {
+        return 6;
+    }
+
 }

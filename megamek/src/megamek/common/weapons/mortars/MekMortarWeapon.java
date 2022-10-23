@@ -20,7 +20,7 @@
 package megamek.common.weapons.mortars;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Compute;
 import megamek.common.Game;
 import megamek.common.ToHitData;
@@ -81,7 +81,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) * 2;
-        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;

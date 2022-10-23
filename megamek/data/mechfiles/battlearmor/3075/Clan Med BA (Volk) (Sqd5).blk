@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -21,7 +21,7 @@ Clan Medium Battle Armor
 </Model>
 
 <mul id:>
-8973
+8609
 </mul id:>
 
 <year>
@@ -68,6 +68,45 @@ StopSwarm
 LegAttack
 </Point Equipment>
 
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<capabilities>
+Instead of the modular weapon ports of the Elemental Battle Armor, Clan Battle Armor mounts a fixed Flamer. Similarly, the SRM-2 pod is no longer detachable, though the new model uses a pair of One-Shot SRM-2 launchers. Interestingly, Clan Battle Armor also incorporates a standard searchlight that can be useful in and out of combat, though the design lacks an anti-personnel weapon. Like all Clan battle armor, Clan Battle Armor employs HarJel. The use of Basic Manipulators allow it to ride OmniMechs and also to make anti-'Mech attacks.
+</capabilities>
+
+<overview>
+Following their Abjuration from the Clan Homeworlds, Clan Nova Cat needed to rebuild. In so doing, Khan Santin West directed his scientist caste to create a new battle armor that could stand up to the newer designs coming out of Clan space.
+</overview>
+
+<deployment>
+Clan Wolf's "Laser Variant" is configured for fast flanking units. It trades out the weapons for a One-Shot SRM-3 launcher, ER Micro Laser, and one Heavy Battle Claw.
+</deployment>
+
+<history>
+Based on the Elemental suit, the result was the Clan Battle Armor, whose visual aesthetic shows that the Clan's contact with the Draconis Combine was already rubbing off on them. Though the design has a slow ground speed, the designers used the jump booster pioneered on the Gray Death Scout armor to rocket it up to one hundred twenty meters at a time. This necessitated a slight reduction in armor and a reworking of the weaponry. Clan Elementals have nicknamed these battle armor Rabids.
+</history>
+
+<manufacturer>
+Trellshire Heavy Industries
+</manufacturer>
+
+<primaryFactory>
+Twycross
+</primaryFactory>
+
 <source>
 TRO 3075 - Jihad
 </source>
@@ -92,26 +131,3 @@ biped
 2
 </weightclass>
 
-<capabilities>
-Instead of the modular weapon ports of the Elemental Battle Armor, Clan Battle Armor mounts a fixed Flamer. Similarly, the SRM-2 pod is no longer detachable, though the new model uses a pair of One-Shot SRM-2 launchers. Interestingly, Clan Battle Armor also incorporates a standard searchlight that can be useful in and out of combat, though the design lacks an anti-personnel weapon. Like all Clan battle armor, Clan Battle Armor employs HarJel. The use of Basic Manipulators allow it to ride OmniMechs and also to make anti-'Mech attacks.
-</capabilities>
-
-<overview>
-Following their Abjuration from the Clan Homeworlds, Clan Nova Cat needed to rebuild. In so doing, Khan Santin West directed his scientist caste to create a new battle armor that could stand up to the newer designs coming out of Clan space.
-</overview>
-
-<deployment>
-Clan Wolf's "Laser Variant" is configured for fast flanking units. It trades out the weapons for a One-Shot SRM-3 launcher, ER Micro Laser, and one Heavy Battle Claw.
-</deployment>
-
-<history>
-Based on the Elemental suit, the result was the Clan Battle Armor, whose visual aesthetic shows that the Clan's contact with the Draconis Combine was already rubbing off on them. Though the design has a slow ground speed, the designers used the jump booster pioneered on the Gray Death Scout armor to rocket it up to one hundred twenty meters at a time. This necessitated a slight reduction in armor and a reworking of the weaponry. Clan Elementals have nicknamed these battle armor Rabids.
-</history>
-
-<manufacturer>
-Trellshire Heavy Industries 
-</manufacturer>
-
-<primaryFactory>
-Twycross
-</primaryFactory>

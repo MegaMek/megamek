@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons.capitalweapons;
 
+import megamek.common.Mounted;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
@@ -39,5 +40,10 @@ public abstract class NGaussWeapon extends GaussWeapon {
     @Override
     public int getBattleForceClass() {
         return BFCLASS_CAPITAL;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return damage;
     }
 }

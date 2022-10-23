@@ -15,6 +15,8 @@
 package megamek.client.ui.swing.util;
 
 import megamek.common.*;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -28,6 +30,7 @@ import java.io.File;
  * @author Jay Lawson
  */
 public class FluffImageHelper {
+
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_CONVFIGHTER = "ConvFighter";
     public static final String DIR_NAME_DROPSHIP = "DropShip";
@@ -44,7 +47,6 @@ public class FluffImageHelper {
 
     /**
      * Get the fluff image for the specified unit, if available.
-     * 
      * @param unit The unit.
      * @return An image file, if one is available, else {@code null}.
      */
@@ -60,9 +62,7 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load the fluff image specified in the Entity data.
-     * 
-     * @param unit
-     *            The unit.
+     * @param unit The unit.
      * @return An image or {@code null}.
      */
     protected static Image loadFluffImage(final Entity unit) {
@@ -76,59 +76,43 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load a fluff image by combining elements of type and name.
-     * 
-     * @param unit
-     *            The unit.
+     * @param unit The unit.
      * @return An image or {@code null}.
      */
-    protected static Image loadFluffImageHeuristic(final Entity unit) {
+    public static @Nullable Image loadFluffImageHeuristic(final Entity unit) {
         Image fluff = null;
-
-        String dir = DIR_NAME_MECH;
-        
-        if (unit instanceof Warship) {
-        	dir = DIR_NAME_WARSHIP;
-    	} else if (unit instanceof SpaceStation) {
-    		dir = DIR_NAME_SPACESTATION;
-    	} else if (unit instanceof Jumpship) {
-    		dir = DIR_NAME_JUMPSHIP;
-    	} else if (unit instanceof ConvFighter) {
-    		dir = DIR_NAME_CONVFIGHTER;          
-    	} else if (unit instanceof Dropship) {
-            dir = DIR_NAME_DROPSHIP;
-    	} else if (unit instanceof SmallCraft) {
-            dir = DIR_NAME_SMALLCRAFT;            
-    	} else if (unit instanceof Aero) {
-            dir = DIR_NAME_FIGHTER;
-    	} else if (unit instanceof BattleArmor) {
-    		dir = DIR_NAME_BA;           
-    	} else if (unit instanceof Infantry) {
-    		dir = DIR_NAME_INFANTRY;     
-    	} else if (unit instanceof Protomech) {
-    		dir = DIR_NAME_PROTOMEK;    
-          } else if (unit instanceof Tank) {
-            dir = DIR_NAME_VEHICLE;
-        }
-
-        File fluff_image_file = findFluffImage(
-                new MegaMekFile(Configuration.fluffImagesDir(), dir).getFile(), unit);
+        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(unit)).getFile();
+        File fluff_image_file = findFluffImage(file, unit.getModel(), unit.getChassis());
         if (fluff_image_file != null) {
             fluff = new ImageIcon(fluff_image_file.toString()).getImage();
         }
+        return fluff;
+    }
 
+    /**
+     * Attempt to load a fluff image by combining elements of type and name.
+     * @param element The AlphaStrikeElement or MechSummary
+     * @return An image or null
+     */
+    public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
+        Image fluff = null;
+        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element)).getFile();
+        File fluff_image_file = findFluffImage(file, element.getModel(), element.getChassis());
+        if (fluff_image_file != null) {
+            fluff = new ImageIcon(fluff_image_file.toString()).getImage();
+        }
         return fluff;
     }
 
     /**
      * Find a fluff image file for the unit.
      * 
-     * @param directory
-     *            Directory to search.
-     * @param unit
-     *            The unit.
-     * @return Path to an appropriate file or {@code null} if none is found.
+     * @param directory Directory to search.
+     * @param origModel The model name of the unit
+     * @param origChassis The chassis name of the unit
+     * @return Path to an appropriate file or {@code null} if none is found
      */
-    protected static File findFluffImage(final File directory, final Entity unit) {
+    protected static @Nullable File findFluffImage(final File directory, String origModel, String origChassis) {
         // Search for a file in the specified directory.
         // Searches for each supported extension on each of the following
         // combinations:
@@ -139,13 +123,10 @@ public class FluffImageHelper {
         // in the filename.
         File fluff_file = null;
         // Remove characters that will cause path problems
-        String sanitizedChassis = unit.getChassis().replace("\"", "")
-                .replace("/", "");
-        String sanitizedModel = unit.getModel().replace("\"", "")
-                .replace("/", "");
+        String sanitizedChassis = origChassis.replace("\"", "").replace("/", "");
+        String sanitizedModel = origModel.replace("\"", "").replace("/", "");
         String[] basenames = {
-                new MegaMekFile(directory, sanitizedChassis + " " + sanitizedModel)
-                        .toString(),
+                new MegaMekFile(directory, sanitizedChassis + " " + sanitizedModel).toString(),
                 new MegaMekFile(directory, sanitizedModel).toString(),
                 new MegaMekFile(directory, sanitizedChassis).toString(), };
 
@@ -161,9 +142,9 @@ public class FluffImageHelper {
                 break;
             }
         }
-        final String model = unit.getModel().replace("\"", "");
-        final String chassisModel = unit.getChassis() + " " + model;
-         
+        final String model = origModel.replace("\"", "");
+        final String chassisModel = origChassis + " " + model;
+
         // If the previous checks failed, we're going to try to discount the
         //  CSO author name, which will make the file look like:
         //   Chassis + model + [ <author> ] + extension
@@ -180,7 +161,7 @@ public class FluffImageHelper {
                 fluff_file = files[0];
             }
         }
-        
+
         // If we still haven't found a file, see if ignoring the model helps
         if (fluff_file == null) {
             File[] files = directory.listFiles((direc, name) -> {
@@ -189,14 +170,73 @@ public class FluffImageHelper {
                     extMatch |= name.endsWith(ext);
                 }
                 String chassis = name.split("\\[")[0].trim();
-                return chassis.equalsIgnoreCase(unit.getChassis()) && extMatch;
+                return chassis.equalsIgnoreCase(origChassis) && extMatch;
             });
 
             if ((files != null) && (files.length > 0)) {
                 fluff_file = files[0];
             }
         }
-        
+
         return fluff_file;
+    }
+
+    private FluffImageHelper() { }
+
+    private static String getImagePath(final ASCardDisplayable element) {
+        switch (element.getASUnitType()) {
+            case WS:
+                return DIR_NAME_WARSHIP;
+            case SS:
+                return DIR_NAME_SPACESTATION;
+            case JS:
+                return DIR_NAME_JUMPSHIP;
+            case CF:
+                return DIR_NAME_CONVFIGHTER;
+            case DS:
+            case DA:
+                return DIR_NAME_DROPSHIP;
+            case SC:
+                return DIR_NAME_SMALLCRAFT;
+            case BA:
+                return DIR_NAME_BA;
+            case CI:
+                return DIR_NAME_INFANTRY;
+            case PM:
+                return DIR_NAME_PROTOMEK;
+            case CV:
+            case SV:
+                return DIR_NAME_VEHICLE;
+            default:
+                return DIR_NAME_MECH;
+        }
+    }
+
+    private static String getImagePath(final Entity unit) {
+        if (unit instanceof Warship) {
+            return DIR_NAME_WARSHIP;
+        } else if (unit instanceof SpaceStation) {
+            return DIR_NAME_SPACESTATION;
+        } else if (unit instanceof Jumpship) {
+            return DIR_NAME_JUMPSHIP;
+        } else if (unit instanceof ConvFighter) {
+            return DIR_NAME_CONVFIGHTER;
+        } else if (unit instanceof Dropship) {
+            return DIR_NAME_DROPSHIP;
+        } else if (unit instanceof SmallCraft) {
+            return DIR_NAME_SMALLCRAFT;
+        } else if (unit instanceof Aero) {
+            return DIR_NAME_FIGHTER;
+        } else if (unit instanceof BattleArmor) {
+            return DIR_NAME_BA;
+        } else if (unit instanceof Infantry) {
+            return DIR_NAME_INFANTRY;
+        } else if (unit instanceof Protomech) {
+            return DIR_NAME_PROTOMEK;
+        } else if (unit instanceof Tank) {
+            return DIR_NAME_VEHICLE;
+        } else {
+            return DIR_NAME_MECH;
+        }
     }
 }

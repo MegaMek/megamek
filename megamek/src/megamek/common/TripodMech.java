@@ -1631,22 +1631,22 @@ public class TripodMech extends Mech {
     public boolean isValidSecondaryFacing(int dir) {
         return canChangeSecondaryFacing();
     }
-    
+
     /**
      * Based on the mech's current damage status, return valid brace locations.
      */
     @Override
     public List<Integer> getValidBraceLocations() {
         List<Integer> validLocations = new ArrayList<>();
-        
+
         if (!isLocationBad(Mech.LOC_RARM)) {
             validLocations.add(Mech.LOC_RARM);
         }
-        
+
         if (!isLocationBad(Mech.LOC_LARM)) {
             validLocations.add(Mech.LOC_LARM);
         }
-        
+
         return validLocations;
     }
 
@@ -1659,7 +1659,7 @@ public class TripodMech extends Mech {
                 || !isLocationBad(Mech.LOC_LARM))
                 && !isProne();
     }
-    
+
     @Override
     public int getBraceMPCost() {
         return 1;

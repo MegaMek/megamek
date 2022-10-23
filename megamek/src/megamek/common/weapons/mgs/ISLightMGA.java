@@ -15,6 +15,7 @@ package megamek.common.weapons.mgs;
 
 import megamek.common.AmmoType;
 import megamek.common.Game;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -74,4 +75,10 @@ public class ISLightMGA extends AmmoWeapon {
                                               GameManager manager) {
         return new MGAWeaponHandler(toHit, waa, game, manager);
     }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return 0;
+    }
+
 }

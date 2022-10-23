@@ -19,6 +19,9 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.Mounted;
+
 /**
  * @author Sebastian Brocks
  */
@@ -57,5 +60,18 @@ public class ISMML3 extends MMLWeapon {
             .setISAdvancement(DATE_NONE, 3067, 3073, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, true,false, false)
             .setProductionFactions(F_MERC,F_WB);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.4;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 0.3;
+        } else if (range == AlphaStrikeElement.LONG_RANGE) {
+            return 0.2;
+        } else {
+            return 0;
+        }
     }
 }

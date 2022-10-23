@@ -186,7 +186,7 @@ public class MekBVCalculator extends HeatTrackingBVCalculator {
                 toSubtract = 1;
             }
 
-            // PPCs with capacitors subtract 1 (Capacitor is already checked for)
+            // PPCs with capacitors subtract 1
             if (etype instanceof PPCWeapon) {
                 toSubtract = 1;
             }

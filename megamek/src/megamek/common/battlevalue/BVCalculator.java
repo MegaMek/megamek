@@ -297,7 +297,7 @@ public abstract class BVCalculator {
             totalArmorBV = totalArmor * armorMultiplier * barRating;
             String calculation = entity.getTotalArmor() + "";
             calculation += (modularArmor > 0) ? " + " + modularArmor + " (Mod.)" : "";
-            calculation += (torsoMountedCockpit > 0) ? " + " + torsoMountedCockpit + " (Torso-m. Cockpit)" : "";
+            calculation += (torsoMountedCockpit > 0) ? " + " + formatForReport(torsoMountedCockpit) + " (Torso-m. Cockpit)" : "";
             if (totalArmor > entity.getTotalArmor()) {
                 calculation = "(" + calculation + ")";
             }
@@ -927,7 +927,7 @@ public abstract class BVCalculator {
     /** @return the MP value to use for the Offensive Speed Factor (TM p.316) for this unit. */
     protected int offensiveSpeedFactorMP() {
         return runMP + (int) (Math.round(Math.max(jumpMP, umuMP) / 2.0));
-    };
+    }
 
     /** Processes unit type modifiers of TM, p.316. */
     protected void processOffensiveTypeModifier() { }
@@ -1008,15 +1008,10 @@ public abstract class BVCalculator {
      */
     protected void adjustBV() {
         adjustedBV = (int) Math.round(baseBV);
-        double tagBonus = bvTagBonus(entity);
         double c3Bonus = ignoreC3 ? 0 : entity.getExtraC3BV((int) Math.round(adjustedBV));
         double pilotFactor = ignoreSkill ? 1 : BVCalculator.bvMultiplier(entity);
 
-        if (tagBonus > 0) {
-            adjustedBV += tagBonus;
-            bvReport.addLine("Force Bonus (TAG):",
-                    "+ " + formatForReport(tagBonus), "= " + formatForReport(adjustedBV));
-        }
+        processTagBonus();
 
         if (c3Bonus > 0) {
             adjustedBV += c3Bonus;
@@ -1039,7 +1034,7 @@ public abstract class BVCalculator {
         }
     }
 
-    private static final double[][] bvMultipliers = new double[][]{
+    private static final double[][] bvMultipliers = new double[][] {
             {2.42, 2.31, 2.21, 2.10, 1.93, 1.75, 1.68, 1.59, 1.50},
             {2.21, 2.11, 2.02, 1.92, 1.76, 1.60, 1.54, 1.46, 1.38},
             {1.93, 1.85, 1.76, 1.68, 1.54, 1.40, 1.35, 1.28, 1.21},
@@ -1113,19 +1108,21 @@ public abstract class BVCalculator {
     }
 
     /**
-     * Returns the BV bonus that a unit with TAG, LTAG or C3M gets for friendly units that have semi-guided
+     * Processes the BV bonus that a unit with TAG, LTAG or C3M gets for friendly units that have semi-guided
      * or Arrow IV homing ammunition
      * (TO:AUE p.198, https://bg.battletech.com/forums/tactical-operations/tagguided-munitions-and-bv/)
-     *
-     * @param entity The entity to get the skill modifier for
-     * @return A BV bonus for the given entity
      */
-    public double bvTagBonus(Entity entity) {
+    public void processTagBonus() {
         long tagCount = workingTAGCount(entity);
         if ((tagCount == 0) || (entity.getGame() == null)) {
-            return 0;
+            return;
         }
-        double bvBonus = 0;
+
+        bvReport.startTentativeSection();
+        bvReport.addLine("TAG Bonus (" + tagCount + " Tag" + (tagCount == 1 ? "" : "s") + "):", "", "");
+        // In the lobby, bombs are represented as a bombChoices array, only later is it real Mounteds.
+        boolean hasGuided = false;
+
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
             if ((otherEntity == entity) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
@@ -1135,18 +1132,29 @@ public abstract class BVCalculator {
                 long munitionType = atype.getMunitionType();
                 if ((mounted.getUsableShotsLeft() > 0)
                         && ((munitionType == M_SEMIGUIDED) || (munitionType == M_HOMING))) {
-                    bvBonus += atype.getBV(otherEntity);
+                    adjustedBV += mounted.getType().getBV(entity) * tagCount;
+                    bvReport.addLine("- " + equipmentDescriptor(mounted),
+                            "+ " + tagCount + " x " + formatForReport(mounted.getType().getBV(entity))
+                                    + " (" + otherEntity.getShortName() + ")",
+                            "= " + formatForReport(adjustedBV));
+                    hasGuided = true;
                 }
             }
-            if (otherEntity instanceof Aero) {
-                Aero otherAero = (Aero) otherEntity;
-                BombType bomb = BombType.createBombByType(BombType.B_TAG);
-                if (bomb != null) {
-                    bvBonus += bomb.getBV(otherAero) * otherAero.getBombChoices()[BombType.B_TAG];
+            if (otherEntity instanceof IBomber) {
+                IBomber asBomber = (IBomber) otherEntity;
+                BombType bomb = BombType.createBombByType(BombType.B_HOMING);
+                int homingCount = asBomber.getBombChoices()[BombType.B_HOMING];
+                if (homingCount > 0) {
+                    adjustedBV += bomb.getBV(otherEntity) * asBomber.getBombChoices()[BombType.B_HOMING] * tagCount;
+                    bvReport.addLine("- " + bomb.getName(),
+                            "+ " + tagCount + " x " + formatForReport(bomb.getBV(otherEntity))
+                                    + " (" + otherEntity.getShortName() + ")",
+                            "= " + formatForReport(adjustedBV));
+                    hasGuided = true;
                 }
             }
         }
-        return bvBonus * tagCount;
+        bvReport.finalizeTentativeSection(hasGuided);
     }
 
     protected long workingTAGCount(Entity entity) {
@@ -1177,7 +1185,7 @@ public abstract class BVCalculator {
                     double bombBV = bombType.getBV(entity) * bombCount;
                     adjustedBV += bombBV;
                     bvReport.addLine("- " + bombType.getName(),
-                            "+ "+bombCount+" x "+formatForReport(bombType.getBV(entity)),
+                            "+ " + bombCount + " x " + formatForReport(bombType.getBV(entity)),
                             "= " + formatForReport(adjustedBV));
                     hasBombs = true;
                 }
@@ -1191,11 +1199,7 @@ public abstract class BVCalculator {
 
             }
         }
-        if (hasBombs) {
-            bvReport.endTentativeSection();
-        } else {
-            bvReport.discardTentativeSection();
-        }
+        bvReport.finalizeTentativeSection(hasBombs);
     }
 
     private double armorMultiplier(int location) {

@@ -35,7 +35,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
 
     @Override
     protected boolean usesWeaponHeat() {
-        return true;
+        return !(entity instanceof ConvFighter);
     }
 
     @Override
@@ -44,11 +44,15 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
             defensiveValue = 1;
             bvReport.addLine("Minimum Defensive Value", "", "= 1");
         }
-        defensiveValue = Math.max(1, defensiveValue);
     }
 
     @Override
     protected void processWeapons() {
+        if (entity instanceof ConvFighter) {
+            super.processWeapons();
+            return;
+        }
+
         List<WeaponBvHeatRecord> weaponRecords = new ArrayList<>();
         for (Mounted mounted : entity.getWeaponList()) {
             if (!countAsOffensiveWeapon(mounted)) {
@@ -149,8 +153,7 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
         }
 
         // double heat for ultras
-        if ((wType.getAmmoType() == AmmoType.T_AC_ULTRA)
-                || (wType.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+        if ((wType.getAmmoType() == AmmoType.T_AC_ULTRA) || (wType.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
             weaponHeat *= 2;
         } else if (wType.getAmmoType() == AmmoType.T_AC_ROTARY) {
             weaponHeat *= 6;
@@ -210,8 +213,6 @@ public abstract class HeatTrackingBVCalculator extends BVCalculator {
                 || !eType.isExplosive(mounted, true)) {
             return false;
         } else if ((eType instanceof AmmoType) && (mounted.getUsableShotsLeft() == 0)) {
-            return false;
-        } else if ((eType instanceof MiscType) && eType.hasFlag(MiscType.F_PPC_CAPACITOR)) {
             return false;
         } else if ((eType instanceof PPCWeapon) && (mounted.getLinkedBy() == null)) {
             return false;

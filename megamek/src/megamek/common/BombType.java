@@ -357,7 +357,7 @@ public class BombType extends AmmoType {
         bomb.setModes("Homing", "Non-Homing");
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
         bomb.shots = 1;
-        bomb.bv = 0;
+        bomb.bv = 30;
         bomb.cost = 3000;
         bomb.rulesRefs = "358, TO";
         bomb.techAdvancement.setTechBase(TECH_BASE_ALL)

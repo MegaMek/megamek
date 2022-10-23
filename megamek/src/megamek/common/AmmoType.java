@@ -13520,13 +13520,6 @@ public class AmmoType extends EquipmentType {
         return ((kgPerShot * shots) / 1000) * bv;
     }
 
-    /**
-     * @return BV for BA loads
-     */
-    public double getBABV() {
-        return ((kgPerShot * shots) / 1000) * bv;
-    }
-
     @Override
     public String getShortName() {
         return shortName.isBlank() ? getName() : shortName;

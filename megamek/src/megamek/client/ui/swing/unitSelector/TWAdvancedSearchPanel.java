@@ -1499,6 +1499,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         };
 
         public boolean matches(String name) {
+            if (name.toLowerCase().contains("ammo")) {
+                return false;
+            }
             if (this == PHYSICAL) {
                 String lName = name.toLowerCase();
 
@@ -1563,6 +1566,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                     WeaponClass.MACHINE_GUN.matches(name);
             } else if (this == RAC) {
                 if (name.toLowerCase().contains("rotary")) {
+                    System.err.println(name);
                     return true;
                 }
             } else if (this == ULTRA) {

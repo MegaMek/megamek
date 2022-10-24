@@ -1566,7 +1566,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                     WeaponClass.MACHINE_GUN.matches(name);
             } else if (this == RAC) {
                 if (name.toLowerCase().contains("rotary")) {
-                    System.err.println(name);
                     return true;
                 }
             } else if (this == ULTRA) {

@@ -905,7 +905,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
             GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
 
-            unitDisplay.saveSpliterLoc();
+            unitDisplay.saveSplitterLoc();
         }
 
         // Ruler display

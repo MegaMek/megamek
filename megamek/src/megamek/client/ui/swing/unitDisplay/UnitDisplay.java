@@ -108,8 +108,6 @@ public class UnitDisplay extends JPanel {
         ((GridBagLayout) getLayout()).setConstraints(displayP, c);
         add(displayP);
 
-        ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SUMMARY);
-
         if (controller != null) {
             registerKeyboardCommands(this, controller);
         }
@@ -155,11 +153,11 @@ public class UnitDisplay extends JPanel {
         splitABC.setLeftComponent(splitA1);
         splitABC.setRightComponent(splitBC);
 
-        splitABC.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitABCLoc());
-        splitBC.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitBCLoc());
-        splitA1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitA1Loc());
-        splitB1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitB1Loc());
-        splitC1.setDividerLocation(GUIPreferences.getInstance().getDisplaSplitC1Loc());
+        splitABC.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitABCLoc());
+        splitBC.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitBCLoc());
+        splitA1.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitA1Loc());
+        splitB1.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitB1Loc());
+        splitC1.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitC1Loc());
 
         butSwitchView.setPreferredSize(new Dimension(500,20));
 
@@ -268,7 +266,7 @@ public class UnitDisplay extends JPanel {
     * Save splitter locations to preferences
     *
     */
-    public void saveSpliterLoc() {
+    public void saveSplitterLoc() {
         GUIPreferences.getInstance().setDisplaySplitABCLoc(splitABC.getDividerLocation());
         GUIPreferences.getInstance().setDisplaySplitBCLoc(splitBC.getDividerLocation());
         GUIPreferences.getInstance().setDisplaySplitA1Loc(splitA1.getDividerLocation());

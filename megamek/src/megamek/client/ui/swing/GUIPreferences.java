@@ -606,23 +606,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(DISPLAY_START_TABBED);
     }
 
-    public int getDisplaSplitABCLoc() {
+    public int getDisplaySplitABCLoc() {
         return store.getInt(DISPLAY_SPLIT_ABC_LOC);
     }
 
-    public int getDisplaSplitBCLoc() {
+    public int getDisplaySplitBCLoc() {
         return store.getInt(DISPLAY_SPLIT_BC_LOC);
     }
 
-    public int getDisplaSplitA1Loc() {
+    public int getDisplaySplitA1Loc() {
         return store.getInt(DISPLAY_SPLIT_A1_LOC);
     }
 
-    public int getDisplaSplitB1Loc() {
+    public int getDisplaySplitB1Loc() {
         return store.getInt(DISPLAY_SPLIT_B1_LOC);
     }
 
-    public int getDisplaSplitC1Loc() {
+    public int getDisplaySplitC1Loc() {
         return store.getInt(DISPLAY_SPLIT_C1_LOC);
     }
 

@@ -104,8 +104,8 @@ public class Infantry extends Entity {
 
     // Infantry only have critical slots for field gun ammo
     private static final int[] NUM_OF_SLOTS = { 20, 20 };
-    private static final String[] LOCATION_ABBRS = { "MEN", "FGUN" };
-    private static final String[] LOCATION_NAMES = { "Men", "Field Guns"};
+    private static final String[] LOCATION_ABBRS = { "TPRS", "FGUN" };
+    private static final String[] LOCATION_NAMES = { "Troopers", "Field Guns" };
 
     public int turnsLayingExplosives = -1;
 

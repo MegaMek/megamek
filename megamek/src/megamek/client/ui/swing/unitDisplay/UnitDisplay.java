@@ -199,27 +199,13 @@ public class UnitDisplay extends JPanel {
     private void setDisplayTabbed() {
         tabStrip.setVisible(true);
 
-        if (displayP.getComponentCount() > 0){
-            displayP.removeAll();
-        }
-        if (mPanP.getComponentCount() > 0){
-            mPanP.removeAll();
-        }
-        if (pPanP.getComponentCount() > 0){
-            pPanP.removeAll();
-        }
-        if (aPanP.getComponentCount() > 0){
-            aPanP.removeAll();
-        }
-        if (wPanP.getComponentCount() > 0){
-            wPanP.removeAll();
-        }
-        if (sPanP.getComponentCount() > 0){
-            sPanP.removeAll();
-        }
-        if (ePanP.getComponentCount() > 0){
-            ePanP.removeAll();
-        }
+        displayP.removeAll();
+        mPanP.removeAll();
+        pPanP.removeAll();
+        aPanP.removeAll();
+        wPanP.removeAll();
+        sPanP.removeAll();
+        ePanP.removeAll();
 
         displayP.add(MechPanelTabStrip.SUMMARY, mPan);
         displayP.add(MechPanelTabStrip.PILOT, pPan);
@@ -240,9 +226,7 @@ public class UnitDisplay extends JPanel {
     private void setDisplayNonTabbed() {
         tabStrip.setVisible(false);
 
-        if (displayP.getComponentCount() > 0){
-            displayP.removeAll();
-        }
+        displayP.removeAll();
 
         mPan.setVisible(true);
         pPan.setVisible(true);

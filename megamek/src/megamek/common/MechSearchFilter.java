@@ -21,7 +21,10 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Class to perform filtering on units. This class stores a list of
@@ -177,6 +180,17 @@ public class MechSearchFilter {
           currNode.children.add(newChild);
           return createFTFromTokensRecursively(toks, currNode);
 
+        }
+
+        if (filterTok instanceof TWAdvancedSearchPanel.WeaponClassFT) {
+            if (currNode == null) {
+                currNode = new ExpNode();
+            }
+
+            TWAdvancedSearchPanel.WeaponClassFT ft = (TWAdvancedSearchPanel.WeaponClassFT) filterTok;
+            ExpNode newChild = new ExpNode(ft.weaponClass, ft.qty);
+            currNode.children.add(newChild);
+            return createFTFromTokensRecursively(toks, currNode);
         }
         return null;
     }
@@ -364,40 +378,71 @@ public class MechSearchFilter {
         //Base Case: See if any of the equipment matches the leaf node in
         // sufficient quantity
         if (n.children.isEmpty()) {
-            Iterator<String> eqIter = eq.iterator();
-            Iterator<Integer> qtyIter = qty.iterator();
-            while (eqIter.hasNext()) {
-                String currEq = eqIter.next();
+            if (n.weaponClass != null) {
+                // Since weapon classes can match across different types of equipment, we have to sum up
+                // all equipment that matches the weaponClass value.
+                // First, convert the two separate lists into a map of name->quantity.
+                List<Map.Entry<String, Integer>> nameQtyPairs = IntStream.range(0, Math.min(eq.size(), qty.size()))
+                    .mapToObj(i -> Map.entry(eq.get(i), qty.get(i)))
+                    .collect(Collectors.toList());
 
-                int currQty = qtyIter.next();
+                // Now, stream that map, filtering on a match with the WeaponClass, then extract the quantities and sum them up.
+                Integer total = nameQtyPairs.stream()
+                    .filter(p -> n.weaponClass.matches(p.getKey()))
+                    .map(e -> e.getValue())
+                    .reduce(0, (a, b) -> a + b);
 
-                if (null == currEq) {
-                    LogManager.getLogger().debug("List<String> currEq is null");
+                // If the requested quantity is 0, then we match if and only if the total number of matching equipment is also 0.
+                // Otherwise, we match if the total equals or exceeds the requested amount.
+                if (n.qty == 0)
+                {
+                    return total == 0;
+                }
+                else
+                {
+                    return total >= n.qty;
                 }
 
-                if (null == n) {
-                    LogManager.getLogger().debug("ExpNode n is null");
+            } else {
+                Iterator<String> eqIter = eq.iterator();
+                Iterator<Integer> qtyIter = qty.iterator();
+
+                while (eqIter.hasNext()) {
+                    String currEq = eqIter.next();
+
+                    int currQty = qtyIter.next();
+
+                    if (null == currEq) {
+                        LogManager.getLogger().debug("List<String> currEq is null");
+                        return false;
+                    }
+
+                    if (null == n) {
+                        LogManager.getLogger().debug("ExpNode n is null");
+                        return false;
+                    }
+
+                    // If the name matches, that means this is the weapon/equipment we are checking for.
+                    // If the requested quantity is greater than 0, then the unit quantity must equal or exceed it.
+                    // However, if the requested quantity is 0, then the simple fact that the weapon/equipment matches
+                    // means that the unit isn't a match for the filter, as it has a weapon/equipment that is required to
+                    // NOT be there.
+                    if (currEq.equals(n.name) && n.qty > 0 && currQty >= n.qty) {
+                        return true;
+                    } else if (currEq.equals(n.name) && n.qty == 0) {
+                        return false;
+                    }
+                    
                 }
 
-                // If the name matches, that means this is the weapon/equipment we are checking for.
-                // If the requested quantity is greater than 0, then the unit quantity must equal or exceed it.
-                // However, if the requested quantity is 0, then the simple fact that the weapon/equipment matches
-                // means that the unit isn't a match for the filter, as it has a weapon/equipment that is required to
-                // NOT be there.
-                if (currEq.equals(n.name) && n.qty > 0 && currQty >= n.qty) {
+                // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
+                // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
+                // a match.
+                if (n.qty == 0) {
                     return true;
-                } else if (currEq.equals(n.name) && n.qty == 0) {
+                } else {
                     return false;
                 }
-            }
-
-            // If we reach this point. It means that the MechSummary didn't have a weapon/equipment that matched the leaf node. 
-            // If the leaf quantity is 0, that means that the mech is a match. If the leaf quantity is non-zero, that means the mech isn't
-            // a match.
-            if (n.qty == 0) {
-                return true;
-            } else {
-                return false;
             }
         }
         // Otherwise, recurse on all the children and either AND the results
@@ -457,6 +502,7 @@ public class MechSearchFilter {
         public ExpNode parent;
         public BoolOp operation;
         public String name;
+        public TWAdvancedSearchPanel.WeaponClass weaponClass;
         public int qty;
         public List<ExpNode> children;
 
@@ -475,9 +521,10 @@ public class MechSearchFilter {
             parent = null;
             this.operation = e.operation;
             this.qty = e.qty;
-            if (e.name != null) {
+            //if (e.name != null) {
                 this.name = e.name;
-            }
+           // }
+           this.weaponClass = e.weaponClass;
             Iterator<ExpNode> nodeIter = e.children.iterator();
             this.children = new LinkedList<>();
             while (nodeIter.hasNext()) {
@@ -488,6 +535,16 @@ public class MechSearchFilter {
         public ExpNode(String n, int q) {
             parent = null;
             name = n;
+            weaponClass = null;
+            qty = q;
+            operation = BoolOp.NOP;
+            children = new LinkedList<>();
+        }
+
+        public ExpNode(TWAdvancedSearchPanel.WeaponClass n, int q) {
+            parent = null;
+            name = null;
+            weaponClass = n;
             qty = q;
             operation = BoolOp.NOP;
             children = new LinkedList<>();
@@ -497,10 +554,19 @@ public class MechSearchFilter {
         public String toString() {
             // Base Case: this is a leaf-node
             if (children.isEmpty()) {
-                if (qty == 1) {
-                    return qty + " " + name;
-                } else {
-                    return qty + " " + name + "s";
+                if (name != null) {
+                    if (qty == 1) {
+                        return qty + " " + name;
+                    } else {
+                        return qty + " " + name + "s";
+                    }
+                }
+                else if (weaponClass != null) {
+                    if (qty == 1) {
+                        return qty + " " + weaponClass.toString();
+                    } else {
+                        return qty + " " + weaponClass.toString() + "s";
+                    }
                 }
             }
 

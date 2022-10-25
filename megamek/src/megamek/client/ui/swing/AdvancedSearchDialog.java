@@ -254,7 +254,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cboTechClass.setModel(techClassModel);
         cboTechClass.addActionListener(this);
 
-
         //Setup Weapons Table
         scrTableWeapons.setMinimumSize(new Dimension(850, 150));
         scrTableWeapons.setPreferredSize(new Dimension(850, 150));
@@ -1107,6 +1106,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     }
 
+            /**
+     * A table model for displaying weapon types
+     */
+    
     /**
      * A table model for displaying equipment
      */
@@ -1241,6 +1244,81 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             tblWeapons.keyTyped(evt);
         } else if (evt.getComponent().equals(tblEquipment)) {
             tblEquipment.keyTyped(evt);
+        }
+    }
+
+
+    /**
+     * Base class for different tokens that can be in a filter expression.
+     * @author Arlith
+     */
+    public class FilterTokens {
+
+    }
+
+    /**
+     * FilterTokens subclass that represents parenthesis.
+     * @author Arlith
+     */
+    public class ParensFT extends FilterTokens {
+        public String parens;
+
+        public ParensFT(String p) {
+            parens = p;
+        }
+
+        @Override
+        public String toString() {
+            return parens;
+        }
+    }
+
+    /**
+     * FilterTokens subclass that represents equipment.
+     * @author Arlith
+     */
+    public class EquipmentFT extends FilterTokens {
+        public String internalName;
+        public String fullName;
+        public int qty;
+
+        public EquipmentFT(String in, String fn, int q) {
+            internalName = in;
+            fullName = fn;
+            qty = q;
+        }
+
+        @Override
+        public String toString() {
+            if (qty == 1) {
+                return qty + " " + fullName;
+            } else {
+                return qty + " " + fullName + "s";
+            }
+        }
+    }
+
+    /**
+     * FilterTokens subclass that represents a boolean operation.
+     * @author Arlith
+     *
+     */
+    public class OperationFT extends FilterTokens {
+        public MechSearchFilter.BoolOp op;
+
+        public OperationFT(MechSearchFilter.BoolOp o) {
+            op = o;
+        }
+
+        @Override
+        public String toString() {
+            if (op == MechSearchFilter.BoolOp.AND) {
+                return "And";
+            } else if (op == MechSearchFilter.BoolOp.OR) {
+                return "Or";
+            } else {
+                return "";
+            }
         }
     }
 }

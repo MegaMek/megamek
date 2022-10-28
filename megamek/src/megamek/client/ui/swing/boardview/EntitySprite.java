@@ -700,7 +700,7 @@ class EntitySprite extends Sprite {
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1)
-                    && !(isInfantry && !((Infantry) entity).hasFieldGun()
+                    && !(isInfantry && !((Infantry) entity).hasFieldWeapon()
                             && !((Infantry) entity).isTakingCover())
                     && !(isAero && ((IAero) entity).isSpheroid() && !board.inSpace())) {
                 // Indicate a stacked unit with the same facing that can still move

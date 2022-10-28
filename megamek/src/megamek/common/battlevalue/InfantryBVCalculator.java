@@ -94,8 +94,8 @@ public class InfantryBVCalculator {
         InfantryWeapon primaryW = infantry.getPrimaryWeapon();
         InfantryWeapon secondW = infantry.getSecondaryWeapon();
         int squadsize = infantry.getSquadSize();
-        int secondn = infantry.getSecondaryN();
-        int squadn = infantry.getSquadN();
+        int secondn = infantry.getSecondaryWeaponsPerSquad();
+        int squadn = infantry.getSquadCount();
 
         if (null != primaryW) {
             wbv += primaryW.getBV(infantry) * (squadsize - secondn);

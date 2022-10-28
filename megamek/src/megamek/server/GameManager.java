@@ -32711,7 +32711,7 @@ public class GameManager implements IGameManager {
                 Infantry guerrilla = new Infantry();
                 guerrilla.setChassis("Insurgents");
                 guerrilla.setModel("(Rifle)");
-                guerrilla.setSquadN(4);
+                guerrilla.setSquadCount(4);
                 guerrilla.setSquadSize(7);
                 guerrilla.autoSetInternal();
                 guerrilla.getCrew().setGunnery(5, 0);

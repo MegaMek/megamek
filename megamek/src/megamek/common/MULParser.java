@@ -827,7 +827,7 @@ public class MULParser {
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
             if (!infSquadNum.isBlank()) {
-                inf.setSquadN(Integer.parseInt(infSquadNum));
+                inf.setSquadCount(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }
         }
@@ -1455,7 +1455,7 @@ public class MULParser {
                 } else {
                     entity.setInternal(pointsVal, loc);
                     if (entity instanceof Infantry) {
-                        ((Infantry) entity).damageOrRestoreFieldGunsAndArty();
+                        ((Infantry) entity).damageOrRestoreFieldWeapons();
                         entity.applyDamage();
                     }
                 }
@@ -2690,7 +2690,7 @@ public class MULParser {
         en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
         en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
         if (en instanceof Infantry) {
-            ((Infantry) en).damageOrRestoreFieldGunsAndArty();
+            ((Infantry) en).damageOrRestoreFieldWeapons();
             en.applyDamage();
         }
         if (en.hasRearArmor(loc)) {

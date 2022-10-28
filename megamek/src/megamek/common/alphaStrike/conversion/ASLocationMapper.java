@@ -48,7 +48,7 @@ public class ASLocationMapper {
         } else if (en instanceof BattleArmor) {
             return 1;
         } else if (en instanceof Infantry) {
-            return ((Infantry) en).hasFieldGun() ? 2 : 1;
+            return ((Infantry) en).hasFieldWeapon() ? 2 : 1;
         } else {
             return 1;
         }

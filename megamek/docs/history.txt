@@ -1,6 +1,27 @@
 VERSION HISTORY:
 ----------------
-0.49.9-SNAPSHOT
+0.49.11-SNAPSHOT
++ Issue #3776 - Add 0 as a selectable weapon/equipment quantity in advanced search
++ PR #3908: Connections Rework: Logging Modernization
++ PR #3910: Remove unused modes from TAG weapons
++ PR #3929: Fix slots used by engines in Conventional Fighters
++ PR #3927: Improve the info shown in the unit tooltip for Conventional Infantry 
++ PR #3925: Fix loading damaged CI and BA from a .MUL file
++ PR #3932, 3940, 3942: Advanced search can now filter on weapon class
++ PR #3935: CI Field Guns and Artillery are now destroyed with trooper loss according to TO:AUE
++ PR #3158: AlphaStrike conversion update and cards
++ PR #3944: Infantry refactor
++ PR #3946: Add a non-tabbed Unit Display
+
+0.49.10 (2022-09-12 1500 UTC)
++ Data: Shorten RAT names for FM3145
++ PR #3887 - Excised Rumble Seat and move to Legacy quirk.
++ PR #3886 - Simplify handling of submunition names
++ Issue #3880 - Respect the setting for showing incline graphics
++ PR #3882 - Base Components: DefaultScrollablePanel
++ Issue #3895 - fix minimap NPE  
+
+0.49.9 (2022-09-06 2100 UTC)
 + Data: Updating Tags on Board Files
 + Issue #3662: Draw "Target Movement Modifier" on final legal step of current movement path
 + PR #3672: Removed No Torso Twist & updated quirks per BMM v6 errata
@@ -71,6 +92,14 @@ VERSION HISTORY:
 + PR #3853: Base Components: Adding AbstractScrollablePanel
 + PR #3855: Add a unit browser to the main menu
 + Issues #2397, #2675, #3135: Fixing Shadow Rendering Issues
++ PR #3859: Unit specifid deployment zone width/offset now persist to and load from MUL
++ PR #3840: BV calculation report for BA
++ PR #3823: Consolidate MASC/SC Target Number lookup
++ PR #3879 (MML Issue #1165): Improve handling of illegal armor on BA units in the TRO View
++ Data: New Camos, New Sprites, updated unit files, adding the buildable Boondoggles units, Tech Progression adjustments.
++ PR #3881 - Improvements to ammunition shortNames fixes MML #1153
++ Updating to Gradle 7.5.1 from 6.7
++ Updating to grgit 5.0.0 from 4.1.1
 + Updating to FlatLAF 2.4 from 2.2
 + Updating to Log4j 2.18.0 from 2.17.2
 + Updating to Mockito 4.6.1 from 4.5.1

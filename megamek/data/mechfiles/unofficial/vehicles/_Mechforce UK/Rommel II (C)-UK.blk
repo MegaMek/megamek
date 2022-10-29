@@ -1,0 +1,79 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Rommel II
+</Name>
+<Model>
+(C)-UK
+</Model>
+<Tonnage>
+75
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+98
+65
+65
+44
+54
+</Armor>
+<Turret Equipment>
+CLUltraAC20
+CLSRM6
+CLSRM6
+ISMediumPulseLaser
+ISTAG
+</Turret Equipment>
+<Front Equipment>
+CLLightMG
+CLLightMG
+</Front Equipment>
+<Rear Equipment>
+CLERSmallLaser
+</Rear Equipment>
+<Body Equipment>
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLSRM6 Ammo
+CLSRM6 Ammo
+CLLightMG Ammo (200)
+CLECMSuite
+CLActiveProbe
+ISC3SlaveUnit
+ISCASE
+</Body Equipment>
+<type>
+Mixed (IS Chassis) Unofficial
+</type>
+<year>
+3055
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<armor_tech>
+2
+</armor_tech>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

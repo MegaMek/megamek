@@ -60,10 +60,6 @@ public class ISERFlamer extends FlamerWeapon {
 
     @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {
-        if (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) {
-            return 2;
-        } else {
-            return 0;
-        }
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 2 : 0;
     }
 }

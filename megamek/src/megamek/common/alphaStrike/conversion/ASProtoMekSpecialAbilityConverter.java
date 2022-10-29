@@ -57,7 +57,7 @@ public class ASProtoMekSpecialAbilityConverter extends ASSpecialAbilityConverter
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 
-        if (entity.getMovementMode().equals(EntityMovementMode.WIGE)) {
+        if (entity.getMovementMode().isWiGE()) {
             assign("Glider ProtoMek", GLD);
         }
 

@@ -21,6 +21,7 @@ package megamek.common.alphaStrike.conversion;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.common.*;
+import megamek.common.alphaStrike.ASArcs;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.annotations.Nullable;
@@ -41,7 +42,7 @@ public final class ASConverter {
     //TODO: pilot skill not working
 
     public static AlphaStrikeElement convertForMechCache(Entity entity) {
-        return performConversion(entity, false, new DummyCalculationReport());
+        return performConversion(entity, false, new DummyCalculationReport(), entity.getCrew());
     }
 
     public static AlphaStrikeElement convert(Entity entity, CalculationReport conversionReport) {
@@ -67,10 +68,14 @@ public final class ASConverter {
             LogManager.getLogger().error("Could not obtain clean Entity for AlphaStrike conversion.");
             return null;
         }
-        return performConversion(undamagedEntity, includePilot, conversionReport);
+        if (entity.getGame() != null) {
+            undamagedEntity.setGame(entity.getGame());
+        }
+        return performConversion(undamagedEntity, includePilot, conversionReport, entity.getCrew());
     }
 
-    private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot, CalculationReport conversionReport) {
+    private static AlphaStrikeElement performConversion(Entity entity, boolean includePilot,
+                                                        CalculationReport conversionReport, Crew originalCrew) {
         Objects.requireNonNull(entity);
         if (!canConvert(entity)) {
             LogManager.getLogger().error("Cannot convert this type of Entity: " + entity.getShortName());
@@ -89,9 +94,9 @@ public final class ASConverter {
         element.setRole(UnitRoleHandler.getRoleFor(entity));
 
         if (entity.getShortName().length() < 15) {
-            conversionReport.addHeader("AlphaStrike Conversion for " + entity.getShortName());
+            conversionReport.addHeader("Alpha Strike Conversion for " + entity.getShortName());
         } else {
-            conversionReport.addHeader("AlphaStrike Conversion for");
+            conversionReport.addHeader("Alpha Strike Conversion for");
             conversionReport.addHeader(entity.getShortName());
         }
         conversionReport.addEmptyLine();
@@ -118,12 +123,11 @@ public final class ASConverter {
 
         // Skill
         if (includePilot) {
-            if ((entity instanceof Infantry) && element.isConventionalInfantry()) {
-                // CI only use their Gunnery skill, as there is no piloting (only Anti-Mek at a base of 8)
-                element.setSkill(entity.getCrew().getGunnery());
+            if (element.isConventionalInfantry() || element.isProtoMek()) {
+                // CI and PM have no Piloting skill and so use only their Gunnery
+                element.setSkill(originalCrew.getGunnery());
             } else {
-                //TODO: multi-crew units
-                element.setSkill((entity.getCrew().getPiloting() + entity.getCrew().getGunnery()) / 2);
+                element.setSkill((originalCrew.getPiloting() + originalCrew.getGunnery()) / 2);
             }
         }
         conversionReport.addLine("Skill:", Integer.toString(element.getSkill()));
@@ -203,7 +207,7 @@ public final class ASConverter {
     }
 
     /** Retrieves a fresh (undamaged && unmodified) copy of the given entity. */
-    private static Entity getUndamagedEntity(Entity entity) {
+    private static @Nullable Entity getUndamagedEntity(Entity entity) {
         try {
             MechSummary ms = MechSummaryCache.getInstance().getMech(entity.getShortNameRaw());
             return new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -216,6 +220,19 @@ public final class ASConverter {
     /** Returns the given number, rounded up to the nearest integer, based on the first decimal only. */
     public static int roundUp(double number) {
         return (int) Math.round(number + 0.4); 
+    }
+
+    public static int toInt(ASArcs arc) {
+        switch (arc) {
+            case LEFT:
+                return 1;
+            case RIGHT:
+                return 2;
+            case REAR:
+                return 3;
+            default:
+                return 0;
+        }
     }
 
     private ASConverter() { }

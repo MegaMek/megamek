@@ -28,7 +28,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * This class encapsulates a block of AlphaStrike or Battleforce or SBF special abilities. Most
  * Alphastrike elements or BF or SBF formations have a single such block of special abilities which
  * may be empty or contain one or many SPAs. AlphaStrike elements that use arcs have an additional special
- * ability block per arc. Units with turret(s) have one or more such blocks as part of the ASArcSummaries
+ * ability block per arc. Units with turret(s) have one or more such blocks as part of the ASTurretSummary
  * representing the turret(s).
  */
 public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilityCollector {

@@ -1,0 +1,154 @@
+Version:1.0
+Black Fang
+BKF-2-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:5
+
+Mass:100
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:20 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:48
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:9
+1 CLLargePulseLaser, Right Arm
+1 CLAntiMissileSystem, Right Arm, Ammo:24
+1 CLMediumPulseLaser, Right Arm
+1 CLLargePulseLaser, Left Arm
+1 CLAntiMissileSystem, Left Arm
+1 CLATM12, Right Torso, Ammo:20
+1 CLATM12, Left Torso
+1 CLERLargeLaser, Center Torso
+1 CLECMSuite, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLAntiMissileSystem
+CLAMS Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLAntiMissileSystem
+CLMediumPulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 HE Ammo
+CLATM12 Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 ER Ammo
+CLATM12 Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+Jump Jet
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERLargeLaser
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLECMSuite
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

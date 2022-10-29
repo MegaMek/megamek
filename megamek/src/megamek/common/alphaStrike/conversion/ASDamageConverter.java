@@ -28,6 +28,8 @@ import java.util.*;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
 import static megamek.common.ITechnology.TECH_BASE_CLAN;
+import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
+import static megamek.common.MiscType.F_RADICAL_HEATSINK;
 import static megamek.common.alphaStrike.AlphaStrikeElement.*;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 
@@ -57,6 +59,7 @@ public class ASDamageConverter {
     protected List<Mounted> weaponsList;
     protected boolean needsHeatAdjustment = false;
     protected double heatAdjustFactor = 1;
+    protected double heatAdjustFactorLE = 1;
 
     protected ASDamage finalSDamage;
     protected ASDamage finalMDamage;
@@ -280,7 +283,8 @@ public class ASDamageConverter {
                 report.addLine("Heat Capacity: ", heatCapacity + ", no heat adjustment", "");
             } else {
                 report.addLine("Heat Capacity: ", heatCapacity + "", "");
-                double lDamageAdjusted = rawLDamage * heatCapacity / (longRangeFrontHeat - 4);
+                heatAdjustFactorLE = heatCapacity / (longRangeFrontHeat - 4);
+                double lDamageAdjusted = rawLDamage * heatAdjustFactorLE;
                 roundedUpAdjusted = ASConverter.roundUp(roundUpToTenth(lDamageAdjusted));
                 report.addLine("Raw L damage:",
                         formatForReport(rawLDamage) + ", " + rdUp, "= " + roundedUpRaw);
@@ -310,8 +314,9 @@ public class ASDamageConverter {
             if (longRangeFrontHeat - 4 <= heatCapacity) {
                 report.addLine("Heat Capacity: ", heatCapacity + ", no heat adjustment", "");
             } else {
+                heatAdjustFactorLE = heatCapacity / (longRangeFrontHeat - 4);
                 report.addLine("Heat Capacity: ", heatCapacity + "", "");
-                double lDamageAdjusted = rawLDamage * heatCapacity / (longRangeFrontHeat - 4);
+                double lDamageAdjusted = rawLDamage * heatAdjustFactorLE;
                 report.addLine("Adjusted Damage: ",
                         formatForReport(rawLDamage) + " x " + heatCapacity + " / ("
                                 + formatForReport(longRangeFrontHeat) + " - 4)",
@@ -571,9 +576,13 @@ public class ASDamageConverter {
             if (dmgType != IF) {
                 finalText = "Adjusted final value:";
             }
-            if (element.hasSUA(OVL)) {
+            if (locations[0].hasSUA(OVL)) {
                 damage[2] *= heatAdjustFactor;
                 damage[3] *= heatAdjustFactor;
+                finalText = "Adjusted final value:";
+            } else if (heatAdjustFactorLE < 1) {
+                damage[2] *= heatAdjustFactorLE;
+                damage[3] *= heatAdjustFactorLE;
                 finalText = "Adjusted final value:";
             }
         }
@@ -715,12 +724,12 @@ public class ASDamageConverter {
         switch (dmgType) {
             case LRM:
                 return !MountedHelper.isAnyArtemis(weapon.getLinkedBy())
-                        && (weaponType.getBattleForceClass() == WeaponType.BFCLASS_LRM)
-                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML);
+                        && ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_LRM)
+                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
             case SRM:
                 return !MountedHelper.isAnyArtemis(weapon.getLinkedBy())
-                        && (weaponType.getBattleForceClass() == WeaponType.BFCLASS_SRM)
-                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML);
+                        && ((weaponType.getBattleForceClass() == WeaponType.BFCLASS_SRM)
+                        || (weaponType.getBattleForceClass() == WeaponType.BFCLASS_MML));
             case FLK:
                 return weaponType.getBattleForceClass() == WeaponType.BFCLASS_FLAK;
             case AC:
@@ -939,17 +948,17 @@ public class ASDamageConverter {
         } else if (entity.isFighter() || element.usesArcs()) {
             heatCapacity = entity.getHeatCapacity(false);
         }
-        long coolantPodCount = entity.getEquipment().stream().filter(Mounted::isCoolantPod).count();
+        long coolantPodCount = entity.getEquipment().stream().filter(MountedHelper::isCoolantPod).count();
         if (coolantPodCount > 0) {
-            heatCapacity += coolantPodCount;
+            heatCapacity += (int) coolantPodCount;
         }
         if (entity.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
             heatCapacity += 3;
         }
-        if (element.hasSUA(RHS)) {
+        if (entity.hasMisc(F_RADICAL_HEATSINK)) {
             heatCapacity += 1;
         }
-        if (element.hasSUA(ECS)) {
+        if (entity.hasMisc(F_EMERGENCY_COOLANT_SYSTEM)) {
             heatCapacity += 1;
         }
         return heatCapacity;

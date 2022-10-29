@@ -1,0 +1,12 @@
+Lyran Commonwealth Heavy Mechs B
+Archer ARC-7S,1
+Defiance DFN-3S,2
+Marauder MAD-9W2,3
+Barghest BGS-4T,4
+Black Hawk-KU BHKU-O,5
+Ursa URA-2A,6
+Gotterdammerung GTD-20S,5
+Warhammer WHD-10CT,4
+Scourge SCG-WF1,3
+Mangonel MNL-3W,2
+Scourge SCG-WD1,1

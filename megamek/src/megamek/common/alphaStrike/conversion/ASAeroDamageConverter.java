@@ -60,6 +60,11 @@ class ASAeroDamageConverter extends ASDamageConverter {
                     formatForReport(eDamage) + " x (see M)",
                     "= " + formatForReport(eDamage * heatAdjustFactor));
             eDamage = eDamage * heatAdjustFactor;
+        } else if (heatAdjustFactorLE < 1) {
+            report.addLine("Adjusted Damage: ",
+                    formatForReport(eDamage) + " x (see L)",
+                    "= " + formatForReport(eDamage * heatAdjustFactorLE));
+            eDamage = eDamage * heatAdjustFactor;
         }
 
         finalEDamage = ASDamage.createDualRoundedUp(eDamage);

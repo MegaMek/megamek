@@ -68,7 +68,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("squadn")) {
             throw new EntityLoadingException("Could not find number of squads.");
         }
-        t.setSquadN(dataFile.getDataAsInt("squadn")[0]);
+        t.setSquadCount(dataFile.getDataAsInt("squadn")[0]);
 
         t.autoSetInternal();
 
@@ -94,7 +94,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         // get primary and secondary weapons
         if (dataFile.exists("secondn")) {
-            t.setSecondaryN(dataFile.getDataAsInt("secondn")[0]);
+            t.setSecondaryWeaponsPerSquad(dataFile.getDataAsInt("secondn")[0]);
         }
 
         if (!dataFile.exists("Primary")) {
@@ -120,7 +120,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         // if there is more than one secondary weapon per squad, then add that
         // to the unit
         // otherwise add the primary weapon
-        if ((t.getSecondaryN() > 1) && (null != stype)) {
+        if ((t.getSecondaryWeaponsPerSquad() > 1) && (null != stype)) {
             try {
                 t.addEquipment(stype, Infantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {

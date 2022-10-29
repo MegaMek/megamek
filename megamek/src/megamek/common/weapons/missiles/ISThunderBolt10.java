@@ -78,9 +78,7 @@ public class ISThunderBolt10 extends ThunderBoltWeapon {
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
             return 0.58;
-        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
-            return 1;
-        } else if (range == AlphaStrikeElement.LONG_RANGE) {
+        } else if (range <= AlphaStrikeElement.LONG_RANGE) {
             return 1;
         } else {
             return 0;

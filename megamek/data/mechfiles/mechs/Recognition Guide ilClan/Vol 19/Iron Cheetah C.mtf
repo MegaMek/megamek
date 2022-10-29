@@ -1,9 +1,8 @@
-Version:1.0
+Version:1.3
 Iron Cheetah
 C
 mul id:8322
-
-Config:Biped
+Config:Biped Omnimech
 techbase:Clan
 era:3054
 source:Rec Guide:ilClan #19 - Clan Invasion
@@ -15,6 +14,7 @@ structure:Clan Endo Steel
 myomer:Standard
 
 heat sinks:24 Clan Double
+base chassis heat sinks:16
 walk mp:4
 jump mp:0
 
@@ -33,54 +33,54 @@ RTC armor:14
 
 Weapons:11
 ER Large Laser, Left Arm
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Streak SRM 2, Left Arm
+ER Large Laser, Right Arm
 ER Large Laser, Right Arm
 Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Left Arm
 Streak SRM 2, Right Arm
-Streak SRM 2, Left Arm
 LRM 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERLargeLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLStreakSRM2
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLStreakSRM2 (OMNIPOD)
 Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERLargeLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLStreakSRM2
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLERLargeLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLMediumPulseLaser (OMNIPOD)
+CLStreakSRM2 (OMNIPOD)
 Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -89,12 +89,12 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM15
-CLLRM15
-Clan Ammo LRM-15
-Clan Streak SRM 2 Ammo
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLLRM15 (OMNIPOD)
+CLLRM15 (OMNIPOD)
+Clan Ammo LRM-15 (OMNIPOD)
+Clan Streak SRM 2 Ammo (OMNIPOD)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -156,12 +156,15 @@ Clan Endo Steel
 -Empty-
 -Empty-
 
-overview:The final OmniMech of Clan Smoke Jaguar. Designed to represent the pinnacle of 3050's technology. 
+overview:The final OmniMech of Clan Smoke Jaguar. Designed to represent the pinnacle of 3050's technology.
+capabilities:Designed to improve upon the Dire Wolf, the Iron Cheetah mounts a 400-rated XL engine. This enables to the 'Mech to reach speeds of 64 km/h. While designers feared the increased engine mass would excessively reduce the 'Mech's payload, the increased cooling efficiency meant little impact to the 'Mech's practical punch. Both Endo Steel and ferro-fibrous armor were used to save additional weight.
+deployment:The C-configuration is designed for holding the line with direct fire weapons. Quadruple ER Large Lasers and an LRM 15 allow the Iron Cheetah to strike at extreme ranges. Four Medium Pulse Lasers and two Streak SRM 2s handle any opponents who manage to close into shorter distances. Eight additional Double Heat Sinks handle the extra waste heat.
+history:Even though the Smoke Jaguars were running into issues of limited resources, they were still able to develop one last OmniMech. The Iron Cheetah was designed to supplement the Dire Wolf and represented the pinnacle of 3050's BattleMech technology. The lack of sufficient resources precluded the Jaguar ability to field more than a handful of these machines before their Annihilation at the hands of the Inner Sphere. The Draconis Combine was able to salvage a few chassis, which were assigned to the most prestigious of MechWarriors. The plans for the Iron Cheetah managed to find their way to Clan Diamond Shark but it wasn't until 3080s that the Diamond Sharks were able to put the OmniMech into production. The Republic of the Sphere purchased an exclusivity contract, thus preventing widespread dissemination of the Iron Cheetah. The Republic concentrated its machines in Stone's Brigade and the Fidelis. With the death of the Republic, Clan Sea Fox began selling the Iron Cheetah on the open market, mostly to House Steiner, Marik, and Davion. Only Clan Snow Raven and Clan Wolf-in-Exile have shown interest in the 'Mech.
 manufacturer:Manufacturing Plant SFF
 primaryfactory:Itabaiana
 systemmanufacturer:CHASSIS:DSAM Endo 4
 systemmanufacturer:ENGINE:400 Model SF-3 XL
 systemmanufacturer:ARMOR:Composite A-4 Ferro-Fibrous
-systemmanufacturer:COMMUNICATIONS:TJ6 “Bell” Integrated Communication System
+systemmanufacturer:COMMUNICATIONS:TJ6 â€œBellâ€? Integrated Communication System
 systemmanufacturer:TARGETING:Series III OPT
 

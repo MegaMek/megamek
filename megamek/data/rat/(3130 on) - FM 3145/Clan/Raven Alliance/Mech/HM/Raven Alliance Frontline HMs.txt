@@ -1,0 +1,12 @@
+Raven Alliance Frontline Heavy Mechs
+Arcas (Standard),1
+Rifleman IIC 8,2
+Crossbow Prime,3
+Ryoken II 3,4
+Vulture (Mad Dog) Prime,5
+Karhu Prime,6
+Mad Cat Mk IV (Savage Wolf) (Prime),5
+Vulture Mk IV (Mad Dog Mk IV) Prime,4
+Linebacker Prime,3
+Cauldron-Born (Ebon Jaguar) Prime,2
+Mad Cat (Timber Wolf) Prime,1

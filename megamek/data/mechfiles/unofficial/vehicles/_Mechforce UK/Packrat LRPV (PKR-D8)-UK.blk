@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Packrat LRPV
+</Name>
+<Model>
+(PKR-D8)-UK
+</Model>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+7
+</cruiseMP>
+<Armor>
+16
+16
+16
+16
+</Armor>
+<Front Equipment>
+ISLRM10
+</Front Equipment>
+<Body Equipment>
+ISLRM10 Ammo
+ISLRM10 Ammo
+</Body Equipment>
+<type>
+IS Level 5
+</type>
+<year>
+3025
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

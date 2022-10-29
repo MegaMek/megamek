@@ -1,0 +1,12 @@
+Free Worlds League States Battle Armor B - 3145
+Leonidas Battle Armor (David),1
+IS Standard Battle Armor [Laser],2
+Longinus Battle Armor [Laser],3
+Achileus Light Battle Armor [Laser],4
+Ogre Battle Armor (Standard),5
+Phalanx Battle Armor (A),6
+Kopis Assault Battle Armor (Anti-Infantry),5
+Kopis Assault Battle Armor 'The Dark Alley',4
+Xiphos Assault Battle Armor (A),3
+Ogre Battle Armor (Interdictor),2
+Phalanx Battle Armor (A),1

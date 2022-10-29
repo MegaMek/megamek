@@ -48,7 +48,7 @@ public class ASLocationMapper {
         } else if (en instanceof BattleArmor) {
             return 1;
         } else if (en instanceof Infantry) {
-            return ((Infantry) en).hasFieldGun() ? 2 : 1;
+            return ((Infantry) en).hasFieldWeapon() ? 2 : 1;
         } else {
             return 1;
         }
@@ -66,11 +66,11 @@ public class ASLocationMapper {
             return getJumpShipLocationMultiplier((Jumpship) en, loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof SmallCraft) {
             return getSmallCraftLocationMultiplier((SmallCraft) en, loc, mount.getLocation(), mount.isRearMounted());
-        } else if (en instanceof SupportTank) {
+        } else if ((en instanceof SupportTank) && !(en instanceof LargeSupportTank)) {
             return getSupportTankLocationMultiplier(loc, mount.getLocation());
         } else if (en instanceof VTOL) {
             return getVTOLLocationMultiplier(loc, mount.getLocation());
-        } else if (en instanceof SuperHeavyTank) {
+        } else if ((en instanceof SuperHeavyTank) || (en instanceof LargeSupportTank)) {
             return getSuperHeavyTankLocationMultiplier(loc, mount.getLocation());
         } else if (en instanceof Tank) {
             return getTankLocationMultiplier(loc, mount.getLocation());

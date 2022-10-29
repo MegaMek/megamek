@@ -561,7 +561,7 @@ public class MechView {
             Infantry inf = (Infantry) entity;
             retVal.add(new LabeledElement(Messages.getString("MechView.Men"),
                     entity.getTotalInternal()
-                            + " (" + inf.getSquadSize() + "/" + inf.getSquadN()
+                            + " (" + inf.getSquadSize() + "/" + inf.getSquadCount()
                             + ")"));
         } else {
             String internal = String.valueOf(entity.getTotalInternal());
@@ -760,7 +760,7 @@ public class MechView {
             retVal.add(new LabeledElement("Secondary Weapon",
                     (null != inf.getSecondaryWeapon()) ?
                             inf.getSecondaryWeapon().getDesc()
-                                    + " (" + inf.getSecondaryN() + ")" : "None"));
+                                    + " (" + inf.getSecondaryWeaponsPerSquad() + ")" : "None"));
             retVal.add(new LabeledElement("Damage per trooper",
                     String.format("%3.3f", inf.getDamagePerTrooper())));
             retVal.add(new SingleLine());

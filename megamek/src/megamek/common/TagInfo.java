@@ -24,17 +24,12 @@ public class TagInfo implements Serializable {
     public int attackerId; // who fired the TAG
     public int targetType; // keeps track of the target's type
     public Targetable target; // entity the tag was fired at
-    public int priority; // how many homing missiles to grab at a time
     public boolean missed; // did the TAG hit?
-    public int shots = 0; // number of homing missiles allocated
 
-    public TagInfo(int attackerId, int targetType, Targetable target,
-            int priority, boolean missed) {
+    public TagInfo(int attackerId, int targetType, Targetable target, boolean missed) {
         this.attackerId = attackerId;
         this.targetType = targetType;
         this.target = target;
-        this.priority = priority;
         this.missed = missed;
-        this.shots = priority;
     }
 }

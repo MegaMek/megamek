@@ -16,8 +16,7 @@ package megamek.client.ui.swing.util;
 
 import megamek.common.*;
 import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.ASUnitType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -31,6 +30,7 @@ import java.io.File;
  * @author Jay Lawson
  */
 public class FluffImageHelper {
+
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_CONVFIGHTER = "ConvFighter";
     public static final String DIR_NAME_DROPSHIP = "DropShip";
@@ -47,7 +47,6 @@ public class FluffImageHelper {
 
     /**
      * Get the fluff image for the specified unit, if available.
-     * 
      * @param unit The unit.
      * @return An image file, if one is available, else {@code null}.
      */
@@ -63,9 +62,7 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load the fluff image specified in the Entity data.
-     * 
-     * @param unit
-     *            The unit.
+     * @param unit The unit.
      * @return An image or {@code null}.
      */
     protected static Image loadFluffImage(final Entity unit) {
@@ -79,112 +76,32 @@ public class FluffImageHelper {
 
     /**
      * Attempt to load a fluff image by combining elements of type and name.
-     * 
-     * @param unit
-     *            The unit.
+     * @param unit The unit.
      * @return An image or {@code null}.
      */
-    protected static Image loadFluffImageHeuristic(final Entity unit) {
+    public static @Nullable Image loadFluffImageHeuristic(final Entity unit) {
         Image fluff = null;
-
-        String dir = DIR_NAME_MECH;
-        
-        if (unit instanceof Warship) {
-        	dir = DIR_NAME_WARSHIP;
-    	} else if (unit instanceof SpaceStation) {
-    		dir = DIR_NAME_SPACESTATION;
-    	} else if (unit instanceof Jumpship) {
-    		dir = DIR_NAME_JUMPSHIP;
-    	} else if (unit instanceof ConvFighter) {
-    		dir = DIR_NAME_CONVFIGHTER;          
-    	} else if (unit instanceof Dropship) {
-            dir = DIR_NAME_DROPSHIP;
-    	} else if (unit instanceof SmallCraft) {
-            dir = DIR_NAME_SMALLCRAFT;            
-    	} else if (unit instanceof Aero) {
-            dir = DIR_NAME_FIGHTER;
-    	} else if (unit instanceof BattleArmor) {
-    		dir = DIR_NAME_BA;           
-    	} else if (unit instanceof Infantry) {
-            dir = DIR_NAME_INFANTRY;
-        } else if (unit instanceof Protomech) {
-            dir = DIR_NAME_PROTOMEK;
-        } else if (unit instanceof Tank) {
-            dir = DIR_NAME_VEHICLE;
-        }
-
-        File fluff_image_file = findFluffImage(
-                new MegaMekFile(Configuration.fluffImagesDir(), dir).getFile(), unit);
+        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(unit)).getFile();
+        File fluff_image_file = findFluffImage(file, unit.getModel(), unit.getChassis());
         if (fluff_image_file != null) {
             fluff = new ImageIcon(fluff_image_file.toString()).getImage();
         }
-
         return fluff;
     }
 
     /**
      * Attempt to load a fluff image by combining elements of type and name.
-     *
-     * @param element The AlphaStrike element
+     * @param element The AlphaStrikeElement or MechSummary
      * @return An image or null
      */
-    public static Image loadFluffImageHeuristic(final ASCardDisplayable element) {
+    public static @Nullable Image loadFluffImageHeuristic(final ASCardDisplayable element) {
         Image fluff = null;
-
-        String dir = DIR_NAME_MECH;
-        if (element.getASUnitType().isAnyOf(ASUnitType.WS)) {
-            dir = DIR_NAME_WARSHIP;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.SS)) {
-            dir = DIR_NAME_SPACESTATION;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.JS)) {
-            dir = DIR_NAME_JUMPSHIP;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.CF)) {
-            dir = DIR_NAME_CONVFIGHTER;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.DS, ASUnitType.DA)) {
-            dir = DIR_NAME_DROPSHIP;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.SC)) {
-            dir = DIR_NAME_SMALLCRAFT;
-        } else if (element.getASUnitType().isFighter()) {
-            dir = DIR_NAME_FIGHTER;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.BA)) {
-            dir = DIR_NAME_BA;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.CI)) {
-            dir = DIR_NAME_INFANTRY;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.PM)) {
-            dir = DIR_NAME_PROTOMEK;
-        } else if (element.getASUnitType().isAnyOf(ASUnitType.CV, ASUnitType.SV)) {
-            dir = DIR_NAME_VEHICLE;
-        }
-
-        File fluff_image_file = findFluffImage(
-                new MegaMekFile(Configuration.fluffImagesDir(), dir).getFile(), element);
+        var file = new MegaMekFile(Configuration.fluffImagesDir(), getImagePath(element)).getFile();
+        File fluff_image_file = findFluffImage(file, element.getModel(), element.getChassis());
         if (fluff_image_file != null) {
             fluff = new ImageIcon(fluff_image_file.toString()).getImage();
         }
-
         return fluff;
-    }
-
-    /**
-     * Find a fluff image file for the given AlphaStrike element
-     *
-     * @param directory Directory to search
-     * @param element The AlphaStrike element
-     * @return Path to an appropriate file or {@code null} if none is found
-     */
-    protected static File findFluffImage(final File directory, final ASCardDisplayable element) {
-        return findFluffImage(directory, element.getModel(), element.getChassis());
-    }
-
-    /**
-     * Find a fluff image file for the unit
-     *
-     * @param directory Directory to search
-     * @param unit The unit
-     * @return Path to an appropriate file or {@code null} if none is found
-     */
-    protected static File findFluffImage(final File directory, final Entity unit) {
-        return findFluffImage(directory, unit.getModel(), unit.getChassis());
     }
 
     /**
@@ -195,7 +112,7 @@ public class FluffImageHelper {
      * @param origChassis The chassis name of the unit
      * @return Path to an appropriate file or {@code null} if none is found
      */
-    protected static File findFluffImage(final File directory, String origModel, String origChassis) {
+    protected static @Nullable File findFluffImage(final File directory, String origModel, String origChassis) {
         // Search for a file in the specified directory.
         // Searches for each supported extension on each of the following
         // combinations:
@@ -262,5 +179,64 @@ public class FluffImageHelper {
         }
 
         return fluff_file;
+    }
+
+    private FluffImageHelper() { }
+
+    private static String getImagePath(final ASCardDisplayable element) {
+        switch (element.getASUnitType()) {
+            case WS:
+                return DIR_NAME_WARSHIP;
+            case SS:
+                return DIR_NAME_SPACESTATION;
+            case JS:
+                return DIR_NAME_JUMPSHIP;
+            case CF:
+                return DIR_NAME_CONVFIGHTER;
+            case DS:
+            case DA:
+                return DIR_NAME_DROPSHIP;
+            case SC:
+                return DIR_NAME_SMALLCRAFT;
+            case BA:
+                return DIR_NAME_BA;
+            case CI:
+                return DIR_NAME_INFANTRY;
+            case PM:
+                return DIR_NAME_PROTOMEK;
+            case CV:
+            case SV:
+                return DIR_NAME_VEHICLE;
+            default:
+                return DIR_NAME_MECH;
+        }
+    }
+
+    private static String getImagePath(final Entity unit) {
+        if (unit instanceof Warship) {
+            return DIR_NAME_WARSHIP;
+        } else if (unit instanceof SpaceStation) {
+            return DIR_NAME_SPACESTATION;
+        } else if (unit instanceof Jumpship) {
+            return DIR_NAME_JUMPSHIP;
+        } else if (unit instanceof ConvFighter) {
+            return DIR_NAME_CONVFIGHTER;
+        } else if (unit instanceof Dropship) {
+            return DIR_NAME_DROPSHIP;
+        } else if (unit instanceof SmallCraft) {
+            return DIR_NAME_SMALLCRAFT;
+        } else if (unit instanceof Aero) {
+            return DIR_NAME_FIGHTER;
+        } else if (unit instanceof BattleArmor) {
+            return DIR_NAME_BA;
+        } else if (unit instanceof Infantry) {
+            return DIR_NAME_INFANTRY;
+        } else if (unit instanceof Protomech) {
+            return DIR_NAME_PROTOMEK;
+        } else if (unit instanceof Tank) {
+            return DIR_NAME_VEHICLE;
+        } else {
+            return DIR_NAME_MECH;
+        }
     }
 }

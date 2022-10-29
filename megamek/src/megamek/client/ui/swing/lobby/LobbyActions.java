@@ -27,7 +27,6 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.AlphaStrikeStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
-import megamek.client.ui.dialogs.StrategicBattleForceStatsDialog;
 import megamek.client.ui.swing.CustomMechDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitEditorDialog;
@@ -38,7 +37,6 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
-import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.util.CollectionUtil;
 import org.apache.logging.log4j.LogManager;
 
@@ -52,10 +50,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_HULLDOWN;
 import static megamek.client.ui.swing.lobby.LobbyMekPopup.LMP_PRONE;
-import static megamek.client.ui.swing.lobby.LobbyUtility.haveSingleOwner;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isBlindDrop;
-import static megamek.client.ui.swing.lobby.LobbyUtility.isRealBlindDrop;
-import static megamek.client.ui.swing.lobby.LobbyUtility.sameNhC3System;
+import static megamek.client.ui.swing.lobby.LobbyUtility.*;
 
 /** This class contains the methods that perform entity and force changes from the pop-up menu and elsewhere. */
 public class LobbyActions {
@@ -1041,15 +1036,6 @@ public class LobbyActions {
             }
         }
         return entities.stream().map(Entity::getOwner).findAny().get();
-    }
-
-    /** Shows a non-modal dialog window with the Strategic BattleForce stats of the given forces. */
-    void showSbfView(Collection<Force> fo) {
-        if (fo.stream().anyMatch(f -> !SBFFormationConverter.canConvertToSbfFormation(f, lobby.game()))) {
-            LobbyErrors.showSBFConversion(frame());
-            return;
-        }
-        new StrategicBattleForceStatsDialog(frame(), fo, lobby.game()).setVisible(true);
     }
 
     /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */

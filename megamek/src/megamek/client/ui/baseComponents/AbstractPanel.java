@@ -90,11 +90,11 @@ public abstract class AbstractPanel extends JPanel {
     }
     //endregion Constructors
 
-    //region Getters/Setters
+    //region Getters
     public JFrame getFrame() {
         return frame;
     }
-    //endregion Getters/Setters
+    //endregion Getters
 
     //region Initialization
     /**

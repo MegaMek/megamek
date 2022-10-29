@@ -1,0 +1,12 @@
+Taurian Concordat Assault Mechs C
+Longbow LGB-8V,1
+Stalker STK-5M,2
+BattleMaster BLR-10S2,3
+Emperor EMP-6A,4
+Albatross ALB-3Ur,5
+Emperor EMP-6A,6
+Yu Huang Y-H9G,5
+Devastator DVS-1D,4
+Banshee BNC-3Mr,3
+Atlas AS7-K2,2
+Longbow LGB-13C,1

@@ -14,9 +14,10 @@
  */
 package megamek.common;
 
-import megamek.client.ui.swing.calculationReport.CalculationReport;
-import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.alphaStrike.*;
+import megamek.common.alphaStrike.ASCardDisplayable;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollection;
+import megamek.common.alphaStrike.ASUnitType;
 
 import java.io.File;
 import java.io.Serializable;
@@ -53,6 +54,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String level;
     private int advTechYear; // year after which the unit is advanced level
     private int stdTechYear; // year after which the unit is standard level
+    private String extinctRange;
     private boolean canon;
     private boolean clan;
     private boolean support;
@@ -97,19 +99,19 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private ASUnitType asUnitType = ASUnitType.UNKNOWN;
     private int size = 0;
     private int tmm = 0;
-    private Map<String,Integer> movement = new LinkedHashMap<>();
+    private Map<String, Integer> movement = new LinkedHashMap<>();
     private String primaryMovementMode = "";
     private ASDamageVector standardDamage = ASDamageVector.ZERO;
     private int overheat = 0;
-    private ASSpecialAbilityCollection frontArc;
-    private ASSpecialAbilityCollection leftArc;
-    private ASSpecialAbilityCollection rightArc;
-    private ASSpecialAbilityCollection rearArc;
-    private int threshold = 0;
+    private ASSpecialAbilityCollection frontArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection leftArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rightArc = new ASSpecialAbilityCollection();
+    private ASSpecialAbilityCollection rearArc = new ASSpecialAbilityCollection();
+    private int threshold;
     private int fullArmor;
     private int fullStructure;
     private int squadSize;
-    private ASSpecialAbilityCollection specialAbilities;
+    private ASSpecialAbilityCollection specialAbilities = new ASSpecialAbilityCollection();
     private UnitRole role;
 
     public MechSummary() {
@@ -120,14 +122,17 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return name;
     }
 
+    @Override
     public String getChassis() {
         return chassis;
     }
 
+    @Override
     public String getModel() {
         return model;
     }
 
+    @Override
     public int getMulId() {
         return mulId;
     }
@@ -644,6 +649,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.suitWeight = suitWeight;
     }
 
+	public String getExtinctRange() {
+		return extinctRange;
+	}
+
     public void setAsUnitType(ASUnitType asUnitType) {
         this.asUnitType = asUnitType;
     }
@@ -704,6 +713,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         this.squadSize = squadSize;
     }
 
+    public void setPointValue(int pointValue) {
+        this.pointValue = pointValue;
+    }
+
     public void setSpecialAbilities(ASSpecialAbilityCollection specialAbilities) {
         this.specialAbilities = specialAbilities;
     }
@@ -711,6 +724,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public void setUnitRole(UnitRole role) {
         this.role = role;
     }
+
+	public void setExtinctRange(String extinctRange) {
+		this.extinctRange = extinctRange;
+	}
 
     @Override
     public boolean equals(Object obj) {
@@ -730,4 +747,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int hashCode() {
         return Objects.hash(chassis, model, unitType, sourceFile);
     }
+
+
 }

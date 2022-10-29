@@ -281,7 +281,7 @@ public class UnitEditorDialog extends JDialog {
 
         int men = Math.max(infantry.getShootingStrength(), 0);
         spnInternal[0] = new JSpinner(new SpinnerNumberModel(men, 0,
-                infantry.getSquadN() * infantry.getSquadSize(), 1));
+                infantry.getSquadCount() * infantry.getSquadSize(), 1));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -1163,9 +1163,6 @@ public class UnitEditorDialog extends JDialog {
                 } else {
                     entity.setInternal(internal, i);
                 }
-                if (entity.isConventionalInfantry()) {
-                    entity.applyDamage();
-                }
             }
             if (null != spnArmor[i]) {
                 int armor = (Integer) spnArmor[i].getModel().getValue();
@@ -1191,6 +1188,10 @@ public class UnitEditorDialog extends JDialog {
                 m.setHit(hits > 0);
                 entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
             }
+        }
+        if (entity instanceof Infantry) {
+            ((Infantry) entity).damageOrRestoreFieldWeapons();
+            entity.applyDamage();
         }
 
         // now systems

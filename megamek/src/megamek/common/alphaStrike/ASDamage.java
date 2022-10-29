@@ -44,6 +44,9 @@ public class ASDamage implements Serializable {
     /** A constant that represents zero damage. May be used as a return value instead of null. */
     public static final ASDamage ZERO = new ASDamage(0, false);
 
+    /** A constant that represents minimal damage 0*. */
+    public static final ASDamage MINIMAL = new ASDamage(0, true);
+
     /**
      * Creates an AlphaStrike damage value that may be minimal damage, i.e. 0*.
      * When 0 < damageValue < 0.5, the result will be minimal damage.
@@ -129,11 +132,7 @@ public class ASDamage implements Serializable {
     }
     
     public String toStringWithZero() {
-        if (minimal) {
-            return "0*";
-        } else {
-            return damage + "";
-        }
+        return minimal ? "0*" : damage + "";
     }
 
     public double asDoubleValue() {

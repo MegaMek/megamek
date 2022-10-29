@@ -59,6 +59,7 @@ import javax.swing.table.TableRowSorter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
+import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import megamek.common.EquipmentType;
 import megamek.common.Mech;
 import megamek.common.MechSearchFilter;
@@ -78,7 +79,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private static final long serialVersionUID = 1L;
     private boolean isCanceled = true;
     public MechSearchFilter mechFilter = null;
-    private Vector<FilterTokens> filterToks;
+    private Vector<TWAdvancedSearchPanel.FilterTokens> filterToks;
     private JButton btnOkay = new JButton(Messages.getString("Okay"));
     private JButton btnCancel = new JButton(Messages.getString("Cancel"));
 
@@ -216,7 +217,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cbxEnableArmorSearch.addItemListener(this);
 
 
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 0; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
         }
         cboQty.setSelectedIndex(0);
@@ -252,7 +253,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         techClassModel.setSelectedItem("All");
         cboTechClass.setModel(techClassModel);
         cboTechClass.addActionListener(this);
-
 
         //Setup Weapons Table
         scrTableWeapons.setMinimumSize(new Dimension(850, 150));
@@ -553,7 +553,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         boolean lastTokIsOperation;
         int tokSize = filterToks.size();
         lastTokIsOperation = ((tokSize == 0) ||
-                (filterToks.elementAt(tokSize-1) instanceof OperationFT));
+                (filterToks.elementAt(tokSize-1) instanceof TWAdvancedSearchPanel.OperationFT));
         if (evt.getSource().equals(tblWeapons.getSelectionModel())) {
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation) {
                 tblEquipment.clearSelection();
@@ -645,7 +645,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 String fullName = (String) tblEquipment.getValueAt(row, EquipmentTableModel.COL_NAME);
                 int qty = Integer.parseInt((String)
                     tblEquipment.getValueAt(row, EquipmentTableModel.COL_QTY));
-                filterToks.add(new EquipmentFT(internalName, fullName, qty));
+                filterToks.add(new TWAdvancedSearchPanel.EquipmentFT(internalName, fullName, qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
@@ -660,14 +660,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 String fullName = (String) tblWeapons.getValueAt(row, WeaponsTableModel.COL_NAME);
                 int qty = Integer.parseInt((String)
                     tblWeapons.getValueAt(row, WeaponsTableModel.COL_QTY));
-                filterToks.add(new EquipmentFT(internalName, fullName, qty));
+                filterToks.add(new TWAdvancedSearchPanel.EquipmentFT(internalName, fullName, qty));
                 txtEqExp.setText(filterExpressionString());
                 btnBack.setEnabled(true);
                 enableOperationButtons();
                 disableSelectionButtons();
             }
         } else if (ev.getSource().equals(btnLeftParen)) {
-            filterToks.add(new ParensFT("("));
+            filterToks.add(new TWAdvancedSearchPanel.ParensFT("("));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
@@ -675,7 +675,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             btnLeftParen.setEnabled(false);
             btnRightParen.setEnabled(false);
         } else if (ev.getSource().equals(btnRightParen)) {
-            filterToks.add(new ParensFT(")"));
+            filterToks.add(new TWAdvancedSearchPanel.ParensFT(")"));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             enableOperationButtons();
@@ -683,13 +683,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             btnLeftParen.setEnabled(false);
             btnRightParen.setEnabled(false);
         } else if (ev.getSource().equals(btnAnd)) {
-            filterToks.add(new OperationFT(MechSearchFilter.BoolOp.AND));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.AND));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
             enableSelectionButtons();
         } else if (ev.getSource().equals(btnOr)) {
-            filterToks.add(new OperationFT(MechSearchFilter.BoolOp.OR));
+            filterToks.add(new TWAdvancedSearchPanel.OperationFT(MechSearchFilter.BoolOp.OR));
             txtEqExp.setText(filterExpressionString());
             btnBack.setEnabled(true);
             disableOperationButtons();
@@ -702,7 +702,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                     btnBack.setEnabled(false);
                 }
 
-                if ((filterToks.isEmpty()) || (filterToks.lastElement() instanceof OperationFT)) {
+                if ((filterToks.isEmpty()) || (filterToks.lastElement() instanceof TWAdvancedSearchPanel.OperationFT)) {
                     disableOperationButtons();
                     enableSelectionButtons();
                 } else {
@@ -867,7 +867,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mechFilter = new MechSearchFilter(currFilter);
         txtEqExp.setText(mechFilter.getEquipmentExpression());
         if ((filterToks == null) || filterToks.isEmpty()
-                || (filterToks.lastElement() instanceof OperationFT)) {
+                || (filterToks.lastElement() instanceof TWAdvancedSearchPanel.OperationFT)) {
             disableOperationButtons();
             enableSelectionButtons();
         } else {
@@ -1106,6 +1106,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     }
 
+            /**
+     * A table model for displaying weapon types
+     */
+    
     /**
      * A table model for displaying equipment
      */

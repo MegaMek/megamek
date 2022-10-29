@@ -81,11 +81,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
 
     @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {
-        if (rangeband <= AlphaStrikeElement.RANGE_BAND_LONG) {
-            return 7;
-        } else {
-            return 0;
-        }
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_LONG) ? 7 : 0;
     }
 
     @Override

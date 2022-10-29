@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Nemera Armored Fighting Vehicle
+</Name>
+
+<Model>
+Mk XI-FC
+</Model>
+
+<year>
+3062
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+70
+47
+47
+40
+55
+</armor>
+
+<Body Equipment>
+ISCASE
+ISAMS Ammo
+ISAMS Ammo
+IS MRM 10 Ammo
+IS Ammo SRM-4
+IS Ammo SRM-4
+IS Ammo SRM-4
+</Body Equipment>
+
+<Front Equipment>
+MRM 10
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+PPC
+PPC Capacitor
+SRM 4
+SRM 4
+SRM 4
+SRM 4
+SRM 4
+SRM 4
+SRM 4
+SRM 4
+ISAntiMissileSystem
+</Turret Equipment>
+
+<source>
+TRO 3063 - Civil War
+</source>
+
+<tonnage>
+75.0
+</tonnage>

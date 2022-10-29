@@ -1,0 +1,12 @@
+Stone’s Brigade Medium Mechs
+Griffin IIC 3,1
+Lineholder KW1-LH8 'Linebreaker',2
+Hunchback HBK-6N,3
+Shadow Hawk SHD-11CS,4
+Osprey OSP-26,5
+Mad Cat III (Standard),6
+Shadow Hawk IIC 8,5
+Kheper KPH-7R,4
+Black Hawk (Standard),3
+Dragonfly (Viper) Prime,2
+Raptor II RPT-5X,1

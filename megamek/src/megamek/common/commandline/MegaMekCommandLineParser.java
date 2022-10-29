@@ -326,13 +326,13 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         bw.write(element.getSpecialsDisplayString(", ", element));
                         bw.write("\t");
                         if (element.usesArcs()) {
-                            bw.write("FRONT(" + element.getFrontArc().toString() + ")");
+                            bw.write("FRONT(" + element.getFrontArc().getSpecialsExportString(", ", element) + ")");
                             bw.write("\t");
-                            bw.write("LEFT(" + element.getLeftArc().toString() + ")");
+                            bw.write("LEFT(" + element.getLeftArc().getSpecialsExportString(", ", element) + ")");
                             bw.write("\t");
-                            bw.write("RIGHT(" + element.getRightArc().toString() + ")");
+                            bw.write("RIGHT(" + element.getRightArc().getSpecialsExportString(", ", element) + ")");
                             bw.write("\t");
-                            bw.write("REAR(" + element.getRearArc().toString() + ")");
+                            bw.write("REAR(" + element.getRearArc().getSpecialsExportString(", ", element) + ")");
                         } else {
                             bw.write("\t\t\t");
                         }

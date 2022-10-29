@@ -1,0 +1,12 @@
+Periphery Light Mechs D
+Stinger STG-3R,1
+Wasp WSP-1A,2
+Toro TR-A-1,3
+Locust LCT-1V2,4
+Commando COM-4H,5
+Brigand LDT-1,6
+Stinger STG-5R,5
+Commando COM-2Dr,4
+Wasp WSP-8T,3
+Cadaver CVR-A1,2
+Firestarter FS9-H,1

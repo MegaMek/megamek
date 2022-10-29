@@ -108,7 +108,6 @@ public class LobbyMekPopupActions implements ActionListener {
             case LMP_FASSIGN:
             case LMP_FASSIGNONLY:
             case LMP_FCREATEFROM:
-            case LMP_SBFFORMATION:
                 forceAction(command, entities, info);
                 break;
         }
@@ -163,10 +162,6 @@ public class LobbyMekPopupActions implements ActionListener {
                 st = new StringTokenizer(info, ":");
                 newOwnerId = Integer.parseInt(st.nextToken());
                 lobby.lobbyActions.forceAssignOnly(LobbyUtility.getForces(lobby.game(), st.nextToken()), newOwnerId);
-                break;
-
-            case LMP_SBFFORMATION:
-                lobby.lobbyActions.showSbfView(LobbyUtility.getForces(lobby.game(), info));
                 break;
         }
     }

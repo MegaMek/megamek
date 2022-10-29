@@ -16,14 +16,13 @@ import java.util.Objects;
 
 public class MechPanelTabStrip extends PicMap {
     private static final long serialVersionUID = -1282343469769007184L;
-    protected static final int NUM_TABS = 7;
+    protected static final int NUM_TABS = 6;
     public static final String SUMMARY = "summary";
     public static final String PILOT = "pilot";
     public static final String ARMOR = "armor";
     public static final String WEAPONS = "weapons";
     public static final String SYSTEMS = "systems";
     public static final String EXTRAS = "extras";
-    public static final String DETAILS = "details";
 
     public static final int SUMMARY_INDEX = 0;
     public static final int PILOT_INDEX = 1;
@@ -31,7 +30,6 @@ public class MechPanelTabStrip extends PicMap {
     public static final int WEAPONS_INDEX = 3;
     public static final int SYSTEMS_INDEX = 4;
     public static final int EXTRAS_INDEX = 5;
-    public static final int DETAILS_INDEX = 6;
 
     private static final Image[] idleImage = new Image[NUM_TABS];
     private static final Image[] activeImage = new Image[NUM_TABS];
@@ -71,18 +69,16 @@ public class MechPanelTabStrip extends PicMap {
         idleImage[SUMMARY_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabIdle()).toString());
         idleImage[PILOT_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabIdle()).toString());
         idleImage[ARMOR_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabIdle()).toString());
-        idleImage[WEAPONS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
-        idleImage[SYSTEMS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
+        idleImage[SYSTEMS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
+        idleImage[WEAPONS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
         idleImage[EXTRAS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
-        idleImage[DETAILS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
 
         activeImage[SUMMARY_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getGeneralTabActive()).toString());
         activeImage[PILOT_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getPilotTabActive()).toString());
         activeImage[ARMOR_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getArmorTabActive()).toString());
-        activeImage[WEAPONS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
-        activeImage[SYSTEMS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
+        activeImage[SYSTEMS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
+        activeImage[WEAPONS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
         activeImage[EXTRAS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
-        activeImage[DETAILS_INDEX] = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
         idleCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerIdle()).toString());
         selectedCorner = tk.getImage(new MegaMekFile(Configuration.widgetsDir(), udSpec.getCornerActive()).toString());
 
@@ -147,39 +143,34 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     private void setListeners() {
-        tabs[0].addActionListener(e -> {
+        tabs[SUMMARY_INDEX].addActionListener(e -> {
             if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(SUMMARY);
             }
         });
-        tabs[1].addActionListener(e -> {
+        tabs[PILOT_INDEX].addActionListener(e -> {
             if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(PILOT);
             }
         });
-        tabs[2].addActionListener(e -> {
+        tabs[ARMOR_INDEX].addActionListener(e -> {
             if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(ARMOR);
             }
         });
-        tabs[3].addActionListener(e -> {
+        tabs[SYSTEMS_INDEX].addActionListener(e -> {
             if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(SYSTEMS);
             }
         });
-        tabs[4].addActionListener(e -> {
+        tabs[WEAPONS_INDEX].addActionListener(e -> {
             if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(WEAPONS);
             }
         });
-        tabs[5].addActionListener(e -> {
+        tabs[EXTRAS_INDEX].addActionListener(e -> {
             if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
                 md.showPanel(EXTRAS);
-            }
-        });
-        tabs[6].addActionListener(e -> {
-            if (Objects.equals(e.getActionCommand(), PMHotArea.MOUSE_DOWN)) {
-                md.showPanel(DETAILS);
             }
         });
     }

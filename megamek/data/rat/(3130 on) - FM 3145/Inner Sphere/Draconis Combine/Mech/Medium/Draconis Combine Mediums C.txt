@@ -1,0 +1,12 @@
+Draconis Combine Medium Mechs C
+Bishamon BSN-4K,1
+Exhumer EXR-2X,2
+Strider SR1-O,3
+Phoenix Hawk PXH-7K,4
+Avalanche AVL-1O,5
+Wolf Trap (Tora) WFT-2B,6
+Hitotsume Kozo HKZ-1F,5
+Wolverine WVR-9W2,4
+Wendigo (Prime),3
+Shadow Hawk SHD-12C,2
+Komodo KIM-2C,1

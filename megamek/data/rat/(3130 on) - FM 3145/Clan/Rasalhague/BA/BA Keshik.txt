@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Battle Armor - Keshik
+Rogue Bear Heavy Battle Armor (Standard),1
+Wraith Battle Armor (Anti-Infantry),2
+Golem Assault Armor (Standard),3
+Elemental Battle Armor [MicroPL],4
+Golem Assault Armor (Support),5
+Wraith Battle Armor (Standard),6
+Elemental Battle Armor [MicroPL],5
+Gnome Battle Armor (Standard),4
+Golem Assault Armor (Support),3
+Elemental Battle Armor (Headhunter),2
+Gnome Battle Armor (Standard),1

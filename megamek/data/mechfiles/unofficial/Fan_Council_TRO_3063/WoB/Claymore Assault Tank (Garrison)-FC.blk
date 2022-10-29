@@ -1,0 +1,103 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Claymore Assault Tank
+</Name>
+
+<Model>
+(Garrison)-FC
+</Model>
+
+<year>
+3062
+</year>
+
+<originalBuildYear>
+3062
+</originalBuildYear>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+70
+55
+55
+24
+55
+</armor>
+
+<Body Equipment>
+ISCASE
+ISGuardianECMSuite
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+BeagleActiveProbe
+ISC3SlaveUnit
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISERMediumLaser
+ISERMediumLaser
+</Turret Equipment>
+
+<source>
+RS 3063 - Civil War
+</source>
+
+<tonnage>
+100.0
+</tonnage>

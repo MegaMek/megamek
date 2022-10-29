@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -25,11 +25,11 @@ Torrent Heavy Bomber
 </mul id:>
 
 <year>
-2093
+2652
 </year>
 
 <originalBuildYear>
-2093
+2652
 </originalBuildYear>
 
 <type>
@@ -126,6 +126,46 @@ External Stores Hardpoint
 2
 </structural_tech_rating>
 
+<engine_tech_rating>
+2
+</engine_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<capabilities>
+The Torrent featured thrust vectoring and fly-by-light equipment, eliminating the need for a horizontal rudder and giving it the ability to use the short runways found on these new colonies; however, the bomber required a full runway and (occasionally) rocket assistance when carrying a full bomb load. With a crew of one officer, three enlisted and two gunners, the aircraft could carry a total of thirty tons of ordnance split between an internal bomb bay and external hardpoints, was protected by three and a half tons of Hubris Heavy armor, and with thirteen tons of fuel could reach a target half a world away.
+</capabilities>
+
+<overview>
+Originally used by the United States of North America's Air Force, the Torrent was one of its most popular designs during the late twenty-first century. The aircraft was inherited by the Terran Alliance when it was formed in 2086 and, as new equipment was introduced, older vehicles such as the Torrent were passed on to the militias of various newly formed colony worlds during the twenty-second and twenty-third centuries. **This unit has been assigned an intro year of 2652 based on fluff so it can validate correctly for play**
+</overview>
+
+<deployment>
+The Torrent features four nose-mounted Machine Guns with half a ton of ammunition and a six-tube short range missile launcher mounted aft with one ton of ammunition, all aimed by an Advanced Fire Control system. The aircraft is protected by three and a half tons of Hubris heavy armor and an ECM suite suite. It has an internal Cargo Bay able to carry fifteen tons and fifteen External Stores Hardpoints, allowing the aircraft to carry a variety of explosive ordnance.
+</deployment>
+
+<history>
+In its day, the aircraft was produced in large numbers by several corporations claiming to be the originators of the design. Continual upgrades kept the aircraft in service, including the mounting of one of the earliest ECM suites, the Squealer I, in the 2650s. As time passed, between the twenty-fourth and twenty-fifth centuries, newly introduced aerospace fighters came onto the scene and proved themselves superior to conventional aircraft like the Torrent. Since its tendency to fly low and slow made it highly vulnerable to these new fighters, the Torrent was forcibly retired from most planetary militias, but not all. General Aleksandr Kerensky brought almost a full wing of these aircraft with him during the Star League Defense Force's Exodus, where they later saw action during the Pentagon Civil War, notably with the newly formed Clans forces. However in the Inner Sphere by 3068 only one corporation still produced parts for the Torrent, located in the Capellan Confederation on Bellatrix, and once a year the company produced a complete Torrent Heavy Bomber as a token vehicle for collectors and museums. Only the Confederation still maintained a small number of Torrents within their military, as elsewhere in the Inner Sphere the aircraft was typically used as Water Bombers to fight fires. However the sheer violence of the Jihad caused the Confederation to restart production of the Torrent - part of their effort to throw everything they had at the Word of Blake - and since then the aircraft has taken on a larger role defending Capellan worlds.
+</history>
+
+<manufacturer>
+Various
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
 <source>
 TRO Vehicle Annex (r) - Star League
 </source>
@@ -133,3 +173,4 @@ TRO Vehicle Annex (r) - Star League
 <tonnage>
 200.0
 </tonnage>
+

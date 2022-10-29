@@ -29,7 +29,7 @@ Crow Scout Helicopter
 </year>
 
 <source>
-Jihad
+TRO 3075 - Jihad
 </source>
 
 <type>
@@ -90,3 +90,39 @@ ISERSmallLaser
 <armor_type>
 0
 </armor_type>
+
+<capabilities>
+The most obvious advantage of the Crow is its 216 km/h top speed. The incredibly fast vehicle can often get in and out of trouble spots before its enemies can effectively bring their weapons to bear. In order to fulfill its duties as a scout, the Crow carries a suite of advanced electronics, though the cost of those pushed the vehicle's price tag far above what Procurement officials expect out of a fifteen-ton VTOL. For scout duties, it has a Wunderland Beagle Active Probe, while a Forward-1 TAG allows the Crow to spot for indirect bombardments. An Apple-Churchill Guardian ECM Suite protects it from enemy spotting devices. The Crow's speed is its best armor. It mounts a meager one and a half tons of standard armor.
+</capabilities>
+
+<overview>
+The Crow Scout VTOL is a military-grade, scout combat vehicle that is based upon the civilian Soar.
+</overview>
+
+<deployment>
+Due to shortage of TAGs, some Crows come equipped with a C3 slave unit instead
+</deployment>
+
+<history>
+Yan Manufacturing designed the Crow to replace the many scout BattleMechs the Draconis Combine lost during the Combine-Ghost Bear War. The Yan team kept many of the strengths of the search-and-rescue vehicle the Crow is descended from, though they improved it using military-grade technologies. Yan initially had trouble selling the Crow to the DCMS. Finally, Yan agreed to give the unit to them as long as the Combine supplied the electronics. In exchange, Yan is free to sell the unit to mercenary units.
+</history>
+
+<manufacturer>
+Yan Manufacturing
+</manufacturer>
+
+<primaryFactory>
+New Samarkand
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:DAV 100 fusion
+ARMOR:Starslab/3
+COMMUNICATIONS:Scuti Dualcom with Apple-Churchill Guardian ECM Suite
+TARGETING:Skyhunter IV with Forward-1 TAG and Wunderland Beagle Active Probe
+</systemManufacturers>
+
+<source>
+TRO 3075 - Jihad
+</source>

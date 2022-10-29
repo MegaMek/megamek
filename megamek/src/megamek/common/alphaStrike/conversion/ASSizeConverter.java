@@ -30,7 +30,7 @@ final class ASSizeConverter {
         Entity entity = conversionData.entity;
         CalculationReport report = conversionData.conversionReport;
 
-        if ((entity instanceof Tank) && (entity.isSupportVehicle())) {
+        if ((entity instanceof Tank) && entity.isSupportVehicle()) {
             if (entity.getWeight() < 5) {
                 report.addLine("Size:", "Ground SV, weight < 5t", "1");
                 return 1;

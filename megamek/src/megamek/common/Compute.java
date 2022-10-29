@@ -7043,7 +7043,7 @@ public class Compute {
             }
             return ntroopers;
         } else if (entity instanceof Infantry) {
-            return ((Infantry) entity).getSquadN() * ((Infantry) entity).getSquadSize();
+            return ((Infantry) entity).getSquadCount() * ((Infantry) entity).getSquadSize();
         } else if (entity instanceof Jumpship || entity instanceof SmallCraft) {
             return getAeroCrewNeeds(entity) + getTotalGunnerNeeds(entity);
         } else {

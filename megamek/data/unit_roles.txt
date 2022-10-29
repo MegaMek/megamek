@@ -2905,6 +2905,8 @@ Heimdall Ground Monitor Tank B:MISSILE_BOAT
 Heimdall Ground Monitor Tank C:JUGGERNAUT
 Heimdall Ground Monitor Tank D:JUGGERNAUT
 Heimdall Ground Monitor Tank Prime:JUGGERNAUT
+Hel HEL-1:SKIRMISHER
+Hel HL-2:SKIRMISHER
 Helepolis HEP-1H:MISSILE_BOAT
 Helepolis HEP-2H:MISSILE_BOAT
 Helepolis HEP-2X:MISSILE_BOAT
@@ -4242,11 +4244,11 @@ Mechanized Wheeled Platoon (MG):AMBUSHER
 Mechanized Wheeled Platoon (Rifle AA):NONE
 Mechanized Wheeled Platoon (Rifle):AMBUSHER
 Mechanized Wheeled Platoon (SRM):AMBUSHER
-MechBuster (Laser):ATTACK_FIGHTER
-MechBuster (LB-X):ATTACK_FIGHTER
+Mechbuster (Laser):ATTACK_FIGHTER
+Mechbuster (LB-X):ATTACK_FIGHTER
 Mechbuster (Mary):ATTACK_FIGHTER
-MechBuster (SRM):ATTACK_FIGHTER
-MechBuster (Standard):ATTACK_FIGHTER
+Mechbuster (SRM):ATTACK_FIGHTER
+Mechbuster (Standard):ATTACK_FIGHTER
 Medium Strike Fighter Crane:FIRE_SUPPORT
 Medium Strike Fighter Defender II:FIRE_SUPPORT
 Medium Strike Fighter Defender:FIRE_SUPPORT
@@ -5719,7 +5721,7 @@ Sea Skimmer Hydrofoil (SRM2):SCOUT
 Sea Skimmer Hydrofoil (SRM6):SCOUT
 Sea Skimmer Hydrofoil (Standard):SCOUT
 Sea Skimmer Hydrofoil 'Sniper':SCOUT
-SeaBuster Early Strike Fighter (Standard):ATTACK_FIGHTER
+SeaBuster Strike Fighter (Early):ATTACK_FIGHTER
 SeaBuster Strike Fighter (Standard):ATTACK_FIGHTER
 Seahorse Cargo Sub (Standard):NONE
 Seeker (2815):NONE
@@ -6592,6 +6594,7 @@ Tian-Zong TNZ-N2:SNIPER
 Tian-Zong TNZ-N3 'Jasminda':SNIPER
 Tian-Zong TNZ-N3:SNIPER
 Tiburon (Standard):STRIKER
+Tiburon 2:STRIKER
 Tiger Medium Tank T-12:BRAWLER
 Tigress Close Patrol Craft TIG-15:NONE
 TinStar BattleArmor (Standard)(Sqd4):SCOUT
@@ -6663,6 +6666,8 @@ Tornado PA(L) P17 'Hurricane'(Sqd5):AMBUSHER
 Tornado PA(L) P17 'Hurricane'(Sqd6):AMBUSHER
 Toro TR-A-1:BRAWLER
 Toro TR-A-6:MISSILE_BOAT
+Toro TR-B-9:BRAWLER
+Toro TR-B-12:SKIRMISHER
 Torrent Heavy Bomber (Standard):NONE
 Tortoise II (aSRM)(Sqd4):AMBUSHER
 Tortoise II (aSRM)(Sqd4):AMBUSHER

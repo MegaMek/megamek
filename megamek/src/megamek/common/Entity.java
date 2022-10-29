@@ -3395,10 +3395,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setInternal(val, loc);
     }
 
-    /**
-     * Set the internal structure to the appropriate value for the mech's weight
-     * class
-     */
+    /** Sets the internal structure for every location to appropriate undamaged values for the unit and location. */
     public abstract void autoSetInternal();
 
     /**
@@ -13455,13 +13452,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     public int getMASCTarget() {
-        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
-            return ALTERNATE_MASC_FAILURE_ENHANCED[nMASCLevel];
-        } else if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
-            return ALTERNATE_MASC_FAILURE[nMASCLevel];
-        } else {
-            return MASC_FAILURE[nMASCLevel];
-        }
+        return getMASCorSuperchargerTarget(nMASCLevel);
     }
 
     /**
@@ -13478,7 +13469,18 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getSuperchargerTarget() {
         // uses same TNs as MASC
-        return MASC_FAILURE[nSuperchargerLevel];
+        return getMASCorSuperchargerTarget(nSuperchargerLevel);
+    }
+
+    /** @return Target number taking into account game options */
+    private int getMASCorSuperchargerTarget(int nLevel) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
+            return ALTERNATE_MASC_FAILURE_ENHANCED[nLevel];
+        } else if (game != null && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
+            return ALTERNATE_MASC_FAILURE[nLevel];
+        } else {
+            return MASC_FAILURE[nLevel];
+        }
     }
 
     /**

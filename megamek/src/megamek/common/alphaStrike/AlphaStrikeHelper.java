@@ -105,7 +105,7 @@ public class AlphaStrikeHelper {
         } else if (sua.isAnyOf(CAP, SCAP, MSL)) {
             return sua.toString();
         } else if (sua.isTransport()) {
-            String result = sua + suaObject.toString();
+            String result = sua.toString() + suaObject;
             BattleForceSUA door = sua.getDoor();
             if ((element == null || element.isLargeAerospace())
                     && collection.hasSUA(door) && ((int) collection.getSUA(door) > 0)) {

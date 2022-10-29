@@ -1,0 +1,12 @@
+3145 Capellan Confederation Heavy Fighters - C
+Mengqin MNG-8L,1
+Transgressor TR-15,2
+Mengqin MNG-8L,3
+Riever F-700b,4
+Transgressor TR-15,5
+Mengqin MNG-8L,6
+Thunderbird TRB-D46,5
+Transgressor TR-15,4
+Thunderbird TRB-D46,3
+Mengqin MNG-8L,2
+Deathstalker F-77A,1

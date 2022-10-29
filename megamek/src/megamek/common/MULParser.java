@@ -140,6 +140,8 @@ public class MULParser {
     private static final String HIDDEN = "hidden";
     public static final String DEPLOYMENT = "deployment";
     private static final String DEPLOYMENT_ZONE = "deploymentZone";
+    private static final String DEPLOYMENT_ZONE_WIDTH = "deploymentZoneWidth";
+    private static final String DEPLOYMENT_ZONE_OFFSET = "deploymentZoneOffset";
     private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
     public static final String ALTITUDE = "altitude";
@@ -689,7 +691,21 @@ public class MULParser {
             entity.setStartingPos(Board.START_NONE);
         }
 
-
+        // deployment zone width
+        try {
+            int deployZoneWidth = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE_WIDTH));
+            entity.setStartingWidth(deployZoneWidth);
+        } catch (Exception e) {
+            entity.setStartingWidth(3);
+        }
+        
+        // deployment zone offset
+        try {
+            int deployZoneOffset = Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE_OFFSET));
+            entity.setStartingOffset(deployZoneOffset);
+        } catch (Exception e) {
+            entity.setStartingOffset(0);
+        }
 
         // Was never deployed
         try {
@@ -811,7 +827,7 @@ public class MULParser {
             
             String infSquadNum = entityTag.getAttribute(INF_SQUAD_NUM);
             if (!infSquadNum.isBlank()) {
-                inf.setSquadN(Integer.parseInt(infSquadNum));
+                inf.setSquadCount(Integer.parseInt(infSquadNum));
                 inf.autoSetInternal();
             }
         }
@@ -1433,15 +1449,15 @@ public class MULParser {
                 }
             } else if (type.equals(INTERNAL)) {
                 if (entity.getOInternal(loc) < pointsVal) {
-                    warning.append("The entity, ")
-                            .append(entity.getShortName())
-                            .append(" does not start with ")
-                            .append(pointsVal)
-                            .append(" points of internal structure for " +
-                                    "location: ")
+                    warning.append("The entity, ").append(entity.getShortName()).append(" does not start with ")
+                            .append(pointsVal).append(" points of internal structure for location: ")
                             .append(loc).append(".\n");
                 } else {
                     entity.setInternal(pointsVal, loc);
+                    if (entity instanceof Infantry) {
+                        ((Infantry) entity).damageOrRestoreFieldWeapons();
+                        entity.applyDamage();
+                    }
                 }
             } else if (type.equals(REAR)) {
                 if (!entity.hasRearArmor(loc)) {
@@ -2673,6 +2689,10 @@ public class MULParser {
         // mark armor, internal as destroyed
         en.setArmor(IArmorState.ARMOR_DESTROYED, loc, false);
         en.setInternal(IArmorState.ARMOR_DESTROYED, loc);
+        if (en instanceof Infantry) {
+            ((Infantry) en).damageOrRestoreFieldWeapons();
+            en.applyDamage();
+        }
         if (en.hasRearArmor(loc)) {
             en.setArmor(IArmorState.ARMOR_DESTROYED, loc, true);
         }

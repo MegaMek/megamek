@@ -64,10 +64,6 @@ public class CLERLaserMicro extends LaserWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range == AlphaStrikeElement.SHORT_RANGE) {
-            return 0.2;
-        } else {
-            return 0;
-        }
+        return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.2 : 0;
     }
 }

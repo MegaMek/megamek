@@ -82,10 +82,6 @@ public class ISBombastLaser extends LaserWeapon {
 
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range <= AlphaStrikeElement.MEDIUM_RANGE) {
-            return 1.02;
-        } else {
-            return 0;
-        }
+        return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.02 : 0;
     }
 }

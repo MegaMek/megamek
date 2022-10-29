@@ -72,12 +72,7 @@ class PilotPanel extends PicMap {
 
     @Override
     public void onResize() {
-        int w = getSize().width;
-        Rectangle r = getContentBounds();
-        int dx = Math.round(((w - r.width) / 2));
-        if (dx < minLeftMargin) {
-            dx = minLeftMargin;
-        }
+        int dx = minLeftMargin;
         int dy = minTopMargin;
         setContentMargins(dx, dy, dx, dy);
     }

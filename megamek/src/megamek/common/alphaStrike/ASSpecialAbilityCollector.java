@@ -91,6 +91,21 @@ public interface ASSpecialAbilityCollector {
         return hasSUA(LRM) ? (ASDamageVector) getSUA(LRM) : ASDamageVector.ZEROSPECIAL;
     }
 
+    /** @return The IATM ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no IATM. */
+    default ASDamageVector getIATM() {
+        return hasSUA(IATM) ? (ASDamageVector) getSUA(IATM) : ASDamageVector.ZEROSPECIAL;
+    }
+
+    /** @return The REAR ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no REAR. */
+    default ASDamageVector getREAR() {
+        return hasSUA(REAR) ? (ASDamageVector) getSUA(REAR) : ASDamageVector.ZEROSPECIAL;
+    }
+
+    /** @return The AC ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no AC. */
+    default ASDamageVector getAC() {
+        return hasSUA(AC) ? (ASDamageVector) getSUA(AC) : ASDamageVector.ZEROSPECIAL;
+    }
+
     /** @return The SRM ability value of this collection or {@link ASDamageVector#ZEROSPECIAL}, if there is no SRM. */
     default ASDamageVector getSRM() {
         return hasSUA(SRM) ? (ASDamageVector) getSUA(SRM) : ASDamageVector.ZEROSPECIAL;

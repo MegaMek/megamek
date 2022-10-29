@@ -80,10 +80,6 @@ public class ISPlasmaRifle extends AmmoWeapon {
 
     @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {
-        if (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) {
-            return 3;
-        } else {
-            return 0;
-        }
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 3 : 0;
     }
 }

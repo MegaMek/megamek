@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Undine Battle Armor
+</Name>
+
+<Model>
+(Prototype)-FC
+</Model>
+
+<year>
+3049
+</year>
+
+<originalBuildYear>
+3049
+</originalBuildYear>
+
+<type>
+Clan Level 5
+</type>
+
+<motion_type>
+umu
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+10
+</armor_tech>
+
+<Point Equipment>
+BABattleClaw:LA
+CLBASmall Laser:RA
+CLBASRM1:Body
+CLBASRM1:Body
+BA-SRM1 Ammo:Body:Shots2#
+BA-SRM1 Ammo Torpedo:Body:Shots2#
+BAAPMount:LA
+BASearchlight:LA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<source>
+TRO 3048 - Succession Wars
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+2
+</jumpingMP>
+
+<armor>
+9
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+
+<history>
+Second SRM-1 is an SRT-1 tube, only able to use torpedos. Both the SRM-1 and SRT-1 are detachable.
+</history>

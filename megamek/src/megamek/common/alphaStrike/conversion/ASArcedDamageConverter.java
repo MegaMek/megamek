@@ -84,6 +84,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         processArcs();
     }
 
+    @Override
     protected void calculateHeatAdjustment() {
         report.addLine("--- Heat Adjustment", "", "");
         int heatCapacity = getHeatCapacity();
@@ -133,7 +134,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         report.startTentativeSection();
         report.addEmptyLine();
         report.addLine("--- " + arc + " " + dmgType + " Damage:", "");
-        double[] damage = assembleSpecialDamage(dmgType, arc.toInt());
+        double[] damage = assembleSpecialDamage(dmgType, ASConverter.toInt(arc));
 
         String finalText = "Final value:";
         if (needsHeatAdjustment) {
@@ -149,7 +150,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
             if (dmgType == PNT) {
                 int finalPNTDamage = ASConverter.roundUp(roundUpToTenth(damage[0]));
                 report.addLine(finalText, formatForReport(damage[0]) + ", " + rdUp, "PNT" + finalPNTDamage);
-                locations[arc.toInt()].mergeSUA(PNT, finalPNTDamage);
+                locations[ASConverter.toInt(arc)].mergeSUA(PNT, finalPNTDamage);
             } else {
                 ASDamageVector finalDamage;
                 if (dmgType.isAnyOf(STD, MSL, CAP, SCAP)) {
@@ -160,7 +161,7 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
                 report.addLine(finalText,
                         formatAsVector(damage[0], damage[1], damage[2], damage[3], dmgType) + ", " + rdUp,
                         "" + dmgType + finalDamage);
-                locations[arc.toInt()].setSUA(dmgType, finalDamage);
+                locations[ASConverter.toInt(arc)].setSUA(dmgType, finalDamage);
             }
             report.endTentativeSection();
         } else {
@@ -206,12 +207,13 @@ public class ASArcedDamageConverter extends ASAeroDamageConverter {
         return rawDmg;
     }
 
+    @Override
     protected void assembleAmmoCounts() { }
 
     @Override
     protected void writeLocationsToElement() {
         for (ASArcs arc : ASArcs.values()) {
-            element.setArc(arc, locations[arc.toInt()]);
+            element.setArc(arc, locations[ASConverter.toInt(arc)]);
         }
     }
 }

@@ -81,7 +81,7 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) * 2;
-        if (range == AlphaStrikeElement.SHORT_RANGE && getMinimumRange() > 0) {
+        if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;

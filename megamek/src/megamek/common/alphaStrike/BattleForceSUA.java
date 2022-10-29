@@ -43,7 +43,7 @@ public enum BattleForceSUA {
     ABA, BRA, BHJ2, BHJ3, BIM, DN, GLD, IRA, LAM, MCS, UCS, NOVA, CASEP, QV, RHS,
     RAMS, ECS, DJ, HJ, RBT, JAM, TSEMP, TSEMPO, TSI, VR,
     ATAC, DB, PL, TCP, SDCS,
-    //TODO: PL, DB do not exist, TCP = Triple-Core Processor?
+    // TODO : PL, DB do not exist, TCP = Triple-Core Processor?
     // AlphaStrike only (this may be incorrect, WIP)
     CRW, CR, DUN, EE, FC, FF, MTN, OVL, PARA, TSMX, RCA, RFA, HTC, TRN, SUBS, SUBW, JMPS, JMPW,
     CAP, SCAP, FUEL, MSL,

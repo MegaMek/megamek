@@ -1,0 +1,92 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Aikuchi
+</Name>
+
+<Model>
+B-UK
+</Model>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+50
+35
+35
+23
+</armor>
+
+<Body Equipment>
+IS MRM 30 Ammo:OMNI
+IS MRM 30 Ammo:OMNI
+IS Streak SRM 6 Ammo:OMNI
+ISC3SlaveUnit
+ISGuardianECMSuite:OMNI
+</Body Equipment>
+
+<Front Equipment>
+MRM 30:OMNI
+MRM 30:OMNI
+ISStreakSRM6:OMNI
+Medium Laser:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+60.0
+</tonnage>

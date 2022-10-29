@@ -571,20 +571,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
         if ((null != client) && (null != game) 
-                && (GamePhase.DEPLOYMENT == game.getPhase()) && (dialog != null)) {
+                && (GamePhase.DEPLOYMENT == game.getPhase()) && (dialog != null) 
+                && (bv.getDeployingEntity() != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.getPlayerNum() == client.getLocalPlayer().getId())) {
                 Entity deployingUnit = bv.getDeployingEntity();
-                int dir;
-                // We need to draw the same deployment zone as boardview
-                if ((deployingUnit != null) && (deployingUnit.getOwnerId() == turn.getPlayerNum())) {
-                    dir = deployingUnit.getStartingPos();
-                } else { 
-                    // if we can't get the deploy zone from the 
-                    // board view, punt and use the players zone
-                    dir = client.getLocalPlayer().getStartingPos();
-                }
-
+                
                 for (int j = 0; j < board.getWidth(); j++) {
                     for (int k = 0; k < board.getHeight(); k++) {
                         Coords coords = new Coords(j, k);

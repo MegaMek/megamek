@@ -1,0 +1,12 @@
+Lyran Commonwealth Heavy Mechs A
+Marauder MAD-9W2,1
+Barghest BGS-4T,2
+Black Hawk-KU BHKU-O,3
+Ursa URA-2A,4
+Gotterdammerung GTD-20S,5
+Warhammer WHD-10CT,6
+Scourge SCG-WF1,5
+Mangonel MNL-3W,4
+Scourge SCG-WD1,3
+Mad Cat Mk IV (Savage Wolf) (Prime),2
+Jade Hawk JHK-03,1

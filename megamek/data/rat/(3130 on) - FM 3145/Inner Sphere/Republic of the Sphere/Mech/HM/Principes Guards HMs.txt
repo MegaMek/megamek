@@ -1,0 +1,12 @@
+Principes Guards Heavy Mechs
+Black Knight BL-6b-KNT,1
+Ryoken II (Standard),2
+Shootist ST-8A,3
+Ostsol OTL-9R,4
+Tempest TMP-3M2 'Storm Tempest',5
+Marauder MAD-9M2,6
+Excalibur EXC-B2b,5
+Warhammer WHD-10CT,4
+Thunderbolt TDR-10SE,3
+Vulture Mk IV (Mad Dog Mk IV) Prime,2
+Rifleman RFL-8X,1

@@ -172,24 +172,25 @@ public class UnitDisplay extends JPanel {
         butSwitchView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!(GUIPreferences.getInstance().getDisplayStartTabbed())) {
-                    saveSplitterLoc();
-                    GUIPreferences.getInstance().setDisplayNontabbedPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
-                    GUIPreferences.getInstance().setDisplayNontabbedPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
-                    GUIPreferences.getInstance().setDisplayNonTabbedSizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
-                    GUIPreferences.getInstance().setDisplayNonTabbedSizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
-                    clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayPosX(), GUIPreferences.getInstance().getDisplayPosY());
-                    clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplaySizeWidth(), GUIPreferences.getInstance().getDisplaySizeHeight());
-                    setDisplayTabbed();
-                }
-                else {
-                    GUIPreferences.getInstance().setDisplayPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
-                    GUIPreferences.getInstance().setDisplayPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
-                    GUIPreferences.getInstance().setDisplaySizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
-                    GUIPreferences.getInstance().setDisplaySizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
-                    clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayNontabbedPosX(), GUIPreferences.getInstance().getDisplayNontabbedPosY());
-                    clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplayNonTabbedSizeWidth(), GUIPreferences.getInstance().getDisplayNonTabbedSizeHeight());
-                    setDisplayNonTabbed();
+                if (clientgui != null) {
+                    if (!(GUIPreferences.getInstance().getDisplayStartTabbed())) {
+                        saveSplitterLoc();
+                        GUIPreferences.getInstance().setDisplayNontabbedPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
+                        GUIPreferences.getInstance().setDisplayNontabbedPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
+                        GUIPreferences.getInstance().setDisplayNonTabbedSizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
+                        GUIPreferences.getInstance().setDisplayNonTabbedSizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
+                        clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayPosX(), GUIPreferences.getInstance().getDisplayPosY());
+                        clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplaySizeWidth(), GUIPreferences.getInstance().getDisplaySizeHeight());
+                        setDisplayTabbed();
+                    } else {
+                        GUIPreferences.getInstance().setDisplayPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
+                        GUIPreferences.getInstance().setDisplayPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
+                        GUIPreferences.getInstance().setDisplaySizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
+                        GUIPreferences.getInstance().setDisplaySizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
+                        clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayNontabbedPosX(), GUIPreferences.getInstance().getDisplayNontabbedPosY());
+                        clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplayNonTabbedSizeWidth(), GUIPreferences.getInstance().getDisplayNonTabbedSizeHeight());
+                        setDisplayNonTabbed();
+                    }
                 }
             }
         });

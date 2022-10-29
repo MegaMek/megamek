@@ -24,6 +24,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
@@ -210,6 +211,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> firingPhaseCommands;
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> physicalPhaseCommands;
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> targetingPhaseCommands;
+
+    // Unit Display order
+    private DefaultListModel<String> unitDisplayNonTabbed = new DefaultListModel<>();
     private final StatusBarPhaseDisplay.CommandComparator cmdComp = new StatusBarPhaseDisplay.CommandComparator();
     private final PhaseCommandListMouseAdapter cmdMouseAdaptor = new PhaseCommandListMouseAdapter();
     
@@ -286,15 +290,51 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         keyBindPane.getVerticalScrollBar().setUnitIncrement(16);
         JScrollPane advancedSettingsPane = new JScrollPane(getAdvancedSettingsPanel());
         advancedSettingsPane.getVerticalScrollBar().setUnitIncrement(16);
+        JScrollPane unitDisplayPane = new JScrollPane(getUnitDisplayPanel());
+        unitDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
+
 
         panTabs.add("Main", settingsPane);
         panTabs.add("Graphics", graphicsPane);
         panTabs.add("Key Binds", keyBindPane);
         panTabs.add("Button Order", getButtonOrderPanel());
         panTabs.add("Advanced", advancedSettingsPane);
+        panTabs.add("Unit Display Order", unitDisplayPane);
 
         return panTabs;
     }
+
+    private JPanel getUnitDisplayPanel() {
+        JPanel unitDisplayPane = new JPanel();
+        unitDisplayPane.setLayout(new BoxLayout(unitDisplayPane, BoxLayout.Y_AXIS));
+        JTabbedPane phasePane = new JTabbedPane();
+        unitDisplayPane.add(phasePane);
+
+        phasePane.add("Non Tabbed", getUnitDisplayPane());
+
+        return unitDisplayPane;
+    }
+
+    private JScrollPane getUnitDisplayPane() {
+        JPanel panel = new JPanel();
+
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA1"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB1"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC1"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA2"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB2"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC2"));
+
+        JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
+        listUnitDisplayNonTabbed.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listUnitDisplayNonTabbed.addMouseListener(cmdMouseAdaptor);
+        listUnitDisplayNonTabbed.addMouseMotionListener(cmdMouseAdaptor);
+        panel.add(listUnitDisplayNonTabbed);
+        JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        return scrollPane;
+    }
+
 
     private JPanel getSettingsPanel() {
 
@@ -691,6 +731,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             GUIPreferences.getInstance().setValue(option, savedAdvancedOpt.get(option));
         }
 
+        unitDisplayNonTabbed.clear();
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA1"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB1"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC1"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA2"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB2"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC2"));
+
         setVisible(false);
     }
 
@@ -887,6 +935,42 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         if (buttonOrderChanged && (clientgui != null)) {
             clientgui.updateButtonPanel(GamePhase.TARGETING);
         }
+
+        // unit display non tabbed
+        if (!GUIPreferences.getInstance().getDisplayStartTabbed()) {
+            boolean unitDisplayNonTabbedChanged = false;
+            int s = unitDisplayNonTabbed.getSize();
+
+            if ((s > 0) && (unitDisplayNonTabbed.get(0) != UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA1"))) {
+                unitDisplayNonTabbedChanged = true;
+                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedA1",  unitDisplayNonTabbed.get(0));
+            }
+            if ((s > 1) && (unitDisplayNonTabbed.get(1) != UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB1"))) {
+                unitDisplayNonTabbedChanged = true;
+                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedB1",  unitDisplayNonTabbed.get(1));
+            }
+            if ((s > 2) && (unitDisplayNonTabbed.get(2) != UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC1"))) {
+                unitDisplayNonTabbedChanged = true;
+                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedC1",  unitDisplayNonTabbed.get(2));
+            }
+            if ((s > 3) && (unitDisplayNonTabbed.get(3) != UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA2"))) {
+                unitDisplayNonTabbedChanged = true;
+                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedA2",  unitDisplayNonTabbed.get(3));
+            }
+            if ((s > 4) && (unitDisplayNonTabbed.get(4) != UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB2"))) {
+                unitDisplayNonTabbedChanged = true;
+                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedB2",  unitDisplayNonTabbed.get(4));
+            }
+            if ((s > 5) && (unitDisplayNonTabbed.get(5) != UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC2"))) {
+                unitDisplayNonTabbedChanged = true;
+                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedC2",  unitDisplayNonTabbed.get(5));
+            }
+
+            if (unitDisplayNonTabbedChanged) {
+                clientgui.unitDisplay.setDisplayNonTabbed();
+            }
+        }
+
 
         setVisible(false);
     }

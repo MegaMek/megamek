@@ -14,6 +14,7 @@
 
 package megamek.client.ui.swing;
 
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
@@ -32,12 +33,12 @@ public class UnitDisplayOrderPreferences extends PreferenceStoreProxy {
         store = PreferenceManager.getInstance().getPreferenceStore(
                 getClass().getName());
 
-        store.setDefault("NonTabbedA1", "General");
-        store.setDefault("NonTabbedA2", "Pilot");
-        store.setDefault("NonTabbedB1", "Weapon");
-        store.setDefault("NonTabbedB2", "System");
-        store.setDefault("NonTabbedC1", "Extra");
-        store.setDefault("NonTabbedC2", "Armor");
+        store.setDefault(UnitDisplay.NON_TABBED_A1, UnitDisplay.NON_TABBED_GENERAL);
+        store.setDefault(UnitDisplay.NON_TABBED_A2, UnitDisplay.NON_TABBED_PILOT);
+        store.setDefault(UnitDisplay.NON_TABBED_B1, UnitDisplay.NON_TABBED_WEAPON);
+        store.setDefault(UnitDisplay.NON_TABBED_B2, UnitDisplay.NON_TABBED_SYSTEM);
+        store.setDefault(UnitDisplay.NON_TABBED_C1, UnitDisplay.NON_TABBED_EXTRA);
+        store.setDefault(UnitDisplay.NON_TABBED_C2, UnitDisplay.NON_TABBED_ARMOR);
     }
 
     @Override

@@ -65,6 +65,27 @@ public class UnitDisplay extends JPanel {
     private Entity currentlyDisplaying;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
 
+    public static final String NON_TABBED_GENERAL = "General";
+    public static final String NON_TABBED_PILOT = "Pilot";
+    public static final String NON_TABBED_ARMOR = "Armor";
+    public static final String NON_TABBED_WEAPON = "Weapon";
+    public static final String NON_TABBED_SYSTEM = "System";
+    public static final String NON_TABBED_EXTRA = "Extra";
+
+    public static final String NON_TABBED_A1 = "NonTabbedA1";
+    public static final String NON_TABBED_A2 = "NonTabbedA2";
+    public static final String NON_TABBED_B1 = "NonTabbedB1";
+    public static final String NON_TABBED_B2 = "NonTabbedB2";
+    public static final String NON_TABBED_C1 = "NonTabbedC1";
+    public static final String NON_TABBED_C2 = "NonTabbedC2";
+
+    public static final int NON_TABBED_ZERO_INDEX = 0;
+    public static final int NON_TABBED_ONE_INDEX = 1;
+    public static final int NON_TABBED_TWO_INDEX = 2;
+    public static final int NON_TABBED_THREE_INDEX = 3;
+    public static final int NON_TABBED_FOUR_INDEX = 4;
+    public static final int NON_TABBED_FIVE_INDEX = 5;
+
     /**
      * Creates and lays out a new mech display.
      * 
@@ -256,12 +277,12 @@ public class UnitDisplay extends JPanel {
         sPan.setVisible(true);
         ePan.setVisible(true);
 
-        linkParentChild("NonTabbedA1", UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA1"));
-        linkParentChild("NonTabbedB1", UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB1"));
-        linkParentChild("NonTabbedC1", UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC1"));
-        linkParentChild("NonTabbedA2", UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA2"));
-        linkParentChild("NonTabbedB2", UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB2"));
-        linkParentChild("NonTabbedC2", UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC2"));
+        linkParentChild(UnitDisplay.NON_TABBED_A1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
+        linkParentChild(UnitDisplay.NON_TABBED_B1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
+        linkParentChild(UnitDisplay.NON_TABBED_C1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
+        linkParentChild(UnitDisplay.NON_TABBED_A2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
+        linkParentChild(UnitDisplay.NON_TABBED_B2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
+        linkParentChild(UnitDisplay.NON_TABBED_C2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
 
         displayP.add(splitABC);
 
@@ -289,22 +310,22 @@ public class UnitDisplay extends JPanel {
      */
     private void linkParentChild(String t, String v) {
         switch (t) {
-            case "NonTabbedA1":
+            case UnitDisplay.NON_TABBED_A1:
                 addChildPanel(panA1, v);
                 break;
-            case "NonTabbedA2":
+            case UnitDisplay.NON_TABBED_A2:
                 addChildPanel(panA2, v);
                 break;
-            case "NonTabbedB1":
+            case UnitDisplay.NON_TABBED_B1:
                 addChildPanel(panB1, v);
                 break;
-            case "NonTabbedB2":
+            case UnitDisplay.NON_TABBED_B2:
                 addChildPanel(panB2, v);
                 break;
-            case "NonTabbedC1":
+            case UnitDisplay.NON_TABBED_C1:
                 addChildPanel(panC1, v);
                 break;
-            case "NonTabbedC2":
+            case UnitDisplay.NON_TABBED_C2:
                 addChildPanel(panC2, v);
                 break;
         }
@@ -316,22 +337,22 @@ public class UnitDisplay extends JPanel {
      */
     private void addChildPanel(JPanel p, String v) {
         switch (v) {
-            case "General":
+            case UnitDisplay.NON_TABBED_GENERAL:
                 p.add(mPan, BorderLayout.CENTER);
                 break;
-            case "Pilot":
+            case UnitDisplay.NON_TABBED_PILOT:
                 p.add(pPan, BorderLayout.CENTER);
                 break;
-            case "Weapon":
+            case UnitDisplay.NON_TABBED_WEAPON:
                 p.add(wPan, BorderLayout.CENTER);
                 break;
-            case "System":
+            case UnitDisplay.NON_TABBED_SYSTEM:
                 p.add(sPan, BorderLayout.CENTER);
                 break;
-            case "Extra":
+            case UnitDisplay.NON_TABBED_EXTRA:
                 p.add(ePan, BorderLayout.CENTER);
                 break;
-            case "Armor":
+            case UnitDisplay.NON_TABBED_ARMOR:
                 p.add(aPan, BorderLayout.CENTER);
                 break;
         }

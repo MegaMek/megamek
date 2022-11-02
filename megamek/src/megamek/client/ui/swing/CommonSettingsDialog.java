@@ -318,12 +318,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private JScrollPane getUnitDisplayPane() {
         JPanel panel = new JPanel();
 
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA1"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB1"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC1"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA2"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB2"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC2"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
 
         JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
         listUnitDisplayNonTabbed.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -732,12 +732,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         }
 
         unitDisplayNonTabbed.clear();
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA1"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB1"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC1"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA2"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB2"));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC2"));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
 
         setVisible(false);
     }
@@ -941,36 +941,35 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             boolean unitDisplayNonTabbedChanged = false;
             int s = unitDisplayNonTabbed.getSize();
 
-            if ((s > 0) && (!unitDisplayNonTabbed.get(0).equals(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA1")))) {
+            if ((s > UnitDisplay.NON_TABBED_ZERO_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedA1",  unitDisplayNonTabbed.get(0));
+                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_A1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX));
             }
-            if ((s > 1) && (!unitDisplayNonTabbed.get(1).equals(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB1")))) {
+            if ((s > UnitDisplay.NON_TABBED_ONE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedB1",  unitDisplayNonTabbed.get(1));
+                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_B1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX));
             }
-            if ((s > 2) && (!unitDisplayNonTabbed.get(2).equals( UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC1")))) {
+            if ((s > UnitDisplay.NON_TABBED_TWO_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX).equals( UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedC1",  unitDisplayNonTabbed.get(2));
+                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_C1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX));
             }
-            if ((s > 3) && (!unitDisplayNonTabbed.get(3).equals(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedA2")))) {
+            if ((s > UnitDisplay.NON_TABBED_THREE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedA2",  unitDisplayNonTabbed.get(3));
+                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_A2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX));
             }
-            if ((s > 4) && (!unitDisplayNonTabbed.get(4).equals(UnitDisplayOrderPreferences.getInstance().getString("NonTabbedB2")))) {
+            if ((s > UnitDisplay.NON_TABBED_FOUR_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedB2",  unitDisplayNonTabbed.get(4));
+                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_B2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX));
             }
-            if ((s > 5) && (!unitDisplayNonTabbed.get(5).equals( UnitDisplayOrderPreferences.getInstance().getString("NonTabbedC2")))) {
+            if ((s > UnitDisplay.NON_TABBED_FIVE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX).equals( UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue("NonTabbedC2",  unitDisplayNonTabbed.get(5));
+                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_C2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX));
             }
 
             if ((unitDisplayNonTabbedChanged) && (clientgui != null)) {
                 clientgui.unitDisplay.setDisplayNonTabbed();
             }
         }
-
 
         setVisible(false);
     }

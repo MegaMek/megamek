@@ -27,6 +27,7 @@ import megamek.common.weapons.other.CLFussilade;
 import java.util.*;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
+import static megamek.common.EquipmentType.armorPointMultipliers;
 import static megamek.common.ITechnology.TECH_BASE_CLAN;
 import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
 import static megamek.common.MiscType.F_RADICAL_HEATSINK;
@@ -57,6 +58,7 @@ public class ASDamageConverter {
     private final Map<WeaponType, Boolean> ammoForWeapon = new HashMap<>();
     protected final boolean hasTargetingComputer;
     protected List<Mounted> weaponsList;
+    protected double rawSDamage;
     protected boolean needsHeatAdjustment = false;
     protected double heatAdjustFactor = 1;
     protected double heatAdjustFactorLE = 1;
@@ -213,18 +215,19 @@ public class ASDamageConverter {
 
     protected void processSDamage() {
         report.addLine("--- Short Range Damage:", "");
-        double sDamage = assembleFrontDamage(SHORT_RANGE);
+        rawSDamage = assembleFrontDamage(SHORT_RANGE);
+        double adjustedSDamage = rawSDamage;
 
         if (needsHeatAdjustment) {
             report.addLine("Adjusted Damage: ",
-                    formatForReport(sDamage) + " x (see M)",
-                    "= " + formatForReport(sDamage * heatAdjustFactor));
-            sDamage = sDamage * heatAdjustFactor;
+                    formatForReport(rawSDamage) + " x (see M)",
+                    "= " + formatForReport(rawSDamage * heatAdjustFactor));
+            adjustedSDamage *= heatAdjustFactor;
         }
 
-        finalSDamage = ASDamage.createDualRoundedUp(sDamage);
+        finalSDamage = ASDamage.createDualRoundedUp(adjustedSDamage);
         report.addLine("Final S damage:",
-                formatForReport(sDamage) + ", " + rdUp, "= " + finalSDamage.toStringWithZero());
+                formatForReport(adjustedSDamage) + ", " + rdUp, "= " + finalSDamage.toStringWithZero());
     }
 
     protected void processMDamage() {
@@ -259,6 +262,15 @@ public class ASDamageConverter {
         report.addLine("Final M damage:",
                 formatForReport(mDamage) + ", " + rdUp, "= " + finalMDamage.toStringWithZero());
 
+        if ((rawMDamage == 0) && needsHeatAdjustment) {
+            // In this case, fall back to short range damage
+            roundedUpRaw = ASDamage.createDualRoundedUp(rawSDamage).damage;
+            roundedUpAdjusted = finalSDamage.damage;
+            if (roundedUpRaw - roundedUpAdjusted > 0) {
+                element.setOverheat(Math.min(roundedUpRaw - roundedUpAdjusted, 4));
+                report.addLine("Using S Damage for OV", "", "");
+            }
+        }
         if (element.hasOV()) {
             report.addLine("Damage difference",
                     roundedUpRaw + " - " + roundedUpAdjusted,

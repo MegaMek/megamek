@@ -125,10 +125,6 @@ final class ASMovementConverter {
             }
         }
 
-        if ((entity instanceof Protomech) && ((Protomech) entity).isGlider()) {
-            result.put("", 2);
-            report.addLine("ProtoMek Glider Movement", "2\"");
-        }
         addUMUMovement(result, conversionData);
         return result;
     }

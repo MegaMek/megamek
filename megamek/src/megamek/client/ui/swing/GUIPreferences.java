@@ -122,6 +122,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
     public static final String DISPLAY_POS_X = "DisplayPosX";
     public static final String DISPLAY_POS_Y = "DisplayPosY";
+    public static final String DISPLAY_NONTABBED_POS_X = "DisplayNontabbedPosX";
+    public static final String DISPLAY_NONTABBED_POS_Y = "DisplayNontabbedPosY";
     public static final String DISPLAY_START_TABBED = "DisplayStartTabbed";
     public static final String DISPLAY_SPLIT_ABC_LOC = "DisplaySplitABCLoc";
     public static final String DISPLAY_SPLIT_BC_LOC = "DisplaySplitBCLoc";
@@ -130,6 +132,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_SPLIT_C1_LOC = "DisplaySplitC2Loc";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
+    public static final String DISPLAY_NONTABBED_SIZE_HEIGHT = "DisplayNonTabbedSizeHeight";
+    public static final String DISPLAY_NONTABBED_SIZE_WIDTH = "DisplayNontabbedSizeWidth";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
@@ -403,6 +407,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(DISPLAY_NONTABBED_SIZE_HEIGHT, 900);
+        store.setDefault(DISPLAY_NONTABBED_SIZE_WIDTH, 900);
         store.setDefault(DISPLAY_START_TABBED, true);
         store.setDefault(DISPLAY_SPLIT_ABC_LOC, 300);
         store.setDefault(DISPLAY_SPLIT_BC_LOC, 300);
@@ -607,6 +613,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(DISPLAY_POS_Y);
     }
 
+    public int getDisplayNontabbedPosX() {
+        return store.getInt(DISPLAY_NONTABBED_POS_X);
+    }
+
+    public int getDisplayNontabbedPosY() {
+        return store.getInt(DISPLAY_NONTABBED_POS_Y);
+    }
+
     public boolean getDisplayStartTabbed() {
         return store.getBoolean(DISPLAY_START_TABBED);
     }
@@ -637,6 +651,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getDisplaySizeWidth() {
         return store.getInt(DISPLAY_SIZE_WIDTH);
+    }
+
+    public int getDisplayNonTabbedSizeHeight() {
+        return store.getInt(DISPLAY_NONTABBED_SIZE_HEIGHT);
+    }
+
+    public int getDisplayNonTabbedSizeWidth() {
+        return store.getInt(DISPLAY_NONTABBED_SIZE_WIDTH);
     }
 
     public boolean getGameSummaryBoardView() {
@@ -1124,6 +1146,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(DISPLAY_POS_Y, i);
     }
 
+    public void setDisplayNontabbedPosX(int i) {
+        store.setValue(DISPLAY_NONTABBED_POS_X, i);
+    }
+
+    public void setDisplayNontabbedPosY(int i) {
+        store.setValue(DISPLAY_NONTABBED_POS_Y, i);
+    }
     public void setDisplayStartTabbed(boolean state) {
         store.setValue(DISPLAY_START_TABBED, state);
     }
@@ -1154,6 +1183,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDisplaySizeWidth(int i) {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
+    }
+
+    public void setDisplayNonTabbedSizeHeight(int i) {
+        store.setValue(DISPLAY_NONTABBED_SIZE_HEIGHT, i);
+    }
+
+    public void setDisplayNonTabbedSizeWidth(int i) {
+        store.setValue(DISPLAY_NONTABBED_SIZE_WIDTH, i);
     }
 
     public void setGameSummaryBoardView(boolean state) {

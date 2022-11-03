@@ -191,7 +191,6 @@ public class MekTableModel extends AbstractTableModel {
             Player lPlayer = clientGui.getClient().getLocalPlayer();
             unitTooltips.add( HTML_BEGIN + UnitToolTip.getEntityTipLobby(entity, lPlayer, mset) + HTML_END);
             pilotTooltips.add(HTML_BEGIN + PilotToolTip.getPilotTipDetailed(entity, true) + PilotToolTip.getCrewAdvs(entity, true) + HTML_END);
-
         }
         final boolean rpgSkills = clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
         if (chatLounge.isCompact()) {

@@ -12,6 +12,7 @@ VERSION HISTORY:
 + PR #3158: AlphaStrike conversion update and cards
 + PR #3944: Infantry refactor
 + PR #3946: Add a non-tabbed Unit Display
++ PR #3954: Remove 2" base MV from ProtoMek gliders (to-be-errata); add missing OV calculation for 0 M dmg units
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

@@ -353,6 +353,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
 
+    public static final int TARGET_DISPLAY_WIDTH = 200;
+
     WeaponPanel(UnitDisplay unitDisplay) {
 
         this.unitDisplay = unitDisplay;

@@ -11,8 +11,10 @@ VERSION HISTORY:
 + PR #3935: CI Field Guns and Artillery are now destroyed with trooper loss according to TO:AUE
 + PR #3158: AlphaStrike conversion update and cards
 + PR #3944: Infantry refactor
-+ PR #3946: Add a non-tabbed Unit Display
++ PR #3946: Add a non-tabbed Unit Display for users with high-resolution monitors
 + PR #3954: Remove 2" base MV from ProtoMek gliders (to-be-errata); add missing OV calculation for 0 M dmg units
++ Issue #961: Allow long unit names to display cleanly when designating weapons fire
++ Issue #3949: non-tabbed unit display panel order can be configured in client settings; size and position saving for panels
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

@@ -121,4 +121,12 @@ public class PlayerListDialog extends JDialog {
         refreshPlayerList(playerList, client, true);
         pack();
     }
+
+    public Player getSelected() {
+        if (!playerList.isSelectionEmpty()) {
+            return client.getGame().getPlayersVectorSorted().elementAt(playerList.getSelectedIndex());
+        }
+
+        return null;
+    }
 }

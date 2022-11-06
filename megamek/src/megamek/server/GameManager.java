@@ -31974,8 +31974,7 @@ public class GameManager implements IGameManager {
         }
         // Not all targets are Entities.
         Targetable target = game.getTarget(aaa.getTargetType(), aaa.getTargetId());
-
-        // if (target instanceof Entity) {
+        
         if ((target != null) && (target instanceof Entity)) {
             Entity targetEntity = (Entity) target;
             targetEntity.setStruck(true);

@@ -1,0 +1,292 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+# Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Carrack Transport
+</Name>
+
+<Model>
+(Merchant 2985)
+</Model>
+
+<mul id:>
+3899
+</mul id:>
+
+<year>
+2985
+</year>
+
+<originalBuildYear>
+2985
+</originalBuildYear>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+smallcraftbay:2.0:2:1
+smallcraftbay:2.0:2:2
+battlearmorbay:5.0:0:3
+dockingcollar
+dockingcollar
+1stclassquarters:210.0:0
+crewquarters:735.0:0
+cargobay:98680.0:7:6
+</transporters>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<heatsinks>
+373
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+5000
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+41
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+6
+3
+3
+2
+3
+3
+</armor>
+
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+(B) CLSRM6
+CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable:30
+CLArtemisIV
+CLArtemisIV
+</Nose Equipment>
+
+<Left Front Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+</Left Front Side Equipment>
+
+<Right Front Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+</Right Front Side Equipment>
+
+<Aft Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+</Aft Equipment>
+
+<Aft Left Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20:24
+CLArtemisIV
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+</Aft Right Side Equipment>
+
+<Hull Equipment>
+ISMobileHPG
+</Hull Equipment>
+
+<Left Broadsides Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+(B) CLSRM6
+CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable:60
+CLArtemisIV
+CLArtemisIV
+</Left Broadsides Equipment>
+
+<Right Broadsides Equipment>
+(B) CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+(B) CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+(B) CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis-capable:24
+CLArtemisIV
+(B) CLSRM6
+CLSRM6
+Clan Ammo SRM-6 (Clan) Artemis-capable:60
+CLArtemisIV
+CLArtemisIV
+</Right Broadsides Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<source>
+3057R - Succession Wars - Late Era
+</source>
+
+<tonnage>
+300000.0
+</tonnage>
+
+<kf_core>
+1
+</kf_core>
+
+<sail>
+1
+</sail>
+
+<grav_decks>
+98
+</grav_decks>
+
+<crew>
+176
+</crew>
+
+<officers>
+21
+</officers>
+
+<gunners>
+11
+</gunners>
+
+<passengers>
+0
+</passengers>
+
+<marines>
+0
+</marines>
+
+<battlearmor>
+0
+</battlearmor>
+
+<life_boat>
+3
+</life_boat>
+
+<escape_pod>
+10
+</escape_pod>
+
+<capabilities>
+Due to its role as a military transport, the Carrack features a light array of mixed capital class and anti-fighter weaponry. The nose bay and each broadside featured a pair of NL35s and a single NAC/20, two ER large lasers and four Large pulse lasers, rounded off by four anti-missile systems for point defense. Save for downgrading the Naval Autocannon to a NAC/10, each fore and rear angle as well as directly aft features almost the same layout as well. The Carrack's 63,446 ton cargo hold surrounds the vessel's Compact Kearny-Fuchida Drive core and is flanked in turn by two Small Craft bays on either side. These bays frequently house a pair of aerospace fighters and a pair of shuttlecraft, however the exact composition of the small craft complement appears to depend on each individual vessel's captain.
+</capabilities>
+
+<overview>
+Developed as a merchantman to ply potentially hostile Periphery shipping lanes, the Carrack-class military transport served with the Star League Defense Force and Great House navies.
+</overview>
+
+<deployment>
+A joint venture between Clans Nova Cat and Clan Diamond Shark that reduces the Carrack's offensive and defensive capacity to become true merchant vessels, the so-called Merchant Carrack removes all the Naval Lasers and Autocannons for a lighter defensive array of one ER Large and two ER Medium Lasers, one Large and two Medium Pulse Lasers and an Artemis IV-enhanced LRM-20 rack on every facing, the front and rear merely adding an additional Artemis-enhanced SRM-6 launcher. Carrying almost half the volume of standard heat sinks the Merchant Carrack carrying a minimal fifteen and a half tons of standard armor, freeing up a massive amount of space for cargo, 98,806 tons worth, nearly a third over that of the standard Carrack transport. The Merchant Carrack also carries a full Star of Elementals to help fend off boarding attempts.
+</deployment>
+
+<history>
+While no examples of the class were known to remain in the Inner Sphere following the maelstrom of the early Succession War era, an undetermined number accompanied the Exodus Fleet, with the modern Clan Carrack military transport first entering service in 2950. ComStar analysts were unable to determine how many of the Carracks which are currently in service among the various Clan toumans are upgraded Star League era vessels and how many are new, Clan-built ships. What ComStar was able to conclude following operations on Wayside V was that the differences between the original Star League and standard Clan Carrack were negligible; while mounting HarJel-based Hull Sealant technology, unlike many redesigned and upgraded Clan vessels the modern Carrack is not equipped with either advanced armor or a Lithium-Fusion Battery.
+</history>
+
+<manufacturer>
+Refit
+</manufacturer>
+
+<primaryFactory>
+Unknown
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

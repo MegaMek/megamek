@@ -1,0 +1,173 @@
+Version:1.3
+Pouncer
+X
+mul id:9265
+Config:Biped Omnimech
+techbase:Mixed (Clan Chassis)
+era:3147
+source:Rec Guide 25 - Clan Invasion
+rules level:3
+
+mass:40
+engine:240 XL (Clan) Engine
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:16 Clan Double
+base chassis heat sinks:9
+walk mp:6
+jump mp:5
+
+armor:Ferro-Fibrous(Clan)
+LA armor:12
+RA armor:12
+LT armor:11
+RT armor:11
+CT armor:12
+HD armor:9
+LL armor:13
+RL armor:13
+RTL armor:7
+RTR armor:7
+RTC armor:8
+
+Weapons:9
+Improved Heavy Small Laser, Left Arm
+Improved Heavy Small Laser, Left Arm
+Improved Heavy Small Laser, Left Arm
+Improved Heavy Small Laser, Left Arm
+Improved Heavy Small Laser, Left Arm
+Improved Heavy Small Laser, Left Arm
+Improved Heavy Small Laser, Left Arm
+Plasma Cannon, Left Torso
+Laser AMS, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+CLImprovedSmallHeavyLaser (OMNIPOD)
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+IS Lance (OMNIPOD)
+IS Lance (OMNIPOD)
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Jump Jet
+Jump Jet
+CLPlasmaCannon (OMNIPOD)
+CLPlasmaCannonAmmo (OMNIPOD)
+Supercharger (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (OMNIPOD)
+CLDoubleHeatSink (OMNIPOD)
+Jump Jet
+Jump Jet
+CLLaserAntiMissileSystem (OMNIPOD)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Pouncer was originally a testbed design that was upgraded to combat specifications on the orders of then ilKhan Ulric Kerensky, as it was realized that a more mobile 'Mech was needed when combating Inner Sphere forces.
+
+capabilities:Overall, the Pouncer is an excellent OmniMech with 15.5 tons of pod space, allowing it to carry a wide variety of weapons payloads.
+
+deployment:No information available on this variant
+
+history:The Pouncer is built on a lightweight DSAM Endo 4 endo steel chassis and is powered by a 240-rated XL engine which gives it a maximum speed of 97.2 km/h. The 'Mech's mobility is enhanced with five Grandthrust Mk. Four jump jets that allow it to jump up to 150 meters. For protection from enemy fire, the 
+Pouncer has a respectable six tons of Forging ZM15 ferro-fibrous armor. The last of the Nova factories on Tokasha were later retooled to create Pouncers after the Wars of Reaving.
+
+manufacturer:WC Primary Facility 5,Manufacturing Plant SFF-TW2
+primaryfactory:Tiber (Clan),CSF Titanic Mobile Production Facility
+systemmanufacturer:CHASSIS:DSAM Endo 4
+systemmanufacturer:ENGINE:Fusion 240 XL
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Grandthrust Mk. 4
+systemmanufacturer:COMMUNICATIONS:Megaband System 21
+systemmanufacturer:TARGETING:Dtrac Suite 4

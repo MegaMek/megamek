@@ -52,11 +52,11 @@ Tracked
 </engine_type>
 
 <armor_type>
-5
+6
 </armor_type>
 
 <armor_tech>
-5
+1
 </armor_tech>
 
 <armor>
@@ -91,6 +91,7 @@ ISBPod
 </Left Equipment>
 
 <Rear Equipment>
+ISBPod
 </Rear Equipment>
 
 <Turret Equipment>
@@ -99,6 +100,8 @@ ISERMediumLaser
 ISTAG
 ISMML9
 ISMML9
+ISArtemisIV
+ISArtemisIV
 </Turret Equipment>
 
 <capabilities>

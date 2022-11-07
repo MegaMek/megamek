@@ -33,7 +33,7 @@ Bulldog Medium Tank
 </originalBuildYear>
 
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <motion_type>
@@ -102,3 +102,34 @@ RS 3145 NTNU - Early Republic
 60.0
 </tonnage>
 
+<capabilities>
+Its speed is not exceptional and its protection of 6½ tons of standard armor is anything but ample. On the other hand, it is easy to repair and said to be a reliable and cheap asset for any field commander that needs a backbone for his vehicle forces.
+</capabilities>
+
+<overview>
+The Bulldog could be called a "Jack of all trades", featuring a classic layout of one main gun and a few secondary weapons.
+</overview>
+
+<deployment>
+Equipped with a fuel cell-powered motor, this Bulldog variant was introduced in the Dark Age. It removes all the standard weaponry and carries a Snub Nose PPC, Machine Gun, and a pair of MML-5 launchers with Artemis IV fire control systems. 
+</deployment>
+
+<history>
+Bulldog Enterprises was a well-known manufacturer of civilian vehicles that tried to break into the huge market for military hardware by producing the Bulldog Main Battle Tank. As the market for heavy vehicles was already largely saturated with well-constructed tanks, the Bulldog was not the economic success the company hoped for, despite its more than adequate firepower. It is worth noting that Bulldog Enterprises developed the tank's main weapon all by themselves to keep costs down. This is quite remarkable, given that it was producing strictly nonmilitary hardware prior to the Bulldog. The tank's sales were poor initially, and the Bulldog was meant to take advantage of the Star League Defense Force's buildup in late twenty-sixth century to finally produce a richer cash flow. In 2700, Bulldog Enterprises licensed rights to produce the tank to Quikscell Company, hoping that interested royalties would boost their sagging sales. It survived the Succession Wars due to its low cost and easily accessible replacement parts.
+</history>
+
+<manufacturer>
+Bulldog Enterprises
+</manufacturer>
+
+<primaryFactory>
+Proserpina
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>

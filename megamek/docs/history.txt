@@ -15,6 +15,9 @@ VERSION HISTORY:
 + PR #3954: Remove 2" base MV from ProtoMek gliders (to-be-errata); add missing OV calculation for 0 M dmg units
 + Issue #961: Allow long unit names to display cleanly when designating weapons fire
 + Issue #3949: non-tabbed unit display panel order can be configured in client settings; size and position saving for panels
++ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867 
++ Data: TP Foster RATS #3930 - Thanks Stonewall072
+
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

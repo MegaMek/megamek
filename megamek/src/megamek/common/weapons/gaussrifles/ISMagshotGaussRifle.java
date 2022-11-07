@@ -26,7 +26,7 @@ public class ISMagshotGaussRifle extends GaussWeapon {
     public ISMagshotGaussRifle() {
         super();
 
-        name = "MagShot";
+        name = "Magshot";
         setInternalName("ISMagshotGR");
         sortingName = "Gauss Z";
         heat = 1;

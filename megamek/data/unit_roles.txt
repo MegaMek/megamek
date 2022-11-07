@@ -7471,3 +7471,25 @@ Zugvogel Omni Support Aircraft D 'Raubvogel':FIRE_SUPPORT
 Zugvogel Omni Support Aircraft E:ATTACK_FIGHTER
 Zugvogel Omni Support Aircraft F:FIRE_SUPPORT
 Zugvogel Omni Support Aircraft Prime:FIRE_SUPPORT
+Pegasus Scout Tank (Upgrade):SCOUT
+Bulldog Medium Tank (ERLL):BRAWLER
+Bulldog Medium Tank (Chemical):BRAWLER
+Bulldog Medium Tank (LB-X):BRAWLER
+Bulldog Medium Tank (Plasma):BRAWLER
+Demolisher Heavy Tank (Cell):JUGGERNAUT
+Demolisher Heavy Tank (Arrow IV):MISSILE_BOAT
+Demolisher Heavy Tank (Clan):JUGGERNAUT
+Demolisher Heavy Tank (Gauss):SNIPER
+Demolisher Heavy Tank (MRM):JUGGERNAUT
+Demolisher Heavy Tank (Reinforced):SNIPER
+Pouncer T:SCOUT
+Pouncer F:SCOUT
+Pouncer G:STRIKER
+Pouncer I:MISSILE_BOAT
+Pouncer W:SNIPER
+Pouncer X:STRIKER
+Vindicator VND-7L:BRAWLER
+Chameleon TRC-4B:SCOUT
+Chameleon CLN-8V:SKIRMISHER
+Chameleon CLN-9V:STRIKER
+Wraith TR5:SKIRMISHER

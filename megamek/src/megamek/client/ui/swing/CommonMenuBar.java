@@ -103,6 +103,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JCheckBoxMenuItem viewMekDisplay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewMekDisplay"));
     private JMenuItem viewAccessibilityWindow = new JMenuItem(getString("CommonMenuBar.viewAccessibilityWindow"));
     private JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewKeyboardShortcuts"));
+    private JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlanetaryConditions"));
     private JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
     private JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
     private JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
@@ -249,6 +250,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         
         initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY);
         viewKeybindsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
+
+        initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY);
+        viewPlanetaryConditionsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY));
+
         initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
         viewUnitOverview.setSelected(GUIP.getShowUnitOverview());
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
@@ -310,6 +315,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleHexCoords.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.HEX_COORDS));
         viewMovModEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOD_ENVELOPE));
         viewKeybindsOverlay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.KEY_BINDS));
+        viewPlanetaryConditionsOverlay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.PLANETARY_CONDITIONS));
         viewMekDisplay.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.UNIT_DISPLAY));
         viewUnitOverview.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.UNIT_OVERVIEW));
         viewLOSSetting.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.LOS_SETTING));
@@ -351,7 +357,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
             GUIP.toggleKeybindsOverlay();
-            
+
+        } else if (event.getActionCommand().equals(ClientGUI.VIEW_PLANETARYCONDITIONS_OVERLAY)) {
+            GUIP.togglePlanetaryConditionsOverlay();
+
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_HEXCOORDS)) {
             boolean coordsShown = GUIP.getBoolean(GUIPreferences.SHOW_COORDS);
             GUIP.setValue(GUIPreferences.SHOW_COORDS, !coordsShown);
@@ -445,6 +454,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewZoomOut.setEnabled(isBoardView);
         toggleIsometric.setEnabled(isBoardView);
         viewKeybindsOverlay.setEnabled(isBoardView);
+        viewPlanetaryConditionsOverlay.setEnabled(isBoardView);
         toggleHexCoords.setEnabled(isBoardView);
         
         viewLOSSetting.setEnabled(isInGameBoardView);
@@ -487,6 +497,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             toggleFieldOfFire.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_KEYBINDS_OVERLAY)) {
             viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
+        } else if (e.getName().equals(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY)) {
+            viewPlanetaryConditionsOverlay.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {

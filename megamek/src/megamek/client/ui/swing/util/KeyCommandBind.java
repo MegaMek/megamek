@@ -102,6 +102,7 @@ public enum KeyCommandBind {
     UNIT_DISPLAY(true, "toggleUnitDisplay", VK_D, CTRL_DOWN_MASK),
     UNIT_OVERVIEW(true, "toggleUnitOverview", VK_U, CTRL_DOWN_MASK),
     KEY_BINDS(true, "toggleKeybinds", VK_K, CTRL_DOWN_MASK),
+    PLANETARY_CONDITIONS(true, "togglePlanetaryConditions", VK_P, CTRL_DOWN_MASK),
     CLIENT_SETTINGS(true, "clientSettings", VK_C, ALT_DOWN_MASK),
     INC_GUISCALE(true, "incGuiScale", VK_ADD, CTRL_DOWN_MASK),
     DEC_GUISCALE(true, "decGuiScale", VK_SUBTRACT, CTRL_DOWN_MASK),

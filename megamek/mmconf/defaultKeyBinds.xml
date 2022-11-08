@@ -358,6 +358,13 @@
     </KeyBind>
 
     <KeyBind>
+        <command>togglePlanetaryConditionsOverlay</command> <!-- Ctrl-P -->
+        <keyCode>80</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
          <command>clientSettings</command> <!-- Alt-C -->
         <keyCode>67</keyCode>
         <modifier>512</modifier>

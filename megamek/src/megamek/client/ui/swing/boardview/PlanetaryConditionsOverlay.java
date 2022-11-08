@@ -33,6 +33,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.common.Game;
 import megamek.common.KeyBindParser;
+import megamek.common.PlanetaryConditions;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -55,9 +56,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
     private static final int DIST_SIDE = 500;
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
-    private static final Color TEXT_COLOR = new Color(200, 250, 200);
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
-    private static final Color BG_COLOR = new Color(80, 80, 80, 200);
     private static final float FADE_SPEED = 0.2f;
 
 
@@ -98,6 +97,10 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
         if (!visible && !isSliding()) {
             return;
         }
+
+        if ((clientGui == null) || (currentGame == null)) {
+            return;
+        }
         
         // At startup, phase and turn change and when the Planetary Conditions change,
         // the cached image is (re)created
@@ -115,8 +118,9 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             Graphics intGraph = displayImage.getGraphics();
             GUIPreferences.AntiAliasifSet(intGraph);
 
-            // draw a semi-transparent background rectangle 
-            intGraph.setColor(BG_COLOR);
+            // draw a semi-transparent background rectangle
+            Color colorBG = GUIPreferences.getInstance().getPlanetaryConditionsColorBackground();
+            intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), 200));
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
             
             // The coordinates to write the texts to
@@ -129,7 +133,9 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
                 y += fm.getHeight();
             }
         }
-        
+
+        int DistSide = clientGui.getWidth() - 500;
+
         // draw the cached image to the boardview
         // uses Composite to draw the image with variable transparency
         if (alpha < 1) {
@@ -137,10 +143,10 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             Composite saveComp = ((Graphics2D) graph).getComposite();
             int type = AlphaComposite.SRC_OVER;
             ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(type, alpha));
-            graph.drawImage(displayImage, clipBounds.x + DIST_SIDE, clipBounds.y + DIST_TOP, null);
+            graph.drawImage(displayImage, clipBounds.x + DistSide, clipBounds.y + DIST_TOP, null);
             ((Graphics2D) graph).setComposite(saveComp);
         } else {
-            graph.drawImage(displayImage, clipBounds.x + DIST_SIDE, clipBounds.y + DIST_TOP, null);
+            graph.drawImage(displayImage, clipBounds.x + DistSide, clipBounds.y + DIST_TOP, null);
         }
     }
 
@@ -159,23 +165,39 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
     /** Returns an ArrayList of all text lines to be shown. */
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
-        
+
+        Color colorTitle = GUIPreferences.getInstance().getPlanetaryConditionsColorTitle();
+        Color colorHot = GUIPreferences.getInstance().getPlanetaryConditionsColorHot();
+        Color colorCold = GUIPreferences.getInstance().getPlanetaryConditionsColorCold();
+
         KeyCommandBind kcb = KeyCommandBind.PLANETARY_CONDITIONS;
         String mod = KeyEvent.getModifiersExText(kcb.modifiers);
         String key = KeyEvent.getKeyText(kcb.key);
         String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
-        result.add(Messages.getString("PlanetaryConditions.heading", toggleKey));
+        result.add(String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue()) + Messages.getString("PlanetaryConditions.heading", toggleKey));
         
         if (clientGui != null) {
             // In a game, not the Board Editor
-            result.add("Temperature (deg C): " + currentGame.getPlanetaryConditions().getTemperature());
-            result.add("Gravity (g): " + currentGame.getPlanetaryConditions().getGravity());
-            result.add("Light: " + currentGame.getPlanetaryConditions().getLightDisplayableName());
-            result.add("Atmospheric Pressure: " + currentGame.getPlanetaryConditions().getAtmosphereDisplayableName());
-            result.add("Weather: " + currentGame.getPlanetaryConditions().getWeatherDisplayableName());
-            result.add("Wind: " + currentGame.getPlanetaryConditions().getWindDisplayableName());
-            result.add("Wind Direction: "  + currentGame.getPlanetaryConditions().getWindDirDisplayableName());
-            result.add("Fog: " + currentGame.getPlanetaryConditions().getFogDisplayableName());
+
+            String tempColor = "";
+            int temp = currentGame.getPlanetaryConditions().getTemperature();
+
+            if (currentGame.getPlanetaryConditions().isExtremeTemperatureHot()) {
+                tempColor = String.format("#%02X%02X%02X", colorHot.getRed(), colorHot.getGreen(), colorHot.getBlue());
+            } else if (currentGame.getPlanetaryConditions().isExtremeTemperatureCold()) {
+                tempColor = String.format("#%02X%02X%02X", colorCold.getRed(), colorCold.getGreen(), colorCold.getBlue());
+            }
+
+            result.add(tempColor + "Temperature (deg C):  " + temp);
+            result.add("Gravity (g):  " + currentGame.getPlanetaryConditions().getGravity());
+            result.add("Light:  " + currentGame.getPlanetaryConditions().getLightDisplayableName() + "  " + currentGame.getPlanetaryConditions().getLightIndicator());
+            result.add("Atmospheric Pressure:  " + currentGame.getPlanetaryConditions().getAtmosphereDisplayableName() + "  " + currentGame.getPlanetaryConditions().getAtmosphereIndicator());
+            result.add("EMI:  " + currentGame.getPlanetaryConditions().getEMIDisplayableValue());
+            result.add("Weather:  " + currentGame.getPlanetaryConditions().getWeatherDisplayableName() + "  " + currentGame.getPlanetaryConditions().getWeatherIndicator());
+            result.add("Wind:  " + currentGame.getPlanetaryConditions().getWindDisplayableName() + "   " + currentGame.getPlanetaryConditions().getWindStrengthIndicator());
+            result.add("Wind Direction:  "  + currentGame.getPlanetaryConditions().getWindDirDisplayableName() + "  " + currentGame.getPlanetaryConditions().getWindDirectionIndicator());
+            result.add("Fog:  " + currentGame.getPlanetaryConditions().getFogDisplayableName() + "  " + currentGame.getPlanetaryConditions().getFogIndicator());
+            result.add("Blowing Sand:  " + currentGame.getPlanetaryConditions().getSandBlowingDisplayableValue());
         }
 
         return result;
@@ -188,7 +210,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
      * otherwise TEXT_COLOR is used.
      */
     private void drawShadowedString(Graphics graph, String s, int x, int y) {
-        Color textColor = TEXT_COLOR;
+        Color textColor = GUIPreferences.getInstance().getPlanetaryConditionsColorText();
         // Extract a color code from the start of the string
         // used to display headlines if it's there
         if (s.startsWith("#") && s.length() > 7) {
@@ -202,6 +224,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             }
             s = s.substring(7);
         }
+
         graph.setColor(SHADOW_COLOR);
         graph.drawString(s, x + 1, y + 1);
         graph.setColor(textColor);

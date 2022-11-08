@@ -1046,4 +1046,145 @@ public class PlanetaryConditions implements Serializable {
     public void setRunOnce(boolean run) {
         runOnce = run;
     }
+
+    public boolean isExtremeTemperatureHot() {
+        return  (isExtremeTemperature() && (temperature > 0));
+    }
+
+    public boolean isExtremeTemperatureCold() {
+        return (isExtremeTemperature() && (temperature < 0));
+    }
+
+    public String getLightIndicator() {
+        switch (lightConditions) {
+            case PlanetaryConditions.L_DAY:
+                return "\u2600";
+            case PlanetaryConditions.L_DUSK:
+                return "\u263D \u263C";
+            case PlanetaryConditions.L_FULL_MOON:
+                return "\u26AB";
+            case PlanetaryConditions.L_MOONLESS:
+                return "\u26AA";
+            case PlanetaryConditions.L_PITCH_BLACK:
+                return "\u2588";
+            default:
+                return "";
+        }
+    }
+
+    public String getFogIndicator() {
+        switch (fog) {
+            case PlanetaryConditions.FOG_NONE:
+                return "";
+            case PlanetaryConditions.FOG_LIGHT:
+                return "\u2601";
+            case PlanetaryConditions.FOG_HEAVY:
+                return "\u2601 \u2601";
+            default:
+                return "";
+        }
+    }
+
+    public String getWindStrengthIndicator() {
+        switch (windStrength) {
+            case PlanetaryConditions.WI_LIGHT_GALE:
+                return "\u21F6";
+            case PlanetaryConditions.WI_MOD_GALE:
+                return "\u21F6\u21F6";
+            case PlanetaryConditions.WI_STRONG_GALE:
+                return "\u21F6\u21F6\u21F6";
+            case PlanetaryConditions.WI_STORM:
+                return "\u21F6\u21F6\u21F6\u21F6";
+            case PlanetaryConditions.WI_TORNADO_F13:
+                return "\u21F6\u21F6\u21F6\u21F6\u21F6";
+            case PlanetaryConditions.WI_TORNADO_F4:
+                return "\u21F6\u21F6\u21F6\u21F6\u21F6\u21F6";
+            default:
+                return "";
+        }
+    }
+
+    public String getWindDirectionIndicator() {
+        switch (getWindDirDisplayableName()) {
+            case "North":
+                return "\u2193";
+            case "Northeast":
+                return "\u2B0B";
+            case "Southeast":
+                return "\u2B09";
+            case "East":
+                return "\u2190";
+            case "South":
+                return "\u2191";
+            case "Southwest":
+                return "\u2B08";
+            case "Northwest":
+                return "\u2B0A";
+            case "West":
+                return "\u279D";
+            case "RandomWindDirection":
+                return "\u267A";
+            default:
+                return "";
+        }
+    }
+
+    public String getWeatherIndicator() {
+        switch (weatherConditions) {
+            case PlanetaryConditions.WE_NONE:
+                return "";
+            case PlanetaryConditions.WE_LIGHT_RAIN:
+                return "\u26C8";
+            case PlanetaryConditions.WE_MOD_RAIN:
+                return "\u26C8 \u26C8";
+            case PlanetaryConditions.WE_HEAVY_RAIN:
+                return "\u26C8 \u26C8 \u26C8";
+            case PlanetaryConditions.WE_GUSTING_RAIN:
+                return "\u26C8 \u26C8 \u26C8 \u26C8";
+            case PlanetaryConditions.WE_DOWNPOUR:
+                return "\u26C8 \u26C8 \u26C8 \u26C8 \u26C8";
+            case PlanetaryConditions.WE_LIGHT_SNOW:
+                return"\u2744";
+            case PlanetaryConditions.WE_MOD_SNOW:
+                return"\u2744 \u2744";
+            case PlanetaryConditions.WE_SNOW_FLURRIES:
+                return "\u2744 \u2744 \u2744";
+            case PlanetaryConditions.WE_HEAVY_SNOW:
+                return "\u2744 \u2744 \u2744 \u2744";
+            case PlanetaryConditions.WE_SLEET:
+                return "\u2745";
+            case PlanetaryConditions.WE_ICE_STORM:
+                return "\u2745 \u26C8";
+            default:
+                return "";
+        }
+    }
+
+    public String getAtmosphereIndicator() {
+        switch (atmosphere) {
+            case PlanetaryConditions.ATMO_VACUUM:
+                return "\u22C4";
+            case PlanetaryConditions.ATMO_TRACE:
+                return "\u22C4 \u22C4";
+            case PlanetaryConditions.ATMO_THIN:
+                return "\u22C4 \u22C4 \u22C4";
+            case PlanetaryConditions.ATMO_STANDARD:
+                return "\u22C4 \u22C4 \u22C4 \u22C4";
+            case PlanetaryConditions.ATMO_HIGH:
+                return "\u22C4 \u22C4 \u22C4 \u22C4 \u22C4";
+            case PlanetaryConditions.ATMO_VHIGH:
+                return "\u22C4 \u22C4 \u22C4 \u22C4 \u22C4 \u22C4";
+            default:
+                return "";
+        }
+    }
+
+    public String getEMIDisplayableValue() {
+        return hasEMI() ? "Yes" : "No";
+    }
+
+    public String getSandBlowingDisplayableValue() {
+        return isSandBlowing() ? "Yes" : "No";
+    }
+
 }

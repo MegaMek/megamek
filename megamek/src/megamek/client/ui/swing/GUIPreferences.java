@@ -104,6 +104,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_HEAT_COLOR_OVERHEAT = "AdvancedHeatColorOverheat";
     public static final String ADVANCED_REPORT_COLOR_LINK = "AdvancedReportColorLink";
 
+    public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE = "AdvancedPlanetaryConditionsColorTitle";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_TEXT = "AdvancedPlanetaryConditionsColorText";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD = "AdvancedPlanetaryConditionsColorCold";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT = "AdvancedPlanetaryConditionsColorHot";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND = "AdvancedPlanetaryConditionsColorBackground";
 
     /* --End advanced settings-- */
 
@@ -300,6 +305,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_HEAT_30_COLOR = new Color(248, 64, 64);
     private static final Color DEFAULT_HEAT_OVERHEAT_COLOR = new Color(248, 12, 12);
 
+    private static final Color DEFAULT_PLANETARY_CONDITIONS_TEXT_COLOR = new Color(200, 250, 200);
+    private static final Color DEFAULT_PLANETARY_CONDITIONS_COLD_COLOR = new Color(173, 216, 230);
+    private static final Color DEFAULT_PLANETARY_CONDITIONS_HOT_COLOR = new Color(255, 204, 203);
+    private static final Color DEFAULT_PLANETARY_CONDITIONS_BACKGROUND_COLOR = new Color(80, 80, 80);
+
     // Report Color
     private static final Color DEFAULT_REPORT_LINK_COLOR = new Color(73, 102, 230);
 
@@ -383,6 +393,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_HEAT_COLOR_25, DEFAULT_HEAT_25_COLOR);
         setDefault(ADVANCED_HEAT_COLOR_20, DEFAULT_HEAT_30_COLOR);
         setDefault(ADVANCED_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
+
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE, Color.WHITE);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_TEXT, DEFAULT_PLANETARY_CONDITIONS_TEXT_COLOR);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD, DEFAULT_PLANETARY_CONDITIONS_COLD_COLOR);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT, DEFAULT_PLANETARY_CONDITIONS_HOT_COLOR);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND, DEFAULT_PLANETARY_CONDITIONS_BACKGROUND_COLOR);
 
         setDefault(ADVANCED_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
 
@@ -1719,6 +1735,46 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setReportLinkColor(Color color) {
         store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
     }
+
+    public Color getPlanetaryConditionsColorTitle() {
+        return getColor(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE);
+    }
+
+    public Color getPlanetaryConditionsColorText() {
+        return getColor(ADVANCED_PLANETARY_CONDITIONS_COLOR_TEXT);
+    }
+
+    public Color getPlanetaryConditionsColorCold() {
+        return getColor(ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD);
+    }
+
+    public Color getPlanetaryConditionsColorHot() {
+        return getColor(ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT);
+    }
+
+    public Color getPlanetaryConditionsColorBackground() {
+        return getColor(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND);
+    }
+    public void setPlanetaryConditionsColorTitle(Color color) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE, getColorString(color));
+    }
+
+    public void setPlanetaryConditionsColorText(Color color) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_TEXT, getColorString(color));
+    }
+
+    public void setPlanetaryConditionsColorCold(Color color) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD, getColorString(color));
+    }
+
+    public void setPlanetaryConditionsColorHot(Color color) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT, getColorString(color));
+    }
+
+    public void setPlanetaryConditionsColorBackground(Color color) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND, getColorString(color));
+    }
+
     /**
      * Sets the user preference for the Unit Display window to active.
      */

@@ -46,6 +46,10 @@ public class ASMekSpecialAbilityConverter extends ASSpecialAbilityConverter {
     protected void processUnitFeatures() {
         super.processUnitFeatures();
 
+        if (entity.isOmni()) {
+            assign("Omni Unit", OMNI);
+        }
+
         String cockpitName = Mech.getCockpitDisplayString(mek.getCockpitType());
         switch (mek.getCockpitType()) {
             case Mech.COCKPIT_INTERFACE:

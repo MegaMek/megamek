@@ -27,7 +27,6 @@ import megamek.common.weapons.other.CLFussilade;
 import java.util.*;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
-import static megamek.common.EquipmentType.armorPointMultipliers;
 import static megamek.common.ITechnology.TECH_BASE_CLAN;
 import static megamek.common.MiscType.F_EMERGENCY_COOLANT_SYSTEM;
 import static megamek.common.MiscType.F_RADICAL_HEATSINK;
@@ -62,6 +61,7 @@ public class ASDamageConverter {
     protected boolean needsHeatAdjustment = false;
     protected double heatAdjustFactor = 1;
     protected double heatAdjustFactorLE = 1;
+    protected double heatAdjustFactorREAR = 1;
 
     protected ASDamage finalSDamage;
     protected ASDamage finalMDamage;
@@ -173,6 +173,10 @@ public class ASDamageConverter {
             if (mediumRangeFrontHeat - 4 > heatCapacity) {
                 needsHeatAdjustment = true;
                 heatAdjustFactor = (double) heatCapacity / (mediumRangeFrontHeat - 4);
+            }
+            int mediumRangeRearHeat = getHeatGeneration(true, false);
+            if (mediumRangeRearHeat - 4 > heatCapacity) {
+                heatAdjustFactorREAR = (double) heatCapacity / (mediumRangeRearHeat - 4);
             }
         }
     }
@@ -583,8 +587,13 @@ public class ASDamageConverter {
 
         String finalText = "Final value:";
         if (needsHeatAdjustment) {
-            damage[0] *= heatAdjustFactor;
-            damage[1] *= heatAdjustFactor;
+            if (dmgType == REAR) {
+                damage[0] *= heatAdjustFactorREAR;
+                damage[1] *= heatAdjustFactorREAR;
+            } else {
+                damage[0] *= heatAdjustFactor;
+                damage[1] *= heatAdjustFactor;
+            }
             if (dmgType != IF) {
                 finalText = "Adjusted final value:";
             }
@@ -629,6 +638,9 @@ public class ASDamageConverter {
             }
             report.endTentativeSection();
         } else if (damage[0] + damage[1] + damage[2] + damage[3] > 0) {
+            report.addLine(finalText,
+                    formatAsVector(damage[0], damage[1], damage[2], damage[3], dmgType) + ", " + rdNm,
+                    "");
             report.addLine("", "No " + dmgType, "");
             report.endTentativeSection();
         } else {

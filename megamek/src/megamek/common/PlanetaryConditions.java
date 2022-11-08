@@ -1163,17 +1163,17 @@ public class PlanetaryConditions implements Serializable {
     public String getAtmosphereIndicator() {
         switch (atmosphere) {
             case PlanetaryConditions.ATMO_VACUUM:
-                return "\u22C4";
+                return "\u2727";
             case PlanetaryConditions.ATMO_TRACE:
-                return "\u22C4 \u22C4";
+                return "\u2727 \u2727";
             case PlanetaryConditions.ATMO_THIN:
-                return "\u22C4 \u22C4 \u22C4";
+                return "\u2727 \u2727 \u2727";
             case PlanetaryConditions.ATMO_STANDARD:
-                return "\u22C4 \u22C4 \u22C4 \u22C4";
+                return "\u2727 \u2727 \u2727 \u25AE";
             case PlanetaryConditions.ATMO_HIGH:
-                return "\u22C4 \u22C4 \u22C4 \u22C4 \u22C4";
+                return "\u2727 \u2727 \u2727 \u25AE \u2726";
             case PlanetaryConditions.ATMO_VHIGH:
-                return "\u22C4 \u22C4 \u22C4 \u22C4 \u22C4 \u22C4";
+                return "\u2727 \u2727 \u2727 \u25AE \u2726 \u2726";
             default:
                 return "";
         }

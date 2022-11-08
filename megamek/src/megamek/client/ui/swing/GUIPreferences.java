@@ -109,6 +109,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD = "AdvancedPlanetaryConditionsColorCold";
     public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT = "AdvancedPlanetaryConditionsColorHot";
     public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND = "AdvancedPlanetaryConditionsColorBackground";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS = "AdvancedPlanetaryConditionsShowDefaults";
 
     /* --End advanced settings-- */
 
@@ -399,6 +400,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD, DEFAULT_PLANETARY_CONDITIONS_COLD_COLOR);
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT, DEFAULT_PLANETARY_CONDITIONS_HOT_COLOR);
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND, DEFAULT_PLANETARY_CONDITIONS_BACKGROUND_COLOR);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS, false);
 
         setDefault(ADVANCED_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
 
@@ -1755,6 +1757,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public Color getPlanetaryConditionsColorBackground() {
         return getColor(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND);
     }
+
+    public Boolean getAdvancedPlanetaryConditionsHideDefaults() {
+        return getBoolean(ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS);
+    }
     public void setPlanetaryConditionsColorTitle(Color color) {
         store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE, getColorString(color));
     }
@@ -1773,6 +1779,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlanetaryConditionsColorBackground(Color color) {
         store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND, getColorString(color));
+    }
+
+    public void setAdvancedPlanetaryConditionsHideDefaults(Boolean state) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS, state);
     }
 
     /**

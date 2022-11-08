@@ -188,16 +188,44 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
                 tempColor = String.format("#%02X%02X%02X", colorCold.getRed(), colorCold.getGreen(), colorCold.getBlue());
             }
 
-            result.add(tempColor + "Temperature (deg C):  " + temp);
-            result.add("Gravity (g):  " + currentGame.getPlanetaryConditions().getGravity());
-            result.add("Light:  " + currentGame.getPlanetaryConditions().getLightDisplayableName() + "  " + currentGame.getPlanetaryConditions().getLightIndicator());
-            result.add("Atmospheric Pressure:  " + currentGame.getPlanetaryConditions().getAtmosphereDisplayableName() + "  " + currentGame.getPlanetaryConditions().getAtmosphereIndicator());
-            result.add("EMI:  " + currentGame.getPlanetaryConditions().getEMIDisplayableValue());
-            result.add("Weather:  " + currentGame.getPlanetaryConditions().getWeatherDisplayableName() + "  " + currentGame.getPlanetaryConditions().getWeatherIndicator());
-            result.add("Wind:  " + currentGame.getPlanetaryConditions().getWindDisplayableName() + "   " + currentGame.getPlanetaryConditions().getWindStrengthIndicator());
-            result.add("Wind Direction:  "  + currentGame.getPlanetaryConditions().getWindDirDisplayableName() + "  " + currentGame.getPlanetaryConditions().getWindDirectionIndicator());
-            result.add("Fog:  " + currentGame.getPlanetaryConditions().getFogDisplayableName() + "  " + currentGame.getPlanetaryConditions().getFogIndicator());
-            result.add("Blowing Sand:  " + currentGame.getPlanetaryConditions().getSandBlowingDisplayableValue());
+            boolean hideDefaultConditions = GUIPreferences.getInstance().getAdvancedPlanetaryConditionsHideDefaults();
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().isExtremeTemperature())))) {
+                result.add(tempColor + "Temperature (deg C):  " + temp);
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getGravity() != 1.0)))) {
+                result.add("Gravity (g):  " + currentGame.getPlanetaryConditions().getGravity());
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY)))) {
+                result.add("Light:  " + currentGame.getPlanetaryConditions().getLightDisplayableName() + "  " + currentGame.getPlanetaryConditions().getLightIndicator());
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_STANDARD)))) {
+                result.add("Atmospheric Pressure:  " + currentGame.getPlanetaryConditions().getAtmosphereDisplayableName() + "  " + currentGame.getPlanetaryConditions().getAtmosphereIndicator());
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().hasEMI())))) {
+                result.add("EMI:  " + currentGame.getPlanetaryConditions().getEMIDisplayableValue());
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getWeather() != PlanetaryConditions.WE_NONE)))) {
+                result.add("Weather:  " + currentGame.getPlanetaryConditions().getWeatherDisplayableName() + "  " + currentGame.getPlanetaryConditions().getWeatherIndicator());
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getWindStrength() != PlanetaryConditions.WI_NONE)))) {
+                result.add("Wind:  " + currentGame.getPlanetaryConditions().getWindDisplayableName() + "   " + currentGame.getPlanetaryConditions().getWindStrengthIndicator());
+                result.add("Wind Direction:  " + currentGame.getPlanetaryConditions().getWindDirDisplayableName() + "  " + currentGame.getPlanetaryConditions().getWindDirectionIndicator());
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getFog() != PlanetaryConditions.FOG_NONE)))) {
+                result.add("Fog:  " + currentGame.getPlanetaryConditions().getFogDisplayableName() + "  " + currentGame.getPlanetaryConditions().getFogIndicator());
+            }
+
+            if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().isSandBlowing())))) {
+                result.add("Blowing Sand:  " + currentGame.getPlanetaryConditions().getSandBlowingDisplayableValue());
+            }
         }
 
         return result;

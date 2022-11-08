@@ -1077,9 +1077,9 @@ public class PlanetaryConditions implements Serializable {
             case PlanetaryConditions.FOG_NONE:
                 return "";
             case PlanetaryConditions.FOG_LIGHT:
-                return "\u2601";
+                return "\u2588";
             case PlanetaryConditions.FOG_HEAVY:
-                return "\u2601 \u2601";
+                return "\u2588 \u2588";
             default:
                 return "";
         }
@@ -1134,15 +1134,15 @@ public class PlanetaryConditions implements Serializable {
             case PlanetaryConditions.WE_NONE:
                 return "";
             case PlanetaryConditions.WE_LIGHT_RAIN:
-                return "\u26C8";
+                return "\u2601";
             case PlanetaryConditions.WE_MOD_RAIN:
-                return "\u26C8 \u26C8";
+                return "\u2601 \u2601";
             case PlanetaryConditions.WE_HEAVY_RAIN:
-                return "\u26C8 \u26C8 \u26C8";
+                return "\u2601 \u2601 \u2601";
             case PlanetaryConditions.WE_GUSTING_RAIN:
-                return "\u26C8 \u26C8 \u26C8 \u26C8";
+                return "\u2601 \u2601 \u2601 \u2601";
             case PlanetaryConditions.WE_DOWNPOUR:
-                return "\u26C8 \u26C8 \u26C8 \u26C8 \u26C8";
+                return "\u2601 \u2601 \u2601 \u2601 \u2601";
             case PlanetaryConditions.WE_LIGHT_SNOW:
                 return"\u2744";
             case PlanetaryConditions.WE_MOD_SNOW:

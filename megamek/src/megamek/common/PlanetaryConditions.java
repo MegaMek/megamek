@@ -1096,9 +1096,9 @@ public class PlanetaryConditions implements Serializable {
             case PlanetaryConditions.WI_STORM:
                 return "\u21F6\u21F6\u21F6\u21F6";
             case PlanetaryConditions.WI_TORNADO_F13:
-                return "\u21F6\u21F6\u21F6\u21F6\u21F6";
+                return "\uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A";
             case PlanetaryConditions.WI_TORNADO_F4:
-                return "\u21F6\u21F6\u21F6\u21F6\u21F6\u21F6";
+                return "\uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A";
             default:
                 return "";
         }

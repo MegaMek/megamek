@@ -1077,7 +1077,7 @@ public class PlanetaryConditions implements Serializable {
             case PlanetaryConditions.FOG_NONE:
                 return "";
             case PlanetaryConditions.FOG_LIGHT:
-                return "\u2588";
+                return "\u2588 \u2022";
             case PlanetaryConditions.FOG_HEAVY:
                 return "\u2588 \u2588";
             default:
@@ -1088,15 +1088,15 @@ public class PlanetaryConditions implements Serializable {
     public String getWindStrengthIndicator() {
         switch (windStrength) {
             case PlanetaryConditions.WI_LIGHT_GALE:
-                return "\u21F6";
+                return "\u21F6 \u2022 \u2022 \u2022";
             case PlanetaryConditions.WI_MOD_GALE:
-                return "\u21F6\u21F6";
+                return "\u21F6 \u21F6 \u2022 \u2022";
             case PlanetaryConditions.WI_STRONG_GALE:
-                return "\u21F6\u21F6\u21F6";
+                return "\u21F6 \u21F6 \u21F6 \u2022";
             case PlanetaryConditions.WI_STORM:
-                return "\u21F6\u21F6\u21F6\u21F6";
+                return "\u21F6 \u21F6 \u21F6 \u21F6";
             case PlanetaryConditions.WI_TORNADO_F13:
-                return "\uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A";
+                return "\uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A \u2022";
             case PlanetaryConditions.WI_TORNADO_F4:
                 return "\uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A \uD83C\uDF2A";
             default:
@@ -1134,25 +1134,25 @@ public class PlanetaryConditions implements Serializable {
             case PlanetaryConditions.WE_NONE:
                 return "";
             case PlanetaryConditions.WE_LIGHT_RAIN:
-                return "\u2601";
+                return "\u2601 \u2022 \u2022 \u2022 \u2022";
             case PlanetaryConditions.WE_MOD_RAIN:
-                return "\u2601 \u2601";
+                return "\u2601 \u2601 \u2022 \u2022 \u2022";
             case PlanetaryConditions.WE_HEAVY_RAIN:
-                return "\u2601 \u2601 \u2601";
+                return "\u2601 \u2601 \u2601 \u2022 \u2022";
             case PlanetaryConditions.WE_GUSTING_RAIN:
-                return "\u2601 \u2601 \u2601 \u2601";
+                return "\u2601 \u2601 \u2601 \u2601 \u2022";
             case PlanetaryConditions.WE_DOWNPOUR:
                 return "\u2601 \u2601 \u2601 \u2601 \u2601";
             case PlanetaryConditions.WE_LIGHT_SNOW:
-                return"\u2744";
+                return"\u2744 \u2022 \u2022 \u2022";
             case PlanetaryConditions.WE_MOD_SNOW:
-                return"\u2744 \u2744";
+                return"\u2744 \u2744 \u2022 \u2022";
             case PlanetaryConditions.WE_SNOW_FLURRIES:
-                return "\u2744 \u2744 \u2744";
+                return "\u2744 \u2744 \u2744 \u2022";
             case PlanetaryConditions.WE_HEAVY_SNOW:
                 return "\u2744 \u2744 \u2744 \u2744";
             case PlanetaryConditions.WE_SLEET:
-                return "\u26C6";
+                return "\u26C6 \u2022";
             case PlanetaryConditions.WE_ICE_STORM:
                 return "\u26C6 \u26C6";
             default:

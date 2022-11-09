@@ -1163,19 +1163,59 @@ public class PlanetaryConditions implements Serializable {
     public String getAtmosphereIndicator() {
         switch (atmosphere) {
             case PlanetaryConditions.ATMO_VACUUM:
-                return "\u2727";
+                return "\u2726 \u2727 \u2727 \u25AF \u2727 \u2727";
             case PlanetaryConditions.ATMO_TRACE:
-                return "\u2727 \u2727";
+                return "\u2726 \u2726 \u2727 \u25AF \u2727 \u2727";
             case PlanetaryConditions.ATMO_THIN:
-                return "\u2727 \u2727 \u2727";
+                return "\u2726 \u2726 \u2726 \u25AF \u2727 \u2727";
             case PlanetaryConditions.ATMO_STANDARD:
-                return "\u2727 \u2727 \u2727 \u25AE";
+                return "\u2726 \u2726 \u2726 \u25AE \u2727 \u2727";
             case PlanetaryConditions.ATMO_HIGH:
-                return "\u2727 \u2727 \u2727 \u25AE \u2726";
+                return "\u2726 \u2726 \u2726 \u25AE \u2726 \u2727";
             case PlanetaryConditions.ATMO_VHIGH:
-                return "\u2727 \u2727 \u2727 \u25AE \u2726 \u2726";
+                return "\u2726 \u2726 \u2726 \u25AE \u2726 \u2726";
             default:
                 return "";
+        }
+    }
+
+    public String getGravityIndicator() {
+        if  (gravity > 1.0) {
+            return "\u2B73";
+        }
+        else if ((gravity < 1.0)) {
+            return "\u2B71";
+        }
+
+        return "";
+    }
+
+    public String getTemperatureIndicator() {
+        if  (isExtremeTemperatureHot()) {
+            return "\uD83D\uDD25";
+        }
+        else if (isExtremeTemperatureCold()) {
+            return "\u2744";
+        }
+
+        return "";
+    }
+
+    public String getEMIIndicator() {
+        if  (hasEMI()) {
+            return "\u2713";
+        }
+        else {
+            return "\u274C";
+        }
+    }
+
+    public String getSandBlowingIndicator() {
+        if  (hasEMI()) {
+            return "\u2713";
+        }
+        else {
+            return "\u274C";
         }
     }
 

@@ -191,11 +191,11 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             boolean hideDefaultConditions = GUIPreferences.getInstance().getAdvancedPlanetaryConditionsHideDefaults();
 
             if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().isExtremeTemperature())))) {
-                result.add(tempColor + "Temperature (deg C):  " + temp);
+                result.add(tempColor + "Temperature (deg C):  " + temp + "  " + currentGame.getPlanetaryConditions().getTemperatureIndicator());
             }
 
             if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getGravity() != 1.0)))) {
-                result.add("Gravity (g):  " + currentGame.getPlanetaryConditions().getGravity());
+                result.add("Gravity (g):  " + currentGame.getPlanetaryConditions().getGravity() + "  " + currentGame.getPlanetaryConditions().getGravityIndicator());
             }
 
             if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY)))) {
@@ -207,7 +207,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             }
 
             if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().hasEMI())))) {
-                result.add("EMI:  " + currentGame.getPlanetaryConditions().getEMIDisplayableValue());
+                result.add("EMI:  " + currentGame.getPlanetaryConditions().getEMIDisplayableValue() + "  " + currentGame.getPlanetaryConditions().getEMIIndicator());
             }
 
             if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().getWeather() != PlanetaryConditions.WE_NONE)))) {
@@ -224,7 +224,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             }
 
             if (((!hideDefaultConditions) || ((hideDefaultConditions) && (currentGame.getPlanetaryConditions().isSandBlowing())))) {
-                result.add("Blowing Sand:  " + currentGame.getPlanetaryConditions().getSandBlowingDisplayableValue());
+                result.add("Blowing Sand:  " + currentGame.getPlanetaryConditions().getSandBlowingDisplayableValue() + "  " + currentGame.getPlanetaryConditions().getSandBlowingIndicator());
             }
         }
 

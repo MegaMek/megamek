@@ -1152,9 +1152,9 @@ public class PlanetaryConditions implements Serializable {
             case PlanetaryConditions.WE_HEAVY_SNOW:
                 return "\u2744 \u2744 \u2744 \u2744";
             case PlanetaryConditions.WE_SLEET:
-                return "\u2745";
+                return "\u26C6";
             case PlanetaryConditions.WE_ICE_STORM:
-                return "\u2745 \u26C8";
+                return "\u26C6 \u26C6";
             default:
                 return "";
         }

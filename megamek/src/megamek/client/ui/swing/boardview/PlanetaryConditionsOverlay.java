@@ -22,7 +22,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,10 +55,12 @@ import org.apache.logging.log4j.LogManager;
  * 
  *
  */
-public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChangeListener {
+public class PlanetaryConditionsOverlay implements ActionListener, IDisplayable, IPreferenceChangeListener {
     private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13);
     private static final int DIST_TOP = 30;
     private static final int DIST_SIDE = 500;
+    private int distSide = 500;
+    private int overlayWidth = 500;
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
@@ -102,6 +108,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
         game.addGameListener(gameListener);
         clientGui = cg;
         KeyBindParser.addPreferenceChangeListener(this);
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     @Override
@@ -113,19 +120,21 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
         if ((clientGui == null) || (currentGame == null)) {
             return;
         }
-        
+
         // At startup, phase and turn change and when the Planetary Conditions change,
         // the cached image is (re)created
         if (changed) {
             changed = false;
             
             // calculate the size from the text lines, font and padding
-            graph.setFont(FONT);
-            FontMetrics fm = graph.getFontMetrics(FONT);
+            Font newFont = FONT.deriveFont(FONT.getSize() * GUIPreferences.getInstance().getGUIScale());
+            graph.setFont(newFont);
+            FontMetrics fm = graph.getFontMetrics(newFont);
             List<String> allLines = assembleTextLines();
             Rectangle r = getSize(graph, allLines, fm);
             r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
-            
+            overlayWidth = r.width;
+
             displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
             Graphics intGraph = displayImage.getGraphics();
             GUIPreferences.AntiAliasifSet(intGraph);
@@ -146,7 +155,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             }
         }
 
-        int DistSide = clientGui.getWidth() - 500;
+        distSide = clientGui.getWidth() - (overlayWidth + 100);
 
         // draw the cached image to the boardview
         // uses Composite to draw the image with variable transparency
@@ -155,10 +164,10 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             Composite saveComp = ((Graphics2D) graph).getComposite();
             int type = AlphaComposite.SRC_OVER;
             ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(type, alpha));
-            graph.drawImage(displayImage, clipBounds.x + DistSide, clipBounds.y + DIST_TOP, null);
+            graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + DIST_TOP, null);
             ((Graphics2D) graph).setComposite(saveComp);
         } else {
-            graph.drawImage(displayImage, clipBounds.x + DistSide, clipBounds.y + DIST_TOP, null);
+            graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + DIST_TOP, null);
         }
     }
 
@@ -265,10 +274,13 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             s = s.substring(7);
         }
 
+        AttributedString text = new AttributedString(s);
+        text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIPreferences.getInstance().getGUIScale())), 0, s.length());
+
         graph.setColor(SHADOW_COLOR);
-        graph.drawString(s, x + 1, y + 1);
+        graph.drawString(text.getIterator(), x + 1, y + 1);
         graph.setColor(textColor);
-        graph.drawString(s, x, y);
+        graph.drawString(text.getIterator(), x, y);
     }
     
     /** 
@@ -335,6 +347,19 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            changed = true;
+        }
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            changed = true;
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent event) {
+        if (event.getActionCommand().equals(ClientGUI.VIEW_INCGUISCALE)) {
+            changed = true;
+        }
+        if (event.getActionCommand().equals(ClientGUI.VIEW_DECGUISCALE)) {
             changed = true;
         }
     }

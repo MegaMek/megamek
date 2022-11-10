@@ -34,11 +34,11 @@ public class PlanetaryConditions implements Serializable {
     public static final int L_FULL_MOON    = 2;
     public static final int L_MOONLESS     = 3;
     public static final int L_PITCH_BLACK  = 4;
-    private static final String PC_NAME_LIGHT_DAYLIGHT = Messages.getString("PlanetaryConditions.Daylight");
-    private static final String PC_NAME_LIGHT_DUSK = Messages.getString("PlanetaryConditions.Dusk");
-    private static final String PC_NAME_LIGHT_FULLMOONNIGHT = Messages.getString("PlanetaryConditions.Full Moon Night");
-    private static final String PC_NAME_LIGHT_MOONLESSNIGHT = Messages.getString("PlanetaryConditions.Moonless Night");
-    private static final String PC_NAME_LIGHT_PITCHBLACK = Messages.getString("PlanetaryConditions.Pitch Black");
+    private static final String PC_NAME_LIGHT_DAYLIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Light.Daylight");
+    private static final String PC_NAME_LIGHT_DUSK = Messages.getString("PlanetaryConditions.DisplayableName.Light.Dusk");
+    private static final String PC_NAME_LIGHT_FULLMOONNIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Light.Full Moon Night");
+    private static final String PC_NAME_LIGHT_MOONLESSNIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Light.Moonless Night");
+    private static final String PC_NAME_LIGHT_PITCHBLACK = Messages.getString("PlanetaryConditions.DisplayableName.Light.Pitch Black");
     private static String[] lightNames = { PC_NAME_LIGHT_DAYLIGHT, PC_NAME_LIGHT_DUSK, PC_NAME_LIGHT_FULLMOONNIGHT,
                                            PC_NAME_LIGHT_MOONLESSNIGHT, PC_NAME_LIGHT_PITCHBLACK };
     public static final int L_SIZE = lightNames.length;
@@ -67,18 +67,18 @@ public class PlanetaryConditions implements Serializable {
     public static final int WE_HEAVY_HAIL       = 13;// NYI
     public static final int WE_LIGHTNING_STORM  = 14;// NYI
     //  public static final int WE_BLIZZARD         = 11; does not exist anymore
-    private static final String PC_NAME_WEATHER_CLEAR = Messages.getString("PlanetaryConditions.Clear");
-    private static final String PC_NAME_WEATHER_LIGHTRAIN = Messages.getString("PlanetaryConditions.Light Rain");
-    private static final String PC_NAME_WEATHER_MODRAIN = Messages.getString("PlanetaryConditions.Moderate Rain");
-    private static final String PC_NAME_WEATHER_HEAVYGRAIN = Messages.getString("PlanetaryConditions.Heavy Rain");
-    private static final String PC_NAME_WEATHER_GUSTINGRAIN = Messages.getString("PlanetaryConditions.Gusting Rain");
-    private static final String PC_NAME_WEATHER_TORRDOWNPOUR = Messages.getString("PlanetaryConditions.Torrential Downpour");
-    private static final String PC_NAME_WEATHER_LIGHTSNOWFALL = Messages.getString("PlanetaryConditions.Light Snowfall");
-    private static final String PC_NAME_WEATHER_MODSNOWFALL = Messages.getString("PlanetaryConditions.Moderate Snowfall");
-    private static final String PC_NAME_WEATHER_SNOWFLUFFIES = Messages.getString("PlanetaryConditions.Snow Flurries");
-    private static final String PC_NAME_WEATHER_HEAVYSNOWFALL = Messages.getString("PlanetaryConditions.Heavy Snowfall");
-    private static final String PC_NAME_WEATHER_SLEET = Messages.getString("PlanetaryConditions.Sleet");
-    private static final String PC_NAME_WEATHER_ICESTORM = Messages.getString("PlanetaryConditions.Ice Storm");
+    private static final String PC_NAME_WEATHER_CLEAR = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Clear");
+    private static final String PC_NAME_WEATHER_LIGHTRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Light Rain");
+    private static final String PC_NAME_WEATHER_MODRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Moderate Rain");
+    private static final String PC_NAME_WEATHER_HEAVYGRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Heavy Rain");
+    private static final String PC_NAME_WEATHER_GUSTINGRAIN = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Gusting Rain");
+    private static final String PC_NAME_WEATHER_TORRDOWNPOUR = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Torrential Downpour");
+    private static final String PC_NAME_WEATHER_LIGHTSNOWFALL = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Light Snowfall");
+    private static final String PC_NAME_WEATHER_MODSNOWFALL = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Moderate Snowfall");
+    private static final String PC_NAME_WEATHER_SNOWFLUFFIES = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Snow Flurries");
+    private static final String PC_NAME_WEATHER_HEAVYSNOWFALL = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Heavy Snowfall");
+    private static final String PC_NAME_WEATHER_SLEET = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Sleet");
+    private static final String PC_NAME_WEATHER_ICESTORM = Messages.getString("PlanetaryConditions.DisplayableName.Weather.Ice Storm");
     private static String[] weatherNames = { PC_NAME_WEATHER_CLEAR, PC_NAME_WEATHER_LIGHTRAIN, PC_NAME_WEATHER_MODRAIN,
                                              PC_NAME_WEATHER_HEAVYGRAIN, PC_NAME_WEATHER_GUSTINGRAIN, PC_NAME_WEATHER_TORRDOWNPOUR,
                                              PC_NAME_WEATHER_LIGHTSNOWFALL, PC_NAME_WEATHER_MODSNOWFALL, PC_NAME_WEATHER_SNOWFLUFFIES,
@@ -109,13 +109,13 @@ public class PlanetaryConditions implements Serializable {
     public static final int WI_STORM       = 4;
     public static final int WI_TORNADO_F13 = 5;
     public static final int WI_TORNADO_F4  = 6;
-    private static final String PC_NAME_WINDSTRENGTH_LIGHT_CALM = Messages.getString("PlanetaryConditions.Calm");
-    private static final String PC_NAME_WINDSTRENGTH_LIGHT_GALE = Messages.getString("PlanetaryConditions.Light Gale");
-    private static final String PC_NAME_WINDSTRENGTH_MOD_GALE = Messages.getString("PlanetaryConditions.Moderate Gale");
-    private static final String PC_NAME_WINDSTRENGTH_STRONG_GALE = Messages.getString("PlanetaryConditions.Strong Gale");
-    private static final String PC_NAME_WINDSTRENGTH_STORM = Messages.getString("PlanetaryConditions.Storm");
-    private static final String PC_NAME_WINDSTRENGTH_TORNADO_F13 = Messages.getString("PlanetaryConditions.Tornado F1-F3");
-    private static final String PC_NAME_WINDSTRENGTH_TORNADO_F4 = Messages.getString("PlanetaryConditions.Tornado F4");
+    private static final String PC_NAME_WINDSTRENGTH_LIGHT_CALM = Messages.getString("PlanetaryConditions.DisplayableName.WindStrength.Calm");
+    private static final String PC_NAME_WINDSTRENGTH_LIGHT_GALE = Messages.getString("PlanetaryConditions.DisplayableName.WindStrength.Light Gale");
+    private static final String PC_NAME_WINDSTRENGTH_MOD_GALE = Messages.getString("PlanetaryConditions.DisplayableName.WindStrength.Moderate Gale");
+    private static final String PC_NAME_WINDSTRENGTH_STRONG_GALE = Messages.getString("PlanetaryConditions.DisplayableName.WindStrength.Strong Gale");
+    private static final String PC_NAME_WINDSTRENGTH_STORM = Messages.getString("PlanetaryConditions.DisplayableName.WindStrength.Storm");
+    private static final String PC_NAME_WINDSTRENGTH_TORNADO_F13 = Messages.getString("PlanetaryConditions.DisplayableName.WindStrength.Tornado F1-F3");
+    private static final String PC_NAME_WINDSTRENGTH_TORNADO_F4 = Messages.getString("PlanetaryConditions.DisplayableName.WindStrength.Tornado F4");
     private static String[] windNames = { PC_NAME_WINDSTRENGTH_LIGHT_CALM, PC_NAME_WINDSTRENGTH_LIGHT_GALE,
                                           PC_NAME_WINDSTRENGTH_MOD_GALE, PC_NAME_WINDSTRENGTH_STRONG_GALE,
                                           PC_NAME_WINDSTRENGTH_STORM, PC_NAME_WINDSTRENGTH_TORNADO_F13,
@@ -134,15 +134,15 @@ public class PlanetaryConditions implements Serializable {
                                                        PC_INDICATOR_WINDSTRENGTH_TORNADO_F4 };
 
     // wind direction
-    private static final String PC_NAME_WINDDIRECTION_NORTH = Messages.getString("PlanetaryConditions.North");
-    private static final String PC_NAME_WINDDIRECTION_NORTHEAST = Messages.getString("PlanetaryConditions.Northeast");
-    private static final String PC_NAME_WINDDIRECTION_EAST = Messages.getString("PlanetaryConditions.East");
-    private static final String PC_NAME_WINDDIRECTION_SOUTHEAST = Messages.getString("PlanetaryConditions.Southeast");
-    private static final String PC_NAME_WINDDIRECTION_SOUTH = Messages.getString("PlanetaryConditions.South");
-    private static final String PC_NAME_WINDDIRECTION_SOUTHWEST = Messages.getString("PlanetaryConditions.Southwest");
-    private static final String PC_NAME_WINDDIRECTION_WEST = Messages.getString("PlanetaryConditions.West");
-    private static final String PC_NAME_WINDDIRECTION_NORTHWEST = Messages.getString("PlanetaryConditions.Northwest");
-    private static final String PC_NAME_WINDDIRECTION_RANDOM = Messages.getString("PlanetaryConditions.RandomWindDirection");
+    private static final String PC_NAME_WINDDIRECTION_NORTH = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.North");
+    private static final String PC_NAME_WINDDIRECTION_NORTHEAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Northeast");
+    private static final String PC_NAME_WINDDIRECTION_EAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.East");
+    private static final String PC_NAME_WINDDIRECTION_SOUTHEAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Southeast");
+    private static final String PC_NAME_WINDDIRECTION_SOUTH = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.South");
+    private static final String PC_NAME_WINDDIRECTION_SOUTHWEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Southwest");
+    private static final String PC_NAME_WINDDIRECTION_WEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.West");
+    private static final String PC_NAME_WINDDIRECTION_NORTHWEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Northwest");
+    private static final String PC_NAME_WINDDIRECTION_RANDOM = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.RandomWindDirection");
     private static String[] dirNames = { PC_NAME_WINDDIRECTION_NORTH, PC_NAME_WINDDIRECTION_NORTHEAST, PC_NAME_WINDDIRECTION_EAST,
                                          PC_NAME_WINDDIRECTION_SOUTHEAST, PC_NAME_WINDDIRECTION_SOUTH, PC_NAME_WINDDIRECTION_SOUTHWEST,
                                          PC_NAME_WINDDIRECTION_WEST, PC_NAME_WINDDIRECTION_NORTHWEST, PC_NAME_WINDDIRECTION_RANDOM };
@@ -168,12 +168,12 @@ public class PlanetaryConditions implements Serializable {
     public static final int ATMO_STANDARD = 3;
     public static final int ATMO_HIGH     = 4;
     public static final int ATMO_VHIGH    = 5;
-    private static final String PC_NAME_ATMOSPHERE_VACUUM = Messages.getString("PlanetaryConditions.Vacuum");
-    private static final String PC_NAME_ATMOSPHERE_TRACE = Messages.getString("PlanetaryConditions.Trace");
-    private static final String PC_NAME_ATMOSPHERE_THIN = Messages.getString("PlanetaryConditions.Thin");
-    private static final String PC_NAME_ATMOSPHERE_STANDARD = Messages.getString("PlanetaryConditions.Standard");
-    private static final String PC_NAME_ATMOSPHERE_HIGH = Messages.getString("PlanetaryConditions.High");
-    private static final String PC_NAME_ATMOSPHERE_VHIGH = Messages.getString("PlanetaryConditions.Very High");
+    private static final String PC_NAME_ATMOSPHERE_VACUUM = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Vacuum");
+    private static final String PC_NAME_ATMOSPHERE_TRACE = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Trace");
+    private static final String PC_NAME_ATMOSPHERE_THIN = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Thin");
+    private static final String PC_NAME_ATMOSPHERE_STANDARD = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Standard");
+    private static final String PC_NAME_ATMOSPHERE_HIGH = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.High");
+    private static final String PC_NAME_ATMOSPHERE_VHIGH = Messages.getString("PlanetaryConditions.DisplayableName.Atmosphere.Very High");
     public static String[] atmoNames = { PC_NAME_ATMOSPHERE_VACUUM, PC_NAME_ATMOSPHERE_TRACE, PC_NAME_ATMOSPHERE_THIN,
                                          PC_NAME_ATMOSPHERE_STANDARD, PC_NAME_ATMOSPHERE_HIGH, PC_NAME_ATMOSPHERE_VHIGH };
     public static final int ATMO_SIZE = atmoNames.length;
@@ -190,8 +190,10 @@ public class PlanetaryConditions implements Serializable {
     public static final int FOG_NONE  = 0;
     public static final int FOG_LIGHT = 1;
     public static final int FOG_HEAVY = 2;
-
-    private static String[] fogNames = { "None", "Light Fog", "Heavy Fog" };
+    private static final String PC_NAME_FOG_NONE = Messages.getString("PlanetaryConditions.DisplayableName.Fog.None");
+    private static final String PC_NAME_FOG_LIGHT = Messages.getString("PlanetaryConditions.DisplayableName.Fog.Light Fog");
+    private static final String PC_NAME_FOG_HEAVY = Messages.getString("PlanetaryConditions.DisplayableName.Fog.Heavy Fog");
+    private static String[] fogNames = { PC_NAME_FOG_NONE, PC_NAME_FOG_LIGHT, PC_NAME_FOG_HEAVY };
     public static final int FOG_SIZE = fogNames.length;
     private static final String PC_INDICATOR_FOG_NONE = Messages.getString("PlanetaryConditions.Indicator.Fog.None");
     private static final String PC_INDICATOR_FOG_LIGHT = Messages.getString("PlanetaryConditions.Indicator.Fog.Light");
@@ -200,10 +202,10 @@ public class PlanetaryConditions implements Serializable {
 
     // misc
     private boolean blowingSand = false;
+    private static final String PC_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.true");
+    private static final String PC_NAME_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.SandBlowing.false");
     private static final String PC_INDICATOR_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.true");
     private static final String PC_INDICATOR_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.Indicator.SandBlowing.false");
-    private static final String PC_NAME_BLOWINGSAND_TRUE = Messages.getString("PlanetaryConditions.Name.SandBlowing.true");
-    private static final String PC_NAME_BLOWINGSAND_FALSE = Messages.getString("PlanetaryConditions.Name.SandBlowing.false");
 
     private boolean sandStorm = false;
     private boolean runOnce = false;
@@ -221,20 +223,20 @@ public class PlanetaryConditions implements Serializable {
     private int fog = FOG_NONE;
     private int temperature = 25;
     private int oldTemperature = 25;
-    private static final String PC_NAME_TEMPERATURE_HEAT = Messages.getString("PlanetaryConditions.ExtremeHeat");
-    private static final String PC_NAME_TEMPERATURE_COLD = Messages.getString("PlanetaryConditions.ExtremeCold");
-    private static final String PC_INDICATOR_TEMPERATURE_HEAT= Messages.getString("PlanetaryConditions.Indicator.Temperature.ExtremeHeat");
+    private static final String PC_NAME_TEMPERATURE_COLD = Messages.getString("PlanetaryConditions.DisplayableName.Temperature.ExtremeCold");
+    private static final String PC_NAME_TEMPERATURE_HEAT = Messages.getString("PlanetaryConditions.DisplayableName.Temperature.ExtremeHeat");
     private static final String PC_INDICATOR_TEMPERATURE_COLD = Messages.getString("PlanetaryConditions.Indicator.Temperature.ExtremeCold");
+    private static final String PC_INDICATOR_TEMPERATURE_HEAT= Messages.getString("PlanetaryConditions.Indicator.Temperature.ExtremeHeat");
     private static final String PC_INDICATOR_TEMPERATURE_NORMAL = Messages.getString("PlanetaryConditions.Indicator.Temperature.Normal");
     private float gravity = (float) 1.0;
-    private static final String PC_INDICATOR_GRAVITY_HIGH = Messages.getString("PlanetaryConditions.Indicator.Gravity.High");
     private static final String PC_INDICATOR_GRAVITY_LOW= Messages.getString("PlanetaryConditions.Indicator.Gravity.Low");
     private static final String PC_INDICATOR_GRAVITY_NORMAL = Messages.getString("PlanetaryConditions.Indicator.Gravity.Normal");
+    private static final String PC_INDICATOR_GRAVITY_HIGH = Messages.getString("PlanetaryConditions.Indicator.Gravity.High");
     private boolean emi = false;
+    private static final String PC_NAME_EMI_TRUE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.true");
+    private static final String PC_NAME_EMI_FALSE = Messages.getString("PlanetaryConditions.DisplayableName.EMI.false");
     private static final String PC_INDICATOR_EMI_TRUE = Messages.getString("PlanetaryConditions.Indicator.EMI.true");
     private static final String PC_INDICATOR_EMI_FALSE = Messages.getString("PlanetaryConditions.Indicator.EMI.false");
-    private static final String PC_NAME_EMI_TRUE = Messages.getString("PlanetaryConditions.Name.EMI.true");
-    private static final String PC_NAME_EMI_FALSE = Messages.getString("PlanetaryConditions.Name.EMI.false");
     private boolean terrainAffected = true;
     private int maxWindStrength = PlanetaryConditions.WI_TORNADO_F4;
     private int minWindStrength = PlanetaryConditions.WI_NONE;

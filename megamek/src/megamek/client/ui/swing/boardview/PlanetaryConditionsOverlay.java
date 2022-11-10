@@ -60,7 +60,6 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
     private static final Color SHADOW_COLOR = Color.DARK_GRAY;
     private static final float FADE_SPEED = 0.2f;
 
-
     ClientGUI clientGui;
 
     /** True when the overlay is displayed or fading in. */

@@ -22,6 +22,9 @@ VERSION HISTORY:
 + RFE #2715: Tooltip displays original vs modified movement due to planetary conditions
 + Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867 
 + Data: TP Foster RATS #3930 - Thanks Stonewall072
++ PR #3970 - AS conversion fixes
++ PR #3971 - Implements #3747 add option to adjust the seen by in the unit tool tip
++ PR #3972 = AS conversion fixes round 2
 
 
 0.49.10 (2022-09-12 1500 UTC)

@@ -208,7 +208,7 @@ public class PlanetaryConditionsOverlay implements ActionListener, IDisplayable,
             result.add(tmpStr);
         }
         
-        if (clientGui != null) {
+        if (clientGui != null && !currentGame.getBoard().inSpace()) {
             // In a game, not the Board Editor
 
             String tempColor = "";

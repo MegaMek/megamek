@@ -775,12 +775,33 @@ public final class UnitToolTip {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         // Unit movement ability
         if (!isGunEmplacement) {
-            result.append(addToTT("Movement", NOBR, entity.getWalkMP(), entity.getRunMPasString()));
+            int walkMP = entity.getWalkMP(false, false,false);
+            int runMP = entity.getRunMP(false, false,false);
+            int jumpMP = entity.getJumpMP(false);
+            result.append(addToTT("Movement", NOBR , walkMP,  runMP));
+
             if (entity.getJumpMP() > 0) {
-                result.append("/" + entity.getJumpMP());
+                result.append("/" + jumpMP);
             }
             if (entity instanceof Tank) {
                 result.append(DOT_SPACER + entity.getMovementModeAsString());
+            }
+
+            int walkMPGravity = entity.getWalkMP(true, false,false);
+            int runMPGravity = entity.getRunMP(true, false, false);
+            int jumpMPGravity = entity.getJumpMP(true);
+
+            if ((walkMP != walkMPGravity) || (runMP != runMPGravity) || (jumpMP != jumpMPGravity)){
+                result.append(" (");
+                result.append(walkMPGravity);
+                result.append("/" + runMPGravity);
+                if (entity.getJumpMP() > 0) {
+                    result.append("/" + jumpMPGravity);
+                }
+                if (entity instanceof Tank) {
+                    result.append(DOT_SPACER + entity.getMovementModeAsString());
+                }
+                result.append(")(" + entity.getGame().getPlanetaryConditions().getGravity() + ")");
             }
         }
         

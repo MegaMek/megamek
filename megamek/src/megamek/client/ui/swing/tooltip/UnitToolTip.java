@@ -15,10 +15,7 @@ package megamek.client.ui.swing.tooltip;
 
 import java.awt.Color;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import megamek.client.ui.Messages;
@@ -729,18 +726,43 @@ public final class UnitToolTip {
 
         // If Double Blind, add information about who sees this Entity
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
-            StringBuffer playerList = new StringBuffer();
+            StringBuffer tempList = new StringBuffer();
             boolean teamVision = game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_TEAM_VISION);
-            for (Player player : entity.getWhoCanSee()) {
+            int seenByResolution = GUIPreferences.getInstance().getAdvancedUnitToolTipSeenByResolution();
+            String tmpStr = "";
+
+            dance: for (Player player :  entity.getWhoCanSee()) {
                 if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
-                    playerList.append(player.getName());
-                    playerList.append(", ");
+                    switch (seenByResolution) {
+                        case 1:
+                            tmpStr = "Someone";
+                            tempList.append(tmpStr);
+                            tempList.append(", ");
+                            break dance;
+                        case 2:
+                            tmpStr = game.getTeamForPlayer(player).toString();
+                            break;
+                        case 3:
+                            tmpStr = player.getName();
+                            break;
+                        case 4:
+                            tmpStr = player.toString();
+                            break;
+                        default:
+                            tmpStr ="";
+                            break dance;
+                    }
+
+                    if (tempList.indexOf(tmpStr) == -1) {
+                        tempList.append(tmpStr);
+                        tempList.append(", ");
+                    }
                 }
             }
-            if (playerList.length() > 1) {
-                playerList.delete(playerList.length() - 2, playerList.length());
-                result.append(addToTT("SeenBy", BR, playerList.toString()));
+            if (tempList.length() > 1) {
+                tempList.delete(tempList.length() - 2, tempList.length());
+                result.append(addToTT("SeenBy", BR, tempList.toString()));
             }            
         }
 

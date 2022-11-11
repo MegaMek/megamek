@@ -103,7 +103,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_HEAT_COLOR_30 = "AdvancedHeatColor30";
     public static final String ADVANCED_HEAT_COLOR_OVERHEAT = "AdvancedHeatColorOverheat";
     public static final String ADVANCED_REPORT_COLOR_LINK = "AdvancedReportColorLink";
-
+    public static final String ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION = "AdvancedUnitToolTipSeenByResolution";
 
     /* --End advanced settings-- */
 
@@ -384,6 +384,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_HEAT_COLOR_OVERHEAT, DEFAULT_HEAT_OVERHEAT_COLOR);
 
         setDefault(ADVANCED_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
+        setDefault(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, 3);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -1714,9 +1715,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getColor(ADVANCED_REPORT_COLOR_LINK);
     }
 
+    public int getAdvancedUnitToolTipSeenByResolution() {
+        return getInt(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION);
+    }
+
+
     public void setReportLinkColor(Color color) {
         store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
     }
+
+    public void setAdvancedUnitToolTipSeenByResolution(int i) {
+        store.setValue(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, i);
+    }
+
     /**
      * Sets the user preference for the Unit Display window to active.
      */

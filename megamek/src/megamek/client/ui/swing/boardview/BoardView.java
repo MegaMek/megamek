@@ -5843,7 +5843,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         txt.append(" width=6></TD><TD>");
 
         // Entity tooltip
-        txt.append(UnitToolTip.getEntityTipGame(entity, getLocalPlayer()));
+        txt.append("<div WIDTH=500>" +  UnitToolTip.getEntityTipGame(entity, getLocalPlayer()) + "</div");
         txt.append("</TD></TR></TABLE>");
     }
 

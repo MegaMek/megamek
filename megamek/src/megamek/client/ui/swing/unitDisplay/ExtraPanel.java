@@ -116,6 +116,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         lblLastTarget.setForeground(Color.WHITE);
         lblLastTarget.setOpaque(false);
         lastTargetR = new JTextArea("", 4, 25);
+        lastTargetR.setLineWrap(true);
+        lastTargetR.setWrapStyleWord(true);
         lastTargetR.setEditable(false);
         lastTargetR.setOpaque(false);
         lastTargetR.setForeground(Color.WHITE);

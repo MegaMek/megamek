@@ -4096,6 +4096,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // if all our entities are actually done, don't start up the turn.
         if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
                 .stream().allMatch(Entity::isDone)) {
+            String playerName;
+            if (e.getPlayer() != null) {
+                playerName = e.getPlayer().getName();
+            } else {
+                playerName = "Unknown";
+            }
+            setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName));
             return;
         }
 

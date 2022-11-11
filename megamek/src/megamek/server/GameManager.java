@@ -31746,13 +31746,17 @@ public class GameManager implements IGameManager {
         } else if (aaa instanceof ChargeAttackAction) {
             ChargeAttackAction caa = (ChargeAttackAction) aaa;
             toHit = caa.toHit(game);
-            if (caa.getTarget(game) instanceof Entity) {
-                Entity target = (Entity) caa.getTarget(game);
-                damage = ChargeAttackAction.getDamageFor(ae, target,
-                        game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
-                        toHit.getMoS());
-            } else {
-                damage = ChargeAttackAction.getDamageFor(ae);
+            Entity target = (Entity) caa.getTarget(game);
+
+            if (target != null ) {
+                if (caa.getTarget(game) instanceof Entity) {
+                    damage = ChargeAttackAction.getDamageFor(ae, target, game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
+                } else {
+                    damage = ChargeAttackAction.getDamageFor(ae);
+                }
+            }
+            else {
+                damage = 0;
             }
         } else if (aaa instanceof AirmechRamAttackAction) {
             AirmechRamAttackAction raa = (AirmechRamAttackAction) aaa;
@@ -31782,7 +31786,14 @@ public class GameManager implements IGameManager {
         } else if (aaa instanceof DfaAttackAction) {
             DfaAttackAction daa = (DfaAttackAction) aaa;
             toHit = daa.toHit(game);
-            damage = DfaAttackAction.getDamageFor(ae, daa.getTarget(game).isConventionalInfantry());
+            Entity target = (Entity) daa.getTarget(game);
+
+            if (target != null) {
+                damage = DfaAttackAction.getDamageFor(ae, daa.getTarget(game).isConventionalInfantry());
+            }
+            else {
+                damage = 0;
+            }
         } else if (aaa instanceof KickAttackAction) {
             KickAttackAction kaa = (KickAttackAction) aaa;
             toHit = kaa.toHit(game);
@@ -31963,7 +31974,8 @@ public class GameManager implements IGameManager {
         }
         // Not all targets are Entities.
         Targetable target = game.getTarget(aaa.getTargetType(), aaa.getTargetId());
-        if (target instanceof Entity) {
+        
+        if ((target != null) && (target instanceof Entity)) {
             Entity targetEntity = (Entity) target;
             targetEntity.setStruck(true);
             targetEntity.addAttackedByThisTurn(target.getTargetId());

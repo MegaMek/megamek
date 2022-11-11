@@ -208,6 +208,13 @@ public class ASDamageConverter {
         return rawDamage;
     }
 
+    /**
+     * Returns the damage value to be used for the given weapon at the given range. Overridden for special
+     * treatment and possibly ignoring some weapons.
+     * @param weapon The weapon Mounted
+     * @param range The range value (not bracket)
+     * @return the damage to be used
+     */
     protected double determineDamage(Mounted weapon, int range) {
         WeaponType weaponType = (WeaponType) weapon.getType();
         if ((weaponType.getDamage() == WeaponType.DAMAGE_ARTILLERY)
@@ -309,7 +316,7 @@ public class ASDamageConverter {
                                 + formatForReport(longRangeFrontHeat) + " - 4)",
                         "= " + formatForReport(lDamageAdjusted));
                 if (roundedUpAdjusted < roundedUpRaw) {
-                    locations[0].setSUA(OVL);
+                    locations[0].setSUA(OVL); // don't set it directly, it  gets overwritten
                     report.addLine("Damage difference",
                             roundedUpRaw + " > " + roundedUpAdjusted,
                             "OVL");
@@ -357,10 +364,8 @@ public class ASDamageConverter {
             damageModifier *= .1;
         }
 
-        // Targetting Computer
-        if (hasTargetingComputer && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)
-                && (weaponType.getAmmoType() != AmmoType.T_AC_LBX)
-                && (weaponType.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
+        // Targeting Computer
+        if (hasTargetingComputer && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)) {
             damageModifier *= 1.10;
         }
 
@@ -668,8 +673,8 @@ public class ASDamageConverter {
             if (!countsforSpecial(weapon, dmgType) || (locationMultiplier == 0)) {
                 continue;
             }
-            // STD means a turret's standard damage, this may use Artemis, all other specials don't
-            Mounted linked = (dmgType == STD) ? weapon.getLinkedBy() : null;
+            // STD means a turret's standard damage, this may use Artemis, TOR also, all other specials don't
+            Mounted linked = dmgType.isAnyOf(STD, TOR) ? weapon.getLinkedBy() : null;
             double dmgS = determineSpecialsDamage(weaponType, linked, SHORT_RANGE, dmgType);
             double dmgM = determineSpecialsDamage(weaponType, linked, MEDIUM_RANGE, dmgType);
             double dmgL = determineSpecialsDamage(weaponType, linked, LONG_RANGE, dmgType);
@@ -1025,7 +1030,9 @@ public class ASDamageConverter {
                 desc.append(" (APM)");
             }
         }
-        desc.append(" (").append(entity.getLocationAbbr(weapon.getLocation())).append(")");
+        if (!element.isBattleArmor()) {
+            desc.append(" (").append(entity.getLocationAbbr(weapon.getLocation())).append(")");
+        }
         return desc.toString();
     }
 

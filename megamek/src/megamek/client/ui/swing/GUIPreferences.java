@@ -109,7 +109,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD = "AdvancedPlanetaryConditionsColorCold";
     public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT = "AdvancedPlanetaryConditionsColorHot";
     public static final String ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND = "AdvancedPlanetaryConditionsColorBackground";
-    public static final String ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS = "AdvancedPlanetaryConditionsShowDefaults";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_DEFAULTS = "AdvancedPlanetaryConditionsShowDefaults";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_HEADER = "AdvancedPlanetaryConditionsShowHeader";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_LABELS = "AdvancedPlanetaryConditionsShowLabels";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_VALUES = "AdvancedPlanetaryConditionsShowValues";
+    public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS = "AdvancedPlanetaryConditionsShowIndicators";
 
     /* --End advanced settings-- */
 
@@ -400,7 +404,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_COLD, DEFAULT_PLANETARY_CONDITIONS_COLD_COLOR);
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_HOT, DEFAULT_PLANETARY_CONDITIONS_HOT_COLOR);
         setDefault(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND, DEFAULT_PLANETARY_CONDITIONS_BACKGROUND_COLOR);
-        setDefault(ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS, false);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_SHOW_DEFAULTS, true);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_SHOW_HEADER, true);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_SHOW_LABELS, true);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_SHOW_VALUES, true);
+        setDefault(ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS, true);
 
         setDefault(ADVANCED_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
 
@@ -1758,9 +1766,26 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getColor(ADVANCED_PLANETARY_CONDITIONS_COLOR_BACKGROUND);
     }
 
-    public Boolean getAdvancedPlanetaryConditionsHideDefaults() {
-        return getBoolean(ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS);
+    public Boolean getAdvancedPlanetaryConditionsShowDefaults() {
+        return getBoolean(ADVANCED_PLANETARY_CONDITIONS_SHOW_DEFAULTS);
     }
+
+    public Boolean getAdvancedPlanetaryConditionsShowHeader() {
+        return getBoolean(ADVANCED_PLANETARY_CONDITIONS_SHOW_HEADER);
+    }
+
+    public Boolean getAdvancedPlanetaryConditionsShowLabels() {
+        return getBoolean(ADVANCED_PLANETARY_CONDITIONS_SHOW_LABELS);
+    }
+
+    public Boolean getAdvancedPlanetaryConditionsShowValues() {
+        return getBoolean(ADVANCED_PLANETARY_CONDITIONS_SHOW_VALUES);
+    }
+
+    public Boolean getAdvancedPlanetaryConditionsShowIndicators() {
+        return getBoolean(ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS);
+    }
+
     public void setPlanetaryConditionsColorTitle(Color color) {
         store.setValue(ADVANCED_PLANETARY_CONDITIONS_COLOR_TITLE, getColorString(color));
     }
@@ -1782,7 +1807,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setAdvancedPlanetaryConditionsHideDefaults(Boolean state) {
-        store.setValue(ADVANCED_PLANETARY_CONDITIONS_HIDE_DEFAULTS, state);
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_SHOW_DEFAULTS, state);
+    }
+
+    public void setAdvancedPlanetaryConditionsHideHeader(Boolean state) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_SHOW_HEADER, state);
+    }
+
+    public void setAdvancedPlanetaryConditionsHideLabels(Boolean state) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_SHOW_LABELS, state);
+    }
+
+    public void setAdvancedPlanetaryConditionsHideValues(Boolean state) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_SHOW_VALUES, state);
+    }
+
+    public void setAdvancedPlanetaryConditionsHideIndicators(Boolean state) {
+        store.setValue(ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS, state);
     }
 
     /**

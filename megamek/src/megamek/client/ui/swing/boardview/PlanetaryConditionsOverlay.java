@@ -175,7 +175,12 @@ public class PlanetaryConditionsOverlay implements ActionListener, IDisplayable,
         int width = 0;
         for (String line: lines) {
             if (fm.stringWidth(line) > width) {
-                width = fm.stringWidth(line);
+                if (line.startsWith("#") && line.length() > 7) {
+                    width = fm.stringWidth(line) - 7;
+                }
+                else {
+                    width = fm.stringWidth(line);
+                }
             }
         }
         int height = fm.getHeight() * lines.size();

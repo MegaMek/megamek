@@ -7493,3 +7493,21 @@ Chameleon TRC-4B:SCOUT
 Chameleon CLN-8V:SKIRMISHER
 Chameleon CLN-9V:STRIKER
 Wraith TR5:SKIRMISHER
+Foot Platoon, Taurian (Flamer):AMBUSHER
+Foot Platoon, Taurian (Laser):AMBUSHER
+Foot Platoon, Taurian (LRM):AMBUSHER
+Foot Platoon, Taurian (MG):AMBUSHER
+Foot Platoon, Taurian (Rifle):AMBUSHER
+Foot Platoon, Taurian (SRM):AMBUSHER
+Jump Platoon, Taurian (Flamer):AMBUSHER
+Jump Platoon, Taurian (Laser):AMBUSHER
+Jump Platoon, Taurian (LRM):AMBUSHER
+Jump Platoon, Taurian (MG):AMBUSHER
+Jump Platoon, Taurian (Rifle):AMBUSHER
+Jump Platoon, Taurian (SRM):AMBUSHER
+Motorized Platoon, Taurian (Flamer):AMBUSHER
+Motorized Platoon, Taurian (Laser):AMBUSHER
+Motorized Platoon, Taurian (MG):AMBUSHER
+Motorized Platoon, Taurian (Rifle):AMBUSHER
+Motorized Platoon, Taurian (SRM):AMBUSHER
+Motorized Platoon, Taurian (LRM):AMBUSHER

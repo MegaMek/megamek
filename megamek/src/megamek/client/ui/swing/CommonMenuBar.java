@@ -455,7 +455,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFiringSolutions.setEnabled(isInGameBoardView);
         viewMovementEnvelope.setEnabled(isInGameBoardView);
         viewMovModEnvelope.setEnabled(isInGameBoardView);
-        gameRoundReport.setEnabled(isInGameBoardView);
+        gameRoundReport.setEnabled((isInGame && canSave));
         viewMekDisplay.setEnabled(isInGameBoardView);
         fireSaveWeaponOrder.setEnabled(isInGameBoardView);
     }

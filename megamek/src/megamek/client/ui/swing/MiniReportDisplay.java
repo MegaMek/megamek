@@ -16,6 +16,12 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
+import megamek.common.Game;
+import megamek.common.enums.GamePhase;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GameTurnChangeEvent;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
@@ -30,9 +36,15 @@ import java.awt.event.WindowEvent;
  */
 public class MiniReportDisplay extends JDialog implements ActionListener {
     private JButton butOkay;
+    private Client currentClient;
+    private JTabbedPane tabs;
+    private JScrollPane sp;
 
     public MiniReportDisplay(JFrame parent, Client client) {
-        super(parent, Messages.getString("MiniReportDisplay.title"), true);
+        super(parent, Messages.getString("MiniReportDisplay.title"), false);
+
+        currentClient = client;
+        currentClient.getGame().addGameListener(gameListener);
 
         butOkay = new JButton(Messages.getString("Okay"));
         butOkay.addActionListener(this);
@@ -64,20 +76,40 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butOkay)) {
-            GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
-            GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
-            GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
-            GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
-            setVisible(false);
+            savePref();
         }
     }
 
     private void setupReportTabs(Client c) {
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
 
-        int numRounds = c.getGame().getRoundCount();
-        for (int round = 1; round < numRounds; round++) {
-            String text = c.receiveReport(c.getGame().getReports(round));
+        addReportPages();
+        
+        getContentPane().add(BorderLayout.CENTER, tabs);
+    }
+
+    public static void setupStylesheet(JTextPane pane) {
+        pane.setContentType("text/html");
+        Font font = UIManager.getFont("Label.font");
+        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
+                "pre { font-family: " + font.getFamily()
+                        + "; font-size: 12pt; font-style:normal;}");
+    }
+
+    private void savePref() {
+        GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
+        GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
+        GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
+        GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
+        setVisible(false);
+    }
+
+    public void addReportPages() {
+        int numRounds = currentClient.getGame().getRoundCount();
+        tabs.removeAll();
+
+        for (int round = 1; round <= numRounds; round++) {
+            String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             JTextPane ta = new JTextPane();
             setupStylesheet(ta);
             BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -93,22 +125,26 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         setupStylesheet(ta);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);
-        ta.setText("<pre>" + c.roundReport + "</pre>");
+        ta.setText("<pre>" + currentClient.roundReport + "</pre>");
         ta.setEditable(false);
         ta.setOpaque(false);
 
         JScrollPane sp = new JScrollPane(ta);
         tabs.add("Phase", sp);
-        tabs.setSelectedComponent(sp);
-        
-        getContentPane().add(BorderLayout.CENTER, tabs);
+
+        tabs.setSelectedIndex(tabs.getTabCount() - 1);
     }
 
-    public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily()
-                        + "; font-size: 12pt; font-style:normal;}");
-    }    
+    private GameListener gameListener = new GameListenerAdapter() {
+        @Override
+        public void gamePhaseChange(GamePhaseChangeEvent e) {
+            switch (currentClient.getGame().getPhase()) {
+                case VICTORY:
+                    savePref();
+                    break;
+                default:
+                    addReportPages();
+            }
+        }
+    };
 }

@@ -1371,7 +1371,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setMiniReportPosY(int i) {
-        store.setValue(MINIMAP_POS_Y, i);
+        store.setValue(MINI_REPORT_POS_Y, i);
     }
 
     public void setBoardEditLoadHeight(int i) {

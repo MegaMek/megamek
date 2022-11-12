@@ -130,7 +130,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         setupStylesheet(ta);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);
-        ta.setText("<pre>" + currentClient.roundReport + "</pre>");
+        ta.setText("<pre>" + currentClient.phaseReport + "</pre>");
         ta.setEditable(false);
         ta.setOpaque(false);
 

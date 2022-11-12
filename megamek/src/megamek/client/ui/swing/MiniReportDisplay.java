@@ -44,6 +44,10 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     public MiniReportDisplay(JFrame parent, Client client) {
         super(parent, MRD_TITLE, false);
 
+        if (client == null) {
+            return;
+        }
+
         currentClient = client;
         currentClient.getGame().addGameListener(gameListener);
 
@@ -144,7 +148,9 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
                     savePrefHide();
                     break;
                 default:
-                    addReportPages();
+                    if (!e.getNewPhase().equals((e.getOldPhase()))) {
+                        addReportPages();
+                    }
             }
         }
     };

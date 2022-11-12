@@ -54,7 +54,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         getContentPane().add(BorderLayout.SOUTH, butOkay);
         
-        setupReportTabs(client);
+        setupReportTabs();
                 
         setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
                 GUIPreferences.getInstance().getMiniReportSizeHeight());
@@ -81,7 +81,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         }
     }
 
-    private void setupReportTabs(Client c) {
+    private void setupReportTabs() {
         tabs = new JTabbedPane();
 
         addReportPages();

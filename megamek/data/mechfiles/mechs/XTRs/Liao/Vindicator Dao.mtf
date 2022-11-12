@@ -150,4 +150,19 @@ Jump Jet
 -Empty-
 -Empty-
 
+overview:The Vindicator is one of the most well-known Capellan Confederation BattleMechs. This workhorse of the CCAF was built in 2826 between the First and Second Succession War to maximize the effectiveness of the Confederation's surviving production capabilities and fulfill as many roles as possible.
 
+capabilities:The 'Mech has a top speed of only 64.8 km/h, which allows it to keep up with most heavy 'Mechs and some slower medium 'Mechs. Four jump jets give it a jumping capability of up to 120 meters that, while not up to par with the greater distances of 'Mechs like the Phoenix Hawk, allows the Vindicator the ability to outmaneuver most heavier 'Mechs, as well as making it easier to traverse rough terrain. It also carries more armor than the Phoenix Hawk with good overall coverage, particularly on its rear torso and legs, making it better protected than smaller 'Mechs. Armament for the 'Mech is adequate though its primary weapons are unsuited for point-blank ranges, while sixteen heat sinks help keep it cool. 
+
+deployment:This custom-designed model is piloted by a Capellan bounty hunter. It has been rebuilt using Clan-technology heat sinks, Ferro-Fibrous Armor, and Endo Steel. A Clan ER PPC is the primary weapon, and the 'Mech also carries a BattleMech Taser to aid in capturing targets alive. A Supercharger and an Actuator Enhancement System add to the Vindicator's speed and accuracy.	
+
+history:Designed by committee, the Vindicator's "jack-of-all-trades" nature means it does not excel in any one role but fulfills them adequately. With almost all of its components produced on Capella, the Vindicator is also cheap, easy to mass produce, and quick to repair with a ready supply of spare parts. Unfortunately, early models of the Vindicator suffered from a design flaw wherein the head-mounted laser created a bulge in the cockpit. More than making the space cramped for tall MechWarriors, it also interfered with the ejection propulsion system, resulting in the deaths of a number of MechWarriors when their ejection seats exploded during ejection. Engineers managed to redesign the cockpit layout prior to the War of 3039, eliminating the deadly intrusion and decreasing the chance of said unfortunate malfunction. Due to its relatively lackluster design and the outrageous mark-ups on spare parts sold to out-of-state parties, the Vindicator has remained almost exclusive to the Capellan Confederation since its introduction. Even in the wake of the Fourth Succession War, with a good portion of their military complex and resources gone, the Capellan leadership continued funding production of this 'Mech and updated it with the rediscovery of lostech. Following the introduction of the Firestarter OmniMech and its spread by the Second Star League production of the Vindicator was curtailed, though the line would be partially revived with a couple of specialized variants in 3060.
+
+manufacturer:Refit
+primaryfactory:Refit
+systemmanufacturer:CHASSIS:Ceresplex IV
+systemmanufacturer:ENGINE:GM 180
+systemmanufacturer:ARMOR:Starshield with CASE
+systemmanufacturer:JUMPJET:Anderson Propulsion 30
+systemmanufacturer:COMMUNICATIONS:CeresCom Model 21-Rs
+systemmanufacturer:TARGETING:C-Apple Churchill

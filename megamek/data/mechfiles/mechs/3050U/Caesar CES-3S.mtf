@@ -1,43 +1,41 @@
-Version:1.0
+Version:1.3
 Caesar
 CES-3S
 mul id:456
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3067
-Source:TRO 3050 - Civil War
-Rules Level:2
+techbase:Inner Sphere
+era:3067
+source:TRO 3050 - Civil War
+rules level:2
 
-Mass:70
-Engine:280 Light Engine
-Structure:Endo Steel
-Myomer:Standard
+mass:70
+engine:280 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
 
-Heat Sinks:12 Double
-Walk MP:4
-Jump MP:0
+heat sinks:12 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Light Ferro-Fibrous
-LA Armor:22
-RA Armor:22
-LT Armor:22
-RT Armor:22
-CT Armor:33
-HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:8
-RTR Armor:8
-RTC Armor:11
+armor:Light Ferro-Fibrous(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:22
+RT armor:22
+CT armor:33
+HD armor:9
+LL armor:30
+RL armor:30
+RTL armor:8
+RTR armor:8
+RTC armor:11
 
-Weapons:6
-1 ISHeavyPPC, Right Arm
-1 ISMediumPulseLaser, Right Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISGaussRifle, Right Torso, Ammo:16
-1 ISGuardianECM, Right Torso
-1 ISERSmallLaser, Center Torso (R)
+Weapons:5
+Medium Pulse Laser, Left Arm
+Heavy PPC, Right Arm
+Medium Pulse Laser, Right Arm
+Gauss Rifle, Right Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -45,41 +43,41 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
--Empty-
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
 ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISGauss Ammo
-ISGauss Ammo
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Gauss Ammo
+IS Gauss Ammo
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -91,9 +89,9 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISGuardianECM
-ISGuardianECM
-Endo Steel
+ISGuardianECMSuite
+ISGuardianECMSuite
+ISCASE
 
 Center Torso:
 Fusion Engine
@@ -107,13 +105,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERSmallLaser (R)
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -128,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,11 +140,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

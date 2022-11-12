@@ -701,7 +701,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FILE_UNITS_REINFORCE:
                 ignoreHotKeys = true;
-                loadListFile(client.getLocalPlayer(), true);
+                PlayerListDialog playerListDialog = new PlayerListDialog(frame, client);
+                playerListDialog.setModal(true);
+                playerListDialog.setVisible(true);
+                loadListFile(playerListDialog.getSelected(), true);
                 ignoreHotKeys = false;
                 break;
             case FILE_UNITS_REINFORCE_RAT:
@@ -1488,78 +1491,82 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * @param player
      */
     protected void loadListFile(Player player, boolean reinforce) {
-        boolean addedUnits = false;
+        if (player != null) {
+            boolean addedUnits = false;
 
-        if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
-            String title = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle");
-            String msg = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage");
-            JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
-            return;
-        }
-        // Build the "load unit" dialog, if necessary.
-        if (dlgLoadList == null) {
-            dlgLoadList = new JFileChooser(".");
-            dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-            dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
-            dlgLoadList.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File dir) {
-                    return (dir.getName().endsWith(".mul") || dir.isDirectory());
-                }
+            if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+                String title = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle");
+                String msg = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage");
+                JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
+                return;
+            }
+            // Build the "load unit" dialog, if necessary.
+            if (dlgLoadList == null) {
+                dlgLoadList = new JFileChooser(".");
+                dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+                dlgLoadList.setDialogTitle(Messages.getString("ClientGUI.openUnitListFileDialog.title"));
+                dlgLoadList.setFileFilter(new FileFilter() {
+                    @Override
+                    public boolean accept(File dir) {
+                        return (dir.getName().endsWith(".mul") || dir.isDirectory());
+                    }
 
-                @Override
-                public String getDescription() {
-                    return "*.mul";
-                }
-            });
-            // Default to the player's name.
-            dlgLoadList.setSelectedFile(new File(player.getName() + ".mul"));
-        }
+                    @Override
+                    public String getDescription() {
+                        return "*.mul";
+                    }
+                });
+                // Default to the player's name.
+                dlgLoadList.setSelectedFile(new File(player.getName() + ".mul"));
+            }
 
-        int returnVal = dlgLoadList.showOpenDialog(frame);
-        if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
-            // I want a file, y'know!
-            return;
-        }
+            int returnVal = dlgLoadList.showOpenDialog(frame);
+            if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgLoadList.getSelectedFile() == null)) {
+                // I want a file, y'know!
+                return;
+            }
 
-        // Did the player select a file?
-        File unitFile = dlgLoadList.getSelectedFile();
-        if (unitFile != null) {
-            try {
-                // Read the units from the file.
-                final Vector<Entity> loadedUnits = new MULParser(unitFile,
-                        getClient().getGame().getOptions()).getEntities();
+            // Did the player select a file?
+            File unitFile = dlgLoadList.getSelectedFile();
+            if (unitFile != null) {
+                try {
+                    // Read the units from the file.
+                    final Vector<Entity> loadedUnits = new MULParser(unitFile, getClient().getGame().getOptions()).getEntities();
 
-                // Add the units from the file.
-                for (Entity entity : loadedUnits) {
-                    entity.setOwner(player);
-                    if (reinforce) {
-                        entity.setDeployRound(client.getGame().getRoundCount() + 1);
-                        entity.setGame(client.getGame());
-                        // Set these to true, otherwise units reinforced in
-                        // the movement turn are considered selectable
-                        entity.setDone(true);
-                        entity.setUnloaded(true);
-                        if (entity instanceof IBomber) {
-                            ((IBomber) entity).applyBombs();
+                    // Add the units from the file.
+                    for (Entity entity : loadedUnits) {
+                        entity.setOwner(player);
+                        if (reinforce) {
+                            entity.setDeployRound(client.getGame().getRoundCount() + 1);
+                            entity.setGame(client.getGame());
+                            // Set these to true, otherwise units reinforced in
+                            // the movement turn are considered selectable
+                            entity.setDone(true);
+                            entity.setUnloaded(true);
+                            if (entity instanceof IBomber) {
+                                ((IBomber) entity).applyBombs();
+                            }
                         }
                     }
-                }
 
-                if (!loadedUnits.isEmpty()) {
-                    client.sendAddEntity(loadedUnits);
-                    addedUnits = true;
+                    if (!loadedUnits.isEmpty()) {
+                        client.sendAddEntity(loadedUnits);
+                        addedUnits = true;
+                    }
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
+                    doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
                 }
-            } catch (Exception ex) {
-                LogManager.getLogger().error("", ex);
-                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), ex.getMessage());
+            }
+
+            // If we've added reinforcements, then we need to set the round deployment up again.
+            if (addedUnits && reinforce) {
+                client.getGame().setupRoundDeployment();
+                client.sendResetRoundDeployment();
             }
         }
-
-        // If we've added reinforcements, then we need to set the round deployment up again.
-        if (addedUnits && reinforce) {
-            client.getGame().setupRoundDeployment();
-            client.sendResetRoundDeployment();
+        else {
+            doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), "Error selecting player");
         }
     }
 

@@ -1,0 +1,136 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Bulldog Medium Tank
+</Name>
+
+<Model>
+(ERLL)
+</Model>
+
+<mul id:>
+9255
+</mul id:>
+
+<year>
+3098
+</year>
+
+<originalBuildYear>
+3098
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+40
+32
+32
+32
+32
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-4
+IS Ammo SRM-4
+IS Heavy Machine Gun Ammo - Full
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+Heavy Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISERLargeLaser
+SRM 4
+SRM 4
+ISArtemisIV
+ISArtemisIV
+</Turret Equipment>
+
+<source>
+Rec Guide 25 - Early Republic
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<capabilities>
+Its speed is not exceptional and its protection of 6½ tons of standard armor is anything but ample. On the other hand, it is easy to repair and said to be a reliable and cheap asset for any field commander that needs a backbone for his vehicle forces.
+</capabilities>
+
+<overview>
+The Bulldog could be called a "Jack of all trades", featuring a classic layout of one main gun and a few secondary weapons.
+</overview>
+
+<deployment>
+No Information available for this variant
+</deployment>
+
+<history>
+Bulldog Enterprises was a well-known manufacturer of civilian vehicles that tried to break into the huge market for military hardware by producing the Bulldog Main Battle Tank. As the market for heavy vehicles was already largely saturated with well-constructed tanks, the Bulldog was not the economic success the company hoped for, despite its more than adequate firepower. It is worth noting that Bulldog Enterprises developed the tank's main weapon all by themselves to keep costs down. This is quite remarkable, given that it was producing strictly nonmilitary hardware prior to the Bulldog. The tank's sales were poor initially, and the Bulldog was meant to take advantage of the Star League Defense Force's buildup in late twenty-sixth century to finally produce a richer cash flow. In 2700, Bulldog Enterprises licensed rights to produce the tank to Quikscell Company, hoping that interested royalties would boost their sagging sales. It survived the Succession Wars due to its low cost and easily accessible replacement parts.
+</history>
+
+<manufacturer>
+Quikscell Company,Bulldog Enterprises
+</manufacturer>
+
+<primaryFactory>
+Ares,Proserpina
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Bulldog 240 Fuel Cell
+ARMOR:ProtecTech 19 Heavy Ferro-Fibrous with CASE
+COMMUNICATIONS:Xilex-2000
+TARGETING:Xilex-2000 with Artemis IV FCS
+</systemManufacturers>

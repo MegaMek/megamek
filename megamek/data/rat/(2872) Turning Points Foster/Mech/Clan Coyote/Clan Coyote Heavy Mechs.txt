@@ -1,0 +1,22 @@
+Clan Coyote Heavy Mechs
+Lupus Prime, 1
+Lupus A, 1
+Lupus B, 1
+Galahad (Glass Spider) (Standard), 2
+Masauwu (Standard), 3
+Excalibur EXC-B2b, 4
+Spirit Walker Prime, 5
+Spirit Walker A, 5
+Spirit Walker B, 5
+Lupus Prime, 6
+Lupus A, 6
+Lupus B, 6
+Shootist ST-8A, 5
+Lupus Prime, 4
+Lupus A, 4
+Lupus B, 4
+Marauder MAD-2R, 3
+Warhammer WHM-7A, 2
+Woodsman Prime, 1
+Woodsman A, 1
+Woodsman B, 1

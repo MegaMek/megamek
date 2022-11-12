@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ Fury Command Tank
 2637
 </year>
 
+<originalBuildYear>
+2637
+</originalBuildYear>
+
 <type>
 IS Level 2
 </type>
@@ -37,7 +41,6 @@ Tracked
 </motion_type>
 
 <transporters>
-troopspace:1.0
 </transporters>
 
 <cruiseMP>
@@ -84,3 +87,4 @@ TRO 3050 - Star League
 <tonnage>
 80.0
 </tonnage>
+

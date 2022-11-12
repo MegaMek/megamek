@@ -376,7 +376,7 @@ public class Game implements IGame, Serializable {
         for (Team team : teams) {
             for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements(); ) {
                 final Player player = j.nextElement();
-                if (p == player) {
+                if (p.equals(player)) {
                     return team;
                 }
             }

@@ -15,6 +15,17 @@ VERSION HISTORY:
 + PR #3954: Remove 2" base MV from ProtoMek gliders (to-be-errata); add missing OV calculation for 0 M dmg units
 + Issue #961: Allow long unit names to display cleanly when designating weapons fire
 + Issue #3949: non-tabbed unit display panel order can be configured in client settings; size and position saving for panels
++ RFE #2403: When reinforcing from MUL, the target player can be picked
++ Issue #3959: Long last target names display properly on extra unit display panel
++ Issue #2757: Bulletproofing for when DFA target is eliminated prior to DFA resolution
++ Issue #3902: Advantages display on the bottom of unit info card
++ RFE #2715: Tooltip displays original vs modified movement due to planetary conditions
++ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867 
++ Data: TP Foster RATS #3930 - Thanks Stonewall072
++ PR #3970 - AS conversion fixes
++ PR #3971 - Implements #3747 add option to adjust the seen by in the unit tool tip
++ PR #3972 = AS conversion fixes round 2
+
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

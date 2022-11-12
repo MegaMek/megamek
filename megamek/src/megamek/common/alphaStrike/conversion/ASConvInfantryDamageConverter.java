@@ -95,13 +95,12 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
             WeaponType weaponType = (WeaponType) weapon.getType();
             if ((weaponType.hasFlag(WeaponType.F_FLAMER) || weaponType.hasFlag(WeaponType.F_PLASMA))
                     && (ASLocationMapper.damageLocationMultiplier(entity, 0, weapon) > 0)) {
-                //TODO: Rules are unclear how to deal with an S damage value of 0*
                 if (finalSDamage.damage < 1) {
-                    report.addLine("No S damage", "No HT", "");
+                    report.addLine("Insufficient S damage", "No HT", "");
                 } else {
                     report.addLine(weapon.getName(), "(has heat damage)", "");
                     ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(Math.min(2, finalSDamage.damage), 0, 0);
-                    element.getSpecialAbilities().setSUA(HT, finalHtValue);
+                    locations[0].setSUA(HT, finalHtValue); // don't set it directly, it  gets overwritten
                     report.addLine("Final Ability", "", "HT" + finalHtValue);
                 }
                 report.endTentativeSection();

@@ -1,0 +1,135 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Demolisher Heavy Tank
+</Name>
+
+<Model>
+(Reinforced)
+</Model>
+
+<mul id:>
+9260
+</mul id:>
+
+<year>
+3144
+</year>
+
+<originalBuildYear>
+3144
+</originalBuildYear>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+26
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+46
+40
+40
+20
+40
+</armor>
+
+<Body Equipment>
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISUltraAC10
+ISUltraAC10
+</Turret Equipment>
+
+<source>
+Clan Invasion
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+
+<capabilities>
+The Demolisher is an intimidating machine with two turret-mounted heavy guns. The titanic weapons employ a well-known propellant system that combines two chemicals in suspension to propel a stream of massive shells at the unlucky target. This generated a tremendous amount of heat in older models. As a result, crew members were required to wear special coolant suits because the inside of the tank can become unbearably hot during a sustained firefight. The current model addressed the issue by directing the majority of the ejection gases through the barrels. The Demolisher is a defensive unit that works best in urban environments. The two massive autocannons can easily take down an assault 'Mech when they emerge from hiding. The vehicle's lack of secondary weapons, however, forces it to rely on friendly infantry to screen against enemy light armour and infantry.
+</capabilities>
+
+<overview>
+Tall, squat, and using four treads, the Demolisher has a well-earned, though sometimes exaggerated, reputation as one of the most deadly vehicles on the battlefield. Designed to counteract the increasing scarcity of 'Mechs during the Succession Wars, the Demolisher became popular, especially on worlds where BattleMechs were not available.
+</overview>
+
+<deployment>
+No information on this variant available
+</deployment>
+
+<history>
+Aldis Industries was nearly destroyed during Aleksandr Kerensky's liberation of Terra in 2767 after being seized by Rim Worlds Republic troops. Aldis was rebuilt under the auspices of Jerome Blake's Terran reconstruction programme and has operated under the neutrality ComStar crafted for Terra.
+During the early days of the First Succession War, engineers at Aldis Industries devised a solution to the 'Mech technology problem. Their plan was to build a vehicle powerful enough to destroy any 'Mech but appealing to worlds that couldn't afford 'Mech forces. The tank, dubbed the Demolisher, made its debut in 2803 and has since earned a reputation as one of the most lethal vehicles on the battlefield.
+</history>
+
+<manufacturer>
+Aldis Industries,Aldis Industries
+</manufacturer>
+
+<primaryFactory>
+Betelgeuse, Terra
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:GM Powercell 240 Fuel Cell with Supercharger
+ARMOR:Durandal 160 Standard
+COMMUNICATIONS:Omicron 5000
+TARGETING:Omicron VII
+</systemManufacturers>

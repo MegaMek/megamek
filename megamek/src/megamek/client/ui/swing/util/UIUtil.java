@@ -438,20 +438,16 @@ public final class UIUtil {
                 comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
             }
             else if ((comp instanceof JPanel)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
                 scaleComp((JComponent) comp, fontSize);
             }
             else if ((comp instanceof JScrollPane)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
                 JComponent tmpComp = ((JScrollPane) comp).getViewport();
                 scaleComp((JComponent) tmpComp, fontSize);
             }
             else if ((comp instanceof JTable)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
                 scaleComp((JComponent) comp, fontSize);
             }
             else if ((comp instanceof JTabbedPane)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
                 scaleComp((JComponent) comp, fontSize);
             }
         }

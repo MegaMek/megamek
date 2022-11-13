@@ -136,30 +136,28 @@ public class PlanetaryConditions implements Serializable {
     // wind direction
     private static final String PC_NAME_WINDDIRECTION_NORTH = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.North");
     private static final String PC_NAME_WINDDIRECTION_NORTHEAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Northeast");
-    private static final String PC_NAME_WINDDIRECTION_EAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.East");
     private static final String PC_NAME_WINDDIRECTION_SOUTHEAST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Southeast");
     private static final String PC_NAME_WINDDIRECTION_SOUTH = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.South");
     private static final String PC_NAME_WINDDIRECTION_SOUTHWEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Southwest");
-    private static final String PC_NAME_WINDDIRECTION_WEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.West");
     private static final String PC_NAME_WINDDIRECTION_NORTHWEST = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.Northwest");
     private static final String PC_NAME_WINDDIRECTION_RANDOM = Messages.getString("PlanetaryConditions.DisplayableName.WindDirection.RandomWindDirection");
-    private static String[] dirNames = { PC_NAME_WINDDIRECTION_NORTH, PC_NAME_WINDDIRECTION_NORTHEAST, PC_NAME_WINDDIRECTION_EAST,
+    // no east and west, because the map uses 6 side hex tiles.  east and west are skipped.
+    private static String[] dirNames = { PC_NAME_WINDDIRECTION_NORTH, PC_NAME_WINDDIRECTION_NORTHEAST,
                                          PC_NAME_WINDDIRECTION_SOUTHEAST, PC_NAME_WINDDIRECTION_SOUTH, PC_NAME_WINDDIRECTION_SOUTHWEST,
-                                         PC_NAME_WINDDIRECTION_WEST, PC_NAME_WINDDIRECTION_NORTHWEST, PC_NAME_WINDDIRECTION_RANDOM };
+                                          PC_NAME_WINDDIRECTION_NORTHWEST, PC_NAME_WINDDIRECTION_RANDOM };
     public static final int DIR_SIZE = dirNames.length;
-    public static final int DIR_RANDOM = 8;
+    public static final int DIR_RANDOM = 6;
     private static final String PC_INDICATOR_WINDDIRECTION_NORTH = Messages.getString("PlanetaryConditions.Indicator.WindDirection.North");
     private static final String PC_INDICATOR_WINDDIRECTION_NORTHEAST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Northeast");
-    private static final String PC_INDICATOR_WINDDIRECTION_EAST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.East");
     private static final String PC_INDICATOR_WINDDIRECTION_SOUTHEAST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Southeast");
     private static final String PC_INDICATOR_WINDDIRECTION_SOUTH = Messages.getString("PlanetaryConditions.Indicator.WindDirection.South");
     private static final String PC_INDICATOR_WINDDIRECTION_SOUTHWEST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Southwest");
-    private static final String PC_INDICATOR_WINDDIRECTION_WEST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.West");
     private static final String PC_INDICATOR_WINDDIRECTION_NORTHWEST = Messages.getString("PlanetaryConditions.Indicator.WindDirection.Northwest");
     private static final String PC_INDICATOR_WINDDIRECTION_RANDOM = Messages.getString("PlanetaryConditions.Indicator.WindDirection.RandomWindDirection");
-    private static String[] windDirectionIndicators = { PC_INDICATOR_WINDDIRECTION_NORTH, PC_INDICATOR_WINDDIRECTION_NORTHEAST, PC_INDICATOR_WINDDIRECTION_EAST,
+    // no east and west, because the map uses 6 side hex tiles.  east and west are skipped.
+    private static String[] windDirectionIndicators = { PC_INDICATOR_WINDDIRECTION_NORTH, PC_INDICATOR_WINDDIRECTION_NORTHEAST,
                                                         PC_INDICATOR_WINDDIRECTION_SOUTHEAST,  PC_INDICATOR_WINDDIRECTION_SOUTH, PC_INDICATOR_WINDDIRECTION_SOUTHWEST,
-                                                        PC_INDICATOR_WINDDIRECTION_WEST, PC_INDICATOR_WINDDIRECTION_NORTHWEST, PC_INDICATOR_WINDDIRECTION_RANDOM };
+                                                        PC_INDICATOR_WINDDIRECTION_NORTHWEST, PC_INDICATOR_WINDDIRECTION_RANDOM };
 
     // atmospheric pressure
     public static final int ATMO_VACUUM   = 0;

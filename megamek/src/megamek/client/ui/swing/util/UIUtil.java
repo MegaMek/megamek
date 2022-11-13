@@ -414,7 +414,46 @@ public final class UIUtil {
             if ((comp instanceof JMenuItem)) {
                 comp.setFont(getScaledFont());
                 scaleJMenuItem((JMenuItem) comp);
-            } 
+            }
+        }
+    }
+
+    public static void scaleComp(final JComponent parentComp, int fontSize) {
+        parentComp.setFont(parentComp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+
+        for (Component comp: parentComp.getComponents()) {
+            if ((comp instanceof JButton)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+            }
+            else if ((comp instanceof JLabel)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+            }
+            else if ((comp instanceof JTextField)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+            }
+            else if ((comp instanceof JTextArea)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+            }
+            else if ((comp instanceof JTextPane)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+            }
+            else if ((comp instanceof JPanel)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+                scaleComp((JComponent) comp, fontSize);
+            }
+            else if ((comp instanceof JScrollPane)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+                JComponent tmpComp = ((JScrollPane) comp).getViewport();
+                scaleComp((JComponent) tmpComp, fontSize);
+            }
+            else if ((comp instanceof JTable)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+                scaleComp((JComponent) comp, fontSize);
+            }
+            else if ((comp instanceof JTabbedPane)) {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+                scaleComp((JComponent) comp, fontSize);
+            }
         }
     }
 
@@ -1065,6 +1104,7 @@ public final class UIUtil {
      */
     public static Font getScaledFont() {
         return new Font("Dialog", Font.PLAIN, scaleForGUI(FONT_SCALE1));
+
     }
 
     // PRIVATE

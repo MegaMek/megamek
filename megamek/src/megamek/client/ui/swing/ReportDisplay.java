@@ -56,6 +56,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         super(clientgui);
         butDone = new MegamekButton("",
                 SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+        UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE1);
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;

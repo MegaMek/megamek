@@ -1025,6 +1025,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     rD.resetTabs();
                 }
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
+                UIUtil.scaleComp(cl.butDone, UIUtil.FONT_SCALE1);
                 cb.setDoneButton(cl.butDone);
                 cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
@@ -1288,6 +1289,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (secondary != null) {
             secondaryNames.put(name, secondary);
         }
+
+        adaptToGUIScale();
         return component;
     }
 
@@ -2437,10 +2440,28 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return pointblankEID;
     }
 
+    /** Adapts the menu (the font size) to the current GUI scale. */
+    private void adaptToGUIScale() {
+        if (panMain != null) {
+            UIUtil.scaleComp(panMain, UIUtil.FONT_SCALE1);
+        }
+        if (panSecondary != null) {
+            UIUtil.scaleComp(panSecondary, UIUtil.FONT_SCALE1);
+        }
+        if (phaseComponents != null) {
+            for (String s : phaseComponents.keySet()) {
+                JComponent component = phaseComponents.get(s);
+                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
+            }
+        }
+    }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
             maybeShowMinimap();
+        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
+            maybeShowUnitDisplay();
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
             maybeShowUnitDisplay();
         }

@@ -39,7 +39,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         shortName = "ER Large Laser (P)";
         toHitModifier = 1;
         flags = flags.or(F_PROTOTYPE);
-        heat = 12;
+        heat = 18;
         damage = 8;
         shortRange = 7;
         mediumRange = 14;
@@ -49,6 +49,10 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         waterMediumRange = 9;
         waterLongRange = 12;
         waterExtremeRange = 18;
+        shortAV = 8;
+        medAV = 8;
+        longAV = 8;
+        maxRange = RANGE_LONG;
         tonnage = 5.0;
         criticals = 2;
         bv = 163;

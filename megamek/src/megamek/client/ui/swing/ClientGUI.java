@@ -2462,8 +2462,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             maybeShowMinimap();
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
             maybeShowUnitDisplay();
-        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
-            maybeShowUnitDisplay();
+        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
         }
         
     }

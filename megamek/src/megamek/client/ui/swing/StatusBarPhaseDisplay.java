@@ -170,6 +170,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
+        adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
     }
@@ -188,13 +189,20 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected void setStatusBarText(String text) {
         labStatus.setText(text);
     }
-    
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panButtons, UIUtil.FONT_SCALE2);
+        UIUtil.scaleComp(panStatus, UIUtil.FONT_SCALE2);
+    }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.ADVANCED_BUTTONS_PER_ROW)) {
             buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
             buttonsPerGroup = 2 * buttonsPerRow;
             setupButtonPanel();
+        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
         }
     }
 

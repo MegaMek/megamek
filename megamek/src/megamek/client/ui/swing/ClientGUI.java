@@ -1025,7 +1025,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     rD.resetTabs();
                 }
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
-                UIUtil.scaleComp(cl.butDone, UIUtil.FONT_SCALE1);
                 cb.setDoneButton(cl.butDone);
                 cl.setBottom(cb.getComponent());
                 getBoardView().getTilesetManager().reset();
@@ -1118,6 +1117,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case STARTING_SCENARIO:
                 component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
+                UIUtil.scaleComp(component, UIUtil.FONT_SCALE2);
                 main = "JLabel-StartingScenario";
                 component.setName(main);
                 panMain.add(component, main);
@@ -1125,6 +1125,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case EXCHANGE:
                 chatlounge.killPreviewBV();
                 component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
+                UIUtil.scaleComp(component, UIUtil.FONT_SCALE2);
                 main = "JLabel-Exchange";
                 component.setName(main);
                 panMain.add(component, main);
@@ -2442,18 +2443,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     /** Adapts the menu (the font size) to the current GUI scale. */
     private void adaptToGUIScale() {
-        if (panMain != null) {
-            UIUtil.scaleComp(panMain, UIUtil.FONT_SCALE1);
-        }
-        if (panSecondary != null) {
-            UIUtil.scaleComp(panSecondary, UIUtil.FONT_SCALE1);
-        }
-        if (phaseComponents != null) {
-            for (String s : phaseComponents.keySet()) {
-                JComponent component = phaseComponents.get(s);
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
-            }
-        }
+
     }
 
     @Override

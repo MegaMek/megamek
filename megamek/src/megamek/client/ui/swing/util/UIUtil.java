@@ -46,6 +46,7 @@ public final class UIUtil {
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
+    public final static int FONT_SCALE2 = 17;
     public final static String ECM_SIGN = " \u24BA ";
     public final static String LOADED_SIGN = " \u26DF ";
     public final static String UNCONNECTED_SIGN = " \u26AC";
@@ -429,9 +430,10 @@ public final class UIUtil {
             if ((comp instanceof JPanel)) {
                 scaleComp((JComponent) comp, fontSize);
             } else if ((comp instanceof JScrollPane)) {
-                JComponent tmpComp = ((JScrollPane) comp).getViewport();
-                scaleComp((JComponent) tmpComp, fontSize);
-            } else if ((comp instanceof JSplitPane)) {
+                scaleComp((JComponent) comp, fontSize);
+            } else if ((comp instanceof JViewport)) {
+                scaleComp((JComponent) comp, fontSize);
+            }  else if ((comp instanceof JSplitPane)) {
                 scaleComp((JComponent) comp, fontSize);
             } else if ((comp instanceof JTabbedPane)) {
                 scaleComp((JComponent) comp, fontSize);

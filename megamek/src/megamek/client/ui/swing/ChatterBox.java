@@ -15,7 +15,10 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.event.*;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
@@ -28,7 +31,7 @@ import java.util.LinkedList;
  * ChatterBox keeps track of a player list and a (chat) message buffer. Although
  * it is not an AWT component, it keeps one that it will gladly supply.
  */
-public class ChatterBox implements KeyListener {
+public class ChatterBox implements KeyListener, IPreferenceChangeListener {
     public static final int MAX_HISTORY = 10;
     Client client;
 
@@ -42,7 +45,7 @@ public class ChatterBox implements KeyListener {
 
     public LinkedList<String> history;
     public int historyBookmark = -1;
-
+    protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private ChatterBox2 cb2;
 
     public ChatterBox(ClientGUI clientgui) {
@@ -102,7 +105,7 @@ public class ChatterBox implements KeyListener {
         playerList = new JList<>(new DefaultListModel<>());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);
-        scrPlayers.setPreferredSize(new Dimension(150, chatArea.getHeight()));
+        scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
         butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
@@ -138,6 +141,9 @@ public class ChatterBox implements KeyListener {
         butDone.setPreferredSize(butDone.getSize());
         butDone.setMinimumSize(butDone.getSize());
         chatPanel.setMinimumSize(chatPanel.getPreferredSize());
+
+        adaptToGUIScale();
+        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -245,6 +251,17 @@ public class ChatterBox implements KeyListener {
         this.cb2 = cb2;
     }
 
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE2);
+    }
 
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        switch (e.getName()) {
+            case GUIPreferences.GUI_SCALE:
+                adaptToGUIScale();
+                break;
 
+        }
+    }
 }

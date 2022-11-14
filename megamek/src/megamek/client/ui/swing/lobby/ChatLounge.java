@@ -2137,14 +2137,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
     /**OK Refreshes the Map Summary, Tech Level and Game Year labels. */
     private void refreshLabels() {
-        Font scaledFont = UIUtil.getScaledFont();
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         
         String txt = Messages.getString("ChatLounge.GameYear"); 
         txt += opts.intOption(OptionsConstants.ALLOWED_YEAR);
         lblGameYear.setText(txt);
-        lblGameYear.setFont(scaledFont);
-        lblGameYear.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear"))); 
+        lblGameYear.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear")));
         
         String tlString = TechConstants.getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
         IOption tlOpt = opts.getOption(OptionsConstants.ALLOWED_TECHLEVEL);
@@ -2152,7 +2150,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             tlString = tlOpt.stringValue();
         }
         lblTechLevel.setText(Messages.getString("ChatLounge.TechLevel") + tlString);
-        lblTechLevel.setFont(scaledFont);
         lblTechLevel.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear")));
         
         txt = Messages.getString("ChatLounge.MapSummary"); 
@@ -2166,7 +2163,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             txt += " Space Map";
         }
         lblMapSummary.setText(txt);
-        lblMapSummary.setFont(scaledFont);
 
         StringBuilder selectedMaps = new StringBuilder();
         selectedMaps.append(Messages.getString("ChatLounge.MapSummarySelectedMaps"));
@@ -3085,60 +3081,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTeamOverview.adaptToGUIScale();
 
         Font scaledFont = UIUtil.getScaledFont();
-        Font scaledBigFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
+        Font scaledBigFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE2));
 
-        butCompact.setFont(scaledFont);
-        butOptions.setFont(scaledBigFont);
-        butLoadList.setFont(scaledFont);
-        butSaveList.setFont(scaledFont);
-        butSkills.setFont(scaledFont);
-        butNames.setFont(scaledFont);
-        butAddBot.setFont(scaledFont);
-        butRemoveBot.setFont(scaledFont);
-        butConfigPlayer.setFont(scaledFont);
-        butBotSettings.setFont(scaledFont);
-        butShowUnitID.setFont(scaledFont);
-        butConditions.setFont(scaledFont);
-        butRandomMap.setFont(scaledFont);
-        butSpaceSize.setFont(scaledFont);
-        butBoardPreview.setFont(scaledFont);
-        butAddX.setFont(scaledFont);
-        butAddY.setFont(scaledFont);
-        comMapSizes.setFont(scaledFont);
-        comboTeam.setFont(scaledFont);
-        lblBoardsAvailable.setFont(scaledFont);
-        lblMapWidth.setFont(scaledFont);
-        butMapGrowW.setFont(scaledFont);
-        butMapShrinkW.setFont(scaledFont);
-        fldMapWidth.setFont(scaledFont);
-        lblMapHeight.setFont(scaledFont);
-        butMapGrowH.setFont(scaledFont);
-        butMapShrinkH.setFont(scaledFont);
-        fldMapHeight.setFont(scaledFont);
-        lblSpaceBoardWidth.setFont(scaledFont);
-        lblSpaceBoardHeight.setFont(scaledFont);
-        fldSpaceBoardWidth.setFont(scaledFont);
-        fldSpaceBoardHeight.setFont(scaledFont);
-        butGroundMap.setFont(scaledFont);
-        butLowAtmoMap.setFont(scaledFont);
-        butHighAtmoMap.setFont(scaledFont);
-        butSpaceMap.setFont(scaledFont);
-        lblBoardSize.setFont(scaledFont);
-        butSaveMapSetup.setFont(scaledFont);
-        butLoadMapSetup.setFont(scaledFont);
-        butDetach.setFont(scaledFont);
-        butCancelSearch.setFont(scaledFont);
-        butListView.setFont(scaledFont);
-        butForceView.setFont(scaledFont);
-        butCollapse.setFont(scaledFont);
-        butExpand.setFont(scaledFont);
-        
-        butAdd.setFont(scaledBigFont);
-        butArmy.setFont(scaledBigFont);
-        panTabs.setFont(scaledBigFont);
-        
-        lblSearch.setFont(scaledFont);
-        fldSearch.setFont(scaledFont);
+        UIUtil.scaleComp(panTabs, UIUtil.FONT_SCALE2);
+        UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE2);
+
         String searchTip = Messages.getString("ChatLounge.map.searchTip") + "<BR>";
         searchTip += autoTagHTMLTable();
         fldSearch.setToolTipText(UIUtil.scaleStringForGUI(searchTip));

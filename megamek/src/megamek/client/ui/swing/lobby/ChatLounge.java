@@ -237,6 +237,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /* Team Overview Panel */
     private TeamOverviewPanel panTeamOverview;
     JButton butDetach = new JButton("Detach to Window");
+    private JSplitPane sp;
     ClientDialog teamOverviewWindow;
         
     private ImageLoader loader;
@@ -255,12 +256,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         super(clientgui, SkinSpecification.UIComponents.ChatLounge.getComp(),
                 SkinSpecification.UIComponents.ChatLoungeDoneButton.getComp());
 
+
+
         setLayout(new BorderLayout());
-        panTabs.add("Select Units", panUnits); 
+        sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        sp.setDividerSize(15);
+        sp.setResizeWeight(0.95);
+        JPanel p = new JPanel(new BorderLayout());
+        panTabs.add("Select Units", panUnits);
         panTabs.add("Select Map", panMap);
-        panTabs.add("Team Overview", panTeam); 
-        add(panTabs, BorderLayout.CENTER);
-        
+        panTabs.add("Team Overview", panTeam);
+        p.add(panTabs, BorderLayout.CENTER);
+        sp.setTopComponent(p);
+        add(sp);
+
         setupSorters();
         setupTeamOverview();
         setupPlayerConfig();
@@ -272,6 +281,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshLabels();
         adaptToGUIScale();
         setupListeners();
+    }
+
+    public void setBottom(JComponent comp) {
+        sp.setBottomComponent(comp);
     }
     
     /** Sets up all the listeners that the lobby works with. */

@@ -89,9 +89,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         // layout screen
         setLayout(new BorderLayout());
         sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        sp.setDividerSize(10);
+        sp.setDividerSize(15);
         sp.setResizeWeight(0.95);
-        sp.setDividerLocation(getSize().height-30);
         JPanel p = new JPanel(new GridBagLayout());
         p.add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
 

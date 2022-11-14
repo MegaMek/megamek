@@ -422,33 +422,17 @@ public final class UIUtil {
         parentComp.setFont(parentComp.getFont().deriveFont((float) scaleForGUI(fontSize)));
 
         for (Component comp: parentComp.getComponents()) {
-            if ((comp instanceof JButton)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
-            }
-            else if ((comp instanceof JLabel)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
-            }
-            else if ((comp instanceof JTextField)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
-            }
-            else if ((comp instanceof JTextArea)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
-            }
-            else if ((comp instanceof JTextPane)) {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
-            }
-            else if ((comp instanceof JPanel)) {
+            if ((comp instanceof JPanel)) {
                 scaleComp((JComponent) comp, fontSize);
-            }
-            else if ((comp instanceof JScrollPane)) {
+            } else if ((comp instanceof JScrollPane)) {
                 JComponent tmpComp = ((JScrollPane) comp).getViewport();
                 scaleComp((JComponent) tmpComp, fontSize);
-            }
-            else if ((comp instanceof JTable)) {
+            } else if ((comp instanceof JTable)) {
                 scaleComp((JComponent) comp, fontSize);
-            }
-            else if ((comp instanceof JTabbedPane)) {
+            } else if ((comp instanceof JTabbedPane)) {
                 scaleComp((JComponent) comp, fontSize);
+            } else {
+                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
             }
         }
     }
@@ -1100,7 +1084,6 @@ public final class UIUtil {
      */
     public static Font getScaledFont() {
         return new Font("Dialog", Font.PLAIN, scaleForGUI(FONT_SCALE1));
-
     }
 
     // PRIVATE

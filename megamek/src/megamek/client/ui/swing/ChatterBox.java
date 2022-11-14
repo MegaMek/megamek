@@ -116,8 +116,8 @@ public class ChatterBox implements KeyListener {
         playerChatSplit.setResizeWeight(0.01);
         
         JPanel subPanel = new JPanel(new BorderLayout());
-        subPanel.setPreferredSize(new Dimension(284, 100));
-        subPanel.setMinimumSize(new Dimension(284, 100));
+        subPanel.setPreferredSize(new Dimension(284, 80));
+        subPanel.setMinimumSize(new Dimension(284, 80));
         subPanel.add(playerChatSplit, BorderLayout.CENTER);
         subPanel.add(inputField, BorderLayout.SOUTH);
 

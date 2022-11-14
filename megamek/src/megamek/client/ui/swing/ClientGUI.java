@@ -1027,7 +1027,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
                 UIUtil.scaleComp(cl.butDone, UIUtil.FONT_SCALE1);
                 cb.setDoneButton(cl.butDone);
-                cl.add(cb.getComponent(), BorderLayout.SOUTH);
+                cl.setBottom(cb.getComponent());
                 getBoardView().getTilesetManager().reset();
                 getUnitDisplayDialog().setVisible(false);
                 setMapVisible(false);

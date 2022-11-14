@@ -419,7 +419,11 @@ public final class UIUtil {
     }
 
     public static void scaleComp(final JComponent parentComp, int fontSize) {
-        parentComp.setFont(parentComp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+        int sf = scaleForGUI(fontSize);
+
+        if ((parentComp.getFont() != null) && (sf != parentComp.getFont().getSize())) {
+            parentComp.setFont(parentComp.getFont().deriveFont((float) sf));
+        }
 
         for (Component comp: parentComp.getComponents()) {
             if ((comp instanceof JPanel)) {
@@ -427,12 +431,14 @@ public final class UIUtil {
             } else if ((comp instanceof JScrollPane)) {
                 JComponent tmpComp = ((JScrollPane) comp).getViewport();
                 scaleComp((JComponent) tmpComp, fontSize);
-            } else if ((comp instanceof JTable)) {
+            } else if ((comp instanceof JSplitPane)) {
                 scaleComp((JComponent) comp, fontSize);
             } else if ((comp instanceof JTabbedPane)) {
                 scaleComp((JComponent) comp, fontSize);
             } else {
-                comp.setFont(comp.getFont().deriveFont((float) scaleForGUI(fontSize)));
+                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+                    comp.setFont(comp.getFont().deriveFont((float) sf));
+                }
             }
         }
     }

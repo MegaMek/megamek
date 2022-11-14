@@ -102,7 +102,7 @@ public class ChatterBox implements KeyListener {
         playerList = new JList<>(new DefaultListModel<>());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);
-        scrPlayers.setPreferredSize(new Dimension(100, chatArea.getHeight()));
+        scrPlayers.setPreferredSize(new Dimension(150, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
         butDone = new JButton(Messages.getString("ChatterBox.ImDone"));

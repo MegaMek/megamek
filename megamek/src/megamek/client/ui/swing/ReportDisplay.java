@@ -45,6 +45,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     // buttons
     private JButton rerollInitiativeB;
+    private JSplitPane sp;
 
     private boolean rerolled; // have we rerolled an init?
 
@@ -86,16 +87,28 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         rerollInitiativeB.addActionListener(this);
 
         // layout screen
-        setLayout(new GridBagLayout());
-        add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
+        setLayout(new BorderLayout());
+        sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        sp.setDividerSize(10);
+        sp.setResizeWeight(0.95);
+        sp.setDividerLocation(getSize().height-30);
+        JPanel p = new JPanel(new GridBagLayout());
+        p.add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
+
         JPanel panButtons = new JPanel();
         panButtons.setLayout(new GridLayout(1, 8));
         panButtons.add(rerollInitiativeB);
         for (int padding = 0; padding < 6; padding++) {
             panButtons.add(new JLabel(""));
         }
-        add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        p.add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        sp.setTopComponent(p);
+        add(sp);
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
+    }
+
+    public void setBottom(JComponent comp) {
+        sp.setBottomComponent(comp);
     }
 
     /**

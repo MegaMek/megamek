@@ -1058,7 +1058,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VICTORY:
                 rD = (ReportDisplay) phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
                 cb.setDoneButton(rD.butDone);
-                rD.add(cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+                rD.setBottom(cb.getComponent());
                 setMapVisible(false);
                 setUnitDisplayVisible(false);
                 break;

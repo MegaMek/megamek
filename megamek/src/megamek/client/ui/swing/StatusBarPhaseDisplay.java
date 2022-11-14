@@ -191,7 +191,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panButtons, UIUtil.FONT_SCALE2);
+        UIUtil.scaleComp(panButtons, UIUtil.FONT_SCALE1);
         UIUtil.scaleComp(panStatus, UIUtil.FONT_SCALE2);
     }
 

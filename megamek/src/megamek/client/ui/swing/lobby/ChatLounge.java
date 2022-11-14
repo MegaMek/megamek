@@ -3081,10 +3081,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTeamOverview.adaptToGUIScale();
 
         Font scaledFont = UIUtil.getScaledFont();
-        Font scaledBigFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE2));
 
-        UIUtil.scaleComp(panTabs, UIUtil.FONT_SCALE2);
+
+        UIUtil.scaleComp(panTabs, UIUtil.FONT_SCALE1);
+
         UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE2);
+        UIUtil.scaleComp(butOptions, UIUtil.FONT_SCALE2);
+        UIUtil.scaleComp(butAdd, UIUtil.FONT_SCALE2);
+        UIUtil.scaleComp(butArmy, UIUtil.FONT_SCALE2);
 
         String searchTip = Messages.getString("ChatLounge.map.searchTip") + "<BR>";
         searchTip += autoTagHTMLTable();

@@ -1117,7 +1117,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case STARTING_SCENARIO:
                 component = new JLabel(Messages.getString("ClientGUI.StartingScenario"));
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE2);
+                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = "JLabel-StartingScenario";
                 component.setName(main);
                 panMain.add(component, main);
@@ -1125,7 +1125,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case EXCHANGE:
                 chatlounge.killPreviewBV();
                 component = new JLabel(Messages.getString("ClientGUI.TransmittingData"));
-                UIUtil.scaleComp(component, UIUtil.FONT_SCALE2);
+                UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = "JLabel-Exchange";
                 component.setName(main);
                 panMain.add(component, main);
@@ -1291,7 +1291,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             secondaryNames.put(name, secondary);
         }
 
-        adaptToGUIScale();
         return component;
     }
 

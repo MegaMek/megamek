@@ -4075,6 +4075,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    private void setStatusBarTextOthersTurn(@Nullable Player player) {
+        String playerName = (player != null) ? player.getName() : "Unknown";
+        setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName));
+    }
+
     //
     // GameListener
     //
@@ -4096,13 +4101,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // if all our entities are actually done, don't start up the turn.
         if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
                 .stream().allMatch(Entity::isDone)) {
-            String playerName;
-            if (e.getPlayer() != null) {
-                playerName = e.getPlayer().getName();
-            } else {
-                playerName = "Unknown";
-            }
-            setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName));
+            setStatusBarTextOthersTurn(e.getPlayer());
             return;
         }
 
@@ -4124,13 +4123,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     && (clientgui.getClient().getGame().getTurn() instanceof UnloadStrandedTurn)) {
                 setStatusBarText(Messages.getString("MovementDisplay.waitForAnother"));
             } else {
-                String playerName;
-                if (e.getPlayer() != null) {
-                    playerName = e.getPlayer().getName();
-                } else {
-                    playerName = "Unknown";
-                }
-                setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName));
+                setStatusBarTextOthersTurn(e.getPlayer());
             }
         }
     }

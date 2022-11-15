@@ -20,13 +20,20 @@ VERSION HISTORY:
 + Issue #2757: Bulletproofing for when DFA target is eliminated prior to DFA resolution
 + Issue #3902: Advantages display on the bottom of unit info card
 + RFE #2715: Tooltip displays original vs modified movement due to planetary conditions
-+ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867 
++ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867
 + Data: TP Foster RATS #3930 - Thanks Stonewall072
 + PR #3970 - AS conversion fixes
 + PR #3971 - Implements #3747 add option to adjust the seen by in the unit tool tip
 + PR #3972 = AS conversion fixes round 2
-+ Issue #3980 - Prototype ER Large Laser Wrong Stats for Aerospace Units 
-
++ Issue #3980 - Prototype ER Large Laser Wrong Stats for Aerospace Units
++ Updating to Apache Commons Text 1.10.0 from 1.9
++ Updating to FlatLAF 2.6 from 2.4
++ Updating to Jackson XML 2.14.0 from 2.13.3
++ Updating to JAXB Runtime 4.0.1 from 4.0.0
++ Updating to JUnit 5.9.1 from 5.9.0
++ Updating to Launch4j 2.5.4 from 2.5.3
++ Updating to Log4j 2.19.0 from 2.18.0
++ Updating to Mockito 4.9.0 from 4.6.1
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145
@@ -93,9 +100,9 @@ VERSION HISTORY:
 + PR #3809: Fix the Formation Builder to again be able to generate fire support lances
 + Issues #3665, 3658: Server Connection Rework
 + Data: BA MUL Alignment Project.
-	This involves a complete rework of the BA naming conventions to match the MUL. Almost all suits now have a (Sqd4,5,6) designation indicating the size
-	as opposed to the random naming used before. MUL IDs have been cross referenced and added as required. As a final bonus to the project all BA now have
-	some fluff text from Sarna.
+    This involves a complete rework of the BA naming conventions to match the MUL. Almost all suits now have a (Sqd4,5,6) designation indicating the size
+    as opposed to the random naming used before. MUL IDs have been cross referenced and added as required. As a final bonus to the project all BA now have
+    some fluff text from Sarna.
 + Issue #3819 Unit Files needing updates.
 + Data: More BA fixes including fix to name_change.txt which resolves MekHQ #3412.
 + Issue #3453: Updated About Box copyright text per #3453 

@@ -866,7 +866,7 @@ public class ASDamageConverter {
         return UNKNOWN;
     }
 
-    private static int resultingHTValue(double heatSum) {
+    private static int resultingHTValue(int heatSum) {
         if (heatSum > 10) {
             return 2;
         } else if (heatSum > 4) {

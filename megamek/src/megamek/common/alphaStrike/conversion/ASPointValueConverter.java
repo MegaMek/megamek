@@ -403,10 +403,7 @@ public class ASPointValueConverter {
             result += 0.5 * element.getSUBS();
             modifierList.add("SUBS");
         }
-        if (element.hasMovementMode("a")) {
-            result += 2;
-            modifierList.add("Thrust");
-        }
+
         double multiplier = (result <= 2 ? 0.1 : 0.25);
         double defFactor = 1 + multiplier * result;
         String modifiers = " (" + String.join(", ", modifierList) + ")";

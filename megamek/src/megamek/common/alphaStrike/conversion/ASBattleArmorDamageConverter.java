@@ -22,6 +22,7 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.weapons.InfantryAttack;
 
 import static megamek.client.ui.swing.calculationReport.CalculationReport.formatForReport;
@@ -46,7 +47,8 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         processMDamage();
         processLDamage();
         processHT();
-        processIFDamage();
+        processFrontSpecialDamage(IF);
+        processFrontSpecialDamage(FLK);
     }
 
     /**
@@ -82,29 +84,31 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
         return weapon.isAPMMounted() ? 0 : super.determineDamage(weapon, range);
     }
 
-    /** Processes IF for BA. Specialized to include the troop factor without bloating the overridden method even more. */
-    protected void processIFDamage() {
-        report.startTentativeSection();
-        report.addEmptyLine();
-        report.addLine("--- IF Damage:", "");
-        double[] damage = assembleSpecialDamage(IF, 0);
-        double ifDamage = damage[2];
-        if (ifDamage > 0) {
-            report.addLine("Troop Factor", formatForReport(ifDamage) + " x " + formatForReport(troopFactor),
-                    "= " + formatForReport(ifDamage * troopFactor));
-            ifDamage *= troopFactor;
-        }
+    @Override
+    protected double[] assembleSpecialDamage(BattleForceSUA dmgType, int location) {
+        double[] damage = super.assembleSpecialDamage(dmgType, location);
+        String rawValues = formatAsVector(damage[0], damage[1], damage[2], 0, dmgType);
+        damage[0] *= troopFactor;
+        damage[1] *= troopFactor;
+        damage[2] *= troopFactor;
+        String multipliedValues = formatAsVector(damage[0], damage[1], damage[2], 0, dmgType);
+        report.addLine("Troop Factor", rawValues + " x " + formatForReport(troopFactor),
+                "= " + multipliedValues);
+        return damage;
+    }
 
-        String finalText = "Final value:";
-
-        if (qualifiesForSpecial(damage, IF)) {
-            ASDamage finalIFDamage = ASDamage.createDualRoundedNormal(ifDamage);
-            report.addLine(finalText, formatForReport(ifDamage) + ", " + rdNm, "IF" + finalIFDamage);
-            locations[0].setSUA(IF, finalIFDamage);
-            report.endTentativeSection();
-        } else {
-            report.discardTentativeSection();
-        }
+    @Override
+    protected int[] assembleHeatDamage() {
+        int[] heatDmg = super.assembleHeatDamage();
+        String rawValues = formatAsVector(heatDmg[0], heatDmg[1], heatDmg[2], 0, HT);
+        int infantryTroopFactor = TROOP_FACTOR[Math.min(((BattleArmor) entity).getShootingStrength(), 30)];
+        heatDmg[0] *= infantryTroopFactor;
+        heatDmg[1] *= infantryTroopFactor;
+        heatDmg[2] *= infantryTroopFactor;
+        String multipliedValues = formatAsVector(heatDmg[0], heatDmg[1], heatDmg[2], 0, HT);
+        report.addLine("(Infantry) Troop Factor", rawValues + " x " + infantryTroopFactor,
+                "= " + multipliedValues);
+        return heatDmg;
     }
 
     @Override

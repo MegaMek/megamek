@@ -395,6 +395,18 @@ public class ASPointValueConverter {
             result -= 1;
             modifierList.add("LG/SLG/VLG");
         }
+        if (element.hasSUA(JMPS)) {
+            result += 0.5 * element.getJMPS();
+            modifierList.add("JMPS");
+        }
+        if (element.hasSUA(SUBS)) {
+            result += 0.5 * element.getSUBS();
+            modifierList.add("SUBS");
+        }
+        if (element.hasMovementMode("a")) {
+            result += 2;
+            modifierList.add("Thrust");
+        }
         double multiplier = (result <= 2 ? 0.1 : 0.25);
         double defFactor = 1 + multiplier * result;
         String modifiers = " (" + String.join(", ", modifierList) + ")";
@@ -442,16 +454,20 @@ public class ASPointValueConverter {
         return roundToHalf(multiplier * subTotal);
     }
 
-    /** Determines the Agile Bonus, AlphaStrike Companion Errata v1.4, p.17  */
+    /**
+     * Determines the Agile Bonus, AlphaStrike Companion Errata v1.4, p.17 and
+     * https://bg.battletech.com/forums/errata/alpha-strike-companion/msg1881442/#msg1881442
+     */
     private double agileBonus() {
         double result = 0;
-        if (element.getTMM() >= 2) {
+        double modifiedTMM = element.getTMM() + 0.5 * element.getJMPS() + 0.5 * element.getSUBS();
+        if (modifiedTMM >= 2) {
             double dmgS = element.getStandardDamage().S.minimal ? 0.5 : element.getStandardDamage().S.damage;
             double dmgM = element.getStandardDamage().M.minimal ? 0.5 : element.getStandardDamage().M.damage;
             if (dmgM > 0) {
-                result = (element.getTMM() - 1) * dmgM;
+                result = (modifiedTMM - 1) * dmgM;
             } else if (element.getTMM() >= 3) {
-                result = (element.getTMM() - 2) * dmgS;
+                result = (modifiedTMM - 2) * dmgS;
             }
         }
         if (result != 0) {

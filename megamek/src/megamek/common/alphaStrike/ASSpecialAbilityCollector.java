@@ -143,9 +143,19 @@ public interface ASSpecialAbilityCollector {
         return hasSUA(BIM) ? (Map<String, Integer>) getSUA(BIM) : Collections.EMPTY_MAP;
     }
 
-    /** @return The MHQ ability value of this element. */
+    /** @return The MHQ ability value of this element or 0 if it doesn't have MHQ. */
     default int getMHQ() {
         return hasSUA(MHQ) ? (Integer) getSUA(MHQ) : 0;
+    }
+
+    /** @return The JPMS ability value of this element or 0 if it doesn't have JMPS. */
+    default int getJMPS() {
+        return hasSUA(JMPS) ? (Integer) getSUA(JMPS) : 0;
+    }
+
+    /** @return The SUBS ability value of this element or 0 if it doesn't have SUBS. */
+    default int getSUBS() {
+        return hasSUA(SUBS) ? (Integer) getSUA(SUBS) : 0;
     }
 
     /** @return The standard damage of this element or turret or the STD damage of this arc. */

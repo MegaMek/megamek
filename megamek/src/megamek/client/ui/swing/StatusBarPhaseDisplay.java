@@ -43,6 +43,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int BUTTON_ROWS = 2;
+    private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
 
     /**
      * Interface that defines what a command for a phase is.
@@ -79,12 +80,11 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     
     protected int buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
     protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
-    
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
         super(cg);
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "clearButton");
-        getActionMap().put("clearButton", new AbstractAction() {
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
+        getActionMap().put(SBPD_KEY_CLEARBUTTON, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isIgnoringEvents()) {

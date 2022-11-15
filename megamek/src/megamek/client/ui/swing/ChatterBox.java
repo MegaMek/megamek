@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
@@ -48,6 +49,13 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private ChatterBox2 cb2;
 
+    private static final String CB_KEY_FONTNAMESANSSERIF = "Sans Serif";
+    private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
+
+    private static final String CB_MESSAGE_MEGAMEK = Messages.getString("ChatterBox.Megamek");
+    private static final String CB_MESSAGE_DONE = Messages.getString("ChatterBox.ImDone");
+    private static final String CB_MESSAGE_ENTITIESADDED = Messages.getString("ChatterBox.entitiesAdded");
+
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
         client.getGame().addGameListener(new GameListenerAdapter() {
@@ -78,7 +86,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
                 PlayerListDialog.refreshPlayerList(playerList, client);
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
-                    systemMessage(e.getNumberOfEntities() + " Entities added.");
+                    systemMessage(e.getNumberOfEntities() + " " + CB_MESSAGE_ENTITIESADDED);
                 }
             }
 
@@ -97,18 +105,18 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         });
         history = new LinkedList<>();
 
-        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40);
+        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE), 40);
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
-        chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
+        chatArea.setFont(new Font(CB_KEY_FONTNAMESANSSERIF, Font.PLAIN, 12));
         playerList = new JList<>(new DefaultListModel<>());
-        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
+        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE));
         scrPlayers = new JScrollPane(playerList);
         scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
-        butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
+        butDone = new JButton(CB_MESSAGE_DONE);
         butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
@@ -170,7 +178,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        chatArea.append("\nMegaMek: " + message);
+        chatArea.append("\n" + CB_MESSAGE_MEGAMEK + " " + message);
         moveToEnd();
     }
 

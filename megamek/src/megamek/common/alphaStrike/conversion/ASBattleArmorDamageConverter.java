@@ -101,12 +101,11 @@ public class ASBattleArmorDamageConverter extends ASDamageConverter {
     protected int[] assembleHeatDamage() {
         int[] heatDmg = super.assembleHeatDamage();
         String rawValues = formatAsVector(heatDmg[0], heatDmg[1], heatDmg[2], 0, HT);
-        int infantryTroopFactor = TROOP_FACTOR[Math.min(((BattleArmor) entity).getShootingStrength(), 30)];
-        heatDmg[0] *= infantryTroopFactor;
-        heatDmg[1] *= infantryTroopFactor;
-        heatDmg[2] *= infantryTroopFactor;
+        heatDmg[0] *= troopFactor;
+        heatDmg[1] *= troopFactor;
+        heatDmg[2] *= troopFactor;
         String multipliedValues = formatAsVector(heatDmg[0], heatDmg[1], heatDmg[2], 0, HT);
-        report.addLine("(Infantry) Troop Factor", rawValues + " x " + infantryTroopFactor,
+        report.addLine("Troop Factor", rawValues + " x " + formatForReport(troopFactor),
                 "= " + multipliedValues);
         return heatDmg;
     }

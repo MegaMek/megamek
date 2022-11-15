@@ -314,7 +314,7 @@ public class ASPointValueConverter {
         dir = 0.5 * Math.round(dir * defFactor * 2);
     }
 
-    private void processArmor() {
+    protected void processArmor() {
         double armorMultiplier = 2;
         List<String> modifierList = new ArrayList<>();
         if (element.isType(CV, SV)) {
@@ -343,7 +343,7 @@ public class ASPointValueConverter {
                 "= " + formatForReport(dir));
     }
 
-    private void processStructure() {
+    protected void processStructure() {
         double strucMultiplier = 1;
         String modifiers = "";
         if (element.isInfantry()) {
@@ -377,6 +377,14 @@ public class ASPointValueConverter {
         } else {
             result += movemod;
             modifierList.add("TMM");
+        }
+        if (element.isAerospace()) {
+            result += 2;
+            modifierList.add("Aerospace");
+        }
+        if (element.isType(DS, DA)) {
+            result -= 2;
+            modifierList.add("DropShip");
         }
         if (element.isType(BA, PM)) {
             result += 1;

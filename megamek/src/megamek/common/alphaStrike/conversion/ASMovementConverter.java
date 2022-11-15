@@ -290,6 +290,9 @@ final class ASMovementConverter {
     static int convertTMM(ASConverter.ConversionData conversionData) {
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
+        if (element.isAerospace()) {
+            return 0;
+        }
 
         int base = element.getPrimaryMovementValue();
         if (element.isInfantry()) {

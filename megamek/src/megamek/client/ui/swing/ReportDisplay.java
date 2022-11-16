@@ -50,11 +50,11 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     private static final String RD_ACTIONCOMMAND_DONEBUTTON = "doneButton";
     private static final String RD_ACTIONCOMMAND_REROLLINITIATIVE = "reroll_initiative";
 
-    private static final String RD_MESSAGE_DONE = Messages.getString("ReportDisplay.Done");
-    private static final String RD_MESSAGE_REROLL = Messages.getString("ReportDisplay.Reroll");
-    private static final String RD_MESSAGE_ROUND = Messages.getString("ReportDisplay.Round");
-    private static final String RD_MESSAGE_PHASE = Messages.getString("ReportDisplay.Phase");
-    private static final String RD_MESSAGE_DETAILS =Messages.getString("ReportDisplay.Details");
+    private static final String MSG_DONE = Messages.getString("ReportDisplay.Done");
+    private static final String MSG_REROLL = Messages.getString("ReportDisplay.Reroll");
+    private static final String MSG_ROUND = Messages.getString("ReportDisplay.Round");
+    private static final String MSG_PHASE = Messages.getString("ReportDisplay.Phase");
+    private static final String MSG_DETAILS =Messages.getString("ReportDisplay.Details");
 
     private boolean rerolled; // have we rerolled an init?
 
@@ -85,9 +85,9 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
         resetTabs();
 
-        butDone.setText(RD_MESSAGE_DONE);
+        butDone.setText(MSG_DONE);
 
-        rerollInitiativeB = new JButton(RD_MESSAGE_REROLL);
+        rerollInitiativeB = new JButton(MSG_REROLL);
         rerollInitiativeB.setActionCommand(RD_ACTIONCOMMAND_REROLLINITIATIVE);
         rerollInitiativeB.addActionListener(this);
 
@@ -179,11 +179,11 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             // report.
             round = 1;
         }
-        if (tabs.indexOfTab(RD_MESSAGE_ROUND + " " + round) == -1) {
+        if (tabs.indexOfTab(MSG_ROUND + " " + round) == -1) {
             // Need a new tab for the new round.
 
             // get rid of phase tab
-            int phaseTab = tabs.indexOfTab(RD_MESSAGE_PHASE);
+            int phaseTab = tabs.indexOfTab(MSG_PHASE);
             if (phaseTab >= 0) {
                 tabs.removeTabAt(phaseTab);
             }
@@ -196,9 +196,9 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             // TODO: we should remove the use of client
             final Client client = clientgui.getClient();
             for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
-                if (tabs.indexOfTab(RD_MESSAGE_ROUND + " " + catchup) != -1) {
+                if (tabs.indexOfTab(MSG_ROUND + " " + catchup) != -1) {
                     ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
-                            .indexOfTab(RD_MESSAGE_ROUND + " " + catchup))).getViewport()
+                            .indexOfTab(MSG_ROUND + " " + catchup))).getViewport()
                             .getView()).setText("<pre>"
                             + client.receiveReport(client.getGame().getReports(
                                     catchup)) + "</pre>");
@@ -216,7 +216,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 ta.setText("<pre>" + text + "</pre>");
                 ta.setEditable(false);
                 ta.setOpaque(false);
-                tabs.add(RD_MESSAGE_ROUND + " " + catchup, new JScrollPane(ta));
+                tabs.add(MSG_ROUND + " " + catchup, new JScrollPane(ta));
             }
 
             // add the new current phase tab
@@ -231,12 +231,12 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
 
             JScrollPane sp = new JScrollPane(ta);
-            tabs.add(RD_MESSAGE_PHASE, sp);
+            tabs.add(MSG_PHASE, sp);
             tabs.setSelectedComponent(sp);
         } else {
             // Update the existing round tab and the phase tab.
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab(RD_MESSAGE_ROUND + " " + round))).getViewport().getView()).setText("<pre>" + roundText + "</pre>");
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab(RD_MESSAGE_PHASE))).getViewport().getView()).setText("<pre>" + phaseText + "</pre>");
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab(MSG_ROUND + " " + round))).getViewport().getView()).setText("<pre>" + roundText + "</pre>");
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab(MSG_PHASE))).getViewport().getView()).setText("<pre>" + phaseText + "</pre>");
         }
     }
 
@@ -247,7 +247,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     }
     
     public void appendReportTab(String additionalText) {
-        int phaseTab = tabs.indexOfTab(RD_MESSAGE_PHASE);
+        int phaseTab = tabs.indexOfTab(MSG_PHASE);
         if (phaseTab > 0) {
             JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView());
             BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -287,7 +287,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         rerolled = false;
 
         SwingUtilities.invokeLater(() -> {
-            int phaseTab = tabs.indexOfTab(RD_MESSAGE_PHASE);
+            int phaseTab = tabs.indexOfTab(MSG_PHASE);
             if (phaseTab > 0) {
                 JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport();
                 vp.setViewPosition(new Point());
@@ -333,7 +333,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString(RD_MESSAGE_DETAILS),
+                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString(MSG_DETAILS),
                         JOptionPane.PLAIN_MESSAGE);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {

@@ -213,66 +213,66 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String CG_FILEFORMATNAMEPNG = "png";
 
 
-    private static final String CG_MESSAGES_TITLE = Messages.getString("ClientGUI.title");
-    private static final String CG_MESSAGES_FATALERRORTITLE = Messages.getString("ClientGUI.FatalError.title");
-    private static final String CG_MESSAGES_FATALERRORMSG = Messages.getString("ClientGUI.FatalError.message");
-    private static final String CG_MESSAGES_SKINNINGHELPPATH = Messages.getString("ClientGUI.skinningHelpPath");
-    private static final String CG_MESSAGES_SKINNINGHELPPATHTITLE = Messages.getString("ClientGUI.skinningHelpPath.title");
-    private static final String CG_MESSAGES_FILESAVESERVERDIALOGMSG = Messages.getString("ClientGUI.FileSaveServerDialog.message");
-    private static final String CG_MESSAGES_FILESAVESERVERDIALOGTITTLE = Messages.getString("ClientGUI.FileSaveServerDialog.title");
-    private static final String CG_MESSAGES_OPENUNITLISTFILEDIALOGNOREINFORCETITILE = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle");
-    private static final String CG_MESSAGES_OPENUNITLISTFILEDIALOGNOREINFORCEMSG = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage");
-    private static final String CG_MESSAGES_OPNEUNITLISTFILEDIALOGTITLE = Messages.getString("ClientGUI.openUnitListFileDialog.title");
-    private static final String CG_MESSAGES_ERRORLOADINGFILE = Messages.getString("ClientGUI.errorLoadingFile");
-    private static final String CG_MESSAGES_FILESAVEDIALOGTITLE = Messages.getString("ClientGUI.FileSaveDialog.title");
-    private static final String CG_MESSAGES_SAVEUNITLISTFILEDIALOGTITLE = Messages.getString("ClientGUI.saveUnitListFileDialog.title");
-    private static final String CG_MESSAGES_ERRORSAVINGFILE = Messages.getString("ClientGUI.errorSavingFile");
-    private static final String CG_MESSAGES_STARTINGSCENARIO = Messages.getString("ClientGUI.StartingScenario");
-    private static final String CG_MESSAGES_TRANSMITTINGDATA = Messages.getString("ClientGUI.TransmittingData");
-    private static final String CG_MESSAGES_WAITINGONTHESERVER = Messages.getString("ClientGUI.waitingOnTheServer");
-    private static final String CG_MESSAGES_DISCONNECTEDMSG = Messages.getString("ClientGUI.Disconnected.message");
-    private static final String CG_MESSAGES_DISCONNECTEDTITLE = Messages.getString("ClientGUI.Disconnected.title");
-    private static final String CG_MESSAGES_SAVEUNITSDIALOGTITLE = Messages.getString("ClientGUI.SaveUnitsDialog.title");
-    private static final String CG_MESSAGES_SAVEUNITSDIALOGMSG = Messages.getString("ClientGUI.SaveUnitsDialog.message");
-    private static final String CG_MESSAGES_POINTBLANKSHOTMSG = Messages.getString("ClientGUI.PointBlankShot.Message");
-    private static final String CG_MESSAGES_POINTBLANKSHOTTITLE = Messages.getString("ClientGUI.PointBlankShot.Title");
-    private static final String CG_MESSAGES_CLIENTTITLESUFFIX = Messages.getString("ClientGUI.clientTitleSuffix");
-    private static final String CG_MESSAGES_FAILEDTOLOADAUDIFILE = Messages.getString("ClientGUI.failedToLoadAudioFile");
-    private static final String CG_MESSAGES_CHATTERBOXMEGAMEK = Messages.getString("ChatterBox.Megamek");
-    private static final String CG_MESSAGES_GAMESAVEDIALOGMSG = Messages.getString("ClientGUI.gameSaveDialogMessage");
-    private static final String CG_MESSAGES_GAMESAVEFIRST = Messages.getString("ClientGUI.gameSaveFirst");
-    private static final String CG_MESSAGES_MECHSELECTORDIALOG = Messages.getString("ClientGUI.mechSelectorDialog");
-    private static final String CG_MESSAGES_ERRORSELECTINGPLAYER = Messages.getString("ClientGUI.errorSelectingPlayer");
-    private static final String CG_MESSAGES_DESCEMULEFILES = Messages.getString("ClientGUI.descriptionMULFiles");
-    private static final String CG_MESSAGES_DIALOGTACTICALGENIUSREPORT = Messages.getString("ClientGUI.dialogTacticalGeniusReport");
-    private static final String CG_MESSAGES_DIALOGDIALOGMOVEMENTREPORT = Messages.getString("ClientGUI.dialogMovementReport");
-    private static final String CG_MESSAGES_MISSILESFROMANUNKNOWNATTACKER = Messages.getString("ClientGUI.missilesFromAnUnknownAttacker");
-    private static final String CG_MESSAGES_ERROROPENINGFILETOSAVE = Messages.getString("ClientGUI.errorOpeningFileToSave");
-    private static final String CG_MESSAGES_DISTANCE = Messages.getString("ClientGUI.distance");
-    private static final String CG_MESSAGES_NOGHOSTPLAYERSTOREPLACE = Messages.getString("ClientGUI.noGhostPlayersToReplace");
-    private static final String CG_MESSAGES_NOGHOSTS = Messages.getString("ClientGUI.noGhosts");
-    private static final String CG_MESSAGES_BOARDEDITORWAITDIALOGTITLE = Messages.getString("BoardEditor.waitDialog.title");
-    private static final String CG_MESSAGES_BOARDEDITORWAITDIALOGMSG = Messages.getString("BoardEditor.waitDialog.message");
-    private static final String CG_MESSAGES_BOARDEDITORSAVEBOARDAS = Messages.getString("BoardEditor.saveBoardAs");
-    private static final String CG_MESSAGES_BOARDEDITORSAVEASIMAGE = Messages.getString("BoardEditor.saveAsImage");
-    private static final String CG_MESSAGES_CFRDOMINOTITLE = Messages.getString("CFRDomino.Title");
-    private static final String CG_MESSAGES_CFRDOMINOMSG = Messages.getString("CFRDomino.Message");
-    private static final String CG_MESSAGES_CFRDOMINOFORWARD = Messages.getString("CFRDomino.Forward");
-    private static final String CG_MESSAGES_CFRDOMINOFBACKWARD = Messages.getFormattedString("CFRDomino.Backward");
-    private static final String CG_MESSAGES_CFRDOMINONOACTION = Messages.getString("CFRDomino.NoAction");
-    private static final String CG_MESSAGES_CFRAMASSIGNTITLE = Messages.getString("CFRAMSAssign.Title");
-    private static final String CG_MESSAGES_CFRAMASSIGNMSG = Messages.getString("CFRAMSAssign.Message");
-    private static final String CG_MESSAGES_CFAPDSASSIGNTITLE = Messages.getString("CFRAPDSAssign.Title");
-    private static final String CG_MESSAGES_CFAPDSASSIGNMSG = Messages.getString("CFRAPDSAssign.Message");
-    private static final String CG_MESSAGES_ERROR = Messages.getString("ERROR");
-    private static final String CG_MESSAGES_FROM = Messages.getString("FROM");
-    private static final String CG_MESSAGES_NONE = Messages.getString("NONE");
-    private static final String CG_MESSAGES_STATUSBARPHASEDISPLAYPOINTBLANKSHOT = Messages.getString("StatusBarPhaseDisplay.pointblankShot");
-    private static final String CG_MESSAGES_TAGTARGETDIALOGMSG = Messages.getString("TAGTargetDialog.message");
-    private static final String CG_MESSAGES_TAGTARGETDIALOGTITLE = Messages.getString("TAGTargetDialog.title");
-    private static final String CG_MESSAGES_TELEMISSILETARGETDIALOGTARGET = Messages.getString("TeleMissileTargetDialog.target");
-    private static final String CG_MESSAGES_TELEMISSILETARGETDIALOGMSG = Messages.getString("TeleMissileTargetDialog.message");
-    private static final String CG_MESSAGES_TELEMISSILETARGETDIALOGTITLE = Messages.getString("TeleMissileTargetDialog.title");
+    private static final String MSG_TITLE = Messages.getString("ClientGUI.title");
+    private static final String MSG_FATALERRORTITLE = Messages.getString("ClientGUI.FatalError.title");
+    private static final String MSG_FATALERRORMSG = Messages.getString("ClientGUI.FatalError.message");
+    private static final String MSG_SKINNINGHELPPATH = Messages.getString("ClientGUI.skinningHelpPath");
+    private static final String MSG_SKINNINGHELPPATHTITLE = Messages.getString("ClientGUI.skinningHelpPath.title");
+    private static final String MSG_FILESAVESERVERDIALOGMSG = Messages.getString("ClientGUI.FileSaveServerDialog.message");
+    private static final String MSG_FILESAVESERVERDIALOGTITTLE = Messages.getString("ClientGUI.FileSaveServerDialog.title");
+    private static final String MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle");
+    private static final String MSG_OPENUNITLISTFILEDIALOGNOREINFORCEMSG = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage");
+    private static final String MSG_OPNEUNITLISTFILEDIALOGTITLE = Messages.getString("ClientGUI.openUnitListFileDialog.title");
+    private static final String MSG_ERRORLOADINGFILE = Messages.getString("ClientGUI.errorLoadingFile");
+    private static final String MSG_FILESAVEDIALOGTITLE = Messages.getString("ClientGUI.FileSaveDialog.title");
+    private static final String MSG_SAVEUNITLISTFILEDIALOGTITLE = Messages.getString("ClientGUI.saveUnitListFileDialog.title");
+    private static final String MSG_ERRORSAVINGFILE = Messages.getString("ClientGUI.errorSavingFile");
+    private static final String MSG_STARTINGSCENARIO = Messages.getString("ClientGUI.StartingScenario");
+    private static final String MSG_TRANSMITTINGDATA = Messages.getString("ClientGUI.TransmittingData");
+    private static final String MSG_WAITINGONTHESERVER = Messages.getString("ClientGUI.waitingOnTheServer");
+    private static final String MSG_DISCONNECTEDMSG = Messages.getString("ClientGUI.Disconnected.message");
+    private static final String MSG_DISCONNECTEDTITLE = Messages.getString("ClientGUI.Disconnected.title");
+    private static final String MSG_SAVEUNITSDIALOGTITLE = Messages.getString("ClientGUI.SaveUnitsDialog.title");
+    private static final String MSG_SAVEUNITSDIALOGMSG = Messages.getString("ClientGUI.SaveUnitsDialog.message");
+    private static final String MSG_POINTBLANKSHOTMSG = Messages.getString("ClientGUI.PointBlankShot.Message");
+    private static final String MSG_POINTBLANKSHOTTITLE = Messages.getString("ClientGUI.PointBlankShot.Title");
+    private static final String MSG_CLIENTTITLESUFFIX = Messages.getString("ClientGUI.clientTitleSuffix");
+    private static final String MSG_FAILEDTOLOADAUDIFILE = Messages.getString("ClientGUI.failedToLoadAudioFile");
+    private static final String MSG_CHATTERBOXMEGAMEK = Messages.getString("ChatterBox.Megamek");
+    private static final String MSG_GAMESAVEDIALOGMSG = Messages.getString("ClientGUI.gameSaveDialogMessage");
+    private static final String MSG_GAMESAVEFIRST = Messages.getString("ClientGUI.gameSaveFirst");
+    private static final String MSG_MECHSELECTORDIALOG = Messages.getString("ClientGUI.mechSelectorDialog");
+    private static final String MSG_ERRORSELECTINGPLAYER = Messages.getString("ClientGUI.errorSelectingPlayer");
+    private static final String MSG_DESCEMULEFILES = Messages.getString("ClientGUI.descriptionMULFiles");
+    private static final String MSG_DIALOGTACTICALGENIUSREPORT = Messages.getString("ClientGUI.dialogTacticalGeniusReport");
+    private static final String MSG_DIALOGDIALOGMOVEMENTREPORT = Messages.getString("ClientGUI.dialogMovementReport");
+    private static final String MSG_MISSILESFROMANUNKNOWNATTACKER = Messages.getString("ClientGUI.missilesFromAnUnknownAttacker");
+    private static final String MSG_ERROROPENINGFILETOSAVE = Messages.getString("ClientGUI.errorOpeningFileToSave");
+    private static final String MSG_DISTANCE = Messages.getString("ClientGUI.distance");
+    private static final String MSG_NOGHOSTPLAYERSTOREPLACE = Messages.getString("ClientGUI.noGhostPlayersToReplace");
+    private static final String MSG_NOGHOSTS = Messages.getString("ClientGUI.noGhosts");
+    private static final String MSG_BOARDEDITORWAITDIALOGTITLE = Messages.getString("BoardEditor.waitDialog.title");
+    private static final String MSG_BOARDEDITORWAITDIALOGMSG = Messages.getString("BoardEditor.waitDialog.message");
+    private static final String MSG_BOARDEDITORSAVEBOARDAS = Messages.getString("BoardEditor.saveBoardAs");
+    private static final String MSG_BOARDEDITORSAVEASIMAGE = Messages.getString("BoardEditor.saveAsImage");
+    private static final String MSG_CFRDOMINOTITLE = Messages.getString("CFRDomino.Title");
+    private static final String MSG_CFRDOMINOMSG = Messages.getString("CFRDomino.Message");
+    private static final String MSG_CFRDOMINOFORWARD = Messages.getString("CFRDomino.Forward");
+    private static final String MSG_CFRDOMINOFBACKWARD = Messages.getFormattedString("CFRDomino.Backward");
+    private static final String MSG_CFRDOMINONOACTION = Messages.getString("CFRDomino.NoAction");
+    private static final String MSG_CFRAMASSIGNTITLE = Messages.getString("CFRAMSAssign.Title");
+    private static final String MSG_CFRAMASSIGNMSG = Messages.getString("CFRAMSAssign.Message");
+    private static final String MSG_CFAPDSASSIGNTITLE = Messages.getString("CFRAPDSAssign.Title");
+    private static final String MSG_CFAPDSASSIGNMSG = Messages.getString("CFRAPDSAssign.Message");
+    private static final String MSG_ERROR = Messages.getString("ERROR");
+    private static final String MSG_FROM = Messages.getString("FROM");
+    private static final String MSG_NONE = Messages.getString("NONE");
+    private static final String MSG_STATUSBARPHASEDISPLAYPOINTBLANKSHOT = Messages.getString("StatusBarPhaseDisplay.pointblankShot");
+    private static final String MSG_TAGTARGETDIALOGMSG = Messages.getString("TAGTargetDialog.message");
+    private static final String MSG_TAGTARGETDIALOGTITLE = Messages.getString("TAGTargetDialog.title");
+    private static final String MSG_TELEMISSILETARGETDIALOGTARGET = Messages.getString("TeleMissileTargetDialog.target");
+    private static final String MSG_TELEMISSILETARGETDIALOGMSG = Messages.getString("TeleMissileTargetDialog.message");
+    private static final String MSG_TELEMISSILETARGETDIALOGTITLE = Messages.getString("TeleMissileTargetDialog.title");
     // a frame, to show stuff in
     public JFrame frame;
 
@@ -425,7 +425,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try {
             File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
             if (!file.exists()) {
-                LogManager.getLogger().error(CG_MESSAGES_FAILEDTOLOADAUDIFILE + " " + GUIPreferences.getInstance().getSoundBingFilename());
+                LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIPreferences.getInstance().getSoundBingFilename());
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
@@ -441,14 +441,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     public void systemMessage(String message) {
         cb.systemMessage(message);
-        cb2.addChatMessage(CG_MESSAGES_CHATTERBOXMEGAMEK + " " + message);
+        cb2.addChatMessage(MSG_CHATTERBOXMEGAMEK + " " + message);
     }
 
     /**
      * Initializes a number of things about this frame.
      */
     private void initializeFrame() {
-        frame = new JFrame(CG_MESSAGES_TITLE);
+        frame = new JFrame(MSG_TITLE);
         frame.setJMenuBar(menuBar);
 
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -489,7 +489,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(client.getName() + CG_MESSAGES_CLIENTTITLESUFFIX);
+        frame.setTitle(client.getName() + MSG_CLIENTTITLESUFFIX);
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(this, BorderLayout.CENTER);
         frame.validate();
@@ -518,8 +518,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             client.setBoardView(bv);
         } catch (Exception ex) {
             LogManager.getLogger().fatal("", ex);
-            doAlertDialog(CG_MESSAGES_FATALERRORTITLE,
-                  CG_MESSAGES_FATALERRORMSG + ex);
+            doAlertDialog(MSG_FATALERRORTITLE,
+                  MSG_FATALERRORMSG + ex);
             die();
         }
 
@@ -532,8 +532,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
                     ignoreHotKeys = true;
                     int savePrompt = JOptionPane.showConfirmDialog(null,
-                            CG_MESSAGES_GAMESAVEDIALOGMSG,
-                            CG_MESSAGES_GAMESAVEFIRST,
+                            MSG_GAMESAVEDIALOGMSG,
+                            MSG_GAMESAVEFIRST,
                             JOptionPane.YES_NO_CANCEL_OPTION,
                             JOptionPane.WARNING_MESSAGE);
                     ignoreHotKeys = false;
@@ -620,7 +620,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
         mechSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
-        new Thread(mechSelectorDialog, CG_MESSAGES_MECHSELECTORDIALOG).start();
+        new Thread(mechSelectorDialog, MSG_MECHSELECTORDIALOG).start();
         frame.setVisible(true);
         GUIP.addPreferenceChangeListener(this);
     }
@@ -669,14 +669,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             if (!helpPath.toString().endsWith(File.separator)) {
                 helpPath.append(File.separator);
             }
-            helpPath.append(CG_MESSAGES_SKINNINGHELPPATH);
+            helpPath.append(MSG_SKINNINGHELPPATH);
             URL helpUrl = new URL(helpPath.toString());
 
             // Launch the help dialog.
-            HelpDialog helpDialog = new HelpDialog(CG_MESSAGES_SKINNINGHELPPATHTITLE, helpUrl);
+            HelpDialog helpDialog = new HelpDialog(MSG_SKINNINGHELPPATHTITLE, helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), CG_MESSAGES_ERROR,
+            JOptionPane.showMessageDialog(this, e.getMessage(), MSG_ERROR,
                     JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error("", e);
         }
@@ -748,8 +748,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case FILE_GAME_SAVE_SERVER:
                 ignoreHotKeys = true;
                 String filename = (String) JOptionPane.showInputDialog(frame,
-                        CG_MESSAGES_FILESAVESERVERDIALOGMSG,
-                        CG_MESSAGES_FILESAVESERVERDIALOGTITTLE,
+                        MSG_FILESAVESERVERDIALOGMSG,
+                        MSG_FILESAVESERVERDIALOGTITTLE,
                         JOptionPane.QUESTION_MESSAGE, null, null,
                         MMConstants.DEFAULT_SAVEGAME_NAME);
                 if (filename != null) {
@@ -801,8 +801,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case FILE_UNITS_REINFORCE_RAT:
                 ignoreHotKeys = true;
                 if (client.getLocalPlayer().getTeam() == Player.TEAM_UNASSIGNED) {
-                    String title = CG_MESSAGES_OPENUNITLISTFILEDIALOGNOREINFORCETITILE;
-                    String msg = CG_MESSAGES_OPENUNITLISTFILEDIALOGNOREINFORCEMSG;
+                    String title = MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE;
+                    String msg = MSG_OPENUNITLISTFILEDIALOGNOREINFORCEMSG;
                     JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
                     return;
                 }
@@ -811,7 +811,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FILE_REFRESH_CACHE:
                 MechSummaryCache.refreshUnitData(false);
-                new Thread(mechSelectorDialog, CG_MESSAGES_MECHSELECTORDIALOG).start();
+                new Thread(mechSelectorDialog, MSG_MECHSELECTORDIALOG).start();
                 break;
             case VIEW_CLIENT_SETTINGS:
                 showSettings();
@@ -973,7 +973,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 EntityListFile.saveTo(unitFile, destroyed);
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
-                doAlertDialog(CG_MESSAGES_ERRORSAVINGFILE, ex.getMessage());
+                doAlertDialog(MSG_ERRORSAVINGFILE, ex.getMessage());
             }
         }
     }
@@ -1208,7 +1208,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 panMain.add(component, main);
                 break;
             case STARTING_SCENARIO:
-                component = new JLabel(CG_MESSAGES_STARTINGSCENARIO);
+                component = new JLabel(MSG_STARTINGSCENARIO);
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_STARTINGSCENARIO;
                 component.setName(main);
@@ -1216,7 +1216,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case EXCHANGE:
                 chatlounge.killPreviewBV();
-                component = new JLabel(CG_MESSAGES_TRANSMITTINGDATA);
+                component = new JLabel(MSG_TRANSMITTINGDATA);
                 UIUtil.scaleComp(component, UIUtil.FONT_SCALE1);
                 main = CG_EXCHANGE;
                 component.setName(main);
@@ -1370,7 +1370,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 main = CG_REPORTDISPLAY;
                 break;
             default:
-                component = new JLabel(CG_MESSAGES_WAITINGONTHESERVER);
+                component = new JLabel(MSG_WAITINGONTHESERVER);
                 main = CG_DEFAULT;
                 secondary = main;
                 component.setName(main);
@@ -1589,8 +1589,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             boolean addedUnits = false;
 
             if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
-                String title = CG_MESSAGES_OPENUNITLISTFILEDIALOGNOREINFORCETITILE;
-                String msg = CG_MESSAGES_OPENUNITLISTFILEDIALOGNOREINFORCEMSG;
+                String title = MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE;
+                String msg = MSG_OPENUNITLISTFILEDIALOGNOREINFORCEMSG;
                 JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
                 return;
             }
@@ -1598,7 +1598,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             if (dlgLoadList == null) {
                 dlgLoadList = new JFileChooser(".");
                 dlgLoadList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-                dlgLoadList.setDialogTitle(CG_MESSAGES_OPNEUNITLISTFILEDIALOGTITLE);
+                dlgLoadList.setDialogTitle(MSG_OPNEUNITLISTFILEDIALOGTITLE);
                 dlgLoadList.setFileFilter(new FileFilter() {
                     @Override
                     public boolean accept(File dir) {
@@ -1649,7 +1649,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     }
                 } catch (Exception ex) {
                     LogManager.getLogger().error("", ex);
-                    doAlertDialog(CG_MESSAGES_ERRORLOADINGFILE, ex.getMessage());
+                    doAlertDialog(MSG_ERRORLOADINGFILE, ex.getMessage());
                 }
             }
 
@@ -1660,7 +1660,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
         }
         else {
-            doAlertDialog(CG_MESSAGES_ERRORLOADINGFILE, CG_MESSAGES_ERRORSELECTINGPLAYER);
+            doAlertDialog(MSG_ERRORLOADINGFILE, MSG_ERRORSELECTINGPLAYER);
         }
     }
 
@@ -1668,7 +1668,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         ignoreHotKeys = true;
         JFileChooser fc = new JFileChooser(MMConstants.SAVEGAME_DIR);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fc.setDialogTitle(CG_MESSAGES_FILESAVEDIALOGTITLE);
+        fc.setDialogTitle(MSG_FILESAVEDIALOGTITLE);
 
         int returnVal = fc.showSaveDialog(frame);
         ignoreHotKeys = false;
@@ -1720,8 +1720,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (dlgSaveList == null) {
             dlgSaveList = new JFileChooser(".");
             dlgSaveList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-            dlgSaveList.setDialogTitle(CG_MESSAGES_SAVEUNITLISTFILEDIALOGTITLE);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(CG_MESSAGES_DESCEMULEFILES, CG_FILEPATHMUL);
+            dlgSaveList.setDialogTitle(MSG_SAVEUNITLISTFILEDIALOGTITLE);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(MSG_DESCEMULEFILES, CG_FILEPATHMUL);
             dlgSaveList.setFileFilter(filter);
         }
         // Default to the player's name.
@@ -1751,7 +1751,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 EntityListFile.saveTo(unitFile, unitList);
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
-                doAlertDialog(CG_MESSAGES_ERRORSAVINGFILE, ex.getMessage());
+                doAlertDialog(MSG_ERRORSAVINGFILE, ex.getMessage());
             }
         }
     }
@@ -1763,8 +1763,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (dlgSaveList == null) {
             dlgSaveList = new JFileChooser(".");
             dlgSaveList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-            dlgSaveList.setDialogTitle(CG_MESSAGES_SAVEUNITLISTFILEDIALOGTITLE);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter(CG_MESSAGES_DESCEMULEFILES, CG_FILEPATHMUL);
+            dlgSaveList.setDialogTitle(MSG_SAVEUNITLISTFILEDIALOGTITLE);
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(MSG_DESCEMULEFILES, CG_FILEPATHMUL);
             dlgSaveList.setFileFilter(filter);
         }
         // Default to the player's name.
@@ -1794,7 +1794,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 EntityListFile.saveTo(unitFile, getClient());
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
-                doAlertDialog(CG_MESSAGES_ERRORSAVINGFILE, ex.getMessage());
+                doAlertDialog(MSG_ERRORSAVINGFILE, ex.getMessage());
             }
         }
     }
@@ -1861,7 +1861,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent evt) {
-            JOptionPane.showMessageDialog(frame, CG_MESSAGES_DISCONNECTEDMSG, CG_MESSAGES_DISCONNECTEDTITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, MSG_DISCONNECTEDMSG, MSG_DISCONNECTEDTITLE, JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             die();
         }
@@ -1921,12 +1921,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 }
                 // Show a popup to the players so that we know whats up!
                 if (!(getClient() instanceof TestBot)) {
-                    doAlertDialog(CG_MESSAGES_DIALOGTACTICALGENIUSREPORT, e.getReport());
+                    doAlertDialog(MSG_DIALOGTACTICALGENIUSREPORT, e.getReport());
                 }
             } else {
                 // Continued movement after getting up
                 if (!(getClient() instanceof TestBot)) {
-                    doAlertDialog(CG_MESSAGES_DIALOGDIALOGMOVEMENTREPORT, e.getReport());
+                    doAlertDialog(MSG_DIALOGDIALOGMOVEMENTREPORT, e.getReport());
                 }
             }
         }
@@ -1953,7 +1953,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
             // Allow players to save their living units to a file.
             // Don't bother asking if none survived.
-            if (!living.isEmpty() && doYesNoDialog(CG_MESSAGES_SAVEUNITSDIALOGTITLE, CG_MESSAGES_SAVEUNITSDIALOGMSG)) {
+            if (!living.isEmpty() && doYesNoDialog(MSG_SAVEUNITSDIALOGTITLE, MSG_SAVEUNITSDIALOGMSG)) {
                 // Allow the player to save the units to a file.
                 saveVictoryList();
             }
@@ -1984,7 +1984,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     EntityListFile.saveTo(unitFile, destroyed);
                 } catch (IOException ex) {
                     LogManager.getLogger().error("", ex);
-                    doAlertDialog(CG_MESSAGES_ERRORSAVINGFILE, ex.getMessage());
+                    doAlertDialog(MSG_ERRORSAVINGFILE, ex.getMessage());
                 }
             }
 
@@ -2027,8 +2027,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     stepForward.compile(client.getGame(), e, false);
                     stepBackward.compile(client.getGame(), e, false);
                     
-                    String title = CG_MESSAGES_CFRDOMINOTITLE;
-                    String msg = Messages.getFormattedString(CG_MESSAGES_CFRDOMINOMSG, e.getDisplayName());
+                    String title = MSG_CFRDOMINOTITLE;
+                    String msg = Messages.getFormattedString(MSG_CFRDOMINOMSG, e.getDisplayName());
                     int choice;
                     Object[] options;
                     MovePath[] paths;
@@ -2036,9 +2036,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     if (stepForward.isMoveLegal() && stepBackward.isMoveLegal()) {
                         options = new Object[3];
                         paths = new MovePath[3];
-                        options[0] = Messages.getFormattedString(CG_MESSAGES_CFRDOMINOFORWARD, stepForward.getMpUsed());
-                        options[1] = Messages.getFormattedString(CG_MESSAGES_CFRDOMINOFBACKWARD, stepForward.getMpUsed());
-                        options[2] = CG_MESSAGES_CFRDOMINONOACTION;
+                        options[0] = Messages.getFormattedString(MSG_CFRDOMINOFORWARD, stepForward.getMpUsed());
+                        options[1] = Messages.getFormattedString(MSG_CFRDOMINOFBACKWARD, stepForward.getMpUsed());
+                        options[2] = MSG_CFRDOMINONOACTION;
                         paths[0] = stepForward;
                         paths[1] = stepBackward;
                         paths[2] = null;
@@ -2046,17 +2046,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     } else if (stepForward.isMoveLegal()) {
                         options = new Object[2];
                         paths = new MovePath[2];
-                        options[0] = Messages.getFormattedString(CG_MESSAGES_CFRDOMINOFORWARD, stepForward.getMpUsed());
-                        options[1] = CG_MESSAGES_CFRDOMINONOACTION;
+                        options[0] = Messages.getFormattedString(MSG_CFRDOMINOFORWARD, stepForward.getMpUsed());
+                        options[1] = MSG_CFRDOMINONOACTION;
                         paths[0] = stepForward;
                         paths[1] = null;
                         optionType = JOptionPane.YES_NO_OPTION;
                     } else { // No request is sent if both moves are illegal
                         options = new Object[2];
                         paths = new MovePath[2];
-                        options[0] = Messages.getFormattedString(CG_MESSAGES_CFRDOMINOFBACKWARD,
+                        options[0] = Messages.getFormattedString(MSG_CFRDOMINOFBACKWARD,
                                 new Object[] { stepForward.getMpUsed() });
-                        options[1] = CG_MESSAGES_CFRDOMINONOACTION;
+                        options[1] = MSG_CFRDOMINONOACTION;
                         paths[0] = stepBackward;
                         paths[1] = null;
                         optionType = JOptionPane.YES_NO_OPTION;
@@ -2072,27 +2072,27 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     break;
                 case CFR_AMS_ASSIGN:
                     ArrayList<String> amsOptions = new ArrayList<>();
-                    amsOptions.add(CG_MESSAGES_NONE);
+                    amsOptions.add(MSG_NONE);
                     for (WeaponAttackAction waa : evt.getWAAs()) {
                         Entity ae = waa.getEntity(client.getGame());
                         String waaMsg;
                         if (ae != null) {
                             Mounted weapon = ae.getEquipment(waa.getWeaponId());
-                            waaMsg = weapon.getDesc() + " " + CG_MESSAGES_FROM + "  " + ae.getDisplayName();
+                            waaMsg = weapon.getDesc() + " " + MSG_FROM + "  " + ae.getDisplayName();
                         } else {
-                            waaMsg = CG_MESSAGES_MISSILESFROMANUNKNOWNATTACKER;
+                            waaMsg = MSG_MISSILESFROMANUNKNOWNATTACKER;
                         }
                         amsOptions.add(waaMsg);
                     }
                     
                     optionType = JOptionPane.OK_CANCEL_OPTION;
-                    title = Messages.getFormattedString(CG_MESSAGES_CFRAMASSIGNTITLE, new Object[] { e.getDisplayName() });
-                    msg = Messages.getFormattedString(CG_MESSAGES_CFRAMASSIGNMSG, new Object[] { e.getDisplayName() });
+                    title = Messages.getFormattedString(MSG_CFRAMASSIGNTITLE, new Object[] { e.getDisplayName() });
+                    msg = Messages.getFormattedString(MSG_CFRAMASSIGNMSG, new Object[] { e.getDisplayName() });
                     result = JOptionPane.showInputDialog(frame, msg, title,
                             JOptionPane.QUESTION_MESSAGE, null, 
                            amsOptions.toArray(), null);
                     // If they closed it, assume no action
-                    if ((result == null) || result.equals(CG_MESSAGES_NONE)) {
+                    if ((result == null) || result.equals(MSG_NONE)) {
                         client.sendAMSAssignCFRResponse(null);
                     } else {
                         client.sendAMSAssignCFRResponse(
@@ -2101,7 +2101,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     break;
                 case CFR_APDS_ASSIGN:
                     ArrayList<String> apdsOptions = new ArrayList<>();
-                    apdsOptions.add(CG_MESSAGES_NONE);
+                    apdsOptions.add(MSG_NONE);
                     Iterator<Integer> distIt = evt.getApdsDists().iterator();
                     for (WeaponAttackAction waa : evt.getWAAs()) {
                         Entity ae = waa.getEntity(client.getGame());
@@ -2109,23 +2109,23 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         String waaMsg;
                         if (ae != null) {
                             Mounted weapon = ae.getEquipment(waa.getWeaponId());
-                            waaMsg = weapon.getDesc() + " " + CG_MESSAGES_FROM + "  "
-                                    + ae.getDisplayName() + " (" + CG_MESSAGES_DISTANCE + " "
+                            waaMsg = weapon.getDesc() + " " + MSG_FROM + "  "
+                                    + ae.getDisplayName() + " (" + MSG_DISTANCE + " "
                                     + dist + ")";
                         } else {
-                            waaMsg = CG_MESSAGES_MISSILESFROMANUNKNOWNATTACKER;
+                            waaMsg = MSG_MISSILESFROMANUNKNOWNATTACKER;
                         }
                         apdsOptions.add(waaMsg);
                     }
 
                     optionType = JOptionPane.OK_CANCEL_OPTION;
-                    title = Messages.getFormattedString(CG_MESSAGES_CFAPDSASSIGNTITLE, new Object[] { e.getDisplayName() });
-                    msg = Messages.getFormattedString(CG_MESSAGES_CFAPDSASSIGNMSG, new Object[] { e.getDisplayName() });
+                    title = Messages.getFormattedString(MSG_CFAPDSASSIGNTITLE, new Object[] { e.getDisplayName() });
+                    msg = Messages.getFormattedString(MSG_CFAPDSASSIGNMSG, new Object[] { e.getDisplayName() });
                     result = JOptionPane.showInputDialog(frame, msg, title,
                             JOptionPane.QUESTION_MESSAGE, null,
                             apdsOptions.toArray(), null);
                     // If they closed it, assume no action
-                    if ((result == null) || result.equals(CG_MESSAGES_NONE)) {
+                    if ((result == null) || result.equals(MSG_NONE)) {
                         client.sendAPDSAssignCFRResponse(null);
                     } else {
                         client.sendAPDSAssignCFRResponse(
@@ -2141,7 +2141,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     if ((attacker == null) || (target == null)) {
                         if (curPanel instanceof StatusBarPhaseDisplay) {
                             ((StatusBarPhaseDisplay) curPanel)
-                                    .setStatusBarText(CG_MESSAGES_STATUSBARPHASEDISPLAYPOINTBLANKSHOT);
+                                    .setStatusBarText(MSG_STATUSBARPHASEDISPLAYPOINTBLANKSHOT);
                         }
                         return;
                     }
@@ -2150,9 +2150,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     bv.highlight(attacker.getPosition());
                     bv.select(target.getPosition());
                     bv.cursor(target.getPosition());
-                    msg = Messages.getFormattedString(CG_MESSAGES_POINTBLANKSHOTMSG,
+                    msg = Messages.getFormattedString(MSG_POINTBLANKSHOTMSG,
                             target.getShortName(), attacker.getShortName());
-                    title = CG_MESSAGES_POINTBLANKSHOTTITLE;
+                    title = MSG_POINTBLANKSHOTTITLE;
                     // Ask whether the player wants to take a PBS or not
                     int pbsChoice = JOptionPane.showConfirmDialog(frame, msg,
                             title, JOptionPane.YES_NO_OPTION,
@@ -2186,12 +2186,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         int th = toHitValues.get(i);
                         Entity tgt = client.getGame().getEntity(id);
                         if (tgt != null) {
-                            targetDescriptions.add(String.format(CG_MESSAGES_TELEMISSILETARGETDIALOGTARGET, tgt.getDisplayName(), th));
+                            targetDescriptions.add(String.format(MSG_TELEMISSILETARGETDIALOGTARGET, tgt.getDisplayName(), th));
                         }
                     }
                     // Set up the selection pane
-                    msg = CG_MESSAGES_TELEMISSILETARGETDIALOGMSG;
-                    title = CG_MESSAGES_TELEMISSILETARGETDIALOGTITLE;
+                    msg = MSG_TELEMISSILETARGETDIALOGMSG;
+                    title = MSG_TELEMISSILETARGETDIALOGTITLE;
                     String input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,
                             targetDescriptions.toArray(), targetDescriptions.get(0));
@@ -2221,8 +2221,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                         }
                     }
                     // Set up the selection pane
-                    msg = CG_MESSAGES_TAGTARGETDIALOGMSG;
-                    title = CG_MESSAGES_TAGTARGETDIALOGTITLE;
+                    msg = MSG_TAGTARGETDIALOGMSG;
+                    title = MSG_TAGTARGETDIALOGTITLE;
                     input = (String) JOptionPane.showInputDialog(frame, msg,
                             title, JOptionPane.QUESTION_MESSAGE, null,
                             TAGTargetDescriptions.toArray(), TAGTargetDescriptions.get(0));
@@ -2290,7 +2290,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         try (OutputStream os = new FileOutputStream(curfileBoard)) {
             client.getGame().getBoard().save(os);
         } catch (IOException e) {
-            LogManager.getLogger().error(CG_MESSAGES_ERROROPENINGFILETOSAVE, e);
+            LogManager.getLogger().error(MSG_ERROROPENINGFILETOSAVE, e);
         }
     }
 
@@ -2302,8 +2302,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             boardSaveAsImage(ignoreUnits);
             return;
         }
-        JDialog waitD = new JDialog(frame, CG_MESSAGES_BOARDEDITORWAITDIALOGTITLE);
-        waitD.add(new JLabel(CG_MESSAGES_BOARDEDITORWAITDIALOGMSG));
+        JDialog waitD = new JDialog(frame, MSG_BOARDEDITORWAITDIALOGTITLE);
+        waitD.add(new JLabel(MSG_BOARDEDITORWAITDIALOGMSG));
         waitD.setSize(250, 130);
         // move to middle of screen
         waitD.setLocation(
@@ -2330,7 +2330,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private void boardSaveAs() {
         JFileChooser fc = new JFileChooser(CG_FILEPATHDATA + File.separator + CG_FILEPATHBOARDS);
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fc.setDialogTitle(CG_MESSAGES_BOARDEDITORSAVEBOARDAS);
+        fc.setDialogTitle(MSG_BOARDEDITORSAVEBOARDAS);
         fc.setFileFilter(new BoardFileFilter());
         int returnVal = fc.showSaveDialog(frame);
         if ((returnVal != JFileChooser.APPROVE_OPTION) || (fc.getSelectedFile() == null)) {
@@ -2358,7 +2358,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private void boardSaveAsImage(boolean ignoreUnits) {
         JFileChooser fc = new JFileChooser(".");
         fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fc.setDialogTitle(CG_MESSAGES_BOARDEDITORSAVEASIMAGE);
+        fc.setDialogTitle(MSG_BOARDEDITORSAVEASIMAGE);
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
@@ -2470,7 +2470,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         Set<Player> ghostPlayers = client.getGame().getPlayersVector().stream()
                 .filter(Player::isGhost).collect(Collectors.toSet());
         if (ghostPlayers.isEmpty()) {
-            JOptionPane.showMessageDialog(this, CG_MESSAGES_NOGHOSTPLAYERSTOREPLACE, CG_MESSAGES_NOGHOSTS,
+            JOptionPane.showMessageDialog(this, MSG_NOGHOSTPLAYERSTOREPLACE, MSG_NOGHOSTS,
                     JOptionPane.INFORMATION_MESSAGE);
             return;
         }

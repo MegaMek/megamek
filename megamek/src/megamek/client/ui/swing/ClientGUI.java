@@ -230,6 +230,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     private Map<String, String> mainNames = new HashMap<>();
 
+    private MiniReportDisplay miniReportDisplay;
+
     /**
      * The <code>JPanel</code> containing the main display area.
      */
@@ -633,7 +635,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     private void showRoundReport() {
         ignoreHotKeys = true;
-        new MiniReportDisplay(frame, client).setVisible(true);
+        if (miniReportDisplay == null) {
+            miniReportDisplay = new MiniReportDisplay(frame, client);
+        }
+
+        miniReportDisplay.setVisible(true);
         ignoreHotKeys = false;
     }
 

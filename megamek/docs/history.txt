@@ -26,7 +26,9 @@ VERSION HISTORY:
 + PR #3971 - Implements #3747 add option to adjust the seen by in the unit tool tip
 + PR #3972 - AS conversion fixes round 2
 + Issue #3980 - Prototype ER Large Laser Wrong Stats for Aerospace Units
-+ PR #3989 - AS Conversion fixes round 3 
++ PR #3989 - AS Conversion fixes round 3
++ Issue #3978: Line wrap for long sensor texts in the Unit Display's sensor tab
++ Issue #3975: Allow the report display dialog to be always active during a game
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.0 from 2.13.3

@@ -260,6 +260,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
     }
 
     private void adaptToGUIScale() {
+        UIUtil.scaleComp(chatPanel, UIUtil.FONT_SCALE1);
         UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE1);
     }
 

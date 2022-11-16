@@ -211,8 +211,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String CG_FILEEXTENTIONXML = ".xml";
     public static final String CG_FILEEXTENTIONPNG =  ".png";
     public static final String CG_FILEFORMATNAMEPNG = "png";
-
-
+    
     private static final String MSG_TITLE = Messages.getString("ClientGUI.title");
     private static final String MSG_FATALERRORTITLE = Messages.getString("ClientGUI.FatalError.title");
     private static final String MSG_FATALERRORMSG = Messages.getString("ClientGUI.FatalError.message");

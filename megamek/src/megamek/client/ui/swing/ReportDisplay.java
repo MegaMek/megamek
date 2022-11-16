@@ -45,7 +45,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     // buttons
     private JButton rerollInitiativeB;
-    private JSplitPane sp;
+    private JSplitPane splitPaneMain;
+    JPanel panelTop;
 
     private static final String RD_ACTIONCOMMAND_DONEBUTTON = "doneButton";
     private static final String RD_ACTIONCOMMAND_REROLLINITIATIVE = "reroll_initiative";
@@ -93,11 +94,11 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
         // layout screen
         setLayout(new BorderLayout());
-        sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        sp.setDividerSize(15);
-        sp.setResizeWeight(0.95);
-        JPanel p = new JPanel(new GridBagLayout());
-        p.add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
+        splitPaneMain = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPaneMain.setDividerSize(15);
+        splitPaneMain.setResizeWeight(0.95);
+        panelTop = new JPanel(new GridBagLayout());
+        panelTop.add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
 
         JPanel panButtons = new JPanel();
         panButtons.setLayout(new GridLayout(1, 8));
@@ -105,16 +106,16 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         for (int padding = 0; padding < 6; padding++) {
             panButtons.add(new JLabel(""));
         }
-        p.add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-        sp.setTopComponent(p);
-        add(sp);
+        panelTop.add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        splitPaneMain.setTopComponent(panelTop);
+        add(splitPaneMain);
 
         adaptToGUIScale();
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     public void setBottom(JComponent comp) {
-        sp.setBottomComponent(comp);
+        splitPaneMain.setBottomComponent(comp);
     }
 
     /**
@@ -346,7 +347,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         }
     }
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(sp, UIUtil.FONT_SCALE1);
+        UIUtil.scaleComp(panelTop, UIUtil.FONT_SCALE1);
 
         for (int i = 0; i < tabs.getTabCount(); i++) {
             Component cp = tabs.getComponentAt(i);

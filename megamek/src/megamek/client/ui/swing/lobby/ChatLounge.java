@@ -122,9 +122,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JLabel lblTechLevel = new JLabel("");
 
     // Game Setup
-
-
-
     private JButton butOptions = new JButton(MSG_BUTOPTIONS);
     private JToggleButton butGroundMap = new JToggleButton(MSG_BUTGROUNDMAP);
     private JToggleButton butLowAtmoMap = new JToggleButton(MSG_NAMELOWALTITUDEMAP);
@@ -151,8 +148,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JButton butCollapse = new JButton(MSG_BUTCOLLAPSE);
     private JButton butExpand = new JButton(MSG_BUTEXPAND);
     private MekTableModel mekModel;
-
-
     
     /* Force Tree */
     private MekTreeForceModel mekForceTreeModel;
@@ -236,7 +231,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /* Team Overview Panel */
     private TeamOverviewPanel panTeamOverview;
     JButton butDetach = new JButton(MSG_BUTDETACH);
-    private JSplitPane sp;
+    private JSplitPane splitPaneMain;
     ClientDialog teamOverviewWindow;
         
     private ImageLoader loader;
@@ -357,16 +352,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 SkinSpecification.UIComponents.ChatLoungeDoneButton.getComp());
 
         setLayout(new BorderLayout());
-        sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        sp.setDividerSize(15);
-        sp.setResizeWeight(0.95);
+        splitPaneMain = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPaneMain.setDividerSize(15);
+        splitPaneMain.setResizeWeight(0.95);
         JPanel p = new JPanel(new BorderLayout());
         panTabs.add(MSG_NAMESELECTUNITS, panUnits);
         panTabs.add(MSG_NAMESELECTMAP, panMap);
         panTabs.add(MSG_NAMETEAMOVERVIEW, panTeam);
         p.add(panTabs, BorderLayout.CENTER);
-        sp.setTopComponent(p);
-        add(sp);
+        splitPaneMain.setTopComponent(p);
+        add(splitPaneMain);
 
         setupSorters();
         setupTeamOverview();
@@ -382,7 +377,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     }
 
     public void setBottom(JComponent comp) {
-        sp.setBottomComponent(comp);
+        splitPaneMain.setBottomComponent(comp);
     }
     
     /** Sets up all the listeners that the lobby works with. */

@@ -23,7 +23,6 @@ import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.dialogs.helpDialogs.AbstractHelpDialog;
@@ -211,7 +210,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public static final String CG_FILEEXTENTIONXML = ".xml";
     public static final String CG_FILEEXTENTIONPNG =  ".png";
     public static final String CG_FILEFORMATNAMEPNG = "png";
-    
+
     private static final String MSG_TITLE = Messages.getString("ClientGUI.title");
     private static final String MSG_FATALERRORTITLE = Messages.getString("ClientGUI.FatalError.title");
     private static final String MSG_FATALERRORMSG = Messages.getString("ClientGUI.FatalError.message");
@@ -675,8 +674,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             HelpDialog helpDialog = new HelpDialog(MSG_SKINNINGHELPPATHTITLE, helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), MSG_ERROR,
-                    JOptionPane.ERROR_MESSAGE);
+            doAlertDialog(e.getMessage(), MSG_ERROR, JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error("", e);
         }
     }
@@ -800,9 +798,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case FILE_UNITS_REINFORCE_RAT:
                 ignoreHotKeys = true;
                 if (client.getLocalPlayer().getTeam() == Player.TEAM_UNASSIGNED) {
-                    String title = MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE;
-                    String msg = MSG_OPENUNITLISTFILEDIALOGNOREINFORCEMSG;
-                    JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
+                    doAlertDialog(MSG_OPENUNITLISTFILEDIALOGNOREINFORCEMSG, MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE, JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 getRandomArmyDialog().setVisible(true);
@@ -1487,6 +1483,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Pops up a dialog box showing an alert
      */
     public void doAlertDialog(String title, String message) {
+        doAlertDialog(title, message, JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void doAlertDialog(String title, String message, int msgTyoe) {
         JTextPane textArea = new JTextPane();
         ReportDisplay.setupStylesheet(textArea);
         BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -1495,11 +1495,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         JScrollPane scrollPane = new JScrollPane(textArea,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        UIUtil.scaleComp(scrollPane, UIUtil.FONT_SCALE1);
         textArea.setText("<pre>" + message + "</pre>");
         scrollPane.setPreferredSize(new Dimension(
                 (int) (getSize().getWidth() / 1.5), (int) (getSize().getHeight() / 1.5)));
-        JOptionPane.showMessageDialog(frame, scrollPane, title,
-                JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(frame, scrollPane, title, msgTyoe);
     }
 
     /**
@@ -1588,9 +1588,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             boolean addedUnits = false;
 
             if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
-                String title = MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE;
-                String msg = MSG_OPENUNITLISTFILEDIALOGNOREINFORCEMSG;
-                JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.ERROR_MESSAGE, null);
+                doAlertDialog(MSG_OPENUNITLISTFILEDIALOGNOREINFORCEMSG, MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE, JOptionPane.ERROR_MESSAGE);
                 return;
             }
             // Build the "load unit" dialog, if necessary.
@@ -1860,7 +1858,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent evt) {
-            JOptionPane.showMessageDialog(frame, MSG_DISCONNECTEDMSG, MSG_DISCONNECTEDTITLE, JOptionPane.ERROR_MESSAGE);
+            doAlertDialog(MSG_DISCONNECTEDMSG, MSG_DISCONNECTEDTITLE, JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             die();
         }
@@ -2469,8 +2467,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         Set<Player> ghostPlayers = client.getGame().getPlayersVector().stream()
                 .filter(Player::isGhost).collect(Collectors.toSet());
         if (ghostPlayers.isEmpty()) {
-            JOptionPane.showMessageDialog(this, MSG_NOGHOSTPLAYERSTOREPLACE, MSG_NOGHOSTS,
-                    JOptionPane.INFORMATION_MESSAGE);
+            doAlertDialog( MSG_NOGHOSTPLAYERSTOREPLACE, MSG_NOGHOSTS, JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 

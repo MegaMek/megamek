@@ -437,6 +437,10 @@ public final class UIUtil {
                 scaleComp((JComponent) comp, fontSize);
             } else if ((comp instanceof JTabbedPane)) {
                 scaleComp((JComponent) comp, fontSize);
+            } else if ((comp instanceof Box)) {
+                scaleComp((JComponent) comp, fontSize);
+            } else if ((comp instanceof Box.Filler)) {
+                scaleComp((JComponent) comp, fontSize);
             } else {
                 if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
                     comp.setFont(comp.getFont().deriveFont((float) sf));

@@ -26,6 +26,7 @@ import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
@@ -258,6 +259,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovHighlightAlpha;
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
+    private JTabbedPane panTabs;
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
@@ -274,7 +276,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
     @Override
     protected Container createCenterPane() {
-        JTabbedPane panTabs = new JTabbedPane();
+        panTabs = new JTabbedPane();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -300,6 +302,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         panTabs.add("Button Order", getButtonOrderPanel());
         panTabs.add("Advanced", advancedSettingsPane);
         panTabs.add("Unit Display Order", unitDisplayPane);
+
+        adaptToGUIScale();
 
         return panTabs;
     }
@@ -699,7 +703,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             }
             markDuplicateBinds();
             
-        }   
+        }
+
+        adaptToGUIScale();
         super.setVisible(visible);
     }
 
@@ -1121,7 +1127,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         fovHighlightAlpha.setMinorTickSpacing(5);
         fovHighlightAlpha.setPaintTicks(true);
         fovHighlightAlpha.setPaintLabels(true);
-        fovHighlightAlpha.setMaximumSize(new Dimension(400, 100));
+        fovHighlightAlpha.setMaximumSize(new Dimension(800, 100));
         fovHighlightAlpha.addChangeListener(this);
         fovHighlightAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         // Label
@@ -1151,7 +1157,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         row = new ArrayList<>();
         fovHighlightRingsRadii= new JTextField((2+1)*7);
         fovHighlightRingsRadii.addFocusListener(this);
-        fovHighlightRingsRadii.setMaximumSize(new Dimension(100, fovHighlightRingsRadii.getPreferredSize().height) );
+        fovHighlightRingsRadii.setMaximumSize(new Dimension(100, 40 ));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadii);
         comps.add(row);
@@ -1169,7 +1175,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         row = new ArrayList<>();
         fovHighlightRingsColors= new JTextField(50);//      ((3+1)*3+1)*7);
         fovHighlightRingsColors.addFocusListener(this);
-        fovHighlightRingsColors.setMaximumSize(new Dimension(200, fovHighlightRingsColors.getPreferredSize().height) );
+        fovHighlightRingsColors.setMaximumSize(new Dimension(200, 40 ));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsColors);
         row.add(Box.createHorizontalGlue());
@@ -1187,7 +1193,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         fovDarkenAlpha.setMinorTickSpacing(5);
         fovDarkenAlpha.setPaintTicks(true);
         fovDarkenAlpha.setPaintLabels(true);
-        fovDarkenAlpha.setMaximumSize(new Dimension(400, 100));
+        fovDarkenAlpha.setMaximumSize(new Dimension(800, 100));
         fovDarkenAlpha.addChangeListener(this);
         fovDarkenAlpha.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.AlphaTooltip"));
         darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); 
@@ -1212,7 +1218,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         numStripesSlider.setMinorTickSpacing(5);
         numStripesSlider.setPaintTicks(true);
         numStripesSlider.setPaintLabels(true);
-        numStripesSlider.setMaximumSize(new Dimension(250, 100));
+        numStripesSlider.setMaximumSize(new Dimension(450, 100));
         numStripesSlider.addChangeListener(this);
         numStripesSlider.setToolTipText(Messages.getString("TacticalOverlaySettingsDialog.FovStripesTooltip"));
         numStripesLabel = new JLabel(
@@ -1624,5 +1630,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             result.addAll(Arrays.asList(userDataFiles));
         }
         return result;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panTabs, UIUtil.FONT_SCALE1);
+        //advancedValue.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
     }
 }

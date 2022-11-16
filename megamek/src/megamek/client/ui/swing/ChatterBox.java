@@ -109,7 +109,6 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
-        chatArea.setFont(new Font(CB_KEY_FONTNAMESANSSERIF, Font.PLAIN, 12));
         playerList = new JList<>(new DefaultListModel<>());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(CB_KEY_ADVANCED_CHATBOXSIZE));
         scrPlayers = new JScrollPane(playerList);

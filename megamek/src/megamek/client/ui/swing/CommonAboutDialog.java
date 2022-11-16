@@ -18,6 +18,7 @@ package megamek.client.ui.swing;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,7 @@ public class CommonAboutDialog extends JDialog {
     /** We only need a single copy of the "about" title image. */
     private static Image imgTitleImage;
 
+    JPanel panelMain;
     /**
      * Get the single title image in a threadsafe way.
      * 
@@ -93,18 +95,26 @@ public class CommonAboutDialog extends JDialog {
         JButton butClose = new ButtonEsc(new CloseAction(this));
 
         // Assemble all
+        panelMain = new JPanel(new BorderLayout());
         JPanel middlePanel = new JPanel();
         middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-        add(panTitle, BorderLayout.PAGE_START);
+        panelMain.add(panTitle, BorderLayout.PAGE_START);
         middlePanel.add(lblVersion);
         middlePanel.add(lblCopyright);
         middlePanel.add(lblAbout);
-        add(middlePanel, BorderLayout.CENTER);
-        add(butClose, BorderLayout.PAGE_END);
+        panelMain.add(middlePanel, BorderLayout.CENTER);
+        panelMain.add(butClose, BorderLayout.PAGE_END);
+        add(panelMain);
+
+        adaptToGUIScale();
 
         // Place in the middle of the screen
         pack();
         setLocationRelativeTo(parentFrame);
         setResizable(false);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
     }
 }

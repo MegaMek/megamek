@@ -20,6 +20,7 @@ package megamek.client.ui.dialogs.helpDialogs;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.util.UIUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -33,6 +34,8 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
     //region Variable Declarations
     private String helpFilePath;
     //endregion Variable Declarations
+
+    JEditorPane pane;
 
     //region Constructors
     protected AbstractHelpDialog(final JFrame frame, final String name, final String helpFilePath) {
@@ -54,9 +57,11 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
 
     @Override
     protected Container createCenterPane() {
-        final JEditorPane pane = new JEditorPane();
+        pane = new JEditorPane();
         pane.setName("helpPane");
         pane.setEditable(false);
+
+        adaptToGUIScale();
 
         final File helpFile = new File(getHelpFilePath());
 
@@ -70,5 +75,9 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
             LogManager.getLogger().error("", e);
         }
         return new JScrollPane(pane);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(pane, UIUtil.FONT_SCALE1);
     }
 }

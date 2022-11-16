@@ -32,6 +32,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -45,12 +48,14 @@ import static megamek.client.ui.swing.util.UIUtil.*;
 import static megamek.client.ui.Messages.*;
 
 /** Responsible for displaying the current game options and allowing the user to change them. */
-public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener {
+public class GameOptionsDialog extends AbstractButtonDialog implements ActionListener, DialogOptionListener, IPreferenceChangeListener {
 
     private ClientGUI clientGui;
     private JFrame frame;
     private GameOptions options;
     private boolean editable = true;
+
+    private JPanel mainPanel;
 
     /**
      * A map that maps an option to a collection of DialogOptionComponents that
@@ -130,13 +135,17 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     @Override
     protected Container createCenterPane() {
-        var mainPanel = new JPanel();
+        mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
         mainPanel.add(panOptions);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(panPassword);
         mainPanel.add(Box.createVerticalStrut(5));
         mainPanel.add(panButtons);
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+
         return mainPanel;
     }
 
@@ -158,6 +167,9 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         panButtons.add(butDefaults);
         panButtons.add(butSave);
         panButtons.add(butLoad);
+
+        adaptToGUIScale();
+
         return panButtons;
     }
 
@@ -525,6 +537,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         }
         List<DialogOptionComponent> comps = optionComps.computeIfAbsent(option.getName(), k -> new ArrayList<>());
         comps.add(optionComp);
+
+        UIUtil.scaleComp(optionComp, UIUtil.FONT_SCALE1);
     }
 
     // Gets called when one of the option checkboxes is clicked.
@@ -902,5 +916,16 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         return editable;
     }
 
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(mainPanel, UIUtil.FONT_SCALE1);
+        UIUtil.scaleComp(panButtons, UIUtil.FONT_SCALE1);
+    }
 
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
+    }
 }

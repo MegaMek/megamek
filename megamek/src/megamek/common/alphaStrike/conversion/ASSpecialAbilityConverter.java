@@ -110,6 +110,8 @@ public class ASSpecialAbilityConverter {
         MiscType miscType = (MiscType) misc.getType();
         if (miscType.isAnyOf(Sensor.BAP, Sensor.BAPP, Sensor.CLAN_AP)) {
             assign(misc, PRB);
+        } else if (miscType.isAnyOf(Sensor.CLIMPROVED, Sensor.ISIMPROVED)) {
+            assign(misc, RCN);
         } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.ISBALIGHT_AP, Sensor.EW_EQUIPMENT)) {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BLOODHOUND)) {
@@ -341,9 +343,11 @@ public class ASSpecialAbilityConverter {
                     assign(armorType, IRA);
                     break;
                 case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_BA_REACTIVE:
                     assign(armorType, RCA);
                     break;
                 case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_BA_REFLECTIVE:
                     assign(armorType, RFA);
                     break;
             }

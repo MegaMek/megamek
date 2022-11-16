@@ -19,6 +19,8 @@
  */
 package megamek.common.weapons.battlearmor;
 
+import megamek.common.Mounted;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.missiles.RLWeapon;
 
 /**
@@ -56,5 +58,11 @@ public class ISBARL1 extends RLWeapon {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_FS, F_LC)
                 .setProductionFactions(F_FS, F_LC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        // This value gets divided by 10 for being one-shot
+        return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 0.1 : 0;
     }
 }

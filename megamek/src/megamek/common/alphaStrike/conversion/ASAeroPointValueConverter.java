@@ -61,7 +61,7 @@ public class ASAeroPointValueConverter extends ASPointValueConverter {
     }
 
     @Override
-    protected void processDefensiveFactors() {
+    protected void processArmor() {
         String calculation = element.getFullArmor() + "";
         double barFactor = 1;
         if (element.hasSUA(BAR)) {
@@ -72,6 +72,10 @@ public class ASAeroPointValueConverter extends ASPointValueConverter {
         calculation += " x " + formatForReport(thresholdMultiplier);
         dir += thresholdMultiplier * barFactor * element.getFullArmor();
         report.addLine("- Armor", calculation, "= " + formatForReport(dir));
+    }
+
+    @Override
+    protected void processStructure() {
         dir += element.getFullStructure();
         report.addLine("- Structure", "+ " + element.getFullStructure(), "= " + formatForReport(dir));
     }

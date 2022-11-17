@@ -84,6 +84,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, IPrefe
         adaptToGUIScale();
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
+        panelMain.add(tabs);
         add(panelMain);
 
         butOkay.requestFocus();
@@ -103,14 +104,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener, IPrefe
         addReportPages();
         
         getContentPane().add(BorderLayout.CENTER, tabs);
-    }
-
-    public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily()
-                        + "; font-size: 12pt; font-style:normal;}");
     }
 
     private void savePrefHide() {

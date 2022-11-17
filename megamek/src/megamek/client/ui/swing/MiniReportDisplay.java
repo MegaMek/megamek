@@ -16,9 +16,14 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.Report;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 
 import javax.swing.*;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,18 +33,20 @@ import java.awt.event.WindowEvent;
 /**
  * Shows reports, with an Okay JButton
  */
-public class MiniReportDisplay extends JDialog implements ActionListener {
+public class MiniReportDisplay extends JDialog implements ActionListener, IPreferenceChangeListener {
     private JButton butOkay;
+    private JPanel panelMain;
+    private JTabbedPane tabs;
 
     public MiniReportDisplay(JFrame parent, Client client) {
         super(parent, Messages.getString("MiniReportDisplay.title"), true);
 
         butOkay = new JButton(Messages.getString("Okay"));
         butOkay.addActionListener(this);
-        
-        getContentPane().setLayout(new BorderLayout());
 
-        getContentPane().add(BorderLayout.SOUTH, butOkay);
+        panelMain = new JPanel(new BorderLayout());
+
+        panelMain.add(BorderLayout.SOUTH, butOkay);
         
         setupReportTabs(client);
                 
@@ -58,6 +65,11 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
             }
         });
 
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+
+        add(panelMain);
+
         butOkay.requestFocus();
     }
 
@@ -73,7 +85,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     }
 
     private void setupReportTabs(Client c) {
-        JTabbedPane tabs = new JTabbedPane();
+        tabs = new JTabbedPane();
 
         int numRounds = c.getGame().getRoundCount();
         for (int round = 1; round < numRounds; round++) {
@@ -100,15 +112,37 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         JScrollPane sp = new JScrollPane(ta);
         tabs.add("Phase", sp);
         tabs.setSelectedComponent(sp);
-        
-        getContentPane().add(BorderLayout.CENTER, tabs);
+
+        panelMain.add(BorderLayout.CENTER, tabs);
     }
 
     public static void setupStylesheet(JTextPane pane) {
         pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily()
-                        + "; font-size: 12pt; font-style:normal;}");
-    }    
+        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
+        Report.setupStylesheet(styleSheet);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            Component cp = tabs.getComponentAt(i);
+            if (cp instanceof JScrollPane) {
+                Component pane = ((JScrollPane) cp).getViewport().getView();
+                if (pane instanceof JTextPane) {
+                    JTextPane tp = (JTextPane) pane;
+                    setupStylesheet(tp);
+                    tp.setText(tp.getText());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
+    }
 }

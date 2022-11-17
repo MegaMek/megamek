@@ -7294,7 +7294,9 @@ public class GameManager implements IGameManager {
 
             // check for breaking magma crust unless we are jumping over the hex
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
-                ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
+                if (!curPos.equals(lastPos)) {
+                    ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
+                }
                 ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, curPos, this);
             }
 

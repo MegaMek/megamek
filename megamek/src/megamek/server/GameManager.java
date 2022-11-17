@@ -4921,6 +4921,7 @@ public class GameManager implements IGameManager {
             // note that this must sequentially occur before the next 'entering liquid magma' check
             // otherwise, magma crust won't have a chance to break
             ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, vPhaseReport, this);
+            ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, curPos, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -7294,6 +7295,7 @@ public class GameManager implements IGameManager {
             // check for breaking magma crust unless we are jumping over the hex
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
+                ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, curPos, this);
             }
 
             // check if we've moved into a swamp
@@ -8431,6 +8433,7 @@ public class GameManager implements IGameManager {
             // Don't interact with terrain when jumping onto a building or a bridge
             if (entity.getElevation() == 0) {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true, vPhaseReport, this);
+                ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, curPos, this);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -12052,6 +12055,7 @@ public class GameManager implements IGameManager {
         }
 
         ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, vPhaseReport, this);
+        ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, dest, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
         if (violation == null) {

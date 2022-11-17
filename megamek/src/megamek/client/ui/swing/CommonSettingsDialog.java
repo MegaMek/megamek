@@ -1634,5 +1634,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
     private void adaptToGUIScale() {
         UIUtil.scaleComp(panTabs, UIUtil.FONT_SCALE1);
+
+        if (getPanelButtons() != null) {
+            UIUtil.scaleComp(getPanelButtons(), UIUtil.FONT_SCALE1);
+        }
     }
 }

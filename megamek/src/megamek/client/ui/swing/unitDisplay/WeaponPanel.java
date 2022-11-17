@@ -5,11 +5,14 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.*;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.gaussrifles.HAGWeapon;
@@ -30,7 +33,7 @@ import java.util.List;
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
  */
-public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener {
+public class WeaponPanel extends PicMap implements ListSelectionListener, ActionListener, IPreferenceChangeListener {
     /**
      * Mouse adaptor for the weapon list.  Supports rearranging the weapons
      * to define a custom ordering.
@@ -289,6 +292,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
      * after the forced target.
      */
     private Targetable prevTarget = null;
+    private JPanel panelMain;
+    private JScrollPane tWeaponScroll;
     private JComboBox<String> m_chAmmo;
     public JComboBox<String> m_chBayWeapon;
 
@@ -358,7 +363,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     WeaponPanel(UnitDisplay unitDisplay) {
 
         this.unitDisplay = unitDisplay;
-        setLayout(new GridBagLayout());
+        panelMain = new JPanel(new GridBagLayout());
 
         int gridy = 0;
         wSortOrder = new JLabel(
@@ -366,10 +371,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 SwingConstants.LEFT);
         wSortOrder.setOpaque(false);
         wSortOrder.setForeground(Color.WHITE);
-        add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wSortOrder, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
         comboWeaponSortOrder = new MMComboBox<>("comboWeaponSortOrder", WeaponSortOrder.values());
-        add(comboWeaponSortOrder,
+        panelMain.add(comboWeaponSortOrder,
                 GBC.eol().insets(15, 9, 15, 1)
                    .fill(GridBagConstraints.HORIZONTAL)
                    .anchor(GridBagConstraints.CENTER).gridy(gridy)
@@ -381,10 +386,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter();
         weaponList.addMouseListener(mouseAdapter);
         weaponList.addMouseMotionListener(mouseAdapter);
-        JScrollPane tWeaponScroll = new JScrollPane(weaponList);
+        tWeaponScroll = new JScrollPane(weaponList);
         tWeaponScroll.setMinimumSize(new Dimension(200, 100));
         tWeaponScroll.setPreferredSize(new Dimension(200, 100));
-        add(tWeaponScroll,
+        panelMain.add(tWeaponScroll,
             GBC.eol().insets(15, 9, 15, 9)
                .fill(GridBagConstraints.HORIZONTAL)
                .anchor(GridBagConstraints.CENTER).gridy(gridy)
@@ -407,14 +412,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wBayWeapon.setForeground(Color.WHITE);
         m_chBayWeapon = new JComboBox<>();
 
-        add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(gridy).gridx(0));
+        panelMain.add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(gridy).gridx(0));
 
-        add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(m_chBayWeapon, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                               .insets(1, 1, 15, 1).gridy(gridy).gridx(1));
         gridy++;
-        add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(gridy).gridx(0));
+        panelMain.add(wAmmo, GBC.std().insets(15, 9, 1, 1).gridy(gridy).gridx(0));
 
-        add(m_chAmmo,
+        panelMain.add(m_chAmmo,
             GBC.eol().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 15, 1).gridy(gridy).gridx(1));
         gridy++;
@@ -427,12 +432,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         currentHeatBuildupR.setOpaque(false);
         currentHeatBuildupR.setForeground(Color.WHITE);
 
-        add(currentHeatBuildupL,
+        panelMain.add(currentHeatBuildupL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .anchor(GridBagConstraints.EAST).insets(9, 1, 1, 9)
                .gridy(gridy).gridx(0));
 
-        add(currentHeatBuildupR,
+        panelMain.add(currentHeatBuildupR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 1, 9, 9).gridy(gridy).gridx(1));
         gridy++;
@@ -470,40 +475,40 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wDamageTrooperR.setOpaque(false);
         wDamageTrooperR.setForeground(Color.WHITE);
 
-        add(wNameL,
+        panelMain.add(wNameL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
-        add(wHeatL,
+        panelMain.add(wHeatL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
 
-        add(wDamL,
+        panelMain.add(wDamL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(2));
 
-        add(wArcHeatL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wArcHeatL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                           .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
 
-        add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wDamageTrooperL, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
         gridy++;
-        add(wNameR,
+        panelMain.add(wNameR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
-        add(wHeatR,
+        panelMain.add(wHeatR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
 
-        add(wDamR,
+        panelMain.add(wDamR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(2));
 
-        add(wArcHeatR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wArcHeatR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                           .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
 
-        add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wDamageTrooperR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                                 .insets(1, 9, 1, 1).gridy(gridy).gridx(3));
         gridy++;
         // Adding range labels
@@ -590,103 +595,103 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wInfantryRange5R.setOpaque(false);
         wInfantryRange5R.setForeground(Color.WHITE);
 
-        add(wMinL,
+        panelMain.add(wMinL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
-        add(wShortL,
+        panelMain.add(wShortL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
-        add(wMedL,
+        panelMain.add(wMedL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
-        add(wLongL,
+        panelMain.add(wLongL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
-        add(wExtL,
+        panelMain.add(wExtL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
 
-        add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange0L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                 .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
-        add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange1L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
-        add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange2L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
-        add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange3L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
-        add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange4L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
 
-        add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange5L, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
 
         gridy++;
         // ----------------
 
-        add(wMinR,
+        panelMain.add(wMinR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
-        add(wShortR,
+        panelMain.add(wShortR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
-        add(wMedR,
+        panelMain.add(wMedR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
-        add(wLongR,
+        panelMain.add(wLongR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
-        add(wExtR,
+        panelMain.add(wExtR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
 
-        add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange0R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                 .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
-        add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange1R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
-        add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange2R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
-        add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange3R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
-        add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange4R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
 
-        add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wInfantryRange5R, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                             .insets(1, 9, 9, 1).gridy(gridy).gridx(5));
 
         gridy++;
         // ----------------
-        add(wAVL,
+        panelMain.add(wAVL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(0));
 
-        add(wShortAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
+        panelMain.add(wShortAVR, GBC.std().fill(GridBagConstraints.HORIZONTAL)
                           .insets(1, 9, 9, 1).gridy(gridy).gridx(1));
 
-        add(wMedAVR,
+        panelMain.add(wMedAVR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(2));
 
-        add(wLongAVR,
+        panelMain.add(wLongAVR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(3));
 
-        add(wExtAVR,
+        panelMain.add(wExtAVR,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 9, 1).gridy(gridy).gridx(4));
 
@@ -715,29 +720,29 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wToHitR.setOpaque(false);
         wToHitR.setForeground(Color.WHITE);
 
-        add(wTargetL,
+        panelMain.add(wTargetL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
-        add(wTargetR,
+        panelMain.add(wTargetR,
             GBC.eol().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
         gridy++;
 
-        add(wRangeL,
+        panelMain.add(wRangeL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
-        add(wRangeR,
+        panelMain.add(wRangeR,
             GBC.eol().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
         gridy++;
 
-        add(wToHitL,
+        panelMain.add(wToHitL,
             GBC.std().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(0));
 
-        add(wToHitR,
+        panelMain.add(wToHitR,
             GBC.eol().fill(GridBagConstraints.HORIZONTAL)
                .insets(1, 9, 1, 1).gridy(gridy).gridx(1));
         gridy++;
@@ -747,14 +752,20 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         toHitText.setEditable(false);
         toHitText.setLineWrap(true);
         toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10));
-        add(toHitText,
+        panelMain.add(toHitText,
             GBC.eol().fill(GridBagConstraints.BOTH)
                .insets(15, 9, 15, 9).gridy(gridy).gridx(0)
                .gridheight(2));
         gridy++;
 
         addListeners();
-        
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        setLayout(new BorderLayout());
+        add(panelMain);
+        panelMain.setOpaque(false);
+
         setBackGround();
         onResize();
     }
@@ -2671,5 +2682,19 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     public void setPrevTarget(Targetable prevTarget) {
         this.prevTarget = prevTarget;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        tWeaponScroll.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(200)));
+        tWeaponScroll.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(200)));
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
     }
 }

@@ -16,31 +16,41 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.Team;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class PlayerListDialog extends JDialog {
+public class PlayerListDialog extends JDialog implements IPreferenceChangeListener {
 
     private static final long serialVersionUID = 7270469195373150106L;
 
     private JList<String> playerList = new JList<>(new DefaultListModel<>());
 
     private Client client;
+    private JPanel panelMain;
 
     public PlayerListDialog(JFrame parent, Client client) {
         super(parent, Messages.getString("PlayerListDialog.title"), false);
         this.client = client;
-        
-        add(playerList, BorderLayout.CENTER);
-        add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
-        add(Box.createHorizontalStrut(20), BorderLayout.LINE_END);
-        add(new JButton(new CloseAction(this)), BorderLayout.PAGE_END);
+
+        panelMain = new JPanel(new BorderLayout());
+        panelMain.add(playerList, BorderLayout.CENTER);
+        panelMain.add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
+        panelMain.add(Box.createHorizontalStrut(20), BorderLayout.LINE_END);
+        panelMain.add(new JButton(new CloseAction(this)), BorderLayout.PAGE_END);
 
         refreshPlayerList();
-        setMinimumSize(new Dimension(300, 260));
+        panelMain.setMinimumSize(new Dimension(300, 260));
+        add(panelMain);
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+
         pack();
         setResizable(false);
         setLocation(parent.getLocation().x + (parent.getSize().width / 2) 
@@ -128,5 +138,18 @@ public class PlayerListDialog extends JDialog {
         }
 
         return null;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(260)));
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
     }
 }

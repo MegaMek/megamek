@@ -145,7 +145,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
             if (playerNameCombo == null) {
                 playerNameCombo = new JComboBox<>(playerNames);
                 Dimension preferredSize = playerNameCombo.getPreferredSize();
-                preferredSize.setSize(180, preferredSize.getHeight());
+                preferredSize.setSize(180, 40);
                 playerNameCombo.setPreferredSize(preferredSize);
                 playerNameCombo.setEditable(true);
             }

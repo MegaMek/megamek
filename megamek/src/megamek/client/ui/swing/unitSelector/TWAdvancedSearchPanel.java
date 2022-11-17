@@ -21,6 +21,7 @@ package megamek.client.ui.swing.unitSelector;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 
 import javax.swing.*;
@@ -484,6 +485,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         designYearPanel.add(new Label("-"));
         designYearPanel.add(tEndYear);
         add(designYearPanel, c);
+
+        adaptToGUIScale();
     }
 
     /**
@@ -1577,6 +1580,18 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             }
             return false;
         }
+    }
+
+    public void adaptToGUIScale() {
+        tblWeaponType.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        scrTableWeaponType.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
+        scrTableWeaponType.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
+        tblWeapons.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
+        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
+        tblEquipment.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
+        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
     }
 
 }

@@ -69,8 +69,6 @@ import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
 
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
-
 /**
  * JDialog that allows the user to create a unit filter.
  *
@@ -1346,17 +1344,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     private void adaptToGUIScale() {
         UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        tblWeapons.getTableHeader().setFont(tblWeapons.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+        tblWeapons.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
+        tblEquipment.getTableHeader().setFont(tblEquipment.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+        tblEquipment.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
+        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
 
-        if (tblWeapons != null){
-            tblWeapons.getTableHeader().setFont(tblWeapons.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-            tblWeapons.setRowHeight(scaleForGUI(20));
-            scrTableWeapons.setPreferredSize(new Dimension(850, scaleForGUI(150)));
-
-        }
-        if (tblEquipment != null){
-            tblEquipment.getTableHeader().setFont(tblEquipment.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-            tblEquipment.setRowHeight(scaleForGUI(20));
-            scrTableEquipment.setPreferredSize(new Dimension(850, scaleForGUI(150)));
-        }
     }
 }

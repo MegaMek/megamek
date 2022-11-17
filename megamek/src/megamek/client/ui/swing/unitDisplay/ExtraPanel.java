@@ -525,8 +525,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         refreshSensorChoices(en);
 
         if (null != en.getActiveSensor()) {
-            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" ")
-                    .concat(en.getSensorDesc()));
+            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + en.getSensorDesc();
+            tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
+            curSensorsL.setText(tmpStr);
         } else {
             curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
         }

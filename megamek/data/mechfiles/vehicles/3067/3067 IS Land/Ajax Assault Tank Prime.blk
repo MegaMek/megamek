@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -27,6 +27,10 @@ Prime
 <year>
 3065
 </year>
+
+<originalBuildYear>
+3065
+</originalBuildYear>
 
 <type>
 IS Level 2
@@ -91,6 +95,42 @@ ISMediumPulseLaser:OMNI
 ISStreakSRM4:OMNI
 </Turret Equipment>
 
+<capabilities>
+The Ajax follows on the heels of the successful Manteuffel OmniVehicle. The Ajax is slow, only capable of attaining speeds up to 54 km/h. Since speed is not its defense, the designers gave the Ajax nineteen tons of armor. The room for all of this armor comes from the XL engine the Ajax uses for power.
+</capabilities>
+
+<overview>
+The Ajax Assault Tank is an Omni-capable combat vehicle that is the followup to GM's Challenger X MBT.
+</overview>
+
+<deployment>
+The primary configuration of the Ajax carries an Ultra Autocannon/10 and a Gauss rifle. Both weapons carry sufficient ammunition for most engagements. For backup, the Ajax mounts a pair of Medium Pulse Lasers and a Streak SRM-4. All the weapons are mounted in a turret, allowing the crew of the Ajax to bring them all to bear on any target within range, regardless of where it is in relation to the tank's facing. A C3 slave unit allows the Assault Tank to tie into a C3 network, making it weapons fire all the more accurate.
+</deployment>
+
+<history>
+Following the success of a series of new vehicle designs, particularly the Challenger X, General Motors sought a way to create a follow-up, a product that would capitalise on the AFFC's sudden interest in conventional military vehicles. With the phenomenal success of Star Corps' Manteuffel Attack Tank, creating an OmniVehicle was the obvious solution. The Fifth Davion Guards and Sixth Syrtis Fusiliers RCTs were among the first to receive Kathil models, which they put to good use in their fight against the Eighth FedCom RCT and the Eighth Donegal Guards on New Syrtis. Though the Fifth Davion Guards were officially deactivated after their victory, Leftenant General Seth Varnay led a ragtag force of armoured forces, including a sizable number of Ajaxes, to New Avalon, where their firepower was once again demonstrated. Ajaxes can now be found in almost every surviving armoured unit that fought alongside an RCT during the war.
+</history>
+
+<manufacturer>
+General Motors Annex,General Motors/Blackwell Corporation,General Motors
+</manufacturer>
+
+<primaryFactory>
+Kathil,New Valencia,Salem
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:GM 270 XL
+ARMOR:ArcShield Maxi II
+COMMUNICATIONS:Neil 6000
+TARGETING:Sync Tracker (39-42071)
+</systemManufacturers>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
 <tonnage>
 90.0
 </tonnage>
@@ -98,3 +138,4 @@ ISStreakSRM4:OMNI
 <baseChassisTurretWeight>
 3.5
 </baseChassisTurretWeight>
+

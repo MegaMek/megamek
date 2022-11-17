@@ -95,4 +95,9 @@ public class CLBALBX extends Weapon {
         }
         return damage / 10.0;
     }
+
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_FLAK;
+    }
 }

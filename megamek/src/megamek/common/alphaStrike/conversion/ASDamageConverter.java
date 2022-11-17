@@ -532,6 +532,16 @@ public class ASDamageConverter {
         report.startTentativeSection();
         report.addEmptyLine();
         report.addLine("--- Heat Damage (HT):", "");
+        int[] heatDamageValues = assembleHeatDamage();
+        if (heatDamageValues[0] + heatDamageValues[1] + heatDamageValues[2] > 0) {
+            determineFinalHT(heatDamageValues);
+            report.endTentativeSection();
+        } else {
+            report.discardTentativeSection();
+        }
+    }
+
+    protected int[] assembleHeatDamage() {
         int totalHeatS = 0;
         int totalHeatM = 0;
         int totalHeatL = 0;
@@ -551,20 +561,19 @@ public class ASDamageConverter {
                 report.addLine(getWeaponDesc(weapon), calculation, currentTotal);
             }
         }
-        if (totalHeatS + totalHeatM + totalHeatL > 0) {
-            int htS = resultingHTValue(totalHeatS);
-            int htM = resultingHTValue(totalHeatM);
-            int htL = resultingHTValue(totalHeatL);
-            if (htS + htM + htL > 0) {
-                ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(htS, htM, htL);
-                locations[0].setSUA(HT, finalHtValue);
-                report.addLine("Final Ability", "", "HT" + finalHtValue);
-            } else {
-                report.addLine("Final Ability", "No HT", "");
-            }
-            report.endTentativeSection();
+        return new int[] {totalHeatS, totalHeatM, totalHeatL};
+    }
+
+    protected void determineFinalHT(int[] heatDamageValues) {
+        int htS = resultingHTValue(heatDamageValues[0]);
+        int htM = resultingHTValue(heatDamageValues[1]);
+        int htL = resultingHTValue(heatDamageValues[2]);
+        if (htS + htM + htL > 0) {
+            ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(htS, htM, htL);
+            locations[0].setSUA(HT, finalHtValue);
+            report.addLine("Final Ability", "", "HT" + finalHtValue);
         } else {
-            report.discardTentativeSection();
+            report.addLine("Final Ability", "No HT", "");
         }
     }
 
@@ -719,7 +728,9 @@ public class ASDamageConverter {
     }
 
     protected int rangesForSpecial(BattleForceSUA dmgType) {
-        if (dmgType == SRM) {
+        if (dmgType == HT) {
+            return 3;
+        } else if (dmgType == SRM) {
             return 2;
         } else if (dmgType == PNT) {
             return 1;
@@ -729,21 +740,29 @@ public class ASDamageConverter {
     }
 
     protected String formatAsVector(double s, double m, double l, double e, BattleForceSUA dmgType) {
-            StringBuilder vector = new StringBuilder();
         if (dmgType == IF) {
-            vector.append(formatForReport(l));
+            return formatAsVector(l);
         } else {
             int ranges = rangesForSpecial(dmgType);
-            vector.append(formatForReport(s));
-            if (ranges > 1) {
-                vector.append("/").append(formatForReport(m));
+            if (ranges == 1) {
+                return formatAsVector(s);
+            } else if (ranges == 2) {
+                return formatAsVector(s, m);
+            } else if (ranges == 3) {
+                return formatAsVector(s, m, l);
+            } else {
+                return formatAsVector(s, m, l, e);
             }
-            if (ranges > 2) {
-                vector.append("/").append(formatForReport(l));
-            }
-            if (ranges > 3) {
-                vector.append("/").append(formatForReport(e));
-            }
+        }
+    }
+
+    protected String formatAsVector(double... damage) {
+        StringBuilder vector = new StringBuilder();
+        if (damage.length > 0) {
+            vector.append(formatForReport(damage[0]));
+        }
+        for (int i = 1; i < damage.length; i++) {
+            vector.append("/").append(formatForReport(damage[i]));
         }
         return vector.toString();
     }

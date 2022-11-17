@@ -13,6 +13,8 @@
 */ 
 package megamek.client.ui.swing.util;
 
+import com.formdev.flatlaf.ui.FlatBorder;
+import megamek.client.bot.MoveOption;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
@@ -424,6 +426,12 @@ public final class UIUtil {
 
         if ((parentComp.getFont() != null) && (sf != parentComp.getFont().getSize())) {
             parentComp.setFont(parentComp.getFont().deriveFont((float) sf));
+
+            if (parentComp.getBorder() != null) {
+                if (parentComp.getBorder() instanceof TitledBorder) {
+                    ((TitledBorder) parentComp.getBorder()).setTitleFont(parentComp.getFont().deriveFont((float) sf));
+                }
+            }
         }
 
         for (Component comp: parentComp.getComponents()) {

@@ -51,6 +51,7 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
@@ -79,6 +80,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     private JComboBox<String> cbRating = new JComboBox<>();
 
     private UnitTypeOptions panUnitTypeOptions;
+    private JPanel panelMain;
 
     private int ratGenYear;
 
@@ -93,7 +95,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
 
     //region Constructors
     public ForceGenerationOptionsPanel(Use use) {
-        setLayout(new GridBagLayout());
+        panelMain = new JPanel();
+        panelMain.setLayout(new GridBagLayout());
         
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -103,7 +106,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(new JLabel(Messages.getString("RandomArmyDialog.Year")), c);
+        panelMain.add(new JLabel(Messages.getString("RandomArmyDialog.Year")), c);
 
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -113,7 +116,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(txtYear, c);
+        panelMain.add(txtYear, c);
         txtYear.setText(String.valueOf(ratGenYear));
         txtYear.addFocusListener(this);
 
@@ -125,7 +128,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(new JLabel(Messages.getString("RandomArmyDialog.Unit")), c);
+        panelMain.add(new JLabel(Messages.getString("RandomArmyDialog.Unit")), c);
 
         txtNumUnits.setText("4");
 
@@ -137,7 +140,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(txtNumUnits, c);
+        panelMain.add(txtNumUnits, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -147,7 +150,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(new JLabel(Messages.getString("RandomArmyDialog.Faction")), c);
+        panelMain.add(new JLabel(Messages.getString("RandomArmyDialog.Faction")), c);
 
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -157,7 +160,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(cbFaction, c);
+        panelMain.add(cbFaction, c);
         cbFaction.setRenderer(factionCbRenderer);
         cbFaction.addActionListener(this);
 
@@ -169,7 +172,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(new JLabel(Messages.getString("RandomArmyDialog.Command")), c);
+        panelMain.add(new JLabel(Messages.getString("RandomArmyDialog.Command")), c);
 
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -179,7 +182,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(cbSubfaction, c);
+        panelMain.add(cbSubfaction, c);
         cbSubfaction.setRenderer(factionCbRenderer);
         cbSubfaction.addActionListener(this);
 
@@ -191,7 +194,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(chkShowMinor, c);
+        panelMain.add(chkShowMinor, c);
         chkShowMinor.addActionListener(this);
 
         c = new GridBagConstraints();
@@ -202,7 +205,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(new JLabel(Messages.getString("RandomArmyDialog.UnitType")), c);
+        panelMain.add(new JLabel(Messages.getString("RandomArmyDialog.UnitType")), c);
 
         boolean restrictUnitType = use == Use.FORMATION_BUILDER;
 
@@ -222,7 +225,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(cbUnitType, c);
+        panelMain.add(cbUnitType, c);
 
         c = new GridBagConstraints();
         c.gridx = 2;
@@ -232,7 +235,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(new JLabel(Messages.getString("RandomArmyDialog.Rating")), c);
+        panelMain.add(new JLabel(Messages.getString("RandomArmyDialog.Rating")), c);
 
         c = new GridBagConstraints();
         c.gridx = 3;
@@ -242,7 +245,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        add(cbRating, c);
+        panelMain.add(cbRating, c);
 
         switch (use) {
             case RAT_GENERATOR:
@@ -261,7 +264,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.5;
-        add(panUnitTypeOptions, c);
+        panelMain.add(panUnitTypeOptions, c);
+
+        adaptToGUIScale();
+        add(panelMain);
 
         if (!RATGenerator.getInstance().isInitialized()) {
             RATGenerator.getInstance().registerListener(this);
@@ -1223,6 +1229,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             generatedUnits = list;
             txtNoFormation.setVisible(list == null || list.isEmpty());
         }
-    }    
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+    }
 }
 

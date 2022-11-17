@@ -22,6 +22,7 @@ import megamek.client.generator.RandomUnitGenerator.RatTreeNode;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
@@ -45,6 +46,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import java.util.*;
+
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
 
 public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
     private static final int TAB_BV_MATCHING       = 0;
@@ -504,6 +507,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         m_pSplit.setDividerLocation(guip.getRndArmySplitPos());
         setSize(guip.getRndArmySizeWidth(), guip.getRndArmySizeHeight());
         setLocation(guip.getRndArmyPosX(), guip.getRndArmyPosY());
+
+        adaptToGUIScale();
         
         m_client.getGame().addGameListener(gameListener);
         addWindowListener(windowListener);
@@ -899,6 +904,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             updateTechChoice();
             updateRATs();
         }
+
+        adaptToGUIScale();
         super.setVisible(show);
     }
 
@@ -1104,6 +1111,25 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 }
             }
             return "";
+        }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(m_pButtons, UIUtil.FONT_SCALE1);
+        UIUtil.scaleComp(m_pSplit, UIUtil.FONT_SCALE1);
+
+        if (m_lArmy != null){
+            m_lArmy.getTableHeader().setFont(m_lArmy.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+            m_lArmy.setRowHeight(scaleForGUI(20));
+
+        }
+        if (m_lUnits != null){
+            m_lUnits.getTableHeader().setFont(m_lUnits.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+            m_lUnits.setRowHeight(scaleForGUI(20));
+        }
+        if (m_lRAT != null){
+            m_lRAT.getTableHeader().setFont(m_lRAT.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+            m_lRAT.setRowHeight(scaleForGUI(20));
         }
     }
 }

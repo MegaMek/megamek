@@ -24,6 +24,7 @@ import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 
 import javax.swing.*;
@@ -36,6 +37,8 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     private final ClientGUI clientGUI;
     private final List<Entity> entities;
     private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
+    private JPanel panel;
+    private JScrollPane scrollPane;
     //endregion Variable Declarations
 
     //region Constructors
@@ -71,14 +74,14 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     protected Container createCenterPane() {
         setSkillGenerationOptionsPanel(new SkillGenerationOptionsPanel(getFrame(), getClientGUI(), null));
 
-        final JScrollPane scrollPane = new JScrollPane(getSkillGenerationOptionsPanel());
+        scrollPane = new JScrollPane(getSkillGenerationOptionsPanel());
         scrollPane.setName("skillGenerationPane");
         return scrollPane;
     }
 
     @Override
     protected JPanel createButtonPanel() {
-        final JPanel panel = new JPanel(new GridLayout(1, 0));
+        panel = new JPanel(new GridLayout(1, 0));
 
         if (!getEntities().isEmpty()) {
             panel.add(new MMButton("btnRandomize", resources.getString("Randomize.text"),
@@ -120,6 +123,8 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
                         : getClientGUI().getClient()));
         panel.add(comboClients);
 
+        adaptToGUIScale();
+
         return panel;
     }
     //endregion Initialization
@@ -131,4 +136,9 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
         getSkillGenerationOptionsPanel().updateClient();
     }
     //endregion Button Actions
+
+    private void adaptToGUIScale() {
+        UIUtil.scaleComp(panel, UIUtil.FONT_SCALE1);
+        UIUtil.scaleComp(scrollPane, UIUtil.FONT_SCALE1);
+    }
 }

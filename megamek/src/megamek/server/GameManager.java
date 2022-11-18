@@ -5924,6 +5924,7 @@ public class GameManager implements IGameManager {
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
+        Hex firstHex = game.getBoard().getHex(curPos); // Used to check for start/end magma damage
         int curFacing = entity.getFacing();
         int curVTOLElevation = entity.getElevation();
         int curElevation;
@@ -6130,6 +6131,10 @@ public class GameManager implements IGameManager {
                 break;
             }
 
+            // Extra damage if first and last hex are magma
+            if (firstStep) {
+                firstHex = game.getBoard().getHex(curPos);
+            }
             // stop if the entity already killed itself
             if (entity.isDestroyed() || entity.isDoomed()) {
                 break;
@@ -7298,6 +7303,16 @@ public class GameManager implements IGameManager {
                     ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
                 }
                 ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, curPos, this);
+            }
+
+            // check for last move ending in magma TODO: build report for end of move
+            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2
+                    && firstHex.terrainLevel(Terrains.MAGMA) == 2) {
+                r = new Report(2404);
+                r.addDesc(entity);
+                r.subject = entity.getId();
+                addReport(r);
+                doMagmaDamage(entity, false);
             }
 
             // check if we've moved into a swamp

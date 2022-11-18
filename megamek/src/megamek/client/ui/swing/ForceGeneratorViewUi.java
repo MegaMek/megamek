@@ -18,6 +18,7 @@ import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
@@ -190,6 +191,8 @@ public class ForceGeneratorViewUi {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(panControls);
         leftPanel.add(scroll);
+
+        adaptToGUIScale();
     }
 
     public Component getLeftPanel() {
@@ -600,5 +603,11 @@ public class ForceGeneratorViewUi {
                     return "??";
             }
         }
+    }
+
+    private void adaptToGUIScale() {
+        tblChosen.getTableHeader().setFont(tblChosen.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+        tblChosen.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
+        forceTree.setRowHeight(UIUtil.scaleForGUI(80));
     }
 }

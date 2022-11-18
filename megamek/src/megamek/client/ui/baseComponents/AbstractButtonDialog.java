@@ -47,7 +47,6 @@ import java.util.ResourceBundle;
 public abstract class AbstractButtonDialog extends AbstractDialog {
     //region Variable Declarations
     private DialogResult result;
-    private JPanel panelButtons;
     //endregion Variable Declarations
 
     //region Constructors
@@ -113,18 +112,14 @@ public abstract class AbstractButtonDialog extends AbstractDialog {
      * @return the created Button Panel
      */
     protected JPanel createButtonPanel() {
-        panelButtons = new JPanel(new GridLayout(1, 2));
-        panelButtons.add(new MMButton("okButton", resources.getString("Ok.text"),
+        JPanel panel = new JPanel(new GridLayout(1, 2));
+        panel.add(new MMButton("okButton", resources.getString("Ok.text"),
                 resources.getString("Ok.toolTipText"), this::okButtonActionPerformed));
-        panelButtons.add(new MMButton("cancelButton", resources.getString("Cancel.text"),
+        panel.add(new MMButton("cancelButton", resources.getString("Cancel.text"),
                 resources.getString("Cancel.toolTipText"), this::cancelActionPerformed));
-        return panelButtons;
+        return panel;
     }
     //endregion Initialization
-
-    public JPanel getPanelButtons(){
-        return panelButtons;
-    }
 
     //region Button Actions
     /**

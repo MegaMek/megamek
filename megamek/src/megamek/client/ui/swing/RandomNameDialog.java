@@ -48,8 +48,6 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     private JButton butOkay;
     private JButton butSave;
     private JButton butCancel;
-    private JPanel panMain;
-    private JPanel panButtons;
 
     private JComboBox<String> chPlayer;
 
@@ -186,11 +184,11 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     }
 
     private void initComponents() {
-        panButtons = new JPanel();
+        JPanel panButtons = new JPanel();
         butOkay = new JButton(Messages.getString("Randomize.text"));
         butSave = new JButton(Messages.getString("Save.text"));
         butCancel = new JButton(Messages.getString("Cancel.text"));
-        panMain = new JPanel();
+        JPanel panMain = new JPanel();
         JLabel lblFaction = new JLabel(Messages.getString("RandomNameDialog.lblFaction"));
         JLabel lblGender = new JLabel(Messages.getString("RandomNameDialog.lblGender"));
         comboFaction = new JComboBox<>();
@@ -252,7 +250,6 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panMain, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(panButtons, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

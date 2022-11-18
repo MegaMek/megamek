@@ -98,8 +98,7 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(advancedSearchPane, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(buttonPanel, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
         totalWarTab.adaptToGUIScale();
     }
 }

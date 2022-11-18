@@ -37,8 +37,6 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     private final ClientGUI clientGUI;
     private final List<Entity> entities;
     private SkillGenerationOptionsPanel skillGenerationOptionsPanel;
-    private JPanel panel;
-    private JScrollPane scrollPane;
     //endregion Variable Declarations
 
     //region Constructors
@@ -74,14 +72,14 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     protected Container createCenterPane() {
         setSkillGenerationOptionsPanel(new SkillGenerationOptionsPanel(getFrame(), getClientGUI(), null));
 
-        scrollPane = new JScrollPane(getSkillGenerationOptionsPanel());
+        final JScrollPane scrollPane = new JScrollPane(getSkillGenerationOptionsPanel());
         scrollPane.setName("skillGenerationPane");
         return scrollPane;
     }
 
     @Override
     protected JPanel createButtonPanel() {
-        panel = new JPanel(new GridLayout(1, 0));
+        final JPanel panel = new JPanel(new GridLayout(1, 0));
 
         if (!getEntities().isEmpty()) {
             panel.add(new MMButton("btnRandomize", resources.getString("Randomize.text"),
@@ -122,12 +120,14 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
                         ? getClientGUI().getBots().get(comboClients.getSelectedItem())
                         : getClientGUI().getClient()));
         panel.add(comboClients);
-
-        adaptToGUIScale();
-
         return panel;
     }
     //endregion Initialization
+
+    protected void finalizeInitialization() throws Exception {
+        super.finalizeInitialization();
+        adaptToGUIScale();
+    }
 
     //region Button Actions
     @Override
@@ -138,7 +138,6 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     //endregion Button Actions
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panel, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(scrollPane, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

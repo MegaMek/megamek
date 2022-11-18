@@ -147,8 +147,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     private JComboBox<String> cboQty = new JComboBox<>();
 
-    private JPanel panelMain;
-
     /**
      * Stores the games current year.
      */
@@ -356,25 +354,24 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         expScroller.setPreferredSize(size);
         expScroller.setMaximumSize(size);
 
-        panelMain = new JPanel();
         // Layout
         setLayout(new BorderLayout());
         GridBagConstraints c = new GridBagConstraints();
-        panelMain.setLayout(new GridBagLayout());
+        setLayout(new GridBagLayout());
 
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 0, 0, 0);
 
         c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
-        panelMain.add(lblWalk, c);
+        add(lblWalk, c);
         c.gridx = 1; c.gridy = 0;
         c.insets = new Insets(0, 0, 0, 0);
         c.anchor = GridBagConstraints.EAST;
         JPanel panWalk = new JPanel();
         panWalk.add(cWalk);
         panWalk.add(tWalk);
-        panelMain.add(panWalk, c);
+        add(panWalk, c);
         c.gridx = 3; c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
         c.weighty = 1;
@@ -383,7 +380,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
-        panelMain.add(cockpitPanel, c);
+        add(cockpitPanel, c);
         c.insets = new Insets(0, 0, 0, 0);
         c.weighty = 0;
 
@@ -391,14 +388,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridx = 0; c.gridy = 1;
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 10, 0, 0);
-        panelMain.add(lblJump, c);
+        add(lblJump, c);
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 1; c.gridy = 1;
         c.anchor = GridBagConstraints.EAST;
         JPanel panJump = new JPanel();
         panJump.add(cJump);
         panJump.add(tJump);
-        panelMain.add(panJump, c);
+        add(panJump, c);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
         c.weighty = 1;
@@ -407,17 +404,17 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
         internalsPanel.add(cboInternalsType,BorderLayout.EAST);
-        panelMain.add(internalsPanel, c);
+        add(internalsPanel, c);
         c.weighty = 0;
         c.insets = new Insets(0, 0, 0, 0);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
         c.insets = new Insets(0, 10, 0, 0);
-        panelMain.add(lblArmor, c);
+        add(lblArmor, c);
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 1;
-        panelMain.add(cArmor, c);
+        add(cArmor, c);
         c.gridx = 3;
         c.weighty = 1;
         c.insets = new Insets(0, 40, 0, 0);
@@ -425,14 +422,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);
         armorPanel.add(cboArmorType,BorderLayout.EAST);
-        panelMain.add(armorPanel, c);
+        add(armorPanel, c);
         c.weighty = 0;
 
         c.anchor = GridBagConstraints.CENTER;
 
         c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
-        panelMain.add(lblTableFilters, c);
+        add(lblTableFilters, c);
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
@@ -443,31 +440,31 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cboPanel.add(cboTechClass);
         cboPanel.add(lblTechLevel, c);
         cboPanel.add(cboTechLevel, c);
-        panelMain.add(cboPanel, c);
+        add(cboPanel, c);
         c.gridwidth = 1;
 
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
-        panelMain.add(lblWeapons, c);
+        add(lblWeapons, c);
 
 
         c.insets = new Insets(0, 0, 0, 0);
         c.gridwidth = 4;
         c.gridx = 0; c.gridy++;
-        panelMain.add(scrTableWeapons, c);
+        add(scrTableWeapons, c);
         c.gridwidth = 1;
 
 
         c.gridwidth = 1;
         c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
-        panelMain.add(lblEquipment, c);
+        add(lblEquipment, c);
 
 
         c.insets = new Insets(0, 0, 0, 0);
         c.gridwidth = 4;
         c.gridx = 0; c.gridy++;
-        panelMain.add(scrTableEquipment, c);
+        add(scrTableEquipment, c);
         c.gridwidth = 1;
 
         c.gridx = 0; c.gridy++;
@@ -480,45 +477,42 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         btnPanel.add(btnOr, c);
         btnPanel.add(btnBack, c);
         btnPanel.add(btnClear, c);
-        panelMain.add(btnPanel, c);
+        add(btnPanel, c);
         c.gridwidth = 1;
 
         // Filter Expression
         // c.insets = new Insets(50, 0, 0, 0);
         c.gridx = 0; c.gridy++;
-        panelMain.add(lblEqExpTxt, c);
+        add(lblEqExpTxt, c);
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 4;
         c.gridx = 1;
-        panelMain.add(expScroller, c);
+        add(expScroller, c);
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
 
         c.gridwidth  = 1;
         c.gridx = 0; c.gridy++;
-        panelMain.add(lblYear, c);
+        add(lblYear, c);
         c.gridx = 1;
         JPanel designYearPanel = new JPanel();
         designYearPanel.add(tStartYear);
         designYearPanel.add(new Label("-"));
         designYearPanel.add(tEndYear);
-        panelMain.add(designYearPanel, c);
+        add(designYearPanel, c);
 
 
         c.gridwidth = 1;
         c.gridx = 2; c.gridy++;
         c.anchor = GridBagConstraints.EAST;
         c.insets = new Insets(0, 20, 10, 0);
-        panelMain.add(btnOkay, c);
+        add(btnOkay, c);
         c.gridx = 3;
         c.insets = new Insets(0, 20, 10, 0);
         c.anchor = GridBagConstraints.WEST;
-        panelMain.add(btnCancel, c);
+        add(btnCancel, c);
 
         adaptToGUIScale();
-
-        add(panelMain);
-
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -1343,7 +1337,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
         tblWeapons.getTableHeader().setFont(tblWeapons.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
         tblWeapons.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));

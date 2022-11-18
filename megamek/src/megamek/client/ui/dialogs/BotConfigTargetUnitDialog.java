@@ -57,8 +57,8 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
             public void windowOpened(WindowEvent e) {
                 unitIDField.requestFocus();
             }
-        }); 
-        UIUtil.adjustDialog(this);
+        });
+        adaptToGUIScale();
     }
 
     @Override
@@ -96,5 +96,9 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
             }
         }
         return result;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

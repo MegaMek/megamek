@@ -52,7 +52,6 @@ public class ConfirmDialog extends JDialog{
     private JCheckBox botherCheckbox;
 
     private JPanel panButtons = new JPanel();
-    private JPanel panelMain;
     JButton butYes;
     JButton butNo;
     JButton defaultButton;
@@ -118,7 +117,7 @@ public class ConfirmDialog extends JDialog{
         super.setResizable(false);
         useCheckbox = includeCheckbox;
 
-        panelMain = new JPanel(gridbag);
+        setLayout(gridbag);
         addQuestion(question);
         setupButtons();
         addInputs();
@@ -128,7 +127,6 @@ public class ConfirmDialog extends JDialog{
             defaultButton = butYes;
         }
 
-        add(panelMain);
         adaptToGUIScale();
         finishSetup(p);
     }
@@ -180,7 +178,7 @@ public class ConfirmDialog extends JDialog{
         c.gridheight = 2;
         c.insets = new Insets(5, 5, 5, 5);
         gridbag.setConstraints(questionLabel, c);
-        panelMain.add(questionLabel);
+        add(questionLabel);
     }
 
     private void addInputs() {
@@ -193,7 +191,7 @@ public class ConfirmDialog extends JDialog{
 
             c.gridy = y++;
             gridbag.setConstraints(botherCheckbox, c);
-            panelMain.add(botherCheckbox);
+            add(botherCheckbox);
         }
 
         GridBagLayout buttonGridbag = new GridBagLayout();
@@ -210,7 +208,7 @@ public class ConfirmDialog extends JDialog{
         c.gridy = y;
 
         gridbag.setConstraints(panButtons, c);
-        panelMain.add(panButtons);
+        add(panButtons);
     }
 
     private void finishSetup(JFrame p) {
@@ -267,6 +265,6 @@ public class ConfirmDialog extends JDialog{
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

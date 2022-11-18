@@ -5,6 +5,7 @@ import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
 import megamek.common.UnitRole;
@@ -17,6 +18,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 import java.util.function.Function;
+
+import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
 
 /**
  * Shows a table of all units matching the chosen faction/unit type/era parameters and
@@ -199,6 +202,8 @@ public class AnalyzeFormationDialog extends JDialog {
         JButton btnOk = new JButton(Messages.getString("Okay"));
         btnOk.addActionListener(ev -> setVisible(false));
         getContentPane().add(btnOk, BorderLayout.SOUTH);
+
+        adaptToGUIScale();
         
         pack();
     }
@@ -325,5 +330,11 @@ public class AnalyzeFormationDialog extends JDialog {
                     return metric == null? "?" : metric.apply(ms);
             }
         }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+        tblUnits.getTableHeader().setFont(tblUnits.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
+        tblUnits.setRowHeight(scaleForGUI(UIUtil.FONT_SCALE1));
     }
 }

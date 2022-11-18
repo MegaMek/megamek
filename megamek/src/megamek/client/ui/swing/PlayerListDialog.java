@@ -32,21 +32,18 @@ public class PlayerListDialog extends JDialog implements IPreferenceChangeListen
     private JList<String> playerList = new JList<>(new DefaultListModel<>());
 
     private Client client;
-    private JPanel panelMain;
 
     public PlayerListDialog(JFrame parent, Client client) {
         super(parent, Messages.getString("PlayerListDialog.title"), false);
         this.client = client;
 
-        panelMain = new JPanel(new BorderLayout());
-        panelMain.add(playerList, BorderLayout.CENTER);
-        panelMain.add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
-        panelMain.add(Box.createHorizontalStrut(20), BorderLayout.LINE_END);
-        panelMain.add(new JButton(new CloseAction(this)), BorderLayout.PAGE_END);
+        add(playerList, BorderLayout.CENTER);
+        add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
+        add(Box.createHorizontalStrut(20), BorderLayout.LINE_END);
+        add(new JButton(new CloseAction(this)), BorderLayout.PAGE_END);
 
         refreshPlayerList();
-        panelMain.setMinimumSize(new Dimension(300, 260));
-        add(panelMain);
+        setMinimumSize(new Dimension(300, 260));
 
         adaptToGUIScale();
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
@@ -141,7 +138,7 @@ public class PlayerListDialog extends JDialog implements IPreferenceChangeListen
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
         setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(260)));
     }
 

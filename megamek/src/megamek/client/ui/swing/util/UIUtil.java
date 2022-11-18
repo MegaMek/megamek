@@ -356,8 +356,8 @@ public final class UIUtil {
     }
     
     /** Call this for  {@link #adjustDialog(Container)} with a dialog as parameter. */
-    public static void adjustDialog(JDialog dialog) {
-        adjustDialog(dialog.getContentPane());
+    public static void adjustDialog(JDialog dialog, int fontSize) {
+        adjustContainer(dialog.getContentPane(), fontSize);
     }
     
     /** 
@@ -366,24 +366,27 @@ public final class UIUtil {
      * but it is of course "experimental". Complex dialogs must be hand-adapted to the 
      * gui scale.
      */
-    public static void adjustDialog(Container contentPane) {
-        Font scaledFont = getScaledFont();
-        Component[] allComps = contentPane.getComponents();
-        for (Component comp: allComps) {
+    public static void adjustContainer(Container parentCon, int fontSize) {
+        int sf = scaleForGUI(fontSize);
+
+        for (Component comp: parentCon.getComponents()) {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JTextPane)
-                    || (comp instanceof JToggleButton)) {
-                comp.setFont(scaledFont.deriveFont(comp.getFont().getStyle()));
+                    || (comp instanceof JToggleButton) || (comp instanceof JTable) || (comp instanceof JList)
+                    || (comp instanceof JEditorPane)) {
+                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+                    comp.setFont(comp.getFont().deriveFont((float) sf));
+                }
             }
             if (comp instanceof JScrollPane 
                     && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
-                adjustDialog(((JScrollPane) comp).getViewport());
+                adjustContainer(((JScrollPane) comp).getViewport(), fontSize);
             } else if (comp instanceof JPanel) {
                 JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
                 if ((border instanceof TitledBorder)) {
-                    ((TitledBorder) border).setTitleFont(scaledFont);
+                    ((TitledBorder) border).setTitleFont(((TitledBorder) border).getTitleFont().deriveFont((float) sf));
                 }
 
                 if ((border instanceof EmptyBorder)) {
@@ -394,19 +397,21 @@ public final class UIUtil {
                     int right = scaleForGUI(i.right);
                     panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
                 }
-                adjustDialog(panel);
+                adjustContainer(panel, fontSize);
             } else if (comp instanceof JTabbedPane) {
-                comp.setFont(scaledFont);
+                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+                    comp.setFont(comp.getFont().deriveFont((float) sf));
+                }
                 JTabbedPane tabbedPane = (JTabbedPane) comp;
                 for (int i=0; i < tabbedPane.getTabCount();i++) {
                     Component subComp = tabbedPane.getTabComponentAt(i);
                     if (subComp instanceof JPanel) {
-                        adjustDialog((JPanel) subComp);
+                        adjustContainer((JPanel) subComp, fontSize);
                     }
                 }
-                adjustDialog((JTabbedPane) comp);
+                adjustContainer((JTabbedPane) comp, fontSize);
             } else if (comp instanceof Container) {
-                adjustDialog((Container) comp);
+                adjustContainer((Container) comp, fontSize);
             }
         }
     }

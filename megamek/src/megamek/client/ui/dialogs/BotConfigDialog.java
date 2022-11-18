@@ -129,7 +129,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         updatePresets();
         initialize();
         updateDialogFields();
-        UIUtil.adjustDialog(this);
+        adaptToGUIScale();
     }
     
     @Override
@@ -835,5 +835,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
     public void stateChanged(ChangeEvent e) {
         updateEnabledStates();
     }
-    
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
 }

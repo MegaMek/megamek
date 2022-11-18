@@ -33,9 +33,8 @@ import java.io.File;
 public abstract class AbstractHelpDialog extends AbstractDialog {
     //region Variable Declarations
     private String helpFilePath;
+    private JEditorPane pane;
     //endregion Variable Declarations
-
-    JEditorPane pane;
 
     //region Constructors
     protected AbstractHelpDialog(final JFrame frame, final String name, final String helpFilePath) {
@@ -61,8 +60,6 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
         pane.setName("helpPane");
         pane.setEditable(false);
 
-        adaptToGUIScale();
-
         final File helpFile = new File(getHelpFilePath());
 
         // Get the help content file if possible
@@ -74,10 +71,17 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
             pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
             LogManager.getLogger().error("", e);
         }
+
+        adaptToGUIScale();
+
         return new JScrollPane(pane);
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(pane, UIUtil.FONT_SCALE1);
+        int sf = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
+
+        if ((pane.getFont() != null) && (sf != pane.getFont().getSize())) {
+            pane.setFont(pane.getFont().deriveFont((float) sf));
+        }
     }
 }

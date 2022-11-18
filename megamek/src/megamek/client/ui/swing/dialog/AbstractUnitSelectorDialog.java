@@ -394,8 +394,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         gridBagConstraints.gridy = 1;
         getContentPane().add(panelButtons, gridBagConstraints);
 
-        adaptToGUIScale();
-
         pack();
 
         // Escape keypress
@@ -644,7 +642,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         buttonResetSearch.setEnabled(false);
         filterUnits();
 
-        adaptToGUIScale();
+        if (visible) {
+            adaptToGUIScale();
+        }
 
         super.setVisible(visible);
     }
@@ -890,9 +890,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(splitPane, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(panelButtons, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(panePreview, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+
         tableUnits.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrollTableUnits.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
         panelFilterButtons.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(180)));
@@ -903,6 +902,5 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         techLevelScroll.setPreferredSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
         panePreview.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(180)));
         panePreview.setPreferredSize(new Dimension(300, UIUtil.scaleForGUI(180)));
-
     }
 }

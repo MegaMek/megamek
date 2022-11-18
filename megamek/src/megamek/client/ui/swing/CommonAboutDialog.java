@@ -36,7 +36,6 @@ public class CommonAboutDialog extends JDialog {
     /** We only need a single copy of the "about" title image. */
     private static Image imgTitleImage;
 
-    JPanel panelMain;
     /**
      * Get the single title image in a threadsafe way.
      * 
@@ -95,16 +94,15 @@ public class CommonAboutDialog extends JDialog {
         JButton butClose = new ButtonEsc(new CloseAction(this));
 
         // Assemble all
-        panelMain = new JPanel(new BorderLayout());
+        setLayout(new BorderLayout());
         JPanel middlePanel = new JPanel();
         middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
-        panelMain.add(panTitle, BorderLayout.PAGE_START);
+        add(panTitle, BorderLayout.PAGE_START);
         middlePanel.add(lblVersion);
         middlePanel.add(lblCopyright);
         middlePanel.add(lblAbout);
-        panelMain.add(middlePanel, BorderLayout.CENTER);
-        panelMain.add(butClose, BorderLayout.PAGE_END);
-        add(panelMain);
+        add(middlePanel, BorderLayout.CENTER);
+        add(butClose, BorderLayout.PAGE_END);
 
         adaptToGUIScale();
 
@@ -115,6 +113,6 @@ public class CommonAboutDialog extends JDialog {
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

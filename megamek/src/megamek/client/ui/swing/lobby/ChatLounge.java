@@ -3160,20 +3160,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /** Adapts the whole Lobby UI (both panels) to the current guiScale. */
     private void adaptToGUIScale() {
         updateTableHeaders();
-        setTableRowHeights();
         refreshLabels();
         refreshCamoButton();
         refreshMapButtons();
         mekModel.refreshCells();
-        panTeamOverview.adaptToGUIScale();
 
         Font scaledFont = UIUtil.getScaledFont();
 
-        UIUtil.scaleComp(panTabs, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(splitPaneMain, UIUtil.FONT_SCALE1);
         UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE2);
         UIUtil.scaleComp(butOptions, UIUtil.FONT_SCALE2);
         UIUtil.scaleComp(butAdd, UIUtil.FONT_SCALE2);
         UIUtil.scaleComp(butArmy, UIUtil.FONT_SCALE2);
+
+
+        setTableRowHeights();
 
         String searchTip = MSG_MAPSEARCHTIP + "<BR>";
         searchTip += autoTagHTMLTable();

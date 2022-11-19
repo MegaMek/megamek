@@ -511,7 +511,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         add(btnCancel, c);
 
-        adaptToGUIScale();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -890,8 +889,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         } else {
             updateMechSearchFilter();
         }
-
-        adaptToGUIScale();
 
         return mechFilter;
     }
@@ -1337,11 +1334,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        tblWeapons.getTableHeader().setFont(tblWeapons.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblWeapons.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        tblEquipment.getTableHeader().setFont(tblEquipment.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblEquipment.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
     }
 }

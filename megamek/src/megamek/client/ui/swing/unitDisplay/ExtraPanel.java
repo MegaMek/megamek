@@ -623,7 +623,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener, IPrefer
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
         scrollPane.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(100)));
         scrollPane.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(100)));
     }

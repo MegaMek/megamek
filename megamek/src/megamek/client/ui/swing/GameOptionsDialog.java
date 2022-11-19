@@ -536,7 +536,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
         List<DialogOptionComponent> comps = optionComps.computeIfAbsent(option.getName(), k -> new ArrayList<>());
         comps.add(optionComp);
 
-        UIUtil.scaleComp(optionComp, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(optionComp, UIUtil.FONT_SCALE1);
     }
 
     // Gets called when one of the option checkboxes is clicked.

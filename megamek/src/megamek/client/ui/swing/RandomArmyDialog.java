@@ -1115,13 +1115,6 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(m_pButtons, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(m_pSplit, UIUtil.FONT_SCALE1);
-        m_lArmy.getTableHeader().setFont(m_lArmy.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        m_lArmy.setRowHeight(scaleForGUI(UIUtil.FONT_SCALE1));
-        m_lUnits.getTableHeader().setFont(m_lUnits.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        m_lUnits.setRowHeight(scaleForGUI(UIUtil.FONT_SCALE1));
-        m_lRAT.getTableHeader().setFont(m_lRAT.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        m_lRAT.setRowHeight(scaleForGUI(UIUtil.FONT_SCALE1));
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

@@ -701,10 +701,10 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
                 cmdKeyMap.get(kcb.cmd).setText(KeyEvent.getKeyText(kcb.key));
             }
             markDuplicateBinds();
-            
+
+            adaptToGUIScale();
         }
 
-        adaptToGUIScale();
         super.setVisible(visible);
     }
 

@@ -33,7 +33,7 @@ import java.io.File;
 public abstract class AbstractHelpDialog extends AbstractDialog {
     //region Variable Declarations
     private String helpFilePath;
-    private JEditorPane pane;
+    JScrollPane scrollPane;
     //endregion Variable Declarations
 
     //region Constructors
@@ -56,7 +56,7 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
 
     @Override
     protected Container createCenterPane() {
-        pane = new JEditorPane();
+        JEditorPane pane = new JEditorPane();
         pane.setName("helpPane");
         pane.setEditable(false);
 
@@ -72,16 +72,14 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
             LogManager.getLogger().error("", e);
         }
 
+        scrollPane = new JScrollPane(pane);
+
         adaptToGUIScale();
 
-        return new JScrollPane(pane);
+        return new JScrollPane(scrollPane);
     }
 
     private void adaptToGUIScale() {
-        int sf = UIUtil.scaleForGUI(UIUtil.FONT_SCALE1);
-
-        if ((pane.getFont() != null) && (sf != pane.getFont().getSize())) {
-            pane.setFont(pane.getFont().deriveFont((float) sf));
-        }
+        UIUtil.adjustContainer(scrollPane, UIUtil.FONT_SCALE1);
     }
 }

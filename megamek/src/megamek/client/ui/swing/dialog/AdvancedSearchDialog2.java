@@ -38,7 +38,6 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
     private final TWAdvancedSearchPanel totalWarTab;
     private final ASAdvancedSearchPanel alphaStrikeTab = new ASAdvancedSearchPanel();
     private final JTabbedPane advancedSearchPane = new JTabbedPane();
-    private JPanel buttonPanel;
 
     public AdvancedSearchDialog2(JFrame parent, int allowedYear) {
         super(parent, true, "AdvancedSearchDialog", "AdvancedSearchDialog.title");
@@ -72,7 +71,7 @@ public class AdvancedSearchDialog2 extends AbstractButtonDialog {
 
     @Override
     protected JPanel createButtonPanel() {
-        buttonPanel = super.createButtonPanel();
+        JPanel buttonPanel = super.createButtonPanel();
         buttonPanel.setLayout(new FlowLayout());
         buttonPanel.setBorder(new EmptyBorder(5, 0, 5, 0));
         return buttonPanel;

@@ -35,7 +35,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Set;
 
-/**git
+/**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since 3/13/14 2:41 PM
  */

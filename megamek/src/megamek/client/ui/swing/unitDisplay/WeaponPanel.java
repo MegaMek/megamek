@@ -2685,7 +2685,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
         tWeaponScroll.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(200)));
         tWeaponScroll.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(200)));
     }

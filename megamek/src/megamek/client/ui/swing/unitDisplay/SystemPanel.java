@@ -843,7 +843,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(panelMain, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
         tSlotScroll.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(100)));
         tSlotScroll.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(100)));
     }

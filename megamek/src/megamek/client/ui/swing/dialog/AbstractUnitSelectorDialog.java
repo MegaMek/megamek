@@ -84,7 +84,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JTextField textFilter;
     protected EntityViewPane panePreview;
     private JSplitPane splitPane;
-    private JPanel panelButtons;
 
     private StringBuffer searchBuffer = new StringBuffer();
     private long lastSearch = 0;
@@ -378,7 +377,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         selectionPanel.add(panelSearchButtons, gridBagConstraints);
         //endregion Selection Panel
 
-        panelButtons = createButtonsPanel();
+        JPanel panelButtons = createButtonsPanel();
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
                 selectionPanel, panePreview);
@@ -891,8 +890,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-
-        tableUnits.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrollTableUnits.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
         panelFilterButtons.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(180)));
         panelFilterButtons.setPreferredSize(new Dimension(300, UIUtil.scaleForGUI(180)));

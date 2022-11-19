@@ -332,7 +332,5 @@ public class AnalyzeFormationDialog extends JDialog {
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        tblUnits.getTableHeader().setFont(tblUnits.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblUnits.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
     }
 }

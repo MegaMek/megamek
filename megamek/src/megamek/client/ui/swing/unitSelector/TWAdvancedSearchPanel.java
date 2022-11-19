@@ -1581,18 +1581,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     }
 
     public void adaptToGUIScale() {
-        tblWeaponType.getTableHeader().setFont(tblWeapons.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblWeaponType.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrTableWeaponType.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
         scrTableWeaponType.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        tblWeapons.getTableHeader().setFont(tblWeapons.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblWeapons.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
         scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        tblEquipment.getTableHeader().setFont(tblWeapons.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblEquipment.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
         scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
     }
-
 }

@@ -3165,7 +3165,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshCamoButton();
         refreshMapButtons();
         mekModel.refreshCells();
-        panTeamOverview.adaptToGUIScale();
 
         Font scaledFont = UIUtil.getScaledFont();
 

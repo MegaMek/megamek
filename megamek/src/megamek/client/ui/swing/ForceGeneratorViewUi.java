@@ -118,7 +118,7 @@ public class ForceGeneratorViewUi {
 
         forceTree = new JTree(new ForceTreeModel(null));
         forceTree.setCellRenderer(new UnitRenderer());
-        forceTree.setRowHeight(80);
+        forceTree.setRowHeight(0);
         forceTree.setVisibleRowCount(12);
         forceTree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
@@ -337,6 +337,7 @@ public class ForceGeneratorViewUi {
                     item = new JMenuItem("Export as MUL");
                     item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
+                    UIUtil.scaleMenu(menu);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
@@ -362,7 +363,7 @@ public class ForceGeneratorViewUi {
                     JMenuItem item = new JMenuItem("Remove");
                     item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
                     menu.add(item);
-
+                    UIUtil.scaleMenu(menu);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
@@ -606,8 +607,7 @@ public class ForceGeneratorViewUi {
     }
 
     private void adaptToGUIScale() {
-        tblChosen.getTableHeader().setFont(tblChosen.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblChosen.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
-        forceTree.setRowHeight(UIUtil.scaleForGUI(80));
+        UIUtil.adjustContainer(leftPanel, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(rightPanel, UIUtil.FONT_SCALE1);
     }
 }

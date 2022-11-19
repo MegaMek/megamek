@@ -26,6 +26,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -357,7 +359,30 @@ public final class UIUtil {
     public static void adjustDialog(JDialog dialog, int fontSize) {
         adjustContainer(dialog.getContentPane(), fontSize);
     }
-    
+
+    /** calculate the max row height in a table + pad */
+    private static int calRowHeights(JTable table, int sf, int pad)
+    {
+        int rowHeight = sf;
+        for (int row = 0; row < table.getRowCount(); row++)         {
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                // Consider the preferred height of the column
+                TableCellRenderer renderer = table.getCellRenderer(row, col);
+                Component comp = table.prepareRenderer(renderer, row, col);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+        }
+        // Add a little margin to the rows
+        return rowHeight + pad;
+    }
+
+    /** set font size for the TitledBorder */
+     public static void setTitledBorder(Border border, int sf) {
+        if ((border instanceof TitledBorder)) {
+            ((TitledBorder) border).setTitleFont(((TitledBorder) border).getTitleFont().deriveFont((float) sf));
+        }
+    }
+
     /** 
      * Applies the current gui scale to a given Container.
      * For a dialog, pass getContentPane(). This can work well for simple dialogs,
@@ -366,26 +391,27 @@ public final class UIUtil {
      */
     public static void adjustContainer(Container parentCon, int fontSize) {
         int sf = scaleForGUI(fontSize);
+        int pad = 3;
 
         for (Component comp: parentCon.getComponents()) {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JTextPane)
                     || (comp instanceof JToggleButton) || (comp instanceof JTable) || (comp instanceof JList)
-                    || (comp instanceof JEditorPane)) {
+                    || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
                 if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
                     comp.setFont(comp.getFont().deriveFont((float) sf));
                 }
             }
             if (comp instanceof JScrollPane 
                     && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
+                JScrollPane scrollPane = (JScrollPane) comp;
+                setTitledBorder(scrollPane.getBorder(), sf);
                 adjustContainer(((JScrollPane) comp).getViewport(), fontSize);
             } else if (comp instanceof JPanel) {
                 JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
-                if ((border instanceof TitledBorder)) {
-                    ((TitledBorder) border).setTitleFont(((TitledBorder) border).getTitleFont().deriveFont((float) sf));
-                }
+                setTitledBorder(border, sf);
 
                 if ((border instanceof EmptyBorder)) {
                     Insets i = ((EmptyBorder) border).getBorderInsets();
@@ -408,6 +434,14 @@ public final class UIUtil {
                     }
                 }
                 adjustContainer((JTabbedPane) comp, fontSize);
+            } else if (comp instanceof JTable) {
+                JTable table = (JTable) comp;
+                table.setRowHeight(calRowHeights(table, sf, pad));
+                JTableHeader header = table.getTableHeader();
+                if ((header instanceof JTableHeader)) {
+                    header.setFont(comp.getFont().deriveFont((float) sf));
+                }
+                adjustContainer((Container) comp, fontSize);
             } else if (comp instanceof Container) {
                 adjustContainer((Container) comp, fontSize);
             }

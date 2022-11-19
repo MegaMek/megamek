@@ -13,8 +13,6 @@
 */ 
 package megamek.client.ui.swing.util;
 
-import com.formdev.flatlaf.ui.FlatBorder;
-import megamek.client.bot.MoveOption;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;

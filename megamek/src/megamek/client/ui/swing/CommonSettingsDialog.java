@@ -259,7 +259,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovHighlightAlpha;
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
-    private JTabbedPane panTabs;
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
@@ -276,7 +275,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
     @Override
     protected Container createCenterPane() {
-        panTabs = new JTabbedPane();
+        JTabbedPane panTabs = new JTabbedPane();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {

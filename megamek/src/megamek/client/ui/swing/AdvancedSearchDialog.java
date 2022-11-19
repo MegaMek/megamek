@@ -355,7 +355,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         expScroller.setMaximumSize(size);
 
         // Layout
-        setLayout(new BorderLayout());
         GridBagConstraints c = new GridBagConstraints();
         setLayout(new GridBagLayout());
 
@@ -1344,6 +1343,5 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         tblEquipment.getTableHeader().setFont(tblEquipment.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
         tblEquipment.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
         scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-
     }
 }

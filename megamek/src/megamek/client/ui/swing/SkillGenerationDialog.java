@@ -124,6 +124,7 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     }
     //endregion Initialization
 
+    @Override
     protected void finalizeInitialization() throws Exception {
         super.finalizeInitialization();
         adaptToGUIScale();

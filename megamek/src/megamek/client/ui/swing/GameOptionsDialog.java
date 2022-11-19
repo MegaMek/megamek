@@ -55,8 +55,6 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     private GameOptions options;
     private boolean editable = true;
 
-    private JPanel mainPanel;
-
     /**
      * A map that maps an option to a collection of DialogOptionComponents that
      * can effect the value of this option.
@@ -135,7 +133,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
 
     @Override
     protected Container createCenterPane() {
-        mainPanel = new JPanel();
+        var mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
         mainPanel.add(panOptions);
         mainPanel.add(Box.createVerticalStrut(5));
@@ -917,8 +915,7 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
     }
 
     private void adaptToGUIScale() {
-        UIUtil.scaleComp(mainPanel, UIUtil.FONT_SCALE1);
-        UIUtil.scaleComp(panButtons, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 
     @Override

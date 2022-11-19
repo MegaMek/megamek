@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Function;
 
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
-
 /**
  * Shows a table of all units matching the chosen faction/unit type/era parameters and
  * general criteria for a formation along with data relevant to the formation constraints.
@@ -335,6 +333,6 @@ public class AnalyzeFormationDialog extends JDialog {
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
         tblUnits.getTableHeader().setFont(tblUnits.getFont().deriveFont((float) UIUtil.scaleForGUI(UIUtil.FONT_SCALE1)));
-        tblUnits.setRowHeight(scaleForGUI(UIUtil.FONT_SCALE1));
+        tblUnits.setRowHeight(UIUtil.scaleForGUI(UIUtil.FONT_SCALE1));
     }
 }

@@ -17,7 +17,6 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
-import megamek.common.Report;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.event.GameListener;
@@ -25,8 +24,6 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 
 import javax.swing.*;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -121,7 +118,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, IPrefe
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             JTextPane ta = new JTextPane();
-            setupStylesheet(ta);
+            ReportDisplay.setupStylesheet(ta);
             BASE64ToolKit toolKit = new BASE64ToolKit();
             ta.setEditorKit(toolKit);
             ta.setText("<pre>" + text + "</pre>");
@@ -132,7 +129,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, IPrefe
 
         // add the new current phase tab
         JTextPane ta = new JTextPane();
-        setupStylesheet(ta);
+        ReportDisplay.setupStylesheet(ta);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);
         ta.setText("<pre>" + currentClient.phaseReport + "</pre>");
@@ -159,12 +156,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener, IPrefe
             }
         }
     };
-  
-    public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
-        Report.setupStylesheet(styleSheet);
-    }
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
@@ -175,7 +166,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, IPrefe
                 Component pane = ((JScrollPane) cp).getViewport().getView();
                 if (pane instanceof JTextPane) {
                     JTextPane tp = (JTextPane) pane;
-                    setupStylesheet(tp);
+                    ReportDisplay.setupStylesheet(tp);
                     tp.setText(tp.getText());
                 }
             }

@@ -20,6 +20,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.swing.util.FluffImageHelper;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.Entity;
 import megamek.common.MechView;
@@ -92,12 +93,14 @@ public class MechViewPanel extends JPanel {
 
     public void setMech(Entity entity, MechView mechView) {
         txtMek.setText(mechView.getMechReadout());
+        UIUtil.scaleDocCssBody(txtMek, UIUtil.FONT_SCALE1);
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }
 
     public void setMech(Entity entity, TROView troView) {
         txtMek.setText(troView.processTemplate());
+        UIUtil.scaleDocCssBody(txtMek, UIUtil.FONT_SCALE1);
         txtMek.setCaretPosition(0);
         setFluffImage(entity);
     }

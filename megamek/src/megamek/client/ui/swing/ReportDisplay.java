@@ -347,6 +347,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     }
     private void adaptToGUIScale() {
         UIUtil.adjustContainer(panelTop, UIUtil.FONT_SCALE1);
+        UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE2);
 
         for (int i = 0; i < tabs.getTabCount(); i++) {
             Component cp = tabs.getComponentAt(i);

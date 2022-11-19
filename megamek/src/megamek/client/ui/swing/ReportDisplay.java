@@ -347,6 +347,18 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     }
     private void adaptToGUIScale() {
         UIUtil.adjustContainer(panelTop, UIUtil.FONT_SCALE1);
+
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            Component cp = tabs.getComponentAt(i);
+            if (cp instanceof JScrollPane) {
+                Component pane = ((JScrollPane) cp).getViewport().getView();
+                if (pane instanceof JTextPane) {
+                    JTextPane tp = (JTextPane) pane;
+                    setupStylesheet(tp);
+                    tp.setText(tp.getText());
+                }
+            }
+        }
     }
 
     @Override

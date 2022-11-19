@@ -47,8 +47,6 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.*;
 
-import static megamek.client.ui.swing.util.UIUtil.scaleForGUI;
-
 public class RandomArmyDialog extends JDialog implements ActionListener, TreeSelectionListener {
     private static final int TAB_BV_MATCHING       = 0;
     private static final int TAB_RAT               = 1;

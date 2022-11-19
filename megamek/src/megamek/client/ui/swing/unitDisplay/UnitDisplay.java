@@ -18,6 +18,7 @@ import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.UnitDisplayOrderPreferences;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -41,13 +42,12 @@ public class UnitDisplay extends JPanel {
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
     private JButton butSwitchView;
-    private JPanel mPanP;
-    private JPanel pPanP;
-    private JPanel aPanP;
-    private JPanel wPanP;
-    private JPanel sPanP;
-    private JPanel ePanP;
-    private JScrollPane pPanSP;
+    private JPanel panA1;
+    private JPanel panA2;
+    private JPanel panB1;
+    private JPanel panB2;
+    private JPanel panC1;
+    private JPanel panC2;
     private JSplitPane splitABC;
     private JSplitPane splitBC;
     private JSplitPane splitA1;
@@ -64,6 +64,27 @@ public class UnitDisplay extends JPanel {
     private ClientGUI clientgui;
     private Entity currentlyDisplaying;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
+
+    public static final String NON_TABBED_GENERAL = "General";
+    public static final String NON_TABBED_PILOT = "Pilot";
+    public static final String NON_TABBED_ARMOR = "Armor";
+    public static final String NON_TABBED_WEAPON = "Weapon";
+    public static final String NON_TABBED_SYSTEM = "System";
+    public static final String NON_TABBED_EXTRA = "Extra";
+
+    public static final String NON_TABBED_A1 = "NonTabbedA1";
+    public static final String NON_TABBED_A2 = "NonTabbedA2";
+    public static final String NON_TABBED_B1 = "NonTabbedB1";
+    public static final String NON_TABBED_B2 = "NonTabbedB2";
+    public static final String NON_TABBED_C1 = "NonTabbedC1";
+    public static final String NON_TABBED_C2 = "NonTabbedC2";
+
+    public static final int NON_TABBED_ZERO_INDEX = 0;
+    public static final int NON_TABBED_ONE_INDEX = 1;
+    public static final int NON_TABBED_TWO_INDEX = 2;
+    public static final int NON_TABBED_THREE_INDEX = 3;
+    public static final int NON_TABBED_FOUR_INDEX = 4;
+    public static final int NON_TABBED_FIVE_INDEX = 5;
 
     /**
      * Creates and lays out a new mech display.
@@ -112,13 +133,12 @@ public class UnitDisplay extends JPanel {
             registerKeyboardCommands(this, controller);
         }
 
-        mPanP = new JPanel(new BorderLayout());
-        pPanP = new JPanel(new BorderLayout());
-        aPanP = new JPanel(new BorderLayout());
-        wPanP = new JPanel(new BorderLayout());
-        sPanP = new JPanel(new BorderLayout());
-        ePanP = new JPanel(new BorderLayout());
-        pPanSP = new JScrollPane(pPanP, 20, 30);
+        panA1 = new JPanel(new BorderLayout());
+        panA2 = new JPanel(new BorderLayout());
+        panB1 = new JPanel(new BorderLayout());
+        panB2 = new JPanel(new BorderLayout());
+        panC1 = new JPanel(new BorderLayout());
+        panC2 = new JPanel(new BorderLayout());
         splitABC = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitBC = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitA1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -142,12 +162,12 @@ public class UnitDisplay extends JPanel {
         splitB1.setResizeWeight(0.6);
         splitC1.setResizeWeight(0.6);
 
-        splitB1.setTopComponent(wPanP);
-        splitB1.setBottomComponent(sPanP);
-        splitA1.setTopComponent(mPanP);
-        splitA1.setBottomComponent(pPanSP);
-        splitC1.setTopComponent(ePanP);
-        splitC1.setBottomComponent(aPanP);
+        splitB1.setTopComponent(panB1);
+        splitB1.setBottomComponent(panB2);
+        splitA1.setTopComponent(panA1);
+        splitA1.setBottomComponent(panA2);
+        splitC1.setTopComponent(panC1);
+        splitC1.setBottomComponent(panC2);
         splitBC.setLeftComponent(splitB1);
         splitBC.setRightComponent(splitC1);
         splitABC.setLeftComponent(splitA1);
@@ -173,14 +193,26 @@ public class UnitDisplay extends JPanel {
         butSwitchView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!(GUIPreferences.getInstance().getDisplayStartTabbed())) {
-                    setDisplayTabbed();
+                if (clientgui != null) {
+                    if (!(GUIPreferences.getInstance().getDisplayStartTabbed())) {
+                        saveSplitterLoc();
+                        GUIPreferences.getInstance().setDisplayNontabbedPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
+                        GUIPreferences.getInstance().setDisplayNontabbedPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
+                        GUIPreferences.getInstance().setDisplayNonTabbedSizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
+                        GUIPreferences.getInstance().setDisplayNonTabbedSizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
+                        clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayPosX(), GUIPreferences.getInstance().getDisplayPosY());
+                        clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplaySizeWidth(), GUIPreferences.getInstance().getDisplaySizeHeight());
+                        setDisplayTabbed();
+                    } else {
+                        GUIPreferences.getInstance().setDisplayPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
+                        GUIPreferences.getInstance().setDisplayPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
+                        GUIPreferences.getInstance().setDisplaySizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
+                        GUIPreferences.getInstance().setDisplaySizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
+                        clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayNontabbedPosX(), GUIPreferences.getInstance().getDisplayNontabbedPosY());
+                        clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplayNonTabbedSizeWidth(), GUIPreferences.getInstance().getDisplayNonTabbedSizeHeight());
+                        setDisplayNonTabbed();
+                    }
                 }
-                else {
-                    setDisplayNonTabbed();
-                }
-
-                displayP.revalidate();
             }
         });
 
@@ -197,15 +229,16 @@ public class UnitDisplay extends JPanel {
      *
      */
     private void setDisplayTabbed() {
+
         tabStrip.setVisible(true);
 
         displayP.removeAll();
-        mPanP.removeAll();
-        pPanP.removeAll();
-        aPanP.removeAll();
-        wPanP.removeAll();
-        sPanP.removeAll();
-        ePanP.removeAll();
+        panA1.removeAll();
+        panA2.removeAll();
+        panB1.removeAll();
+        panB2.removeAll();
+        panC1.removeAll();
+        panC2.removeAll();
 
         displayP.add(MechPanelTabStrip.SUMMARY, mPan);
         displayP.add(MechPanelTabStrip.PILOT, pPan);
@@ -216,6 +249,9 @@ public class UnitDisplay extends JPanel {
 
         tabStrip.setTab(MechPanelTabStrip.SUMMARY_INDEX);
 
+        displayP.revalidate();
+        displayP.repaint();
+
         GUIPreferences.getInstance().setDisplayStartTabbed(true);
     }
 
@@ -223,10 +259,16 @@ public class UnitDisplay extends JPanel {
      * switch display to the non tabbed version
      *
      */
-    private void setDisplayNonTabbed() {
+    public void setDisplayNonTabbed() {
         tabStrip.setVisible(false);
 
         displayP.removeAll();
+        panA1.removeAll();
+        panA2.removeAll();
+        panB1.removeAll();
+        panB2.removeAll();
+        panC1.removeAll();
+        panC2.removeAll();
 
         mPan.setVisible(true);
         pPan.setVisible(true);
@@ -235,18 +277,22 @@ public class UnitDisplay extends JPanel {
         sPan.setVisible(true);
         ePan.setVisible(true);
 
-        mPanP.add(mPan, BorderLayout.CENTER);
-        pPanP.add(pPan, BorderLayout.PAGE_START);
-        aPanP.add(aPan, BorderLayout.CENTER);
-        wPanP.add(wPan, BorderLayout.CENTER);
-        sPanP.add(sPan, BorderLayout.CENTER);
-        ePanP.add(ePan, BorderLayout.CENTER);
+        linkParentChild(UnitDisplay.NON_TABBED_A1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
+        linkParentChild(UnitDisplay.NON_TABBED_B1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
+        linkParentChild(UnitDisplay.NON_TABBED_C1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
+        linkParentChild(UnitDisplay.NON_TABBED_A2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
+        linkParentChild(UnitDisplay.NON_TABBED_B2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
+        linkParentChild(UnitDisplay.NON_TABBED_C2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
+
         displayP.add(splitABC);
+
+        displayP.revalidate();
+        displayP.repaint();
 
         GUIPreferences.getInstance().setDisplayStartTabbed(false);
     }
 
-    /*
+    /**
     * Save splitter locations to preferences
     *
     */
@@ -256,6 +302,60 @@ public class UnitDisplay extends JPanel {
         GUIPreferences.getInstance().setDisplaySplitA1Loc(splitA1.getDividerLocation());
         GUIPreferences.getInstance().setDisplaySplitB1Loc(splitB1.getDividerLocation());
         GUIPreferences.getInstance().setDisplaySplitC2Loc(splitC1.getDividerLocation());
+    }
+
+    /**
+     * connect parent to child panel
+     *
+     */
+    private void linkParentChild(String t, String v) {
+        switch (t) {
+            case UnitDisplay.NON_TABBED_A1:
+                addChildPanel(panA1, v);
+                break;
+            case UnitDisplay.NON_TABBED_A2:
+                addChildPanel(panA2, v);
+                break;
+            case UnitDisplay.NON_TABBED_B1:
+                addChildPanel(panB1, v);
+                break;
+            case UnitDisplay.NON_TABBED_B2:
+                addChildPanel(panB2, v);
+                break;
+            case UnitDisplay.NON_TABBED_C1:
+                addChildPanel(panC1, v);
+                break;
+            case UnitDisplay.NON_TABBED_C2:
+                addChildPanel(panC2, v);
+                break;
+        }
+    }
+
+    /**
+     * add child panel to parent
+     *
+     */
+    private void addChildPanel(JPanel p, String v) {
+        switch (v) {
+            case UnitDisplay.NON_TABBED_GENERAL:
+                p.add(mPan, BorderLayout.CENTER);
+                break;
+            case UnitDisplay.NON_TABBED_PILOT:
+                p.add(pPan, BorderLayout.CENTER);
+                break;
+            case UnitDisplay.NON_TABBED_WEAPON:
+                p.add(wPan, BorderLayout.CENTER);
+                break;
+            case UnitDisplay.NON_TABBED_SYSTEM:
+                p.add(sPan, BorderLayout.CENTER);
+                break;
+            case UnitDisplay.NON_TABBED_EXTRA:
+                p.add(ePan, BorderLayout.CENTER);
+                break;
+            case UnitDisplay.NON_TABBED_ARMOR:
+                p.add(aPan, BorderLayout.CENTER);
+                break;
+        }
     }
 
     /**

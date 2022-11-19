@@ -110,6 +110,8 @@ public class ASSpecialAbilityConverter {
         MiscType miscType = (MiscType) misc.getType();
         if (miscType.isAnyOf(Sensor.BAP, Sensor.BAPP, Sensor.CLAN_AP)) {
             assign(misc, PRB);
+        } else if (miscType.isAnyOf(Sensor.CLIMPROVED, Sensor.ISIMPROVED)) {
+            assign(misc, RCN);
         } else if (miscType.isAnyOf(Sensor.LIGHT_AP, Sensor.ISBALIGHT_AP, Sensor.EW_EQUIPMENT)) {
             assign(misc, LPRB);
         } else if (miscType.isAnyOf(Sensor.BLOODHOUND)) {
@@ -191,6 +193,9 @@ public class ASSpecialAbilityConverter {
                     | S_BUZZSAW | S_RETRACTABLE_BLADE)) != 0) {
                 assign(misc, SAW);
             }
+            if (miscType.isShield()) {
+                assign(misc, SHLD);
+            }
         } else if (miscType.hasFlag(F_SPIKES)) {
             assign(misc, MEL);
         } else if (miscType.hasFlag(F_FIRE_RESISTANT)) {
@@ -229,8 +234,6 @@ public class ASSpecialAbilityConverter {
             assign(misc, BHJ2);
         } else if (miscType.hasFlag(F_HARJEL_III)) {
             assign(misc, BHJ3);
-        } else if (miscType.isShield()) {
-            assign(misc, SHLD);
         } else if (miscType.hasFlag(F_INDUSTRIAL_TSM)) {
             assign(misc, ITSM);
         } else if (miscType.hasFlag(F_TSM)) {
@@ -240,7 +243,6 @@ public class ASSpecialAbilityConverter {
         } else if (miscType.hasFlag(F_NULLSIG)
                 || miscType.hasFlag(F_CHAMELEON_SHIELD)) {
             assign(misc, STL);
-            assign(misc, ECM);
         } else if (miscType.hasFlag(F_UMU)) {
             assign(misc, UMU);
         } else if (miscType.hasFlag(F_EW_EQUIPMENT)) {
@@ -302,10 +304,6 @@ public class ASSpecialAbilityConverter {
             assign("Trailer Hitch Quirk", HTC);
         }
 
-        if (entity.isOmni()) {
-            assign("Omni Unit", OMNI);
-        }
-
         if ((entity.getBARRating(0) >= 1) && (entity.getBARRating(0) <= 9)) {
             assign("BAR Rating " + entity.getBARRating(0), BAR);
         }
@@ -345,9 +343,11 @@ public class ASSpecialAbilityConverter {
                     assign(armorType, IRA);
                     break;
                 case EquipmentType.T_ARMOR_REACTIVE:
+                case EquipmentType.T_ARMOR_BA_REACTIVE:
                     assign(armorType, RCA);
                     break;
                 case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_BA_REFLECTIVE:
                     assign(armorType, RFA);
                     break;
             }
@@ -362,9 +362,9 @@ public class ASSpecialAbilityConverter {
             }
         }
 
-        if (element.getMovementModes().contains("j") && element.getMovementModes().contains("")) {
+        if (element.getMovementModes().contains("j") && !element.getPrimaryMovementMode().equals("j")) {
             int jumpTMM = ASConverter.tmmForMovement(element.getMovement("j"));
-            int walkTMM = ASConverter.tmmForMovement(element.getMovement(""));
+            int walkTMM = ASConverter.tmmForMovement(element.getPrimaryMovementValue());
             if (jumpTMM > walkTMM) {
                 assign("Strong Jumper", JMPS, jumpTMM - walkTMM);
             } else if (jumpTMM < walkTMM) {
@@ -372,9 +372,9 @@ public class ASSpecialAbilityConverter {
             }
         }
 
-        if (element.getMovementModes().contains("s") && element.getMovementModes().contains("")) {
+        if (element.getMovementModes().contains("s") && !element.getPrimaryMovementMode().equals("s")) {
             int umuTMM = ASConverter.tmmForMovement(element.getMovement("s"));
-            int walkTMM = ASConverter.tmmForMovement(element.getMovement(""));
+            int walkTMM = ASConverter.tmmForMovement(element.getPrimaryMovementValue());
             if (umuTMM > walkTMM) {
                 assign("Strong UMU", SUBS, umuTMM - walkTMM);
             } else if (umuTMM < walkTMM) {
@@ -388,6 +388,16 @@ public class ASSpecialAbilityConverter {
 
         if (AlphaStrikeHelper.hasAutoSeal(element)) {
             assign("Sealed", SEAL);
+        }
+
+        if (element.isSupportVehicle()) {
+            if (element.getSize() == 3) {
+                assign("SIZE 3", LG);
+            } else if (element.getSize() == 4) {
+                assign("SIZE 4", VLG);
+            } else if (element.getSize() == 5) {
+                assign("SIZE 5", SLG);
+            }
         }
     }
 

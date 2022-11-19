@@ -150,3 +150,21 @@ Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Pouncer was originally a testbed design that was upgraded to combat specifications on the orders of then ilKhan Ulric Kerensky, as it was realized that a more mobile 'Mech was needed when combating Inner Sphere forces.
+
+capabilities:Overall, the Pouncer is an excellent OmniMech with 15.5 tons of pod space, allowing it to carry a wide variety of weapons payloads.
+
+deployment:Configured around the new Advanced Tactical Missile system, the E configuration carries as its primary weapons a pair of ATM-9 launchers. These launchers can fire specialized munitions that increase in damage potential as the ranges close. The ATM launchers are supported in short range combat by an ER medium laser and two ER micro lasers.
+
+history:The Pouncer is built on a lightweight DSAM Endo 4 endo steel chassis and is powered by a 240-rated XL engine which gives it a maximum speed of 97.2 km/h. The 'Mech's mobility is enhanced with five Grandthrust Mk. Four jump jets that allow it to jump up to 150 meters. For protection from enemy fire, the 
+Pouncer has a respectable six tons of Forging ZM15 ferro-fibrous armor. The last of the Nova factories on Tokasha were later retooled to create Pouncers after the Wars of Reaving.
+
+manufacturer:WC Primary Facility 5,Manufacturing Plant SFF-TW2
+primaryfactory:Tiber (Clan),CSF Titanic Mobile Production Facility
+systemmanufacturer:CHASSIS:DSAM Endo 4
+systemmanufacturer:ENGINE:Fusion 240 XL
+systemmanufacturer:ARMOR:Forging ZM15 Ferro-Fibrous
+systemmanufacturer:JUMPJET:Grandthrust Mk. 4
+systemmanufacturer:COMMUNICATIONS:Megaband System 21
+systemmanufacturer:TARGETING:Dtrac Suite 4

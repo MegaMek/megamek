@@ -78,8 +78,8 @@ public class ASLocationMapper {
             return getAeroLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof BattleArmor) {
             // A few weapons (e.g. Narc) are present in the weapon list for every trooper, count only the first (loc = 1)
-            // Weapons in location 0 (Squad/Point) can all be counted
-            return (mount.getLocation() <= 1) ? 1 : 0;
+            // Don't count squad support weapons, these are handled separately
+            return ((mount.getLocation() <= 1) && !mount.isSquadSupportWeapon()) ? 1 : 0;
         } else if (en instanceof Infantry) {
             return (loc == mount.getLocation()) ? 1 : 0;
         } else if (en instanceof TripodMech) {

@@ -116,6 +116,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         lblLastTarget.setForeground(Color.WHITE);
         lblLastTarget.setOpaque(false);
         lastTargetR = new JTextArea("", 4, 25);
+        lastTargetR.setLineWrap(true);
+        lastTargetR.setWrapStyleWord(true);
         lastTargetR.setEditable(false);
         lastTargetR.setOpaque(false);
         lastTargetR.setForeground(Color.WHITE);
@@ -523,8 +525,9 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         refreshSensorChoices(en);
 
         if (null != en.getActiveSensor()) {
-            curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" ")
-                    .concat(en.getSensorDesc()));
+            String tmpStr = Messages.getString("MechDisplay.CurrentSensors") + " " + en.getSensorDesc();
+            tmpStr = String.format("<html><div WIDTH=%d>%s</div></html>",  250, tmpStr);
+            curSensorsL.setText(tmpStr);
         } else {
             curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors")).concat(" "));
         }

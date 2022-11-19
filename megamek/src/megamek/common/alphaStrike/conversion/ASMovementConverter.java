@@ -73,9 +73,9 @@ final class ASMovementConverter {
         double walkMP = entity.getOriginalWalkMP();
         report.addLine("Base Walking MP", "", Integer.toString(entity.getOriginalWalkMP()));
 
-        int jumpMove = entity.getJumpMP() * 2;
+        int jumpMove = entity.getJumpMP(false) * 2;
         if (entity instanceof Mech) {
-            jumpMove = ((Mech) entity).getJumpMP(false, true) * 2;
+            jumpMove = ((Mech) entity).getJumpMP(false, false) * 2;
         }
 
         if (hasSupercharger(entity) && hasMechMASC(entity)) {
@@ -125,10 +125,6 @@ final class ASMovementConverter {
             }
         }
 
-        if ((entity instanceof Protomech) && ((Protomech) entity).isGlider()) {
-            result.put("", 2);
-            report.addLine("ProtoMek Glider Movement", "2\"");
-        }
         addUMUMovement(result, conversionData);
         return result;
     }
@@ -294,6 +290,9 @@ final class ASMovementConverter {
     static int convertTMM(ASConverter.ConversionData conversionData) {
         CalculationReport report = conversionData.conversionReport;
         AlphaStrikeElement element = conversionData.element;
+        if (element.isAerospace()) {
+            return 0;
+        }
 
         int base = element.getPrimaryMovementValue();
         if (element.isInfantry()) {

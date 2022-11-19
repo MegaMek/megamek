@@ -65,6 +65,16 @@ class PilotPanel extends PicMap {
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(0,0);
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return new Dimension(0,0);
+    }
+
+    @Override
     public void addNotify() {
         super.addNotify();
         update();

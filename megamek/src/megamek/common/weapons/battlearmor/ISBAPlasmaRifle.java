@@ -15,6 +15,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -51,5 +52,10 @@ public class ISBAPlasmaRifle extends Weapon {
                 .setISApproximate(true, false, false, false, false)
                 .setPrototypeFactions(F_CC)
                 .setProductionFactions(F_CC);
+    }
+
+    @Override
+    public int getAlphaStrikeHeatDamage(int rangeband) {
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 2 : 0;
     }
 }

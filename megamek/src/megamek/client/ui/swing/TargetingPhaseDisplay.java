@@ -18,6 +18,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.FiringDisplay.FiringCommand;
+import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
@@ -971,8 +972,9 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                         target.getTargetId(), weaponId, clientgui.getClient().getGame());
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
             }
-            
-            clientgui.getUnitDisplay().wPan.wTargetR.setText(target.getDisplayName());
+
+            String t =  String.format("<html><div WIDTH=%d>%s</div></html>", WeaponPanel.TARGET_DISPLAY_WIDTH, target.getDisplayName());
+            clientgui.getUnitDisplay().wPan.wTargetR.setText(t);
             clientgui.getUnitDisplay().wPan.wRangeR.setText(String.format("%d %s", targetDistance, flightTimeText));
             
             Game game = clientgui.getClient().getGame();

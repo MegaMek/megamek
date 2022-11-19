@@ -145,6 +145,7 @@ public class SummaryPanel extends PicMap {
                 bv.appendTerrainTooltip(hexTxt, mhex);
                 bv.appendBuildingsTooltip(hexTxt, mhex);
             }
+            hexTxt.append(PilotToolTip.getCrewAdvs(entity, true));
             unitInfo.setText(HTML_BEGIN + padLeft(hexTxt.toString()) + HTML_END);
         }
         unitInfo.setOpaque(false);

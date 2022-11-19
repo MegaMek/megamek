@@ -69,8 +69,13 @@ public final class PilotToolTip {
         result.append(crewInfoCell(entity));
 
         result.append(TABLE_END);
+        result.append(scaledHTMLSpacer(3));
+        return result;
+    }
 
-        // The crew advantages and MD
+    /** The crew advantages and MD */
+    public static StringBuilder getCrewAdvs(Entity entity, boolean detailed) {
+        StringBuilder result = new StringBuilder();
         result.append(scaledHTMLSpacer(3));
         result.append(crewAdvs(entity, detailed));
         return result;

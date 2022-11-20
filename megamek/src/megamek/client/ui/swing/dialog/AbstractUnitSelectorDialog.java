@@ -177,6 +177,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         //region Unit Preview Pane
         panePreview = new EntityViewPane(frame, null);
+        panePreview.setMinimumSize(new Dimension(0,0));
+        panePreview.setPreferredSize(new Dimension(0,0));
         //endregion Unit Preview Pane
 
         //region Selection Panel
@@ -222,8 +224,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
-        scrollTableUnits.setMinimumSize(new Dimension(500, 400));
-        scrollTableUnits.setPreferredSize(new Dimension(500, 400));
+        scrollTableUnits.setMinimumSize(new Dimension(800, 400));
+        scrollTableUnits.setPreferredSize(new Dimension(800, 400));
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -890,14 +892,11 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        scrollTableUnits.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
         panelFilterButtons.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(180)));
         panelFilterButtons.setPreferredSize(new Dimension(300, UIUtil.scaleForGUI(180)));
         textFilter.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(100)));
         textFilter.setPreferredSize(new Dimension(300, UIUtil.scaleForGUI(100)));
         techLevelScroll.setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
         techLevelScroll.setPreferredSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
-        panePreview.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(180)));
-        panePreview.setPreferredSize(new Dimension(300, UIUtil.scaleForGUI(180)));
     }
 }

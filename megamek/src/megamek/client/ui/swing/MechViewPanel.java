@@ -57,7 +57,8 @@ public class MechViewPanel extends JPanel {
         ReportDisplay.setupStylesheet(txtMek);
         txtMek.setEditable(false);
         txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
-        txtMek.setPreferredSize(new Dimension(width, height));
+        txtMek.setPreferredSize(new Dimension(UIUtil.scaleForGUI(width), height));
+        txtMek.setMinimumSize(new Dimension(UIUtil.scaleForGUI(width), height));
         txtMek.addHyperlinkListener(e -> {
             try {
                 if (HyperlinkEvent.EventType.ACTIVATED == e.getEventType()) {
@@ -75,14 +76,12 @@ public class MechViewPanel extends JPanel {
             scrMek.setBorder(null);
         }
         scrMek.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        scrMek.setPreferredSize(new Dimension(width, height));
-        scrMek.setMinimumSize(new Dimension(width, height));
 
-        var textPanel = new FixedXPanel(new GridLayout(1, 1));
-        textPanel.add(scrMek);
+        var textPanel = new FixedXPanel(new BorderLayout());
+        textPanel.add(scrMek, BorderLayout.CENTER);
 
-        var fluffPanel = new FixedXPanel();
-        fluffPanel.add(lblMek);
+        var fluffPanel = new FixedXPanel(new BorderLayout());
+        fluffPanel.add(lblMek, BorderLayout.CENTER);
 
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         add(textPanel);

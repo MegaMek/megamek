@@ -18,7 +18,10 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -28,7 +31,7 @@ import java.awt.event.*;
 /**
  * @author Ken Nguyen (kenn)
  */
-public class Ruler extends JDialog implements BoardViewListener {
+public class Ruler extends JDialog implements BoardViewListener, IPreferenceChangeListener {
     private static final long serialVersionUID = -4820402626782115601L;
     public static Color color1 = Color.cyan;
     public static Color color2 = Color.magenta;
@@ -92,7 +95,7 @@ public class Ruler extends JDialog implements BoardViewListener {
         buttonPanel = new JPanel();
         butFlip.setText(Messages.getString("Ruler.flip"));
         butFlip.addActionListener(e -> butFlip_actionPerformed());
-        getContentPane().setLayout(gridBagLayout1);
+        JPanel panelMain = new JPanel(gridBagLayout1);
         jLabel1 = new JLabel(Messages.getString("Ruler.Start"), SwingConstants.RIGHT);
         tf_start.setEditable(false);
         tf_start.setColumns(16);
@@ -136,16 +139,6 @@ public class Ruler extends JDialog implements BoardViewListener {
         height2.setColumns(5);
         cboIsMech2.addItemListener(e -> checkBoxSelectionChanged());
         
-        //need to set all the minimum sizes to prevent jtextfield going to zero size
-        //on dialog resize.setColumns(16);
-        tf_start.setMinimumSize(tf_start.getPreferredSize());
-        tf_end.setMinimumSize(tf_end.getPreferredSize());
-        height1.setMinimumSize(height1.getPreferredSize());
-        height2.setMinimumSize(height2.getPreferredSize());
-        tf_distance.setMinimumSize(tf_distance.getPreferredSize());
-        tf_los1.setMinimumSize(tf_los1.getPreferredSize());
-        tf_los2.setMinimumSize(tf_los2.getPreferredSize());
-
         GridBagConstraints c = new GridBagConstraints();
         
         c.anchor = GridBagConstraints.EAST;
@@ -153,88 +146,88 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.gridx = 0;
         c.gridy = 0;
         gridBagLayout1.setConstraints(heightLabel1, c);
-        getContentPane().add(heightLabel1);  
+        panelMain.add(heightLabel1);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         gridBagLayout1.setConstraints(height1, c);
-        getContentPane().add(height1);
+        panelMain.add(height1);
         c.gridx = 2;
         gridBagLayout1.setConstraints(cboIsMech1, c);
-        getContentPane().add(cboIsMech1);
+        panelMain.add(cboIsMech1);
 
         c.gridx = 0;
         c.gridy = 1;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(heightLabel2, c);
-        getContentPane().add(heightLabel2);    
+        panelMain.add(heightLabel2);
         c.anchor = GridBagConstraints.WEST;   
         c.gridx = 1;
         gridBagLayout1.setConstraints(height2, c);
-        getContentPane().add(height2);
+        panelMain.add(height2);
         c.gridx = 2;
         gridBagLayout1.setConstraints(cboIsMech2, c);
-        getContentPane().add(cboIsMech2);
+        panelMain.add(cboIsMech2);
         
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel1, c);
-        getContentPane().add(jLabel1); 
+        panelMain.add(jLabel1);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         c.gridwidth = 2;
         gridBagLayout1.setConstraints(tf_start, c);
         c.gridwidth = 1;
-        getContentPane().add(tf_start);
+        panelMain.add(tf_start);
 
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel2, c);
-        getContentPane().add(jLabel2); 
+        panelMain.add(jLabel2);
         c.anchor = GridBagConstraints.WEST;
         c.gridwidth = 2;
         c.gridx = 1;        
         gridBagLayout1.setConstraints(tf_end, c);
         c.gridwidth = 1;
-        getContentPane().add(tf_end);
+        panelMain.add(tf_end);
 
         c.gridx = 0;
         c.gridy = 4;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel3, c);
-        getContentPane().add(jLabel3); 
+        panelMain.add(jLabel3);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         gridBagLayout1.setConstraints(tf_distance, c);
-        getContentPane().add(tf_distance);
+        panelMain.add(tf_distance);
 
         c.gridx = 0;
         c.gridy = 5;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel4, c);
-        getContentPane().add(jLabel4); 
+        panelMain.add(jLabel4);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = 2;
         gridBagLayout1.setConstraints(tf_los1, c);
         c.gridwidth = 1;
-        getContentPane().add(tf_los1);
+        panelMain.add(tf_los1);
 
         c.gridx = 0;
         c.gridy = 6;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.EAST;
         gridBagLayout1.setConstraints(jLabel5, c);
-        getContentPane().add(jLabel5); 
+        panelMain.add(jLabel5);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridwidth = 2;
         gridBagLayout1.setConstraints(tf_los2, c);
         c.gridwidth = 1;
-        getContentPane().add(tf_los2);
+        panelMain.add(tf_los2);
 
         buttonPanel.add(butFlip);
         buttonPanel.add(butClose);
@@ -244,9 +237,16 @@ public class Ruler extends JDialog implements BoardViewListener {
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.CENTER;
         gridBagLayout1.setConstraints(buttonPanel, c);
-        getContentPane().add(buttonPanel);
+        panelMain.add(buttonPanel);
+
+        JScrollPane sp = new JScrollPane(panelMain);
+        setLayout(new BorderLayout());
+        add(sp);
 
         validate();
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         setVisible(false);
     }
@@ -468,5 +468,16 @@ public class Ruler extends JDialog implements BoardViewListener {
     @Override
     public void unitSelected(BoardViewEvent b) {
         //ignored
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
     }
 }

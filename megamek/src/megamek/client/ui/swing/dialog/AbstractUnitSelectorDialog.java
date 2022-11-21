@@ -223,6 +223,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
+
+        gridBagConstraints.insets = new Insets(5, 0, 0, 0);
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -235,6 +237,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
         labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
+        gridBagConstraintsWest.insets = new Insets(5, 0, 0, 0);
         gridBagConstraintsWest.gridx = 0;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(labelType, gridBagConstraintsWest);
@@ -305,7 +308,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         });
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 3;
+        gridBagConstraintsWest.fill = GridBagConstraints.HORIZONTAL;
         panelFilterButtons.add(textFilter, gridBagConstraintsWest);
+        gridBagConstraintsWest.fill = GridBagConstraints.NONE;
 
         JLabel labelFilter = new JLabel(Messages.getString("MechSelectorDialog.m_labelFilter"));
         labelFilter.setName("labelFilter");

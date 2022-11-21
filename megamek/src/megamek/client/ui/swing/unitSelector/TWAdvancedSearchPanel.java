@@ -230,14 +230,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponTypesSorter = new TableRowSorter<>(weaponTypesModel);
         tblWeaponType.setRowSorter(weaponTypesSorter);
         tblWeaponType.addKeyListener(this);
-        for (int i = 0; i < WeaponClassTableModel.N_COL; i++) {
-            TableColumn column = tblWeaponType.getColumnModel().getColumn(i);
-            if ((i == WeaponClassTableModel.COL_QTY)) {
-                column.setPreferredWidth(40);
-            } else {
-                column.setPreferredWidth(310);
-            }
-        }
+
         tblWeaponType.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblWeaponType.getSelectionModel().addListSelectionListener(this);
         scrTableWeaponType.setViewportView(tblWeaponType);
@@ -253,20 +246,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponsSorter = new TableRowSorter<>(weaponsModel);
         tblWeapons.setRowSorter(weaponsSorter);
         tblWeapons.addKeyListener(this);
-        for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
-            TableColumn column = tblWeapons.getColumnModel().getColumn(i);
-            if (i == WeaponsTableModel.COL_QTY) {
-                column.setPreferredWidth(40);
-            } else if (i == WeaponsTableModel.COL_IS_CLAN) {
-                column.setPreferredWidth(75);
-            } else if (i == WeaponsTableModel.COL_NAME) {
-                column.setPreferredWidth(310);
-            } else if (i == WeaponsTableModel.COL_LEVEL) {
-                column.setPreferredWidth(100);
-            } else {
-                column.setPreferredWidth(50);
-            }
-        }
+
         tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
         scrTableWeapons.setViewportView(tblWeapons);
@@ -282,20 +262,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         equipmentSorter = new TableRowSorter<>(equipmentModel);
         tblEquipment.setRowSorter(equipmentSorter);
         tblEquipment.addKeyListener(this);
-        for (int i = 0; i < EquipmentTableModel.N_COL; i++) {
-            TableColumn column = tblEquipment.getColumnModel().getColumn(i);
-            if (i == EquipmentTableModel.COL_NAME) {
-                column.setPreferredWidth(400);
-            } else if (i == EquipmentTableModel.COL_COST) {
-                column.setPreferredWidth(175);
-            } else if (i == EquipmentTableModel.COL_LEVEL) {
-                column.setPreferredWidth(100);
-            } else if (i == EquipmentTableModel.COL_QTY) {
-                column.setPreferredWidth(40);
-            } else {
-                column.setPreferredWidth(75);
-            }
-        }
+
         tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
         scrTableEquipment.setViewportView(tblEquipment);
@@ -329,6 +296,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         setLayout(new GridBagLayout());
 
         c.weighty = 0;
+        c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
@@ -342,14 +310,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(panWalk, c);
         c.gridx = 3; c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
-        c.weighty = 0;
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel();
         cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
         this.add(cockpitPanel, c);
-        c.weighty = 0;
 
         c.gridx = 0; c.gridy = 1;
         c.anchor = GridBagConstraints.WEST;
@@ -364,15 +330,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(panJump, c);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
-        c.weighty = 0;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
         internalsPanel.add(cboInternalsType,BorderLayout.EAST);
         this.add(internalsPanel, c);
-        c.weighty = 0;
-        c.insets = new Insets(0, 0, 0, 0);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
@@ -382,17 +345,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 1;
         this.add(cArmor, c);
         c.gridx = 3;
-        c.weighty = 0;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);
         armorPanel.add(cboArmorType,BorderLayout.EAST);
         this.add(armorPanel, c);
-        c.weighty = 0;
 
         c.anchor = GridBagConstraints.CENTER;
-
         c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblTableFilters, c);
@@ -413,34 +373,37 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 0; c.gridy++;
         this.add(lblWeaponClass, c);
 
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridwidth = 4;
+        c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeaponType, c);
         c.gridwidth = 1;
 
+        c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblWeapons, c);
 
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridwidth = 4;
+        c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeapons, c);
-        c.gridwidth = 1;
 
+        c.fill = GridBagConstraints.NONE;
         c.gridwidth = 1;
         c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblEquipment, c);
 
-
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridwidth = 4;
+        c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableEquipment, c);
-        c.gridwidth = 1;
 
+        c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
         JPanel btnPanel = new JPanel();
@@ -457,9 +420,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         // Filter Expression
         c.gridx = 0; c.gridy++;
         this.add(lblEqExpTxt, c);
-        c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 4;
         c.gridx = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
         this.add(expScroller, c);
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
@@ -1569,11 +1532,50 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     }
 
     public void adaptToGUIScale() {
-        scrTableWeaponType.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
-        scrTableWeaponType.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
-        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(100)));
-        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
+        scrTableWeaponType.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+        scrTableWeaponType.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(350)));
+        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(350)));
+        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+
+        for (int i = 0; i < WeaponClassTableModel.N_COL; i++) {
+            TableColumn column = tblWeaponType.getColumnModel().getColumn(i);
+            if ((i == WeaponClassTableModel.COL_QTY)) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(40));
+            } else {
+                column.setPreferredWidth(UIUtil.scaleForGUI(310));
+            }
+        }
+
+        for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
+            TableColumn column = tblWeapons.getColumnModel().getColumn(i);
+            if (i == WeaponsTableModel.COL_QTY) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(40));
+            } else if (i == WeaponsTableModel.COL_IS_CLAN) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(75));
+            } else if (i == WeaponsTableModel.COL_NAME) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(310));
+            } else if (i == WeaponsTableModel.COL_LEVEL) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(100));
+            } else {
+                column.setPreferredWidth(UIUtil.scaleForGUI(50));
+            }
+        }
+
+        for (int i = 0; i < EquipmentTableModel.N_COL; i++) {
+            TableColumn column = tblEquipment.getColumnModel().getColumn(i);
+            if (i == EquipmentTableModel.COL_NAME) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(400));
+            } else if (i == EquipmentTableModel.COL_COST) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(175));
+            } else if (i == EquipmentTableModel.COL_LEVEL) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(100));
+            } else if (i == EquipmentTableModel.COL_QTY) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(40));
+            } else {
+                column.setPreferredWidth(UIUtil.scaleForGUI(75));
+            }
+        }
     }
 }

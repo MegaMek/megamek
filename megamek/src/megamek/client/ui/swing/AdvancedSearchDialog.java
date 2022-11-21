@@ -256,8 +256,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cboTechClass.addActionListener(this);
 
         //Setup Weapons Table
-        scrTableWeapons.setMinimumSize(new Dimension(850, 150));
-        scrTableWeapons.setPreferredSize(new Dimension(850, 150));
         weaponsModel = new WeaponsTableModel();
         tblWeapons = new MegamekTable(weaponsModel,WeaponsTableModel.COL_NAME);
         TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(
@@ -267,34 +265,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         weaponsSorter = new TableRowSorter<>(weaponsModel);
         tblWeapons.setRowSorter(weaponsSorter);
         tblWeapons.addKeyListener(this);
-        TableColumn column = null;
-        for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
-            column = tblWeapons.getColumnModel().getColumn(i);
-            if ((i == WeaponsTableModel.COL_QTY)) {
-                column.setPreferredWidth(40);
-            } else if ( i == WeaponsTableModel.COL_IS_CLAN) {
-                column.setPreferredWidth(75);
-            } else if ( i == WeaponsTableModel.COL_NAME) {
-                column.setPreferredWidth(310);
-            } else if ( i == WeaponsTableModel.COL_LEVEL) {
-                column.setPreferredWidth(100);
-            } else if ((i == WeaponsTableModel.COL_DMG)   ||
-                    (i == WeaponsTableModel.COL_HEAT)  ||
-                    (i == WeaponsTableModel.COL_SHORT) ||
-                    (i == WeaponsTableModel.COL_MED)   ||
-                    (i == WeaponsTableModel.COL_LONG)) {
-                column.setPreferredWidth(50);
-            } else {
-                column.setPreferredWidth(25);
-            }
-        }
         tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
         scrTableWeapons.setViewportView(tblWeapons);
 
         //Setup Equipment Table
-        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
-        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
         tblEquipment = new MegamekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
@@ -305,23 +280,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         equipmentSorter = new TableRowSorter<>(equipmentModel);
         tblEquipment.setRowSorter(equipmentSorter);
         tblEquipment.addKeyListener(this);
-        column = null;
-        for (int i = 0; i < EquipmentTableModel.N_COL; i++) {
-            column = tblEquipment.getColumnModel().getColumn(i);
-            if (i == EquipmentTableModel.COL_NAME) {
-                column.setPreferredWidth(400);
-            } else if (i == EquipmentTableModel.COL_COST) {
-                    column.setPreferredWidth(175);
-            } else if (i == EquipmentTableModel.COL_LEVEL) {
-                column.setPreferredWidth(100);
-            } else if ((i == EquipmentTableModel.COL_QTY)) {
-                column.setPreferredWidth(40);
-            } else if (i == EquipmentTableModel.COL_IS_CLAN) {
-                column.setPreferredWidth(75);
-            } else {
-                column.setPreferredWidth(25);
-            }
-        }
+
         tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
         scrTableEquipment.setViewportView(tblEquipment);
@@ -349,18 +308,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
-        Dimension size = new Dimension(325, 50);
-        txtEqExp.setPreferredSize(size);
-        expScroller.setPreferredSize(size);
-        expScroller.setMaximumSize(size);
 
         // Layout
         GridBagConstraints c = new GridBagConstraints();
         JPanel mainPanel = new JPanel(new GridBagLayout());
 
+        c.weighty = 0;
+        c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(0, 0, 0, 0);
-
         c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
         mainPanel.add(lblWalk, c);
@@ -373,16 +328,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mainPanel.add(panWalk, c);
         c.gridx = 3; c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
-        c.weighty = 1;
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel();
         cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
         mainPanel.add(cockpitPanel, c);
-        c.insets = new Insets(0, 0, 0, 0);
-        c.weighty = 0;
-
 
         c.gridx = 0; c.gridy = 1;
         c.anchor = GridBagConstraints.WEST;
@@ -397,15 +348,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mainPanel.add(panJump, c);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
-        c.weighty = 1;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
         internalsPanel.add(cboInternalsType,BorderLayout.EAST);
         mainPanel.add(internalsPanel, c);
-        c.weighty = 0;
-        c.insets = new Insets(0, 0, 0, 0);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
@@ -415,17 +363,14 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridx = 1;
         mainPanel.add(cArmor, c);
         c.gridx = 3;
-        c.weighty = 1;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);
         armorPanel.add(cboArmorType,BorderLayout.EAST);
         mainPanel.add(armorPanel, c);
-        c.weighty = 0;
 
         c.anchor = GridBagConstraints.CENTER;
-
         c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         mainPanel.add(lblTableFilters, c);
@@ -451,8 +396,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 4;
         c.gridx = 0; c.gridy++;
         mainPanel.add(scrTableWeapons, c);
-        c.gridwidth = 1;
-
 
         c.gridwidth = 1;
         c.insets = new Insets(16, 0, 0, 0);
@@ -464,7 +407,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 4;
         c.gridx = 0; c.gridy++;
         mainPanel.add(scrTableEquipment, c);
-        c.gridwidth = 1;
 
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
@@ -480,7 +422,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridwidth = 1;
 
         // Filter Expression
-        // c.insets = new Insets(50, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         mainPanel.add(lblEqExpTxt, c);
         c.fill = GridBagConstraints.BOTH;
@@ -499,7 +440,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         designYearPanel.add(new Label("-"));
         designYearPanel.add(tEndYear);
         mainPanel.add(designYearPanel, c);
-
 
         c.gridwidth = 1;
         c.gridx = 2; c.gridy++;
@@ -1341,5 +1281,46 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
         scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
         scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
+
+
+        TableColumn column = null;
+        for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
+            column = tblWeapons.getColumnModel().getColumn(i);
+            if ((i == WeaponsTableModel.COL_QTY)) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(40));
+            } else if ( i == WeaponsTableModel.COL_IS_CLAN) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(75));
+            } else if ( i == WeaponsTableModel.COL_NAME) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(310));
+            } else if ( i == WeaponsTableModel.COL_LEVEL) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(100));
+            } else if ((i == WeaponsTableModel.COL_DMG)   ||
+                    (i == WeaponsTableModel.COL_HEAT)  ||
+                    (i == WeaponsTableModel.COL_SHORT) ||
+                    (i == WeaponsTableModel.COL_MED)   ||
+                    (i == WeaponsTableModel.COL_LONG)) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(50));
+            } else {
+                column.setPreferredWidth(UIUtil.scaleForGUI(25));
+            }
+        }
+
+        column = null;
+        for (int i = 0; i < EquipmentTableModel.N_COL; i++) {
+            column = tblEquipment.getColumnModel().getColumn(i);
+            if (i == EquipmentTableModel.COL_NAME) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(400));
+            } else if (i == EquipmentTableModel.COL_COST) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(175));
+            } else if (i == EquipmentTableModel.COL_LEVEL) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(100));
+            } else if ((i == EquipmentTableModel.COL_QTY)) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(40));
+            } else if (i == EquipmentTableModel.COL_IS_CLAN) {
+                column.setPreferredWidth(UIUtil.scaleForGUI(75));
+            } else {
+                column.setPreferredWidth(UIUtil.scaleForGUI(25));
+            }
+        }
     }
 }

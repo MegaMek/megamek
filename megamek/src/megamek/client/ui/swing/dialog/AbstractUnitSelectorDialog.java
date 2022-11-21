@@ -83,6 +83,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected JTable tableUnits;
     protected JTextField textFilter;
     protected EntityViewPane panePreview;
+    private JPanel selectionPanel;
     private JSplitPane splitPane;
 
     private StringBuffer searchBuffer = new StringBuffer();
@@ -182,9 +183,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         //endregion Unit Preview Pane
 
         //region Selection Panel
-        JPanel selectionPanel = new JPanel(new GridBagLayout());
-        selectionPanel.setMinimumSize(new Dimension(500, 500));
-        selectionPanel.setPreferredSize(new Dimension(500, 600));
+        selectionPanel = new JPanel(new GridBagLayout());
 
         tableUnits = new JTable(unitModel);
         tableUnits.setColumnModel(unitColumnModel);
@@ -224,8 +223,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         scrollTableUnits = new JScrollPane(tableUnits);
         scrollTableUnits.setName("scrollTableUnits");
-        scrollTableUnits.setMinimumSize(new Dimension(800, 400));
-        scrollTableUnits.setPreferredSize(new Dimension(800, 400));
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -235,8 +232,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         selectionPanel.add(scrollTableUnits, gridBagConstraints);
 
         panelFilterButtons = new JPanel(new GridBagLayout());
-        panelFilterButtons.setMinimumSize(new Dimension(300, 180));
-        panelFilterButtons.setPreferredSize(new Dimension(300, 180));
 
         JLabel labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"));
         labelType.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
@@ -246,8 +241,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         listTechLevel.setToolTipText(Messages.getString("MechSelectorDialog.m_labelType.ToolTip"));
         techLevelScroll = new JScrollPane(listTechLevel);
-        techLevelScroll.setMinimumSize(new Dimension(300, 100));
-        techLevelScroll.setPreferredSize(new Dimension(300, 100));
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 2;
         panelFilterButtons.add(techLevelScroll, gridBagConstraintsWest);
@@ -265,8 +258,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         weightModel.addElement(Messages.getString("MechSelectorDialog.All"));
         comboWeight.setModel(weightModel);
         comboWeight.setName("comboWeight");
-        comboWeight.setMinimumSize(new Dimension(300, 40));
-        comboWeight.setPreferredSize(new Dimension(300, 40));
         comboWeight.addActionListener(this);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 1;
@@ -289,8 +280,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         unitTypeModel.addElement(Messages.getString("MechSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setName("comboUnitType");
-        comboUnitType.setMinimumSize(new Dimension(300, 40));
-        comboUnitType.setPreferredSize(new Dimension(300, 40));
         comboUnitType.addActionListener(this);
         gridBagConstraintsWest.gridx = 1;
         gridBagConstraintsWest.gridy = 0;
@@ -298,8 +287,6 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
         textFilter = new JTextField("");
         textFilter.setName("textFilter");
-        textFilter.setMinimumSize(new Dimension(300, 28));
-        textFilter.setPreferredSize(new Dimension(300, 28));
         textFilter.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -379,10 +366,13 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         selectionPanel.add(panelSearchButtons, gridBagConstraints);
         //endregion Selection Panel
 
+        JScrollPane selectionScrollPane = new JScrollPane(selectionPanel);
+        JScrollPane previewScrollPane = new JScrollPane(panePreview);
+
         JPanel panelButtons = createButtonsPanel();
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
-                selectionPanel, panePreview);
+                selectionScrollPane, previewScrollPane);
         splitPane.setResizeWeight(0);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = gridBagConstraints.gridy = 0;
@@ -892,10 +882,8 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
 
     private void adaptToGUIScale() {
         UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-        panelFilterButtons.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(180)));
-        panelFilterButtons.setPreferredSize(new Dimension(300, UIUtil.scaleForGUI(180)));
-        textFilter.setMinimumSize(new Dimension(300, UIUtil.scaleForGUI(100)));
-        textFilter.setPreferredSize(new Dimension(300, UIUtil.scaleForGUI(100)));
+        textFilter.setMinimumSize(new Dimension(UIUtil.scaleForGUI(200), UIUtil.scaleForGUI(28)));
+        textFilter.setPreferredSize(new Dimension(UIUtil.scaleForGUI(200), UIUtil.scaleForGUI(28)));
         techLevelScroll.setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
         techLevelScroll.setPreferredSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(100)));
     }

@@ -222,8 +222,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
 
         // Set up Weapon Class table
-        scrTableWeaponType.setMinimumSize(new Dimension(850, 150));
-        scrTableWeaponType.setPreferredSize(new Dimension(850, 150));
         weaponTypesModel = new WeaponClassTableModel();
         tblWeaponType = new MegamekTable(weaponTypesModel,WeaponClassTableModel.COL_NAME);
         TableColumn wpsTypeCol = tblWeaponType.getColumnModel().getColumn(WeaponClassTableModel.COL_QTY);
@@ -246,8 +244,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
 
         // Setup Weapons Table
-        scrTableWeapons.setMinimumSize(new Dimension(850, 150));
-        scrTableWeapons.setPreferredSize(new Dimension(850, 150));
         weaponsModel = new WeaponsTableModel();
         tblWeapons = new MegamekTable(weaponsModel, WeaponsTableModel.COL_NAME);
         TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(
@@ -276,8 +272,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         scrTableWeapons.setViewportView(tblWeapons);
 
         // Setup Equipment Table
-        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
-        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
         tblEquipment = new MegamekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
@@ -329,18 +323,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
-        Dimension size = new Dimension(325, 50);
-        txtEqExp.setPreferredSize(size);
-        expScroller.setPreferredSize(size);
-        expScroller.setMaximumSize(size);
 
         // Layout
         GridBagConstraints c = new GridBagConstraints();
         setLayout(new GridBagLayout());
 
+        c.weighty = 0;
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(0, 0, 0, 0);
-
         c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
         this.add(lblWalk, c);
@@ -353,14 +342,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(panWalk, c);
         c.gridx = 3; c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
-        c.weighty = 1;
+        c.weighty = 0;
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel();
         cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
         this.add(cockpitPanel, c);
-        c.insets = new Insets(0, 0, 0, 0);
         c.weighty = 0;
 
         c.gridx = 0; c.gridy = 1;
@@ -376,7 +364,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(panJump, c);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
-        c.weighty = 1;
+        c.weighty = 0;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
@@ -394,7 +382,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 1;
         this.add(cArmor, c);
         c.gridx = 3;
-        c.weighty = 1;
+        c.weighty = 0;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);

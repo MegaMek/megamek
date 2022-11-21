@@ -28,9 +28,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -469,13 +466,6 @@ public final class UIUtil {
             Border border = comp.getBorder();
             setTitledBorder(border, sf);
         }
-    }
-
-    public static void scaleDocCssBody(JTextPane p, int sf) {
-        MutableAttributeSet a = p.getInputAttributes();
-        StyleConstants.setFontSize(a, UIUtil.scaleForGUI(sf));
-        StyledDocument d = p.getStyledDocument();
-        d.setCharacterAttributes(0, d.getLength(), a, true);
     }
 
     /**

@@ -241,6 +241,10 @@ public class MekTableModel extends AbstractTableModel {
     
     /** Creates and returns the display content of the "Player" column for the given entity. */
     private String playerCellContent(final Entity entity) {
+        if (entity == null) {
+            return "";
+        }
+
         StringBuilder result = new StringBuilder("<HTML><NOBR>");
         Player owner = ownerOf(entity);
         boolean isEnemy = clientGui.getClient().getLocalPlayer().isEnemyOf(owner);

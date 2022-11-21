@@ -27,6 +27,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.AlphaStrikeStatsDialog;
 import megamek.client.ui.dialogs.CamoChooserDialog;
+import megamek.client.ui.dialogs.StrategicBattleForceStatsDialog;
 import megamek.client.ui.swing.CustomMechDialog;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitEditorDialog;
@@ -37,6 +38,7 @@ import megamek.common.force.Force;
 import megamek.common.force.Forces;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
+import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.util.CollectionUtil;
 import org.apache.logging.log4j.LogManager;
 
@@ -1036,6 +1038,15 @@ public class LobbyActions {
             }
         }
         return entities.stream().map(Entity::getOwner).findAny().get();
+    }
+
+    /** Shows a non-modal dialog window with the Strategic BattleForce stats of the given forces. */
+    void showSbfView(Collection<Force> fo) {
+        if (fo.stream().anyMatch(f -> !SBFFormationConverter.canConvertToSbfFormation(f, lobby.game()))) {
+            LobbyErrors.showSBFConversion(frame());
+            return;
+        }
+        new StrategicBattleForceStatsDialog(frame(), fo, lobby.game()).setVisible(true);
     }
 
     /** Shows a non-modal dialog window with the AlphaStrike stats of the given entities. */

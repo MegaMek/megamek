@@ -23,6 +23,7 @@ import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.common.Entity;
 import megamek.common.Game;
+import megamek.common.alphaStrike.ASDamage;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.alphaStrike.conversion.ASConverter;
@@ -178,7 +179,7 @@ public final class SBFFormationConverter {
                 MSW, MFB, SAW, SDS, TRN, FD, HELI, SDCS);
         addFormationSpasIf2Thirds(formation, AC3, PRB, AECM, ECM, ENG, LPRB, LECM, ORO, RCN, SRCH, SHLD, TAG, WAT);
         addFormationSpasIfAll(formation, AMP, BH, EE, FC, SEAL, MAG, PARA, RAIL, RBT, UMU);
-        sumFormationSpas(formation, SBF_OMNI, CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
+        sumFormationSpas(SBF_OMNI, CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
                 VTS, AT, BOMB, DT, MT, PT, ST, SCR, PNT, IF, MHQ);
     }
 
@@ -219,7 +220,7 @@ public final class SBFFormationConverter {
         }
     }
 
-    private static void sumFormationSpas(SBFFormation formation, BattleForceSUA... spas) {
+    private void sumFormationSpas(BattleForceSUA... spas) {
         for (BattleForceSUA spa : spas) {
             for (SBFUnit unit : formation.getUnits()) {
                 if (unit.hasSUA(spa)) {
@@ -229,6 +230,8 @@ public final class SBFFormationConverter {
                         formation.addSPA(spa, (Integer) unit.getSUA(spa));
                     } else if (unit.getSUA(spa) instanceof Double) {
                         formation.addSPA(spa, (Double) unit.getSUA(spa));
+                    } else if (unit.getSUA(spa) instanceof ASDamage) {
+                        formation.addSPA(spa, (ASDamage) unit.getSUA(spa));
                     }
                 }
             }

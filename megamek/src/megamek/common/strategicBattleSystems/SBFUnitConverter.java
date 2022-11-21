@@ -20,10 +20,7 @@ package megamek.common.strategicBattleSystems;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.alphaStrike.ASDamageVector;
-import megamek.common.alphaStrike.ASUnitType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.*;
 import megamek.common.options.OptionsConstants;
 
 import java.util.*;
@@ -76,7 +73,7 @@ public class SBFUnitConverter {
         calcUnitSpecialAbilities();
         calcUnitTMM();
 
-        unit.setDamage(calcUnitDamage(elements, unit));
+        unit.setDamage(calcUnitDamage());
         calcUnitSkill();
         calcUnitPointValue();
         return unit;
@@ -139,23 +136,73 @@ public class SBFUnitConverter {
         unit.setTmm(tmm);
     }
 
-    private static ASDamageVector calcUnitDamage(Collection<AlphaStrikeElement> elements, SBFUnit unit) {
-        double dmgS = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.S.asDoubleValue()).sum();
-        double dmgM = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.M.asDoubleValue()).sum();
-        double dmgL = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.L.asDoubleValue()).sum();
-        double dmgE = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.E.asDoubleValue()).sum();
+    private ASDamageVector calcUnitDamage() {
+        report.addLine("Damage:", "", "");
         double artTC = elements.stream().filter(e -> e.hasSUA(ARTTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTTC);
         double artLTC = elements.stream().filter(e -> e.hasSUA(ARTLTC)).count() * SBFFormation.getSbfArtilleryDamage(ARTLTC);
         double artSC = elements.stream().filter(e -> e.hasSUA(ARTSC)).count() * SBFFormation.getSbfArtilleryDamage(ARTSC);
-        dmgS += elements.stream().mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
-        dmgS += unit.isAnyTypeOf(BA, CI) && unit.hasSUA(AM) ? 1 : 0;
-        dmgS += artTC + artLTC + artSC;
-        dmgM += elements.stream().filter(e -> e.getStandardDamage().M.damage >= 1).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
-        dmgM += artTC + artLTC + artSC;
-        dmgL += elements.stream().filter(e -> e.getStandardDamage().L.damage >= 1).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
-        dmgL += artTC + artLTC;
-        dmgE += artTC + artLTC;
+        double dmgS = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.S.asDoubleValue()).sum();
+        String sCalculation = elements.stream().map(u -> formatForReport(u.getStandardDamage().S.asDoubleValue())).collect(joining(" + "));
+        String rangeType = "S";
+        double ovValue = elements.stream().mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
+        if (ovValue > 0) {
+            dmgS += ovValue;
+            rangeType += " + OV";
+            sCalculation += " + " + formatForReport(ovValue);
+        }
+        if (unit.isAnyTypeOf(BA, CI) && unit.hasSUA(AM)) {
+            dmgS += unit.isAnyTypeOf(BA, CI) && unit.hasSUA(AM) ? 1 : 0;
+            rangeType += " + AM";
+            sCalculation += " + 1";
+        }
+        if (artTC + artLTC + artSC > 0) {
+            dmgS += artTC + artLTC + artSC;
+            rangeType += " + ART";
+            sCalculation += " + " + formatForReport(artTC + artLTC + artSC);
+        }
+        report.addLine(rangeType + ":", "(" + sCalculation + ") / 3, rn", Math.round(dmgS / 3) + "");
+
+        double dmgM = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.M.asDoubleValue()).sum();
+        String mCalculation = elements.stream().map(u -> formatForReport(u.getStandardDamage().M.asDoubleValue())).collect(joining(" + "));
+        rangeType = "M";
+        if (ovValue > 0) {
+            dmgM += ovValue;
+            rangeType += " + OV";
+            mCalculation += " + " + formatForReport(ovValue);
+        }
+        if (artTC + artLTC + artSC > 0) {
+            dmgM += artTC + artLTC + artSC;
+            rangeType += " + ART";
+            mCalculation += " + " + formatForReport(artTC + artLTC + artSC);
+        }
+        report.addLine(rangeType + ":", "(" + mCalculation + ") / 3, rn", Math.round(dmgM / 3) + "");
+
+        double dmgL = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.L.asDoubleValue()).sum();
+        String lCalculation = elements.stream().map(u -> formatForReport(u.getStandardDamage().L.asDoubleValue())).collect(joining(" + "));
+        rangeType = "L";
+        double ovLValue = elements.stream().filter(e -> e.hasSUA(OVL)).mapToDouble(AlphaStrikeElement::getOV).sum() / 2;
+        if (ovLValue > 0) {
+            dmgL += ovLValue;
+            rangeType += " + OV";
+            lCalculation += " + " + formatForReport(ovValue);
+        }
+        if (artTC + artLTC > 0) {
+            dmgL += artTC + artLTC;
+            rangeType += " + ART";
+            lCalculation += " + " + formatForReport(artTC + artLTC);
+        }
+        report.addLine(rangeType + ":", "(" + lCalculation + ") / 3, rn", Math.round(dmgL / 3) + "");
+
         if (unit.getType() == AS) {
+            double dmgE = elements.stream().map(AlphaStrikeElement::getStandardDamage).mapToDouble(d -> d.E.asDoubleValue()).sum();
+            String eCalculation = elements.stream().map(u -> formatForReport(u.getStandardDamage().E.asDoubleValue())).collect(joining(" + "));
+            rangeType = "E";
+            if (artTC + artLTC > 0) {
+                dmgE += artTC + artLTC;
+                rangeType += " + ART";
+                eCalculation += " + " + formatForReport(artTC + artLTC);
+            }
+            report.addLine(rangeType + ":", "(" + eCalculation + ") / 3, rn", Math.round(dmgE / 3) + "");
             return ASDamageVector.createUpRndDmg(Math.round(dmgS / 3), Math.round(dmgM / 3),
                     Math.round(dmgL / 3), Math.round(dmgE / 3));
         } else {
@@ -327,34 +374,36 @@ public class SBFUnitConverter {
     private void sumUnitSUAsDivideBy3(BattleForceSUA... suas) {
         for (BattleForceSUA sua : suas) {
             List<String> summands = new ArrayList<>();
+            double suaValue = 0;
             for (AlphaStrikeElement element : elements) {
                 if (element.hasSUA(sua)) {
                     if (element.getSUA(sua) == null) {
-                        unit.getSpecialAbilities().mergeSUA(sua, 1);
+                        suaValue++;
                         summands.add("1");
+                    } else if (element.getSUA(sua) instanceof ASDamage) {
+                        suaValue += ((ASDamage) element.getSUA(sua)).damage;
+                        summands.add(((ASDamage) element.getSUA(sua)).damage + "");
                     } else if (element.getSUA(sua) instanceof Integer) {
-                        unit.getSpecialAbilities().mergeSUA(sua, (Integer) element.getSUA(sua));
+                        suaValue += (Integer) element.getSUA(sua);
                         summands.add(formatForReport((Integer) element.getSUA(sua)));
                     } else if (element.getSUA(sua) instanceof Double) {
-                        unit.getSpecialAbilities().mergeSUA(sua, (Double) element.getSUA(sua));
+                        suaValue += (Double) element.getSUA(sua);
                         summands.add(formatForReport((Double) element.getSUA(sua)));
-                    } else if (element.getSUA(sua) instanceof ASDamageVector
-                            && ((ASDamageVector)element.getSUA(sua)).rangeBands == 1) {
-                        unit.getSpecialAbilities().mergeSUA(sua, ((ASDamageVector) element.getSUA(sua)).S.asDoubleValue());
-                        summands.add(formatForReport(((ASDamageVector) element.getSUA(sua)).S.asDoubleValue()));
                     }
                 }
             }
-            if (unit.hasSUA(sua)) {
-                int oneThird = (int) Math.round((double) unit.getSUA(sua) / 3);
+            if (suaValue > 0) {
+                int oneThird = (int) Math.round(suaValue / 3);
                 String result = oneThird > 0 ? sua.toString() + oneThird : "--";
                 report.addLine("",
                         sua + ": (" + String.join(" + ", summands) + ") / 3, rn",
                         result);
-                if (oneThird == 0) {
-                    unit.getSpecialAbilities().removeSUA(sua);
-                } else {
-                    unit.getSpecialAbilities().replaceSUA(sua, oneThird);
+                if (oneThird > 0) {
+                    if (sua == IF) {
+                        unit.getSpecialAbilities().setSUA(IF, new ASDamage(oneThird, false));
+                    } else {
+                        unit.getSpecialAbilities().replaceSUA(sua, oneThird);
+                    }
                 }
             }
         }

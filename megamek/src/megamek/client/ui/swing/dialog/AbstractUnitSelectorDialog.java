@@ -204,17 +204,9 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                         refreshUnitView();
                     }
                 });
-        for (int i = 0; i < MechTableModel.N_COL; i++) {
-            TableColumn column = tableUnits.getColumnModel().getColumn(i);
-            if (i == MechTableModel.COL_CHASSIS) {
-                column.setPreferredWidth(125);
-            } else if ((i == MechTableModel.COL_MODEL) || (i == MechTableModel.COL_COST)) {
-                column.setPreferredWidth(75);
-            } else if ((i == MechTableModel.COL_WEIGHT) || (i == MechTableModel.COL_BV)) {
-                column.setPreferredWidth(50);
-            } else {
-                column.setPreferredWidth(25);
-            }
+
+        for (int i = 0; i < unitModel.getColumnCount(); i++) {
+            tableUnits.getColumnModel().getColumn(i).setPreferredWidth(unitModel.getPreferredWidth(i));
         }
         bvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_BV);
         pvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_PV);
@@ -799,6 +791,29 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         @Override
         public int getColumnCount() {
             return N_COL;
+        }
+
+        public int getPreferredWidth(int col) {
+            switch (col) {
+                case COL_MODEL:
+                    return 75;
+                case COL_CHASSIS:
+                    return 125;
+                case COL_WEIGHT:
+                    return 50;
+                case COL_BV:
+                    return 25;
+                case COL_PV:
+                    return 25;
+                case COL_YEAR:
+                    return 25;
+                case COL_COST:
+                    return 25;
+                case COL_LEVEL:
+                    return 25;
+                default:
+                    return 0;
+            }
         }
 
         @Override

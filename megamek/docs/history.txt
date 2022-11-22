@@ -31,7 +31,7 @@ VERSION HISTORY:
 + Issue #3975: Allow the report display dialog to be always active during a game
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
-+ Updating to Jackson XML 2.14.0 from 2.13.3
++ Updating to Jackson XML 2.14.1 from 2.13.3
 + Updating to JAXB Runtime 4.0.1 from 4.0.0
 + Updating to JUnit 5.9.1 from 5.9.0
 + Updating to Launch4j 2.5.4 from 2.5.3

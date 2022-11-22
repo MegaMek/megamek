@@ -8119,8 +8119,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
             if (next.canLoad(unit)
-                && (!checkElev || (unit.getElevation() == getElevation()))
-                && ((bayNumber == -1) || (((Bay) next).getBayNumber() == bayNumber))) {
+                    && (!checkElev || (unit.getElevation() == getElevation()))
+                    && ((bayNumber == -1)
+                        || ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber))
+                        || ((next instanceof DockingCollar) && (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
                 next.load(unit);
                 unit.setTargetBay(-1); // Reset the target bay for later.
                 return;
@@ -8128,8 +8130,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // If we got to this point, then we can't load the unit.
-        throw new IllegalArgumentException(getShortName() + " can not load "
-                                           + unit.getShortName());
+        throw new IllegalArgumentException(getShortName() + " can not load " + unit.getShortName());
     }
 
     public void load(Entity unit, boolean checkElev) {
@@ -8165,7 +8166,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     choice = 2;
                 }
                 if (nextbay instanceof SmallCraftBay) {
-                choice = 1;
+                    choice = 1;
                 }
             }
         }

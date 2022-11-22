@@ -3428,11 +3428,7 @@ public class GameManager implements IGameManager {
         // Load the unit. Do not check for elevation during deployment
         boolean checkElevation = !getGame().getPhase().isLounge()
                 && !getGame().getPhase().isDeployment();
-        if (bayNumber == -1) {
-            loader.load(unit, checkElevation);
-        } else {
-            loader.load(unit, checkElevation, bayNumber);
-        }
+        loader.load(unit, checkElevation, bayNumber);
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -3443,9 +3439,9 @@ public class GameManager implements IGameManager {
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
 
-        //Update the loading unit's passenger count, if it's a large craft
-        if (loader instanceof SmallCraft || loader instanceof Jumpship) {
-            //Don't add DropShip crew to a JumpShip or station's passenger list
+        // Update the loading unit's passenger count, if it's a large craft
+        if ((loader instanceof SmallCraft) || (loader instanceof Jumpship)) {
+            // Don't add DropShip crew to a JumpShip or station's passenger list
             if (!unit.isLargeCraft()) {
                 loader.setNPassenger(loader.getNPassenger() + unit.getCrew().getSize());
             }

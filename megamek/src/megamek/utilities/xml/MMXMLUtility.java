@@ -380,47 +380,6 @@ public class MMXMLUtility {
     }
     //endregion Close Tag
 
-    //region Deprecated Tag Writers
-    @Deprecated
-    public static void writeSimpleXMLOpenIndentedLine(final PrintWriter pw, final int indent,
-                                                      final String name) {
-        writeSimpleXMLOpenTag(pw, indent, name, null, null, null, null);
-    }
-
-    @Deprecated
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, UUID val) {
-        if (val != null) {
-            writeSimpleXmlTag(pw1, indent, name, val.toString());
-        }
-    }
-
-    @Deprecated
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, String val) {
-        pw1.println(indentStr(indent) + '<' + name + '>' + escape(val) + "</" + name + '>');
-    }
-
-    @Deprecated
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, int val) {
-        pw1.println(indentStr(indent) + '<' + name + '>' + val + "</" + name + '>');
-    }
-
-    @Deprecated
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, boolean val) {
-        pw1.println(indentStr(indent) + '<' + name + '>' + val + "</" + name + '>');
-    }
-
-    @Deprecated
-    public static void writeSimpleXmlTag(PrintWriter pw1, int indent, String name, double val) {
-        pw1.println(indentStr(indent) + '<' + name + '>' + val + "</" + name + '>');
-    }
-
-    @Deprecated
-    public static void writeSimpleXMLCloseIndentedLine(final PrintWriter pw, final int indent,
-                                                       final String name) {
-        writeSimpleXMLCloseTag(pw, indent, name);
-    }
-    //endregion Deprecated Tag Writers
-
     /**
      * @param level the level to indent up to
      * @return a string containing level tab indents

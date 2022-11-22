@@ -268,6 +268,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         constraints.weighty = 1.0;
         layout.setConstraints(m_pAdvSearch, constraints);
         m_pParameters.add(m_pAdvSearch);
+        JScrollPane m_spParameters = new JScrollPane(m_pParameters);
 
         // construct the RAT panel
         m_pRAT.setLayout(new GridBagLayout());
@@ -472,8 +473,10 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         c.weightx = 1.0;
         c.weighty = 1.0;
         m_pPreview.add(scroll, c);
+        m_pPreview.setMinimumSize(new Dimension(0,0));
 
-        m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
+
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_spParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.Formationtab"), m_pFormations);
@@ -490,7 +493,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
         
         m_pRightPane.add(m_pPreview, CARD_PREVIEW);
         m_pRightPane.add(m_pForceGen.getRightPanel(), CARD_FORCE_TREE);
-        
+        m_pRightPane.setMinimumSize(new Dimension(0,0));
+
         m_pSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, m_pMain, m_pRightPane);
         m_pSplit.setOneTouchExpandable(false);
         m_pSplit.setResizeWeight(0.5);

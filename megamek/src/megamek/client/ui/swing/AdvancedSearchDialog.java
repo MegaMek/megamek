@@ -267,6 +267,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         tblWeapons.addKeyListener(this);
         tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
+        for (int i = 0; i < weaponsModel.getColumnCount(); i++) {
+            tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
+        }
         scrTableWeapons.setViewportView(tblWeapons);
 
         //Setup Equipment Table
@@ -283,6 +286,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
+        for (int i = 0; i < tblEquipment.getColumnCount(); i++) {
+            tblEquipment.getColumnModel().getColumn(i).setPreferredWidth(equipmentModel.getPreferredWidth(i));
+        }
         scrTableEquipment.setViewportView(tblEquipment);
 
         //Populate Tables
@@ -958,6 +964,31 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             return N_COL;
         }
 
+        public int getPreferredWidth(int col) {
+            switch (col) {
+                case COL_QTY:
+                    return 40;
+                case COL_NAME:
+                    return 310;
+                case COL_IS_CLAN:
+                    return 75;
+                case COL_DMG:
+                    return 50;
+                case COL_HEAT:
+                    return 50;
+                case COL_SHORT:
+                    return 50;
+                case COL_MED:
+                    return 50;
+                case COL_LONG:
+                    return 50;
+                case COL_LEVEL:
+                    return 100;
+                default:
+                    return 0;
+            }
+        }
+
         @Override
         public String getColumnName(int column) {
             switch (column) {
@@ -1088,6 +1119,23 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         @Override
         public int getColumnCount() {
             return N_COL;
+        }
+
+        public int getPreferredWidth(int column) {
+            switch (column) {
+                case COL_QTY:
+                    return 40;
+                case COL_NAME:
+                    return 400;
+                case COL_IS_CLAN:
+                    return 75;
+                case COL_COST:
+                    return 175;
+                case COL_LEVEL:
+                    return 100;
+                default:
+                    return 0;
+            }
         }
 
         @Override
@@ -1281,46 +1329,5 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
         scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
         scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(850), UIUtil.scaleForGUI(150)));
-
-
-        TableColumn column = null;
-        for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
-            column = tblWeapons.getColumnModel().getColumn(i);
-            if ((i == WeaponsTableModel.COL_QTY)) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(40));
-            } else if ( i == WeaponsTableModel.COL_IS_CLAN) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(75));
-            } else if ( i == WeaponsTableModel.COL_NAME) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(310));
-            } else if ( i == WeaponsTableModel.COL_LEVEL) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(100));
-            } else if ((i == WeaponsTableModel.COL_DMG)   ||
-                    (i == WeaponsTableModel.COL_HEAT)  ||
-                    (i == WeaponsTableModel.COL_SHORT) ||
-                    (i == WeaponsTableModel.COL_MED)   ||
-                    (i == WeaponsTableModel.COL_LONG)) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(50));
-            } else {
-                column.setPreferredWidth(UIUtil.scaleForGUI(25));
-            }
-        }
-
-        column = null;
-        for (int i = 0; i < EquipmentTableModel.N_COL; i++) {
-            column = tblEquipment.getColumnModel().getColumn(i);
-            if (i == EquipmentTableModel.COL_NAME) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(400));
-            } else if (i == EquipmentTableModel.COL_COST) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(175));
-            } else if (i == EquipmentTableModel.COL_LEVEL) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(100));
-            } else if ((i == EquipmentTableModel.COL_QTY)) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(40));
-            } else if (i == EquipmentTableModel.COL_IS_CLAN) {
-                column.setPreferredWidth(UIUtil.scaleForGUI(75));
-            } else {
-                column.setPreferredWidth(UIUtil.scaleForGUI(25));
-            }
-        }
     }
 }

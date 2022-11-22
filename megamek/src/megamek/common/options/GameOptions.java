@@ -470,18 +470,18 @@ public class GameOptions extends AbstractOptions {
      * @param indent the indent to write at
      */
     public void writeToXML(final PrintWriter pw, int indent) {
-        MMXMLUtility.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOptions");
+        MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOptions");
         for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
             final IOptionGroup group = groups.nextElement();
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
-                MMXMLUtility.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOption");
+                MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOption");
                 MMXMLUtility.writeSimpleXMLTag(pw, indent, "name", option.getName());
                 MMXMLUtility.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
-                MMXMLUtility.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOption");
+                MMXMLUtility.writeSimpleXMLCloseTag(pw, --indent, "gameOption");
             }
         }
-        MMXMLUtility.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
+        MMXMLUtility.writeSimpleXMLCloseTag(pw, --indent, "gameOptions");
     }
 
     /**

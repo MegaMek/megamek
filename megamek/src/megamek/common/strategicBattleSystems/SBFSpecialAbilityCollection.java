@@ -19,6 +19,7 @@
 
 package megamek.common.strategicBattleSystems;
 
+import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
@@ -50,6 +51,9 @@ public class SBFSpecialAbilityCollection extends ASSpecialAbilityCollection {
      */
     public String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollection collection,
                                        @Nullable SBFUnit element, String delimiter) {
+        if (!collection.hasSUA(sua)) {
+            return "";
+        }
         Object suaObject = collection.getSUA(sua);
         if (!sua.isValidAbilityObject(suaObject)) {
             return "ERROR - wrong ability object (" + sua + ")";
@@ -65,6 +69,9 @@ public class SBFSpecialAbilityCollection extends ASSpecialAbilityCollection {
             return sua.toString() + ((int) suaObject == 1 ? "" : (int) suaObject);
         } else if (sua.isAnyOf(CAP, SCAP, MSL)) {
             return sua.toString();
+        } else if (sua == FLK) {
+            ASDamageVector flkDamage = collection.getFLK();
+            return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
         } else if (sua.isTransport()) {
             String result = sua + suaObject.toString();
             BattleForceSUA door = sua.getDoor();

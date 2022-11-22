@@ -44,7 +44,7 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
     private final JPanel centerPanel = new JPanel();
 
     public StrategicBattleForceStatsDialog(JFrame frame, Collection<Force> fo, Game gm) {
-        super(frame, true, "AlphaStrikeStatsDialog", "Ok.text");
+        super(frame, true, "SBFStatsDialog", "SBFStatsDialog.title");
         forceList = fo;
         game = gm;
         initialize();

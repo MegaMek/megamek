@@ -98,7 +98,10 @@ public final class SBFFormationConverter {
                 "= " + formationSize);
         formation.setSize(formationSize);
 
-        int formationMove = (int)Math.round(units.stream().mapToDouble(SBFUnit::getMovement).average().orElse(0));
+        int formationMove = (int) Math.round(units.stream().mapToDouble(SBFUnit::getMovement).average().orElse(0));
+        if (formation.isAerospace()) {
+            formationMove = (int) Math.round(units.stream().mapToDouble(SBFUnit::getMovement).min().orElse(0));
+        }
         report.addLine("Movement:",
                 "Average of " + units.stream().map(u -> u.getMovement() + "").collect(joining(", ")),
                 "= " + formationMove);
@@ -168,7 +171,7 @@ public final class SBFFormationConverter {
             invalid |= elementsList.stream().anyMatch(a -> a.hasAnySUAOf(VLG, SLG)) && elementsList.size() > 1;
             SBFUnit unit = new SBFUnitConverter(elementsList, "temporary", elementsList, new DummyCalculationReport()).createSbfUnit();
             invalid |= unit.isGround() && elementsList.stream().anyMatch(AlphaStrikeElement::isAerospace);
-            invalid |= unit.isAerospace() && elementsList.stream().anyMatch(a -> !a.hasAnySUAOf(SOA, LAM, BIM));
+            invalid |= unit.isAerospace() && elementsList.stream().filter(AlphaStrikeElement::isGround).anyMatch(a -> !a.hasAnySUAOf(SOA, LAM, BIM));
         }
         return !invalid;
     }
@@ -181,6 +184,11 @@ public final class SBFFormationConverter {
         addFormationSpasIfAll(formation, AMP, BH, EE, FC, SEAL, MAG, PARA, RAIL, RBT, UMU);
         sumFormationSpas(SBF_OMNI, CAR, CK, CT, IT, CRW, DCC, MDS, MASH, RSD, VTM, VTH,
                 VTS, AT, BOMB, DT, MT, PT, ST, SCR, PNT, IF, MHQ);
+
+        var fuel = formation.getUnits().stream().filter(SBFUnit::isAerospace).mapToInt(SBFUnit::getFUEL).min();
+        if (fuel.isPresent()) {
+            formation.addSPA(FUEL, fuel.orElse(0));
+        }
     }
 
     /**
@@ -222,18 +230,22 @@ public final class SBFFormationConverter {
 
     private void sumFormationSpas(BattleForceSUA... spas) {
         for (BattleForceSUA spa : spas) {
+            double suaValue = 0;
             for (SBFUnit unit : formation.getUnits()) {
                 if (unit.hasSUA(spa)) {
                     if (unit.getSUA(spa) == null) {
-                        formation.addSPA(spa, 1);
+                        suaValue++;
                     } else if (unit.getSUA(spa) instanceof Integer) {
-                        formation.addSPA(spa, (Integer) unit.getSUA(spa));
+                        suaValue += (Integer) unit.getSUA(spa);
                     } else if (unit.getSUA(spa) instanceof Double) {
-                        formation.addSPA(spa, (Double) unit.getSUA(spa));
+                        suaValue += (Double) unit.getSUA(spa);
                     } else if (unit.getSUA(spa) instanceof ASDamage) {
-                        formation.addSPA(spa, (ASDamage) unit.getSUA(spa));
+                        suaValue += ((ASDamage) unit.getSUA(spa)).damage;
                     }
                 }
+            }
+            if (suaValue > 0) {
+                formation.addSPA(spa, (int) suaValue);
             }
         }
     }

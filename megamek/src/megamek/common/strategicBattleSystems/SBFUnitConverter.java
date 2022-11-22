@@ -224,14 +224,7 @@ public class SBFUnitConverter {
         calcRCN();
         calcSTL();
         calcOMNI();
-
-        double flkMSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> dv.M.asDoubleValue()).sum();
-        int flkM = (int) Math.round(flkMSum / 3);
-        double flkLSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> dv.L.asDoubleValue()).sum();
-        int flkL = (int) Math.round(flkLSum / 3);
-        if (flkM + flkL > 0) {
-            unit.getSpecialAbilities().setSUA(FLK, ASDamageVector.createNormRndDmgNoMin(0, flkM, flkL));
-        }
+        calcFLK();
 
         if (((suaCount(elements, C3M) >= 1) || (suaCount(elements, C3BSM) >= 1))
                 && (suaCount(elements, C3M) + suaCount(elements, C3S) + suaCount(elements, C3BSS) >= elements.size() / 2)) {
@@ -248,11 +241,36 @@ public class SBFUnitConverter {
             report.addLine("", calculation, result);
         }
 
+        var fuel = elements.stream().filter(ASCardDisplayable::isAerospace).mapToInt(this::fuelRating).min();
+        if (fuel.isPresent()) {
+            unit.getSpecialAbilities().mergeSUA(FUEL, fuel.orElse(0));
+        }
+
         if (unit.hasSUA(ATAC)) {
             unit.getSpecialAbilities().replaceSUA(ATAC, Math.round(1.0d / 3 * (int) unit.getSUA(ATAC)));
         }
 
         finalizeSpecials();
+    }
+
+    private int fuelRating(AlphaStrikeElement element) {
+        int fuel = element.getFUEL();
+        if (element.isFighter() && fuel == 0) {
+            fuel = 4;
+        }
+        return fuel;
+    }
+
+    private void calcFLK() {
+        double flkMSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> dv.M.asDoubleValue()).sum();
+        flkMSum += elements.stream().filter(e -> e.hasSUA(AC)).map(e -> (ASDamageVector)e.getSUA(AC)).mapToDouble(dv -> dv.M.asDoubleValue()).sum();
+        int flkM = (int) Math.round(flkMSum / 3);
+        double flkLSum = elements.stream().filter(e -> e.hasSUA(FLK)).map(e -> (ASDamageVector)e.getSUA(FLK)).mapToDouble(dv -> dv.L.asDoubleValue()).sum();
+        flkLSum += elements.stream().filter(e -> e.hasSUA(AC)).map(e -> (ASDamageVector)e.getSUA(AC)).mapToDouble(dv -> dv.L.asDoubleValue()).sum();
+        int flkL = (int) Math.round(flkLSum / 3);
+        if (flkM + flkL > 0) {
+            unit.getSpecialAbilities().setSUA(FLK, ASDamageVector.createNormRndDmgNoMin(0, flkM, flkL));
+        }
     }
 
     private void finalizeSpecials() {
@@ -480,30 +498,41 @@ public class SBFUnitConverter {
 
     /** Determine the Unit's movement value. Must come before TMM. */
     private void calcUnitMove() {
-        double averageMove = elements.stream().mapToInt(AlphaStrikeElement::getPrimaryMovementValue).average().orElse(0);
-        roundedAverageMove = (int) Math.round(averageMove / 2);
-        if (elements.stream().anyMatch(AlphaStrikeElement::isInfantry)) {
-            int minInfantryMove = elements.stream()
-                    .filter(AlphaStrikeElement::isInfantry)
-                    .mapToInt(AlphaStrikeElement::getPrimaryMovementValue)
-                    .min()
-                    .orElse(0) / 2;
-            int finalMove = Math.min(roundedAverageMove, minInfantryMove);
-            report.addLine("Movement:", "");
-            String elementsSum = elements.stream().map(e -> e.getPrimaryMovementValue() + "").collect(joining(" + "));
-            report.addLine("- Average Move", "(" + elementsSum + ") / " + elements.size() + " / 2, rn",
-                    "= " + formatForReport(averageMove));
-            report.addLine("- Minimum Infantry Move", "", minInfantryMove + "");
-            report.addLine("Final Movement Value", "", finalMove + "");
-            unit.setMovement(finalMove);
+        if (unit.isAerospace()) {
+            int minThrust = elements.stream().mapToInt(this::effectiveThrust).min().orElse(0);
+            unit.setMovement(minThrust);
+            String minThrustString = elements.stream().map(e -> effectiveThrust(e) + "").collect(joining(", "));
+            report.addLine("Movement:", "Minimum of " + minThrustString, minThrust + "");
         } else {
-            report.addLine("Movement:",
-                    "(Average of "
-                            + elements.stream().map(e -> e.getPrimaryMovementValue() + "").collect(joining(", "))
-                            + ") / 2, rn",
-                    formatForReport(roundedAverageMove));
-            unit.setMovement(roundedAverageMove);
+            double averageMove = elements.stream().mapToInt(AlphaStrikeElement::getPrimaryMovementValue).average().orElse(0);
+            roundedAverageMove = (int) Math.round(averageMove / 2);
+            if (elements.stream().anyMatch(AlphaStrikeElement::isInfantry)) {
+                int minInfantryMove = elements.stream()
+                        .filter(AlphaStrikeElement::isInfantry)
+                        .mapToInt(AlphaStrikeElement::getPrimaryMovementValue)
+                        .min()
+                        .orElse(0) / 2;
+                int finalMove = Math.min(roundedAverageMove, minInfantryMove);
+                report.addLine("Movement:", "");
+                String elementsSum = elements.stream().map(e -> e.getPrimaryMovementValue() + "").collect(joining(" + "));
+                report.addLine("- Average Move", "(" + elementsSum + ") / " + elements.size() + " / 2, rn",
+                        "= " + formatForReport(averageMove));
+                report.addLine("- Minimum Infantry Move", "", minInfantryMove + "");
+                report.addLine("Final Movement Value", "", finalMove + "");
+                unit.setMovement(finalMove);
+            } else {
+                report.addLine("Movement:",
+                        "(Average of "
+                                + elements.stream().map(e -> e.getPrimaryMovementValue() + "").collect(joining(", "))
+                                + ") / 2, rn",
+                        formatForReport(roundedAverageMove));
+                unit.setMovement(roundedAverageMove);
+            }
         }
+    }
+
+    private int effectiveThrust(AlphaStrikeElement element) {
+        return element.hasSUA(SOA) ? 0 : element.getPrimaryMovementValue();
     }
 
     private void calcTransportMove() {

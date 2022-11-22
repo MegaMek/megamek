@@ -158,6 +158,11 @@ public interface ASSpecialAbilityCollector {
         return hasSUA(SUBS) ? (Integer) getSUA(SUBS) : 0;
     }
 
+    /** @return The FUEL ability value of this element or 0 if it doesn't have FUEL. */
+    default int getFUEL() {
+        return hasSUA(FUEL) ? (Integer) getSUA(FUEL) : 0;
+    }
+
     /** @return The standard damage of this element or turret or the STD damage of this arc. */
     default ASDamageVector getStdDamage() {
         return hasSUA(STD) ? (ASDamageVector) getSUA(STD) : ASDamageVector.ZEROSPECIAL;

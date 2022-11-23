@@ -95,6 +95,26 @@ public class ServerHelper {
             r.subject = entity.getId();
             vPhaseReport.add(r);
         }
+        
+        // Add or subtract heat due to extreme temperatures TO:AR p60
+        if (game.getPlanetaryConditions().getTemperatureDifference(50, -30) != 0) {
+            if (game.getPlanetaryConditions().getTemperature() > 50) {
+                int heatToAdd = game.getPlanetaryConditions()
+                        .getTemperatureDifference(50, -30);
+                entity.heatFromExternal += heatToAdd;
+                r = new Report(5020);
+                r.subject = entity.getId();
+                r.add(heatToAdd);
+                vPhaseReport.add(r);
+            } else {
+                entity.heatFromExternal -= game.getPlanetaryConditions()
+                        .getTemperatureDifference(50, -30);
+                r = new Report(5025);
+                r.subject = entity.getId();
+                r.add(game.getPlanetaryConditions().getTemperatureDifference(50, -30));
+                vPhaseReport.add(r);
+            }
+        }
 
         // Combat computers help manage heat
         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {

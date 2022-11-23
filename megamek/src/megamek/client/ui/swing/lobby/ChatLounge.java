@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -1101,7 +1102,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         int h = image.getHeight();
         String text = "Server-side board";
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));
-        g.setFont(new Font("Dialog", Font.ITALIC, fontSize));
+        g.setFont(new Font(MMConstants.FONT_DIALOG, Font.ITALIC, fontSize));
         FontMetrics fm = g.getFontMetrics(g.getFont());
         int cx = (w - fm.stringWidth(text)) / 2;
         int cy = h / 10 + fm.getAscent();
@@ -3072,7 +3073,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTeamOverview.adaptToGUIScale();
 
         Font scaledFont = UIUtil.getScaledFont();
-        Font scaledBigFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
+        Font scaledBigFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 3));
 
         butCompact.setFont(scaledFont);
         butOptions.setFont(scaledBigFont);
@@ -3139,7 +3140,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butBoardPreview.setToolTipText(scaleMessageForGUI("BoardSelectionDialog.ViewGameBoardTooltip"));
         butSaveMapSetup.setToolTipText(scaleMessageForGUI("ChatLounge.map.saveMapSetupTip"));
         
-        Font scaledHelpFont = new Font("Dialog", Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 33));
+        Font scaledHelpFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 33));
         butHelp.setFont(scaledHelpFont);
 
         // Makes a new tooltip appear immediately (rescaled and possibly for a different unit)

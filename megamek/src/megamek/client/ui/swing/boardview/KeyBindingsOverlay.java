@@ -13,20 +13,7 @@
 */  
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import megamek.MMConstants;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -44,6 +31,12 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /** 
  * An overlay for the Boardview that displays a selection of keybinds
  * for the current game situation 
@@ -51,7 +44,7 @@ import org.apache.logging.log4j.LogManager;
  * @author SJuliez
  */
 public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListener {
-    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13);
+    private static final Font FONT = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 13);
     private static final int DIST_TOP = 30;
     private static final int DIST_SIDE = 30;
     private static final int PADDING_X = 10;
@@ -69,13 +62,13 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             KeyCommandBind.NEXT_TARGET_VALID,
             KeyCommandBind.NEXT_TARGET_NOALLIES,
             KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES
-            );
+    );
 
     /** The keybinds to be shown during the movement phase */
     private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
             KeyCommandBind.TOGGLE_MOVEMODE,
             KeyCommandBind.TOGGLE_CONVERSIONMODE
-            );
+    );
 
     /** The keybinds to be shown in all phases during the local player's turn */
     private static final List<KeyCommandBind> BINDS_MY_TURN = Arrays.asList(
@@ -84,19 +77,19 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             KeyCommandBind.NEXT_UNIT,
             KeyCommandBind.PREV_UNIT,
             KeyCommandBind.CENTER_ON_SELECTED
-            );
+    );
 
     /** The keybinds to be shown in all phases during any player's turn */
     private static final List<KeyCommandBind> BINDS_ANY_TURN = Arrays.asList(
             KeyCommandBind.TOGGLE_CHAT,
             KeyCommandBind.DRAW_LABELS,
             KeyCommandBind.HEX_COORDS
-            );
+    );
     
     /** The keybinds to be shown in the Board Editor */
     private static final List<KeyCommandBind> BINDS_BOARD_EDITOR = Arrays.asList(
             KeyCommandBind.HEX_COORDS
-            );
+    );
 
     private static final List<String> ADDTL_BINDS = Arrays.asList(
             Messages.getString("KeyBindingsDisplay.fixedBinds").split("\n"));

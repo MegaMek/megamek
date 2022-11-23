@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing.minimap;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -896,7 +897,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         if (EntityVisibilityUtils.onlyDetectedBySensors(bv.getLocalPlayer(), entity)) { 
             // This unit is visible only as a sensor Return
             String sensorReturn = "?";           
-            Font font = new Font("SansSerif", Font.BOLD, FONT_SIZE[zoom]);             
+            Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, FONT_SIZE[zoom]);
             int width = getFontMetrics(font).stringWidth(sensorReturn) / 2;
             int height = getFontMetrics(font).getHeight() / 2 - 2;
             g.setFont(font);
@@ -987,7 +988,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 }
                 if (!s.isBlank()) {
                     var fontContext = new FontRenderContext(null, true, true);
-                    var font = new Font("SansSerif", Font.BOLD, 100);
+                    var font = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 100);
                     FontMetrics currentMetrics = getFontMetrics(font);
                     int stringWidth = currentMetrics.stringWidth(s);
                     GlyphVector gv = font.createGlyphVector(fontContext, s);

@@ -19,6 +19,7 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
 import megamek.common.*;
@@ -239,10 +240,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 column.setPreferredWidth(310);
             }
         }
-        tblWeaponType.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeaponType.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeaponType.getSelectionModel().addListSelectionListener(this);
         scrTableWeaponType.setViewportView(tblWeaponType);
-
 
         // Setup Weapons Table
         scrTableWeapons.setMinimumSize(new Dimension(850, 150));
@@ -270,13 +270,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 column.setPreferredWidth(50);
             }
         }
-        tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeapons.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
         scrTableWeapons.setViewportView(tblWeapons);
 
         // Setup Equipment Table
-        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
-        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
+        scrTableEquipment.setMinimumSize(new Dimension(850, 150));
+        scrTableEquipment.setPreferredSize(new Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
         tblEquipment = new MegamekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
@@ -301,7 +301,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 column.setPreferredWidth(75);
             }
         }
-        tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblEquipment.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
         scrTableEquipment.setViewportView(tblEquipment);
 

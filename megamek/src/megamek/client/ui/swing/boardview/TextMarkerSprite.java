@@ -1,17 +1,13 @@
 package megamek.client.ui.swing.boardview;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Rectangle2D;
-
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+
 public class TextMarkerSprite extends HexSprite {
-    
     private String spriteText;
     private Color spriteColor;
 
@@ -33,7 +29,7 @@ public class TextMarkerSprite extends HexSprite {
 
         // get a big font and test to see which font size will fit
         // the hex shape
-        Font textFont = new Font("SansSerif", Font.PLAIN, 1000);
+        Font textFont = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 1000);
         graph.setFont(textFont);
         FontMetrics fm = graph.getFontMetrics(graph.getFont());
         Rectangle2D rect = fm.getStringBounds(spriteText, graph);
@@ -50,9 +46,9 @@ public class TextMarkerSprite extends HexSprite {
         factor = factor * 0.7f;
         
         // set the font and draw the text
-        Font textFontS = new Font("SansSerif", Font.PLAIN, (int) (factor * 1000));
+        Font textFontS = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, (int) (factor * 1000));
         graph.setFont(textFontS);
-        Point pos = new Point((int) (bounds.getWidth() / 2),(int) (bounds.getHeight() / 2));
+        Point pos = new Point((int) (bounds.getWidth() / 2), (int) (bounds.getHeight() / 2));
         bv.drawTextShadow(graph, spriteText, pos, textFontS);
         bv.drawCenteredText(graph, spriteText, pos, spriteColor, false);
     }

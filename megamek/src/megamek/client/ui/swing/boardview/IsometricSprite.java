@@ -1,5 +1,6 @@
 package megamek.client.ui.swing.boardview;
 
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.EntityWreckHelper;
 import megamek.common.Coords;
@@ -28,7 +29,7 @@ class IsometricSprite extends Sprite {
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
         String shortName = entity.getShortName();
-        Font font = new Font("SansSerif", Font.PLAIN, 10);
+        Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
 

@@ -13,60 +13,25 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Label;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Vector;
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
+import megamek.client.ui.swing.table.MegamekTable;
+import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
+import megamek.common.*;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultRowSorter;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowFilter;
+import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
-import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
-
-import megamek.client.ui.Messages;
-import megamek.client.ui.swing.table.MegamekTable;
-import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
-import megamek.common.EquipmentType;
-import megamek.common.Mech;
-import megamek.common.MechSearchFilter;
-import megamek.common.MiscType;
-import megamek.common.TechConstants;
-import megamek.common.UnitType;
-import megamek.common.WeaponType;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * JDialog that allows the user to create a unit filter.
@@ -287,13 +252,13 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 column.setPreferredWidth(25);
             }
         }
-        tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeapons.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
         scrTableWeapons.setViewportView(tblWeapons);
 
         //Setup Equipment Table
-        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
-        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
+        scrTableEquipment.setMinimumSize(new Dimension(850, 150));
+        scrTableEquipment.setPreferredSize(new Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
         tblEquipment = new MegamekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
@@ -321,7 +286,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
                 column.setPreferredWidth(25);
             }
         }
-        tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblEquipment.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
         scrTableEquipment.setViewportView(tblEquipment);
 

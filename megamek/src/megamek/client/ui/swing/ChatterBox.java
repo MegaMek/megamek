@@ -13,6 +13,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.event.*;
@@ -98,7 +99,7 @@ public class ChatterBox implements KeyListener {
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
-        chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
+        chatArea.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
         playerList = new JList<>(new DefaultListModel<>());
         playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
         scrPlayers = new JScrollPane(playerList);

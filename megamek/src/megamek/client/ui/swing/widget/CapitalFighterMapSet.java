@@ -14,21 +14,17 @@
  */
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
 
 /**
  * Class which keeps set of all areas required to represent Capital Fighter unit
@@ -68,7 +64,7 @@ public class CapitalFighterMapSet implements DisplayMapSet {
     private int armorRows = 8;
     private int armorCols = 6;
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
 
     public CapitalFighterMapSet(JComponent c) {

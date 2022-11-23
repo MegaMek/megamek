@@ -15,6 +15,7 @@
 */
 package megamek.client.ui.swing.widget;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
@@ -43,9 +44,9 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             elevationR, fuelR, curSensorsR, visualRangeR;
     private PMMultiLineLabel quirksAndPartReps;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<>();
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
-    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC,
+    private static final Font FONT_TITLE = new Font(MMConstants.FONT_SANS_SERIF, Font.ITALIC,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
     private int yCoord = 1;
 

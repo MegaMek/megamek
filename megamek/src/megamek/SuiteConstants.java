@@ -18,8 +18,6 @@
  */
 package megamek;
 
-import java.time.LocalDate;
-
 /**
  * These are constants that hold across the entire MegaMek Suite of MegaMek, MegaMekLab, and MekHQ.
  */
@@ -32,6 +30,18 @@ public abstract class SuiteConstants {
     // This is used in creating the name of save files, e.g. the MekHQ campaign file
     public static final String FILENAME_DATE_FORMAT = "yyyyMMdd";
     //endregion General Constants
+
+    //region Font Constants
+    // FIXME : These uses all need to be converted into SuiteOptions, and this step was done to
+    // FIXME : simplify and isolate places that will be required
+    // FIXME : This is an accessibility issue
+    public static final String FONT_ARIAL = "Arial";
+    public static final String FONT_COURIER_NEW = "Courier New";
+    public static final String FONT_DIALOG = "Dialog";
+    public static final String FONT_HELVETICA = "Helvetica";
+    public static final String FONT_MONOSPACED = "Monospaced";
+    public static final String FONT_SANS_SERIF = "Sans Serif";
+    //endregion Font Constants
 
     //region GUI Constants
     //endregion GUI Constants

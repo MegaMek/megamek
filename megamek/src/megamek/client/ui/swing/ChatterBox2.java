@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.boardview.BoardView;
@@ -51,7 +52,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     private static final String FILENAME_BUTTON_MINIMISE = "minbutton.gif";
     private static final String FILENAME_BUTTON_MAXIMISE = "maxbutton.gif";
     private static final String FILENAME_BUTTON_RESIZE = "resizebutton.gif";
-    private static final Font FONT_CHAT = new Font("SansSerif", Font.BOLD,
+    private static final Font FONT_CHAT = new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD,
             GUIPreferences.getInstance().getInt("AdvancedChatbox2Fontsize"));
     private static final Color COLOR_TEXT_BACK = Color.black;
     private static final Color COLOR_TEXT_FRONT = Color.white;

@@ -13,6 +13,7 @@
 */ 
 package megamek.client.ui.swing.util;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.ClientGUI;
@@ -1064,7 +1065,7 @@ public final class UIUtil {
      * size 14 and scaled with the current gui scaling. 
      */
     public static Font getScaledFont() {
-        return new Font("Dialog", Font.PLAIN, scaleForGUI(FONT_SCALE1));
+        return new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(FONT_SCALE1));
     }
 
     // PRIVATE

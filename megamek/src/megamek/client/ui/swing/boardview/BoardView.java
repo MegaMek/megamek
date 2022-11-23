@@ -79,8 +79,8 @@ import java.util.Queue;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -132,13 +132,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
     // line width of the fly over lines
     static final int FLY_OVER_LINE_WIDTH = 3;
-
-    // FIXME : Fonts shouldn't ever be handled like this for accessibility reasons
-    private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7);
-    private static Font FONT_8 = new Font("SansSerif", Font.PLAIN, 8);
-    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9);
-    private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10);
-    private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12);
+    private static Font FONT_7 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 7);
+    private static Font FONT_8 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 8);
+    private static Font FONT_9 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 9);
+    private static Font FONT_10 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
+    private static Font FONT_12 = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12);
 
     Dimension hex_size;
 
@@ -340,7 +338,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     private long totalTime;
     private long averageTime;
     private int frameCount;
-    private Font fpsFont = new Font("SansSerif", Font.PLAIN, 20);
+    private Font fpsFont = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 20);
 
     /**
      * Keeps track of whether we have an active ChatterBox2
@@ -2632,7 +2630,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (getDisplayInvalidHexInfo() && !hex.isValid(null)) {
             Point hexCenter = new Point((int) (HEX_W / 2 * scale), (int) (HEX_H / 2 * scale));
             drawCenteredText(g, Messages.getString("BoardEditor.INVALID"), hexCenter, Color.RED,
-                    false, new Font("SansSerif", Font.BOLD, 14));
+                    false, new Font(MMConstants.FONT_SANS_SERIF, Font.BOLD, 14));
         }
 
         // write terrain level / water depth / building height

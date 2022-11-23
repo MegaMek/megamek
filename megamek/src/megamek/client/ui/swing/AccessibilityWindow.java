@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Coords;
@@ -161,7 +162,7 @@ public class AccessibilityWindow extends JDialog implements KeyListener {
         chatArea.setEditable(false);
         chatArea.setLineWrap(true);
         chatArea.setWrapStyleWord(true);
-        chatArea.setFont(new Font("Sans Serif", Font.PLAIN, 12));
+        chatArea.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
         add(new JScrollPane(chatArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 

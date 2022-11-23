@@ -13,11 +13,11 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
@@ -72,7 +72,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         // Create a tabbed panel to hold our reports.
         tabs = new JTabbedPane();
 
-        Font tabPanelFont = new Font("Dialog", Font.BOLD,
+        Font tabPanelFont = new Font(MMConstants.FONT_DIALOG, Font.BOLD,
                 GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setFont(tabPanelFont);
 

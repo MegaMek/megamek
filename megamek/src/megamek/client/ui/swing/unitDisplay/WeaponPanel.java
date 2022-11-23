@@ -1,5 +1,6 @@
 package megamek.client.ui.swing.unitDisplay;
 
+import megamek.MMConstants;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -24,8 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * This class contains the all the gizmos for firing the mech's weapons.
@@ -746,7 +747,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         toHitText = new JTextArea("", 2, 20);
         toHitText.setEditable(false);
         toHitText.setLineWrap(true);
-        toHitText.setFont(new Font("SansSerif", Font.PLAIN, 10));
+        toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
         add(toHitText,
             GBC.eol().fill(GridBagConstraints.BOTH)
                .insets(15, 9, 15, 9).gridy(gridy).gridx(0)

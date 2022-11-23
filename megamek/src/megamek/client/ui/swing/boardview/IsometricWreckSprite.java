@@ -1,27 +1,23 @@
 /*
  * MegaMek - Copyright (C) 2020 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.image.ImageObserver;
-
+import megamek.MMConstants;
 import megamek.common.Entity;
+
+import java.awt.*;
+import java.awt.image.ImageObserver;
 
 /**
  * Sprite for an wreck. Consists of an image, drawn from the Tile Manager
@@ -39,27 +35,21 @@ class IsometricWreckSprite extends AbstractWreckSprite {
 
         String shortName = entity.getShortName();
 
-        Font font = new Font("SansSerif", Font.PLAIN, 10);
+        Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
         modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, bv.getFontMetrics(font).getAscent());
 
         image = null;
     }
 
-    /**
-    *
-    */
     @Override
-    public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
-            boolean makeTranslucent) {
+    public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
         if (isReady()) {
             Graphics2D g2 = (Graphics2D) g;
             if (makeTranslucent) {
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 0.35f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
                 g2.drawImage(image, x, y, observer);
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1.0f));
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             } else {
                 g.drawImage(image, x, y, observer);
             }
@@ -71,5 +61,4 @@ class IsometricWreckSprite extends AbstractWreckSprite {
     public Entity getEntity() {
         return entity;
     }
-    
 }

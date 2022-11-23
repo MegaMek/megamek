@@ -454,7 +454,7 @@ public class ServerHelper {
     }
 
     /**
-     * Check for movement into magma hex and apply damage. TODO: If first and last step are in magma double it.
+     * Check for movement into magma hex and apply damage.
      */
     public static void checkEnteringMagma(Hex hex, int elevation, Entity entity, GameManager gameManager) {
 

@@ -82,6 +82,6 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
     }
 
     private void adaptToGUIScale() {
-        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

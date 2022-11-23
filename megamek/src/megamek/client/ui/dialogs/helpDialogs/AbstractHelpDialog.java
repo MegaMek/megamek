@@ -76,7 +76,7 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
 
         adaptToGUIScale();
 
-        return new JScrollPane(scrollPane);
+        return scrollPane;
     }
 
     private void adaptToGUIScale() {

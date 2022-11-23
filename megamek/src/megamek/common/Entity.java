@@ -809,9 +809,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     private int braceLocation = Entity.LOC_NONE;
 
     /**
-     * The persistent (except for client/server-transmission) battle value calculator for this entity.
+     * The persistent (except for client/server-transmission and saving) battle value calculator for this entity.
      */
-    private BVCalculator bvCalculator = BVCalculator.getBVCalculator(this);
+    private transient BVCalculator bvCalculator = BVCalculator.getBVCalculator(this);
     
     /**
      * Generates a new, blank, entity.
@@ -15586,6 +15586,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /** @return The persistent BV Calculator object for this entity. */
     public BVCalculator getBvCalculator() {
+        if (bvCalculator == null) {
+            bvCalculator = BVCalculator.getBVCalculator(this);
+        }
         return bvCalculator;
     }
 }

@@ -493,7 +493,8 @@ public class BipedMech extends Mech {
 
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
-            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_CLUB) && (type.hasSubType(size))) {
+            if ((type instanceof MiscType) && type.hasFlag(MiscType.F_CLUB)
+                    && (type.hasSubType(size))) {
                 // ok so we have a shield of certain size. no which arm is it.
                 if (m.getLocation() == Mech.LOC_RARM) {
                     raShield = 1;

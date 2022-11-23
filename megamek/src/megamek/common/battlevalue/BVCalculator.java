@@ -205,7 +205,7 @@ public abstract class BVCalculator {
     protected void processPreparation() {
         reset();
         assembleAmmo();
-        assembleMovementValues();
+        assembleMovementPoints();
 
         String header = "Battle Value Calculation for ";
         String fullName = entity.getChassis() + " " + entity.getModel();
@@ -223,6 +223,8 @@ public abstract class BVCalculator {
     }
 
     protected void processCalculations() {
+        bvReport.addLine("Effective MP:", "R: " + runMP + ", J: " + jumpMP + ", U: " + umuMP, "");
+        bvReport.addEmptyLine();
         bvReport.addSubHeader("Defensive Battle Rating:");
         processDefensiveValue();
         bvReport.addEmptyLine();
@@ -265,9 +267,10 @@ public abstract class BVCalculator {
         names.clear();
         weaponsForExcessiveAmmo.clear();
         heatEfficiencyExceeded = false;
+        heatSum = 0;
     }
 
-    protected void assembleMovementValues() {
+    protected void assembleMovementPoints() {
         setRunMP();
         setJumpMP();
         setUmuMP();
@@ -275,24 +278,33 @@ public abstract class BVCalculator {
 
     /**
      * Sets the running MP as used for battle value calculations. This value should not factor
-     * in gravity or weather (as these aren't well visible in the calculation and may change over
-     * the course of a battle). It also should not factor in player-controlled transients such as
+     * in gravity or weather (as these aren't well visible in the calculation, may change over
+     * the course of a battle and aren't available in MHQ).
+     * It also should not factor in player-controlled transients such as
      * cargo, trailers, bombs, heat, movement mode changes (LAM, WiGE, QuadVees), grounded/landed
      * status (Aero) as these would also change BV in battle in strange ways. Also, it should
-     * ignore advanced rules such as TO Infantry Fast Movement to prevent BV values
+     * ignore advanced rules such as TO Infantry Fast Movement to prevent base BV values
      * different from those on the MUL.
      *
      * It should factor in intransient modifiers such as TSM, modular or hardened armor as well as
      * damage to the unit (engine hits, motive damage, immobile status).
      */
     protected void setRunMP() {
-        runMP = (int) Math.ceil(entity.getOriginalWalkMP() * 1.5);
+        runMP = entity.getOriginalRunMP();
     }
 
+    /**
+     * Sets the jumping MP as used for battle value calculations. Here the same rules apply as with
+     * {@link #setRunMP()}.
+     */
     protected void setJumpMP() {
-        jumpMP = entity.getJumpMP(false);
+        jumpMP = entity.getOriginalJumpMP();
     }
 
+    /**
+     * Sets the UMU MP as used for battle value calculations. Here the same rules apply as with
+     * {@link #setRunMP()}.
+     */
     protected void setUmuMP() {
         umuMP = entity.getActiveUMUCount();
     }
@@ -859,17 +871,18 @@ public abstract class BVCalculator {
             WeaponType weaponType = (WeaponType) equipment.getType();
             return !weaponType.hasFlag(WeaponType.F_AMS) && !weaponType.hasFlag(WeaponType.F_B_POD)
                     && !weaponType.hasFlag(WeaponType.F_M_POD) && (weaponType.getBV(entity) > 0)
-                    && !equipment.isMissing() && !equipment.isHit() && !equipment.isDestroyed()
+                    && !equipment.isInoperable() && !equipment.isHit()
                     && !equipment.isWeaponGroup() && !(weaponType.getAtClass() == WeaponType.CLASS_SCREEN)
-                    && !equipment.isBreached() && !(weaponType instanceof BayWeapon);
+                    && !(weaponType instanceof BayWeapon);
         }
     }
 
     protected boolean countMiscAsOffensiveWeapon(Mounted misc) {
         MiscType miscType = (MiscType) misc.getType();
         return (miscType.getBV(entity) > 0)
-                && !misc.isMissing() && !misc.isHit() && !misc.isDestroyed()
-                && !misc.isWeaponGroup() && !misc.isBreached();
+                && !misc.isHit() && !misc.isInoperable()
+                && !misc.isWeaponGroup()
+                && ((MiscType) misc.getType()).isVibroblade();
     }
 
     /** @return The BV modifier for AFC or BFC. Override as necessary. */

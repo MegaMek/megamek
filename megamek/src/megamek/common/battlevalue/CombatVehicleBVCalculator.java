@@ -31,14 +31,41 @@ public class CombatVehicleBVCalculator extends BVCalculator {
     }
 
     @Override
+    protected void setRunMP() {
+        runMP = entity.getOriginalWalkMP();
+        if (entity.getEngineHits() != 0 || entity.isImmobile()) {
+            runMP = 0;
+            return;
+        }
+        if ((entity instanceof VTOL) && entity.isLocationBad(VTOL.LOC_ROTOR)) {
+            runMP = 0;
+            return;
+        }
+        if (entity.hasWorkingMisc(MiscType.F_HYDROFOIL)) {
+            runMP = (int) Math.round(runMP * 1.25);
+        }
+        runMP = Math.max(0, runMP - ((Tank) entity).getMotiveDamage());
+
+        if (entity.hasModularArmor()) {
+            runMP--;
+        }
+        if (entity.hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
+            runMP--;
+        }
+        runMP = Math.max((int) Math.ceil(runMP * 1.5), 0);
+    }
+
+    @Override
     protected int getUmuTMM() {
         return 0;
     }
 
     @Override
     protected int getRunningTMM() {
-        int tmmRan = Compute.getTargetMovementModifier(
-                entity.getRunMP(false, true, true), entity instanceof VTOL,
+        if (runMP == 0) {
+            return 0;
+        }
+        int tmmRan = Compute.getTargetMovementModifier(runMP, entity instanceof VTOL,
                 entity instanceof VTOL, entity.getGame()).getValue();
         tmmRan += (entity.hasStealth()) ? 2 : 0;
         tmmRan += (entity.getMovementMode() == EntityMovementMode.WIGE) ? 1 : 0;
@@ -50,7 +77,7 @@ public class CombatVehicleBVCalculator extends BVCalculator {
         if (jumpMP == 0) {
             return 0;
         }
-        int tmmJumped = Compute.getTargetMovementModifier(entity.getJumpMP(), true, false, entity.getGame()).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(jumpMP, true, false, entity.getGame()).getValue();
         tmmJumped += (entity.hasStealth()) ? 2 : 0;
         tmmJumped += (entity.getMovementMode() == EntityMovementMode.WIGE) ? 1 : 0;
         return tmmJumped;

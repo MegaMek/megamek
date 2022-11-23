@@ -41,22 +41,6 @@ public class BattleArmorBVCalculator extends BVCalculator {
     }
 
     @Override
-    protected int getRunningTMM() {
-        int runMP = battleArmor.getWalkMP(false, false, true, true, false);
-        return (runMP > 0) ?
-                Compute.getTargetMovementModifier(runMP, false, false, battleArmor.getGame()).getValue()
-                : 0;
-    }
-
-    @Override
-    protected int getJumpingTMM() {
-        int rawJump = battleArmor.getJumpMP(false, true, true);
-        return (rawJump > 0) ?
-                Compute.getTargetMovementModifier(rawJump, true, false, battleArmor.getGame()).getValue()
-                : 0;
-    }
-
-    @Override
     protected void setRunMP() {
         runMP = entity.getOriginalWalkMP();
         if (battleArmor.hasMyomerBooster()) {
@@ -79,7 +63,24 @@ public class BattleArmorBVCalculator extends BVCalculator {
                 runMP++;
             }
         }
-        this.runMP = (int) Math.ceil(runMP * 1.5);
+    }
+
+    @Override
+    protected void setJumpMP() {
+        if (battleArmor.isBurdened() || battleArmor.hasDWP() || battleArmor.getMovementMode().isUMUInfantry()) {
+            jumpMP = 0;
+            return;
+        }
+        jumpMP = battleArmor.getOriginalJumpMP();
+        if ((jumpMP == 0) && battleArmor.hasWorkingMisc(MiscType.F_MECHANICAL_JUMP_BOOSTER)) {
+            jumpMP++;
+        }
+        if ((jumpMP > 0) && battleArmor.hasWorkingMisc(MiscType.F_PARTIAL_WING)) {
+            jumpMP++;
+        }
+        if ((jumpMP > 0) && battleArmor.hasWorkingMisc(MiscType.F_JUMP_BOOSTER)) {
+            jumpMP++;
+        }
     }
 
     @Override

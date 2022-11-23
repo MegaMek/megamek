@@ -70,6 +70,24 @@ public class InfantryBVCalculator extends BVCalculator {
     }
 
     @Override
+    protected void setJumpMP() {
+        jumpMP = 0;
+        if (!infantry.getMovementMode().isUMUInfantry() && !infantry.getMovementMode().isSubmarine()) {
+            jumpMP = infantry.getOriginalJumpMP();
+        }
+        if ((infantry.getSecondaryN() > 1)
+                && !infantry.hasAbility(OptionsConstants.MD_TSM_IMPLANT)
+                && !infantry.hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
+                && !infantry.getMovementMode().isSubmarine()
+                && (null != infantry.getSecondaryWeapon())
+                && infantry.getSecondaryWeapon().hasFlag(WeaponType.F_INF_SUPPORT)) {
+            jumpMP = Math.max(jumpMP - 1, 0);
+        } else if (infantry.getMovementMode().isVTOL() && infantry.getSecondaryN() > 0) {
+            jumpMP = Math.max(jumpMP - 1, 0);
+        }
+    }
+
+    @Override
     protected void processStructure() {
         int men = Math.max(0, entity.getInternal(Infantry.LOC_INFANTRY));
         double dmgDivisor = infantry.calcDamageDivisor();

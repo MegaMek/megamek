@@ -1498,6 +1498,16 @@ public class Infantry extends Entity {
     }
 
     @Override
+    public boolean isEligibleForPavementBonus() {
+        if ((game != null)
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS)) {
+            return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED || movementMode == EntityMovementMode.INF_MOTORIZED;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public void setMovementMode(EntityMovementMode movementMode) {
         super.setMovementMode(movementMode);
         //movement mode will determine base mp

@@ -1187,4 +1187,54 @@ public final class UIUtil {
         window.setLocation(location);
         window.setSize(size);
     }
+
+    /**
+     * search for searchPattern in text starting from startPos in direction searchDown
+     * if search hits text start or end wrap until hit startPos
+     * return the position of the match if found
+     * return -1 if not found
+     */
+    public static int findPattern (String text, String searchPattern, int startPos, boolean searchDown) {
+        boolean found = false;
+        int len = text.length() - searchPattern.length();
+        int currentPos = 0;
+        if (searchDown) {
+            currentPos = startPos + 1;
+        }
+        else {
+            currentPos = startPos - searchPattern.length() - 1;
+
+            if (currentPos < 1) {
+                currentPos = len;
+            }
+        }
+
+        while (startPos != currentPos) {
+            String match = text.substring(currentPos, currentPos + searchPattern.length());
+            if (searchPattern.equalsIgnoreCase(match)) {
+                found = true;
+                break;
+            }
+
+            if (searchDown) {
+                currentPos++;
+                if (currentPos > len) {
+                    currentPos = 0;
+                }
+            }
+            else {
+                currentPos--;
+                if (startPos == currentPos) {
+                    break;
+                }
+                if (currentPos < 1) {
+                    currentPos = len;
+                }
+            }
+        }
+        if (found) {
+            return currentPos;
+        }
+        return -1;
+    }
 }

@@ -97,7 +97,7 @@ public class ServerHelper {
         }
         
         // Add or subtract heat due to extreme temperatures TO:AR p60
-        if (game.getPlanetaryConditions().getTemperatureDifference(50, -30) != 0) {
+        if ((game.getPlanetaryConditions().getTemperatureDifference(50, -30) != 0) && !game.getBoard().inSpace()) {
             if (game.getPlanetaryConditions().getTemperature() > 50) {
                 int heatToAdd = game.getPlanetaryConditions()
                         .getTemperatureDifference(50, -30);

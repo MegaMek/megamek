@@ -121,9 +121,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         butOkay.requestFocus();
     }
 
-
-
-
     private void searchTextPane(String searchPattern, Boolean searchDown) {
         Component selCom = tabs.getSelectedComponent();
         searchPattern = searchPattern.toUpperCase();
@@ -272,6 +269,14 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         }
     }
 
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
+            savePrefHide();
+        }
+    }
+
     private void setupReportTabs() {
         tabs = new JTabbedPane();
 
@@ -340,6 +345,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
                 default:
                     if (!e.getNewPhase().equals((e.getOldPhase()))) {
                         addReportPages();
+                        updatePlayerChoice();
                         updateEntityChoice();
                     }
             }

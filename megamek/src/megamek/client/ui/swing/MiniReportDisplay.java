@@ -25,7 +25,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 
 import javax.swing.*;
 import javax.swing.text.Document;
-import javax.swing.text.Utilities;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.*;
@@ -53,6 +52,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     private static final String MSG_PHASE = Messages.getString("MiniReportDisplay.Phase");
     private static final String MSG_DAMAGE = Messages.getString("MiniReportDisplay.Damage");
     private static final String MSG_DESTROYED = Messages.getString("MiniReportDisplay.Destroyed");
+    private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
+    private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
     private static final String MSG_OKAY= Messages.getString("Okay");
 
     private static final int MRD_MAXNAMELENGHT = 60;
@@ -70,17 +71,17 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         butOkay = new JButton(MSG_OKAY);
         butOkay.addActionListener(this);
 
-        butPlayerSearchUp = new JButton("\u25B2");
+        butPlayerSearchUp = new JButton(MSG_ARROWUP);
         butPlayerSearchUp.addActionListener(this);
-        butPlayerSearchDown = new JButton("\u25BC");
+        butPlayerSearchDown = new JButton(MSG_ARROWDOWN);
         butPlayerSearchDown.addActionListener(this);
-        butEntitySearchUp = new JButton("\u25B2");
+        butEntitySearchUp = new JButton(MSG_ARROWUP);
         butEntitySearchUp.addActionListener(this);
-        butEntitySearchDown = new JButton("\u25BC");
+        butEntitySearchDown = new JButton(MSG_ARROWDOWN);
         butEntitySearchDown.addActionListener(this);
-        butQuickSearchUp = new JButton("\u25B2");
+        butQuickSearchUp = new JButton(MSG_ARROWUP);
         butQuickSearchUp.addActionListener(this);
-        butQuickSearchDown = new JButton("\u25BC");
+        butQuickSearchDown = new JButton(MSG_ARROWDOWN);
         butQuickSearchDown.addActionListener(this);
 
         setLayout(new BorderLayout());
@@ -131,8 +132,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
                 && ((JScrollPane) selCom).getViewport().getView() instanceof JComponent) {
             JViewport v = ((JScrollPane) selCom).getViewport();
             for (Component comp : v.getComponents()) {
-                JScrollPane sp =(JScrollPane) selCom;
-
                 if (comp instanceof JTextPane) {
                     try {
                         JTextPane textPane = (JTextPane) comp;

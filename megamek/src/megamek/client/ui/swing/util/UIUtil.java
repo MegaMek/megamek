@@ -1237,4 +1237,13 @@ public final class UIUtil {
         }
         return -1;
     }
+
+    /*
+    * Calculates center of view port for a given point
+     */
+    public static int calculateCenter(int vh, int h, int th, int y) {
+        y = Math.max(0, y - ((vh - th)/2));
+        y = Math.min(y, h - vh);
+        return y;
+    }
 }

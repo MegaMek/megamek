@@ -25,6 +25,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 
 import javax.swing.*;
 import javax.swing.text.Document;
+import javax.swing.text.Utilities;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.*;
@@ -113,12 +114,14 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
             public void windowClosing(WindowEvent e) {
                 actionPerformed(new ActionEvent(butOkay,
                         ActionEvent.ACTION_PERFORMED, butOkay.getText()));
-
             }
         });
 
         butOkay.requestFocus();
     }
+
+
+
 
     private void searchTextPane(String searchPattern, Boolean searchDown) {
         Component selCom = tabs.getSelectedComponent();
@@ -126,7 +129,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         if (selCom instanceof JScrollPane
                 && ((JScrollPane) selCom).getViewport().getView() instanceof JComponent) {
-            for (Component comp : ((JScrollPane) selCom).getViewport().getComponents()) {
+            JViewport v = ((JScrollPane) selCom).getViewport();
+            for (Component comp : v.getComponents()) {
                 JScrollPane sp =(JScrollPane) selCom;
 
                 if (comp instanceof JTextPane) {
@@ -144,6 +148,9 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
                         int newPos = UIUtil.findPattern(text, searchPattern, currentPos, searchDown);
 
                         if (newPos != -1) {
+                            Rectangle r = (Rectangle) textPane.modelToView2D(newPos);
+                            int y = UIUtil.calculateCenter(v.getExtentSize().height, v.getViewSize().height, r.height, r.y);
+                            v.setViewPosition(new Point(0,y));
                             textPane.setCaretPosition(newPos);
                             textPane.moveCaretPosition(newPos + searchPattern.length());
                             textPane.getCaret().setSelectionVisible(true);

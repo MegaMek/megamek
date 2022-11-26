@@ -319,7 +319,7 @@ public class Tank extends Entity {
     
     @Override
     public boolean isEligibleForPavementBonus() {
-        return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED;
+        return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED || movementMode == EntityMovementMode.HOVER;
     }
 
     public boolean isTurretLocked(int turret) {

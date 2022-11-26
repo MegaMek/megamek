@@ -1501,7 +1501,7 @@ public class Infantry extends Entity {
     public boolean isEligibleForPavementBonus() {
         if ((game != null)
                 && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS)) {
-            return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED || movementMode == EntityMovementMode.INF_MOTORIZED;
+            return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED || movementMode == EntityMovementMode.INF_MOTORIZED || movementMode == EntityMovementMode.HOVER;
         } else {
             return false;
         }

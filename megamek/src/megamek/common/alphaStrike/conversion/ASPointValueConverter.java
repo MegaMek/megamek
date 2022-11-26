@@ -466,7 +466,7 @@ public class ASPointValueConverter {
     private double agileBonus() {
         double result = 0;
         double modifiedTMM = element.getTMM() + 0.5 * element.getJMPS() + 0.5 * element.getSUBS();
-        if (modifiedTMM >= 2) {
+        if (modifiedTMM > 1) {
             double dmgS = element.getStandardDamage().S.minimal ? 0.5 : element.getStandardDamage().S.damage;
             double dmgM = element.getStandardDamage().M.minimal ? 0.5 : element.getStandardDamage().M.damage;
             if (dmgM > 0) {
@@ -534,7 +534,11 @@ public class ASPointValueConverter {
         }
         if (element.hasSUA(MHQ)) {
             int mhqValue = (int) element.getSUA(MHQ);
-            bonus += mhqValue;
+            if (mhqValue <= 4) {
+                bonus += mhqValue;
+            } else {
+                bonus += 4 + Math.ceil(0.2 * mhqValue);
+            }
             modifierList.add("MHQ");
         }
         if (!modifierList.isEmpty()) {

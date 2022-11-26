@@ -70,7 +70,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         butOkay = new JButton(MSG_OKAY);
         butOkay.addActionListener(this);
-
         butPlayerSearchUp = new JButton(MSG_ARROWUP);
         butPlayerSearchUp.addActionListener(this);
         butPlayerSearchDown = new JButton(MSG_ARROWDOWN);

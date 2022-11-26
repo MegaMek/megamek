@@ -741,14 +741,15 @@ public class MtfFile implements IMechLoader {
                         m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
-                        // do we already have this one in this or an outer
-                        // location?
+                        // do we already have this one in this or an outer location?
                         Mounted m = null;
                         boolean bFound = false;
                         for (Mounted vSplitWeapon : vSplitWeapons) {
                             m = vSplitWeapon;
                             int nLoc = m.getLocation();
-                            if (((nLoc == loc) || (loc == Mech.getInnerLocation(nLoc))) && (m.getType() == etype)) {
+                            if ((((nLoc == loc) || (loc == Mech.getInnerLocation(nLoc)))
+                                    || ((nLoc == Mech.LOC_CT) && (loc == Mech.LOC_HEAD)))
+                                    && (m.getType() == etype)) {
                                 bFound = true;
                                 break;
                             }

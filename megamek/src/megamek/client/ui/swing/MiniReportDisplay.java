@@ -133,7 +133,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
                     try {
                         JTextPane textPane = (JTextPane) comp;
                         Document doc = textPane.getDocument();
-                        String text = doc.getText(0, doc.getLength());
+                        String text = doc.getText(0, doc.getLength()).toUpperCase();
                         int currentPos = textPane.getCaretPosition();
 
                         if (currentPos > text.length() - searchPattern.length()) {
@@ -141,7 +141,23 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
                             currentPos = 0;
                         }
 
-                        int newPos = UIUtil.findPattern(text, searchPattern, currentPos, searchDown);
+                        int newPos = -1;
+
+                        if (searchDown){
+                            newPos = text.indexOf(searchPattern, currentPos);
+
+                            if (newPos == -1) {
+                                newPos = text.indexOf(searchPattern, 0);
+                            }
+
+                        }
+                        else {
+                            newPos = text.lastIndexOf(searchPattern, currentPos-searchPattern.length()-1);
+
+                            if (newPos == -1) {
+                                newPos = text.lastIndexOf(searchPattern, text.length()-searchPattern.length()-1);
+                            }
+                        }
 
                         if (newPos != -1) {
                             Rectangle r = (Rectangle) textPane.modelToView2D(newPos);
@@ -247,7 +263,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource().equals(butOkay)) {
-            savePrefHide();
+            savePref();
+            setVisible(false);
         } else if (ae.getSource().equals(butPlayerSearchDown)) {
             String searchPattern = comboPlayer.getSelectedItem().toString().trim();
             searchTextPane(searchPattern, true);
@@ -273,7 +290,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            savePrefHide();
+            savePref();
         }
     }
 
@@ -293,12 +310,11 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
                         + "; font-size: 12pt; font-style:normal;}");
     }
 
-    private void savePrefHide() {
+    private void savePref() {
         GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
         GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
         GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
         GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
-        setVisible(false);
     }
 
     public void addReportPages() {
@@ -340,7 +356,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             switch (e.getOldPhase()) {
                 case VICTORY:
-                    savePrefHide();
+                    savePref();
+                    setVisible(false);
                     break;
                 default:
                     if (!e.getNewPhase().equals((e.getOldPhase()))) {

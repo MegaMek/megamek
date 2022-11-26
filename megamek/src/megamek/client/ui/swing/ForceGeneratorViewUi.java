@@ -118,6 +118,7 @@ public class ForceGeneratorViewUi {
 
         forceTree = new JTree(new ForceTreeModel(null));
         forceTree.setCellRenderer(new UnitRenderer());
+        // JTree setRowHeight(0) the height for each row is determined by the renderer
         forceTree.setRowHeight(0);
         forceTree.setVisibleRowCount(12);
         forceTree.addTreeExpansionListener(new TreeExpansionListener() {

@@ -427,7 +427,7 @@ public class ServerHelper {
                 entity.heatFromExternal += heatToAdd;
                 r = new Report(5020);
                 r.subject = entity.getId();
-                r.add(tempDiff);
+                r.add(heatToAdd);
                 vPhaseReport.add(r);
                 if (entity instanceof Mech) {
                     if (((Mech) entity).hasIntactHeatDissipatingArmor()) {

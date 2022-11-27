@@ -33,6 +33,7 @@ VERSION HISTORY:
 + PR #3992: Update Alpha Strike conversion to newest errata
 + Issue #2842: Fix an issue where Thin Snow would increase MP costs for BA
 + PR #4007: Allow loading .mtf Mek files with split weapons on CT+H locations
++ Issue #3939: Prevent Null Entities in a Bay's Loaded Units
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3

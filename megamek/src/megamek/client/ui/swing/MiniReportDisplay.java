@@ -19,11 +19,14 @@ import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.Entity;
+import megamek.common.Report;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
@@ -33,7 +36,7 @@ import java.util.Iterator;
 /**
  * Shows reports, with an Okay JButton
  */
-public class MiniReportDisplay extends JDialog implements ActionListener {
+public class MiniReportDisplay extends JDialog implements ActionListener, HyperlinkListener {
     private JButton butOkay;
     private JButton butPlayerSearchUp;
     private JButton butPlayerSearchDown;
@@ -44,6 +47,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     private JComboBox<String> comboPlayer = new JComboBox<>();
     private JComboBox<String> comboEntity = new JComboBox<>();
     private JComboBox<String> comboQuick = new JComboBox<>();
+    private ClientGUI currentClientgui;
     private Client currentClient;
     private JTabbedPane tabs;
 
@@ -54,18 +58,20 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
     private static final String MSG_DESTROYED = Messages.getString("MiniReportDisplay.Destroyed");
     private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
     private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
+    private static final String MSG_DETAILS = Messages.getString("MiniReportDisplay.Details");
     private static final String MSG_OKAY= Messages.getString("Okay");
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
-    public MiniReportDisplay(JFrame parent, Client client) {
+    public MiniReportDisplay(JFrame parent, ClientGUI clientgui) {
         super(parent, MSG_TITLE, false);
 
-        if (client == null) {
+        if (clientgui == null) {
             return;
         }
 
-        currentClient = client;
+        currentClientgui = clientgui;
+        currentClient = clientgui.getClient();
         currentClient.getGame().addGameListener(gameListener);
 
         butOkay = new JButton(MSG_OKAY);
@@ -323,6 +329,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             JTextPane ta = new JTextPane();
+            ta.addHyperlinkListener(this);
             setupStylesheet(ta);
             BASE64ToolKit toolKit = new BASE64ToolKit();
             ta.setEditorKit(toolKit);
@@ -336,6 +343,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
 
         // add the new current phase tab
         JTextPane ta = new JTextPane();
+        ta.addHyperlinkListener(this);
         setupStylesheet(ta);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);
@@ -348,6 +356,42 @@ public class MiniReportDisplay extends JDialog implements ActionListener {
         tabs.add(MSG_PHASE, sp);
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
+    }
+
+    private JComponent activePane() {
+        return (JComponent) ((JScrollPane) tabs.getSelectedComponent()).getViewport().getView();
+    }
+
+    @Override
+    public void hyperlinkUpdate(HyperlinkEvent evt) {
+        String evtDesc = evt.getDescription();
+        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            if (evtDesc.startsWith(Report.ENTITY_LINK)) {
+                String idString = evtDesc.substring(Report.ENTITY_LINK.length());
+                int id;
+                try {
+                    id = Integer.parseInt(idString);
+                } catch (Exception ex) {
+                    id = -1;
+                }
+                Entity ent = currentClientgui.getClient().getGame().getEntity(id);
+                if (ent != null) {
+                    currentClientgui.getUnitDisplay().displayEntity(ent);
+                    currentClientgui.setUnitDisplayVisible(true);
+                }
+            } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+                JOptionPane.showMessageDialog(currentClientgui, desc, MSG_DETAILS,
+                        JOptionPane.PLAIN_MESSAGE);
+            }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
+            if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
+                String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
+                activePane().setToolTipText(desc);
+            }
+        } else if (evt.getEventType() == HyperlinkEvent.EventType.EXITED) {
+            activePane().setToolTipText(null);
+        }
     }
 
     private GameListener gameListener = new GameListenerAdapter() {

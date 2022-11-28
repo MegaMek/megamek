@@ -725,7 +725,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private void showRoundReport() {
         ignoreHotKeys = true;
         if (miniReportDisplay == null) {
-            miniReportDisplay = new MiniReportDisplay(frame, client);
+            miniReportDisplay = new MiniReportDisplay(frame, this);
         }
 
         miniReportDisplay.setVisible(true);

@@ -1048,6 +1048,12 @@ public class BattleArmor extends Infantry {
         return longStealthMod;
     }
 
+    // Only for ground vehicles and certain infantry
+    @Override
+    public boolean isEligibleForPavementBonus() {
+        return false;
+    }
+
     /**
      * Determine if this unit has an active stealth system.
      * <p>

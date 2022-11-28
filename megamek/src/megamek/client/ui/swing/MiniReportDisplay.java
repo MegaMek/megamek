@@ -30,7 +30,6 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
-import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Iterator;
@@ -312,7 +311,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         add(BorderLayout.CENTER, tabs);
     }
 
-    private void savePrefHide() {
+    private void savePref() {
         GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
         GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
         GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);

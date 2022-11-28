@@ -96,6 +96,9 @@ public class ServerHelper {
             vPhaseReport.add(r);
         }
 
+        // Add or subtract heat due to extreme temperatures TO:AR p60
+        adjustHeatExtremeTemp(game, entity, vPhaseReport);
+
         // Combat computers help manage heat
         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
             int reduce = Math.min(entity.heatBuildup, 4);
@@ -398,7 +401,50 @@ public class ServerHelper {
             vPhaseReport.addAll(s.destroyEntity(entity, "pilot death", true));
         }
     }
-    
+
+	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
+        Report r;
+		int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+
+        if (game.getBoard().inSpace()) {
+            return;
+        } else if (tempDiff == 0) {
+            return;
+        } else {
+            if (entity instanceof Mech) {
+                if (((Mech) entity).hasLaserHeatSinks()) {
+                    return;
+                }
+            }
+
+            if (game.getPlanetaryConditions().getTemperature() > 50) {
+                int heatToAdd = tempDiff;
+                if (entity instanceof Mech) {
+                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        heatToAdd /= 2;
+                    }
+                }
+                entity.heatFromExternal += heatToAdd;
+                r = new Report(5020);
+                r.subject = entity.getId();
+                r.add(heatToAdd);
+                vPhaseReport.add(r);
+                if (entity instanceof Mech) {
+                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        r = new Report(5550);
+                        vPhaseReport.add(r);
+                    }
+                }
+            } else {
+                entity.heatFromExternal -= tempDiff;
+                r = new Report(5025);
+                r.subject = entity.getId();
+                r.add(tempDiff);
+                vPhaseReport.add(r);
+            }
+        }
+    }
+
     /**
      * Helper function that causes an entity to sink to the bottom of the water
      * hex it's currently in.

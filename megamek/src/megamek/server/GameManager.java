@@ -4917,6 +4917,7 @@ public class GameManager implements IGameManager {
             // note that this must sequentially occur before the next 'entering liquid magma' check
             // otherwise, magma crust won't have a chance to break
             ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, vPhaseReport, this);
+            ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -5919,6 +5920,7 @@ public class GameManager implements IGameManager {
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
+        Hex firstHex = game.getBoard().getHex(curPos); // Used to check for start/end magma damage
         int curFacing = entity.getFacing();
         int curVTOLElevation = entity.getElevation();
         int curElevation;
@@ -6125,6 +6127,10 @@ public class GameManager implements IGameManager {
                 break;
             }
 
+            // Extra damage if first and last hex are magma
+            if (firstStep) {
+                firstHex = game.getBoard().getHex(curPos);
+            }
             // stop if the entity already killed itself
             if (entity.isDestroyed() || entity.isDoomed()) {
                 break;
@@ -7289,7 +7295,20 @@ public class GameManager implements IGameManager {
 
             // check for breaking magma crust unless we are jumping over the hex
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
-                ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
+                if (!curPos.equals(lastPos)) {
+                    ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
+                    ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, this);
+                }
+            }
+
+            // check for last move ending in magma TODO: build report for end of move
+            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2
+                    && firstHex.terrainLevel(Terrains.MAGMA) == 2) {
+                r = new Report(2404);
+                r.addDesc(entity);
+                r.subject = entity.getId();
+                addReport(r);
+                doMagmaDamage(entity, false);
             }
 
             // check if we've moved into a swamp
@@ -8427,6 +8446,7 @@ public class GameManager implements IGameManager {
             // Don't interact with terrain when jumping onto a building or a bridge
             if (entity.getElevation() == 0) {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true, vPhaseReport, this);
+                ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, this);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -12048,6 +12068,7 @@ public class GameManager implements IGameManager {
         }
 
         ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, vPhaseReport, this);
+        ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
         if (violation == null) {

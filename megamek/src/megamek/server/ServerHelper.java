@@ -491,9 +491,21 @@ public class ServerHelper {
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 gameManager.sendChangedHex(curPos);
                 for (Entity en : entity.getGame().getEntitiesVector(curPos)) {
-                    gameManager.doMagmaDamage(en, false);
+                    if (en != entity) {
+                        gameManager.doMagmaDamage(en, false);
+                    }
                 }
             }
+        }
+    }
+
+    /**
+     * Check for movement into magma hex and apply damage.
+     */
+    public static void checkEnteringMagma(Hex hex, int elevation, Entity entity, GameManager gameManager) {
+
+        if ((hex.terrainLevel(Terrains.MAGMA) == 2) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+            gameManager.doMagmaDamage(entity, false);
         }
     }
 

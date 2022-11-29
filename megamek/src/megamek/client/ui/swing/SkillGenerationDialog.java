@@ -24,6 +24,7 @@ import megamek.client.ui.baseComponents.MMButton;
 import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.SkillGenerationOptionsPanel;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 
 import javax.swing.*;
@@ -119,10 +120,15 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
                         ? getClientGUI().getBots().get(comboClients.getSelectedItem())
                         : getClientGUI().getClient()));
         panel.add(comboClients);
-
         return panel;
     }
     //endregion Initialization
+
+    @Override
+    protected void finalizeInitialization() throws Exception {
+        super.finalizeInitialization();
+        adaptToGUIScale();
+    }
 
     //region Button Actions
     @Override
@@ -131,4 +137,8 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
         getSkillGenerationOptionsPanel().updateClient();
     }
     //endregion Button Actions
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+    }
 }

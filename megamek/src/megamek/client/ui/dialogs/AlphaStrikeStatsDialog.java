@@ -61,7 +61,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         super(frame, "AlphaStrikeStatsDialog", "AlphaStrikeStatsDialog.title");
         this.entities = new ArrayList<>(entities);
         initialize();
-        UIUtil.adjustDialog(this);
+        adaptToGUIScale();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         var asPanel = new AlphaStrikeStatsTablePanel(getFrame(), entities, pilotToggle.isSelected());
         scrollPane.setViewportView(asPanel);
         centerPanel.add(scrollPane);
-        UIUtil.adjustDialog(this);
+        adaptToGUIScale();
     }
     
     private void copyToClipboard() {
@@ -145,4 +145,7 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         return dataLine;
     }
 
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
 }

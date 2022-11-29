@@ -77,8 +77,7 @@ public class TeamOverviewPanel extends JPanel {
         colModel.getColumn(TOMCOLS.HIDDEN.ordinal()).setCellRenderer(centerRenderer);
         scrTeams.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrTeams);
-        
-        adaptToGUIScale();
+
         refreshData();
     }
     
@@ -124,12 +123,6 @@ public class TeamOverviewPanel extends JPanel {
         }
     };
     
-    /** Adapts the row heights and headers to the current GUI scaling. */
-    public void adaptToGUIScale() {
-        teamOverviewModel.updateRowHeights();
-        refreshTableHeader();
-    }
-
     /** Refreshes the headers, setting the header names and gui scaling them. */
     public void refreshTableHeader() {
         JTableHeader header = teamOverviewTable.getTableHeader();

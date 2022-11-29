@@ -74,7 +74,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     @Override
     protected void initialize() {
         super.initialize();
-        UIUtil.adjustDialog(this.getContentPane());
+        adaptToGUIScale();
         try {
             finalizeInitialization();
         } catch (Exception ex) {
@@ -179,5 +179,9 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             }
         }
         return result;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

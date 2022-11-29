@@ -471,7 +471,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     @Override
     public void setVisible(boolean b) {
         if (b) {
-            UIUtil.adjustDialog(getContentPane());
+            adaptToGUIScale();
             loadWindowSettings();
         } else {
             saveWindowSettings();
@@ -504,5 +504,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             basicButton.setSelected(true);
         }
     }
-    
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
 }

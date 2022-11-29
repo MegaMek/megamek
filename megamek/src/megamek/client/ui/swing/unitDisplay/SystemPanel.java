@@ -4,10 +4,14 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ChoiceDialog;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.fileUtils.MegaMekFile;
 
 import javax.swing.*;
@@ -24,7 +28,7 @@ import java.util.Vector;
 /**
  * This class shows the critical hits and systems for a mech
  */
-class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSelectionListener {
+class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSelectionListener, IPreferenceChangeListener {
     
     private static int LOC_ALL_EQUIP = 0;
     private static int LOC_ALL_WEAPS = 1;
@@ -35,6 +39,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
 
     private static final long serialVersionUID = 6660316427898323590L;
 
+    private JPanel panelMain;
+    private JScrollPane tSlotScroll;
     private JLabel locLabel;
     private JLabel slotLabel;
     private JLabel modeLabel;
@@ -91,7 +97,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         // layout main panel
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        panelMain = new JPanel(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 1);
@@ -102,7 +108,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.gridwidth = 1;
         c.gridheight = 1;
         gridbag.setConstraints(locLabel, c);
-        add(locLabel);
+        panelMain.add(locLabel);
 
         c.weightx = 0.0;
         c.gridy = 0;
@@ -110,7 +116,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.insets = new Insets(15, 1, 1, 9);
         gridbag.setConstraints(slotLabel, c);
-        add(slotLabel);
+        panelMain.add(slotLabel);
 
         c.weightx = 0.5;
         // c.weighty = 1.0;
@@ -120,7 +126,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.insets = new Insets(1, 9, 15, 1);
         c.gridheight = 1;
         gridbag.setConstraints(locList, c);
-        add(locList);
+        panelMain.add(locList);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(15, 9, 1, 1);
@@ -131,7 +137,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.gridwidth = 1;
         c.gridheight = 1;
         gridbag.setConstraints(unitLabel, c);
-        add(unitLabel);
+        panelMain.add(unitLabel);
 
         c.weightx = 0.5;
         // c.weighty = 1.0;
@@ -141,7 +147,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.insets = new Insets(1, 9, 15, 1);
         c.gridheight = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(unitList, c);
-        add(unitList);
+        panelMain.add(unitList);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = 1;
@@ -150,10 +156,10 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.weightx = 0.0;
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 9);
-        JScrollPane tSlotScroll = new JScrollPane(slotList);
+        tSlotScroll = new JScrollPane(slotList);
         tSlotScroll.setMinimumSize(new Dimension(200, 100));
         gridbag.setConstraints(tSlotScroll, c);
-        add(tSlotScroll);
+        panelMain.add(tSlotScroll);
 
         c.gridwidth = 1;
         c.gridy = 2;
@@ -162,7 +168,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.weighty = 0.0;
         gridbag.setConstraints(modeLabel, c);
         c.insets = new Insets(1, 1, 1, 1);
-        add(modeLabel);
+        panelMain.add(modeLabel);
 
         c.weightx = 1.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -170,7 +176,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.gridx = 2;
         c.insets = new Insets(1, 1, 1, 9);
         gridbag.setConstraints(m_chMode, c);
-        add(m_chMode);
+        panelMain.add(m_chMode);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.gridheight = GridBagConstraints.REMAINDER;
@@ -178,7 +184,13 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         c.gridx = 1;
         c.insets = new Insets(4, 4, 15, 9);
         gridbag.setConstraints(m_bDumpAmmo, c);
-        add(m_bDumpAmmo);
+        panelMain.add(m_bDumpAmmo);
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        setLayout(new BorderLayout());
+        add(panelMain);
+        panelMain.setOpaque(false);
 
         setBackGround();
         onResize();
@@ -828,5 +840,19 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener, ListSe
         
         m_chMode.removeItemListener(this);
         m_bDumpAmmo.removeActionListener(this);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(panelMain, UIUtil.FONT_SCALE1);
+        tSlotScroll.setMinimumSize(new Dimension(200, UIUtil.scaleForGUI(100)));
+        tSlotScroll.setPreferredSize(new Dimension(200, UIUtil.scaleForGUI(100)));
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
     }
 }

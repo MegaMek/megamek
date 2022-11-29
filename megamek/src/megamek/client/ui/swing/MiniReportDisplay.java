@@ -17,6 +17,8 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.Player;
 import megamek.common.Entity;
 import megamek.common.Report;
@@ -28,7 +30,6 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
-import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Iterator;
@@ -36,8 +37,9 @@ import java.util.Iterator;
 /**
  * Shows reports, with an Okay JButton
  */
-public class MiniReportDisplay extends JDialog implements ActionListener, HyperlinkListener {
+public class MiniReportDisplay extends JDialog implements ActionListener, HyperlinkListener, IPreferenceChangeListener {
     private JButton butOkay;
+    private JTabbedPane tabs;  
     private JButton butPlayerSearchUp;
     private JButton butPlayerSearchDown;
     private JButton butEntitySearchUp;
@@ -49,7 +51,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     private JComboBox<String> comboQuick = new JComboBox<>();
     private ClientGUI currentClientgui;
     private Client currentClient;
-    private JTabbedPane tabs;
 
     private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
     private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
@@ -123,6 +124,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
             }
         });
 
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
         butOkay.requestFocus();
     }
 
@@ -299,20 +302,13 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         }
     }
 
+
     private void setupReportTabs() {
         tabs = new JTabbedPane();
 
         addReportPages();
         
         add(BorderLayout.CENTER, tabs);
-    }
-
-    public static void setupStylesheet(JTextPane pane) {
-        pane.setContentType("text/html");
-        Font font = UIManager.getFont("Label.font");
-        ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet().addRule(
-                "pre { font-family: " + font.getFamily()
-                        + "; font-size: 12pt; font-style:normal;}");
     }
 
     private void savePref() {
@@ -329,8 +325,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             JTextPane ta = new JTextPane();
+            ReportDisplay.setupStylesheet(ta);
             ta.addHyperlinkListener(this);
-            setupStylesheet(ta);
             BASE64ToolKit toolKit = new BASE64ToolKit();
             ta.setEditorKit(toolKit);
             ta.setText("<pre>" + text + "</pre>");
@@ -343,8 +339,9 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
 
         // add the new current phase tab
         JTextPane ta = new JTextPane();
+        ReportDisplay.setupStylesheet(ta);
         ta.addHyperlinkListener(this);
-        setupStylesheet(ta);
+
         BASE64ToolKit toolKit = new BASE64ToolKit();
         ta.setEditorKit(toolKit);
         ta.setText("<pre>" + currentClient.phaseReport + "</pre>");
@@ -411,4 +408,28 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
             }
         }
     };
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            Component cp = tabs.getComponentAt(i);
+            if (cp instanceof JScrollPane) {
+                Component pane = ((JScrollPane) cp).getViewport().getView();
+                if (pane instanceof JTextPane) {
+                    JTextPane tp = (JTextPane) pane;
+                    ReportDisplay.setupStylesheet(tp);
+                    tp.setText(tp.getText());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
+    }
 }

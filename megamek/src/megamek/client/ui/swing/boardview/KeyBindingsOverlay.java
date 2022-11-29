@@ -23,6 +23,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +56,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private static final Font FONT = new Font("SansSerif", Font.PLAIN, 13);
     private static final int DIST_TOP = 30;
     private static final int DIST_SIDE = 30;
+    private int overlayWidth = 500;
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
     private static final Color TEXT_COLOR = new Color(200, 250, 200);
@@ -65,6 +68,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private static final List<KeyCommandBind> BINDS_FIRE = Arrays.asList(
             KeyCommandBind.NEXT_WEAPON,
             KeyCommandBind.PREV_WEAPON,
+            KeyCommandBind.UNDO_LAST_STEP,
             KeyCommandBind.NEXT_TARGET,
             KeyCommandBind.NEXT_TARGET_VALID,
             KeyCommandBind.NEXT_TARGET_NOALLIES,
@@ -74,6 +78,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     /** The keybinds to be shown during the movement phase */
     private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
             KeyCommandBind.TOGGLE_MOVEMODE,
+            KeyCommandBind.UNDO_LAST_STEP,
             KeyCommandBind.TOGGLE_CONVERSIONMODE
             );
 
@@ -146,11 +151,13 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             changed = false;
             
             // calculate the size from the text lines, font and padding
-            graph.setFont(FONT);
-            FontMetrics fm = graph.getFontMetrics(FONT);
+            Font newFont = FONT.deriveFont(FONT.getSize() * GUIPreferences.getInstance().getGUIScale());
+            graph.setFont(newFont);
+            FontMetrics fm = graph.getFontMetrics(newFont);
             List<String> allLines = assembleTextLines();
             Rectangle r = getSize(graph, allLines, fm);
             r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
+            overlayWidth = r.width;
             
             displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
             Graphics intGraph = displayImage.getGraphics();
@@ -190,6 +197,10 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         int width = 0;
         for (String line: lines) {
             if (fm.stringWidth(line) > width) {
+                if (line.startsWith("#") && line.length() > 7) {
+                    line = line.substring(7);
+                }
+
                 width = fm.stringWidth(line);
             }
         }
@@ -272,10 +283,16 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             }
             s = s.substring(7);
         }
-        graph.setColor(SHADOW_COLOR);
-        graph.drawString(s, x + 1, y + 1);
-        graph.setColor(textColor);
-        graph.drawString(s, x, y);
+
+        if (s.length() > 0) {
+            AttributedString text = new AttributedString(s);
+            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIPreferences.getInstance().getGUIScale())), 0, s.length());
+
+            graph.setColor(SHADOW_COLOR);
+            graph.drawString(text.getIterator(), x + 1, y + 1);
+            graph.setColor(textColor);
+            graph.drawString(text.getIterator(), x, y);
+        }
     }
     
     /** 

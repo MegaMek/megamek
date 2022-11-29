@@ -18,6 +18,7 @@ import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
@@ -117,7 +118,8 @@ public class ForceGeneratorViewUi {
 
         forceTree = new JTree(new ForceTreeModel(null));
         forceTree.setCellRenderer(new UnitRenderer());
-        forceTree.setRowHeight(80);
+        // JTree setRowHeight(0) the height for each row is determined by the renderer
+        forceTree.setRowHeight(0);
         forceTree.setVisibleRowCount(12);
         forceTree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
@@ -190,6 +192,8 @@ public class ForceGeneratorViewUi {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.add(panControls);
         leftPanel.add(scroll);
+
+        adaptToGUIScale();
     }
 
     public Component getLeftPanel() {
@@ -334,6 +338,7 @@ public class ForceGeneratorViewUi {
                     item = new JMenuItem("Export as MUL");
                     item.addActionListener(ev -> panControls.exportMUL(fd));
                     menu.add(item);
+                    UIUtil.scaleMenu(menu);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
@@ -359,7 +364,7 @@ public class ForceGeneratorViewUi {
                     JMenuItem item = new JMenuItem("Remove");
                     item.addActionListener(ev -> modelChosen.removeEntities(tblChosen.getSelectedRows()));
                     menu.add(item);
-
+                    UIUtil.scaleMenu(menu);
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
@@ -600,5 +605,10 @@ public class ForceGeneratorViewUi {
                     return "??";
             }
         }
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(leftPanel, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(rightPanel, UIUtil.FONT_SCALE1);
     }
 }

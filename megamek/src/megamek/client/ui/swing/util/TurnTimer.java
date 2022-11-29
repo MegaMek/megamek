@@ -41,8 +41,8 @@ public class TurnTimer {
 
     public TurnTimer(int limit, AbstractPhaseDisplay pD) {
         phaseDisplay = pD;
-        // make it minutes here.
-        timeLimit = limit * 60;
+        // linit in seconds.
+        timeLimit = limit;
 
         display = new JPanel();
         progressBar = new JProgressBar(JProgressBar.HORIZONTAL, 0, timeLimit);
@@ -100,7 +100,7 @@ public class TurnTimer {
     public static TurnTimer init(AbstractPhaseDisplay phaseDisplay, Client client) {
         // check if there should be a turn timer running
         if (timerShouldStart(client)) {
-            Option timer = (Option) client.getGame().getOptions().getOption("turn_timer");
+            Option timer = (Option) client.getGame().getOptions().getOption(OptionsConstants.BASE_TURN_TIMER);
             TurnTimer tt = new TurnTimer(timer.intValue(), phaseDisplay);
             tt.startTimer();
             return tt;

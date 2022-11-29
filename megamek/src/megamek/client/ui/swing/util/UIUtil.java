@@ -27,6 +27,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -47,6 +49,7 @@ public final class UIUtil {
     
     /** The style = font-size: xx value corresponding to a GUI scale of 1 */
     public final static int FONT_SCALE1 = 14;
+    public final static int FONT_SCALE2 = 17;
     public final static String ECM_SIGN = " \u24BA ";
     public final static String LOADED_SIGN = " \u26DF ";
     public final static String UNCONNECTED_SIGN = " \u26AC";
@@ -354,36 +357,63 @@ public final class UIUtil {
     }
     
     /** Call this for  {@link #adjustDialog(Container)} with a dialog as parameter. */
-    public static void adjustDialog(JDialog dialog) {
-        adjustDialog(dialog.getContentPane());
+    public static void adjustDialog(JDialog dialog, int fontSize) {
+        adjustContainer(dialog.getContentPane(), fontSize);
     }
-    
+
+    /** calculate the max row height in a table + pad */
+    public static int calRowHeights(JTable table, int sf, int pad)
+    {
+        int rowHeight = sf;
+        for (int row = 0; row < table.getRowCount(); row++)         {
+            for (int col = 0; col < table.getColumnCount(); col++) {
+                // Consider the preferred height of the column
+                TableCellRenderer renderer = table.getCellRenderer(row, col);
+                Component comp = table.prepareRenderer(renderer, row, col);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+        }
+        // Add a little margin to the rows
+        return rowHeight + pad;
+    }
+
+    /** set font size for the TitledBorder */
+     public static void setTitledBorder(Border border, int sf) {
+        if ((border instanceof TitledBorder)) {
+            ((TitledBorder) border).setTitleFont(((TitledBorder) border).getTitleFont().deriveFont((float) sf));
+        }
+    }
+
     /** 
      * Applies the current gui scale to a given Container.
      * For a dialog, pass getContentPane(). This can work well for simple dialogs,
      * but it is of course "experimental". Complex dialogs must be hand-adapted to the 
      * gui scale.
      */
-    public static void adjustDialog(Container contentPane) {
-        Font scaledFont = getScaledFont();
-        Component[] allComps = contentPane.getComponents();
-        for (Component comp: allComps) {
+    public static void adjustContainer(Container parentCon, int fontSize) {
+        int sf = scaleForGUI(fontSize);
+        int pad = 3;
+
+        for (Component comp: parentCon.getComponents()) {
             if ((comp instanceof JButton) || (comp instanceof JLabel)
                     || (comp instanceof JComboBox<?>) || (comp instanceof JTextField) || (comp instanceof JSlider)
                     || (comp instanceof JSpinner) || (comp instanceof JTextArea) || (comp instanceof JTextPane)
-                    || (comp instanceof JToggleButton)) {
-                comp.setFont(scaledFont.deriveFont(comp.getFont().getStyle()));
+                    || (comp instanceof JToggleButton) || (comp instanceof JTable) || (comp instanceof JList)
+                    || (comp instanceof JEditorPane) || (comp instanceof JTree)) {
+                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+                    comp.setFont(comp.getFont().deriveFont((float) sf));
+                }
             }
             if (comp instanceof JScrollPane 
                     && ((JScrollPane) comp).getViewport().getView() instanceof JComponent) {
-                adjustDialog(((JScrollPane) comp).getViewport());
+                JScrollPane scrollPane = (JScrollPane) comp;
+                Border border = scrollPane.getBorder();
+                setTitledBorder(border, sf);
+                adjustContainer(((JScrollPane) comp).getViewport(), fontSize);
             } else if (comp instanceof JPanel) {
                 JPanel panel = (JPanel) comp;
                 Border border = panel.getBorder();
-                if ((border instanceof TitledBorder)) {
-                    ((TitledBorder) border).setTitleFont(scaledFont);
-                }
-
+                setTitledBorder(border, sf);
                 if ((border instanceof EmptyBorder)) {
                     Insets i = ((EmptyBorder) border).getBorderInsets();
                     int top = scaleForGUI(i.top);
@@ -392,19 +422,29 @@ public final class UIUtil {
                     int right = scaleForGUI(i.right);
                     panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
                 }
-                adjustDialog(panel);
+                adjustContainer(panel, fontSize);
             } else if (comp instanceof JTabbedPane) {
-                comp.setFont(scaledFont);
+                if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+                    comp.setFont(comp.getFont().deriveFont((float) sf));
+                }
                 JTabbedPane tabbedPane = (JTabbedPane) comp;
                 for (int i=0; i < tabbedPane.getTabCount();i++) {
                     Component subComp = tabbedPane.getTabComponentAt(i);
                     if (subComp instanceof JPanel) {
-                        adjustDialog((JPanel) subComp);
+                        adjustContainer((JPanel) subComp, fontSize);
                     }
                 }
-                adjustDialog((JTabbedPane) comp);
+                adjustContainer((JTabbedPane) comp, fontSize);
+            } else if (comp instanceof JTable) {
+                JTable table = (JTable) comp;
+                table.setRowHeight(calRowHeights(table, sf, pad));
+                JTableHeader header = table.getTableHeader();
+                if ((header instanceof JTableHeader)) {
+                    header.setFont(comp.getFont().deriveFont((float) sf));
+                }
+                adjustContainer((Container) comp, fontSize);
             } else if (comp instanceof Container) {
-                adjustDialog((Container) comp);
+                adjustContainer((Container) comp, fontSize);
             }
         }
     }
@@ -415,7 +455,17 @@ public final class UIUtil {
             if ((comp instanceof JMenuItem)) {
                 comp.setFont(getScaledFont());
                 scaleJMenuItem((JMenuItem) comp);
-            } 
+            }
+        }
+    }
+
+    public static void scaleComp(JComponent comp, int fontSize) {
+        int sf = scaleForGUI(fontSize);
+
+        if ((comp.getFont() != null) && (sf != comp.getFont().getSize())) {
+            comp.setFont(comp.getFont().deriveFont((float) sf));
+            Border border = comp.getBorder();
+            setTitledBorder(border, sf);
         }
     }
 
@@ -1187,5 +1237,14 @@ public final class UIUtil {
 
         window.setLocation(location);
         window.setSize(size);
+    }
+
+    /*
+    * Calculates center of view port for a given point
+     */
+    public static int calculateCenter(int vh, int h, int th, int y) {
+        y = Math.max(0, y - ((vh - th)/2));
+        y = Math.min(y, h - vh);
+        return y;
     }
 }

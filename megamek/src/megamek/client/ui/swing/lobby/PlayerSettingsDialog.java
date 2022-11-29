@@ -70,12 +70,13 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         
         numFormatter.setMinimum(0);
         numFormatter.setCommitsOnValidEdit(true);
+
         initialize();
     }
 
     @Override
     protected void finalizeInitialization() throws Exception {
-        UIUtil.adjustDialog(this);
+        adaptToGUIScale();
         super.finalizeInitialization();
     }
 
@@ -416,5 +417,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
             return 0;
         }
     }
-
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
 }

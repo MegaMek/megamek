@@ -13,11 +13,11 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
@@ -45,6 +45,17 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
     // buttons
     private JButton rerollInitiativeB;
+    private JSplitPane splitPaneMain;
+    JPanel panelTop;
+
+    private static final String RD_ACTIONCOMMAND_DONEBUTTON = "doneButton";
+    private static final String RD_ACTIONCOMMAND_REROLLINITIATIVE = "reroll_initiative";
+
+    private static final String MSG_DONE = Messages.getString("ReportDisplay.Done");
+    private static final String MSG_REROLL = Messages.getString("ReportDisplay.Reroll");
+    private static final String MSG_ROUND = Messages.getString("ReportDisplay.Round");
+    private static final String MSG_PHASE = Messages.getString("ReportDisplay.Phase");
+    private static final String MSG_DETAILS =Messages.getString("ReportDisplay.Details");
 
     private boolean rerolled; // have we rerolled an init?
 
@@ -56,13 +67,13 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         super(clientgui);
         butDone = new MegamekButton("",
                 SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
-        butDone.setActionCommand("doneButton");
+        butDone.setActionCommand(RD_ACTIONCOMMAND_DONEBUTTON);
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (e.getActionCommand().equals("doneButton")) {
+                if (e.getActionCommand().equals(RD_ACTIONCOMMAND_DONEBUTTON)) {
                     ready();
                 }
             }
@@ -72,29 +83,38 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         // Create a tabbed panel to hold our reports.
         tabs = new JTabbedPane();
 
-        Font tabPanelFont = new Font(MMConstants.FONT_DIALOG, Font.BOLD,
-                GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
-        tabs.setFont(tabPanelFont);
-
         resetTabs();
 
-        butDone.setText(Messages.getString("ReportDisplay.Done"));
+        butDone.setText(MSG_DONE);
 
-        rerollInitiativeB = new JButton(Messages.getString("ReportDisplay.Reroll"));
-        rerollInitiativeB.setActionCommand("reroll_initiative");
+        rerollInitiativeB = new JButton(MSG_REROLL);
+        rerollInitiativeB.setActionCommand(RD_ACTIONCOMMAND_REROLLINITIATIVE);
         rerollInitiativeB.addActionListener(this);
 
         // layout screen
-        setLayout(new GridBagLayout());
-        add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
+        setLayout(new BorderLayout());
+        splitPaneMain = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+        splitPaneMain.setDividerSize(15);
+        splitPaneMain.setResizeWeight(0.95);
+        panelTop = new JPanel(new GridBagLayout());
+        panelTop.add(tabs, GBC.eol().fill(GridBagConstraints.BOTH));
+
         JPanel panButtons = new JPanel();
         panButtons.setLayout(new GridLayout(1, 8));
         panButtons.add(rerollInitiativeB);
         for (int padding = 0; padding < 6; padding++) {
             panButtons.add(new JLabel(""));
         }
-        add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panelTop.add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        splitPaneMain.setTopComponent(panelTop);
+        add(splitPaneMain);
+
+        adaptToGUIScale();
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
+    }
+
+    public void setBottom(JComponent comp) {
+        splitPaneMain.setBottomComponent(comp);
     }
 
     /**
@@ -159,11 +179,11 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             // report.
             round = 1;
         }
-        if (tabs.indexOfTab("Round " + round) == -1) {
+        if (tabs.indexOfTab(MSG_ROUND + " " + round) == -1) {
             // Need a new tab for the new round.
 
             // get rid of phase tab
-            int phaseTab = tabs.indexOfTab("Phase");
+            int phaseTab = tabs.indexOfTab(MSG_PHASE);
             if (phaseTab >= 0) {
                 tabs.removeTabAt(phaseTab);
             }
@@ -176,9 +196,9 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             // TODO: we should remove the use of client
             final Client client = clientgui.getClient();
             for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
-                if (tabs.indexOfTab("Round " + catchup) != -1) {
+                if (tabs.indexOfTab(MSG_ROUND + " " + catchup) != -1) {
                     ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
-                            .indexOfTab("Round " + catchup))).getViewport()
+                            .indexOfTab(MSG_ROUND + " " + catchup))).getViewport()
                             .getView()).setText("<pre>"
                             + client.receiveReport(client.getGame().getReports(
                                     catchup)) + "</pre>");
@@ -196,7 +216,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 ta.setText("<pre>" + text + "</pre>");
                 ta.setEditable(false);
                 ta.setOpaque(false);
-                tabs.add("Round " + catchup, new JScrollPane(ta));
+                tabs.add(MSG_ROUND + " " + catchup, new JScrollPane(ta));
             }
 
             // add the new current phase tab
@@ -211,12 +231,12 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
 
             JScrollPane sp = new JScrollPane(ta);
-            tabs.add("Phase", sp);
+            tabs.add(MSG_PHASE, sp);
             tabs.setSelectedComponent(sp);
         } else {
             // Update the existing round tab and the phase tab.
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round " + round))).getViewport().getView()).setText("<pre>" + roundText + "</pre>");
-            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Phase"))).getViewport().getView()).setText("<pre>" + phaseText + "</pre>");
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab(MSG_ROUND + " " + round))).getViewport().getView()).setText("<pre>" + roundText + "</pre>");
+            ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab(MSG_PHASE))).getViewport().getView()).setText("<pre>" + phaseText + "</pre>");
         }
     }
 
@@ -227,7 +247,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     }
     
     public void appendReportTab(String additionalText) {
-        int phaseTab = tabs.indexOfTab("Phase");
+        int phaseTab = tabs.indexOfTab(MSG_PHASE);
         if (phaseTab > 0) {
             JTextPane pane = ((JTextPane) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView());
             BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -249,7 +269,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
     //
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) {
+        if (ev.getActionCommand().equalsIgnoreCase(RD_ACTIONCOMMAND_REROLLINITIATIVE)) {
             rerollInitiative();
         }
     }
@@ -267,7 +287,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
         rerolled = false;
 
         SwingUtilities.invokeLater(() -> {
-            int phaseTab = tabs.indexOfTab("Phase");
+            int phaseTab = tabs.indexOfTab(MSG_PHASE);
             if (phaseTab > 0) {
                 JViewport vp = ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport();
                 vp.setViewPosition(new Point());
@@ -313,7 +333,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString("ReportDisplay.Details"),
+                JOptionPane.showMessageDialog(clientgui, desc, Messages.getString(MSG_DETAILS),
                         JOptionPane.PLAIN_MESSAGE);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
@@ -325,22 +345,28 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             activePane().setToolTipText(null);
         }
     }
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(panelTop, UIUtil.FONT_SCALE1);
+        UIUtil.scaleComp(butDone, UIUtil.FONT_SCALE2);
+
+        for (int i = 0; i < tabs.getTabCount(); i++) {
+            Component cp = tabs.getComponentAt(i);
+            if (cp instanceof JScrollPane) {
+                Component pane = ((JScrollPane) cp).getViewport().getView();
+                if (pane instanceof JTextPane) {
+                    JTextPane tp = (JTextPane) pane;
+                    setupStylesheet(tp);
+                    tp.setText(tp.getText());
+                }
+            }
+        }
+    }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         // Update the text size when the GUI scaling changes
         if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            for (int i = 0; i < tabs.getTabCount(); i++) {
-                Component cp = tabs.getComponentAt(i);
-                if (cp instanceof JScrollPane) {
-                    Component pane = ((JScrollPane) cp).getViewport().getView();
-                    if (pane instanceof JTextPane) {
-                        JTextPane tp = (JTextPane) pane;
-                        setupStylesheet(tp);
-                        tp.setText(tp.getText());
-                    }
-                }
-            }
+            adaptToGUIScale();
         } 
     }
 

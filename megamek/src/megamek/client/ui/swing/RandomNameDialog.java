@@ -28,6 +28,7 @@ import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Entity;
 import megamek.common.enums.Gender;
 
@@ -243,6 +244,12 @@ public class RandomNameDialog extends JDialog implements ActionListener {
 
         getContentPane().add(panMain, java.awt.BorderLayout.PAGE_START);
 
+        adaptToGUIScale();
+
         pack();
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

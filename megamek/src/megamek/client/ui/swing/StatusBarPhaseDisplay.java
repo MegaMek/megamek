@@ -43,6 +43,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected static final Dimension MIN_BUTTON_SIZE = new Dimension(32, 32);
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int BUTTON_ROWS = 2;
+    private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
 
     /**
      * Interface that defines what a command for a phase is.
@@ -79,12 +80,11 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     
     protected int buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
     protected int buttonsPerGroup = BUTTON_ROWS * buttonsPerRow;
-    
 
     protected StatusBarPhaseDisplay(ClientGUI cg) {
         super(cg);
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "clearButton");
-        getActionMap().put("clearButton", new AbstractAction() {
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SBPD_KEY_CLEARBUTTON);
+        getActionMap().put(SBPD_KEY_CLEARBUTTON, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isIgnoringEvents()) {
@@ -170,6 +170,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                 
         panButtons.add(buttonsPanel);
         panButtons.add(donePanel);
+        adaptToGUIScale();
         panButtons.validate();
         panButtons.repaint();
     }
@@ -188,13 +189,20 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected void setStatusBarText(String text) {
         labStatus.setText(text);
     }
-    
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(panButtons, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(panStatus, UIUtil.FONT_SCALE2);
+    }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.ADVANCED_BUTTONS_PER_ROW)) {
             buttonsPerRow = GUIP.getInt(GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
             buttonsPerGroup = 2 * buttonsPerRow;
             setupButtonPanel();
+        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
         }
     }
 

@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.Gender;
 import megamek.common.options.*;
@@ -514,6 +515,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         });
 
+        adaptToGUIScale();
+
         pack();
         mainPanel.setSize(mainPanel.getSize().width,
                 Math.min(mainPanel.getSize().height, 400));
@@ -641,6 +644,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
 
+        adaptToGUIScale();
         validate();
     }
 
@@ -1411,5 +1415,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         m_equip = new EquipChoicePanel(entity, clientgui, client);
         panEquip.add(m_equip, GBC.std());
     }
-    
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
 }

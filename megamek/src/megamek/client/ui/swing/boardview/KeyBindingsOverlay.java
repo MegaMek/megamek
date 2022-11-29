@@ -33,6 +33,8 @@ import org.apache.logging.log4j.LogManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +60,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     private static final List<KeyCommandBind> BINDS_FIRE = Arrays.asList(
             KeyCommandBind.NEXT_WEAPON,
             KeyCommandBind.PREV_WEAPON,
+            KeyCommandBind.UNDO_LAST_STEP,
             KeyCommandBind.NEXT_TARGET,
             KeyCommandBind.NEXT_TARGET_VALID,
             KeyCommandBind.NEXT_TARGET_NOALLIES,
@@ -67,6 +70,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
     /** The keybinds to be shown during the movement phase */
     private static final List<KeyCommandBind> BINDS_MOVE = Arrays.asList(
             KeyCommandBind.TOGGLE_MOVEMODE,
+            KeyCommandBind.UNDO_LAST_STEP,
             KeyCommandBind.TOGGLE_CONVERSIONMODE
     );
 
@@ -139,12 +143,13 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             changed = false;
             
             // calculate the size from the text lines, font and padding
-            graph.setFont(FONT);
-            FontMetrics fm = graph.getFontMetrics(FONT);
+            Font newFont = FONT.deriveFont(FONT.getSize() * GUIPreferences.getInstance().getGUIScale());
+            graph.setFont(newFont);
+            FontMetrics fm = graph.getFontMetrics(newFont);
             List<String> allLines = assembleTextLines();
             Rectangle r = getSize(graph, allLines, fm);
             r = new Rectangle(r.width + 2 * PADDING_X, r.height + 2 * PADDING_Y);
-            
+
             displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
             Graphics intGraph = displayImage.getGraphics();
             GUIPreferences.AntiAliasifSet(intGraph);
@@ -183,6 +188,10 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
         int width = 0;
         for (String line: lines) {
             if (fm.stringWidth(line) > width) {
+                if (line.startsWith("#") && line.length() > 7) {
+                    line = line.substring(7);
+                }
+
                 width = fm.stringWidth(line);
             }
         }
@@ -260,15 +269,21 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
                 int grn = Integer.parseInt(s.substring(3, 5), 16);
                 int blu = Integer.parseInt(s.substring(5, 7), 16);
                 textColor = new Color(red, grn, blu);
-            } catch (Exception e) {
-                LogManager.getLogger().error("", e);
+            } catch (Exception ex) {
+                LogManager.getLogger().error("", ex);
             }
             s = s.substring(7);
         }
-        graph.setColor(SHADOW_COLOR);
-        graph.drawString(s, x + 1, y + 1);
-        graph.setColor(textColor);
-        graph.drawString(s, x, y);
+
+        if (s.length() > 0) {
+            AttributedString text = new AttributedString(s);
+            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIPreferences.getInstance().getGUIScale())), 0, s.length());
+
+            graph.setColor(SHADOW_COLOR);
+            graph.drawString(text.getIterator(), x + 1, y + 1);
+            graph.setColor(textColor);
+            graph.drawString(text.getIterator(), x, y);
+        }
     }
     
     /** 

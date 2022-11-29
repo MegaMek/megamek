@@ -42,8 +42,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
      * separated in the settings dialog shields new users from unnecessary
      * complication.
      */
-    public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
-    public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE = "AdvancedChatLoungeTabFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE = "AdvancedMechDisplayArmorLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE = "AdvancedMechDisplayArmorMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE = "AdvancedMechDisplayArmorSmallFontSize";
@@ -68,7 +66,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_TRANSLUCENT_HIDDEN_UNITS = "AdvancedTranslucentHiddenUnits";
     public static final String ADVANCED_ATTACK_ARROW_TRANSPARENCY = "AdvancedAttackArrowTransparency";
     public static final String ADVANCED_BUILDING_TEXT_COLOR = "AdvancedBuildingTextColor";
-    public static final String ADVANCED_CHATBOX2_FONTSIZE = "AdvancedChatbox2Fontsize";
     public static final String ADVANCED_CHATBOX2_BACKCOLOR = "AdvancedChatbox2BackColor";
     public static final String ADVANCED_CHATBOX2_TRANSPARANCY = "AdvancedChatbox2Transparancy";
     public static final String ADVANCED_CHATBOX2_AUTOSLIDEDOWN = "AdvancedChatbox2AutoSlidedown";
@@ -318,8 +315,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     protected GUIPreferences() {
         store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
 
-        store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
-        store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);
@@ -364,7 +359,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
         setDefault(ADVANCED_BUILDING_TEXT_COLOR, DEFAULT_BLUE);
         setDefault(ADVANCED_CHATBOX2_BACKCOLOR, DEFAULT_WHITE);
-        store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
         store.setDefault(ADVANCED_CHATBOX2_AUTOSLIDEDOWN, true);
         store.setDefault(ADVANCED_ECM_TRANSPARENCY, 0x80);

@@ -3428,11 +3428,7 @@ public class GameManager implements IGameManager {
         // Load the unit. Do not check for elevation during deployment
         boolean checkElevation = !getGame().getPhase().isLounge()
                 && !getGame().getPhase().isDeployment();
-        if (bayNumber == -1) {
-            loader.load(unit, checkElevation);
-        } else {
-            loader.load(unit, checkElevation, bayNumber);
-        }
+        loader.load(unit, checkElevation, bayNumber);
 
         // The loaded unit is being carried by the loader.
         unit.setTransportId(loader.getId());
@@ -3443,9 +3439,9 @@ public class GameManager implements IGameManager {
         // set deployment round of the loadee to equal that of the loader
         unit.setDeployRound(loader.getDeployRound());
 
-        //Update the loading unit's passenger count, if it's a large craft
-        if (loader instanceof SmallCraft || loader instanceof Jumpship) {
-            //Don't add DropShip crew to a JumpShip or station's passenger list
+        // Update the loading unit's passenger count, if it's a large craft
+        if ((loader instanceof SmallCraft) || (loader instanceof Jumpship)) {
+            // Don't add DropShip crew to a JumpShip or station's passenger list
             if (!unit.isLargeCraft()) {
                 loader.setNPassenger(loader.getNPassenger() + unit.getCrew().getSize());
             }
@@ -4921,6 +4917,7 @@ public class GameManager implements IGameManager {
             // note that this must sequentially occur before the next 'entering liquid magma' check
             // otherwise, magma crust won't have a chance to break
             ServerHelper.checkAndApplyMagmaCrust(nextHex, nextElevation, entity, curPos, false, vPhaseReport, this);
+            ServerHelper.checkEnteringMagma(nextHex, nextElevation, entity, this);
 
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(step, moveType, nextHex, curPos, nextPos,
@@ -5923,6 +5920,7 @@ public class GameManager implements IGameManager {
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
+        Hex firstHex = game.getBoard().getHex(curPos); // Used to check for start/end magma damage
         int curFacing = entity.getFacing();
         int curVTOLElevation = entity.getElevation();
         int curElevation;
@@ -6129,6 +6127,10 @@ public class GameManager implements IGameManager {
                 break;
             }
 
+            // Extra damage if first and last hex are magma
+            if (firstStep) {
+                firstHex = game.getBoard().getHex(curPos);
+            }
             // stop if the entity already killed itself
             if (entity.isDestroyed() || entity.isDoomed()) {
                 break;
@@ -7293,7 +7295,20 @@ public class GameManager implements IGameManager {
 
             // check for breaking magma crust unless we are jumping over the hex
             if (stepMoveType != EntityMovementType.MOVE_JUMP) {
-                ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
+                if (!curPos.equals(lastPos)) {
+                    ServerHelper.checkAndApplyMagmaCrust(curHex, step.getElevation(), entity, curPos, false, vPhaseReport, this);
+                    ServerHelper.checkEnteringMagma(curHex, step.getElevation(), entity, this);
+                }
+            }
+
+            // check for last move ending in magma TODO: build report for end of move
+            if (!i.hasMoreElements() && curHex.terrainLevel(Terrains.MAGMA) == 2
+                    && firstHex.terrainLevel(Terrains.MAGMA) == 2) {
+                r = new Report(2404);
+                r.addDesc(entity);
+                r.subject = entity.getId();
+                addReport(r);
+                doMagmaDamage(entity, false);
             }
 
             // check if we've moved into a swamp
@@ -8431,6 +8446,7 @@ public class GameManager implements IGameManager {
             // Don't interact with terrain when jumping onto a building or a bridge
             if (entity.getElevation() == 0) {
                 ServerHelper.checkAndApplyMagmaCrust(curHex, entity.getElevation(), entity, curPos, true, vPhaseReport, this);
+                ServerHelper.checkEnteringMagma(curHex, entity.getElevation(), entity, this);
 
                 // jumped into swamp? maybe stuck!
                 if (curHex.getBogDownModifier(entity.getMovementMode(),
@@ -12052,6 +12068,7 @@ public class GameManager implements IGameManager {
         }
 
         ServerHelper.checkAndApplyMagmaCrust(destHex, entity.getElevation(), entity, dest, false, vPhaseReport, this);
+        ServerHelper.checkEnteringMagma(destHex, entity.getElevation(), entity, this);
 
         Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
         if (violation == null) {
@@ -18478,32 +18495,7 @@ public class GameManager implements IGameManager {
             // If a Mek is in extreme Temperatures, add or subtract one
             // heat per 10 degrees (or fraction of 10 degrees) above or
             // below 50 or -30 degrees Celsius
-            if (game.getPlanetaryConditions().getTemperatureDifference(50, -30) != 0
-                    && !((Mech) entity).hasLaserHeatSinks()) {
-                if (game.getPlanetaryConditions().getTemperature() > 50) {
-                    int heatToAdd = game.getPlanetaryConditions()
-                            .getTemperatureDifference(50, -30);
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        heatToAdd /= 2;
-                    }
-                    entity.heatFromExternal += heatToAdd;
-                    r = new Report(5020);
-                    r.subject = entity.getId();
-                    r.add(heatToAdd);
-                    addReport(r);
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        r = new Report(5550);
-                        addReport(r);
-                    }
-                } else {
-                    entity.heatFromExternal -= game.getPlanetaryConditions()
-                            .getTemperatureDifference(50, -30);
-                    r = new Report(5025);
-                    r.subject = entity.getId();
-                    r.add(game.getPlanetaryConditions().getTemperatureDifference(50, -30));
-                    addReport(r);
-                }
-            }
+            ServerHelper.adjustHeatExtremeTemp(game, entity, vPhaseReport);
 
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.

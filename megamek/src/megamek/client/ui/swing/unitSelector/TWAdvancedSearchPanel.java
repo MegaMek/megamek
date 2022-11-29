@@ -19,6 +19,7 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
 import megamek.client.ui.swing.util.UIUtil;
@@ -230,14 +231,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponTypesSorter = new TableRowSorter<>(weaponTypesModel);
         tblWeaponType.setRowSorter(weaponTypesSorter);
         tblWeaponType.addKeyListener(this);
-
-        tblWeaponType.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeaponType.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeaponType.getSelectionModel().addListSelectionListener(this);
         for (int i = 0; i < weaponTypesModel.getColumnCount(); i++) {
             tblWeaponType.getColumnModel().getColumn(i).setPreferredWidth(weaponTypesModel.getPreferredWidth(i));
         }
         scrTableWeaponType.setViewportView(tblWeaponType);
-
 
         // Setup Weapons Table
         weaponsModel = new WeaponsTableModel();
@@ -249,8 +248,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponsSorter = new TableRowSorter<>(weaponsModel);
         tblWeapons.setRowSorter(weaponsSorter);
         tblWeapons.addKeyListener(this);
-
-        tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeapons.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
         for (int i = 0; i < weaponsModel.getColumnCount(); i++) {
             tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
@@ -268,8 +266,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         equipmentSorter = new TableRowSorter<>(equipmentModel);
         tblEquipment.setRowSorter(equipmentSorter);
         tblEquipment.addKeyListener(this);
-
-        tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblEquipment.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
         for (int i = 0; i < equipmentModel.getColumnCount(); i++) {
             tblEquipment.getColumnModel().getColumn(i).setPreferredWidth(equipmentModel.getPreferredWidth(i));

@@ -13,27 +13,16 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Iterator;
-import java.util.Map;
+import megamek.MMConstants;
+import megamek.client.ui.Messages;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-import megamek.client.ui.Messages;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author Ryan McConnell
@@ -62,7 +51,7 @@ public class UnitFailureDialog extends JDialog implements ActionListener, ListSe
 
         reasonTextArea.setEditable(false);
         reasonTextArea.setOpaque(false);
-        reasonTextArea.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        reasonTextArea.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 12));
         failedList.addListSelectionListener(this);
 
         getContentPane().setLayout(new BorderLayout());

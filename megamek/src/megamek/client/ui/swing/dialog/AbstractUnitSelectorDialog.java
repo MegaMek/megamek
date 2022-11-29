@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing.dialog;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BVDisplayDialog;
 import megamek.client.ui.models.XTableColumnModel;
@@ -34,7 +35,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -210,7 +213,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
         }
         bvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_BV);
         pvColumn = tableUnits.getColumnModel().getColumn(MechTableModel.COL_PV);
-        tableUnits.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tableUnits.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         togglePV(false);
 
         scrollTableUnits = new JScrollPane(tableUnits);

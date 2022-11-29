@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
@@ -49,7 +48,6 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private ChatterBox2 cb2;
 
-    private static final String CB_KEY_FONTNAMESANSSERIF = "Sans Serif";
     private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
 
     private static final String MSG_MEGAMEK = Messages.getString("ChatterBox.Megamek");

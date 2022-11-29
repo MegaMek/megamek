@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -245,7 +246,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     
     LobbyKeyDispatcher lobbyKeyDispatcher = new LobbyKeyDispatcher(this);
 
-    private static final String CL_KEY_FONTNAME_DIALOG = "Dialog";
     private static final String CL_KEY_FILEEXTENTION_BOARD = ".board";
     private static final String CL_KEY_FILEEXTENTION_XML = ".xml";
     private static final String CL_KEY_FILEPATH_MAPASSEMBLYHELP = "docs/Boards Stuff/MapAssemblyHelp.html";
@@ -1204,9 +1204,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         GUIPreferences.AntiAliasifSet(g);
         int w = image.getWidth();
         int h = image.getHeight();
-        String text =MSG_BOARDSEVERSIDB;
+        String text = MSG_BOARDSEVERSIDB;
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));
-        g.setFont(new Font(CL_KEY_FONTNAME_DIALOG, Font.ITALIC, fontSize));
+        g.setFont(new Font(MMConstants.FONT_DIALOG, Font.ITALIC, fontSize));
         FontMetrics fm = g.getFontMetrics(g.getFont());
         int cx = (w - fm.stringWidth(text)) / 2;
         int cy = h / 10 + fm.getAscent();
@@ -3188,8 +3188,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         butBoardPreview.setToolTipText(scaleStringForGUI(MSG_VIEWGAMEBOARDTOOLTIP));
         butSaveMapSetup.setToolTipText(scaleStringForGUI(MSG_MAPSAVESETUPTIP));
-        
-        Font scaledHelpFont = new Font(CL_KEY_FONTNAME_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 33));
+
+        Font scaledHelpFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 33));
         butHelp.setFont(scaledHelpFont);
 
         // Makes a new tooltip appear immediately (rescaled and possibly for a different unit)
@@ -3231,10 +3231,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * Saves column widths of the Mek Table when the mouse button is released. 
      * Also switches between table sorting types
      */
-    MouseListener mekTableHeaderMouseListener = new MouseAdapter()
-    {
-        private void changeSorter(MouseEvent e)
-        {
+    MouseListener mekTableHeaderMouseListener = new MouseAdapter() {
+        private void changeSorter(MouseEvent e) {
             // Save table widths
             for (int i = 0; i < MekTableModel.N_COL; i++) {
                 TableColumn column = mekTable.getColumnModel().getColumn(i);
@@ -3280,7 +3278,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
-
     };
     
     /**
@@ -3363,7 +3360,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             lisBoardsAvailable.repaint();
         }
     }
-    
 
     class ImageLoader extends SwingWorker<Void, Image> {
 

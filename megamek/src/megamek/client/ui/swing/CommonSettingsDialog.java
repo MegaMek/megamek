@@ -20,6 +20,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.baseComponents.MMComboBox;
@@ -1585,7 +1586,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         p.add(advancedKeys);
 
         advancedValue = new JTextField(10);
-        advancedValue.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+        advancedValue.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 16));
         advancedValue.addFocusListener(this);
         p.add(advancedValue);
 

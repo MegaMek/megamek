@@ -1479,7 +1479,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (event.getSource().equals(clientgui.getUnitDisplay().wPan.weaponList)) {
+        if ((clientgui.getClient().getGame().getPhase().isTargeting()) &&
+                (event.getSource().equals(clientgui.getUnitDisplay().wPan.weaponList))) {
             // update target data in weapon display
             updateTarget();
         }

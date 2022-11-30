@@ -753,7 +753,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         toHitText.setEditable(false);
         toHitText.setLineWrap(true);
         toHitText.setFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10));
-        add(toHitText,
+        panelMain.add(toHitText,
             GBC.eol().fill(GridBagConstraints.BOTH)
                .insets(15, 9, 15, 9).gridy(gridy).gridx(0)
                .gridheight(2));

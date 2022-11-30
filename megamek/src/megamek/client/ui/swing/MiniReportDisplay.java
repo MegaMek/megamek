@@ -185,8 +185,9 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     }
 
     private void updatePlayerChoice() {
+        String name = String.format("%-12s", currentClient.getName());
         String lastChoice = (String) comboPlayer.getSelectedItem();
-        lastChoice = (lastChoice != null ? lastChoice : currentClient.getName());
+        lastChoice = (lastChoice != null ? lastChoice : name);
         comboPlayer.removeAllItems();
         comboPlayer.setEnabled(true);
         for (Player player  : currentClient.getGame().getPlayersVectorSorted()) {

@@ -881,15 +881,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         tt = TurnTimer.init(this, clientgui.getClient());
     }
 
-    /**
-     * Does end turn stuff.
-     */
-    protected void endMyTurn() {
+    public void stopTimer() {
         //get rid of still running timer, if turn is concluded before time is up
         if (tt != null) {
             tt.stopTimer();
             tt = null;
         }
+    }
+
+    /**
+     * Does end turn stuff.
+     */
+    protected void endMyTurn() {
+        stopTimer();
+
         // end my turn, then.
         Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());

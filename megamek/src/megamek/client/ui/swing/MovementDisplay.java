@@ -944,17 +944,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         tt = TurnTimer.init(this, clientgui.getClient());
     }
 
+    public void stopTimer() {
+        //get rid of still running timer, if turn is concluded before time is up
+        if (tt != null) {
+            tt.stopTimer();
+            tt = null;
+        }
+    }
+
     /**
      * Clears out old movement data and disables relevant buttons.
      */
     private synchronized void endMyTurn() {
         final Entity ce = ce();
 
-        // get rid of still running timer, if turn is concluded before time is up
-        if (tt != null) {
-            tt.stopTimer();
-            tt = null;
-        }
+        stopTimer();
 
         // end my turn, then.
         disableButtons();

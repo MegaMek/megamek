@@ -93,7 +93,11 @@ public class TurnTimer {
 
     public void stopTimer() {
         display.setVisible(false);
-        phaseDisplay.getClientgui().getMenuBar().remove(display);
+
+        if (phaseDisplay.getClientgui().getMenuBar() != null) {
+            phaseDisplay.getClientgui().getMenuBar().remove(display);
+        }
+
         timer.stop();
     }
 

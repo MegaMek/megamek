@@ -14,8 +14,10 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -52,5 +54,15 @@ public class ISBAMortarLight extends Weapon {
         techAdvancement.setISAdvancement(3049, 3057, 3063);
         techAdvancement.setTechRating(RATING_B);
         techAdvancement.setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.276 : 0;
+    }
+
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        return true;
     }
 }

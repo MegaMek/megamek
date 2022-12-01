@@ -40,8 +40,9 @@ VERSION HISTORY:
 + Issue #3054: TO Infantry Movement on Pavement optional rule
 + Issue #4003: Add search functionality to the mini report dialog
 + Issue #3818: Airborne Aerospace Units Unaffected By Extreme Temperatures
-+ Issue #3727: Magma crust breakthrough and liquid magma damage not working as expected\
++ Issue #3727: Magma crust breakthrough and liquid magma damage not working as expected
 + Issues #543, #2959, #3982: Scale the Client GUI using the GUI scale
++ Issue #2684: Fix target being cleared when selecting a new weapon
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3

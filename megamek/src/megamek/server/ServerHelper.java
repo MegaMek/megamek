@@ -404,36 +404,31 @@ public class ServerHelper {
 
 	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
         Report r;
-		int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+        int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+        boolean heatArmor =false;
+        boolean laserHS = false;
 
-        if (game.getBoard().inSpace()) {
-            return;
-        } else if (tempDiff == 0) {
+        if (entity instanceof Mech) {
+            laserHS = ((Mech) entity).hasLaserHeatSinks();
+            heatArmor = ((Mech) entity).hasIntactHeatDissipatingArmor();
+        }
+
+        if (game.getBoard().inSpace() || (tempDiff == 0) || laserHS) {
             return;
         } else {
-            if (entity instanceof Mech) {
-                if (((Mech) entity).hasLaserHeatSinks()) {
-                    return;
-                }
-            }
-
             if (game.getPlanetaryConditions().getTemperature() > 50) {
                 int heatToAdd = tempDiff;
-                if (entity instanceof Mech) {
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        heatToAdd /= 2;
-                    }
+                if (heatArmor) {
+                    heatToAdd /= 2;
                 }
                 entity.heatFromExternal += heatToAdd;
                 r = new Report(5020);
                 r.subject = entity.getId();
                 r.add(heatToAdd);
                 vPhaseReport.add(r);
-                if (entity instanceof Mech) {
-                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
-                        r = new Report(5550);
-                        vPhaseReport.add(r);
-                    }
+                if (heatArmor) {
+                    r = new Report(5550);
+                    vPhaseReport.add(r);
                 }
             } else {
                 entity.heatFromExternal -= tempDiff;

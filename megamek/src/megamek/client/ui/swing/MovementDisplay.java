@@ -25,7 +25,6 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.*;
@@ -79,7 +78,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO;
     public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED;
-    private TurnTimer tt;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be carried out during the

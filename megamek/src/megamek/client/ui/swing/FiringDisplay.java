@@ -48,11 +48,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     private static final long serialVersionUID = -5586388490027013723L;
 
     /**
-     * timer that ends turn if time limit set in options is over
-     */
-    private TurnTimer tt;
-
-    /**
      * This enumeration lists all of the possible ActionCommands that can be
      * carried out during the firing phase.  Each command has a string for the
      * command plus a flag that determines what unit type it is appropriate for.
@@ -877,16 +872,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
-        // check if there should be a turn timer running
-        tt = TurnTimer.init(this, clientgui.getClient());
-    }
 
-    public void stopTimer() {
-        //get rid of still running timer, if turn is concluded before time is up
-        if (tt != null) {
-            tt.stopTimer();
-            tt = null;
-        }
+        startTimer();
     }
 
     /**

@@ -26,6 +26,7 @@ import java.util.*;
 
 import javax.swing.*;
 
+import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.preference.*;
@@ -44,6 +45,11 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int BUTTON_ROWS = 2;
     private static final String SBPD_KEY_CLEARBUTTON = "clearButton";
+
+    /**
+     * timer that ends turn if time limit set in options is over
+     */
+    private TurnTimer tt;
 
     /**
      * Interface that defines what a command for a phase is.
@@ -232,4 +238,17 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     @Override
     public void mouseExited(MouseEvent e) { }
+
+    public void startTimer() {
+        // check if there should be a turn timer running
+        tt = TurnTimer.init(this, clientgui.getClient());
+    }
+
+    public void stopTimer() {
+        //get rid of still running timer, if turn is concluded before time is up
+        if (tt != null) {
+            tt.stopTimer();
+            tt = null;
+        }
+    }
 }

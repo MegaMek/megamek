@@ -940,16 +940,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
         }
         selectEntity(clientgui.getClient().getFirstEntityNum());
-        // check if there should be a turn timer running
-        tt = TurnTimer.init(this, clientgui.getClient());
-    }
 
-    public void stopTimer() {
-        //get rid of still running timer, if turn is concluded before time is up
-        if (tt != null) {
-            tt.stopTimer();
-            tt = null;
-        }
+        startTimer();
     }
 
     /**

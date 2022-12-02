@@ -23,7 +23,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.AbstractButtonDialog;
 import megamek.client.ui.dialogs.BotConfigDialog;
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Game;
 import megamek.common.Player;
 import org.apache.logging.log4j.LogManager;
@@ -179,9 +178,5 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             }
         }
         return result;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

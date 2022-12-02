@@ -124,12 +124,6 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
     }
     //endregion Initialization
 
-    @Override
-    protected void finalizeInitialization() throws Exception {
-        super.finalizeInitialization();
-        adaptToGUIScale();
-    }
-
     //region Button Actions
     @Override
     protected void okAction() {
@@ -137,8 +131,4 @@ public class SkillGenerationDialog extends AbstractButtonDialog {
         getSkillGenerationOptionsPanel().updateClient();
     }
     //endregion Button Actions
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-    }
 }

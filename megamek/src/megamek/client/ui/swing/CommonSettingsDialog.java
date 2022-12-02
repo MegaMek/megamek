@@ -27,7 +27,6 @@ import megamek.client.ui.baseComponents.MMComboBox;
 import megamek.client.ui.swing.StatusBarPhaseDisplay.PhaseCommand;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.KeyCommandBind;
-import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
@@ -302,8 +301,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         panTabs.add("Button Order", getButtonOrderPanel());
         panTabs.add("Advanced", advancedSettingsPane);
         panTabs.add("Unit Display Order", unitDisplayPane);
-
-        adaptToGUIScale();
 
         return panTabs;
     }
@@ -702,8 +699,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
                 cmdKeyMap.get(kcb.cmd).setText(KeyEvent.getKeyText(kcb.key));
             }
             markDuplicateBinds();
-
-            adaptToGUIScale();
         }
 
         super.setVisible(visible);
@@ -1630,9 +1625,5 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             result.addAll(Arrays.asList(userDataFiles));
         }
         return result;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

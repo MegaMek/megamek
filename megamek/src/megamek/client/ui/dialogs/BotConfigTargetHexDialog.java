@@ -80,7 +80,6 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
                 coordsField.requestFocus();
             }
         });
-        adaptToGUIScale();
     }
     
     @Override
@@ -168,9 +167,5 @@ public class BotConfigTargetHexDialog extends AbstractButtonDialog {
             }
             return super.getListCellRendererComponent(list, content, index, isSelected, cellHasFocus);
         }
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

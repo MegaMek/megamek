@@ -92,14 +92,4 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     public Camouflage getSelectedItem() {
         return useDefault ? new Camouflage() : ((Camouflage) super.getSelectedItem()).clone();
     }
-
-    @Override
-    protected void finalizeInitialization() throws Exception {
-        super.finalizeInitialization();
-        adaptToGUIScale();
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
-    }
 }

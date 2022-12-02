@@ -74,12 +74,6 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         initialize();
     }
 
-    @Override
-    protected void finalizeInitialization() throws Exception {
-        adaptToGUIScale();
-        super.finalizeInitialization();
-    }
-
     /** Returns the chosen initiative modifier. */
     public int getInit() {
         return parseField(fldInit);
@@ -416,8 +410,5 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         } catch (NumberFormatException ex) {
             return 0;
         }
-    }
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

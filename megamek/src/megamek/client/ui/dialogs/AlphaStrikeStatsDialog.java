@@ -61,7 +61,6 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         super(frame, "AlphaStrikeStatsDialog", "AlphaStrikeStatsDialog.title");
         this.entities = new ArrayList<>(entities);
         initialize();
-        adaptToGUIScale();
     }
 
     @Override
@@ -143,9 +142,5 @@ public class AlphaStrikeStatsDialog extends AbstractDialog {
         dataLine.append(AlphaStrikeHelper.getSpecialsExportString(INTERNAL_DELIMITER, element));
         dataLine.append("\n");
         return dataLine;
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 }

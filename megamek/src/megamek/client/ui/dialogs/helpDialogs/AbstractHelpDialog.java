@@ -74,14 +74,4 @@ public abstract class AbstractHelpDialog extends AbstractDialog {
 
         return new JScrollPane(pane);
     }
-
-    @Override
-    protected void finalizeInitialization() throws Exception {
-        super.finalizeInitialization();
-        adaptToGUIScale();
-    }
-
-    private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
-    }
 }

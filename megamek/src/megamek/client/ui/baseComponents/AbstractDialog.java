@@ -21,6 +21,10 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
@@ -40,7 +44,7 @@ import java.util.ResourceBundle;
  *
  * This is directly tied to MekHQ's AbstractMHQDialog, and any changes here MUST be verified there.
  */
-public abstract class AbstractDialog extends JDialog implements WindowListener {
+public abstract class AbstractDialog extends JDialog implements IPreferenceChangeListener, WindowListener {
     //region Variable Declarations
     private JFrame frame;
 
@@ -140,6 +144,8 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
             }
         });
 
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
         addWindowListener(this);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setPreferences();
@@ -256,4 +262,16 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
 
     }
     //endregion WindowEvents
+
+    public void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
+    }
 }

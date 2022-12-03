@@ -14,7 +14,9 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.WeaponType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -61,5 +63,15 @@ public class CLBAMortarLight extends Weapon {
                 .setClanApproximate(false, false, true, false, false)
                 .setPrototypeFactions(F_FS, F_LC)
                 .setProductionFactions(F_LC);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted linked) {
+        return (range <= AlphaStrikeElement.SHORT_RANGE) ? 0.276 : 0;
+    }
+
+    @Override
+    public boolean isAlphaStrikeIndirectFire() {
+        return true;
     }
 }

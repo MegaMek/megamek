@@ -539,6 +539,11 @@ public class ASSpecialAbilityConverter {
                 }
             }
         }
+
+        // Armor 0 elements cannot get BAR
+        if (element.getFullArmor() == 0) {
+            element.getSpecialAbilities().removeSUA(BAR);
+        }
     }
 
     /** Adds the sua(s) to the element and writes a report line for each, if it is not yet present. */

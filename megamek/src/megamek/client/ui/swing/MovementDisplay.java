@@ -1727,7 +1727,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.RAM);
 
                 ToHitData toHit = new RamAttackAction(cen,
-                        target.getTargetType(), target.getTargetId(),
+                        target.getTargetType(), target.getId(),
                         target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // Determine how much damage the charger will take.
@@ -1778,11 +1778,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 ToHitData toHit = null;
                 if (ce.isAirborneVTOLorWIGE()) {
                     toHit = new AirmechRamAttackAction(cen,
-                            target.getTargetType(), target.getTargetId(),
+                            target.getTargetType(), target.getId(),
                             target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 } else {
                     toHit = new ChargeAttackAction(cen,
-                            target.getTargetType(), target.getTargetId(),
+                            target.getTargetType(), target.getId(),
                             target.getPosition()).toHit(clientgui.getClient().getGame(), cmd);
                 }
 

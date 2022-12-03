@@ -557,7 +557,7 @@ public class MoveOption extends MovePath {
         if (target == null) {
             return -1;
         }
-        return target.getTargetId();
+        return target.getId();
     }
 
     @Override

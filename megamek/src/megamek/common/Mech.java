@@ -6534,4 +6534,14 @@ public abstract class Mech extends Entity {
     public int getSpriteDrawPriority() {
         return 6;
     }
+
+    @Override
+    public boolean isMek() {
+        return true;
+    }
+
+    @Override
+    public boolean isIndustrialMek() {
+        return isIndustrial();
+    }
 }

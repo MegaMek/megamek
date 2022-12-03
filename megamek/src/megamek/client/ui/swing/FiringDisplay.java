@@ -1327,9 +1327,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         switch (skillNames.get(input)) {
             case OptionsConstants.GUNNERY_BLOOD_STALKER:
                 // figure out when to clear Blood Stalker (when unit destroyed or flees or fly off no return)
-                ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getTargetId());
+                ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getId());
                 attacks.add(0, bloodStalkerAction);
-                ce().setBloodStalkerTarget(target.getTargetId());
+                ce().setBloodStalkerTarget(target.getId());
                 break;
         }
 
@@ -1362,7 +1362,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen,
-                target.getTargetType(), target.getTargetId());
+                target.getTargetType(), target.getId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -1553,10 +1553,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     || (mounted.getType() instanceof CapitalMissileWeapon
                             && Compute.isGroundToGround(ce(), t)))) {
                 waa = new WeaponAttackAction(cen, t.getTargetType(),
-                        t.getTargetId(), weaponNum);
+                        t.getId(), weaponNum);
             } else {
                 waa = new ArtilleryAttackAction(cen, t.getTargetType(),
-                        t.getTargetId(), weaponNum, game);
+                        t.getId(), weaponNum, game);
             }
 
             // check for a bomb payload dialog
@@ -1712,7 +1712,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        attacks.addElement(new SpotAction(cen, target.getTargetId()));
+        attacks.addElement(new SpotAction(cen, target.getId()));
 
     }
 
@@ -1813,7 +1813,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             if ((visibleTargets != null) && (target != null)) {
                 // Set last target ID, so next/prev target behaves correctly
                 for (int i = 0; i < visibleTargets.length; i++) {
-                    if (visibleTargets[i].getId() == target.getTargetId()) {
+                    if (visibleTargets[i].getId() == target.getId()) {
                         lastTargetID = i;
                         break;
                     }

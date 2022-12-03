@@ -935,7 +935,7 @@ public class Compute {
 
         for (Entity other : game.getEntitiesVector()) {
             if (((other.isSpotting() && (other.getSpotTargetId() == target
-                    .getTargetId())) || (taggedBy == other.getId()))
+                    .getId())) || (taggedBy == other.getId()))
                 && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 LosEffects los = LosEffects.calculateLOS(game, other, target, true);
@@ -989,7 +989,7 @@ public class Compute {
             targetTagged = te.getTaggedBy() != -1;
         } else { // Non entities will require us to look harder
             for (TagInfo ti : game.getTagInfo()) {
-                if (target.getTargetId() == ti.target.getTargetId()) {
+                if (target.getId() == ti.target.getId()) {
                     return true;
                 }
             }
@@ -1018,7 +1018,7 @@ public class Compute {
             targetTagged = te.getTaggedBy() == attacker.getId();
         } else { // Non entities will require us to look harder
             for (TagInfo ti : game.getTagInfo()) {
-                if ((target.getTargetId() == ti.target.getTargetId()) &&
+                if ((target.getId() == ti.target.getId()) &&
                         (ti.attackerId == attacker.getId())) {
                     return true;
                 }
@@ -1319,7 +1319,7 @@ public class Compute {
             && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                  && !ae.isAirborne() && !ae.isSpaceborne())
             && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target
-                .getTargetId()))) {
+                .getId()))) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                                  "Only infantry weapons shoot at zero range");
         }
@@ -2266,7 +2266,7 @@ public class Compute {
             WeaponAttackAction prevAttack = (WeaponAttackAction) o;
             if (prevAttack.getEntityId() == attacker.getId()) {
                 // Don't add id of current target, as it gets counted elsewhere
-                if (prevAttack.getTargetId() != target.getTargetId()) {
+                if (prevAttack.getTargetId() != target.getId()) {
                     targIds.add(prevAttack.getTargetId());
                 }
                 // first front arc target is our primary.
@@ -2325,7 +2325,7 @@ public class Compute {
             return null; // no modifier
         }
 
-        if ((primaryTarget == Entity.NONE) || (primaryTarget == target.getTargetId())) {
+        if ((primaryTarget == Entity.NONE) || (primaryTarget == target.getId())) {
             // current target is primary target
             return null; // no modifier
         }
@@ -2848,7 +2848,7 @@ public class Compute {
      */
     public static int getTargetTotalHP(Game game, Targetable target) {
         int targetType = target.getTargetType();
-        int targetId = target.getTargetId();
+        int targetId = target.getId();
         Coords position = target.getPosition();
 
         // First, handle buildings versus entities, since they are handled differently.
@@ -3772,7 +3772,7 @@ public class Compute {
             Targetable t) {
         Entity ae = game.getEntity(attackerId);
         if ((ae instanceof Mech)
-            && (((Mech) ae).getGrappled() == t.getTargetId())) {
+            && (((Mech) ae).getGrappled() == t.getId())) {
             return true;
         }
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae
@@ -5530,7 +5530,7 @@ public class Compute {
         }
 
         // swarm/leg attacks take target movement mods into account
-        data.append(getTargetMovementModifier(attacker.getGame(), defender.getTargetId()));
+        data.append(getTargetMovementModifier(attacker.getGame(), defender.getId()));
         
         return data;
     }

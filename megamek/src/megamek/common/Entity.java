@@ -49,7 +49,7 @@ import java.util.stream.IntStream;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
-        PhaseUpdated, ITechnology {
+        PhaseUpdated, ITechnology, ForceAssignable {
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
@@ -780,21 +780,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     private Set<Integer> offBoardShotObservers;
     
-    /** 
-     * A String representation of the force hierarchy this entity belongs to.
-     * The String contains all forces from top to bottom separated by backslash
-     * with no backslash at beginning or end. Each force is followed by a unique id
-     * separated by the vertical bar. E.g.
-     * Regiment|1\Battalion B|11\Alpha Company|18\Battle Lance II|112
-     * <P>If this is not empty, the server will attempt to resconstruct the force
-     * hierarchy when it receives this entity and will empty the string.
-     * This should be used for loading/saving MULs or transfer from other sources that
-     * don't have access to the current MM game's forces, such as MekHQ or the Force
-     * Generators. At all other times, forceId should be used instead. 
-     */
-    private String force = "";
-    
-    /** The force this entity belongs to. */
+    private String forceString = "";
     private int forceId = Force.NO_FORCE;
     
     /**
@@ -907,11 +893,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setGameOptions();
     }
 
-    /**
-     * Returns the ID number of this Entity.
-     *
-     * @return ID Number.
-     */
+    @Override
     public int getId() {
         return id;
     }
@@ -1471,6 +1453,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         generateDisplayName();
     }
 
+    @Override
     public int getOwnerId() {
         return ownerId;
     }
@@ -1599,11 +1582,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public int getTargetType() {
         return Targetable.TYPE_ENTITY;
-    }
-
-    @Override
-    public int getTargetId() {
-        return getId();
     }
 
     @Override
@@ -11511,23 +11489,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return reckless;
     }
 
-    /**
-     * Helper function to test whether an entity should be treated as an Aero unit (includes
-     * LAMs in fighter mode)
-     */
-    @Override
-    public boolean isAero() {
-        return false;
-    }
-
-    /**
-     * Helper function to determine whether an entity is an aero unit but not Small Craft/
-     * DropShip/JumpShip/WarShip.
-     */
-    public boolean isFighter() {
-        return isAero();
-    }
-
     public boolean isCapitalFighter() {
         return isCapitalFighter(false);
     }
@@ -14653,13 +14614,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @return the flag that determines if the Entity is a support vehicle
-     */
-    public boolean isSupportVehicle() {
-        return false;
-    }
-
-    /**
      * @return Whether the unit uses primitive or retrotech construction rules
      */
     public boolean isPrimitive() {
@@ -15395,25 +15349,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isOffBoardObserved(int teamID) {
         return offBoardShotObservers.contains(teamID);
     }
-    
+
+    @Override
     public String getForceString() {
-        return force;
+        return forceString;
     }
-    
+
+    @Override
     public void setForceString(String f) {
-        force = f;
+        forceString = f;
     }
-    
+
+    @Override
     public int getForceId() {
         return forceId;
     }
-    
+
+    @Override
     public void setForceId(int newId) {
         forceId = newId;
-    }
-    
-    public boolean partOfForce() {
-        return forceId != Force.NO_FORCE;
     }
     
     public void setBloodStalkerTarget(int value) {

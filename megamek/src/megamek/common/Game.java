@@ -37,14 +37,13 @@ import org.apache.logging.log4j.LogManager;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 /**
  * The game class is the root of all data about the game in progress. Both the
  * Client and the Server should have one of these objects, and it is their job to
  * keep it synched.
  */
-public class Game implements IGame, Serializable {
+public class Game extends AbstractGame implements Serializable {
     private static final long serialVersionUID = 8376320092671792532L;
 
     /**
@@ -71,10 +70,7 @@ public class Game implements IGame, Serializable {
      */
     private Vector<Entity> vOutOfGame = new Vector<>();
 
-    private Vector<Player> players = new Vector<>();
     private Vector<Team> teams = new Vector<>();
-
-    private Hashtable<Integer, Player> playerIds = new Hashtable<>();
 
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
@@ -451,24 +447,11 @@ public class Game implements IGame, Serializable {
     }
 
     /**
-     * @return the {@link #players} vector
-     */
-    @Override
-    public Vector<Player> getPlayersVector() {
-        return players;
-    }
-
-    /**
      * @return a clone of the {@link #players} vector sorted by id
      */
     public Vector<Player> getPlayersVectorSorted() {
-        Vector<Player> clone = (Vector<Player>) players.clone();
-        Collections.sort(clone, new Comparator<Player>() {
-            @Override
-            public int compare(Player result1, Player result2) {
-                return ((Integer)result1.getId()).compareTo(result2.getId());
-            }
-        });
+        Vector<Player> clone = new Vector<>(getPlayersVector());
+        clone.sort(Comparator.comparingInt(Player::getId));
         return clone;
     }
 
@@ -479,58 +462,36 @@ public class Game implements IGame, Serializable {
         return players.size();
     }
 
-    /**
-     * Returns the individual player assigned the id parameter.
-     */
-    @Override
-    public @Nullable Player getPlayer(final int id) {
-        return (Player.PLAYER_NONE == id) ? null : playerIds.get(id);
-    }
-
     @Override
     public void addPlayer(int id, Player player) {
         player.setGame(this);
-        players.addElement(player);
-        playerIds.put(id, player);
+        players.put(id, player);
         setupTeams();
         updatePlayer(player);
     }
 
     public void setPlayer(int id, Player player) {
-        final Player oldPlayer = getPlayer(id);
         player.setGame(this);
-        players.setElementAt(player, players.indexOf(oldPlayer));
-        playerIds.put(id, player);
+        players.put(id, player);
         setupTeams();
         updatePlayer(player);
-    }
-
-    protected void updatePlayer(Player player) {
-        processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
     @Override
     public void removePlayer(int id) {
         Player playerToRemove = getPlayer(id);
-        players.removeElement(playerToRemove);
-        playerIds.remove(id);
+        players.remove(id);
         setupTeams();
-        processGameEvent(new GamePlayerChangeEvent(this, playerToRemove));
+        updatePlayer(playerToRemove);
     }
 
-    /**
-     * Returns the number of entities owned by the player, regardless of their
-     * status, as long as they are in the game.
-     */
+    private void updatePlayer(Player player) {
+        processGameEvent(new GamePlayerChangeEvent(this, player));
+    }
+
     @Override
-    public int getEntitiesOwnedBy(Player player) {
-        int count = 0;
-        for (Entity entity : entities) {
-            if ((entity != null) && player.equals(entity.getOwner())) {
-                count++;
-            }
-        }
-        return count;
+    public List<InGameObject> getInGameObjects(Collection<Integer> idList) {
+        return new ArrayList<>(entities);
     }
 
     /**
@@ -3463,8 +3424,9 @@ public class Game implements IGame, Serializable {
         return forces;
     }
 
-    public Stream<Entity> getEntitiesStream() {
-        return getEntitiesVector().stream();
+    @Override
+    public List<InGameObject> getInGameObjects() {
+        return new ArrayList<>(entities);
     }
 
     /**

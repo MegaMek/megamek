@@ -18,7 +18,7 @@
  */
 package megamek.common.force;
 
-import megamek.common.Entity;
+import megamek.common.ForceAssignable;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -195,7 +195,7 @@ public final class Force implements Serializable {
      * Returns true if the provided entity is among the force's direct members. 
      * Does NOT check if the entity is part of any subforce. 
      */
-    public boolean containsEntity(Entity entity) {
+    public boolean containsEntity(ForceAssignable entity) {
         return containsEntity(entity.getId());
     }
     
@@ -211,7 +211,7 @@ public final class Force implements Serializable {
      * Returns the index of the provided entity in the list of direct members of this force.
      * Returns -1 if the entity is no direct member of this force.  
      */
-    public int entityIndex(Entity entity) {
+    public int entityIndex(ForceAssignable entity) {
         return entities.indexOf(entity.getId());
     }
     
@@ -242,11 +242,11 @@ public final class Force implements Serializable {
         return Collections.unmodifiableList(subForces);
     }
     
-    void addEntity(Entity entity) {
+    void addEntity(ForceAssignable entity) {
         entities.add(entity.getId());
     }
     
-    void removeEntity(Entity entity) {
+    void removeEntity(ForceAssignable entity) {
         entities.remove((Integer) entity.getId());
     }
     

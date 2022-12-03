@@ -4533,7 +4533,7 @@ public class GameManager implements IGameManager {
                 addReport(r);
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(),
                         crashDropShip.getTargetType(),
-                        crashDropShip.getTargetId(),
+                        crashDropShip.getId(),
                         crashDropShip.getPosition());
                 ToHitData toHit = caa.toHit(game, true);
                 resolveChargeDamage(entity, crashDropShip, toHit, direction);
@@ -4656,7 +4656,7 @@ public class GameManager implements IGameManager {
                             || (target instanceof Aero)) {
                         ChargeAttackAction caa = new ChargeAttackAction(
                                 entity.getId(), target.getTargetType(),
-                                target.getTargetId(), target.getPosition());
+                                target.getId(), target.getPosition());
                         ToHitData toHit = caa.toHit(game, true);
 
                         // roll
@@ -6749,7 +6749,7 @@ public class GameManager implements IGameManager {
                     if (target != null) {
                         ChargeAttackAction caa = new ChargeAttackAction(
                                 entity.getId(), target.getTargetType(),
-                                target.getTargetId(), target.getPosition());
+                                target.getId(), target.getPosition());
                         entity.setDisplacementAttack(caa);
                         game.addCharge(caa);
                         charge = caa;
@@ -6767,7 +6767,7 @@ public class GameManager implements IGameManager {
                     if (target != null) {
                         AirmechRamAttackAction raa = new AirmechRamAttackAction(
                                 entity.getId(), target.getTargetType(),
-                                target.getTargetId(), target.getPosition());
+                                target.getId(), target.getPosition());
                         entity.setDisplacementAttack(raa);
                         entity.setRamming(true);
                         game.addCharge(raa);
@@ -6804,7 +6804,7 @@ public class GameManager implements IGameManager {
 
                     // if it's a valid target, then simply pass along the type and ID
                     if (target != null) {
-                        targetID = target.getTargetId();
+                        targetID = target.getId();
                         targetType = target.getTargetType();
                         // if the target has become invalid somehow, or was incorrectly declared in the first place
                         // log the error, then put some defaults in for the DFA and proceed as if the target had been moved/destroyed
@@ -6846,7 +6846,7 @@ public class GameManager implements IGameManager {
                 if (entity.canRam()) {
                     Targetable target = step.getTarget(game);
                     RamAttackAction raa = new RamAttackAction(entity.getId(),
-                            target.getTargetType(), target.getTargetId(),
+                            target.getTargetType(), target.getId(),
                             target.getPosition());
                     entity.setRamming(true);
                     game.addRam(raa);
@@ -29269,7 +29269,7 @@ public class GameManager implements IGameManager {
         delForces.stream().map(forces::getFullSubForces).forEach(allSubForces::addAll);
         delForces.removeIf(allSubForces::contains);
         Set<Entity> delEntities = new HashSet<>();
-        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
+        delForces.stream().map(forces::getFullEntities).map(ForceAssignable::filterToEntityList).forEach(delEntities::addAll);
 
         // Unload units and disconnect any C3 networks
         Set<Entity> updateCandidates = new HashSet<>();
@@ -31978,7 +31978,7 @@ public class GameManager implements IGameManager {
         if ((target != null) && (target instanceof Entity)) {
             Entity targetEntity = (Entity) target;
             targetEntity.setStruck(true);
-            targetEntity.addAttackedByThisTurn(target.getTargetId());
+            targetEntity.addAttackedByThisTurn(target.getId());
             creditKill(targetEntity, game.getEntity(cen));
         }
     }

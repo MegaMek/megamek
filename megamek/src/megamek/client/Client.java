@@ -1013,7 +1013,12 @@ public class Client implements IClientCommandHandler {
         Set<Force> delForces = new HashSet<>();
         Set<Entity> delEntities = new HashSet<>();
         forceIds.stream().map(forces::getForce).forEach(delForces::add);
-        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
+        for (Force delForce : delForces) {
+            forces.getFullEntities(delForce).stream()
+                    .filter(e -> e instanceof Entity)
+                    .map(e -> (Entity) e)
+                    .forEach(delEntities::add);
+        }
 
         forces.deleteForces(delForces);
 

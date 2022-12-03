@@ -481,7 +481,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && !(weapon.isSquadSupportWeapon())
-                && !(ae.getSwarmTargetId() == target.getTargetId())) {
+                && !(ae.getSwarmTargetId() == target.getId())) {
             bSalvo = true;
             int toReturn = allShotsHit() ? ((BattleArmor) ae)
                     .getShootingStrength() : Compute
@@ -1096,7 +1096,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         game.addTagInfo(info);
                         
                         ae.setSpotting(true);
-                        ae.setSpotTargetId(target.getTargetId());
+                        ae.setSpotTargetId(target.getId());
                         
                         r = new Report(3390);
                         r.subject = subjectId;

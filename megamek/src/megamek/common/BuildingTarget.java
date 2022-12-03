@@ -152,8 +152,13 @@ public class BuildingTarget implements Targetable {
     }
 
     @Override
-    public int getTargetId() {
+    public int getId() {
         return id;
+    }
+
+    @Override
+    public int getOwnerId() {
+        return Player.PLAYER_NONE;
     }
 
     @Override

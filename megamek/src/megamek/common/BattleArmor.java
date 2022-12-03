@@ -2206,4 +2206,9 @@ public class BattleArmor extends Infantry {
     protected boolean isFieldWeapon(Mounted equipment) {
         return false;
     }
+
+    @Override
+    public boolean isBattleArmor() {
+        return true;
+    }
 }

@@ -304,7 +304,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
         // display dropdown containing all observed offboard enemy entities in given direction
         // upon selection, generate an ArtilleryAttackAction vs selected entity as per  TargetingPhaseDisplay, like so:
         WeaponAttackAction waa = new ArtilleryAttackAction(targetingPhaseDisplay.ce().getId(), choice.getTargetType(),
-                choice.getTargetId(), 
+                choice.getId(),
                 targetingPhaseDisplay.ce().getEquipmentNum(clientgui.getBoardView().getSelectedArtilleryWeapon()), 
                 clientgui.getClient().getGame());
         

@@ -30,7 +30,6 @@ import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 public class EnergyWeaponHandler extends WeaponHandler {
     private static final long serialVersionUID = 2452514543790235562L;
@@ -62,7 +61,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
         if ((ae instanceof BattleArmor)
             && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
             && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)

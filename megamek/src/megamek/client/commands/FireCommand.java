@@ -207,7 +207,7 @@ public class FireCommand extends ClientCommand {
         }
 
         WeaponAttackAction waa = new WeaponAttackAction(cen, target
-                .getTargetType(), target.getTargetId(), weaponNum);
+                .getTargetType(), target.getId(), weaponNum);
 
         if (mounted.getLinked() != null && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();
@@ -250,7 +250,7 @@ public class FireCommand extends ClientCommand {
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(),
-                target.getTargetId());
+                target.getId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily

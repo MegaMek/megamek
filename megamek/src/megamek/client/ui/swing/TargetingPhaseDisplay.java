@@ -729,7 +729,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getTargetId());
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -761,7 +761,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
-                target.getTargetId(), weaponNum);
+                target.getId(), weaponNum);
         Game game = clientgui.getClient().getGame();
         int distance = Compute.effectiveDistance(game, waa.getEntity(game), waa.getTarget(game));
         if ((mounted.getType().hasFlag(WeaponType.F_ARTILLERY))
@@ -770,7 +770,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target))) {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum, clientgui.getClient().getGame());
+                    target.getId(), weaponNum, clientgui.getClient().getGame());
             // Get the launch velocity for bearings-only telemissiles
             if (mounted.getType() instanceof TeleOperatedMissileBayWeapon) {                
                 TeleMissileSettingDialog tsd = new TeleMissileSettingDialog(clientgui.frame, clientgui.getClient().getGame());
@@ -969,7 +969,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             String flightTimeText = ""; 
             if (isArtilleryAttack) {
                 ArtilleryAttackAction aaa = new ArtilleryAttackAction(ce().getId(), target.getTargetType(),
-                        target.getTargetId(), weaponId, clientgui.getClient().getGame());
+                        target.getId(), weaponId, clientgui.getClient().getGame());
                 flightTimeText = String.format("(%d turns)", aaa.getTurnsTilHit());
             }
 

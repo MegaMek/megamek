@@ -103,7 +103,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         }
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         }
         final int armLoc = (arm == BrushOffAttackAction.RIGHT) ? Mech.LOC_RARM
                                                                : Mech.LOC_LARM;

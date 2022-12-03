@@ -205,7 +205,7 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type, Targetable target,
                     Coords pos) {
         this(path, type);
-        targetId = target.getTargetId();
+        targetId = target.getId();
         targetType = target.getTargetType();
         targetPos = pos;
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
@@ -227,7 +227,7 @@ public class MoveStep implements Serializable {
      */
     public MoveStep(MovePath path, MoveStepType type, Targetable target) {
         this(path, type);
-        targetId = target.getTargetId();
+        targetId = target.getId();
         targetType = target.getTargetType();
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
                 || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)
@@ -418,7 +418,7 @@ public class MoveStep implements Serializable {
             targetId = Entity.NONE;
             targetType = Targetable.TYPE_ENTITY;
         } else {
-            targetId = target.getTargetId();
+            targetId = target.getId();
             targetType = target.getTargetType();
         }
     }

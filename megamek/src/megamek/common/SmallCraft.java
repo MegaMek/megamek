@@ -899,4 +899,9 @@ public class SmallCraft extends Aero {
     protected int calculateWalk() {
         return walkMP;
     }
+
+    @Override
+    public boolean isLargeAerospace() {
+        return true;
+    }
 }

@@ -16,9 +16,9 @@
  */
 package megamek.client.ui.swing;
 
-import com.thoughtworks.xstream.XStream;
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.Version;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -49,15 +49,20 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.EmailService;
 import megamek.common.util.ImageUtil;
-import megamek.common.util.SerializationHelper;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.server.GameManager;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
+import megamek.utilities.xml.MMXMLUtility;
 import org.apache.logging.log4j.LogManager;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.xml.parsers.DocumentBuilder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -540,30 +545,47 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        // extract game data before starting to check and get player names
-        Game newGame;
-        try (InputStream is = new FileInputStream(fc.getSelectedFile()); InputStream gzi = new GZIPInputStream(is)) {
-            XStream xstream = SerializationHelper.getXStream();
-            newGame = (Game) xstream.fromXML(gzi);
-        } catch (Exception e) {
-            LogManager.getLogger().error("Unable to load file: " + fc.getSelectedFile().getAbsolutePath(), e);
-            JOptionPane.showMessageDialog(frame, Messages.getFormattedString("MegaMek.LoadGameAlert.message", fc.getSelectedFile().getAbsolutePath()),
-            Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        final Vector<String> playerNames = new Vector<>();
 
-        if (!MMConstants.VERSION.is(newGame.getVersion())) {
-            final String message = String.format(Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
-                    newGame.getVersion(), MMConstants.VERSION);
-            JOptionPane.showMessageDialog(frame, message,
-                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
-            LogManager.getLogger().error(message);
-            return;
-        }
+        // Handrolled extraction, as we require Server initialization to use XStream and don't need
+        // the additional overhead of initializing everything twice
+        try (InputStream is = new FileInputStream(fc.getSelectedFile());
+             InputStream gzi = new GZIPInputStream(is)) {
+            // Using factory get an instance of document builder
+            final DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
+            // Parse using builder to get DOM representation of the XML file
+            final Document xmlDocument = documentBuilder.parse(gzi);
 
-        Vector<String> playerNames = new Vector<>();
-        for (Player player : newGame.getPlayersVector()) {
-            playerNames.add(player.getName());
+            final Element gameElement = xmlDocument.getDocumentElement();
+            gameElement.normalize();
+
+            final NodeList nl = gameElement.getChildNodes();
+            for (int i = 0; i < nl.getLength(); i++) {
+                final Node n = nl.item(i);
+                if (n.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+
+                switch (n.getNodeName()) {
+                    case "version":
+                        if (!validateSaveVersion(n)) {
+                            return;
+                        }
+                        break;
+                    case "players":
+                        parsePlayerNames(n, playerNames);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        } catch (Exception ex) {
+            LogManager.getLogger().error("Unable to load file: " + fc.getSelectedFile().getAbsolutePath(), ex);
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getFormattedString("MegaMek.LoadGameAlert.message",
+                            fc.getSelectedFile().getAbsolutePath()),
+                    Messages.getString("MegaMek.LoadGameAlert.title"),
+                    JOptionPane.ERROR_MESSAGE);
         }
 
         HostDialog hd = new HostDialog(frame, playerNames);
@@ -576,6 +598,86 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         startHost(hd.getServerPass(), hd.getPort(),
                 hd.isRegister(), hd.isRegister() ? hd.getMetaserver() : "", null,
                 fc.getSelectedFile(), hd.getPlayerName());
+    }
+
+    private boolean validateSaveVersion(final Node n) {
+        if (!n.hasChildNodes()) {
+            final String message = String.format(
+                    Messages.getString("MegaMek.LoadGameMissingVersion.message"),
+                    MMConstants.VERSION);
+            JOptionPane.showMessageDialog(frame, message,
+                    Messages.getString("MegaMek.LoadGameAlert.title"),
+                    JOptionPane.ERROR_MESSAGE);
+            LogManager.getLogger().error(message);
+        }
+        final NodeList nl = n.getChildNodes();
+        String release = null;
+        String major = null;
+        String minor = null;
+        String snapshot = null;
+        for (int i = 0; i < nl.getLength(); i++) {
+            final Node n2 = nl.item(i);
+            if (n2.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
+            switch (n2.getNodeName()) {
+                case "release":
+                    release = n2.getTextContent();
+                    break;
+                case "major":
+                    major = n2.getTextContent();
+                    break;
+                case "minor":
+                    minor = n2.getTextContent();
+                    break;
+                case "snapshot":
+                    snapshot = n2.getTextContent();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        final Version version = new Version(release, major, minor, snapshot);
+        if (MMConstants.VERSION.is(version)) {
+            return true;
+        } else {
+            final String message = String.format(
+                    Messages.getString("MegaMek.LoadGameIncorrectVersion.message"),
+                    version, MMConstants.VERSION);
+            JOptionPane.showMessageDialog(frame, message,
+                    Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
+            LogManager.getLogger().error(message);
+            return false;
+        }
+    }
+
+    private void parsePlayerNames(final Node n, final Vector<String> playerNames) {
+        if (!n.hasChildNodes()) {
+            return;
+        }
+
+        final NodeList nl = n.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            final Node n2 = nl.item(i);
+            if ((n2.getNodeType() != Node.ELEMENT_NODE) || !n2.hasChildNodes()
+                    || !"megamek.common.Player".equals(n2.getNodeName())) {
+                continue;
+            }
+
+            final NodeList nl2 = n2.getChildNodes();
+            for (int j = 0; j < nl2.getLength(); j++) {
+                final Node n3 = nl2.item(j);
+                if (n3.getNodeType() != Node.ELEMENT_NODE) {
+                    continue;
+                }
+
+                if ("name".equals(n3.getNodeName())) {
+                    playerNames.add(n3.getTextContent());
+                }
+            }
+        }
     }
     
     /** Developer Utility: Loads "quicksave.sav.gz" with the last used connection settings. */

@@ -17,8 +17,8 @@
 package megamek.client.ui.swing;
 
 import com.thoughtworks.xstream.XStream;
-import megamek.MegaMek;
 import megamek.MMConstants;
+import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -38,6 +38,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -61,8 +62,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.awt.image.BaseMultiResolutionImage;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -78,8 +79,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png";
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png";
-
-    private static final int DEFAULT_DISPLAY_DPI = 96;
 
     private JFrame frame;
     private Client client;
@@ -400,17 +399,16 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 hd.getPlayerName());
     }
 
-    public void startHost(String serverPassword, int port, boolean isRegister, String metaServer,
-                          String mailPropertiesFileName, File savegame, String playerName) {
+    public void startHost(@Nullable String serverPassword, int port, boolean isRegister,
+                          @Nullable String metaServer, @Nullable String mailPropertiesFileName,
+                          @Nullable File savegame, String playerName) {
         startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, savegame);
         startClient(playerName, MMConstants.LOCALHOST, server.getPort());
     }
 
-
-
-    public void startServer(String serverPassword, int port, boolean isRegister, String metaServer,
-                            String mailPropertiesFileName, File saveGameFile) {
-
+    public void startServer(@Nullable String serverPassword, int port, boolean isRegister,
+                            @Nullable String metaServer, @Nullable String mailPropertiesFileName,
+                            @Nullable File saveGameFile) {
         try {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);
@@ -421,7 +419,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         }
 
         EmailService mailer = null;
-        if ( (mailPropertiesFileName != null) && (!mailPropertiesFileName.isBlank())) {
+        if (!StringUtility.isNullOrBlank(mailPropertiesFileName)) {
             File propsFile = new File(mailPropertiesFileName);
             try (var propsReader = new FileReader(propsFile)) {
                 var mailProperties = new Properties();
@@ -441,11 +439,13 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
         // kick off a RNG check
         d6();
+
         // start server
         try {
             gameManager = new GameManager();
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted", server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
+            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted",
+                    server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,
@@ -525,7 +525,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         fc.setFileFilter(new FileFilter() {
             @Override
             public boolean accept(File dir) {
-                return ((dir.getName().endsWith(MMConstants.SAVE_FILE_EXT) || dir.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT) || dir.isDirectory()));
+                return dir.getName().endsWith(MMConstants.SAVE_FILE_EXT)
+                        || dir.getName().endsWith(MMConstants.SAVE_FILE_GZ_EXT) || dir.isDirectory();
             }
 
             @Override

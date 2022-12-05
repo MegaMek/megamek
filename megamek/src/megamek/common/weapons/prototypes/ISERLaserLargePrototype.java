@@ -23,6 +23,7 @@ import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeLaserHandler;
 import megamek.common.weapons.lasers.LaserWeapon;
 import megamek.server.GameManager;
+import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -86,16 +87,14 @@ public class ISERLaserLargePrototype extends LaserWeapon {
 
     @Override
     public int getLongRange() {
-        GameOptions options = getGameOptions();
-        if (options == null) {
+        GameOptions options = Server.getServerInstance().getGame().getOptions();
+        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE) == null) {
             return super.getLongRange();
-        } else if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE) == null) {
-            return super.getLongRange();
-        }
-        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE).booleanValue()) {
+        } else if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE).booleanValue()) {
             return 21;
+        } else {
+            return super.getLongRange();
         }
-        return super.getLongRange();
     }
 
     @Override

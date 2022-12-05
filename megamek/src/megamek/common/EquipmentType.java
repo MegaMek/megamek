@@ -1419,20 +1419,8 @@ public class EquipmentType implements ITechnology {
         return "EquipmentType: " + name;
     }
 
-    protected static GameOptions getGameOptions() {
-        if (Server.getServerInstance() == null) {
-            return null;
-        } else if (Server.getServerInstance().getGame() == null) {
-            return null;
-        }
-        return Server.getServerInstance().getGame().getOptions();
-    }
-
     public String getShortName() {
-        if (shortName.isBlank()) {
-            return getName();
-        }
-        return shortName;
+        return shortName.isBlank() ? getName() : shortName;
     }
 
     public String getShortName(double size) {

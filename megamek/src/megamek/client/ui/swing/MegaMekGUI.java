@@ -414,9 +414,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         startClient(playerName, MMConstants.LOCALHOST, server.getPort());
     }
 
-    public void startServer(@Nullable String serverPassword, int port, boolean isRegister,
-                            @Nullable String metaServer, @Nullable String mailPropertiesFileName,
-                            @Nullable File saveGameFile) {
+    public boolean startServer(@Nullable String serverPassword, int port, boolean isRegister,
+                               @Nullable String metaServer, @Nullable String mailPropertiesFileName,
+                               @Nullable File saveGameFile) {
         try {
             serverPassword = Server.validatePassword(serverPassword);
             port = Server.validatePort(port);

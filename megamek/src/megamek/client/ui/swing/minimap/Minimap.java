@@ -941,14 +941,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         
         Path2D form = MinimapUnitSymbols.getForm(entity);
 
-        Color borderColor = Color.WHITE;
+        Color borderColor = entity.moved != EntityMovementType.MOVE_NONE ? Color.BLACK : Color.WHITE;
         Color fontColor = Color.BLACK;
-        if (entity.moved != EntityMovementType.MOVE_NONE) {
-            borderColor = Color.BLACK;
-        }
-
+        
         float outerBorderWidth = 30f;
-        float innerBorderWidth = 20f;
+        float innerBorderWidth = 10f;
+        float formStrokeWidth = 20f;
 
         if (stratOpsSymbols) {
             // White border to set off the icon from the background
@@ -960,15 +958,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             g2.setColor(fontColor);
             g2.fill(STRAT_BASERECT);
 
-            // Rectangle border for all units
-            g2.setColor(borderColor);
-            g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
-            g2.draw(STRAT_BASERECT);
-
             // Set a thin brush for filled areas (leave a thick brush for line symbols
             if ((entity instanceof Mech) || (entity instanceof Protomech)
                     || (entity instanceof VTOL) || (entity.isAero())) {
                 g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            } else {
+                g2.setStroke(new BasicStroke(formStrokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
             }
 
             // Fill the form in player color / team color
@@ -1001,6 +996,11 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             }
             // Draw the unit icon in black
             g2.draw(form);
+
+            // Rectangle border for all units
+            g2.setColor(borderColor);
+            g2.setStroke(new BasicStroke(innerBorderWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
+            g2.draw(STRAT_BASERECT);
 
         } else {
             // Standard symbols

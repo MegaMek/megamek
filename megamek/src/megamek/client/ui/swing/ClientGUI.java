@@ -1067,6 +1067,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             menuBar.die();
             menuBar = null;
         }
+
+        if (curPanel instanceof FiringDisplay) {
+            ((FiringDisplay) curPanel).stopTimer();
+        }
+
+        if (curPanel instanceof MovementDisplay) {
+            ((MovementDisplay) curPanel).stopTimer();
+        }
+
         GUIP.removePreferenceChangeListener(this);
     }
 

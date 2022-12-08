@@ -21,7 +21,6 @@ import megamek.client.ui.swing.unitDisplay.WeaponPanel;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
@@ -46,11 +45,6 @@ import java.util.*;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
-
-    /**
-     * timer that ends turn if time limit set in options is over
-     */
-    private TurnTimer tt;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -877,19 +871,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
-        // check if there should be a turn timer running
-        tt = TurnTimer.init(this, clientgui.getClient());
+
+        startTimer();
     }
 
     /**
      * Does end turn stuff.
      */
     protected void endMyTurn() {
-        //get rid of still running timer, if turn is concluded before time is up
-        if (tt != null) {
-            tt.stopTimer();
-            tt = null;
-        }
+        stopTimer();
+
         // end my turn, then.
         Game game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());

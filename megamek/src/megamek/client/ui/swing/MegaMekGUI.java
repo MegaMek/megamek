@@ -407,7 +407,10 @@ public class MegaMekGUI implements IPreferenceChangeListener {
     public void startHost(@Nullable String serverPassword, int port, boolean isRegister,
                           @Nullable String metaServer, @Nullable String mailPropertiesFileName,
                           @Nullable File savegame, String playerName) {
-        startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, savegame);
+        if (!startServer(serverPassword, port, isRegister, metaServer, mailPropertiesFileName, savegame)) {
+            return;
+        }
+
         startClient(playerName, MMConstants.LOCALHOST, server.getPort());
     }
 
@@ -420,7 +423,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         } catch (Exception ex) {
             LogManager.getLogger().error("Failed to start Server", ex);
             frame.setVisible(true);
-            return;
+            return false;
         }
 
         EmailService mailer = null;
@@ -438,7 +441,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                         Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
                         Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
                 frame.setVisible(true);
-                return;
+                return false;
             }
         }
 
@@ -457,14 +460,14 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
-            return;
+            return false;
         } catch (Exception ex) {
             LogManager.getLogger().error("Could not create server", ex);
             JOptionPane.showMessageDialog(frame,
                     Messages.getFormattedString("MegaMek.StartServerError", port, ex.getMessage()),
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
-            return;
+            return false;
         }
 
         if (saveGameFile != null) {
@@ -475,9 +478,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 server.die();
                 server = null;
                 frame.setVisible(true);
-                return;
+                return false;
             }
         }
+
+        return true;
     }
 
     public void startClient(String playerName, String serverAddress, int port) {
@@ -825,7 +830,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         Compute.d6();
 
         // start server
-        startServer(serverPW, port, false, null, null, null);
+        if (!startServer(serverPW, port, false, null, null, null)) {
+            return;
+        }
         server.setGame(g);
         
         // apply any scenario damage

@@ -23,6 +23,7 @@ import megamek.client.ui.swing.util.FluffImageHelper;
 import megamek.client.ui.swing.util.UIUtil.FixedXPanel;
 import megamek.common.Entity;
 import megamek.common.MechView;
+import megamek.common.Report;
 import megamek.common.templates.TROView;
 import org.apache.logging.log4j.LogManager;
 
@@ -53,7 +54,7 @@ public class MechViewPanel extends JPanel {
     }
 
     public MechViewPanel(int width, int height, boolean noBorder) {
-        ReportDisplay.setupStylesheet(txtMek);
+        Report.setupStylesheet(txtMek);
         txtMek.setEditable(false);
         txtMek.setBorder(new EmptyBorder(5, 10, 0, 0));
         txtMek.setMinimumSize(new Dimension(width, height));

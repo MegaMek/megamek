@@ -712,7 +712,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Called when the user selects the "View->Player List" menu item.
      */
-    private void showPlayerList() {
+    public void showPlayerList() {
         if (playerListDialog == null) {
             playerListDialog = new PlayerListDialog(frame, client);
         }
@@ -722,13 +722,20 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Called when the user selects the "View->Round Report" menu item.
      */
-    private void showRoundReport() {
+    public void showRoundReport() {
         ignoreHotKeys = true;
         if (miniReportDisplay == null) {
             miniReportDisplay = new MiniReportDisplay(frame, this);
         }
-
         miniReportDisplay.setVisible(true);
+        ignoreHotKeys = false;
+    }
+
+    public void addReportPages() {
+        ignoreHotKeys = true;
+        if (miniReportDisplay != null) {
+            miniReportDisplay.addReportPages();
+        }
         ignoreHotKeys = false;
     }
 
@@ -1122,10 +1129,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         switch (phase) {
             case LOUNGE:
                 // reset old report tabs and images, if any
-                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
-                if (rD != null) {
-                    rD.resetTabs();
-                }
                 ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(GamePhase.LOUNGE));
                 cb.setDoneButton(cl.butDone);
                 cl.setBottom(cb.getComponent());
@@ -1157,11 +1160,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                rD = (ReportDisplay) phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
-                cb.setDoneButton(rD.butDone);
-                rD.setBottom(cb.getComponent());
-                setMapVisible(false);
-                setUnitDisplayVisible(false);
+                showRoundReport();
                 break;
             default:
                 break;
@@ -1359,11 +1358,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 panSecondary.add(component, secondary);
                 break;
             case INITIATIVE_REPORT:
-                component = new ReportDisplay(this);
-                main = CG_REPORTDISPLAY;
-                component.setName(main);
-                panMain.add(main, component);
-                break;
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
             case OFFBOARD_REPORT:
@@ -1371,13 +1365,27 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String.valueOf(GamePhase.INITIATIVE_REPORT));
-                if (component == null) {
-                    // no ReportDisplay to reuse - get a new one
-                    component = initializePanel(GamePhase.INITIATIVE_REPORT);
+                component = null;
+                for (String s : phaseComponents.keySet()) {
+                    JComponent comp = phaseComponents.get(s);
+                    if (comp instanceof ReportDisplay) {
+                        component = comp;
+                        break;
+                    }
                 }
-                main = CG_REPORTDISPLAY;
+                if (component == null) {
+                    component = new ReportDisplay(this);
+                }
+                main = CG_BOARDVIEW;
+                secondary = CG_REPORTDISPLAY;
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                if (!secondaryNames.containsValue(secondary)) {
+                    panSecondary.add(component, secondary);
+                }
                 break;
             default:
                 component = new JLabel(MSG_WAITINGONTHESERVER);
@@ -1503,7 +1511,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     public void doAlertDialog(String title, String message, int msgTyoe) {
         JTextPane textArea = new JTextPane();
-        ReportDisplay.setupStylesheet(textArea);
+        Report.setupStylesheet(textArea);
         BASE64ToolKit toolKit = new BASE64ToolKit();
         textArea.setEditorKit(toolKit);
         textArea.setEditable(false);
@@ -1865,10 +1873,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
-
-             if ((curPanel instanceof ReportDisplay) && !client.getLocalPlayer().isDone()) {
-                 ((ReportDisplay) curPanel).resetReadyButton();
-             }
         }
 
         @Override
@@ -1907,39 +1911,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
-            if (curPanel instanceof ReportDisplay) {
-                ((ReportDisplay) curPanel).resetReadyButton();
-            }
+
         }
 
         @Override
         public void gameReport(GameReportEvent e) {
-            // Normally the Report Display is updated when the panel is
-            // switched during a phase change.
-            // This update is for reports that get sent at odd times,
-            // currently Tactical Genius reroll requests and when
-            // a player wishes to continue moving after a fall.
-            if (curPanel instanceof ReportDisplay) {
-                // Tactical Genius
-                ((ReportDisplay) curPanel).appendReportTab(getClient().phaseReport);
-                ((ReportDisplay) curPanel).resetReadyButton();
-                // Check if the player deserves an active reroll button
-                // (possible, if he gets one which he didn't use, and his
-                // opponent got and used one) and if so activates it.
-                if (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer())) {
-                    if (!((ReportDisplay) curPanel).hasRerolled()) {
-                        ((ReportDisplay) curPanel).resetRerollButton();
-                    }
-                }
-                // Show a popup to the players so that we know whats up!
-                if (!(getClient() instanceof TestBot)) {
-                    doAlertDialog(MSG_DIALOGTACTICALGENIUSREPORT, e.getReport());
-                }
-            } else {
-                // Continued movement after getting up
-                if (!(getClient() instanceof TestBot)) {
-                    doAlertDialog(MSG_DIALOGDIALOGMOVEMENTREPORT, e.getReport());
-                }
+            if ((getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) && getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer())) {
+                addReportPages();
+            }
+
+            // Continued movement after getting up
+            if (!(getClient() instanceof TestBot)) {
+                doAlertDialog(MSG_DIALOGDIALOGMOVEMENTREPORT, e.getReport());
             }
         }
 

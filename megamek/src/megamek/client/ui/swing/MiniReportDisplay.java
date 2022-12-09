@@ -326,7 +326,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
             JTextPane ta = new JTextPane();
-            ReportDisplay.setupStylesheet(ta);
+            Report.setupStylesheet(ta);
             ta.addHyperlinkListener(this);
             BASE64ToolKit toolKit = new BASE64ToolKit();
             ta.setEditorKit(toolKit);
@@ -340,7 +340,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
 
         // add the new current phase tab
         JTextPane ta = new JTextPane();
-        ReportDisplay.setupStylesheet(ta);
+        Report.setupStylesheet(ta);
         ta.addHyperlinkListener(this);
 
         BASE64ToolKit toolKit = new BASE64ToolKit();
@@ -419,7 +419,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
                 Component pane = ((JScrollPane) cp).getViewport().getView();
                 if (pane instanceof JTextPane) {
                     JTextPane tp = (JTextPane) pane;
-                    ReportDisplay.setupStylesheet(tp);
+                    Report.setupStylesheet(tp);
                     tp.setText(tp.getText());
                 }
             }

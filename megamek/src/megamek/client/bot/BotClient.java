@@ -1135,7 +1135,7 @@ public abstract class BotClient extends Client {
      */
     public void doAlertDialog(String title, String message) {
         JTextPane textArea = new JTextPane();
-        ReportDisplay.setupStylesheet(textArea);
+        Report.setupStylesheet(textArea);
 
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea,

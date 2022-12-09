@@ -68,9 +68,9 @@ public class SBFUnitConverter {
         calcUnitArmor();
         calcUnitMove();
         setMovementMode();
-        calcTransportMove();
         calcUnitJumpMove();
         calcUnitSpecialAbilities();
+        calcTransportMove();
         calcUnitTMM();
 
         unit.setDamage(calcUnitDamage());
@@ -109,7 +109,7 @@ public class SBFUnitConverter {
     private void calcUnitTMM() {
         int tmm = getTmmFromMove(roundedAverageMove);
         String calculation = "Average Movement " + roundedAverageMove;
-        String moveMode = unit.getMovementMode();
+        String moveMode = unit.getMovementCode();
         if (unit.isAnyTypeOf(BA, PM)
                 || (unit.isType(V) && (moveMode.equals("v") || moveMode.equals("g")))) {
             tmm += 1;
@@ -283,6 +283,10 @@ public class SBFUnitConverter {
         }
         if (unit.hasSUA(ECM)) {
             unit.getSpecialAbilities().removeSUA(LECM);
+        }
+        if (unit.hasSUA(CT)) {
+            unit.getSpecialAbilities().mergeSUA(IT, unit.getCT());
+            unit.getSpecialAbilities().removeSUA(CT);
         }
     }
 
@@ -537,10 +541,23 @@ public class SBFUnitConverter {
 
     private void calcTransportMove() {
         int transportMove = unit.getMovement();
-        if (elements.stream().anyMatch(AlphaStrikeElement::isInfantry)) {
-            //stub
+        if (unit.getCAR() <= unit.getIT()) {
+            double averageMove = elements.stream()
+                    .filter(e -> !e.isInfantry())
+                    .mapToInt(AlphaStrikeElement::getPrimaryMovementValue)
+                    .average().orElse(0);
+            transportMove = (int) Math.round(averageMove / 2);
+            report.addLine("Transport Movement:", "");
+            String elementsSum = elements.stream()
+                    .filter(e -> !e.isInfantry())
+                    .map(e -> e.getPrimaryMovementValue() + "")
+                    .collect(joining(" + "));
+            report.addLine("- Average Move", "(" + elementsSum + ") / " + elements.size() + " / 2, rn",
+                    "= " + formatForReport(averageMove));
+            report.addLine("Final Movement Value", "", transportMove + "");
         }
         unit.setTrspMovement(transportMove);
+        unit.setTrspMovementMode(unit.getMovementMode());
     }
 
     private void calcUnitJumpMove() {
@@ -555,100 +572,15 @@ public class SBFUnitConverter {
     }
 
     private void setMovementMode() {
-        SBFMoveMode currentMode = new SBFMoveMode("", Integer.MAX_VALUE);
+        SBFMovementMode currentMode = SBFMovementMode.UNKNOWN;
         for (AlphaStrikeElement element : elements) {
-            SBFMoveMode newMode = modeForElement(element);
+            SBFMovementMode newMode = SBFMovementMode.modeForElement(unit, element);
             if (newMode.rank < currentMode.rank) {
                 currentMode = newMode;
             }
         }
-        report.addLine("Movement Mode:", currentMode.key);
-        unit.setMovementMode(currentMode.key);
-    }
-
-    private SBFMoveMode modeForElement(AlphaStrikeElement element) {
-        if (unit.isAerospace() && element.isGround()) {
-            if (element.hasSUA(BIM)) {
-                return new SBFMoveMode("l", 50);
-            } else if (element.hasSUA(LAM)) {
-                return new SBFMoveMode("l", 65);
-            } else if (element.hasSUA(SOA)) {
-                return new SBFMoveMode("k", 10);
-            } else {
-                return new SBFMoveMode("unknown", 0);
-            }
-        }
-        switch (element.getPrimaryMovementMode()) {
-            case "":
-                if (element.isType(ASUnitType.BM, ASUnitType.PM, ASUnitType.IM)) {
-                    return new SBFMoveMode("l", 60);
-                } else if (element.isType(ASUnitType.WS)) {
-                    return new SBFMoveMode("aw", 31);
-                } else if (element.isType(ASUnitType.BA)) {
-                    return new SBFMoveMode("l", 50);
-                }
-                break;
-            case "w":
-            case "w(b)":
-            case "w(m)":
-            case "m":
-                return new SBFMoveMode("w", 20);
-            case "v":
-                return new SBFMoveMode("v", 80);
-            case "f":
-                return new SBFMoveMode("f", 52);
-            case "i":
-                return new SBFMoveMode("i", 41);
-            case "r":
-                return new SBFMoveMode("r", 10);
-            case "h":
-                return new SBFMoveMode("h", 30);
-            case "g":
-                return new SBFMoveMode("g", 81);
-            case "p":
-                return new SBFMoveMode("p", 21);
-            case "a":
-                return new SBFMoveMode("a", 54);
-            case "qt":
-                return new SBFMoveMode("qt", 63);
-            case "qw":
-                return new SBFMoveMode("qw", 64);
-            case "k":
-                return new SBFMoveMode("k", 11);
-            case "n":
-                return new SBFMoveMode("n", 0);
-            case "t":
-                return new SBFMoveMode("t", 40);
-            case "s":
-                if (element.isType(ASUnitType.CV, ASUnitType.SV)) {
-                    return new SBFMoveMode("s", 0);
-                } else if (element.isType(ASUnitType.BM, ASUnitType.PM)) {
-                    return new SBFMoveMode("s", 62);
-                } else if (element.isType(ASUnitType.BA)) {
-                    return new SBFMoveMode("s", 51);
-                }
-                break;
-            case "j":
-                if (element.isType(ASUnitType.BM, ASUnitType.PM)) {
-                    return new SBFMoveMode("j", 70);
-                } else if (element.isType(ASUnitType.BA)) {
-                    return new SBFMoveMode("j", 61);
-                } else if (element.isType(ASUnitType.CI)) {
-                    return new SBFMoveMode("j", 53);
-                }
-                break;
-        }
-        return new SBFMoveMode("unknown", 0);
-    }
-
-    private static class SBFMoveMode {
-        String key;
-        int rank;
-
-        SBFMoveMode(String key, int rank) {
-            this.key = key;
-            this.rank = rank;
-        }
+        report.addLine("Movement Mode:", currentMode.code);
+        unit.setMovementMode(currentMode);
     }
 
     private void calcUnitArmor() {

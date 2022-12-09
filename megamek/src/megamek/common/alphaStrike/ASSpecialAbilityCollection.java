@@ -116,16 +116,25 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
     /**
      * Adds a Special Unit Ability associated with a possibly non-integer number such
      * as CT1.5. If that SUA is already present, the given number is added to the one already present.
-     * If the previosly present number was an integer, it will be converted to a Double type value.
+     * If the previously present number was an integer, it will be converted to a Double type value.
+     * If the resulting value would be 0, the SUA is removed.
      */
     public void mergeSUA(BattleForceSUA sua, double doubleValue) {
-        if (!specialAbilities.containsKey(sua)) {
-            specialAbilities.put(sua, doubleValue);
-        } else {
+        double resultingValue = doubleValue;
+        if (specialAbilities.containsKey(sua)) {
             if (specialAbilities.get(sua) instanceof Integer) {
-                specialAbilities.put(sua, (int) specialAbilities.get(sua) + doubleValue);
+                resultingValue += (int) specialAbilities.get(sua);
             } else if (specialAbilities.get(sua) instanceof Double) {
-                specialAbilities.put(sua, (double) specialAbilities.get(sua) + doubleValue);
+                resultingValue += (double) specialAbilities.get(sua);
+            }
+        }
+        if (resultingValue <= 0) {
+            specialAbilities.remove(sua);
+        } else {
+            if ((int) resultingValue == resultingValue) {
+                specialAbilities.put(sua, (int) resultingValue);
+            } else {
+                specialAbilities.put(sua, resultingValue);
             }
         }
     }

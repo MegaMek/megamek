@@ -106,12 +106,14 @@ public final class SBFFormationConverter {
                 "Average of " + units.stream().map(u -> u.getMovement() + "").collect(joining(", ")),
                 "= " + formationMove);
         formation.setMovement(formationMove);
+        setMovementMode();
 
         int trspMove = (int)Math.round(units.stream().mapToDouble(SBFUnit::getTrspMovement).average().orElse(0));
         report.addLine("Transport Movement:",
                 "Average of " + units.stream().map(u -> u.getTrspMovement() + "").collect(joining(", ")),
                 "= " + trspMove);
         formation.setTrspMovement(trspMove);
+        setTrspMovementMode();
 
         int jumpMove = (int)Math.round(units.stream().mapToDouble(SBFUnit::getJumpMove).average().orElse(0));
         report.addLine("Jump:",
@@ -187,7 +189,16 @@ public final class SBFFormationConverter {
 
         var fuel = formation.getUnits().stream().filter(SBFUnit::isAerospace).mapToInt(SBFUnit::getFUEL).min();
         if (fuel.isPresent()) {
-            formation.addSPA(FUEL, fuel.orElse(0));
+            formation.getSpecialAbilities().mergeSUA(FUEL, fuel.orElse(0));
+        }
+
+        if (formation.hasSUA(CAR) && formation.hasSUA(IT)) {
+            double carValue = formation.getSpecialAbilities().getCAR();
+            double itValue = formation.getSpecialAbilities().getIT();
+            itValue = Math.max(itValue - carValue, 0);
+            carValue = Math.max(carValue - itValue, 0);
+            formation.getSpecialAbilities().mergeSUA(CAR, carValue);
+            formation.getSpecialAbilities().mergeSUA(IT, itValue);
         }
     }
 
@@ -219,7 +230,7 @@ public final class SBFFormationConverter {
                 report.addLine("",
                         spa + ": " + count + " of " + formation.getUnits().size() + ", minimum " + minimumCount,
                         spa.toString());
-                formation.addSPA(spa);
+                formation.getSpecialAbilities().setSUA(spa);
             } else if (count > 0) {
                 report.addLine("",
                         spa + ": " + count + " of " + formation.getUnits().size() + ", minimum " + minimumCount,
@@ -245,7 +256,7 @@ public final class SBFFormationConverter {
                 }
             }
             if (suaValue > 0) {
-                formation.addSPA(spa, (int) suaValue);
+                formation.getSpecialAbilities().mergeSUA(spa, (int) suaValue);
             }
         }
     }
@@ -253,8 +264,8 @@ public final class SBFFormationConverter {
     void calcFormationTactics() {
         int tactics = Math.max(0, 10 - formation.getMovement() + formation.getSkill() - 4);
         String calculation = "10 - " + formation.getMovement() + " + " + formation.getSkill() + " - 4";
-        if (formation.hasSPA(MHQ)) {
-            double mhqValue = (Integer) formation.getSPA(MHQ);
+        if (formation.hasSUA(MHQ)) {
+            double mhqValue = (Integer) formation.getSUA(MHQ);
             long delta = Math.min(3, Math.round(mhqValue / 2));
             tactics -= Math.min(3, Math.round(mhqValue / 2));
             calculation += " - " + delta;
@@ -281,5 +292,29 @@ public final class SBFFormationConverter {
         report.addLine("Type:",
                 "Most frequent: " + highestType + ", " + highestCount + " of " + units.size(),
                 formation.getType().toString());
+    }
+
+    private void setMovementMode() {
+        SBFMovementMode currentMode = SBFMovementMode.UNKNOWN;
+        for (SBFUnit unit : formation.getUnits()) {
+            SBFMovementMode newMode = unit.getMovementMode();
+            if (newMode.rank < currentMode.rank) {
+                currentMode = newMode;
+            }
+        }
+        report.addLine("Movement Mode:", currentMode.code);
+        formation.setMovementMode(currentMode);
+    }
+
+    private void setTrspMovementMode() {
+        SBFMovementMode currentMode = SBFMovementMode.UNKNOWN;
+        for (SBFUnit unit : formation.getUnits()) {
+            SBFMovementMode newMode = unit.getTrspMovementMode();
+            if (newMode.rank < currentMode.rank) {
+                currentMode = newMode;
+            }
+        }
+        report.addLine("Movement Mode:", currentMode.code);
+        formation.setTrspMovementMode(currentMode);
     }
 }

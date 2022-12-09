@@ -51,15 +51,15 @@ public class SBFViewPanel extends JPanel {
             addGridElement(formation.getName(), UIUtil.uiDarkBlue(), FlowLayout.LEFT);
             addGridElement(formation.getType().toString(), UIUtil.uiDarkBlue());
             addGridElement(formation.getSize() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getMovement() + "", UIUtil.uiDarkBlue());
+            addGridElement(formation.getMovement() + formation.getMovementCode() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getJumpMove() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getTrspMovement() + "", UIUtil.uiDarkBlue());
+            addGridElement(formation.getTrspMovement() + formation.getTrspMovementCode() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getTmm() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getTactics() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getMorale() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getSkill() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getPointValue() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getSpecialsString() + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+            addGridElement(formation.getSpecialsDisplayString(", ", null) + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
             addConversionInfo((FlexibleCalculationReport) formation.getConversionReport(), null, parent);
 
             addUnitHeaders();
@@ -70,9 +70,9 @@ public class SBFViewPanel extends JPanel {
                 addGridElement("  " + unit.getName(), bgColor, FlowLayout.LEFT);
                 addGridElement(unit.getType().toString(), bgColor);
                 addGridElement(unit.getSize() + "", bgColor);
-                addGridElement(unit.getMovement() + unit.getMovementMode(), bgColor);
+                addGridElement(unit.getMovement() + unit.getMovementCode(), bgColor);
                 addGridElement(unit.getJumpMove() + "", bgColor);
-                addGridElement(unit.getTrspMovement() + "", bgColor);
+                addGridElement(unit.getTrspMovement() + unit.getTrspMovementCode(), bgColor);
                 addGridElement(unit.getTmm() + "", bgColor);
                 addGridElement(unit.getArmor() + "", bgColor);
                 addGridElement(unit.getDamage() + "", bgColor);

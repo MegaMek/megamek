@@ -183,4 +183,37 @@ public interface ASSpecialAbilityCollector {
         return hasSUA(MSL) ? (ASDamageVector) getSUA(MSL) : ASDamageVector.ZEROSPECIAL;
     }
 
+    /** @return The CT transport ability value of this element or 0 if it doesn't have CT. */
+    default double getCT() {
+        if (hasSUA(CT)) {
+            Object ctValue = getSUA(CT);
+            if (ctValue instanceof Integer) {
+                return (Integer) ctValue;
+            } else {
+                return (Double) ctValue;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    /** @return The IT transport ability value of this element or 0 if it doesn't have IT. */
+    default double getIT() {
+        if (hasSUA(IT)) {
+            Object itValue = getSUA(IT);
+            if (itValue instanceof Integer) {
+                return (Integer) itValue;
+            } else {
+                return (Double) itValue;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    /** @return The CAR ability value of this element or 0 if it doesn't have CAR. */
+    default int getCAR() {
+        return hasSUA(CAR) ? (Integer) getSUA(CAR) : 0;
+    }
+
 }

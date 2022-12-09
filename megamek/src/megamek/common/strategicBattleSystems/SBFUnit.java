@@ -36,9 +36,10 @@ public class SBFUnit implements ASSpecialAbilityCollector {
     private int size = 0;
     private int tmm = 0;
     private int movement = 0;
-    private String movementMode = "";
+    private SBFMovementMode movementMode = SBFMovementMode.UNKNOWN;
     private int jumpMove = 0;
     private int trspMovement = 0;
+    private SBFMovementMode trspMovementMode = SBFMovementMode.UNKNOWN;
     private int armor = 0;
     private int skill = 4;
     private ASDamageVector damage = ASDamageVector.ZERO;
@@ -93,12 +94,28 @@ public class SBFUnit implements ASSpecialAbilityCollector {
         this.trspMovement = trspMovement;
     }
 
-    public String getMovementMode() {
+    public String getTrspMovementCode() {
+        return trspMovementMode.code;
+    }
+
+    public SBFMovementMode getTrspMovementMode() {
+        return trspMovementMode;
+    }
+
+    public void setTrspMovementMode(SBFMovementMode mode) {
+        trspMovementMode = mode;
+    }
+
+    public String getMovementCode() {
+        return movementMode.code;
+    }
+
+    public SBFMovementMode getMovementMode() {
         return movementMode;
     }
 
-    public void setMovementMode(String movementMode) {
-        this.movementMode = movementMode;
+    public void setMovementMode(SBFMovementMode mode) {
+        movementMode = mode;
     }
 
     public int getJumpMove() {

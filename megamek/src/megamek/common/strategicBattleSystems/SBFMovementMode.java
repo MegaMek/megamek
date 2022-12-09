@@ -18,15 +18,20 @@
  */
 package megamek.common.strategicBattleSystems;
 
+import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+
+import static megamek.common.alphaStrike.BattleForceSUA.*;
+
 public enum SBFMovementMode {
 
     //TODO: Nah, not in SBF
     UNKNOWN("Unknown", "Unknown", Integer.MAX_VALUE),
-    BIM_AEROSPACE_WALK("l", "Mek Walk", 50),
-    LAM_AEROSPACE_WALK("l", "Mek Walk", 65),
-    MEK_WALK("l", "Mek Walk", 60),
+    BIM_AEROSPACE_WALK("", "Mek Walk", 50),
+    LAM_AEROSPACE_WALK("", "Mek Walk", 65),
+    MEK_WALK("", "Mek Walk", 60),
     WARSHIP("aw", "Warship Thrust", 31),
-    BA_WALK("l", "BAttleArmor Walk", 50),
+    BA_WALK("", "BAttleArmor Walk", 50),
     WHEELED("w", "Wheeled", 20),
     VTOL("v", "VTOL", 80),
     INFANTRY_FOOT("f", "Infantry Walk", 52),
@@ -44,18 +49,92 @@ public enum SBFMovementMode {
     SUBMARINE("s", "Submarine", 0),
     MEK_UMU("s", "Mek UMU", 62),
     BA_UMU("s", "BA UMU", 51),
-    MEK_JUMP("j", "Mek Jump", 70),
-    BA_JUMP("j", "BA Jump", 61),
-    CI_JUMP("j", "CI Jump", 53);
+    MEK_JUMP("", "Mek Jump", 70),
+    BA_JUMP("", "BA Jump", 61),
+    CI_JUMP("", "CI Jump", 53);
 
-    public final String mode;
+    public final String code;
     public final String name;
     public final int rank;
 
     SBFMovementMode(String mode, String modeName, int rank) {
-        this.mode = mode;
+        code = mode;
         name = modeName;
         this.rank = rank;
     }
 
+    public static SBFMovementMode modeForElement(SBFUnit unit, AlphaStrikeElement element) {
+        if (unit.isAerospace() && element.isGround()) {
+            if (element.hasSUA(BIM)) {
+                return BIM_AEROSPACE_WALK;
+            } else if (element.hasSUA(LAM)) {
+                return LAM_AEROSPACE_WALK;
+            } else if (element.hasSUA(SOA)) {
+                return STATION_KEEPING;
+            } else {
+                return UNKNOWN;
+            }
+        }
+        switch (element.getPrimaryMovementMode()) {
+            case "":
+                if (element.isType(ASUnitType.BM, ASUnitType.PM, ASUnitType.IM)) {
+                    return MEK_WALK;
+                } else if (element.isType(ASUnitType.WS)) {
+                    return WARSHIP;
+                } else if (element.isType(ASUnitType.BA)) {
+                    return BA_WALK;
+                }
+                break;
+            case "w":
+            case "w(b)":
+            case "w(m)":
+            case "m":
+                return WHEELED;
+            case "v":
+                return VTOL;
+            case "f":
+                return INFANTRY_FOOT;
+            case "i":
+                return AIRSHIP;
+            case "r":
+                return RAIL;
+            case "h":
+                return HOVER;
+            case "g":
+                return WIGE;
+            case "p":
+                return SPHEROID;
+            case "a":
+                return AERODYNE;
+            case "qt":
+                return QUAD_TRACKED;
+            case "qw":
+                return QUAD_WHEELED;
+            case "k":
+                return STATION_KEEPING;
+            case "n":
+                return NAVAL;
+            case "t":
+                return TRACKED;
+            case "s":
+                if (element.isType(ASUnitType.CV, ASUnitType.SV)) {
+                    return SUBMARINE;
+                } else if (element.isType(ASUnitType.BM, ASUnitType.PM)) {
+                    return MEK_UMU;
+                } else if (element.isType(ASUnitType.BA)) {
+                    return BA_UMU;
+                }
+                break;
+            case "j":
+                if (element.isType(ASUnitType.BM, ASUnitType.PM)) {
+                    return MEK_JUMP;
+                } else if (element.isType(ASUnitType.BA)) {
+                    return BA_JUMP;
+                } else if (element.isType(ASUnitType.CI)) {
+                    return CI_JUMP;
+                }
+                break;
+        }
+        return UNKNOWN;
+    }
 }

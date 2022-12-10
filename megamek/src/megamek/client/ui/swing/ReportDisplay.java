@@ -79,7 +79,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
             return;
         }
 
-        setupStatusBar(Messages.getString("ReportDisplay.waitingForReportPhase"));
+        setupStatusBar("");
 
         buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
         for (ReportCommand cmd : ReportCommand.values()) {
@@ -201,12 +201,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
             case VICTORY:
                 resetButtons();
                 setStatusBarText(clientgui.getClient().getGame().getPhase().toString());
-
                 break;
             default:
                 setStatusBarText(clientgui.getClient().getGame().getPhase().toString());
                 break;
-        };
+        }
     }
 
     /**

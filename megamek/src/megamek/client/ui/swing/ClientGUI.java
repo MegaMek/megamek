@@ -773,6 +773,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_RESET_WINDOW_POSITIONS:
                 minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
                 getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
+                miniReportDisplay.setBounds(0, 0, miniReportDisplay.getWidth(), miniReportDisplay.getHeight());
+                playerListDialog.setBounds(0, 0, playerListDialog.getWidth(), playerListDialog.getHeight());
                 break;
             case FILE_GAME_SAVE:
                 saveGame();

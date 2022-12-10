@@ -19,28 +19,52 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.Team;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-public class PlayerListDialog extends JDialog implements IPreferenceChangeListener {
+public class PlayerListDialog extends JDialog implements ActionListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = 7270469195373150106L;
 
     private JList<String> playerList = new JList<>(new DefaultListModel<>());
 
     private Client client;
+    private JButton butOkay;
+
+    private static final String MSG_OKAY= Messages.getString("Okay");
 
     public PlayerListDialog(JFrame parent, Client client) {
         super(parent, Messages.getString("PlayerListDialog.title"), false);
         this.client = client;
 
+        client.getGame().addGameListener(gameListener);
+
         add(playerList, BorderLayout.CENTER);
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_END);
-        add(new JButton(new CloseAction(this)), BorderLayout.PAGE_END);
+
+        butOkay = new JButton(MSG_OKAY);
+        butOkay.addActionListener(this);
+        add(butOkay, BorderLayout.PAGE_END);
+
+        // closing the window is the same as hitting butOkay
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                actionPerformed(new ActionEvent(butOkay,
+                        ActionEvent.ACTION_PERFORMED, butOkay.getText()));
+            }
+        });
 
         refreshPlayerList();
         setMinimumSize(new Dimension(300, 260));
@@ -50,11 +74,8 @@ public class PlayerListDialog extends JDialog implements IPreferenceChangeListen
 
         pack();
         setResizable(false);
-        setLocation(parent.getLocation().x + (parent.getSize().width / 2) 
-                - (getSize().width / 2),
-                parent.getLocation().y + (parent.getSize().height / 2) 
-                - (getSize().height / 2));
-        
+        setLocation(GUIPreferences.getInstance().getPlayerListPosX(),
+                GUIPreferences.getInstance().getPlayerListPosY());
     }
 
     public static void refreshPlayerList(JList<String> playerList, 
@@ -135,6 +156,40 @@ public class PlayerListDialog extends JDialog implements IPreferenceChangeListen
         }
 
         return null;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource().equals(butOkay)) {
+            savePref();
+            setVisible(false);
+        }
+    }
+
+    private GameListener gameListener = new GameListenerAdapter() {
+        @Override
+        public void gamePhaseChange(GamePhaseChangeEvent e) {
+            switch (e.getOldPhase()) {
+                case VICTORY:
+                    savePref();
+                    setVisible(false);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
+            savePref();
+        }
+    }
+    private void savePref() {
+        GUIPreferences.getInstance().setPlayerListPosX(getLocation().x);
+        GUIPreferences.getInstance().setPlayerListPosY(getLocation().y);
     }
 
     private void adaptToGUIScale() {

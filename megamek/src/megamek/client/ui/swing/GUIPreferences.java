@@ -179,6 +179,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
     public static final String MINI_REPORT_SIZE_WIDTH = "MiniReportSizeWidth";
     public static final String MINI_REPORT_ENABLED = "MiniReportEnabled";
+    public static final String PLAYER_lIST_POS_X = "PlayerListPosX";
+    public static final String PLAYER_lIST_POS_Y = "PlayerListPosY";
     public static final String PLAYER_lIST_ENABLED = "PlayerListEnabled";
     public static final String MINIMAP_COLOURS = "MinimapColours";
     public static final String MINIMAP_ENABLED = "MinimapEnabled";
@@ -462,6 +464,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_ENABLED, true);
 
         store.setDefault(PLAYER_lIST_ENABLED, true);
+        store.setDefault(PLAYER_lIST_POS_X, 200);
+        store.setDefault(PLAYER_lIST_POS_Y, 150);
 
         store.setDefault(MOUSE_WHEEL_ZOOM, true);
         store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
@@ -843,6 +847,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getPlayerListEnabled() {
         return store.getBoolean(PLAYER_lIST_ENABLED);
+    }
+
+    public int getPlayerListPosX() {
+        return store.getInt(PLAYER_lIST_POS_X);
+    }
+
+    public int getPlayerListPosY() {
+        return store.getInt(PLAYER_lIST_POS_Y);
     }
 
     public boolean getIsometricEnabled() {
@@ -1387,6 +1399,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlayerListEnabled(boolean b) {
         store.setValue(PLAYER_lIST_ENABLED, b);
+    }
+
+    public void setPlayerListPosX(int i) {
+        store.setValue(PLAYER_lIST_POS_X, i);
+    }
+
+    public void setPlayerListPosY(int i) {
+        store.setValue(PLAYER_lIST_POS_Y, i);
     }
 
     public void setBoardEditLoadHeight(int i) {

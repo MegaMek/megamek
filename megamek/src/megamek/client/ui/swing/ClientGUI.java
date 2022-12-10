@@ -731,12 +731,24 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         ignoreHotKeys = false;
     }
 
-    public void addReportPages() {
+    public void miniReportDisplayAddReportPages() {
         ignoreHotKeys = true;
         if (miniReportDisplay != null) {
             miniReportDisplay.addReportPages();
         }
         ignoreHotKeys = false;
+    }
+
+    public void reportDisplayResetDone() {
+        if (!getClient().getLocalPlayer().isDone()) {
+            for (String s : phaseComponents.keySet()) {
+                JComponent comp = phaseComponents.get(s);
+                if (comp instanceof ReportDisplay) {
+                    ((ReportDisplay) comp).setDoneEnabled(true);
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -1916,13 +1928,23 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         @Override
         public void gameReport(GameReportEvent e) {
-            if ((getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) && getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer())) {
-                addReportPages();
-            }
+            // Normally the Report Display is updated when the panel is
+            // switched during a phase change.
+            // This update is for reports that get sent at odd times,
+            // currently Tactical Genius reroll requests and when
+            // a player wishes to continue moving after a fall.
+            if (getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) {
+                miniReportDisplayAddReportPages();
+                reportDisplayResetDone();
 
-            // Continued movement after getting up
-            if (!(getClient() instanceof TestBot)) {
-                doAlertDialog(MSG_DIALOGDIALOGMOVEMENTREPORT, e.getReport());
+                if (!(getClient() instanceof TestBot)) {
+                    doAlertDialog(MSG_DIALOGTACTICALGENIUSREPORT, e.getReport());
+                }
+            } else {
+                // Continued movement after getting up
+                if (!(getClient() instanceof TestBot)) {
+                    doAlertDialog(MSG_DIALOGDIALOGMOVEMENTREPORT, e.getReport());
+                }
             }
         }
 

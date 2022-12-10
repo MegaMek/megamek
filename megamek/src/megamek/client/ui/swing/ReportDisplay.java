@@ -151,6 +151,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         buttons.get(ReportCommand.REPORT_REROLLINITIATIVE).setEnabled(enabled);
     }
 
+    public void setDoneEnabled(boolean enabled) {
+        butDone.setEnabled(enabled);
+    }
+
     /**
      * Requests an initiative reroll and disables the ready button.
      */

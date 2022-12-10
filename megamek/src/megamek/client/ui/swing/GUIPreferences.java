@@ -178,6 +178,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
     public static final String MINI_REPORT_SIZE_WIDTH = "MiniReportSizeWidth";
+    public static final String MINI_REPORT_ENABLED = "MiniReportEnabled";
+    public static final String PLAYER_lIST_ENABLED = "PlayerListEnabled";
     public static final String MINIMAP_COLOURS = "MinimapColours";
     public static final String MINIMAP_ENABLED = "MinimapEnabled";
     public static final String MINIMAP_POS_X = "MinimapPosX";
@@ -457,6 +459,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_POS_Y, 150);
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
+        store.setDefault(MINI_REPORT_ENABLED, true);
+
+        store.setDefault(PLAYER_lIST_ENABLED, true);
 
         store.setDefault(MOUSE_WHEEL_ZOOM, true);
         store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
@@ -830,6 +835,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getMinimapEnabled() {
         return store.getBoolean(MINIMAP_ENABLED);
+    }
+
+    public boolean getMiniReportEnabled() {
+        return store.getBoolean(MINI_REPORT_ENABLED);
+    }
+
+    public boolean getPlayerListEnabled() {
+        return store.getBoolean(PLAYER_lIST_ENABLED);
     }
 
     public boolean getIsometricEnabled() {
@@ -1348,6 +1361,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINIMAP_ENABLED, b);
     }
 
+    public void setMiniReportEnabled(boolean b) {
+        store.setValue(MINI_REPORT_ENABLED, b);
+    }
+
     public void setMinimapPosX(int i) {
         store.setValue(MINIMAP_POS_X, i);
     }
@@ -1366,6 +1383,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMiniReportPosY(int i) {
         store.setValue(MINI_REPORT_POS_Y, i);
+    }
+
+    public void setPlayerListEnabled(boolean b) {
+        store.setValue(PLAYER_lIST_ENABLED, b);
     }
 
     public void setBoardEditLoadHeight(int i) {

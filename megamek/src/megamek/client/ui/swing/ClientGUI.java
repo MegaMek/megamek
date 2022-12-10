@@ -1185,7 +1185,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                showRoundReport();
+                if (frame.isShowing()) {
+                    maybeShowMiniReport();
+                    maybeShowPlayerList();
+                }
                 break;
             default:
                 break;
@@ -1465,6 +1468,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         setMapVisible(GUIP.getMinimapEnabled());
     }
 
+    private void maybeShowMiniReport() {
+        setMiniReportVisible(GUIP.getMiniReportEnabled());
+    }
+
+    private void maybeShowPlayerList() {
+        setPlayerListVisible(GUIP.getPlayerListEnabled());
+    }
+
     /** 
      * Shows or hides the Minimap based on the given visible. This works independently 
      * of the current menu setting, so it should be used only when the Minimap is to 
@@ -1474,6 +1485,22 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
+    }
+
+    void setMiniReportVisible(boolean visible) {
+        if (visible) {
+            showRoundReport();
+        } else {
+            miniReportDisplay.setVisible(visible);
+        }
+    }
+
+    void setPlayerListVisible(boolean visible) {
+        if (visible) {
+            showPlayerList();
+        } else {
+            playerListDialog.setVisible(visible);
+        }
     }
     
     /** Shows or hides the Unit Display based on the current menu setting. */

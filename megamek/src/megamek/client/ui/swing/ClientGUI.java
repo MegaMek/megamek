@@ -589,12 +589,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         getUnitDisplayDialog().setFocusable(false);
         getUnitDisplayDialog().setFocusableWindowState(false);
         getUnitDisplayDialog().add(getUnitDisplay());
-        getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                GUIPreferences.getInstance().hideUnitDisplay();
-            }
-        });
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
@@ -1486,14 +1480,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Does not change the menu setting. 
      */
     void setMapVisible(boolean visible) {
-        minimapW.setVisible(visible);
+        if (minimapW != null) {
+            minimapW.setVisible(visible);
+        }
     }
 
     void setMiniReportVisible(boolean visible) {
         if (visible) {
             showRoundReport();
         } else {
-            miniReportDisplay.setVisible(visible);
+            if (miniReportDisplay != null) {
+                miniReportDisplay.setVisible(visible);
+            }
         }
     }
 
@@ -1501,7 +1499,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (visible) {
             showPlayerList();
         } else {
-            playerListDialog.setVisible(visible);
+            if (miniReportDisplay != null) {
+                playerListDialog.setVisible(visible);
+            }
         }
     }
     
@@ -1528,7 +1528,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
         }
 
-        getUnitDisplayDialog().setVisible(visible);
+        if (getUnitDisplayDialog() != null) {
+            getUnitDisplayDialog().setVisible(visible);
+        }
     }
 
     private boolean fillPopup(Coords coords) {

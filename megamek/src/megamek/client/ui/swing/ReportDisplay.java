@@ -75,6 +75,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     public ReportDisplay(ClientGUI clientgui) {
         super(clientgui);
 
+        if (clientgui == null) {
+            return;
+        }
+
         setupStatusBar(Messages.getString("ReportDisplay.waitingForReportPhase"));
 
         buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));

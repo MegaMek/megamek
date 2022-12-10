@@ -751,6 +751,19 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
+    public void reportDisplayResetRerollInitiative() {
+        if ((!getClient().getLocalPlayer().isDone()) && (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer()))) {
+            for (String s : phaseComponents.keySet()) {
+                JComponent comp = phaseComponents.get(s);
+                if (comp instanceof ReportDisplay) {
+                    ((ReportDisplay) comp).resetRerollInitiativeEnabled();
+                    break;
+                }
+            }
+        }
+    }
+
+
     /**
      * Implement the <code>ActionListener</code> interface.
      */
@@ -1936,6 +1949,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             if (getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) {
                 miniReportDisplayAddReportPages();
                 reportDisplayResetDone();
+                // Check if the player deserves an active reroll button
+                // (possible, if he gets one which he didn't use, and his
+                // opponent got and used one) and if so activates it.
+                reportDisplayResetRerollInitiative();
 
                 if (!(getClient() instanceof TestBot)) {
                     doAlertDialog(MSG_DIALOGTACTICALGENIUSREPORT, e.getReport());

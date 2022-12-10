@@ -67,6 +67,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
 
     // buttons
     private Map<ReportCommand, MegamekButton> buttons;
+    private boolean rerolled; // have we rerolled an init?
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -151,6 +152,12 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         buttons.get(ReportCommand.REPORT_REROLLINITIATIVE).setEnabled(enabled);
     }
 
+    public void resetRerollInitiativeEnabled() {
+        if (!rerolled) {
+            setRerollInitiativeEnabled(true);
+        }
+    }
+
     public void setDoneEnabled(boolean enabled) {
         butDone.setEnabled(enabled);
     }
@@ -159,6 +166,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
      * Requests an initiative reroll and disables the ready button.
      */
     public void rerollInitiative() {
+        rerolled = true;
         setRerollInitiativeEnabled(false);
         clientgui.getClient().sendRerollInitiativeRequest();
     }
@@ -193,6 +201,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         if (isIgnoringEvents()) {
             return;
         }
+
+        rerolled = false;
 
         switch (clientgui.getClient().getGame().getPhase()) {
             case INITIATIVE_REPORT:

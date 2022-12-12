@@ -249,6 +249,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String MSG_DISTANCE = Messages.getString("ClientGUI.distance");
     private static final String MSG_NOGHOSTPLAYERSTOREPLACE = Messages.getString("ClientGUI.noGhostPlayersToReplace");
     private static final String MSG_NOGHOSTS = Messages.getString("ClientGUI.noGhosts");
+    private static final String MSG_SHOW = Messages.getString("ClientGUI.Show");
+    private static final String MSG_HIDE = Messages.getString("ClientGUI.Hide");
+    private static final String MSG_MANUAL = Messages.getString("ClientGUI.Manual");
     private static final String MSG_BOARDEDITORWAITDIALOGTITLE = Messages.getString("BoardEditor.waitDialog.title");
     private static final String MSG_BOARDEDITORWAITDIALOGMSG = Messages.getString("BoardEditor.waitDialog.message");
     private static final String MSG_BOARDEDITORSAVEBOARDAS = Messages.getString("BoardEditor.saveBoardAs");
@@ -271,6 +274,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String MSG_TELEMISSILETARGETDIALOGTARGET = Messages.getString("TeleMissileTargetDialog.target");
     private static final String MSG_TELEMISSILETARGETDIALOGMSG = Messages.getString("TeleMissileTargetDialog.message");
     private static final String MSG_TELEMISSILETARGETDIALOGTITLE = Messages.getString("TeleMissileTargetDialog.title");
+
     // a frame, to show stuff in
     public JFrame frame;
 
@@ -1168,11 +1172,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case PREFIRING:
             case FIRING:
             case PHYSICAL:
-                if (frame.isShowing()) {
-                    maybeShowMinimap();
-                    maybeShowUnitDisplay();
-                }
-                break;
             case INITIATIVE_REPORT:
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
@@ -1181,11 +1180,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                if (frame.isShowing()) {
-                    maybeShowMiniReport();
-                    maybeShowPlayerList();
-                }
-                break;
             default:
                 break;
         }
@@ -1196,6 +1190,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (secondaryToShow != null) {
             panSecondary.setVisible(true);
             cardsSecondary.show(panSecondary, secondaryNames.get(name));
+
+            maybeShowMinimap();
+            maybeShowUnitDisplay();
+            maybeShowMiniReport();
+            maybeShowPlayerList();
         } else {
             // otherwise, hide the panel
             panSecondary.setVisible(false);
@@ -1434,7 +1433,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    /** 
+    /**
      * Switches the Minimap and the UnitDisplay an and off together.
      * If the UnitDisplay is active, both will be hidden, else both will be shown.
      */
@@ -1461,15 +1460,63 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     /** Shows or hides the minimap based on the current menu setting. */
     private void maybeShowMinimap() {
-        setMapVisible(GUIP.getMinimapEnabled());
+        GamePhase phase = getClient().getGame().getPhase();
+
+        if (phase.isReport()) {
+            String action = GUIP.getMinimapAutoDisplayReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setMapVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setMapVisible(false);
+            }
+        } else if (phase.isOnMap()) {
+            String action = GUIP.getMinimapAutoDisplayNonReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setMapVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setMapVisible(false);
+            }
+        }
     }
 
     private void maybeShowMiniReport() {
-        setMiniReportVisible(GUIP.getMiniReportEnabled());
+        GamePhase phase = getClient().getGame().getPhase();
+
+        if (phase.isReport()) {
+            String action = GUIP.getMiniReportAutoDisplayReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setMiniReportVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setMiniReportVisible(false);
+            }
+        } else if (phase.isOnMap()) {
+            String action = GUIP.getMiniReportAutoDisplayNonReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setMiniReportVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setMiniReportVisible(false);
+            }
+        }
     }
 
     private void maybeShowPlayerList() {
-        setPlayerListVisible(GUIP.getPlayerListEnabled());
+        GamePhase phase = getClient().getGame().getPhase();
+
+        if (phase.isReport()) {
+            String action = GUIP.getPlayerListAutoDisplayReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setPlayerListVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setPlayerListVisible(false);
+            }
+        } else if (phase.isOnMap()) {
+            String action = GUIP.getPlayerListAutoDisplayNonReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setPlayerListVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setPlayerListVisible(false);
+            }
+        }
     }
 
     /** 
@@ -1507,7 +1554,23 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     
     /** Shows or hides the Unit Display based on the current menu setting. */
     public void maybeShowUnitDisplay() {
-        setUnitDisplayVisible(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+        GamePhase phase = getClient().getGame().getPhase();
+
+        if (phase.isReport()) {
+            String action = GUIP.getDisplayAutoDisplayReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setUnitDisplayVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setUnitDisplayVisible(false);
+            }
+        } else if (phase.isOnMap()) {
+            String action = GUIP.getDisplayAutoDisplayNonReportPhase();
+            if (action.equals(MSG_SHOW)) {
+                setUnitDisplayVisible(true);
+            } else if (action.equals(MSG_HIDE)) {
+                setUnitDisplayVisible(false);
+            }
+        }
     }
 
     /** 
@@ -2590,13 +2653,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
-            maybeShowMinimap();
+            setMapVisible(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
-            maybeShowUnitDisplay();
+            setUnitDisplayVisible(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
         }
-        
     }
-
 }

@@ -157,6 +157,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
         result.setFocusableWindowState(false);
         result.setLocation(GUIP.getMinimapPosX(), GUIP.getMinimapPosY());
         result.setResizable(false);
+        result.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                GUIP.setMinimapEnabled(false);
+            }
+        });
 
         result.add(new Minimap(result, game, bv, cg));
         result.pack();

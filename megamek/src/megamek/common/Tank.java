@@ -3035,5 +3035,9 @@ public class Tank extends Entity {
         }
         return false;
     }
-    
+
+    @Override
+    public boolean getsAutoExternalSearchlight() {
+        return true;
+    }
 }

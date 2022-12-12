@@ -1458,7 +1458,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setMinimapAutoDisplayNonReportPhase(String s) {
-        store.setValue(MINIMAP_AUTO_DISPLAY_REPORT_PHASE, s);
+        store.setValue(MINIMAP_AUTO_DISPLAY_NONREPORT_PHASE, s);
     }
 
     public void setMiniReportPosX(int i) {

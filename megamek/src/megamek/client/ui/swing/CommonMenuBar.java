@@ -99,8 +99,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem boardRemoveBuildings = new JMenuItem(getString("CommonMenuBar.boardRemoveBuildings"));
 
     // The View menu
-    private JMenuItem viewMinimap = new JMenuItem(getString("CommonMenuBar.viewMinimap"));
-    private JMenuItem viewMekDisplay = new JMenuItem(getString("CommonMenuBar.viewMekDisplay"));
+    private JCheckBoxMenuItem  viewMinimap = new JCheckBoxMenuItem (getString("CommonMenuBar.viewMinimap"));
+    private JCheckBoxMenuItem  viewMekDisplay = new JCheckBoxMenuItem (getString("CommonMenuBar.viewMekDisplay"));
     private JMenuItem viewAccessibilityWindow = new JMenuItem(getString("CommonMenuBar.viewAccessibilityWindow"));
     private JCheckBoxMenuItem viewKeybindsOverlay = new JCheckBoxMenuItem(getString("CommonMenuBar.viewKeyboardShortcuts"));
     private JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
@@ -260,7 +260,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         
         initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
+        viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
         initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M);
+        viewMinimap.setSelected(GUIP.getMinimapEnabled());
         menu.addSeparator();
         
         initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN);
@@ -352,10 +354,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             GUIP.setValue(GUIPreferences.SHOW_COORDS, !coordsShown);
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_LABELS)) {
             GUIP.setUnitLabelStyle(GUIP.getUnitLabelStyle().next());
-        } else if (event.getActionCommand().equals(VIEW_ROUND_REPORT)) {
-            GUIP.setMiniReportEnabled(!GUIP.getMiniReportEnabled());
-        } else if (event.getActionCommand().equals(VIEW_PLAYER_LIST)) {
-            GUIP.setPlayerListEnabled(!GUIP.getPlayerListEnabled());
         }
         
         // Pass the action on to each of our listeners.
@@ -489,10 +487,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
+        } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
+            viewMinimap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
             toggleHexCoords.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_COORDS));
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setKeyBinds();
+        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
+            viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
         }
     }
     

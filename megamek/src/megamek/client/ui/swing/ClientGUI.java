@@ -593,6 +593,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         getUnitDisplayDialog().setFocusable(false);
         getUnitDisplayDialog().setFocusableWindowState(false);
         getUnitDisplayDialog().add(getUnitDisplay());
+        getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                GUIPreferences.getInstance().hideUnitDisplay();
+            }
+        });
 
         Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
         Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();

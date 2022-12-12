@@ -1191,10 +1191,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             panSecondary.setVisible(true);
             cardsSecondary.show(panSecondary, secondaryNames.get(name));
 
-            maybeShowMinimap();
-            maybeShowUnitDisplay();
-            maybeShowMiniReport();
-            maybeShowPlayerList();
+            if (!getClient().getGame().getTurnVector().isEmpty()) {
+                maybeShowMinimap();
+                maybeShowUnitDisplay();
+                maybeShowMiniReport();
+                maybeShowPlayerList();
+            }
         } else {
             // otherwise, hide the panel
             panSecondary.setVisible(false);

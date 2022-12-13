@@ -1190,7 +1190,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
         }
 
-        if (frame.isShowing()) {
+        if ((getClient().isMyTurn())
+                || (getClient().getGame().getTurn() != null)
+                || (getClient().getGame().getPhase().isReport())) {
             maybeShowMinimap();
             maybeShowUnitDisplay();
             maybeShowMiniReport();

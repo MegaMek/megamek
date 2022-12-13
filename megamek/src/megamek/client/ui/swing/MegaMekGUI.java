@@ -591,6 +591,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                             fc.getSelectedFile().getAbsolutePath()),
                     Messages.getString("MegaMek.LoadGameAlert.title"),
                     JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         HostDialog hd = new HostDialog(frame, playerNames);
@@ -614,7 +615,9 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Messages.getString("MegaMek.LoadGameAlert.title"),
                     JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error(message);
+            return false;
         }
+
         final NodeList nl = n.getChildNodes();
         String release = null;
         String major = null;
@@ -697,8 +700,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             return;
         }
 
-        startHost("", 0, false, "", null,
-                file, PreferenceManager.getClientPreferences().getLastPlayerName());
+        startHost("", 0, false, "", null, file,
+                PreferenceManager.getClientPreferences().getLastPlayerName());
     }
 
     /**

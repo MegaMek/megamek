@@ -670,7 +670,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         for (int i = 0; i < nl.getLength(); i++) {
             final Node n2 = nl.item(i);
             if ((n2.getNodeType() != Node.ELEMENT_NODE) || !n2.hasChildNodes()
-                    || !"megamek.common.Player".equals(n2.getNodeName())) {
+                    || !Player.class.getName().equals(n2.getNodeName())) {
                 continue;
             }
 

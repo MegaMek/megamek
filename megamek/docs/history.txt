@@ -43,7 +43,7 @@ VERSION HISTORY:
 + Issue #3727: Magma crust breakthrough and liquid magma damage not working as expected
 + Issues #543, #2959, #3982: Scale the Client GUI using the GUI scale
 + Issue #2684: Fix target being cleared when selecting a new weapon
-+ PR #4015: Further Alpha Strike conversion errata and corrections
++ PR #4015, #4036, #4037: Further Alpha Strike conversion errata and corrections
 + Issue #3375: Fix Player's Turn text not being updated in some circumstances
 + Issue #4013: Turn timer continues to run when you close the main window
 + PR #4017: Fix border move indication for vehicles

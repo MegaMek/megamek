@@ -17,7 +17,6 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 import java.util.Vector;
 
@@ -28,11 +27,6 @@ import java.util.Vector;
 public class FlamerHandler extends WeaponHandler {
     private static final long serialVersionUID = -7348456582587703751L;
 
-    /**
-     * @param toHit
-     * @param waa
-     * @param g
-     */
     public FlamerHandler(ToHitData toHit, WeaponAttackAction waa, Game g, GameManager m) {
         super(toHit, waa, g, m);
         generalDamageType = HitData.DAMAGE_ENERGY;

@@ -34,39 +34,23 @@ import megamek.server.GameManager;
 public class ACAPHandler extends ACWeaponHandler {
     private static final long serialVersionUID = -4251291510045646817L;
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
     public ACAPHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common
-     * .Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
     @Override
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
+                                      Building bldg, int hits, int nCluster, int bldgAbsorbs) {
         AmmoType atype = (AmmoType) weapon.getLinked().getType();
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                toHit.getSideTable(), waa.getAimedLocation(),
-                waa.getAimingMode(), toHit.getCover());
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
+                waa.getAimedLocation(), waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
         hit.setAttackerId(getAttackerId());
-        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
-                .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
-                .getCalledShot().getCall()))) {
+        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                Compute.targetSideTable(ae, entityTarget, weapon.getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
-            handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
-                                  nCluster, bldgAbsorbs);
+            handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits, nCluster, bldgAbsorbs);
             return;
         }
 
@@ -98,8 +82,8 @@ public class ACAPHandler extends ACWeaponHandler {
         Hex targetHex = game.getBoard().getHex(target.getPosition());
         boolean targetStickingOutOfBuilding = unitStickingOutOfBuilding(targetHex, entityTarget);
                 
-        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, 
-                vPhaseReport, bldg, targetStickingOutOfBuilding);
+        nDamage = absorbBuildingDamage(nDamage, entityTarget, bldgAbsorbs, vPhaseReport, bldg,
+                targetStickingOutOfBuilding);
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 
@@ -133,12 +117,9 @@ public class ACAPHandler extends ACWeaponHandler {
                 critModifier += toHit.getMoS() / 3;
             }
             hit.makeArmorPiercing(atype, critModifier);
-            vPhaseReport
-                    .addAll(gameManager.damageEntity(entityTarget, hit, nDamage,
-                            false, ae.getSwarmTargetId() == entityTarget
-                                    .getId() ? DamageType.IGNORE_PASSENGER
-                                    : damageType, false, false, throughFront,
-                            underWater));
+            vPhaseReport.addAll(gameManager.damageEntity(entityTarget, hit, nDamage, false,
+                    ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType,
+                    false, false, throughFront, underWater));
         }
     }
 }

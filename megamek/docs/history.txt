@@ -51,6 +51,7 @@ VERSION HISTORY:
 + PR #3996: MMXMLUtility: Removing Deprecated Methods
 + Issue #3709: Removed  searchlight customization checkboxes for units that receive external searchlights automatically
 + Issue #3811: Fix formatting issue with the Infantry victory report
++ Issue #4021: Preventing Save Game Loading Player Name NPE
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3

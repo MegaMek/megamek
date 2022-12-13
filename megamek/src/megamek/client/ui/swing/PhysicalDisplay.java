@@ -274,7 +274,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
         if (clientgui.getClient().getGame().getPhase().isPhysical() && (null != next)
                 && (null != ce()) && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         target(null);

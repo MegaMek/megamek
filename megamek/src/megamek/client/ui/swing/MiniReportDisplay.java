@@ -375,7 +375,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
                 Entity ent = currentClientgui.getClient().getGame().getEntity(id);
                 if (ent != null) {
                     currentClientgui.getUnitDisplay().displayEntity(ent);
-                    currentClientgui.setUnitDisplayVisible(true);
+                    GUIPreferences.getInstance().showUnitDisplay();
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());

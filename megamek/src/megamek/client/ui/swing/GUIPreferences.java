@@ -1872,6 +1872,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SHOW_UNIT_DISPLAY, !getBoolean(SHOW_UNIT_DISPLAY));
     }
 
+    public void setUnitDisplayEnabled(boolean b) {
+        store.setValue(SHOW_UNIT_DISPLAY, b);
+    }
+
     /**
      * Toggles the state of the user preference for the Keybinds overlay.
      */

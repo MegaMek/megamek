@@ -958,7 +958,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && (null != next)
                 && (null != ce)
                 && (next.getOwnerId() != ce.getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);

@@ -350,7 +350,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         if ((phase == clientgui.getClient().getGame().getPhase())
                 && (null != next) && (null != ce())
                 && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
 
         cen = Entity.NONE;

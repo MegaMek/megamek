@@ -260,9 +260,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         
         initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
-        viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+        GUIP.setUnitDisplayEnabled(false);
+        viewMekDisplay.setSelected(false);
         initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M);
-        viewMinimap.setSelected(GUIP.getMinimapEnabled());
+        GUIP.setMinimapEnabled(false);
+        viewMinimap.setSelected(false);
         menu.addSeparator();
         
         initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN);

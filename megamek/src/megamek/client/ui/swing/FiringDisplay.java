@@ -887,7 +887,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if ((game.getPhase() == GamePhase.FIRING)
             && (next != null) && (ce() != null)
             && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         target(null);

@@ -723,15 +723,12 @@ public class Infantry extends Entity {
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<>();
 
-        Report r = new Report(7025);
-        r.type = Report.PUBLIC;
+        Report r = new Report(7025, Report.PUBLIC);
         r.addDesc(this);
         vDesc.addElement(r);
 
-        r = new Report(7041);
-        r.type = Report.PUBLIC;
+        r = new Report(7041, Report.PUBLIC);
         r.add(getCrew().getGunnery());
-        r.newlines = 0;
         vDesc.addElement(r);
 
         r = new Report(7070, Report.PUBLIC);

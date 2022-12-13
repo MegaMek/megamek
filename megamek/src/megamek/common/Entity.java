@@ -15571,4 +15571,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <P>This method does nothing by default and must be overridden for unit types that get Clan CASE.
      */
     public void addClanCase() { }
+
+    /** @return True for unit types that have an automatic external searchlight (Meks and Tanks). */
+    public boolean getsAutoExternalSearchlight() {
+        return false;
+    }
 }

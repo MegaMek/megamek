@@ -48,6 +48,9 @@ VERSION HISTORY:
 + Issue #4013: Turn timer continues to run when you close the main window
 + PR #4017: Fix border move indication for vehicles
 + Issue #4022: Fixing Uncaught NPE when Address Bind is Already in Use
++ PR #3996: MMXMLUtility: Removing Deprecated Methods
++ Issue #3709: Removed  searchlight customization checkboxes for units that receive external searchlights automatically
++ Issue #3811: Fix formatting issue with the Infantry victory report
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3

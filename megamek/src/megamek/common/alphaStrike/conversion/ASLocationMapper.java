@@ -57,9 +57,6 @@ public class ASLocationMapper {
     public static double damageLocationMultiplier(Entity en, int loc, Mounted mount) {
         if (locationName(en, loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
             return 1;
-        } else if (locationName(en, loc).startsWith("TUR") && (en instanceof Tank)
-                && (mount.isPintleTurretMounted() || mount.isSponsonTurretMounted())) {
-            return 1;
         } else if (en instanceof Warship) {
             return getWarShipLocationMultiplier(loc, mount.getLocation());
         } else if (en instanceof Jumpship) {

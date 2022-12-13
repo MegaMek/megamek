@@ -160,7 +160,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(Messages.getString("CommonSettingsDialog.showIPAddressesInChat"));
-
+    private JTextPane reportKeywordsTextPane;
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
     private final JCheckBox showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
@@ -260,6 +260,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovHighlightAlpha;
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
+
+    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
@@ -497,6 +499,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         comps.add(row);
 
         addLineSpacer(comps);
+
+        JLabel reportKeywordsLabel = new JLabel(MSG_REPORTKEYWORDS + ": ");
+        reportKeywordsTextPane = new JTextPane();
+        row = new ArrayList<>();
+        row.add(reportKeywordsLabel);
+        row.add(reportKeywordsTextPane);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         comps.add(checkboxEntry(showIPAddressesInChat, Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
         return createSettingsPanel(comps);
     }
@@ -581,6 +593,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             stampFilenames.setSelected(cs.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormat.setText(cs.getStampFormat());
+            reportKeywordsTextPane.setText(cs.getReportKeywords());
             showIPAddressesInChat.setSelected(cs.getShowIPAddressesInChat());
 
             defaultAutoejectDisabled.setSelected(cs.defaultAutoejectDisabled());
@@ -789,6 +802,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         // cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
         cs.setStampFilenames(stampFilenames.isSelected());
         cs.setStampFormat(stampFormat.getText());
+        cs.setReportKeywords(reportKeywordsTextPane.getText());
         cs.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
 
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());

@@ -17,6 +17,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.BASE64ToolKit;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.Player;
@@ -25,6 +26,7 @@ import megamek.common.Report;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.preference.PreferenceManager;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -56,7 +58,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
     private static final String MSG_PHASE = Messages.getString("MiniReportDisplay.Phase");
     private static final String MSG_DAMAGE = Messages.getString("MiniReportDisplay.Damage");
-    private static final String MSG_DESTROYED = Messages.getString("MiniReportDisplay.Destroyed");
     private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
     private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
     private static final String MSG_DETAILS = Messages.getString("MiniReportDisplay.Details");
@@ -126,6 +127,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
 
         adaptToGUIScale();
         GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
         butOkay.requestFocus();
     }
 
@@ -236,7 +238,6 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
             comboEntity.setEnabled(false);
         }
         comboEntity.setSelectedItem(lastChoice);
-        comboEntity.setSelectedItem(lastChoice);
         if (comboEntity.getSelectedIndex() < 0) {
             comboEntity.setSelectedIndex(0);
         }
@@ -247,9 +248,10 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         lastChoice = (lastChoice != null ? lastChoice : MSG_DAMAGE);
         comboQuick.removeAllItems();
         comboQuick.setEnabled(true);
-        comboQuick.addItem(MSG_DAMAGE);
-        comboQuick.addItem(MSG_DESTROYED);
-        comboQuick.addItem(MSG_PHASE);
+        String[] keywords =  PreferenceManager.getClientPreferences().getReportKeywords().split("\n");
+        for (String keyword : keywords) {
+            comboQuick.addItem(keyword);
+        }
         if (comboQuick.getItemCount() == 1) {
             comboQuick.setEnabled(false);
         }
@@ -431,6 +433,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         // Update the text size when the GUI scaling changes
         if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
+        } else if (e.getName().equals(ClientPreferences.REPORT_KEYWORDS)) {
+            updateQuickChoice();
         }
     }
 }

@@ -57,6 +57,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String BOARD_HEIGHT = "BoardHeight";
     public static final String MAP_WIDTH = "MapWidth";
     public static final String MAP_HEIGHT = "MapHeight";
+    public static final String REPORT_KEYWORDS = "ReportKeywords";
+    private static final String REPORTKEYWORDSDEFAULTS = "Needs\nRolls\nTakes\nHit\nFalls\nSkill Roll\nPilot Skill\nPhase\nDestoryed\nDamage";
     public static final String IP_ADDRESSES_IN_CHAT = "IPAddressesInChat";
     //endregion Variable Declarations
     
@@ -86,6 +88,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(MAP_HEIGHT, 1);
         store.setDefault(DEBUG_OUTPUT_ON, false);
         store.setDefault(MEMORY_DUMP_ON, false);
+        store.setDefault(REPORT_KEYWORDS, REPORTKEYWORDSDEFAULTS);
         store.setDefault(IP_ADDRESSES_IN_CHAT, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -281,6 +284,14 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setGUIName(String guiName) {
         store.setValue(GUI_NAME, guiName);
+    }
+
+    public String getReportKeywords() {
+        return store.getString(REPORT_KEYWORDS);
+    }
+
+    public void setReportKeywords(String s) {
+        store.setValue(REPORT_KEYWORDS, s);
     }
 
     public boolean getShowIPAddressesInChat() {

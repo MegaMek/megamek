@@ -394,12 +394,8 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
-            changed = true;
-        }
-        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            changed = true;
-        }
+        // change on any preference change
+        changed = true;
     }
 
 }

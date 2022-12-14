@@ -38,7 +38,7 @@ VERSION HISTORY:
 + Issue #3985: ER Small Pulse Laser Incorrect Aerospace Range
 + Issue #3906: Turn timer in seconds
 + Issue #3054: TO Infantry Movement on Pavement optional rule
-+ Issue #4003: Add search functionality to the mini report dialog
++ Issue #4003, #4039: Add search functionality to the mini report dialog; configure keywords in the Client Settings
 + Issue #3818: Airborne Aerospace Units Unaffected By Extreme Temperatures
 + Issue #3727: Magma crust breakthrough and liquid magma damage not working as expected
 + Issues #543, #2959, #3982: Scale the Client GUI using the GUI scale

@@ -2623,7 +2623,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         // write hex coordinate unless deactivated or scale factor too small
-        if (guip.getBoolean(GUIPreferences.SHOW_COORDS) && (scale >= 0.5)) {
+        if (guip.getCoordsEnabled() && (scale >= 0.5)) {
             drawCenteredString(c.getBoardNum(), 0, (int) (12 * scale), font_hexnum, g);
         }
 

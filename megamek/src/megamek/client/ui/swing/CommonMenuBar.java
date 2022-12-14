@@ -349,19 +349,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             if (guiScale > ClientGUI.MIN_GUISCALE) {
                 GUIP.setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
             }
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            GUIP.toggleMinimapEnabled();
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_UNIT_DISPLAY)) {
-            GUIP.toggleUnitDisplay();
-        } else if (event.getActionCommand().equals(VIEW_ROUND_REPORT)) {
-            GUIP.toggleRoundReportEnabled();
-        } else if (event.getActionCommand().equals(VIEW_PLAYER_LIST)) {
-            GUIP.togglePlayerListEnabled();
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
-            GUIP.toggleKeybindsOverlay();
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_HEXCOORDS)) {
-            boolean coordsShown = GUIP.getBoolean(GUIPreferences.SHOW_COORDS);
-            GUIP.setValue(GUIPreferences.SHOW_COORDS, !coordsShown);
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_LABELS)) {
             GUIP.setUnitLabelStyle(GUIP.getUnitLabelStyle().next());
         }

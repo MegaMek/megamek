@@ -87,6 +87,7 @@ public class UnitDisplay extends JPanel {
     public static final int NON_TABBED_FIVE_INDEX = 5;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
 
     /**
      * Creates and lays out a new mech display.
@@ -280,12 +281,12 @@ public class UnitDisplay extends JPanel {
         sPan.setVisible(true);
         ePan.setVisible(true);
 
-        linkParentChild(UnitDisplay.NON_TABBED_A1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
-        linkParentChild(UnitDisplay.NON_TABBED_B1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
-        linkParentChild(UnitDisplay.NON_TABBED_C1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
-        linkParentChild(UnitDisplay.NON_TABBED_A2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
-        linkParentChild(UnitDisplay.NON_TABBED_B2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
-        linkParentChild(UnitDisplay.NON_TABBED_C2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
+        linkParentChild(UnitDisplay.NON_TABBED_A1, UDOP.getString(UnitDisplay.NON_TABBED_A1));
+        linkParentChild(UnitDisplay.NON_TABBED_B1, UDOP.getString(UnitDisplay.NON_TABBED_B1));
+        linkParentChild(UnitDisplay.NON_TABBED_C1, UDOP.getString(UnitDisplay.NON_TABBED_C1));
+        linkParentChild(UnitDisplay.NON_TABBED_A2, UDOP.getString(UnitDisplay.NON_TABBED_A2));
+        linkParentChild(UnitDisplay.NON_TABBED_B2, UDOP.getString(UnitDisplay.NON_TABBED_B2));
+        linkParentChild(UnitDisplay.NON_TABBED_C2, UDOP.getString(UnitDisplay.NON_TABBED_C2));
 
         displayP.add(splitABC);
 

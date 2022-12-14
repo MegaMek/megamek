@@ -45,6 +45,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.icons.Camouflage;
+import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
@@ -78,6 +79,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final long serialVersionUID = 3913466735610109147L;
     
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
 
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png";
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png";
@@ -251,7 +253,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String MSG_NOGHOSTS = Messages.getString("ClientGUI.noGhosts");
     private static final String MSG_SHOW = Messages.getString("ClientGUI.Show");
     private static final String MSG_HIDE = Messages.getString("ClientGUI.Hide");
-    private static final String MSG_MANUAL = Messages.getString("ClientGUI.Manual");
     private static final String MSG_BOARDEDITORWAITDIALOGTITLE = Messages.getString("BoardEditor.waitDialog.title");
     private static final String MSG_BOARDEDITORWAITDIALOGMSG = Messages.getString("BoardEditor.waitDialog.message");
     private static final String MSG_BOARDEDITORSAVEBOARDAS = Messages.getString("BoardEditor.saveBoardAs");
@@ -861,6 +862,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_ROUND_REPORT:
                 GUIP.toggleRoundReportEnabled();
                 break;
+            case VIEW_UNIT_DISPLAY:
+                GUIP.toggleUnitDisplay();
+                break;
+            case VIEW_MINI_MAP:
+                GUIP.toggleMinimapEnabled();
+                break;
+            case VIEW_KEYBINDS_OVERLAY:
+                GUIP.toggleKeybindsOverlay();
+                break;
+            case VIEW_TOGGLE_HEXCOORDS:
+                GUIP.toggleCoords();
+                break;
             case BOARD_SAVE:
                 ignoreHotKeys = true;
                 boardSave();
@@ -987,13 +1000,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         if (!destroyed.isEmpty()) {
-            String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+            String sLogDir = CP.getLogDirectory();
             File logDir = new File(sLogDir);
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
             String fileName = CG_FILENAMESALVAGE + CG_FILEEXTENTIONMUL;
-            if (PreferenceManager.getClientPreferences().stampFilenames()) {
+            if (CP.stampFilenames()) {
                 fileName = StringUtil.addDateTimeStamp(fileName);
             }
             File unitFile = new File(sLogDir + File.separator + fileName);
@@ -2090,13 +2103,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             }
 
             if (!destroyed.isEmpty()) {
-                String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+                String sLogDir = CP.getLogDirectory();
                 File logDir = new File(sLogDir);
                 if (!logDir.exists()) {
                     logDir.mkdir();
                 }
                 String fileName = CG_FILENAMESALVAGE + CG_FILEEXTENTIONMUL;
-                if (PreferenceManager.getClientPreferences().stampFilenames()) {
+                if (CP.stampFilenames()) {
                     fileName = StringUtil.addDateTimeStamp(fileName);
                 }
                 File unitFile = new File(sLogDir + File.separator + fileName);
@@ -2645,16 +2658,23 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
-            setMapVisible(GUIP.getMinimapEnabled());
-        } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_ENABLED)) {
-            setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
-        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_ENABLED)) {
-            setMiniReportVisible(GUIP.getMiniReportEnabled());
-        } else if (e.getName().equals(GUIPreferences.PLAYER_lIST_ENABLED)) {
-            setPlayerListVisible(GUIP.getPlayerListEnabled());
-        } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
-            adaptToGUIScale();
+        switch (e.getName()) {
+            case GUIPreferences.MINI_MAP_ENABLED:
+                setMapVisible(GUIP.getMinimapEnabled());
+                break;
+            case GUIPreferences.UNIT_DISPLAY_ENABLED:
+                setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
+                break;
+            case GUIPreferences.MINI_REPORT_ENABLED:
+                setMiniReportVisible(GUIP.getMiniReportEnabled());
+                break;
+            case GUIPreferences.PLAYER_lIST_ENABLED:
+                setPlayerListVisible(GUIP.getPlayerListEnabled());
+                break;
+            case GUIPreferences.GUI_SCALE:
+                adaptToGUIScale();
+                break;
+            default:
         }
     }
 }

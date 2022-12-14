@@ -701,6 +701,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(UNIT_DISPLAY_ENABLED);
     }
 
+    public boolean getCoordsEnabled() {
+        return store.getBoolean(SHOW_COORDS);
+    }
+
     public boolean getGameSummaryBoardView() {
         return store.getBoolean(GAME_SUMMARY_BOARD_VIEW);
     }
@@ -1287,6 +1291,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitDisplayEnabled(boolean b) {
         store.setValue(UNIT_DISPLAY_ENABLED, b);
+    }
+
+    public void toggleCoords() {
+        store.setValue(SHOW_COORDS, !getBoolean(SHOW_COORDS));
+    }
+
+    public void setCoordsEnabled(boolean b) {
+        store.setValue(SHOW_COORDS, b);
     }
 
     public void setGameSummaryBoardView(boolean state) {

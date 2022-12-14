@@ -19,17 +19,18 @@
 package megamek.common.strategicBattleSystems;
 
 import megamek.common.alphaStrike.*;
+import megamek.common.annotations.Nullable;
 
 import java.util.Arrays;
 
-import static megamek.common.alphaStrike.BattleForceSUA.SOA;
-import static megamek.common.alphaStrike.BattleForceSUA.SRCH;
+import static megamek.common.alphaStrike.BattleForceSUA.*;
+import static megamek.common.alphaStrike.BattleForceSUA.FLK;
 
 /**
  * Represents an SBF Unit (Ground SBF Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike
  * elements and is the building block of SBF Formations.
  */
-public class SBFUnit implements ASSpecialAbilityCollector {
+public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatter {
 
     private String name = "Unknown";
     private SBFElementType type = SBFElementType.UNKNOWN;
@@ -203,7 +204,53 @@ public class SBFUnit implements ASSpecialAbilityCollector {
     }
 
     @Override
-    public String getSpecialsDisplayString(String delimiter, ASCardDisplayable element) {
-        return specialAbilities.getSpecialsDisplayString(delimiter, this);
+    public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
+        return specialAbilities.getSpecialsDisplayString(delimiter, element);
+    }
+
+    @Override
+    public boolean showSUA(BattleForceSUA sua) {
+        return true;
+    }
+
+    @Override
+    public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
+        return formatAbility(sua, collection, this, delimiter);
+    }
+
+    public String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollector collection,
+                                @Nullable SBFUnit element, String delimiter) {
+        if (!collection.hasSUA(sua)) {
+            return "";
+        }
+        Object suaObject = collection.getSUA(sua);
+        if (!sua.isValidAbilityObject(suaObject)) {
+            return "ERROR - wrong ability object (" + sua + ")";
+        }
+        if (sua == TUR) {
+            return "";
+//            return "TUR(" + collection.getTUR().getSpecialsDisplayString(delimiter, element) + ")";
+//        } else if (sua == BIM) {
+//            return lamString(sua, collection.getBIM());
+//        } else if (sua == LAM) {
+//            return lamString(sua, collection.getLAM());
+        } else if (sua.isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC)) {
+            return sua.toString() + ((int) suaObject == 1 ? "" : (int) suaObject);
+        } else if (sua.isAnyOf(CAP, SCAP, MSL)) {
+            return sua.toString();
+        } else if (sua == FLK) {
+            ASDamageVector flkDamage = collection.getFLK();
+            return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
+        } else if (sua.isTransport()) {
+            String result = sua + suaObject.toString();
+            BattleForceSUA door = sua.getDoor();
+            if ((element == null || element.isType(SBFElementType.LA))
+                    && collection.hasSUA(door) && ((int) collection.getSUA(door) > 0)) {
+                result += door.toString() + collection.getSUA(door);
+            }
+            return result;
+        } else {
+            return sua.toString() + (suaObject != null ? suaObject : "");
+        }
     }
 }

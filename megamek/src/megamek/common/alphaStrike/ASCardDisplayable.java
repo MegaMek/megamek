@@ -19,6 +19,7 @@
 package megamek.common.alphaStrike;
 
 import megamek.common.UnitRole;
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -37,7 +38,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
  * These return an undamaged state by default and thus require overriding in AlphaStrikeElement
  * (e.g. {@link #getCurrentArmor()}.
  */
-public interface ASCardDisplayable {
+public interface ASCardDisplayable extends BattleForceSUAFormatter {
 
     // TODO : Must also be able to return more "current" values for MV, Dmg, crits etc.
 
@@ -99,16 +100,16 @@ public interface ASCardDisplayable {
     }
 
     /** @return The AS element's front arc. Returns an empty arc for elements that don't use arcs. */
-    ASSpecialAbilityCollection getFrontArc();
+    ASArcSummary getFrontArc();
 
     /** @return The AS element's left arc. Returns an empty arc for elements that don't use arcs. */
-    ASSpecialAbilityCollection getLeftArc();
+    ASArcSummary getLeftArc();
 
     /** @return The AS element's right arc. Returns an empty arc for elements that don't use arcs. */
-    ASSpecialAbilityCollection getRightArc();
+    ASArcSummary getRightArc();
 
     /** @return The AS element's rear arc. Returns an empty arc for elements that don't use arcs. */
-    ASSpecialAbilityCollection getRearArc();
+    ASArcSummary getRearArc();
 
     /** @return The AS element's armor threshold (TH), if it uses threshold. */
     int getThreshold();

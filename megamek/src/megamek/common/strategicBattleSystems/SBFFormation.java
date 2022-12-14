@@ -20,20 +20,20 @@ package megamek.common.strategicBattleSystems;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.alphaStrike.ASCardDisplayable;
-import megamek.common.alphaStrike.ASSpecialAbilityCollector;
-import megamek.common.alphaStrike.BattleForceSUA;
+import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static megamek.common.alphaStrike.ASUnitType.*;
+import static megamek.common.alphaStrike.ASUnitType.BM;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
 import static megamek.common.strategicBattleSystems.SBFElementType.AS;
 import static megamek.common.strategicBattleSystems.SBFElementType.LA;
 
-public class SBFFormation implements ASSpecialAbilityCollector {
+public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter {
     
     private List<SBFUnit> units = new ArrayList<>();
     private String name;
@@ -72,76 +72,91 @@ public class SBFFormation implements ASSpecialAbilityCollector {
     public int getSize() {
         return size;
     }
+
     public void setSize(int size) {
         this.size = size;
     }
+
     public int getTmm() {
         return tmm;
     }
+
     public void setTmm(int tmm) {
         this.tmm = tmm;
     }
+
     public int getJumpMove() {
         return jumpMove;
     }
+
     public void setJumpMove(int jumpMove) {
         this.jumpMove = jumpMove;
     }
+
     public int getTrspMovement() {
         return trspMovement;
     }
+
     public void setTrspMovement(int trspMovement) {
         this.trspMovement = trspMovement;
     }
+
     public int getMovement() {
         return movement;
     }
+
     public void setMovement(int movement) {
         this.movement = movement;
     }
+
     public int getTactics() {
         return tactics;
     }
+
     public void setTactics(int tactics) {
         this.tactics = tactics;
     }
+
     public int getMorale() {
         return morale;
     }
+
     public void setMorale(int morale) {
         this.morale = morale;
     }
+
     public int getSkill() {
         return skill;
     }
+
     public void setSkill(int skill) {
         this.skill = skill;
     }
+
     public int getPointValue() {
         return pointValue;
     }
+
     public void setPointValue(int pointValue) {
         this.pointValue = pointValue;
     }
-//    public EnumMap<BattleForceSUA, Object> getSpecialAbilities() {
-//        return specialAbilities;
-//    }
-//    public void setSpecialAbilities(EnumMap<BattleForceSUA, Object> specialAbilities) {
-//        this.specialAbilities = specialAbilities;
-//    }
 
     public SBFSpecialAbilityCollection getSpecialAbilities() {
         return specialAbilities;
     }
+
     public List<SBFUnit> getUnits() {
         return units;
     }
+
     public void setUnits(List<SBFUnit> units) {
         this.units = units;
     }
+
     public CalculationReport getConversionReport() {
         return conversionReport;
     }
+
     public void setConversionReport(CalculationReport report) {
         conversionReport = report;
     }
@@ -373,7 +388,71 @@ public class SBFFormation implements ASSpecialAbilityCollector {
     }
 
     @Override
-    public String getSpecialsDisplayString(String delimiter, ASCardDisplayable element) {
+    public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
         return specialAbilities.getSpecialsDisplayString(delimiter, element);
+    }
+
+    @Override
+    public boolean showSUA(BattleForceSUA sua) {
+        return true;
+//        return sua.isDoor()
+//                || (element.isLargeAerospace() && (sua == STD))
+//                || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
+//                || (element.isType(BM, PM) && (sua == SOA))
+//                || (element.isType(CV, BM) && (sua == SRCH))
+//                || (!element.isLargeAerospace() && sua.isDoor())
+//                || (hasAutoSeal(element) && (sua == SEAL));
+    }
+
+    @Override
+    public String formatSUA(BattleForceSUA sua, String delimiter, ASSpecialAbilityCollector collection) {
+        return formatAbility(sua, collection, this, delimiter);
+    }
+
+    /**
+     * Creates the formatted SPA string for the given spa. For turrets this includes everything in that
+     * turret. The given collection can be the specials of the AlphaStrikeElement itself, a turret or
+     * an arc of a large aerospace unit.
+     *
+     * @param sua The Special Unit Ability to process
+     * @param collection The SUA collection that the SUA is part of
+     * @param element The AlphaStrikeElement that the collection is part of
+     * @param delimiter The delimiter to insert between entries (only relevant for TUR)
+     * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
+     */
+    public String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollector collection,
+                                       @Nullable SBFFormation element, String delimiter) {
+        if (!collection.hasSUA(sua)) {
+            return "";
+        }
+        Object suaObject = collection.getSUA(sua);
+        if (!sua.isValidAbilityObject(suaObject)) {
+            return "ERROR - wrong ability object (" + sua + ")";
+        }
+        if (sua == TUR) {
+            return "";
+//            return "TUR(" + collection.getTUR().getSpecialsDisplayString(delimiter, element) + ")";
+//        } else if (sua == BIM) {
+//            return lamString(sua, collection.getBIM());
+//        } else if (sua == LAM) {
+//            return lamString(sua, collection.getLAM());
+        } else if (sua.isAnyOf(C3BSS, C3M, C3BSM, C3EM, INARC, CNARC, SNARC)) {
+            return sua.toString() + ((int) suaObject == 1 ? "" : (int) suaObject);
+        } else if (sua.isAnyOf(CAP, SCAP, MSL)) {
+            return sua.toString();
+        } else if (sua == FLK) {
+            ASDamageVector flkDamage = collection.getFLK();
+            return sua.toString() + flkDamage.M.damage + "/" + flkDamage.L.damage;
+        } else if (sua.isTransport()) {
+            String result = sua + suaObject.toString();
+            BattleForceSUA door = sua.getDoor();
+            if ((element == null || element.isType(SBFElementType.LA))
+                    && collection.hasSUA(door) && ((int) collection.getSUA(door) > 0)) {
+                result += door.toString() + collection.getSUA(door);
+            }
+            return result;
+        } else {
+            return sua.toString() + (suaObject != null ? suaObject : "");
+        }
     }
 }

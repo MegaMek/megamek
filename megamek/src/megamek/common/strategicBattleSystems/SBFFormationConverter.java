@@ -193,12 +193,20 @@ public final class SBFFormationConverter {
         }
 
         if (formation.hasSUA(CAR) && formation.hasSUA(IT)) {
-            double carValue = formation.getSpecialAbilities().getCAR();
-            double itValue = formation.getSpecialAbilities().getIT();
-            itValue = Math.max(itValue - carValue, 0);
-            carValue = Math.max(carValue - itValue, 0);
-            formation.getSpecialAbilities().mergeSUA(CAR, carValue);
-            formation.getSpecialAbilities().mergeSUA(IT, itValue);
+            int carValue = formation.getCAR();
+            double itValue = formation.getIT();
+            double newCARValue = Math.max(carValue - itValue, 0);
+            double newITValue = Math.max(itValue - carValue, 0);
+            formation.getSpecialAbilities().removeSUA(CAR);
+            formation.getSpecialAbilities().removeSUA(IT);
+            formation.getSpecialAbilities().mergeSUA(CAR, newCARValue);
+            formation.getSpecialAbilities().mergeSUA(IT, newITValue);
+        }
+
+        if (formation.hasSUA(IF)) {
+            // IF uses an ASDamage value; therefore replace the summed integer value
+            int ifValue = (int) formation.getSUA(IF);
+            formation.getSpecialAbilities().setSUA(IF, new ASDamage(ifValue, false));
         }
     }
 

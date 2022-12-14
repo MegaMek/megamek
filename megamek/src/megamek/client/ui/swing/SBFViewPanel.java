@@ -59,7 +59,7 @@ public class SBFViewPanel extends JPanel {
             addGridElement(formation.getMorale() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getSkill() + "", UIUtil.uiDarkBlue());
             addGridElement(formation.getPointValue() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getSpecialsDisplayString(", ", null) + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+            addGridElement(formation.getSpecialsDisplayString(", ", formation) + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
             addConversionInfo((FlexibleCalculationReport) formation.getConversionReport(), null, parent);
 
             addUnitHeaders();
@@ -78,7 +78,7 @@ public class SBFViewPanel extends JPanel {
                 addGridElement(unit.getDamage() + "", bgColor);
                 addGridElement(unit.getSkill() + "", bgColor);
                 addGridElement(unit.getPointValue() + "", bgColor);
-                addGridElement(unit.getSpecialsDisplayString(", ", null), bgColor, FlowLayout.LEFT);
+                addGridElement(unit.getSpecialsDisplayString(", ", unit), bgColor, FlowLayout.LEFT);
                 addGridElement("", bgColor);
             }
             addSpacer();

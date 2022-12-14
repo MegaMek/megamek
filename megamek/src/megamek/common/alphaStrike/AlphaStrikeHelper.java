@@ -88,7 +88,7 @@ public class AlphaStrikeHelper {
      * @param delimiter The delimiter to insert between entries (only relevant for TUR)
      * @return The complete formatted Special Unit Ability string such as "LRM1/1/-" or "CK15D2".
      */
-    public static String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollection collection,
+    public static String formatAbility(BattleForceSUA sua, ASSpecialAbilityCollector collection,
                                        @Nullable ASCardDisplayable element, String delimiter) {
         Object suaObject = collection.getSUA(sua);
         if (!sua.isValidAbilityObject(suaObject)) {

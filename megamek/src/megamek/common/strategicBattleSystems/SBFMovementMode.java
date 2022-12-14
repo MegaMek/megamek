@@ -25,7 +25,6 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 public enum SBFMovementMode {
 
-    //TODO: Nah, not in SBF
     UNKNOWN("Unknown", "Unknown", Integer.MAX_VALUE),
     BIM_AEROSPACE_WALK("", "Mek Walk", 50),
     LAM_AEROSPACE_WALK("", "Mek Walk", 65),

@@ -18,11 +18,11 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+
 import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.stream.Collectors;
-
-import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 /**
  * This class encapsulates a block of AlphaStrike or Battleforce or SBF special abilities. Most
@@ -58,29 +58,12 @@ public class ASSpecialAbilityCollection implements Serializable, ASSpecialAbilit
     }
 
     @Override
-    public String getSpecialsDisplayString(String delimiter, ASCardDisplayable element) {
+    public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
         return specialAbilities.keySet().stream()
-                .filter(sua -> !AlphaStrikeHelper.hideSpecial(sua, element))
-                .map(sua -> AlphaStrikeHelper.formatAbility(sua, this, element, delimiter))
+                .filter(element::showSUA)
+                .map(sua -> element.formatSUA(sua, delimiter, this))
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .collect(Collectors.joining(delimiter));
-    }
-
-    /** @return A string formatted for export (listing the damage values of STD, SCAP, MSL and CAP for arcs). */
-    public String getSpecialsExportString(String delimiter, ASCardDisplayable element) {
-        if (element.usesArcs()) {
-            String damage = getStdDamage() + delimiter + CAP + getCAP().toString() + delimiter + SCAP + getSCAP() + delimiter
-                    + MSL + getMSL();
-            String specials = specialAbilities.keySet().stream()
-                    .filter(sua -> !AlphaStrikeHelper.hideSpecial(sua, element))
-                    .filter(sua -> !sua.isAnyOf(STD, CAP, SCAP, MSL))
-                    .map(sua -> AlphaStrikeHelper.formatAbility(sua, this, element, delimiter))
-                    .sorted(String.CASE_INSENSITIVE_ORDER)
-                    .collect(Collectors.joining(delimiter));
-            return damage + (!specials.isBlank() ? delimiter + specials : "");
-        } else {
-            return getSpecialsDisplayString(delimiter, element);
-        }
     }
 
     @Override

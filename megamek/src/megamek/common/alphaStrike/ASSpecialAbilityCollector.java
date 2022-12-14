@@ -18,6 +18,8 @@
  */
 package megamek.common.alphaStrike;
 
+import megamek.common.strategicBattleSystems.BattleForceSUAFormatter;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -69,7 +71,7 @@ public interface ASSpecialAbilityCollector {
      *
      * @return A formatted Special Unit Ability string
      */
-    default String getSpecialsDisplayString(ASCardDisplayable element) {
+    default String getSpecialsDisplayString(BattleForceSUAFormatter element) {
         return getSpecialsDisplayString(", ", element);
     }
 
@@ -79,7 +81,7 @@ public interface ASSpecialAbilityCollector {
      *
      * @return A formatted Special Unit Ability string
      */
-    String getSpecialsDisplayString(String delimiter, ASCardDisplayable element);
+    String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element);
 
     /** @return The IF ability value of this collection or {@link ASDamage#ZERO}, if there is no IF. */
     default ASDamage getIF() {

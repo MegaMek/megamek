@@ -110,11 +110,9 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         
         setupReportTabs();
                 
-        setSize(GUIP.getMiniReportSizeWidth(),
-                GUIP.getMiniReportSizeHeight());
+        setSize(GUIP.getMiniReportSizeWidth(), GUIP.getMiniReportSizeHeight());
         doLayout();
-        setLocation(GUIP.getMiniReportPosX(),
-                GUIP.getMiniReportPosY());
+        setLocation(GUIP.getMiniReportPosX(), GUIP.getMiniReportPosY());
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {

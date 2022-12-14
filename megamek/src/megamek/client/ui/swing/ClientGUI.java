@@ -579,13 +579,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
 
-        if (GUIP.getDisplayStartTabbed()) {
-            getUnitDisplayDialog().setLocation(GUIP.getDisplayPosX(), GUIP.getDisplayPosY());
-            getUnitDisplayDialog().setSize(GUIP.getDisplaySizeWidth(), GUIP.getDisplaySizeHeight());
+        if (GUIP.getUnitDisplayStartTabbed()) {
+            getUnitDisplayDialog().setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
+            getUnitDisplayDialog().setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
         }
         else {
-            getUnitDisplayDialog().setLocation(GUIP.getDisplayNontabbedPosX(), GUIP.getDisplayNontabbedPosY());
-            getUnitDisplayDialog().setSize(GUIP.getDisplayNonTabbedSizeWidth(), GUIP.getDisplayNonTabbedSizeHeight());
+            getUnitDisplayDialog().setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
+            getUnitDisplayDialog().setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
         }
 
         UIUtil.updateWindowBounds(getUnitDisplayDialog());
@@ -1026,17 +1026,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         // Mek display
         if ((getUnitDisplayDialog() != null)
                 && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
-            if (GUIP.getDisplayStartTabbed()) {
-                GUIP.setDisplayPosX(getUnitDisplayDialog().getLocation().x);
-                GUIP.setDisplayPosY(getUnitDisplayDialog().getLocation().y);
-                GUIP.setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
-                GUIP.setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
+            if (GUIP.getUnitDisplayStartTabbed()) {
+                GUIP.setUnitDisplayPosX(getUnitDisplayDialog().getLocation().x);
+                GUIP.setUnitDisplayPosY(getUnitDisplayDialog().getLocation().y);
+                GUIP.setUnitDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
+                GUIP.setUnitDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
             }
             else {
-                GUIP.setDisplayNontabbedPosX(getUnitDisplayDialog().getLocation().x);
-                GUIP.setDisplayNontabbedPosY(getUnitDisplayDialog().getLocation().y);
-                GUIP.setDisplayNonTabbedSizeWidth(getUnitDisplayDialog().getSize().width);
-                GUIP.setDisplayNonTabbedSizeHeight(getUnitDisplayDialog().getSize().height);
+                GUIP.setUnitDisplayNontabbedPosX(getUnitDisplayDialog().getLocation().x);
+                GUIP.setUnitDisplayNontabbedPosY(getUnitDisplayDialog().getLocation().y);
+                GUIP.setUnitDisplayNonTabbedSizeWidth(getUnitDisplayDialog().getSize().width);
+                GUIP.setUnitDisplayNonTabbedSizeHeight(getUnitDisplayDialog().getSize().height);
                 unitDisplay.saveSplitterLoc();
             }
         }
@@ -1551,14 +1551,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         GamePhase phase = getClient().getGame().getPhase();
 
         if (phase.isReport()) {
-            String action = GUIP.getDisplayAutoDisplayReportPhase();
+            String action = GUIP.getUnitDisplayAutoDisplayReportPhase();
             if (action.equals(MSG_SHOW)) {
                 GUIP.setUnitDisplayEnabled(true);
             } else if (action.equals(MSG_HIDE)) {
                 GUIP.setUnitDisplayEnabled(false);
             }
         } else if (phase.isOnMap()) {
-            String action = GUIP.getDisplayAutoDisplayNonReportPhase();
+            String action = GUIP.getUnitDisplayAutoDisplayNonReportPhase();
             if (action.equals(MSG_SHOW)) {
                 GUIP.setUnitDisplayEnabled(true);
             } else if (action.equals(MSG_HIDE)) {
@@ -2645,9 +2645,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
+        if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
             setMapVisible(GUIP.getMinimapEnabled());
-        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
+        } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_ENABLED)) {
             setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
         } else if (e.getName().equals(GUIPreferences.MINI_REPORT_ENABLED)) {
             setMiniReportVisible(GUIP.getMiniReportEnabled());

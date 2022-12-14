@@ -350,9 +350,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 GUIP.setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
             }
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            GUIP.setMinimapEnabled(!GUIP.getMinimapEnabled());
+            GUIP.toggleMinimapEnabled();
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_UNIT_DISPLAY)) {
             GUIP.toggleUnitDisplay();
+        } else if (event.getActionCommand().equals(VIEW_ROUND_REPORT)) {
+            GUIP.toggleRoundReportEnabled();
+        } else if (event.getActionCommand().equals(VIEW_PLAYER_LIST)) {
+            GUIP.togglePlayerListEnabled();
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
             GUIP.toggleKeybindsOverlay();
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_HEXCOORDS)) {
@@ -493,13 +497,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             viewUnitOverview.setSelected((Boolean) e.getNewValue());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
-        } else if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
+        } else if (e.getName().equals(GUIPreferences.MINI_MAP_ENABLED)) {
             viewMinimap.setSelected(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_COORDS)) {
             toggleHexCoords.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_COORDS));
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setKeyBinds();
-        } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
+        } else if (e.getName().equals(GUIPreferences.UNIT_DISPLAY_ENABLED)) {
             viewMekDisplay.setSelected(GUIP.getUnitDisplayEnabled());
         } else if (e.getName().equals(GUIPreferences.MINI_REPORT_ENABLED)) {
             gameRoundReport.setSelected(GUIP.getMiniReportEnabled());

@@ -51,6 +51,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     private JComboBox<String> comboQuick = new JComboBox<>();
     private ClientGUI currentClientgui;
     private Client currentClient;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
     private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
@@ -109,11 +110,11 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         
         setupReportTabs();
                 
-        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
-                GUIPreferences.getInstance().getMiniReportSizeHeight());
+        setSize(GUIP.getMiniReportSizeWidth(),
+                GUIP.getMiniReportSizeHeight());
         doLayout();
-        setLocation(GUIPreferences.getInstance().getMiniReportPosX(),
-                GUIPreferences.getInstance().getMiniReportPosY());
+        setLocation(GUIP.getMiniReportPosX(),
+                GUIP.getMiniReportPosY());
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {
@@ -125,7 +126,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         });
 
         adaptToGUIScale();
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        GUIP.addPreferenceChangeListener(this);
         butOkay.requestFocus();
     }
 
@@ -274,6 +275,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         if (ae.getSource().equals(butOkay)) {
             savePref();
             setVisible(false);
+            GUIP.setMiniReportEnabled(false);
         } else if (ae.getSource().equals(butPlayerSearchDown)) {
             String searchPattern = comboPlayer.getSelectedItem().toString().trim();
             searchTextPane(searchPattern, true);
@@ -313,10 +315,10 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     }
 
     private void savePref() {
-        GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
-        GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
-        GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
-        GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
+        GUIP.setMiniReportSizeWidth(getSize().width);
+        GUIP.setMiniReportSizeHeight(getSize().height);
+        GUIP.setMiniReportPosX(getLocation().x);
+        GUIP.setMiniReportPosY(getLocation().y);
     }
 
     public void addReportPages() {
@@ -375,7 +377,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
                 Entity ent = currentClientgui.getClient().getGame().getEntity(id);
                 if (ent != null) {
                     currentClientgui.getUnitDisplay().displayEntity(ent);
-                    GUIPreferences.getInstance().showUnitDisplay();
+                    GUIP.setUnitDisplayEnabled(true);
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());

@@ -60,9 +60,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private JMenuItem gameQSave = new JMenuItem(getString("CommonMenuBar.fileGameQuickSave")); 
     private JMenuItem gameQLoad = new JMenuItem(getString("CommonMenuBar.fileGameQuickLoad"));
     private JMenuItem gameSaveServer = new JMenuItem(getString("CommonMenuBar.fileGameSaveServer"));
-    private JMenuItem gameRoundReport = new JMenuItem(getString("CommonMenuBar.viewRoundReport"));
+    private JCheckBoxMenuItem gameRoundReport = new JCheckBoxMenuItem(getString("CommonMenuBar.viewRoundReport"));
     private JMenuItem gameReplacePlayer = new JMenuItem(getString("CommonMenuBar.replacePlayer"));
-    private JMenuItem gamePlayerList = new JMenuItem(getString("CommonMenuBar.viewPlayerList"));
+    private JCheckBoxMenuItem gamePlayerList = new JCheckBoxMenuItem(getString("CommonMenuBar.viewPlayerList"));
     private JMenuItem gameGameOptions = new JMenuItem(getString("CommonMenuBar.viewGameOptions"));
     private JMenuItem gamePlayerSettings = new JMenuItem(getString("CommonMenuBar.viewPlayerSettings"));
     
@@ -174,10 +174,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.setMnemonic(VK_G);
         
         initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT);
+        GUIP.setMiniReportEnabled(false);
+        gameRoundReport.setSelected(false);
         menu.addSeparator();
         
         initMenuItem(gameReplacePlayer, menu, FILE_GAME_REPLACE_PLAYER, VK_R);
         initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST);
+        GUIP.setMinimapEnabled(false);
+        gamePlayerList.setSelected(false);
         menu.addSeparator();
         
         initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
@@ -496,7 +500,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
             setKeyBinds();
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
-            viewMekDisplay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+            viewMekDisplay.setSelected(GUIP.getUnitDisplayEnabled());
+        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_ENABLED)) {
+            gameRoundReport.setSelected(GUIP.getMiniReportEnabled());
+        } else if (e.getName().equals(GUIPreferences.PLAYER_lIST_ENABLED)) {
+            gamePlayerList.setSelected(GUIP.getPlayerListEnabled());
         }
     }
     

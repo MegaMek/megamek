@@ -43,6 +43,8 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
 
     private static final String MSG_OKAY= Messages.getString("Okay");
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     public PlayerListDialog(JFrame parent, Client client) {
         super(parent, Messages.getString("PlayerListDialog.title"), false);
         this.client = client;
@@ -70,12 +72,12 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         setMinimumSize(new Dimension(300, 260));
 
         adaptToGUIScale();
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        GUIP.addPreferenceChangeListener(this);
 
         pack();
         setResizable(false);
-        setLocation(GUIPreferences.getInstance().getPlayerListPosX(),
-                GUIPreferences.getInstance().getPlayerListPosY());
+        setLocation(GUIP.getPlayerListPosX(),
+                GUIP.getPlayerListPosY());
     }
 
     public static void refreshPlayerList(JList<String> playerList, 
@@ -163,6 +165,7 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         if (ae.getSource().equals(butOkay)) {
             savePref();
             setVisible(false);
+            GUIP.setPlayerListEnabled(false);
         }
     }
 
@@ -188,8 +191,8 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         }
     }
     private void savePref() {
-        GUIPreferences.getInstance().setPlayerListPosX(getLocation().x);
-        GUIPreferences.getInstance().setPlayerListPosY(getLocation().y);
+        GUIP.setPlayerListPosX(getLocation().x);
+        GUIP.setPlayerListPosY(getLocation().y);
     }
 
     private void adaptToGUIScale() {

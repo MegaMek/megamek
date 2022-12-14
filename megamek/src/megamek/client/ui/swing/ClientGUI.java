@@ -422,14 +422,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Try to load the "bing" sound clip.
      */
     private void loadSoundClip() {
-        if (GUIPreferences.getInstance().getSoundBingFilename() == null) {
+        if (GUIP.getSoundBingFilename() == null) {
             return;
         }
 
         try {
-            File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
+            File file = new File(GUIP.getSoundBingFilename());
             if (!file.exists()) {
-                LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIPreferences.getInstance().getSoundBingFilename());
+                LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIP.getSoundBingFilename());
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
@@ -455,14 +455,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame = new JFrame(MSG_TITLE);
         frame.setJMenuBar(menuBar);
 
-        if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
+        if (GUIP.getWindowSizeHeight() != 0) {
             frame.setLocation(
-                    GUIPreferences.getInstance().getWindowPosX(),
-                    GUIPreferences.getInstance().getWindowPosY()
+                    GUIP.getWindowPosX(),
+                    GUIP.getWindowPosY()
             );
             frame.setSize(
-                    GUIPreferences.getInstance().getWindowSizeWidth(),
-                    GUIPreferences.getInstance().getWindowSizeHeight()
+                    GUIP.getWindowSizeWidth(),
+                    GUIP.getWindowSizeHeight()
             );
         } else {
             frame.setSize(800, 600);
@@ -533,7 +533,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                if (!GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
+                if (!GUIP.getBoolean(GUIPreferences.ADVANCED_NO_SAVE_NAG)) {
                     ignoreHotKeys = true;
                     int savePrompt = JOptionPane.showConfirmDialog(null,
                             MSG_GAMESAVEDIALOGMSG,
@@ -579,13 +579,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
         setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
 
-        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
-            getUnitDisplayDialog().setLocation(GUIPreferences.getInstance().getDisplayPosX(), GUIPreferences.getInstance().getDisplayPosY());
-            getUnitDisplayDialog().setSize(GUIPreferences.getInstance().getDisplaySizeWidth(), GUIPreferences.getInstance().getDisplaySizeHeight());
+        if (GUIP.getDisplayStartTabbed()) {
+            getUnitDisplayDialog().setLocation(GUIP.getDisplayPosX(), GUIP.getDisplayPosY());
+            getUnitDisplayDialog().setSize(GUIP.getDisplaySizeWidth(), GUIP.getDisplaySizeHeight());
         }
         else {
-            getUnitDisplayDialog().setLocation(GUIPreferences.getInstance().getDisplayNontabbedPosX(), GUIPreferences.getInstance().getDisplayNontabbedPosY());
-            getUnitDisplayDialog().setSize(GUIPreferences.getInstance().getDisplayNonTabbedSizeWidth(), GUIPreferences.getInstance().getDisplayNonTabbedSizeHeight());
+            getUnitDisplayDialog().setLocation(GUIP.getDisplayNontabbedPosX(), GUIP.getDisplayNontabbedPosY());
+            getUnitDisplayDialog().setSize(GUIP.getDisplayNonTabbedSizeWidth(), GUIP.getDisplayNonTabbedSizeHeight());
         }
 
         UIUtil.updateWindowBounds(getUnitDisplayDialog());
@@ -593,23 +593,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         getUnitDisplayDialog().setFocusable(false);
         getUnitDisplayDialog().setFocusableWindowState(false);
         getUnitDisplayDialog().add(getUnitDisplay());
-        getUnitDisplayDialog().addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent evt) {
-                GUIPreferences.getInstance().hideUnitDisplay();
-            }
-        });
 
-        Ruler.color1 = GUIPreferences.getInstance().getRulerColor1();
-        Ruler.color2 = GUIPreferences.getInstance().getRulerColor2();
+        Ruler.color1 = GUIP.getRulerColor1();
+        Ruler.color2 = GUIP.getRulerColor2();
         ruler = new Ruler(frame, client, bv);
         ruler.setLocation(
-                GUIPreferences.getInstance().getRulerPosX(),
-                GUIPreferences.getInstance().getRulerPosY()
+                GUIP.getRulerPosX(),
+                GUIP.getRulerPosY()
         );
         ruler.setSize(
-                GUIPreferences.getInstance().getRulerSizeHeight(),
-                GUIPreferences.getInstance().getRulerSizeWidth()
+                GUIP.getRulerSizeHeight(),
+                GUIP.getRulerSizeWidth()
         );
         UIUtil.updateWindowBounds(ruler);
 
@@ -862,10 +856,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 customizePlayer();
                 break;
             case VIEW_PLAYER_LIST:
-                showPlayerList();
+                GUIP.togglePlayerListEnabled();
                 break;
             case VIEW_ROUND_REPORT:
-                showRoundReport();
+                GUIP.toggleRoundReportEnabled();
                 break;
             case BOARD_SAVE:
                 ignoreHotKeys = true;
@@ -906,32 +900,29 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 bv.zoomOut();
                 break;
             case VIEW_TOGGLE_ISOMETRIC:
-                GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
+                GUIP.setIsometricEnabled(bv.toggleIsometric());
                 break;
             case VIEW_TOGGLE_FOV_HIGHLIGHT:
-                GUIPreferences.getInstance().setFovHighlight(
-                        !GUIPreferences.getInstance().getFovHighlight());
+                GUIP.setFovHighlight(!GUIP.getFovHighlight());
                 bv.refreshDisplayables();
                 if (client.getGame().getPhase() == GamePhase.MOVEMENT) {
                     bv.clearHexImageCache();
                 }
                 break;
             case VIEW_TOGGLE_FIELD_OF_FIRE:
-                GUIPreferences.getInstance().setShowFieldOfFire(
-                        !GUIPreferences.getInstance().getShowFieldOfFire());
+                GUIP.setShowFieldOfFire(!GUIP.getShowFieldOfFire());
                 bv.repaint();
                 break;
             case VIEW_TOGGLE_FOV_DARKEN:
-                GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getFovDarken());
+                GUIP.setFovDarken(!GUIP.getFovDarken());
                 bv.refreshDisplayables();
                 if (client.getGame().getPhase() == GamePhase.MOVEMENT) {
                     bv.clearHexImageCache();
                 }
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
-                GUIPreferences.getInstance().setFiringSolutions(
-                        !GUIPreferences.getInstance().getFiringSolutions());
-                if (!GUIPreferences.getInstance().getFiringSolutions()) {
+                GUIP.setFiringSolutions(!GUIP.getFiringSolutions());
+                if (!GUIP.getFiringSolutions()) {
                     bv.clearFiringSolutionData();
                 } else {
                     if (curPanel instanceof FiringDisplay) {
@@ -942,8 +933,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case VIEW_MOVE_ENV:
                 if (curPanel instanceof MovementDisplay) {
-                    GUIPreferences.getInstance().setMoveEnvelope(
-                            !GUIPreferences.getInstance().getMoveEnvelope());
+                    GUIP.setMoveEnvelope(!GUIP.getMoveEnvelope());
                     ((MovementDisplay) curPanel).computeMovementEnvelope(getUnitDisplay().getCurrentEntity());
                 }
                 break;
@@ -1022,41 +1012,41 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     void saveSettings() {
         // Frame location
-        GUIPreferences.getInstance().setWindowPosX(frame.getLocation().x);
-        GUIPreferences.getInstance().setWindowPosY(frame.getLocation().y);
-        GUIPreferences.getInstance().setWindowSizeWidth(frame.getSize().width);
-        GUIPreferences.getInstance().setWindowSizeHeight(frame.getSize().height);
+        GUIP.setWindowPosX(frame.getLocation().x);
+        GUIP.setWindowPosY(frame.getLocation().y);
+        GUIP.setWindowSizeWidth(frame.getSize().width);
+        GUIP.setWindowSizeHeight(frame.getSize().height);
 
         // Minimap
         if ((minimapW != null) && ((minimapW.getSize().width * minimapW.getSize().height) > 0)) {
-            GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
-            GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
+            GUIP.setMinimapPosX(minimapW.getLocation().x);
+            GUIP.setMinimapPosY(minimapW.getLocation().y);
         }
 
         // Mek display
         if ((getUnitDisplayDialog() != null)
                 && ((getUnitDisplayDialog().getSize().width * getUnitDisplayDialog().getSize().height) > 0)) {
-            if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
-                GUIPreferences.getInstance().setDisplayPosX(getUnitDisplayDialog().getLocation().x);
-                GUIPreferences.getInstance().setDisplayPosY(getUnitDisplayDialog().getLocation().y);
-                GUIPreferences.getInstance().setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
-                GUIPreferences.getInstance().setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
+            if (GUIP.getDisplayStartTabbed()) {
+                GUIP.setDisplayPosX(getUnitDisplayDialog().getLocation().x);
+                GUIP.setDisplayPosY(getUnitDisplayDialog().getLocation().y);
+                GUIP.setDisplaySizeWidth(getUnitDisplayDialog().getSize().width);
+                GUIP.setDisplaySizeHeight(getUnitDisplayDialog().getSize().height);
             }
             else {
-                GUIPreferences.getInstance().setDisplayNontabbedPosX(getUnitDisplayDialog().getLocation().x);
-                GUIPreferences.getInstance().setDisplayNontabbedPosY(getUnitDisplayDialog().getLocation().y);
-                GUIPreferences.getInstance().setDisplayNonTabbedSizeWidth(getUnitDisplayDialog().getSize().width);
-                GUIPreferences.getInstance().setDisplayNonTabbedSizeHeight(getUnitDisplayDialog().getSize().height);
+                GUIP.setDisplayNontabbedPosX(getUnitDisplayDialog().getLocation().x);
+                GUIP.setDisplayNontabbedPosY(getUnitDisplayDialog().getLocation().y);
+                GUIP.setDisplayNonTabbedSizeWidth(getUnitDisplayDialog().getSize().width);
+                GUIP.setDisplayNonTabbedSizeHeight(getUnitDisplayDialog().getSize().height);
                 unitDisplay.saveSplitterLoc();
             }
         }
 
         // Ruler display
         if ((ruler != null) && (ruler.getSize().width != 0) && (ruler.getSize().height != 0)) {
-            GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
-            GUIPreferences.getInstance().setRulerPosY(ruler.getLocation().y);
-            GUIPreferences.getInstance().setRulerSizeWidth(ruler.getSize().width);
-            GUIPreferences.getInstance().setRulerSizeHeight(ruler.getSize().height);
+            GUIP.setRulerPosX(ruler.getLocation().x);
+            GUIP.setRulerPosY(ruler.getLocation().y);
+            GUIP.setRulerSizeWidth(ruler.getSize().width);
+            GUIP.setRulerSizeHeight(ruler.getSize().height);
         }
     }
 
@@ -1218,7 +1208,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (GUIPreferences.getInstance().getFocus() && !(client instanceof TestBot)) {
+        if (GUIP.getFocus() && !(client instanceof TestBot)) {
             curPanel.requestFocus();
         }
     }
@@ -1443,7 +1433,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     public void toggleMMUDDisplays() {
         GUIP.toggleUnitDisplay();
-        GUIP.setMinimapEnabled(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+        GUIP.setMinimapEnabled(GUIP.getUnitDisplayEnabled());
     }
 
     /**
@@ -1458,7 +1448,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     private void toggleUnitOverview() {
         uo.setVisible(!uo.isVisible());
-        GUIPreferences.getInstance().setShowUnitOverview(uo.isVisible());
+        GUIP.setShowUnitOverview(uo.isVisible());
         bv.refreshDisplayables();
     }
 
@@ -1489,16 +1479,16 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (phase.isReport()) {
             String action = GUIP.getMiniReportAutoDisplayReportPhase();
             if (action.equals(MSG_SHOW)) {
-                setMiniReportVisible(true);
+                GUIP.setMiniReportEnabled(true);
             } else if (action.equals(MSG_HIDE)) {
-                setMiniReportVisible(false);
+                GUIP.setMiniReportEnabled(false);
             }
         } else if (phase.isOnMap()) {
             String action = GUIP.getMiniReportAutoDisplayNonReportPhase();
             if (action.equals(MSG_SHOW)) {
-                setMiniReportVisible(true);
+                GUIP.setMiniReportEnabled(true);
             } else if (action.equals(MSG_HIDE)) {
-                setMiniReportVisible(false);
+                GUIP.setMiniReportEnabled(false);
             }
         }
     }
@@ -1509,16 +1499,16 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (phase.isReport()) {
             String action = GUIP.getPlayerListAutoDisplayReportPhase();
             if (action.equals(MSG_SHOW)) {
-                setPlayerListVisible(true);
+                GUIP.setPlayerListEnabled(true);
             } else if (action.equals(MSG_HIDE)) {
-                setPlayerListVisible(false);
+                GUIP.setPlayerListEnabled(false);
             }
         } else if (phase.isOnMap()) {
             String action = GUIP.getPlayerListAutoDisplayNonReportPhase();
             if (action.equals(MSG_SHOW)) {
-                setPlayerListVisible(true);
+                GUIP.setPlayerListEnabled(true);
             } else if (action.equals(MSG_HIDE)) {
-                setPlayerListVisible(false);
+                GUIP.setPlayerListEnabled(false);
             }
         }
     }
@@ -1954,12 +1944,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * used in the LOS tool.
      */
     private void showLOSSettingDialog() {
-        GUIPreferences gp = GUIPreferences.getInstance();
-        LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
+        LOSDialog ld = new LOSDialog(frame, GUIP.getMechInFirst(), GUIP.getMechInSecond());
         ignoreHotKeys = true;
         if (ld.showDialog().isConfirmed()) {
-            gp.setMechInFirst(ld.getMechInFirst());
-            gp.setMechInSecond(ld.getMechInSecond());
+            GUIP.setMechInFirst(ld.getMechInFirst());
+            GUIP.setMechInSecond(ld.getMechInSecond());
         }
         ignoreHotKeys = false;
     }
@@ -1985,7 +1974,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * Make a "bing" sound.
      */
     void bing() {
-        if (!GUIPreferences.getInstance().getSoundMute() && (bingClip != null)) {
+        if (!GUIP.getSoundMute() && (bingClip != null)) {
             bingClip.play();
         }
     }
@@ -2659,7 +2648,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (e.getName().equals(GUIPreferences.MINIMAP_ENABLED)) {
             setMapVisible(GUIP.getMinimapEnabled());
         } else if (e.getName().equals(GUIPreferences.SHOW_UNIT_DISPLAY)) {
-            setUnitDisplayVisible(GUIP.getBoolean(GUIPreferences.SHOW_UNIT_DISPLAY));
+            setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
+        } else if (e.getName().equals(GUIPreferences.MINI_REPORT_ENABLED)) {
+            setMiniReportVisible(GUIP.getMiniReportEnabled());
+        } else if (e.getName().equals(GUIPreferences.PLAYER_lIST_ENABLED)) {
+            setPlayerListVisible(GUIP.getPlayerListEnabled());
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
         }

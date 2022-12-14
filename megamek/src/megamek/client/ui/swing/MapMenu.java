@@ -312,7 +312,7 @@ public class MapMenu extends JPopupMenu {
         item.addActionListener(evt -> {
             try {
                 selectedEntity = game.getEntity(Integer.parseInt(evt.getActionCommand()));
-                GUIPreferences.getInstance().showUnitDisplay();
+                GUIPreferences.getInstance(). setUnitDisplayEnabled(true);
                 gui.getUnitDisplay().displayEntity(selectedEntity);
             } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);

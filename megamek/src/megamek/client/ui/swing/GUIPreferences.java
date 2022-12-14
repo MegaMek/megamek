@@ -1441,6 +1441,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_REPORT_ENABLED, b);
     }
 
+    public void toggleRoundReportEnabled() {
+        setMiniReportEnabled(!getMiniReportEnabled());
+    }
+
     public void setMinimapPosX(int i) {
         store.setValue(MINIMAP_POS_X, i);
     }
@@ -1479,6 +1483,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setPlayerListEnabled(boolean b) {
         store.setValue(PLAYER_lIST_ENABLED, b);
+    }
+
+    public void togglePlayerListEnabled() {
+        setPlayerListEnabled(!getPlayerListEnabled());
     }
 
     public void setPlayerListPosX(int i) {
@@ -1852,20 +1860,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * Sets the user preference for the Unit Display window to active.
-     */
-    public void showUnitDisplay() {
-        store.setValue(SHOW_UNIT_DISPLAY, true);
-    }
-
-    /**
-     * Sets the user preference for the Unit Display window to inactive.
-     */
-    public void hideUnitDisplay() {
-        store.setValue(SHOW_UNIT_DISPLAY, false);
-    }
-
-    /**
      * Toggles the state of the user preference for the Unit Display.
      */
     public void toggleUnitDisplay() {
@@ -1874,6 +1868,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitDisplayEnabled(boolean b) {
         store.setValue(SHOW_UNIT_DISPLAY, b);
+    }
+
+    public boolean getUnitDisplayEnabled() {
+        return store.getBoolean(SHOW_UNIT_DISPLAY);
     }
 
     /**

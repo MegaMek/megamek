@@ -511,7 +511,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
                     if ((game != null) && (game.getPhase() == GamePhase.UNKNOWN) && !h.isValid(null)) {
-                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
+                        gg.setColor(GUIP.getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
                 }
@@ -1344,7 +1344,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            if (GUIPreferences.getInstance().getGameSummaryMinimap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
+            if (GUIP.getGameSummaryMinimap() && ((e.getOldPhase() == GamePhase.DEPLOYMENT)
                     || (e.getOldPhase() == GamePhase.MOVEMENT) || (e.getOldPhase() == GamePhase.TARGETING)
                     || (e.getOldPhase() == GamePhase.PREMOVEMENT) || (e.getOldPhase() == GamePhase.PREFIRING)
                     || (e.getOldPhase() == GamePhase.FIRING) || (e.getOldPhase() == GamePhase.PHYSICAL))) {

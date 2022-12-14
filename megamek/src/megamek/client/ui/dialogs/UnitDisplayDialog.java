@@ -20,16 +20,20 @@ package megamek.client.ui.dialogs;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class UnitDisplayDialog extends JDialog {
     //region Variable Declarations
     private UnitDisplay unitDisplay;
 
     private final ClientGUI clientGUI;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
@@ -37,6 +41,14 @@ public class UnitDisplayDialog extends JDialog {
                              final ClientGUI clientGUI) {
         super(frame, Messages.getString("ClientGUI.MechDisplay"), false);
         setUnitDisplay(unitDisplay);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent evt) {
+                GUIP.setUnitDisplayEnabled(false);
+            }
+        });
+
         this.clientGUI = clientGUI;
     }
     //endregion Constructors

@@ -639,7 +639,7 @@ public class MechSummaryCache {
                                     .append(failedEquipment.next()).append("\n");
                         }
                     }
-                } catch (EntityLoadingException ex) {
+                } catch (Exception ex) {
                     loadReport.append("    Loading from ").append(f).append("\n");
                     loadReport.append("***   Unable to load file: ");
                     StringWriter stringWriter = new StringWriter();

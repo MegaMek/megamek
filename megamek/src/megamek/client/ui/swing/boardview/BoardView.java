@@ -406,6 +406,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
     
     /** A map overlay showing some important keybinds. */ 
     KeyBindingsOverlay keybindOverlay;
+
+    PlanetaryConditionsOverlay planetaryConditionsOverlay;
     
     /** The coords where the mouse was last. */
     Coords lastCoords;
@@ -431,6 +433,13 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (controller != null) {
             addDisplayable(keybindOverlay);
         }
+
+        planetaryConditionsOverlay = new PlanetaryConditionsOverlay(game, clientgui);
+        // Avoid showing the planetary Conditions when they can't be used (in the lobby map preview)
+        if (controller != null) {
+            addDisplayable(planetaryConditionsOverlay);
+        }
+
         ourTask = scheduleRedrawTimer(); // call only once
         clearSprites();
         addMouseListener(this);
@@ -883,6 +892,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             case GUIPreferences.SHOW_KEYBINDS_OVERLAY:
                 keybindOverlay.setVisible((boolean) e.getNewValue());
+                repaint();
+                break;
+            case GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY:
+                planetaryConditionsOverlay.setVisible((boolean) e.getNewValue());
                 repaint();
                 break;
 

@@ -237,10 +237,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         comboEntity.setSelectedItem(lastChoice);
         if (comboEntity.getItemCount() <= 1) {
             comboEntity.setEnabled(false);
-        } else {
-            if (comboEntity.getSelectedIndex() < 0) {
-                comboEntity.setSelectedIndex(0);
-            }
+        } else if (comboEntity.getSelectedIndex() < 0) {
+            comboEntity.setSelectedIndex(0);
         }
     }
 
@@ -256,10 +254,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         comboQuick.setSelectedItem(lastChoice);
         if (comboQuick.getItemCount() <= 1) {
             comboQuick.setEnabled(false);
-        } else {
-            if (comboQuick.getSelectedIndex() < 0) {
-                comboQuick.setSelectedIndex(0);
-            }
+        } else if (comboQuick.getSelectedIndex() < 0) {
+            comboQuick.setSelectedIndex(0);
         }
     }
 

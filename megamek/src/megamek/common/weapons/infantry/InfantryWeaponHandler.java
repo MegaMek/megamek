@@ -213,7 +213,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
             // TacOps crits against BA do not happen for infantry weapon attacks
             hit = ((BattleArmor) entityTarget).rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
-                    waa.getAimingMode(), toHit.getCover(), false);
+                    waa.getAimingMode(), toHit.getCover(), true);
             hit.setGeneralDamageType(generalDamageType);
             hit.setCapital(wtype.isCapital());
             hit.setBoxCars(roll == 12);

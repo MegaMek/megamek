@@ -53,6 +53,7 @@ VERSION HISTORY:
 + Issue #3811: Fix formatting issue with the Infantry victory report
 + Issue #4021: Preventing Save Game Loading Player Name NPE
 + PR #3969: Add an overlay for Planetary Conditions
++ Issue #2695: Improve game options tooltips
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3

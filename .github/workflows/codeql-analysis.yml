@@ -30,7 +30,7 @@ jobs:
         os: [ ubuntu-latest ] # For Code QL running on *nix is sufficient
         language: [ 'java' ]
         java-distribution: [ temurin ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
       fail-fast: false
 
     steps:

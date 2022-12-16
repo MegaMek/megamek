@@ -46,7 +46,7 @@ dependencies {
 mainClassName = 'megamek.MegaMek'
 
 ext {
-    mmJvmOptions = ['-Xmx2048m']
+    mmJvmOptions = ['-Xmx2048m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED']
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -62,6 +62,10 @@ ext {
     mavenPublishDir = "${buildDir}/mavenrepo"
     scriptsDir = "${projectDir}/scripts"
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
+}
+
+run {
+    jvmArgs = mmJvmOptions
 }
 
 jar {

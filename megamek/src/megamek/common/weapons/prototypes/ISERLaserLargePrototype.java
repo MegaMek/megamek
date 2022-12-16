@@ -87,7 +87,10 @@ public class ISERLaserLargePrototype extends LaserWeapon {
 
     @Override
     public int getLongRange() {
-        GameOptions options = Server.getServerInstance().getGame().getOptions();
+        if (Server.getServerInstance() == null) {
+            return super.getLongRange();
+        }
+        final GameOptions options = Server.getServerInstance().getGame().getOptions();
         if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE) == null) {
             return super.getLongRange();
         } else if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE).booleanValue()) {

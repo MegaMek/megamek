@@ -404,7 +404,7 @@ public class Server implements Runnable {
         gameManager.setGame(g);
     }
 
-    public @Nullable IGame getGame() {
+    public IGame getGame() {
         return gameManager.getGame();
     }
 
@@ -1311,9 +1311,9 @@ public class Server implements Runnable {
     }
 
     /**
-     * @return the current server instance
+     * @return the current server instance. This may be null if a server has not been started
      */
-    public static Server getServerInstance() {
+    public static @Nullable Server getServerInstance() {
         return serverInstance;
     }
 

@@ -589,6 +589,16 @@ public class BattleArmor extends Infantry {
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
                                    int cover) {
+        return rollHitLocation(table, side, aimedLocation, aimingMode, cover, true);
+    }
+
+    /**
+     * Battle Armor units can only get hit in undestroyed troopers.
+     *
+     * @param allowTacOpsCrits Set to true when attacked by CI, as these cannot score TacOps crits
+     */
+    public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
+                                   int cover, boolean allowTacOpsCrits) {
 
         // If this squad was killed, target trooper 1 (just because).
         if (isDoomed()) {
@@ -621,16 +631,13 @@ public class BattleArmor extends Infantry {
             loc = Compute.d6();
         }
 
-        int critLocation = Compute.d6();
-        // TacOps p. 108 Trooper takes a crit if a second roll is the same
-        // location as the first.
+        // TO:AR p.108: Trooper takes a crit if a second roll is the same location as the first.
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS)
-                && (loc == critLocation)) {
+                && (loc == Compute.d6()) && allowTacOpsCrits) {
             return new HitData(loc, false, HitData.EFFECT_CRITICAL);
         }
         // Hit that trooper.
         return new HitData(loc);
-
     }
 
     @Override

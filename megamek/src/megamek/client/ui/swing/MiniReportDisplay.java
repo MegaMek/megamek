@@ -230,15 +230,14 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         for (Iterator<Entity> ents = currentClient.getGame().getEntities(); ents.hasNext();) {
             Entity entity = ents.next();
             if (entity.getOwner().equals(currentClient.getLocalPlayer())) {
-                displayNane =addEntity(comboEntity, entity.getShortName());
+                displayNane = addEntity(comboEntity, entity.getShortName());
             }
         }
         lastChoice = (lastChoice != null ? lastChoice : displayNane);
-        if (comboEntity.getItemCount() == 1) {
-            comboEntity.setEnabled(false);
-        }
         comboEntity.setSelectedItem(lastChoice);
-        if (comboEntity.getSelectedIndex() < 0) {
+        if (comboEntity.getItemCount() <= 1) {
+            comboEntity.setEnabled(false);
+        } else if (comboEntity.getSelectedIndex() < 0) {
             comboEntity.setSelectedIndex(0);
         }
     }
@@ -252,11 +251,10 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         for (String keyword : keywords) {
             comboQuick.addItem(keyword);
         }
-        if (comboQuick.getItemCount() == 1) {
-            comboQuick.setEnabled(false);
-        }
         comboQuick.setSelectedItem(lastChoice);
-        if (comboQuick.getSelectedIndex() < 0) {
+        if (comboQuick.getItemCount() <= 1) {
+            comboQuick.setEnabled(false);
+        } else if (comboQuick.getSelectedIndex() < 0) {
             comboQuick.setSelectedIndex(0);
         }
     }

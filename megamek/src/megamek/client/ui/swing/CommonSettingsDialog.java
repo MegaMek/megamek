@@ -1161,7 +1161,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         addSpacer(comps, 3);
 
         row = new ArrayList<>();
-        fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii")); 
+        fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii"));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadiiLabel);
         comps.add(row);
@@ -1171,7 +1171,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         row = new ArrayList<>();
         fovHighlightRingsRadii= new JTextField((2+1)*7);
         fovHighlightRingsRadii.addFocusListener(this);
-        fovHighlightRingsRadii.setMaximumSize(new Dimension(100, 40 ));
+        fovHighlightRingsRadii.setMaximumSize(new Dimension(240, 40));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadii);
         comps.add(row);

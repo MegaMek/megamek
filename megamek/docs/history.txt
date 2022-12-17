@@ -54,6 +54,7 @@ VERSION HISTORY:
 + Issue #4021: Preventing Save Game Loading Player Name NPE
 + PR #3969: Add an overlay for Planetary Conditions
 + Issue #2695: Improve game options tooltips
++ PR #4049: Player Java 17 Support
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3

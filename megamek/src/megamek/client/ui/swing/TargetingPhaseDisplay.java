@@ -1176,7 +1176,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
             if (shiftheld) {
                 updateFlipArms(false);
-            } else if (phase == GamePhase.TARGETING) {
+            } else if (phase.isTargeting()) {
                 target(new HexTarget(b.getCoords(), Targetable.TYPE_HEX_ARTILLERY));
             } else {
                 target(chooseTarget(b.getCoords()));
@@ -1261,7 +1261,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
         // On simultaneous phases, each player ending their turn will generate a turn change

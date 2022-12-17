@@ -34,7 +34,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.util.UIUtil.*;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -788,7 +787,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
                 content = Messages.getString("BotConfigDialog.hexListIntro", coords.getX() + 1, coords.getY() + 1);
                 if (client != null) {
                     Board board = client.getBoard();
-                    if (client.getGame().getPhase() == GamePhase.LOUNGE) {
+                    if (client.getGame().getPhase().isLounge()) {
                         board = clientGui.chatlounge.getPossibleGameBoard(true);
                     }
                     if (board == null) {

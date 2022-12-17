@@ -29,7 +29,6 @@ import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.ISFireExtinguisher;
@@ -209,7 +208,7 @@ public class MapMenu extends JPopupMenu {
                 }
             });
 
-            if (game.getPhase() == GamePhase.MOVEMENT) {
+            if (game.getPhase().isMovement()) {
                 add(item);
             }
         }

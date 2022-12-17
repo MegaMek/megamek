@@ -24,7 +24,6 @@ import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;

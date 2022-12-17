@@ -20,7 +20,6 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 
@@ -272,11 +271,10 @@ public class FireCommand extends ClientCommand {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.alreadyFired");
             } else if ((m.getType().hasFlag(WeaponType.F_AUTO_TARGET) && !m.curMode().equals(Weapon.MODE_AMS_MANUAL))
-                        || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
+                    || (m.getType().hasModes() && m.curMode().equals("Point Defense"))) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
-            } else if (getClient().getGame().getPhase() == GamePhase.FIRING
-                        && m.isInBearingsOnlyMode()) {
+            } else if (getClient().getGame().getPhase().isFiring() && m.isInBearingsOnlyMode()) {
                 str += " Can't shoot: "
                         + Messages.getString("FiringDisplay.bearingsOnlyWrongPhase");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {

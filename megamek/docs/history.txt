@@ -62,7 +62,7 @@ VERSION HISTORY:
 + Updating to JUnit 5.9.1 from 5.9.0
 + Updating to Launch4j 2.5.4 from 2.5.3
 + Updating to Log4j 2.19.0 from 2.18.0
-+ Updating to Mockito 4.9.0 from 4.6.1
++ Updating to Mockito 4.10.0 from 4.6.1
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

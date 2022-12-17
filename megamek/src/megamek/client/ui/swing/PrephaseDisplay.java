@@ -290,7 +290,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
         setStatusBarText(Messages.getFormattedString("PrephaseDisplay.its_your_turn", phase.toString(), ce.getDisplayName()));
 
-        boolean isRevealing = ce.getHiddenActivationPhase() != GamePhase.UNKNOWN;
+        boolean isRevealing = !ce.getHiddenActivationPhase().isUnknown();
         setRevealEnabled(!isRevealing);
         setCancelRevealEnabled(isRevealing);
         butDone.setEnabled(true);
@@ -375,7 +375,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     private GamePhase revealInPhase() {
-        return phase == GamePhase.PREMOVEMENT ? GamePhase.MOVEMENT : GamePhase.FIRING;
+        return phase.isPremovement() ? GamePhase.MOVEMENT : GamePhase.FIRING;
     }
 
     private void reveal() {
@@ -438,9 +438,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     // GameListener
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
-
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
         // On simultaneous phases, each player ending their turn will generate a turn change

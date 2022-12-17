@@ -1028,13 +1028,13 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleFor(GamePhase phase) {
-        if ((turnsLayingExplosives > 0) && (phase != GamePhase.PHYSICAL)) {
+        if ((turnsLayingExplosives > 0) && !phase.isPhysical()) {
             return false;
-        }
-        if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
+        } else if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             return false;
+        } else {
+            return super.isEligibleFor(phase);
         }
-        return super.isEligibleFor(phase);
     }
 
     @Override

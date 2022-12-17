@@ -688,11 +688,10 @@ public class GameManager implements IGameManager {
                 send(connId, createAttackPacket(getGame().getTeleMissileAttacksVector(), 1));
             }
 
-            if (game.getPhase().hasTurns() && game.hasMoreTurns()) {
+            if (getGame().getPhase().hasTurns() && getGame().hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
-            } else if ((game.getPhase() != GamePhase.LOUNGE)
-                    && (game.getPhase() != GamePhase.STARTING_SCENARIO)) {
+            } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
                 endCurrentPhase();
             }
 
@@ -1386,8 +1385,8 @@ public class GameManager implements IGameManager {
         }
 
         // need at least one entity in the game for the lounge phase to end
-        if (!game.getPhase().hasTurns() && ((game.getPhase() != GamePhase.LOUNGE)
-                || (game.getNoOfEntities() > 0))) {
+        if (!getGame().getPhase().hasTurns()
+                && (!getGame().getPhase().isLounge() || (getGame().getNoOfEntities() > 0))) {
             endCurrentPhase();
         }
     }
@@ -3407,8 +3406,7 @@ public class GameManager implements IGameManager {
                     && en.getUnitNumber() == unit.getUnitNumber());
         }
 
-        if ((game.getPhase() != GamePhase.LOUNGE) && !unit.isDone()
-                && (remainingProtos == 0)) {
+        if (!getGame().getPhase().isLounge() && !unit.isDone() && (remainingProtos == 0)) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -3459,7 +3457,7 @@ public class GameManager implements IGameManager {
      * @param unit   - the <code>Entity</code> being towed.
      */
     private void towUnit(Entity loader, Entity unit) {
-        if ((game.getPhase() != GamePhase.LOUNGE) && !unit.isDone()) {
+        if (!getGame().getPhase().isLounge() && !unit.isDone()) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -4141,7 +4139,7 @@ public class GameManager implements IGameManager {
         md.setEntity(entity);
 
         // is this the right phase?
-        if (game.getPhase() != GamePhase.MOVEMENT) {
+        if (!getGame().getPhase().isMovement()) {
             LogManager.getLogger().error("Server got movement packet in wrong phase");
             return;
         }
@@ -4151,6 +4149,7 @@ public class GameManager implements IGameManager {
         if (getGame().getPhase().isSimultaneous(getGame())) {
             turn = game.getTurnForPlayer(connId);
         }
+
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
             String msg = "error: server got invalid movement packet from " + "connection " + connId;
             if (entity != null) {
@@ -12649,7 +12648,7 @@ public class GameManager implements IGameManager {
         Vector<Minefield> minefields = (Vector<Minefield>) packet.getObject(0);
 
         // is this the right phase?
-        if (game.getPhase() != GamePhase.DEPLOY_MINEFIELDS) {
+        if (!getGame().getPhase().isDeployMinefields()) {
             LogManager.getLogger().error("Server got deploy minefields packet in wrong phase");
             return;
         }
@@ -12725,9 +12724,8 @@ public class GameManager implements IGameManager {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         // is this the right phase?
-        if ((game.getPhase() != GamePhase.PREFIRING)
-                && (game.getPhase() != GamePhase.PREMOVEMENT)) {
-            LogManager.getLogger().error("Server got Prephase packet in wrong phase "+game.getPhase());
+        if (!getGame().getPhase().isPrefiring() && !getGame().getPhase().isPremovement()) {
+            LogManager.getLogger().error("Server got Prephase packet in wrong phase " + game.getPhase());
             return;
         }
 
@@ -12765,10 +12763,8 @@ public class GameManager implements IGameManager {
         Vector<EntityAction> vector = (Vector<EntityAction>) packet.getObject(1);
 
         // is this the right phase?
-        if ((game.getPhase() != GamePhase.FIRING)
-                && (game.getPhase() != GamePhase.PHYSICAL)
-                && (game.getPhase() != GamePhase.TARGETING)
-                && (game.getPhase() != GamePhase.OFFBOARD)) {
+        if (!getGame().getPhase().isFiring() && !getGame().getPhase().isPhysical()
+                && !getGame().getPhase().isTargeting() && !getGame().getPhase().isOffboard()) {
             LogManager.getLogger().error("Server got attack packet in wrong phase");
             return;
         }
@@ -13090,7 +13086,7 @@ public class GameManager implements IGameManager {
             // For Bearings-only Capital Missiles, don't assign during the offboard phase
             if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-                if (aaa.getTurnsTilHit() > 0 || game.getPhase() != GamePhase.FIRING) {
+                if ((aaa.getTurnsTilHit() > 0) || !getGame().getPhase().isFiring()) {
                     continue;
                 }
             }
@@ -29049,7 +29045,7 @@ public class GameManager implements IGameManager {
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityIds.add(entity.getId());
 
-            if (game.getPhase() != GamePhase.LOUNGE) {
+            if (!getGame().getPhase().isLounge()) {
                 entity.getOwner().changeInitialEntityCount(1);
                 entity.getOwner().changeInitialBV(entity.calculateBattleValue());
             }
@@ -29225,7 +29221,7 @@ public class GameManager implements IGameManager {
      * remain unchanged but still be sent back to overwrite incorrect client changes.
      */
     private void receiveEntitiesUpdate(Packet c, int connIndex) {
-        if (game.getPhase() != GamePhase.LOUNGE) {
+        if (!getGame().getPhase().isLounge()) {
             LogManager.getLogger().error("Multi entity updates should not be used outside the lobby phase!");
         }
         Set<Entity> newEntities = new HashSet<>();
@@ -29641,7 +29637,7 @@ public class GameManager implements IGameManager {
                     } // End update-unit-number
                 } // End added-ProtoMech
 
-                if (game.getPhase() != GamePhase.DEPLOYMENT) {
+                if (!getGame().getPhase().isDeployment()) {
                     // if a unit is removed during deployment just keep going
                     // without adjusting the turn vector.
                     game.removeTurnFor(entity);
@@ -33008,7 +33004,7 @@ public class GameManager implements IGameManager {
      * let all Entities make their "break-free-of-swamp-stickyness" PSR
      */
     private void doTryUnstuck() {
-        if (game.getPhase() != GamePhase.MOVEMENT) {
+        if (!getGame().getPhase().isMovement()) {
             return;
         }
 

@@ -13,24 +13,6 @@
 */  
 package megamek.client.ui.swing.boardview;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.font.TextAttribute;
-import java.text.AttributedString;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
@@ -49,6 +31,22 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.util.ImageUtil;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.util.List;
+
 /** 
  * An overlay for the Boardview that displays a selection of Planetary Conditions
  * for the current game situation 
@@ -66,6 +64,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
     private static final float FADE_SPEED = 0.2f;
 
     ClientGUI clientGui;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /** True when the overlay is displayed or fading in. */
     private boolean visible;
@@ -101,13 +100,13 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
      * for the current game situation. 
      */
     public PlanetaryConditionsOverlay(Game game, ClientGUI cg) {
-        visible = GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY);
+        visible = GUIP.getBoolean(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY);
         currentGame = game;
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
         clientGui = cg;
         KeyBindParser.addPreferenceChangeListener(this);
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+        GUIP.addPreferenceChangeListener(this);
     }
 
     @Override
@@ -126,7 +125,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             changed = false;
             
             // calculate the size from the text lines, font and padding
-            Font newFont = FONT.deriveFont(FONT.getSize() * GUIPreferences.getInstance().getGUIScale());
+            Font newFont = FONT.deriveFont(FONT.getSize() * GUIP.getGUIScale());
             graph.setFont(newFont);
             FontMetrics fm = graph.getFontMetrics(newFont);
             List<String> allLines = assembleTextLines();
@@ -139,7 +138,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             GUIPreferences.AntiAliasifSet(intGraph);
 
             // draw a semi-transparent background rectangle
-            Color colorBG = GUIPreferences.getInstance().getPlanetaryConditionsColorBackground();
+            Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
             intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(), 200));
             intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_X);
             
@@ -190,9 +189,9 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
     private List<String> assembleTextLines() {
         List<String> result = new ArrayList<>();
 
-        Color colorTitle = GUIPreferences.getInstance().getPlanetaryConditionsColorTitle();
-        Color colorHot = GUIPreferences.getInstance().getPlanetaryConditionsColorHot();
-        Color colorCold = GUIPreferences.getInstance().getPlanetaryConditionsColorCold();
+        Color colorTitle = GUIP.getPlanetaryConditionsColorTitle();
+        Color colorHot = GUIP.getPlanetaryConditionsColorHot();
+        Color colorCold = GUIP.getPlanetaryConditionsColorCold();
 
         KeyCommandBind kcb = KeyCommandBind.PLANETARY_CONDITIONS;
         String mod = KeyEvent.getModifiersExText(kcb.modifiers);
@@ -200,7 +199,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
         String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
 
         String tmpStr = "";
-        Boolean showHeading = GUIPreferences.getInstance().getAdvancedPlanetaryConditionsShowHeader();
+        Boolean showHeading = GUIP.getAdvancedPlanetaryConditionsShowHeader();
         tmpStr = (showHeading ? String.format("#%02X%02X%02X", colorTitle.getRed(), colorTitle.getGreen(), colorTitle.getBlue()) + MessageFormat.format(MSG_HEADING, toggleKey) : "");
 
         if (tmpStr.length()  > 0) {
@@ -219,11 +218,11 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
                 tempColor = String.format("#%02X%02X%02X", colorCold.getRed(), colorCold.getGreen(), colorCold.getBlue());
             }
 
-            boolean showDefaultConditions = GUIPreferences.getInstance().getAdvancedPlanetaryConditionsShowDefaults();
+            boolean showDefaultConditions = GUIP.getAdvancedPlanetaryConditionsShowDefaults();
 
-            Boolean showLabel = GUIPreferences.getInstance().getAdvancedPlanetaryConditionsShowLabels();
-            Boolean showValue = GUIPreferences.getInstance().getAdvancedPlanetaryConditionsShowValues();
-            Boolean showIndicator = GUIPreferences.getInstance().getAdvancedPlanetaryConditionsShowIndicators();
+            Boolean showLabel = GUIP.getAdvancedPlanetaryConditionsShowLabels();
+            Boolean showValue = GUIP.getAdvancedPlanetaryConditionsShowValues();
+            Boolean showIndicator = GUIP.getAdvancedPlanetaryConditionsShowIndicators();
 
 
             if (((showDefaultConditions) || ((!showDefaultConditions) && (currentGame.getPlanetaryConditions().isExtremeTemperature())))) {
@@ -305,7 +304,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
      * otherwise TEXT_COLOR is used.
      */
     private void drawShadowedString(Graphics graph, String s, int x, int y) {
-        Color textColor = GUIPreferences.getInstance().getPlanetaryConditionsColorText();
+        Color textColor = GUIP.getPlanetaryConditionsColorText();
         // Extract a color code from the start of the string
         // used to display headlines if it's there
         if (s.startsWith("#") && s.length() > 7) {
@@ -322,7 +321,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
 
         if (s.length() > 0) {
             AttributedString text = new AttributedString(s);
-            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIPreferences.getInstance().getGUIScale())), 0, s.length());
+            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIP.getGUIScale())), 0, s.length());
 
             graph.setColor(SHADOW_COLOR);
             graph.drawString(text.getIterator(), x + 1, y + 1);
@@ -338,7 +337,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
      * */
     public void setVisible(boolean vis) {
         visible = vis;
-        GUIPreferences.getInstance().setValue(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY, vis);
+        GUIP.setValue(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY, vis);
         if (vis) {
             fadingIn = true;
             fadingOut = false;

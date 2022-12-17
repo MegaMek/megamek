@@ -21,7 +21,6 @@ package megamek.client.ui.baseComponents;
 import megamek.MegaMek;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -64,7 +63,7 @@ public abstract class AbstractDialog extends JDialog implements WindowListener {
      */
     protected AbstractDialog(final JFrame frame, final boolean modal, final String name, final String title) {
         this(frame, modal, ResourceBundle.getBundle("megamek.client.messages", 
-                MegaMek.getMMOptions().getLocale(), new EncodeControl()), name, title);
+                MegaMek.getMMOptions().getLocale()), name, title);
     }
 
     /**

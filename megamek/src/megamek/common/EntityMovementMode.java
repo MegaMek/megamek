@@ -20,7 +20,6 @@
 package megamek.common;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.List;
@@ -67,7 +66,7 @@ public enum EntityMovementMode {
     //region Constructors
     EntityMovementMode(final String name) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
     }
     //endregion Constructors

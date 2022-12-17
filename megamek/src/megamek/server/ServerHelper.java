@@ -405,7 +405,7 @@ public class ServerHelper {
 	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
         Report r;
         int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
-        boolean heatArmor =false;
+        boolean heatArmor = false;
         boolean laserHS = false;
 
         if (entity instanceof Mech) {

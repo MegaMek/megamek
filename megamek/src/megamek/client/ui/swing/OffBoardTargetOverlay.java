@@ -74,8 +74,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
      */
     private boolean shouldBeVisible() {
         // only relevant if it's our turn in the targeting phase
-        boolean visible = clientgui.getClient().isMyTurn() &&
-                getCurrentGame().getPhase().isTargeting();
+        boolean visible = clientgui.getClient().isMyTurn() && getCurrentGame().getPhase().isTargeting();
         
         if (!visible) {
             return false;

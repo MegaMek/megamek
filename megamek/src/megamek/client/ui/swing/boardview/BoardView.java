@@ -5483,7 +5483,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     }
                 }
 
-                if (game.getPhase().isMovement() &&(movementTarget != null)) {
+                if (game.getPhase().isMovement() && (movementTarget != null)) {
                     txt.append("<BR>");
                     int disPM = movementTarget.distance(mcoords);
                     if (disPM == 1) {

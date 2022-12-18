@@ -23,7 +23,7 @@ import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 
-public class Thunderbolt5Weapon extends ThunderBoltWeapon {
+public abstract class Thunderbolt5Weapon extends ThunderBoltWeapon {
 
     public Thunderbolt5Weapon() {
         super();

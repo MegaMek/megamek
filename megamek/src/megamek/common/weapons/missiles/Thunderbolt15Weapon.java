@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -19,25 +18,22 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
+import megamek.common.alphaStrike.AlphaStrikeElement;
 
-/**
- * @author Sebastian Brocks
- */
-public class ISThunderBolt10 extends Thunderbolt10Weapon {
-    private static final long serialVersionUID = 6781882739979127656L;
+public abstract class Thunderbolt15Weapon extends ThunderBoltWeapon {
 
-    public ISThunderBolt10() {
+    public Thunderbolt15Weapon() {
         super();
-        name = "Thunderbolt 10";
-        setInternalName(name);
-        addLookupName("IS Thunderbolt-10");
-        addLookupName("ISThunderbolt10");
-        addLookupName("IS Thunderbolt 10");
-        addLookupName("ISTBolt10");
-        tonnage = 7;
-        bv = 127;
-        cost = 175000;
+        ammoType = AmmoType.T_TBOLT_15;
+        heat = 7;
+        shortAV = 15;
+        medAV = 15;
+        criticals = 3;
+        missileArmor = 15;
+        rulesRefs = "347, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -48,5 +44,18 @@ public class ISThunderBolt10 extends Thunderbolt10Weapon {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS, F_LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range == AlphaStrikeElement.SHORT_RANGE) {
+            return 0.87;
+        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
+            return 1.5;
+        } else if (range == AlphaStrikeElement.LONG_RANGE) {
+            return 1.5;
+        } else {
+            return 0;
+        }
     }
 }

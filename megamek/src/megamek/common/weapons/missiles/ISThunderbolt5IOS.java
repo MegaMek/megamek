@@ -20,6 +20,10 @@ package megamek.common.weapons.missiles;
 
 import megamek.common.SimpleTechLevel;
 
+/**
+ * The Improved One-Shot Thunderbolt 5
+ * @author Simon (Juliez)
+ */
 public class ISThunderbolt5IOS extends Thunderbolt5Weapon {
 
     public ISThunderbolt5IOS() {

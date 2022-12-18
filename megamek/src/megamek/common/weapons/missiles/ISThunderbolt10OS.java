@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -22,22 +21,23 @@ package megamek.common.weapons.missiles;
 import megamek.common.SimpleTechLevel;
 
 /**
- * @author Sebastian Brocks
+ * The One-Shot Thunderbolt 10
+ * @author Simon (Juliez)
  */
-public class ISThunderBolt10 extends Thunderbolt10Weapon {
-    private static final long serialVersionUID = 6781882739979127656L;
+public class ISThunderbolt10OS extends Thunderbolt10Weapon {
 
-    public ISThunderBolt10() {
+    public ISThunderbolt10OS() {
         super();
-        name = "Thunderbolt 10";
+        name = "Thunderbolt-10 (OS)";
         setInternalName(name);
-        addLookupName("IS Thunderbolt-10");
-        addLookupName("ISThunderbolt10");
-        addLookupName("IS Thunderbolt 10");
-        addLookupName("ISTBolt10");
-        tonnage = 7;
-        bv = 127;
-        cost = 175000;
+        addLookupName("IS OS Thunderbolt-10");
+        addLookupName("ISThunderbolt10 (OS)");
+        addLookupName("IS Thunderbolt 10 (OS)");
+        addLookupName("ISTBolt10OS");
+        tonnage = 7.5;
+        bv = 25;
+        cost = 87500;
+        flags = flags.or(F_ONESHOT);
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)

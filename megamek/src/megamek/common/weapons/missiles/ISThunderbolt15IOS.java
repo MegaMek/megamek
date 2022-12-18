@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -20,21 +19,22 @@
 package megamek.common.weapons.missiles;
 
 /**
- * @author Sebastian Brocks
+ * The Improved One-Shot Thunderbolt 15
+ * @author Simon (Juliez)
  */
-public class ISThunderBolt20 extends Thunderbolt20Weapon {
-    private static final long serialVersionUID = -6976091682813292840L;
+public class ISThunderbolt15IOS extends Thunderbolt15Weapon {
 
-    public ISThunderBolt20() {
+    public ISThunderbolt15IOS() {
         super();
-        name = "Thunderbolt 20";
+        name = "Thunderbolt-15 (I-OS)";
         setInternalName(name);
-        addLookupName("IS Thunderbolt-20");
-        addLookupName("ISThunderbolt20");
-        addLookupName("ISTBolt20");
-        addLookupName("IS Thunderbolt 20");
-        tonnage = 15;
-        bv = 305;
-        cost = 450000;
+        addLookupName("IS IOS Thunderbolt-15");
+        addLookupName("ISThunderbolt15 (IOS)");
+        addLookupName("IS Thunderbolt 15 (IOS)");
+        addLookupName("ISTBolt15IOS");
+        tonnage = 10.5;
+        bv = 46;
+        cost = 260000;
+        flags = flags.or(F_ONESHOT);
     }
 }

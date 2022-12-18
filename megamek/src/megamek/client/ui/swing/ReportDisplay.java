@@ -106,6 +106,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             panButtons.add(new JLabel(""));
         }
         panelTop.add(panButtons, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+        panelTop.setMinimumSize(new Dimension(0, 0));
         splitPaneMain.setTopComponent(panelTop);
         add(splitPaneMain);
 

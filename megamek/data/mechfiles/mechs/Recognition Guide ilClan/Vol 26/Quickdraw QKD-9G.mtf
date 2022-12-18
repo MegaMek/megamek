@@ -1,0 +1,166 @@
+Version:1.3
+Quickdraw
+QKD-9G
+mul id:9320
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3144
+source:Rec Guide:ilClan #26 - Dark Age
+rules level:2
+
+mass:60
+engine:300 Light Engine(IS)
+structure:Clan Endo Steel
+myomer:Standard
+
+heat sinks:12 IS Double
+walk mp:5
+jump mp:5
+
+armor:Ferro-Fibrous(Inner Sphere)
+LA armor:17
+RA armor:17
+LT armor:20
+RT armor:20
+CT armor:26
+HD armor:9
+LL armor:24
+RL armor:24
+RTL armor:7
+RTR armor:7
+RTC armor:8
+
+Weapons:7
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+Streak SRM 4, Center Torso
+Streak SRM 6, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Streak SRM 4, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+Clan Endo Steel
+Clan Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+Clan Endo Steel
+Clan Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM4
+Clan Streak SRM 6 Ammo
+Clan Streak SRM 4 Ammo
+ISCASEII
+Clan Endo Steel
+IS Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Medium Laser (R)
+Medium Laser (R)
+ISMASC
+ISMASC
+ISMASC
+ISTargeting Computer
+Supercharger
+IS Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+CLStreakSRM4
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+IS Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Few business decisions have been as questionable as those that lead to the original reasoning for the Quickdraw. Intended to replace the Rifleman, the Quickdraw lacked any of the capabilities that made the Rifleman such a popular fire support platform. Had the Star League stood for longer, perhaps the Quickdraw would have faded into obscurity, but the rapid start of the Succession Wars only seven years after the Quickdraw's introduction instead sent it into the armies of every Great House. There it created its own legacy as a generalist workhouse, able to fill many different roles with its maneuverable movement profile and varied armament.
+capabilities: Many Quickdraw variants carry weapons for every angle, including rarely seen rear-mount firepower. With its specially-modified arm actuators allowing it to flip its arms towards the rear, the Quickdraw is well suited for forays in the midst of an enemy formation. Pilots must be cautious of the Quickdraw's fragility in physical combat, however. The ankle actuators, though allowing the Quickdraw unparalleled stability on uneven ground, are susceptible to damage that can quickly paralize the BattleMech.
+deployment: The Quickdraw shows few favorites, and has notable concentrations in most armies of the Inner Sphere. The Draconis Combine and Free Worlds League are both home to manufacturing lines for the design, and the 'Mech tends to be a more common sight in most of their formations as a result. Unlike many other lower-technology BattleMechs, the Quickdraw QKD-4G survived through the worst of the fighting of the past century, and remains common even in this post-Jihad world.
+manufacturer:Technicron Manufacturing
+primaryfactory:Savannah
+systemmanufacturer:CHASSIS:Unknown
+systemmanufacturer:ENGINE:Unknown
+systemmanufacturer:ARMOR:Unknown
+systemmanufacturer:COMMUNICATIONS:Garret
+systemmode:COMMUNICATIONS:T12E
+systemmanufacturer:TARGETING:Dynatec
+systemmode:TARGETING:2180
+

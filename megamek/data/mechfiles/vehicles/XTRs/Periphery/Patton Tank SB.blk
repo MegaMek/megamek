@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -13,10 +13,11 @@ Tank
 </UnitType>
 
 <Name>
-Patton Tank-SB
+Patton Tank
 </Name>
 
 <Model>
+-SB
 </Model>
 
 <mul id:>
@@ -27,6 +28,10 @@ Patton Tank-SB
 3079
 </year>
 
+<originalBuildYear>
+3079
+</originalBuildYear>
+
 <type>
 IS Level 4
 </type>
@@ -34,6 +39,9 @@ IS Level 4
 <motion_type>
 Tracked
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 4
@@ -94,3 +102,4 @@ XTRO Periphery - Jihad
 <tonnage>
 65.0
 </tonnage>
+

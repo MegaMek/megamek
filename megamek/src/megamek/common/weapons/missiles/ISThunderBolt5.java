@@ -19,15 +19,12 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.AmmoType;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 
 /**
  * @author Sebastian Brocks
  */
-public class ISThunderBolt5 extends ThunderBoltWeapon {
+public class ISThunderBolt5 extends Thunderbolt5Weapon {
     private static final long serialVersionUID = 5295837076559643763L;
 
     public ISThunderBolt5() {
@@ -37,24 +34,9 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         addLookupName("IS Thunderbolt-5");
         addLookupName("ISThunderbolt5");
         addLookupName("IS Thunderbolt 5");
-        sortingName = "Thunderbolt 05";
-        ammoType = AmmoType.T_TBOLT_5;
-        heat = 3;
-        minimumRange = 5;
-        shortRange = 6;
-        mediumRange = 12;
-        longRange = 18;
-        extremeRange = 24;
-        shortAV = 5;
-        medAV = 5;
-        maxRange = RANGE_MED;
         tonnage = 3.0;
-        criticals = 1;
         bv = 64;
         cost = 50000;
-        flags = flags.or(F_LARGEMISSILE);
-        this.missileArmor = 5;
-        rulesRefs = "347, TO";
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
@@ -66,18 +48,5 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS, F_LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    }
-
-    @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range == AlphaStrikeElement.SHORT_RANGE) {
-            return 0.29;
-        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
-            return 0.5;
-        } else if (range == AlphaStrikeElement.LONG_RANGE) {
-            return 0.5;
-        } else {
-            return 0;
-        }
     }
 }

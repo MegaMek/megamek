@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -19,35 +18,22 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.AmmoType;
 import megamek.common.SimpleTechLevel;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.Mounted;
 
-/**
- * @author Sebastian Brocks
- */
-public class ISThunderBolt20 extends ThunderBoltWeapon {
-    private static final long serialVersionUID = -6976091682813292840L;
+public class ISThunderbolt5IOS extends Thunderbolt5Weapon {
 
-    public ISThunderBolt20() {
+    public ISThunderbolt5IOS() {
         super();
-        name = "Thunderbolt 20";
+        name = "Thunderbolt-5 (I-OS)";
         setInternalName(name);
-        addLookupName("IS Thunderbolt-20");
-        addLookupName("ISThunderbolt20");
-        addLookupName("ISTBolt20");
-        addLookupName("IS Thunderbolt 20");
-        ammoType = AmmoType.T_TBOLT_20;
-        heat = 8;
-        shortAV = 20;
-        medAV = 20;
-        tonnage = 15.0;
-        criticals = 5;
-        bv = 305;
-        cost = 450000;
-        missileArmor = 20;
-        rulesRefs = "347, TO";
+        addLookupName("IS IOS Thunderbolt-5");
+        addLookupName("ISThunderbolt5 (IOS)");
+        addLookupName("IS Thunderbolt 5 (IOS)");
+        tonnage = 2.5;
+        bv = 13;
+        cost = 40000;
+        flags = flags.or(F_ONESHOT);
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -58,18 +44,5 @@ public class ISThunderBolt20 extends ThunderBoltWeapon {
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS, F_LC)
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    }
-
-    @Override
-    public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range == AlphaStrikeElement.SHORT_RANGE) {
-            return 1.16;
-        } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
-            return 2;
-        } else if (range == AlphaStrikeElement.LONG_RANGE) {
-            return 2;
-        } else {
-            return 0;
-        }
     }
 }

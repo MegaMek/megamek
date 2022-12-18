@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.Game;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -27,46 +26,27 @@ import megamek.server.GameManager;
  * @author Sebastian Brocks
  */
 public abstract class ThunderBoltWeapon extends MissileWeapon {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 3496376576886743383L;
 
-    /**
-     * 
-     */
     public ThunderBoltWeapon() {
         super();
-        this.rackSize = 1;
+        rackSize = 1;
+        minimumRange = 5;
+        shortRange = 6;
+        mediumRange = 12;
+        longRange = 18;
+        extremeRange = 24;
+        maxRange = RANGE_MED;
+        flags = flags.or(F_LARGEMISSILE);
         atClass = CLASS_THUNDERBOLT;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game)
-     */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, Game game, GameManager manager) {
         return new ThunderBoltWeaponHandler(toHit, waa, game, manager);
     }
 
-    @Override
-    public double getBattleForceDamage(int range) {
-        double damage = 0;
-        if (range <= getLongRange()) {
-            damage = getRackSize();
-            if ((range == AlphaStrikeElement.SHORT_RANGE) && (getMinimumRange() > 0)) {
-                damage = adjustBattleForceDamageForMinRange(damage);
-            }
-        }
-        return damage / 10.0;
-    }
-    
     @Override
     public boolean hasIndirectFire() {
         return true;

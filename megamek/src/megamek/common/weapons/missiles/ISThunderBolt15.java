@@ -40,20 +40,13 @@ public class ISThunderBolt15 extends ThunderBoltWeapon {
         addLookupName("ISTBolt15");
         ammoType = AmmoType.T_TBOLT_15;
         heat = 7;
-        minimumRange = 5;
-        shortRange = 6;
-        mediumRange = 12;
-        longRange = 18;
-        extremeRange = 24;
         shortAV = 15;
         medAV = 15;
-        maxRange = RANGE_MED;
         tonnage = 11.0;
         criticals = 3;
         bv = 229;
         cost = 325000;
-        flags = flags.or(F_LARGEMISSILE);
-        this.missileArmor = 15;
+        missileArmor = 15;
         rulesRefs = "347, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

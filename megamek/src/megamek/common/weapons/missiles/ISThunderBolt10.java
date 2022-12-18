@@ -28,15 +28,8 @@ import megamek.common.SimpleTechLevel;
  * @author Sebastian Brocks
  */
 public class ISThunderBolt10 extends ThunderBoltWeapon {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 6781882739979127656L;
 
-    /**
-     *
-     */
     public ISThunderBolt10() {
         super();
         name = "Thunderbolt 10";
@@ -47,20 +40,13 @@ public class ISThunderBolt10 extends ThunderBoltWeapon {
         addLookupName("ISTBolt10");
         ammoType = AmmoType.T_TBOLT_10;
         heat = 5;
-        minimumRange = 5;
-        shortRange = 6;
-        mediumRange = 12;
-        longRange = 18;
-        extremeRange = 24;
         shortAV = 10;
         medAV = 10;
-        maxRange = RANGE_MED;
         tonnage = 7.0;
         criticals = 2;
         bv = 127;
         cost = 175000;
-        flags = flags.or(F_LARGEMISSILE);
-        this.missileArmor = 10;
+        missileArmor = 10;
         rulesRefs = "347, TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)

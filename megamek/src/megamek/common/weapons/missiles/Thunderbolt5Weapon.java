@@ -1,5 +1,4 @@
 /*
- * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2022 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
@@ -20,34 +19,23 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
+import megamek.common.Mounted;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.Mounted;
 
-/**
- * @author Sebastian Brocks
- */
-public class ISThunderBolt20 extends ThunderBoltWeapon {
-    private static final long serialVersionUID = -6976091682813292840L;
+public class Thunderbolt5Weapon extends ThunderBoltWeapon {
 
-    public ISThunderBolt20() {
+    public Thunderbolt5Weapon() {
         super();
-        name = "Thunderbolt 20";
-        setInternalName(name);
-        addLookupName("IS Thunderbolt-20");
-        addLookupName("ISThunderbolt20");
-        addLookupName("ISTBolt20");
-        addLookupName("IS Thunderbolt 20");
-        ammoType = AmmoType.T_TBOLT_20;
-        heat = 8;
-        shortAV = 20;
-        medAV = 20;
-        tonnage = 15.0;
-        criticals = 5;
-        bv = 305;
-        cost = 450000;
-        missileArmor = 20;
+        sortingName = "Thunderbolt 05";
+        ammoType = AmmoType.T_TBOLT_5;
+        heat = 3;
+        shortAV = 5;
+        medAV = 5;
+        criticals = 1;
+        missileArmor = 5;
         rulesRefs = "347, TO";
+        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TECH_BASE_IS)
                 .setIntroLevel(false)
                 .setUnofficial(false)
@@ -63,11 +51,11 @@ public class ISThunderBolt20 extends ThunderBoltWeapon {
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
         if (range == AlphaStrikeElement.SHORT_RANGE) {
-            return 1.16;
+            return 0.29;
         } else if (range == AlphaStrikeElement.MEDIUM_RANGE) {
-            return 2;
+            return 0.5;
         } else if (range == AlphaStrikeElement.LONG_RANGE) {
-            return 2;
+            return 0.5;
         } else {
             return 0;
         }

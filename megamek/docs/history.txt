@@ -20,7 +20,7 @@ VERSION HISTORY:
 + Issue #2757: Bulletproofing for when DFA target is eliminated prior to DFA resolution
 + Issue #3902: Advantages display on the bottom of unit info card
 + Issue #2715: Tooltip displays original vs modified movement due to planetary conditions
-+ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867
++ Data: Updated sprites and camos. Data fixes for #3962, #3913, #3907, #3905, #3933, #3867
 + Data: TP Foster RATS #3930 - Thanks Stonewall072
 + PR #3970: AS conversion fixes
 + Issue #3414: Add option to adjust the seen by in the unit tool tip

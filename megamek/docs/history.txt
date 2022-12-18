@@ -57,6 +57,7 @@ VERSION HISTORY:
 + PR #4049: Player Java 17 Support
 + PR #4055: Expand FOV Highlight Disk Size Option Dimension for Display Scaling
 + PR #4057: Allow Report Display Split Pane to Resize
++ Issue #4058: Fixing Default Fluff Image Paths
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3

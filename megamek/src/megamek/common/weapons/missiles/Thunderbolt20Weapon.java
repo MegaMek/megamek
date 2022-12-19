@@ -33,17 +33,6 @@ public abstract class Thunderbolt20Weapon extends ThunderBoltWeapon {
         medAV = 20;
         criticals = 5;
         missileArmor = 20;
-        rulesRefs = "347, TO";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS, F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override
@@ -57,5 +46,14 @@ public abstract class Thunderbolt20Weapon extends ThunderBoltWeapon {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS" : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS";
+        }
+        return "Thunderbolt-" + oneShotTag + "20";
     }
 }

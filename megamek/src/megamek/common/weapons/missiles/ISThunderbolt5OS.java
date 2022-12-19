@@ -18,17 +18,15 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.SimpleTechLevel;
-
 /**
  * The One-Shot Thunderbolt 5
  * @author Simon (Juliez)
  */
-public class ISThunderbolt5OS extends ThunderBoltWeapon {
+public class ISThunderbolt5OS extends Thunderbolt5Weapon {
 
     public ISThunderbolt5OS() {
         super();
-        name = "Thunderbolt-5 (OS)";
+        name = "Thunderbolt 5 (OS)";
         setInternalName(name);
         addLookupName("IS OS Thunderbolt-5");
         addLookupName("ISThunderbolt5 (OS)");
@@ -38,15 +36,12 @@ public class ISThunderbolt5OS extends ThunderBoltWeapon {
         cost = 25000;
         flags = flags.or(F_ONESHOT);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS, F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        techAdvancement.setISAdvancement(2665, 2676, 3045, 2800, 3030)
+                .setISApproximate(true, false, false, false, false)
+                .setClanAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
+                .setClanApproximate(true, false, false, false, false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_FW);
     }
 }

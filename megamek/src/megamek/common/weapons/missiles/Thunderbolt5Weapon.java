@@ -27,25 +27,12 @@ public abstract class Thunderbolt5Weapon extends ThunderBoltWeapon {
 
     public Thunderbolt5Weapon() {
         super();
-        sortingName = "Thunderbolt 05";
         ammoType = AmmoType.T_TBOLT_5;
         heat = 3;
         shortAV = 5;
         medAV = 5;
         criticals = 1;
         missileArmor = 5;
-        rulesRefs = "347, TO";
-        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS, F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override
@@ -59,5 +46,14 @@ public abstract class Thunderbolt5Weapon extends ThunderBoltWeapon {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public String getSortingName() {
+        String oneShotTag = hasFlag(F_ONESHOT) ? "OS" : "";
+        if (name.contains("I-OS")) {
+            oneShotTag = "XIOS";
+        }
+        return "Thunderbolt-" + oneShotTag + "05";
     }
 }

@@ -26,7 +26,7 @@ public class ISThunderbolt15IOS extends Thunderbolt15Weapon {
 
     public ISThunderbolt15IOS() {
         super();
-        name = "Thunderbolt-15 (I-OS)";
+        name = "Thunderbolt 15 (I-OS)";
         setInternalName(name);
         addLookupName("IS IOS Thunderbolt-15");
         addLookupName("ISThunderbolt15 (IOS)");

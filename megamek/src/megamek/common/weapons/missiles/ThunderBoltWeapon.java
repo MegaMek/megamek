@@ -20,6 +20,7 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.Game;
+import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -45,6 +46,17 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
         maxRange = RANGE_MED;
         flags = flags.or(F_LARGEMISSILE);
         atClass = CLASS_THUNDERBOLT;
+        rulesRefs = "159, TO:AUE";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS, F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

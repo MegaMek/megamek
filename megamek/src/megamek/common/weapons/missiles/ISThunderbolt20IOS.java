@@ -35,5 +35,6 @@ public class ISThunderbolt20IOS extends Thunderbolt20Weapon {
         tonnage = 14.5;
         bv = 61;
         cost = 360000;
+        flags = flags.or(F_ONESHOT);
     }
 }

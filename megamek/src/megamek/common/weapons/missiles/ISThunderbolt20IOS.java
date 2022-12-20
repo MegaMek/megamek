@@ -18,6 +18,7 @@
  */
 package megamek.common.weapons.missiles;
 
+import megamek.common.SimpleTechLevel;
 /**
  * The Improved One-Shot Thunderbolt 20
  * @author Simon (Juliez)
@@ -36,5 +37,15 @@ public class ISThunderbolt20IOS extends Thunderbolt20Weapon {
         bv = 61;
         cost = 360000;
         flags = flags.or(F_ONESHOT);
+        techAdvancement.setTechBase(TECH_BASE_IS)
+                .setIntroLevel(false)
+                .setUnofficial(false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_FS)
+                .setProductionFactions(F_FS, F_LC)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 }

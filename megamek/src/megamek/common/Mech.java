@@ -824,17 +824,21 @@ public abstract class Mech extends Entity {
         return false;
     }
 
-    /**
-     * does this mech have SCM?
-     */
+    /** @return True when this unit has a RISC Super-Cooled Myomer System (even if the SCM is destroyed). */
     public boolean hasSCM() {
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_SCM)) {
-                return true;
-            }
-        }
-        return false;
+        return miscList.stream().anyMatch(m -> m.is(EquipmentTypeLookup.SCM));
+    }
+
+    /** @return True when this unit has an operable RISC Super-Cooled Myomer System. */
+    public boolean hasWorkingSCM() {
+        return miscList.stream().filter(m -> m.is(EquipmentTypeLookup.SCM)).anyMatch(Mounted::isOperable);
+    }
+
+    public long DestroyedSCMCritCount() {
+        return miscList.stream()
+                .filter(m -> m.is(EquipmentTypeLookup.SCM))
+                .filter(Mounted::isInoperable)
+                .count();
     }
 
     /**
@@ -1169,8 +1173,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getSprintHeat() {
-        int extra = bDamagedCoolantSystem?1:0;
-        return extra + (hasEngine() ? getEngine().getSprintHeat() : 0);
+        int extra = bDamagedCoolantSystem ? 1 : 0;
+        return extra + (hasEngine() ? getEngine().getSprintHeat(this) : 0);
     }
 
     /**
@@ -1667,8 +1671,7 @@ public abstract class Mech extends Entity {
         return "Heat Sink";
     }
 
-    public int getHeatCapacity(boolean includePartialWing,
-            boolean includeRadicalHeatSink) {
+    public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
         int activeCount = getActiveSinks();
 
@@ -1707,8 +1710,9 @@ public abstract class Mech extends Entity {
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
+        capacity -= DestroyedSCMCritCount();
 
-        return capacity;
+        return Math.max(capacity, 0);
     }
 
     /**

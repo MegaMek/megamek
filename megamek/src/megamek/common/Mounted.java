@@ -630,8 +630,32 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
     }
 
+    /**
+     * Returns true when this Mounted is not destroyed nor located in a blown-off
+     * or breached location. Does not check any other conditions such as DWP mounting or prior use.
+     * Also does not check if this mounted has been hit in this phase.
+     * This is equivalent to !{@link #isInoperable()}.
+     *
+     * @return True when this Mounted is operable
+     */
+    public boolean isOperable() {
+        return !isInoperable();
+    }
+
+    /**
+     * Returns true when this Mounted destroyed or located in a blown-off
+     * or breached location. Does not check any other conditions such as DWP mounting or prior use.
+     * Also does not check if this mounted has been hit in this phase.
+     * Equivalent to !{@link #isOperable()}.
+     *
+     * @return True when this Mounted is operable
+     */
     public boolean isInoperable() {
         return destroyed || missing || useless;
+    }
+
+    public boolean is(String typeInternalName) {
+        return getType().getInternalName().equals(typeInternalName);
     }
 
     public boolean isHit() {

@@ -116,7 +116,7 @@ public abstract class BotClient extends Client {
 
             @Override
             public void gameReport(GameReportEvent e) {
-                if (game.getPhase() == GamePhase.INITIATIVE_REPORT) {
+                if (game.getPhase().isInitiativeReport()) {
                     // Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
@@ -506,7 +506,7 @@ public abstract class BotClient extends Client {
         currentTurnFriendlyEntities = null;
 
         try {
-            if (game.getPhase() == GamePhase.MOVEMENT) {
+            if (game.getPhase().isMovement()) {
                 MovePath mp;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game.getTurn();
@@ -521,37 +521,34 @@ public abstract class BotClient extends Client {
                     }
                 }
                 moveEntity(mp.getEntity().getId(), mp);
-            } else if (game.getPhase() == GamePhase.FIRING) {
+            } else if (game.getPhase().isFiring()) {
                 calculateFiringTurn();
-            } else if (game.getPhase() == GamePhase.PHYSICAL) {
+            } else if (game.getPhase().isPhysical()) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
                 if (null != po) {
                     sendAttackData(po.attacker.getId(), po.getVector());
                 } else {
                     // Send a "no attack" to clear the game turn, if any.
-                    sendAttackData(game.getFirstEntityNum(getMyTurn()),
-                                   new Vector<>(0));
+                    sendAttackData(game.getFirstEntityNum(getMyTurn()), new Vector<>(0));
                 }
-            } else if (game.getPhase() == GamePhase.DEPLOYMENT) {
+            } else if (game.getPhase().isDeployment()) {
                 calculateDeployment();
-            } else if (game.getPhase() == GamePhase.DEPLOY_MINEFIELDS) {
+            } else if (game.getPhase().isDeployMinefields()) {
                 Vector<Minefield> mines = calculateMinefieldDeployment();
                 for (Minefield mine : mines) {
                     game.addMinefield(mine);
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
-            } else if (game.getPhase() == GamePhase.SET_ARTILLERY_AUTOHIT_HEXES) {
+            } else if (game.getPhase().isSetArtilleryAutohitHexes()) {
                 // For now, declare no autohit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
-            } else if ((game.getPhase() == GamePhase.TARGETING)
-                       || (game.getPhase() == GamePhase.OFFBOARD)) {
+            } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
                 // Princess implements arty targeting
                 calculateTargetingOffBoardTurn();
-            } else if ((game.getPhase() == GamePhase.PREMOVEMENT)
-                    || (game.getPhase() == GamePhase.PREFIRING)) {
+            } else if (game.getPhase().isPremovement() || game.getPhase().isPrefiring()) {
                 calculatePrephaseTurn();
             }
             

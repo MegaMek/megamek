@@ -39,6 +39,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.EmailService;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -443,12 +444,6 @@ public class GameManager implements IGameManager {
         if (sFile.endsWith(".gz")) {
             sFile = sFile.replace(".gz", "");
         }
-        XStream xstream = new XStream();
-
-        // This will make save games much smaller
-        // by using a more efficient means of referencing
-        // objects in the XML graph
-        xstream.setMode(XStream.ID_REFERENCES);
 
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
@@ -464,8 +459,7 @@ public class GameManager implements IGameManager {
         try (OutputStream os = new FileOutputStream(sFinalFile + ".gz");
              OutputStream gzo = new GZIPOutputStream(os);
              Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
-
-            xstream.toXML(getGame(), writer);
+            SerializationHelper.getSaveGameXStream().toXML(getGame(), writer);
         } catch (Exception e) {
             LogManager.getLogger().error("Unable to save file: " + sFinalFile, e);
         }
@@ -673,14 +667,12 @@ public class GameManager implements IGameManager {
 
             // LOUNGE triggers a Game.reset() on the client, which wipes out
             // the PlanetaryCondition, so resend
-            if (game.getPhase() == GamePhase.LOUNGE) {
+            if (game.getPhase().isLounge()) {
                 send(connId, createPlanetaryConditionsPacket());
             }
 
-            if ((game.getPhase() == GamePhase.FIRING)
-                    || (game.getPhase() == GamePhase.TARGETING)
-                    || (game.getPhase() == GamePhase.OFFBOARD)
-                    || (game.getPhase() == GamePhase.PHYSICAL)) {
+            if (game.getPhase().isFiring() || game.getPhase().isTargeting()
+                    || game.getPhase().isOffboard() || game.getPhase().isPhysical()) {
                 // can't go above, need board to have been sent
                 send(connId, createAttackPacket(getGame().getActionsVector(), 0));
                 send(connId, createAttackPacket(getGame().getChargesVector(), 1));
@@ -688,11 +680,10 @@ public class GameManager implements IGameManager {
                 send(connId, createAttackPacket(getGame().getTeleMissileAttacksVector(), 1));
             }
 
-            if (game.getPhase().hasTurns() && game.hasMoreTurns()) {
+            if (getGame().getPhase().hasTurns() && getGame().hasMoreTurns()) {
                 send(connId, createTurnVectorPacket());
                 send(connId, createTurnIndexPacket(connId));
-            } else if ((game.getPhase() != GamePhase.LOUNGE)
-                    && (game.getPhase() != GamePhase.STARTING_SCENARIO)) {
+            } else if (!getGame().getPhase().isLounge() && !getGame().getPhase().isStartingScenario()) {
                 endCurrentPhase();
             }
 
@@ -1086,7 +1077,7 @@ public class GameManager implements IGameManager {
 
             // reset done to false
 
-            if (phase == GamePhase.DEPLOYMENT) {
+            if (phase.isDeployment()) {
                 entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
             } else {
                 entity.setDone(false);
@@ -1386,8 +1377,8 @@ public class GameManager implements IGameManager {
         }
 
         // need at least one entity in the game for the lounge phase to end
-        if (!game.getPhase().hasTurns() && ((game.getPhase() != GamePhase.LOUNGE)
-                || (game.getNoOfEntities() > 0))) {
+        if (!getGame().getPhase().hasTurns()
+                && (!getGame().getPhase().isLounge() || (getGame().getNoOfEntities() > 0))) {
             endCurrentPhase();
         }
     }
@@ -1431,22 +1422,15 @@ public class GameManager implements IGameManager {
         final int playerId = null == entityUsed ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
         boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
-                && ((currPhase == GamePhase.MOVEMENT)
-                || (currPhase == GamePhase.DEPLOYMENT)
-                || (currPhase == GamePhase.INITIATIVE));
+                && (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
         boolean protosMoved = entityUsed instanceof Protomech;
         boolean protosMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean tanksMoved = entityUsed instanceof Tank;
-        boolean tanksMoveMulti = gameOpts.booleanOption(
-                OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
-                && ((currPhase == GamePhase.MOVEMENT)
-                || (currPhase == GamePhase.DEPLOYMENT)
-                || (currPhase == GamePhase.INITIATIVE));
+        boolean tanksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
+                && (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
         boolean meksMoved = entityUsed instanceof Mech;
         boolean meksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
-                && ((currPhase == GamePhase.MOVEMENT)
-                || (currPhase == GamePhase.DEPLOYMENT)
-                || (currPhase == GamePhase.INITIATIVE));
+                && (currPhase.isMovement() || currPhase.isDeployment() || currPhase.isInitiative());
 
         // If infantry or protos move multi see if any
         // other unit types can move in the current turn.
@@ -2498,8 +2482,8 @@ public class GameManager implements IGameManager {
      * allow the other players to skip that player.
      */
     private void changeToNextTurn(int prevPlayerId) {
-        boolean minefieldPhase = game.getPhase() == GamePhase.DEPLOY_MINEFIELDS;
-        boolean artyPhase = game.getPhase() == GamePhase.SET_ARTILLERY_AUTOHIT_HEXES;
+        boolean minefieldPhase = game.getPhase().isDeployMinefields();
+        boolean artyPhase = game.getPhase().isSetArtilleryAutohitHexes();
 
         GameTurn nextTurn = null;
         Entity nextEntity = null;
@@ -2720,7 +2704,7 @@ public class GameManager implements IGameManager {
 
         // Stranded units only during movement phases, rebuild the turns vector
         // TODO maybe move this to Premovemnt?
-        if (game.getPhase() == GamePhase.MOVEMENT) {
+        if (game.getPhase().isMovement()) {
             // See if there are any loaded units stranded on immobile transports.
             Iterator<Entity> strandedUnits = game.getSelectedEntities(
                     entity -> game.isEntityStranded(entity));
@@ -2815,40 +2799,31 @@ public class GameManager implements IGameManager {
         }
         // and/or deploy even according to game options.
         boolean infMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_EVEN)
-                && ((game.getPhase() == GamePhase.INITIATIVE)
-                || (game.getPhase() == GamePhase.MOVEMENT)))
+                && (game.getPhase().isInitiative() || game.getPhase().isMovement()))
                 || (game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN)
-                && (game.getPhase() == GamePhase.DEPLOYMENT));
-        boolean infMoveMulti = game.getOptions()
-                .booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
-                && ((game.getPhase() == GamePhase.INITIATIVE)
-                || ((game.getPhase() == GamePhase.MOVEMENT)
-                || (game.getPhase() == GamePhase.DEPLOYMENT)));
-        boolean protosMoveEven = (game.getOptions().booleanOption(
-                OptionsConstants.INIT_PROTOS_MOVE_EVEN)
-                && ((game.getPhase() == GamePhase.INITIATIVE)
-                || ((game.getPhase() == GamePhase.MOVEMENT)
-                || (game.getPhase() == GamePhase.DEPLOYMENT))))
+                        && game.getPhase().isDeployment());
+        boolean infMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
+                && (game.getPhase().isInitiative() || game.getPhase().isMovement()
+                        || game.getPhase().isDeployment());
+        boolean protosMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)
+                && (game.getPhase().isInitiative() || game.getPhase().isMovement()
+                        || game.getPhase().isDeployment()))
                 || (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN)
-                && (game.getPhase() == GamePhase.DEPLOYMENT));
-        boolean protosMoveMulti = game.getOptions().booleanOption(
-                OptionsConstants.INIT_PROTOS_MOVE_MULTI);
+                        && game.getPhase().isDeployment());
+        boolean protosMoveMulti = game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean protosMoveByPoint = !protosMoveMulti;
-        boolean tankMoveByLance = game.getOptions().booleanOption(
-                OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
-                && ((game.getPhase() == GamePhase.INITIATIVE)
-                || ((game.getPhase() == GamePhase.MOVEMENT)
-                || (game.getPhase() == GamePhase.DEPLOYMENT)));
-        boolean mekMoveByLance = game.getOptions().booleanOption(
-                OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
-                && ((game.getPhase() == GamePhase.INITIATIVE)
-                || ((game.getPhase() == GamePhase.MOVEMENT)
-                || (game.getPhase() == GamePhase.DEPLOYMENT)));
+        boolean tankMoveByLance = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
+                && (game.getPhase().isInitiative() || game.getPhase().isMovement()
+                        || game.getPhase().isDeployment());
+        boolean mekMoveByLance = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
+                && (game.getPhase().isInitiative() || game.getPhase().isMovement()
+                        || game.getPhase().isDeployment());
 
         int evenMask = 0;
         if (infMoveEven) {
             evenMask += GameTurn.CLASS_INFANTRY;
         }
+
         if (protosMoveEven) {
             evenMask += GameTurn.CLASS_PROTOMECH;
         }
@@ -2910,28 +2885,22 @@ public class GameManager implements IGameManager {
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
                 if ((entity instanceof SpaceStation)
-                        && ((game.getPhase() == GamePhase.MOVEMENT)
-                        || (game.getPhase() == GamePhase.DEPLOYMENT))) {
+                        && (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementSpaceStationTurns();
                 } else if ((entity instanceof Warship)
-                        && ((game.getPhase() == GamePhase.MOVEMENT)
-                        || (game.getPhase() == GamePhase.DEPLOYMENT))) {
+                        && (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementWarshipTurns();
                 } else if ((entity instanceof Jumpship)
-                        && ((game.getPhase() == GamePhase.MOVEMENT)
-                        || (game.getPhase() == GamePhase.DEPLOYMENT))) {
+                        && (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementJumpshipTurns();
                 } else if ((entity instanceof Dropship) && entity.isAirborne()
-                        && ((game.getPhase() == GamePhase.MOVEMENT)
-                        || (game.getPhase() == GamePhase.DEPLOYMENT))) {
+                        && (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementDropshipTurns();
                 } else if ((entity instanceof SmallCraft) && entity.isAirborne()
-                        && ((game.getPhase() == GamePhase.MOVEMENT)
-                        || (game.getPhase() == GamePhase.DEPLOYMENT))) {
+                        && (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementSmallCraftTurns();
                 } else if (entity.isAirborne()
-                        && ((game.getPhase() == GamePhase.MOVEMENT)
-                        || (game.getPhase() == GamePhase.DEPLOYMENT))) {
+                        && (game.getPhase().isMovement() || game.getPhase().isDeployment())) {
                     player.incrementAeroTurns();
                 } else if ((entity instanceof Infantry)) {
                     if (infMoveEven) {
@@ -3124,7 +3093,7 @@ public class GameManager implements IGameManager {
         if (!abbreviatedReport) {
             r = new Report(1210);
             r.type = Report.PUBLIC;
-            if ((game.getLastPhase() == GamePhase.DEPLOYMENT) || game.isDeploymentComplete()
+            if (game.getLastPhase().isDeployment() || game.isDeploymentComplete()
                     || !game.shouldDeployThisRound()) {
                 r.messageId = 1000;
                 r.add(game.getRoundCount());
@@ -3221,7 +3190,7 @@ public class GameManager implements IGameManager {
                     r = new Report(1021, Report.PUBLIC);
                     if ((game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN)
                             || game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN))
-                            && !(game.getLastPhase() == GamePhase.END_REPORT)) {
+                            && !game.getLastPhase().isEndReport()) {
                         r.choose(true);
                     } else {
                         r.choose(false);
@@ -3407,8 +3376,7 @@ public class GameManager implements IGameManager {
                     && en.getUnitNumber() == unit.getUnitNumber());
         }
 
-        if ((game.getPhase() != GamePhase.LOUNGE) && !unit.isDone()
-                && (remainingProtos == 0)) {
+        if (!getGame().getPhase().isLounge() && !unit.isDone() && (remainingProtos == 0)) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -3459,7 +3427,7 @@ public class GameManager implements IGameManager {
      * @param unit   - the <code>Entity</code> being towed.
      */
     private void towUnit(Entity loader, Entity unit) {
-        if ((game.getPhase() != GamePhase.LOUNGE) && !unit.isDone()) {
+        if (!getGame().getPhase().isLounge() && !unit.isDone()) {
             // Remove the *last* friendly turn (removing the *first* penalizes
             // the opponent too much, and re-calculating moves is too hard).
             game.removeTurnFor(unit);
@@ -4141,7 +4109,7 @@ public class GameManager implements IGameManager {
         md.setEntity(entity);
 
         // is this the right phase?
-        if (game.getPhase() != GamePhase.MOVEMENT) {
+        if (!getGame().getPhase().isMovement()) {
             LogManager.getLogger().error("Server got movement packet in wrong phase");
             return;
         }
@@ -4151,6 +4119,7 @@ public class GameManager implements IGameManager {
         if (getGame().getPhase().isSimultaneous(getGame())) {
             turn = game.getTurnForPlayer(connId);
         }
+
         if ((turn == null) || !turn.isValid(connId, entity, game)) {
             String msg = "error: server got invalid movement packet from " + "connection " + connId;
             if (entity != null) {
@@ -12003,8 +11972,7 @@ public class GameManager implements IGameManager {
                 // Make sure there aren't any specific entity turns for entity
                 int turnsRemoved = game.removeSpecificEntityTurnsFor(entity);
                 // May need to remove a turn for this Entity
-                if ((game.getPhase() == GamePhase.MOVEMENT)
-                        && !entity.isDone() && (turnsRemoved == 0)) {
+                if (game.getPhase().isMovement() && !entity.isDone() && (turnsRemoved == 0)) {
                     game.removeTurnFor(entity);
                     send(createTurnVectorPacket());
                 } else if (turnsRemoved > 0) {
@@ -12649,7 +12617,7 @@ public class GameManager implements IGameManager {
         Vector<Minefield> minefields = (Vector<Minefield>) packet.getObject(0);
 
         // is this the right phase?
-        if (game.getPhase() != GamePhase.DEPLOY_MINEFIELDS) {
+        if (!getGame().getPhase().isDeployMinefields()) {
             LogManager.getLogger().error("Server got deploy minefields packet in wrong phase");
             return;
         }
@@ -12725,9 +12693,8 @@ public class GameManager implements IGameManager {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         // is this the right phase?
-        if ((game.getPhase() != GamePhase.PREFIRING)
-                && (game.getPhase() != GamePhase.PREMOVEMENT)) {
-            LogManager.getLogger().error("Server got Prephase packet in wrong phase "+game.getPhase());
+        if (!getGame().getPhase().isPrefiring() && !getGame().getPhase().isPremovement()) {
+            LogManager.getLogger().error("Server got Prephase packet in wrong phase " + game.getPhase());
             return;
         }
 
@@ -12765,10 +12732,8 @@ public class GameManager implements IGameManager {
         Vector<EntityAction> vector = (Vector<EntityAction>) packet.getObject(1);
 
         // is this the right phase?
-        if ((game.getPhase() != GamePhase.FIRING)
-                && (game.getPhase() != GamePhase.PHYSICAL)
-                && (game.getPhase() != GamePhase.TARGETING)
-                && (game.getPhase() != GamePhase.OFFBOARD)) {
+        if (!getGame().getPhase().isFiring() && !getGame().getPhase().isPhysical()
+                && !getGame().getPhase().isTargeting() && !getGame().getPhase().isOffboard()) {
             LogManager.getLogger().error("Server got attack packet in wrong phase");
             return;
         }
@@ -13090,7 +13055,7 @@ public class GameManager implements IGameManager {
             // For Bearings-only Capital Missiles, don't assign during the offboard phase
             if (wh instanceof CapitalMissileBearingsOnlyHandler) {
                 ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-                if (aaa.getTurnsTilHit() > 0 || game.getPhase() != GamePhase.FIRING) {
+                if ((aaa.getTurnsTilHit() > 0) || !getGame().getPhase().isFiring()) {
                     continue;
                 }
             }
@@ -18319,33 +18284,6 @@ public class GameManager implements IGameManager {
                 } else {
                     LogManager.getLogger().error("Radical heat sinks mounted on non-mech, non-aero Entity!");
                 }
-                int rhsRoll = Compute.d6(2);
-                int targetNumber;
-                switch (entity.getConsecutiveRHSUses()) {
-                    case 0:
-                        targetNumber = 2;
-                        break;
-                    case 1:
-                        targetNumber = 3;
-                        break;
-                    case 2:
-                        targetNumber = 5;
-                        break;
-                    case 3:
-                        targetNumber = 7;
-                        break;
-                    case 4:
-                        targetNumber = 10;
-                        break;
-                    case 5:
-                        targetNumber = 11;
-                        break;
-                    case 6:
-                    default:
-                        targetNumber = TargetRoll.AUTOMATIC_FAIL;
-                        break;
-                }
-                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
 
                 // RHS activation report
                 r = new Report(5540);
@@ -18355,7 +18293,11 @@ public class GameManager implements IGameManager {
                 r.add(radicalHSBonus);
                 rhsReports.add(r);
 
+                int rhsRoll = Compute.d6(2);
+                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
+                int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = rhsRoll < targetNumber;
+
                 r = new Report(5541);
                 r.indent(2);
                 r.subject = entity.getId();
@@ -29049,7 +28991,7 @@ public class GameManager implements IGameManager {
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityIds.add(entity.getId());
 
-            if (game.getPhase() != GamePhase.LOUNGE) {
+            if (!getGame().getPhase().isLounge()) {
                 entity.getOwner().changeInitialEntityCount(1);
                 entity.getOwner().changeInitialBV(entity.calculateBattleValue());
             }
@@ -29212,7 +29154,7 @@ public class GameManager implements IGameManager {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit
-            if (game.getPhase() == GamePhase.LOUNGE) {
+            if (game.getPhase().isLounge()) {
                 sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
             }
         }
@@ -29225,7 +29167,7 @@ public class GameManager implements IGameManager {
      * remain unchanged but still be sent back to overwrite incorrect client changes.
      */
     private void receiveEntitiesUpdate(Packet c, int connIndex) {
-        if (game.getPhase() != GamePhase.LOUNGE) {
+        if (!getGame().getPhase().isLounge()) {
             LogManager.getLogger().error("Multi entity updates should not be used outside the lobby phase!");
         }
         Set<Entity> newEntities = new HashSet<>();
@@ -29311,7 +29253,7 @@ public class GameManager implements IGameManager {
      */
     private void receiveCustomInit(Packet c, int connIndex) {
         // In the chat lounge, notify players of customizing of unit
-        if (game.getPhase() == GamePhase.LOUNGE) {
+        if (game.getPhase().isLounge()) {
             Player p = (Player) c.getObject(0);
             sendServerChat("" + p.getName() + " has customized initiative.");
         }
@@ -29641,7 +29583,7 @@ public class GameManager implements IGameManager {
                     } // End update-unit-number
                 } // End added-ProtoMech
 
-                if (game.getPhase() != GamePhase.DEPLOYMENT) {
+                if (!getGame().getPhase().isDeployment()) {
                     // if a unit is removed during deployment just keep going
                     // without adjusting the turn vector.
                     game.removeTurnFor(entity);
@@ -29659,7 +29601,7 @@ public class GameManager implements IGameManager {
         send(createRemoveEntityPacket(ids, affectedForces, IEntityRemovalConditions.REMOVE_NEVER_JOINED));
 
         // Prevents deployment hanging. Only do this during deployment.
-        if (game.getPhase() == GamePhase.DEPLOYMENT) {
+        if (game.getPhase().isDeployment()) {
             for (Integer entityId : ids) {
                 final Entity entity = game.getEntity(entityId);
                 game.removeEntity(entityId, IEntityRemovalConditions.REMOVE_NEVER_JOINED);
@@ -29681,7 +29623,7 @@ public class GameManager implements IGameManager {
 
     private void receiveInitiativeRerollRequest(Packet pkt, int connIndex) {
         Player player = game.getPlayer(connIndex);
-        if (GamePhase.INITIATIVE_REPORT != game.getPhase()) {
+        if (!game.getPhase().isInitiativeReport()) {
             StringBuilder message = new StringBuilder();
             if (null == player) {
                 message.append("Player #").append(connIndex);
@@ -33008,7 +32950,7 @@ public class GameManager implements IGameManager {
      * let all Entities make their "break-free-of-swamp-stickyness" PSR
      */
     private void doTryUnstuck() {
-        if (game.getPhase() != GamePhase.MOVEMENT) {
+        if (!getGame().getPhase().isMovement()) {
             return;
         }
 

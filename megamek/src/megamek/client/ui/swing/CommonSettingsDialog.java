@@ -619,9 +619,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             gameLogFilename.setText(CP.getGameLogFilename());
             stampFilenames.setSelected(CP.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
-            stampFormat.setText(cs.getStampFormat());
-            reportKeywordsTextPane.setText(cs.getReportKeywords());
-            showIPAddressesInChat.setSelected(cs.getShowIPAddressesInChat());
+            stampFormat.setText(CP.getStampFormat());
+            reportKeywordsTextPane.setText(CP.getReportKeywords());
+            showIPAddressesInChat.setSelected(CP.getShowIPAddressesInChat());
 
             defaultAutoejectDisabled.setSelected(CP.defaultAutoejectDisabled());
             useAverageSkills.setSelected(CP.useAverageSkills());
@@ -849,8 +849,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         CP.setGameLogFilename(gameLogFilename.getText());
         CP.setStampFilenames(stampFilenames.isSelected());
         CP.setStampFormat(stampFormat.getText());
-        cs.setReportKeywords(reportKeywordsTextPane.getText());
-        cs.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
+        CP.setReportKeywords(reportKeywordsTextPane.getText());
+        CP.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
 
         CP.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         CP.setUseAverageSkills(useAverageSkills.isSelected());

@@ -1554,7 +1554,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (visible) {
             showPlayerList();
         } else {
-            if (miniReportDisplay != null) {
+            if (playerListDialog != null) {
                 playerListDialog.setVisible(visible);
             }
         }

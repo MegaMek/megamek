@@ -179,9 +179,9 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         if (ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REROLLINITIATIVE.getCmd())) {
             rerollInitiative();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_REPORT.getCmd()))) {
-            clientgui.showRoundReport();
+            GUIP.toggleRoundReportEnabled();
         } else if ((ev.getActionCommand().equalsIgnoreCase(ReportCommand.REPORT_PLAYERLIST.getCmd()))) {
-            clientgui.showPlayerList();
+            GUIP.togglePlayerListEnabled();
         }
     }
 

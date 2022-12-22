@@ -54,6 +54,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     private ClientGUI currentClientgui;
     private Client currentClient;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
 
     private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
     private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
@@ -127,7 +128,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         adaptToGUIScale();
 
         GUIP.addPreferenceChangeListener(this);
-        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+        CP.addPreferenceChangeListener(this);
 
         butOkay.requestFocus();
     }
@@ -248,7 +249,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         lastChoice = (lastChoice != null ? lastChoice : MSG_DAMAGE);
         comboQuick.removeAllItems();
         comboQuick.setEnabled(true);
-        String[] keywords =  PreferenceManager.getClientPreferences().getReportKeywords().split("\n");
+        String[] keywords =  CP.getReportKeywords().split("\n");
         for (String keyword : keywords) {
             comboQuick.addItem(keyword);
         }

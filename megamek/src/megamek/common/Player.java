@@ -14,7 +14,6 @@
 package megamek.common;
 
 import megamek.client.ui.swing.util.PlayerColour;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
@@ -272,7 +271,7 @@ public final class Player extends TurnOrdered {
 
     /** @return true if {@link #observer} flag is true and not in VICTORY phase*/
     public boolean isObserver() {
-        if ((game != null) && (game.getPhase() == GamePhase.VICTORY)) {
+        if ((game != null) && game.getPhase().isVictory()) {
             return false;
         }
         return observer;

@@ -14,7 +14,6 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.DropShipBVCalculator;
 import megamek.common.cost.DropShipCostCalculator;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 
 import java.util.HashMap;
@@ -621,7 +620,7 @@ public class Dropship extends SmallCraft {
         if (null == game) {
             return true;
         }
-        return (isAirborne() || isSpaceborne() || game.getPhase() == GamePhase.LOUNGE);
+        return (isAirborne() || isSpaceborne() || game.getPhase().isLounge());
     }
 
     @Override

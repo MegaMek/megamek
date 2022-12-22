@@ -402,15 +402,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         actionListeners.remove(listener);
     }
 
-    /** Manages the enabled states of the menu items depending on where the menu is empoyed. */
+    /** Manages the enabled states of the menu items depending on where the menu is employed. */
     private synchronized void updateEnabledStates() {
-        boolean isLobby = isGame && (phase == GamePhase.LOUNGE);
+        boolean isLobby = isGame && phase.isLounge();
         boolean isInGame = isGame && phase.isDuringOrAfter(GamePhase.DEPLOYMENT);
         boolean isInGameBoardView = isInGame && phase.isOnMap();
         boolean isBoardView = isInGameBoardView || isBoardEditor;
-        boolean canSave = (phase != GamePhase.UNKNOWN) && (phase != GamePhase.SELECTION)
-                && (phase != GamePhase.EXCHANGE) && (phase != GamePhase.VICTORY)
-                && (phase != GamePhase.STARTING_SCENARIO);
+        boolean canSave = !phase.isUnknown() && !phase.isSelection() && !phase.isExchange()
+                && !phase.isVictory() && !phase.isStartingScenario();
         
         viewAccessibilityWindow.setEnabled(false);
         

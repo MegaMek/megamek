@@ -13,18 +13,12 @@
 */  
 package megamek.client.ui.swing.tooltip;
 
-import java.awt.Color;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
-import megamek.common.options.*;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.weapons.LegAttack;
@@ -33,9 +27,18 @@ import megamek.common.weapons.SwarmAttack;
 import megamek.common.weapons.SwarmWeaponAttack;
 import org.apache.logging.log4j.LogManager;
 
+import java.awt.*;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import static megamek.client.ui.Messages.getString;
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.*;
-import static megamek.client.ui.Messages.*;
 
 public final class UnitToolTip {
     
@@ -614,10 +617,10 @@ public final class UnitToolTip {
         // Actual Movement
         if (!isGunEmplacement) {
             // "Has not yet moved" only during movement phase
-            if (!entity.isDone() && game.getPhase() == GamePhase.MOVEMENT) {
+            if (!entity.isDone() && game.getPhase().isMovement()) {
                 result.append(addToTT("NotYetMoved", BR));
-            } else if ((entity.isDone() && game.getPhase() == GamePhase.MOVEMENT)
-                    || game.getPhase() == GamePhase.FIRING) {
+            } else if ((entity.isDone() && game.getPhase().isMovement())
+                    || game.getPhase().isFiring()) {
                 result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForMovement(entity.moved)));
                 int tmm = Compute.getTargetMovementModifier(game, entity.getId()).getValue();
                 if (entity.moved == EntityMovementType.MOVE_NONE) {

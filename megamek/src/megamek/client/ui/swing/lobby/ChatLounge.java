@@ -44,7 +44,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.*;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
@@ -1760,7 +1759,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase().isLounge()) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerTable();
@@ -3471,7 +3470,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String board = (String) value;
             // For generated boards, add the size to have different images for different sizes
             if (board.startsWith(MapSettings.BOARD_GENERATED)) {
-                board += mapSettings.getBoardSize().toString();
+                board += mapSettings.getBoardSize();
             }
             
             // If the gui scaling has changed, clear out all images, triggering a reload

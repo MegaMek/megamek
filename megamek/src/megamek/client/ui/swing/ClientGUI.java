@@ -56,11 +56,12 @@ import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.applet.Applet;
-import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -238,7 +239,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String MSG_POINTBLANKSHOTMSG = Messages.getString("ClientGUI.PointBlankShot.Message");
     private static final String MSG_POINTBLANKSHOTTITLE = Messages.getString("ClientGUI.PointBlankShot.Title");
     private static final String MSG_CLIENTTITLESUFFIX = Messages.getString("ClientGUI.clientTitleSuffix");
-    private static final String MSG_FAILEDTOLOADAUDIFILE = Messages.getString("ClientGUI.failedToLoadAudioFile");
     private static final String MSG_CHATTERBOXMEGAMEK = Messages.getString("ChatterBox.Megamek");
     private static final String MSG_GAMESAVEDIALOGMSG = Messages.getString("ClientGUI.gameSaveDialogMessage");
     private static final String MSG_GAMESAVEFIRST = Messages.getString("ClientGUI.gameSaveFirst");
@@ -321,7 +321,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     /**
      * Cache for the "bing" soundclip.
      */
-    private AudioClip bingClip;
+    private Clip bingClip;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -427,16 +427,23 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (GUIP.getSoundBingFilename() == null) {
             return;
         }
+        final File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
+        if (!file.exists()) {
+            LogManager.getLogger().error("Failed to load audio file named " + GUIP.getSoundBingFilename());
+            return;
+        }
 
         try {
-            File file = new File(GUIP.getSoundBingFilename());
-            if (!file.exists()) {
-                LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIP.getSoundBingFilename());
-                return;
+            if (bingClip != null) {
+                bingClip.close();
             }
-            bingClip = Applet.newAudioClip(file.toURI().toURL());
+            bingClip = AudioSystem.getClip();
+            try (AudioInputStream ais = AudioSystem.getAudioInputStream(file)) {
+                bingClip.open(ais);
+            }
         } catch (Exception ex) {
             LogManager.getLogger().error("", ex);
+            bingClip = null;
         }
     }
 
@@ -919,7 +926,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_TOGGLE_FOV_HIGHLIGHT:
                 GUIP.setFovHighlight(!GUIP.getFovHighlight());
                 bv.refreshDisplayables();
-                if (client.getGame().getPhase() == GamePhase.MOVEMENT) {
+                if (client.getGame().getPhase().isMovement()) {
                     bv.clearHexImageCache();
                 }
                 break;
@@ -930,7 +937,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_TOGGLE_FOV_DARKEN:
                 GUIP.setFovDarken(!GUIP.getFovDarken());
                 bv.refreshDisplayables();
-                if (client.getGame().getPhase() == GamePhase.MOVEMENT) {
+                if (client.getGame().getPhase().isMovement()) {
                     bv.clearHexImageCache();
                 }
                 break;
@@ -1989,7 +1996,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     void bing() {
         if (!GUIP.getSoundMute() && (bingClip != null)) {
-            bingClip.play();
+            bingClip.setFramePosition(0);
+            bingClip.start();
         }
     }
 
@@ -2624,7 +2632,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
-            if ((princess != null) && client.getGame().getPhase() == GamePhase.LOUNGE) {
+            if ((princess != null) && client.getGame().getPhase().isLounge()) {
                 getBots().put(player, princess);   
             } 
         }

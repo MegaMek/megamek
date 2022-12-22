@@ -14,7 +14,6 @@ package megamek.common;
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.cost.CostCalculator;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -678,7 +677,8 @@ public class FighterSquadron extends Aero {
             // Add the unit to our squadron.
             fighters.addElement(unit.getId());
         }
-        if (game.getPhase() != GamePhase.LOUNGE) {
+
+        if (!getGame().getPhase().isLounge()) {
             computeSquadronBombLoadout();
             // updateWeaponGroups() and loadAllWeapons() are called in
             // computeSquadronBombLoadout()
@@ -711,7 +711,7 @@ public class FighterSquadron extends Aero {
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
         boolean success = fighters.removeElement(unit.getId());
-        if (game.getPhase() != GamePhase.LOUNGE) {
+        if (!getGame().getPhase().isLounge()) {
             computeSquadronBombLoadout();
             // updateWeaponGroups() and loadAllWeapons() are called in
             // computeSquadronBombLoadout()

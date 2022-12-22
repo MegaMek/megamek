@@ -867,7 +867,7 @@ public class Server implements Runnable {
 
         Game newGame;
         try (InputStream is = new FileInputStream(f); InputStream gzi = new GZIPInputStream(is)) {
-            XStream xstream = SerializationHelper.getXStream();
+            XStream xstream = SerializationHelper.getLoadSaveGameXStream();
             newGame = (Game) xstream.fromXML(gzi);
         } catch (Exception e) {
             LogManager.getLogger().error("Unable to load file: " + f, e);

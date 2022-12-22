@@ -17,6 +17,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.enums.GamePhase;
+import megamek.common.Entity;
+import megamek.common.Report;
 import megamek.common.event.GamePhaseChangeEvent;
 
 import java.awt.event.ActionEvent;

@@ -22,7 +22,6 @@ import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
@@ -1438,9 +1437,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-
         // In case of a /reset command, ensure the state gets reset
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.LOUNGE) {
+        if (clientgui.getClient().getGame().getPhase().isLounge()) {
             endMyTurn();
         }
 
@@ -1450,11 +1448,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()
-                && (clientgui.getClient().getGame().getPhase() != GamePhase.PHYSICAL)) {
+                && !clientgui.getClient().getGame().getPhase().isPhysical()) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
-        if (clientgui.getClient().getGame().getPhase() == GamePhase.PHYSICAL) {
+        if (clientgui.getClient().getGame().getPhase().isPhysical()) {
             setStatusBarText(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase"));
         }
     }

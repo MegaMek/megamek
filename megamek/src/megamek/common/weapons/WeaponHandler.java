@@ -399,10 +399,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     @Override
     public boolean cares(GamePhase phase) {
-        if (phase == GamePhase.FIRING) {
-            return true;
-        }
-        return false;
+        return phase.isFiring();
     }
 
     /**

@@ -3471,7 +3471,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             String board = (String) value;
             // For generated boards, add the size to have different images for different sizes
             if (board.startsWith(MapSettings.BOARD_GENERATED)) {
-                board += mapSettings.getBoardSize().toString();
+                board += mapSettings.getBoardSize();
             }
             
             // If the gui scaling has changed, clear out all images, triggering a reload

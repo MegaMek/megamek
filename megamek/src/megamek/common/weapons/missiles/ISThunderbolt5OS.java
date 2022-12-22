@@ -18,7 +18,6 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.SimpleTechLevel;
 /**
  * The One-Shot Thunderbolt 5
  * @author Simon (Juliez)

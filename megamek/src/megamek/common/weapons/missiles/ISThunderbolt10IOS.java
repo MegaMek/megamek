@@ -18,8 +18,6 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.SimpleTechLevel;
-
 /**
  * The Improved One-Shot Thunderbolt 10
  * @author Simon (Juliez)

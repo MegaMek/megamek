@@ -872,10 +872,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
                 break;
             case VIEW_TOGGLE_FOV_HIGHLIGHT:
-                GUIPreferences.getInstance().setFovHighlight(
-                        !GUIPreferences.getInstance().getFovHighlight());
+                GUIPreferences.getInstance().setFovHighlight(!GUIPreferences.getInstance().getFovHighlight());
                 bv.refreshDisplayables();
-                if (client.getGame().getPhase() == GamePhase.MOVEMENT) {
+                if (client.getGame().getPhase().isMovement()) {
                     bv.clearHexImageCache();
                 }
                 break;
@@ -887,7 +886,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case VIEW_TOGGLE_FOV_DARKEN:
                 GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getFovDarken());
                 bv.refreshDisplayables();
-                if (client.getGame().getPhase() == GamePhase.MOVEMENT) {
+                if (client.getGame().getPhase().isMovement()) {
                     bv.clearHexImageCache();
                 }
                 break;
@@ -2502,7 +2501,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             systemMessage(message.toString());
             // Make this princess a locally owned bot if in the lobby. This way it
             // can be configured, and it will faithfully press Done when the local player does.
-            if ((princess != null) && client.getGame().getPhase() == GamePhase.LOUNGE) {
+            if ((princess != null) && client.getGame().getPhase().isLounge()) {
                 getBots().put(player, princess);   
             } 
         }

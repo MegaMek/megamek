@@ -24,7 +24,6 @@ import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
-import megamek.common.enums.GamePhase;
 import megamek.common.enums.Gender;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -555,7 +554,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
       
                         autoSetSkillsAndName(e);
                         e.setOwner(c.getLocalPlayer());
-                        if (c.getGame().getPhase() != GamePhase.LOUNGE) {
+                        if (!c.getGame().getPhase().isLounge()) {
                             e.setDeployRound(c.getGame().getRoundCount() + 1);
                             e.setGame(c.getGame());
                             // Set these to true, otherwise units reinforced in

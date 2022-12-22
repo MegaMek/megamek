@@ -125,7 +125,7 @@ public class TurnTimer {
             GamePhase phase = client.getGame().getPhase();
 
             // turn timer should only kick in on firing, targeting, movement and physical attack phase
-            return phase == GamePhase.MOVEMENT || phase == GamePhase.FIRING || phase == GamePhase.PHYSICAL || phase == GamePhase.TARGETING;
+            return phase.isMovement() || phase.isFiring() || phase.isPhysical() || phase.isTargeting();
         }
         return false;
     }

@@ -18319,33 +18319,6 @@ public class GameManager implements IGameManager {
                 } else {
                     LogManager.getLogger().error("Radical heat sinks mounted on non-mech, non-aero Entity!");
                 }
-                int rhsRoll = Compute.d6(2);
-                int targetNumber;
-                switch (entity.getConsecutiveRHSUses()) {
-                    case 0:
-                        targetNumber = 2;
-                        break;
-                    case 1:
-                        targetNumber = 3;
-                        break;
-                    case 2:
-                        targetNumber = 5;
-                        break;
-                    case 3:
-                        targetNumber = 7;
-                        break;
-                    case 4:
-                        targetNumber = 10;
-                        break;
-                    case 5:
-                        targetNumber = 11;
-                        break;
-                    case 6:
-                    default:
-                        targetNumber = TargetRoll.AUTOMATIC_FAIL;
-                        break;
-                }
-                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
 
                 // RHS activation report
                 r = new Report(5540);
@@ -18355,7 +18328,11 @@ public class GameManager implements IGameManager {
                 r.add(radicalHSBonus);
                 rhsReports.add(r);
 
+                int rhsRoll = Compute.d6(2);
+                entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
+                int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = rhsRoll < targetNumber;
+
                 r = new Report(5541);
                 r.indent(2);
                 r.subject = entity.getId();

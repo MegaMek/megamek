@@ -162,7 +162,7 @@
     </KeyBind>
 
     <KeyBind>
-        <command>viewActingUnit</command> <!-- V -->
+         <command>viewActingUnit</command> <!-- V -->
         <keyCode>86</keyCode>
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
@@ -353,6 +353,13 @@
     <KeyBind>
          <command>toggleKeybinds</command> <!-- Ctrl-K -->
         <keyCode>75</keyCode>
+        <modifier>128</modifier>
+        <isRepeatable>false</isRepeatable>
+    </KeyBind>
+
+    <KeyBind>
+         <command>togglePlanetaryConditions</command> <!-- Ctrl-P -->
+        <keyCode>80</keyCode>
         <modifier>128</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>

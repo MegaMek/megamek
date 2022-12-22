@@ -3808,6 +3808,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>easy_pilot</quirk>
 		<quirk>non_standard</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Chameleon</chassis>
+		<unitType>Mech</unitType>
+		<quirk>easy_pilot</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Chameleon</chassis>
@@ -3818,14 +3824,24 @@ Example: You can define quirks that affect all units of a given chassis and then
 
 	<unit>
 		<chassis>Chameleon</chassis>
+		<model>CLN-7V</model>
 		<unitType>Mech</unitType>
 		<quirk>easy_pilot</quirk>
 	</unit>
 
 	<unit>
 		<chassis>Chameleon</chassis>
-		<model>CLN-7V</model>
+		<model>CLN-8V</model>
 		<unitType>Mech</unitType>
+		<quirk>distracting</quirk>
+		<quirk>easy_pilot</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Chameleon</chassis>
+		<model>CLN-9V</model>
+		<unitType>Mech</unitType>
+		<quirk>distracting</quirk>
 		<quirk>easy_pilot</quirk>
 	</unit>
 
@@ -10479,6 +10495,270 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>ext_twist</quirk>
 		<quirk>bad_rep_clan</quirk>
 		<quirk>no_arms</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Naga II</chassis>
+		<model>Prime</model>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>bad_rep_clan</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>CT</location>
+			<slot>10</slot>
+			<weaponName>CLERSmallLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>2</slot>
+			<weaponName>CLUltraAC10</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>2</slot>
+			<weaponName>CLLBXAC10</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Naga II</chassis>
+		<model>A</model>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>bad_rep_clan</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>CT</location>
+			<slot>10</slot>
+			<weaponName>CLERSmallLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLStreakSRM6</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>10</slot>
+			<weaponName>CLERLargeLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>11</slot>
+			<weaponName>CLERLargeLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>2</slot>
+			<weaponName>CLLBXAC20</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Naga II</chassis>
+		<model>B</model>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>bad_rep_clan</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLNarcBeacon</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLAntiMissileSystem</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>2</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>6</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>2</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>6</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Naga II</chassis>
+		<model>C</model>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>bad_rep_clan</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RT</location>
+			<slot>5</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLLRM15</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>5</slot>
+			<weaponName>CLMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>2</slot>
+			<weaponName>CLUltraAC5</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>CLMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>2</slot>
+			<weaponName>CLStreakSRM6</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>CLLargePulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>6</slot>
+			<weaponName>CLMediumPulseLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Naga II</chassis>
+		<model>H</model>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>bad_rep_clan</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>CT</location>
+			<slot>10</slot>
+			<weaponName>CLHeavySmallLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>2</slot>
+			<weaponName>CLLRM20</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>CLHeavyLargeLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>CLHeavyMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>9</slot>
+			<weaponName>CLHeavyMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>2</slot>
+			<weaponName>CLGaussRifle</weaponName>
+		</weaponQuirk>
+	</unit>
+	
+	<unit>
+		<chassis>Naga II</chassis>
+		<model>W</model>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>bad_rep_clan</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>CT</location>
+			<slot>10</slot>
+			<weaponName>CLERSmallLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RT</location>
+			<slot>2</slot>
+			<weaponName>CLStreakLRM15</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>CLERMediumLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>2</slot>
+			<weaponName>CLERPPC</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>2</slot>
+			<weaponName>CLRotaryAC5</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>

@@ -158,8 +158,8 @@ public class MechSummaryCache {
             synchronized (lock) {
                 try {
                     lock.wait();
-                } catch (Exception e) {
-                    // Ignore
+                } catch (Exception ignored) {
+
                 }
             }
         }
@@ -232,10 +232,10 @@ public class MechSummaryCache {
                     fin.close();
                     istream.close();
                 }
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 loadReport.append("  Unable to load unit cache: ")
-                        .append(e.getMessage()).append("\n");
-                LogManager.getLogger().error(loadReport.toString(), e);
+                        .append(ex.getMessage()).append("\n");
+                LogManager.getLogger().error(loadReport.toString(), ex);
             }
         }
 
@@ -639,7 +639,7 @@ public class MechSummaryCache {
                                     .append(failedEquipment.next()).append("\n");
                         }
                     }
-                } catch (EntityLoadingException ex) {
+                } catch (Exception ex) {
                     loadReport.append("    Loading from ").append(f).append("\n");
                     loadReport.append("***   Unable to load file: ");
                     StringWriter stringWriter = new StringWriter();
@@ -680,8 +680,8 @@ public class MechSummaryCache {
                 try {
                     zFile.close();
                     return false;
-                } catch (IOException e) {
-                    LogManager.getLogger().error("", e);
+                } catch (Exception ex) {
+                    LogManager.getLogger().error("", ex);
                 }
             }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
@@ -773,7 +773,7 @@ public class MechSummaryCache {
                         }
                     }
                 }
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 LogManager.getLogger().error("", ex);
             }
         }

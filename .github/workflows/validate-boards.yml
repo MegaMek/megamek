@@ -36,7 +36,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # For Board Validation running on *nix is sufficient
         java-distribution: [ temurin ]
-        java-version: [ 11 ]
+        java-version: [ 17 ]
 
     steps:
     - uses: actions/checkout@v2

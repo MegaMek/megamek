@@ -1,0 +1,163 @@
+Version:1.3
+Hermes II
+HER-7A
+mul id:9314
+Config:Biped
+techbase:Mixed (IS Chassis)
+era:3120
+source:Rec Guide:ilClan #26 - Late Republic
+rules level:2
+
+mass:40
+engine:240 Light Engine(IS)
+structure:IS Endo Steel
+myomer:Standard
+cockpit:Standard Cockpit
+gyro:XL Gyro
+
+heat sinks:10 IS Double
+walk mp:6
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:11
+RA armor:11
+LT armor:14
+RT armor:14
+CT armor:17
+HD armor:9
+LL armor:14
+RL armor:14
+RTL armor:5
+RTR armor:5
+RTC armor:6
+
+Weapons:3
+Flamer, Left Arm
+Medium X-Pulse Laser, Right Arm
+Ultra AC/10, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Flamer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumXPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+ISCASEII
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Hermes II was first produced in 2798, based on the original Hermes BattleMech that had been used by the Star League. A heavy scout, the Hermes II boasted respectable weaponry, armoring, and speed, allowing it to easily brawl with lighter 'Mechs or survive an encounter with heavier 'Mechs and retreat. 
+capabilities:Seven and a half tons of armor provides the Hermes II with good protection, superior to that of the lighter scouting elements it's likely to encounter. The Hermes has respectable cruising speed with enough to scout ahead of the main force, although the heart of this reconnaissance 'Mech is its Irian E.A.R. communications system. Powerful enough to communicate with orbiting satellites, drawbacks to system include its bulk and the required surface area it takes up on the 'Mech in order to function. Out of all medium-weight 'Mechs at the time the Hermes II was the easiest to perform field maintenance on, leading to its nickname "old reliable."
+deployment:No information on this variant
+history:As combination scout and light strike platforms, Hermes II 'Mechs often operated alone, employed for missions for which lighter 'Mechs were too fragile and heavier 'Mechs too clumsy. The Hermes II was in its element when operating in a restrictive environment like a forest or city, where it could employ a most unusual tactic of setting its surroundings on fire to escape pursuit. Since most 'Mech pilots would naturally avoid a fire to prevent overheating and the flames interfered with most thermal scanners, starting a blaze allowed the Hermes II to more easily slip away. When operating as part of a team the Hermes II was usually paired with 'Mechs sharing similar performance statistics, such as the Vulcan or Phoenix Hawk, but it was also paired with heavier 'Mechs like the Hunchback or Centurion where it served as bait to draw the enemy in to its compatriot's heavier guns. When first produced, the Hermes II had its AC/5 mounted in the center of the torso, although this proved to be disastrous since even a minor hit to the chest rendered the weapon inoperable. A replacement model armed with lasers was temporarily deployed while Irian BattleMechs reworked the design and shifted the weapon to its current placement. The Hermes II stayed in production throughout the Succession Wars, with minor stoppages every time Irian's 'Mech factories were destroyed, and served almost exclusively with the Free Worlds League. A few could be found in the arsenals of the other Great Houses as a result of battlefield salvage, and IBMU was willing to sell the design to mercenary units; the company preferred to sell the 'Mech in large lots but was willing to make small custom orders for a premium. With the slow recovery of lostech Irian was not only able to begin producing the original Hermes again, but also upgrade the Hermes II, building upon the original Star League-era schematics they had saved to create the HER-5S model in 3050. As a result of the Clan Invasion and the accords reached by the Great Houses on Outreach, Irian began selling these upgraded models to the rest of the Inner Sphere. The HER-5S was also used to replace older variants within the Free Worlds League Military as part of a massive upgrade program, with the first models going to elite units such as the Free Worlds Guards and slowly trickling down to other units. This also meant a large number fell into the hands of the Word of Blake and were used on both sides of the Jihad.
+manufacturer:Irian BattleMechs Unlimited, Irian BattleMechs Unlimited 
+primaryfactory:Irian,Shiro III 
+systemmanufacturer:CHASSIS:Irian Second Generation Class 40 Endo Steel
+systemmanufacturer:ENGINE:Unknown Light Fusion
+systemmanufacturer:ARMOR:Riese-456
+systemmanufacturer:COMMUNICATIONS:Irian E.A.R.
+systemmanufacturer:TARGETING:Wasat Aggressor
+

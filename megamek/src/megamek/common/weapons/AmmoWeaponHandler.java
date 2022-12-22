@@ -26,6 +26,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
 import megamek.server.Server;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * @author Andrew Hunter
@@ -40,28 +41,18 @@ public class AmmoWeaponHandler extends WeaponHandler {
         // deserialization only
     }
 
-    /**
-     * @param t
-     * @param w
-     * @param g
-     */
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g,
-            GameManager m) {
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, GameManager m) {
         super(t, w, g, m);
         generalDamageType = HitData.DAMAGE_BALLISTIC;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#UseAmmo()
-     */
     @Override
     protected void useAmmo() {
         checkAmmo();
-        if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
-            // *shouldn't* fire.
-            System.out.println("Handler can't find any ammo!  Oh no!");
+        if (ammo == null) {
+            // Can't happen. w/o legal ammo, the weapon *shouldn't* fire.
+            LogManager.getLogger().error("Handler can't find any ammo! Oh no!", new Exception());
+            return;
         }
 
         if (ammo.getUsableShotsLeft() <= 0) {
@@ -84,8 +75,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
      * For ammo weapons, this number can be less than the full number if the
      * amount of ammo is not high enough
      * 
-     * @return the number of weapons of this type firing (for squadron weapon
-     *         groups)
+     * @return the number of weapons of this type firing (for squadron weapon groups)
      */
     @Override
     protected int getNumberWeapons() {
@@ -161,8 +151,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         int wloc = weapon.getLocation();
         for (int i = 0; i < ae.getNumberOfCriticals(wloc); i++) {
             CriticalSlot slot1 = ae.getCritical(wloc, i);
-            if ((slot1 == null) || 
-                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+            if ((slot1 == null) || (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                 continue;
             }
             Mounted mounted = slot1.getMount();

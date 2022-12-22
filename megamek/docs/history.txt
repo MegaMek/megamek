@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-0.49.11-SNAPSHOT
+0.49.12-SNAPSHOT
+ 
+0.49.11 (2022-12-22 1500 UTC)
 + Issue #3776: Add 0 as a selectable weapon/equipment quantity in advanced search
 + PR #3908: Connections Rework: Logging Modernization
 + PR #3910: Remove unused modes from TAG weapons
@@ -20,7 +22,7 @@ VERSION HISTORY:
 + Issue #2757: Bulletproofing for when DFA target is eliminated prior to DFA resolution
 + Issue #3902: Advantages display on the bottom of unit info card
 + Issue #2715: Tooltip displays original vs modified movement due to planetary conditions
-+ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867
++ Data: Updated sprites and camos. Data fixes for #3962, #3913, #3907, #3905, #3933, #3867
 + Data: TP Foster RATS #3930 - Thanks Stonewall072
 + PR #3970: AS conversion fixes
 + Issue #3414: Add option to adjust the seen by in the unit tool tip
@@ -38,16 +40,26 @@ VERSION HISTORY:
 + Issue #3985: ER Small Pulse Laser Incorrect Aerospace Range
 + Issue #3906: Turn timer in seconds
 + Issue #3054: TO Infantry Movement on Pavement optional rule
-+ Issue #4003: Add search functionality to the mini report dialog
++ Issue #4003, #4039, #4047: Add search functionality to the mini report dialog; configure keywords in the Client Settings
 + Issue #3818: Airborne Aerospace Units Unaffected By Extreme Temperatures
 + Issue #3727: Magma crust breakthrough and liquid magma damage not working as expected
 + Issues #543, #2959, #3982: Scale the Client GUI using the GUI scale
 + Issue #2684: Fix target being cleared when selecting a new weapon
-+ PR #4015: Further Alpha Strike conversion errata and corrections
++ PR #4015, #4036, #4037: Further Alpha Strike conversion errata and corrections
 + Issue #3375: Fix Player's Turn text not being updated in some circumstances
 + Issue #4013: Turn timer continues to run when you close the main window
 + PR #4017: Fix border move indication for vehicles
 + Issue #4022: Fixing Uncaught NPE when Address Bind is Already in Use
++ PR #3996: MMXMLUtility: Removing Deprecated Methods
++ Issue #3709: Removed  searchlight customization checkboxes for units that receive external searchlights automatically
++ Issue #3811: Fix formatting issue with the Infantry victory report
++ Issue #4021: Preventing Save Game Loading Player Name NPE
++ PR #3969: Add an overlay for Planetary Conditions
++ Issue #2695: Improve game options tooltips
++ PR #4049: Player Java 17 Support
++ PR #4055: Expand FOV Highlight Disk Size Option Dimension for Display Scaling
++ PR #4057: Allow Report Display Split Pane to Resize
++ Issue #4058: Fixing Default Fluff Image Paths
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3
@@ -55,7 +67,7 @@ VERSION HISTORY:
 + Updating to JUnit 5.9.1 from 5.9.0
 + Updating to Launch4j 2.5.4 from 2.5.3
 + Updating to Log4j 2.19.0 from 2.18.0
-+ Updating to Mockito 4.9.0 from 4.6.1
++ Updating to Mockito 4.10.0 from 4.6.1
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

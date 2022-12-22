@@ -161,7 +161,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private JComboBox<String> displayLocale;
     private final JCheckBox showIPAddressesInChat = new JCheckBox(Messages.getString("CommonSettingsDialog.showIPAddressesInChat"));
-
+    private JTextPane reportKeywordsTextPane;
     private final JCheckBox showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel"));
     private final JCheckBox showDamageDecal = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageDecal"));
     private final JCheckBox showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets"));
@@ -274,6 +274,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovHighlightAlpha;
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
+
+    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     private static final String MSG_UNITDISPLAY = Messages.getString("CommonMenuBar.viewMekDisplay");
@@ -531,6 +533,15 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         addLineSpacer(comps);
 
+        JLabel reportKeywordsLabel = new JLabel(MSG_REPORTKEYWORDS + ": ");
+        reportKeywordsTextPane = new JTextPane();
+        row = new ArrayList<>();
+        row.add(reportKeywordsLabel);
+        row.add(reportKeywordsTextPane);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
         comps.add(checkboxEntry(showIPAddressesInChat, Messages.getString("CommonSettingsDialog.showIPAddressesInChat.tooltip")));
         return createSettingsPanel(comps);
     }
@@ -608,8 +619,9 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             gameLogFilename.setText(CP.getGameLogFilename());
             stampFilenames.setSelected(CP.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
-            stampFormat.setText(CP.getStampFormat());
-            showIPAddressesInChat.setSelected(CP.getShowIPAddressesInChat());
+            stampFormat.setText(cs.getStampFormat());
+            reportKeywordsTextPane.setText(cs.getReportKeywords());
+            showIPAddressesInChat.setSelected(cs.getShowIPAddressesInChat());
 
             defaultAutoejectDisabled.setSelected(CP.defaultAutoejectDisabled());
             useAverageSkills.setSelected(CP.useAverageSkills());
@@ -837,7 +849,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         CP.setGameLogFilename(gameLogFilename.getText());
         CP.setStampFilenames(stampFilenames.isSelected());
         CP.setStampFormat(stampFormat.getText());
-        CP.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
+        cs.setReportKeywords(reportKeywordsTextPane.getText());
+        cs.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
 
         CP.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
         CP.setUseAverageSkills(useAverageSkills.isSelected());
@@ -1202,7 +1215,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         addSpacer(comps, 3);
 
         row = new ArrayList<>();
-        fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii")); 
+        fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii"));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadiiLabel);
         comps.add(row);
@@ -1212,7 +1225,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         row = new ArrayList<>();
         fovHighlightRingsRadii= new JTextField((2+1)*7);
         fovHighlightRingsRadii.addFocusListener(this);
-        fovHighlightRingsRadii.setMaximumSize(new Dimension(100, 40 ));
+        fovHighlightRingsRadii.setMaximumSize(new Dimension(240, 40));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadii);
         comps.add(row);

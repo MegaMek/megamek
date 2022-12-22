@@ -2058,8 +2058,7 @@ public class GameManager implements IGameManager {
                     a.setSI(currentSI);
                 }
             }
-            // Give the unit a spotlight, if it has the spotlight quirk
-            if (entity instanceof Mech || entity instanceof Tank) {
+            if (entity.getsAutoExternalSearchlight()) {
                 entity.setExternalSearchlight(true);
             }
             entityUpdate(entity.getId());

@@ -57,6 +57,10 @@ public class Game implements IGame, Serializable {
      */
     public final Version version = MMConstants.VERSION;
 
+    private Vector<Player> players = new Vector<>();
+    private Hashtable<Integer, Player> playerIds = new Hashtable<>();
+    private Vector<Team> teams = new Vector<>();
+
     private GameOptions options = new GameOptions();
 
     private Board board = new Board();
@@ -70,11 +74,6 @@ public class Game implements IGame, Serializable {
      * Track entities removed from the game (probably by death)
      */
     private Vector<Entity> vOutOfGame = new Vector<>();
-
-    private Vector<Player> players = new Vector<>();
-    private Vector<Team> teams = new Vector<>();
-
-    private Hashtable<Integer, Player> playerIds = new Hashtable<>();
 
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 

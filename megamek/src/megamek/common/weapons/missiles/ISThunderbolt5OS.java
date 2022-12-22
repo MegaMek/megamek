@@ -35,13 +35,5 @@ public class ISThunderbolt5OS extends Thunderbolt5Weapon {
         bv = 13;
         cost = 25000;
         flags = flags.or(F_ONESHOT);
-        // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        techAdvancement.setISAdvancement(2665, 2676, 3045, 2800, 3030)
-                .setISApproximate(true, false, false, false, false)
-                .setClanAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false)
-                .setPrototypeFactions(F_TH)
-                .setProductionFactions(F_TH)
-                .setReintroductionFactions(F_FW);
     }
 }

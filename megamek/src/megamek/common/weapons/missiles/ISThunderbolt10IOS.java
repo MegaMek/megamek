@@ -38,15 +38,10 @@ public class ISThunderbolt10IOS extends Thunderbolt10Weapon {
         bv = 25;
         cost = 140000;
         flags = flags.or(F_ONESHOT);
-        techAdvancement.setTechBase(TECH_BASE_IS)
-                .setIntroLevel(false)
-                .setUnofficial(false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false)
-                .setPrototypeFactions(F_FS)
-                .setProductionFactions(F_FS, F_LC)
-                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        techAdvancement.setTechRating(RATING_B)
+                .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)
+                .setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC)
+                .setISApproximate(false, true, false, false, false);
     }
 }

@@ -36,5 +36,10 @@ public class ISThunderbolt20IOS extends Thunderbolt20Weapon {
         bv = 61;
         cost = 360000;
         flags = flags.or(F_ONESHOT);
+        techAdvancement.setTechRating(RATING_B)
+                .setISAdvancement(3056, 3081, 3085, DATE_NONE, DATE_NONE)
+                .setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC)
+                .setISApproximate(false, true, false, false, false);
     }
 }

@@ -23907,8 +23907,8 @@ public class GameManager implements IGameManager {
         reports.addElement(r);
 
         // Shield objects are not useless when they take one crit.
-        // Shields can be critted and still be usable.
-        if ((eqType instanceof MiscType) && ((MiscType) eqType).isShield()) {
+        if (((eqType instanceof MiscType) && ((MiscType) eqType).isShield())
+                || (mounted.is(EquipmentTypeLookup.SCM) && (en instanceof Mech) && ((Mech) en).destroyedSCMCritCount() < 6)) {
             mounted.setHit(false);
         } else {
             mounted.setHit(true);

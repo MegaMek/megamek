@@ -654,8 +654,17 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         return destroyed || missing || useless;
     }
 
+    /**
+     * Returns true if this Mounted's EquipmentType is that identified by the given eType String. The
+     * given eType is compared to the internal name of the EquipmentType of this Mounted,
+     * not the (display) name!
+     * Best use the constants defined in EquipmentTypeLookup.
+     *
+     * @param typeInternalName An Equipment internal name to check
+     * @return true if the internalName of this equipment matches the given type
+     */
     public boolean is(String typeInternalName) {
-        return getType().getInternalName().equals(typeInternalName);
+        return getType().is(typeInternalName);
     }
 
     public boolean isHit() {

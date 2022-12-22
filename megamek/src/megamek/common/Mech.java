@@ -834,11 +834,18 @@ public abstract class Mech extends Entity {
         return miscList.stream().filter(m -> m.is(EquipmentTypeLookup.SCM)).anyMatch(Mounted::isOperable);
     }
 
-    public long DestroyedSCMCritCount() {
-        return miscList.stream()
-                .filter(m -> m.is(EquipmentTypeLookup.SCM))
-                .filter(Mounted::isInoperable)
-                .count();
+    public long destroyedSCMCritCount() {
+        int destroyedCount = 0;
+        for (int location = 0; location < locations(); location++) {
+            for (int index = 0; index < crits[location].length; index++) {
+                final CriticalSlot slot = crits[location][index];
+                if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                        && slot.getMount().is(EquipmentTypeLookup.SCM) && slot.isDestroyed()) {
+                    destroyedCount++;
+                }
+            }
+        }
+        return destroyedCount;
     }
 
     /**
@@ -1710,7 +1717,7 @@ public abstract class Mech extends Entity {
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
-        capacity -= DestroyedSCMCritCount();
+        capacity -= destroyedSCMCritCount();
 
         return Math.max(capacity, 0);
     }

@@ -20,7 +20,7 @@ VERSION HISTORY:
 + Issue #2757: Bulletproofing for when DFA target is eliminated prior to DFA resolution
 + Issue #3902: Advantages display on the bottom of unit info card
 + Issue #2715: Tooltip displays original vs modified movement due to planetary conditions
-+ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867
++ Data: Updated sprites and camos. Data fixes for #3962, #3913, #3907, #3905, #3933, #3867
 + Data: TP Foster RATS #3930 - Thanks Stonewall072
 + PR #3970: AS conversion fixes
 + Issue #3414: Add option to adjust the seen by in the unit tool tip
@@ -55,6 +55,9 @@ VERSION HISTORY:
 + PR #3969: Add an overlay for Planetary Conditions
 + Issue #2695: Improve game options tooltips
 + PR #4049: Player Java 17 Support
++ PR #4055: Expand FOV Highlight Disk Size Option Dimension for Display Scaling
++ PR #4057: Allow Report Display Split Pane to Resize
++ Issue #4058: Fixing Default Fluff Image Paths
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3
@@ -62,7 +65,7 @@ VERSION HISTORY:
 + Updating to JUnit 5.9.1 from 5.9.0
 + Updating to Launch4j 2.5.4 from 2.5.3
 + Updating to Log4j 2.19.0 from 2.18.0
-+ Updating to Mockito 4.9.0 from 4.6.1
++ Updating to Mockito 4.10.0 from 4.6.1
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

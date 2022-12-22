@@ -103,6 +103,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
 
     ClientGUI clientGui;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     /** True when the overlay is displayed or fading in. */
     private boolean visible;
@@ -124,11 +125,12 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * for the current game situation. 
      */
     public KeyBindingsOverlay(Game game, ClientGUI cg) {
-        visible = GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
+        visible = GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY);
         currentPhase = game.getPhase();
         game.addGameListener(gameListener);
         clientGui = cg;
         KeyBindParser.addPreferenceChangeListener(this);
+        GUIP.addPreferenceChangeListener(this);
     }
 
     @Override
@@ -143,7 +145,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
             changed = false;
             
             // calculate the size from the text lines, font and padding
-            Font newFont = FONT.deriveFont(FONT.getSize() * GUIPreferences.getInstance().getGUIScale());
+            Font newFont = FONT.deriveFont(FONT.getSize() * GUIP.getGUIScale());
             graph.setFont(newFont);
             FontMetrics fm = graph.getFontMetrics(newFont);
             List<String> allLines = assembleTextLines();
@@ -277,7 +279,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
         if (s.length() > 0) {
             AttributedString text = new AttributedString(s);
-            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIPreferences.getInstance().getGUIScale())), 0, s.length());
+            text.addAttribute(TextAttribute.FONT, new Font(FONT.getFontName(), Font.PLAIN, (int) (FONT.getSize() * GUIP.getGUIScale())), 0, s.length());
 
             graph.setColor(SHADOW_COLOR);
             graph.drawString(text.getIterator(), x + 1, y + 1);
@@ -293,7 +295,7 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
      * */
     public void setVisible(boolean vis) {
         visible = vis;
-        GUIPreferences.getInstance().setValue(GUIPreferences.SHOW_KEYBINDS_OVERLAY, vis);
+        GUIP.setValue(GUIPreferences.SHOW_KEYBINDS_OVERLAY, vis);
         if (vis) {
             fadingIn = true;
             fadingOut = false;
@@ -349,9 +351,8 @@ public class KeyBindingsOverlay implements IDisplayable, IPreferenceChangeListen
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
-        if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
-            changed = true;
-        }
+        // change on any preference change
+        changed = true;
     }
 
 }

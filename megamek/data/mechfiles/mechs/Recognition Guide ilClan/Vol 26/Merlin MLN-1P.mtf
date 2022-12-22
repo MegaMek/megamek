@@ -1,0 +1,168 @@
+Version:1.3
+Merlin
+MLN-1P
+mul id:9318
+Config:Biped
+techbase:Inner Sphere
+era:3114
+source:Rec Guide:ilClan #26 - Late Republic
+rules level:2
+
+mass:60
+engine:240 Fusion Engine(IS)
+structure:IS Standard
+myomer:Standard
+
+heat sinks:13 IS Double
+walk mp:4
+jump mp:4
+
+armor:Heavy Ferro-Fibrous(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:18
+RT armor:18
+CT armor:26
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:8
+RTR armor:8
+RTC armor:11
+
+Weapons:5
+Medium VSP Laser, Left Arm
+Medium VSP Laser, Right Arm
+Flamer, Left Torso
+Large VSP Laser, Right Torso
+LRM 5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Flamer
+IS Ammo LRM-5
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+LRM 5
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Heavy Ferro-Fibrous
+IS Heavy Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Heavy Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:The Merlin uses components that are all reliable and readily available, making the Merlin a durable and easy-to-repair 'Mech. 
+
+capabilities:The 'Mech is powered by a Pitban 240 fusion engine that gives it a top speed of 64.8 km/h. The Merlin carries ten and a half tons of armor, which is a respectable amount of protection for its weight. Additionally, the Merlin carries eighteen heat sinks to handle its heavy heat load.
+
+deployment:No Information Available
+
+history:The Merlin debuted in 3010 as a product of the rebuilt Mountain Wolf BattleMechs. The Merlin was hailed as a technological marvel at the time it was released, as it was the first completely new design to be developed in over 100 years.
+
+manufacturer:Field Refit
+primaryfactory:Various
+systemmanufacturer:CHASSIS:Heavy Star QAT-4
+systemmanufacturer:ENGINE:Pitban 240
+systemmanufacturer:ARMOR:StarSlab-7 Heavy Ferro-Fibrous
+systemmanufacturer:JUMPJET:Pitban LFT 50
+systemmanufacturer:COMMUNICATIONS:Magestrix Alpha
+systemmanufacturer:TARGETING:Magestrix Gamma
+

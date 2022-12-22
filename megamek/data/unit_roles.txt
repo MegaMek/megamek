@@ -1282,7 +1282,7 @@ Condor Heavy Hover Tank (Laser):STRIKER
 Condor Heavy Hover Tank (Liao):STRIKER
 Condor Heavy Hover Tank (Standard):STRIKER
 Condor Heavy Hover Tank (Upgrade) (Laser):MISSILE_BOAT
-Condor Heavy Hover Tank (Upgrade) (Standard):MISSILE_BOAT
+Condor Heavy Hover Tank (Upgrade):MISSILE_BOAT
 Condor Multi-Purpose Tank (Reactive):STRIKER
 Condor Multi-Purpose Tank (Standard):STRIKER
 Condottiere Assault Craft (Standard):NONE
@@ -4328,7 +4328,7 @@ Mobile Long Tom Artillery Ammunition Trailer LT-MOB-25:NONE
 Mobile Long Tom Artillery Support Carriage LT-MOB-25:NONE
 Model 96 'Elephant' (Standard):NONE
 Model 96 'Elephant' Mk I:NONE
-Model 96C “Howdah” SDS Command Ship:NONE
+Model 96C 'Howdah' SDS Command Ship:NONE
 Model 97 'Octopus' (3051):NONE
 Molniya Corvette (2951):NONE
 Moltke MBT M1:SNIPER
@@ -7511,3 +7511,84 @@ Motorized Platoon, Taurian (MG):AMBUSHER
 Motorized Platoon, Taurian (Rifle):AMBUSHER
 Motorized Platoon, Taurian (SRM):AMBUSHER
 Motorized Platoon, Taurian (LRM):AMBUSHER
+Kamisori Light Tank Prime:SCOUT
+Kamisori Light Tank A:SNIPER
+Kamisori Light Tank B:SCOUT
+Kamisori Light Tank C:SCOUT
+Kamisori Light Tank R:SCOUT
+Galleon Light Tank GAL-106:SCOUT
+Galleon Light Tank GAL-106M:SCOUT
+Galleon Light Tank GAL-200R:AMBUSHER
+Galleon Light Tank GAL-201:SCOUT
+Galleon Light Tank GAL-300:STRIKER
+Galleon Light Tank C:STRIKER
+Buzzard Hover Tank :STRIKER
+Falcon Hover Tank :STRIKER
+Hawk Hover Tank (LTV-4):STRIKER
+Axel Heavy Tank IIC :BRAWLER
+Axel Heavy Tank IIC (XL):BRAWLER
+Patton Tank (Taurian):BRAWLER
+Patton Tank (Ultra):BRAWLER
+Patton Tank (XL):BRAWLER
+Phantom T:SCOUT
+Phantom F:STRIKER
+Phantom G:SCOUT
+Phantom I:SCOUT
+Phantom J:STRIKER
+Phantom K:SNIPER
+Phantom L:SCOUT
+Phantom R:STRIKER
+Nightsky NGS-7S:STRIKER
+Penetrator PTR-8D:BRAWLER
+Gunslinger GUN-3ERD:JUGGERNAUT
+Condor Heavy Hover Tank (Ultra):STRIKER
+Condor Heavy Hover Tank (Fusion):STRIKER
+Condor Heavy Hover Tank (Laser):STRIKER
+Condor Heavy Hover Tank (LAC):STRIKER
+Condor Heavy Hover Tank C:STRIKER
+Maxim Heavy Hover Transport (Escort):STRIKER
+Flea FLE-21:STRIKER
+Hermes II HER-7A:SNIPER
+Starslayer STY-4C:SKIRMISHER
+Merlin MLN-1D:SNIPER
+Merlin MLN-1E:SNIPER
+Merlin MLN-1P:JUGGERNAUT
+Merlin C:BRAWLER
+Quickdraw QKD-9G:SKIRMISHER
+Caesar CES-5R:BRAWLER
+Naga II Prime:BRAWLER
+Naga II A:BRAWLER
+Naga II B:MISSILE_BOAT
+Naga II C:BRAWLER
+Naga II H:BRAWLER
+Naga II W:SNIPER
+Kamisori Light Tank Prime:SCOUT
+Kamisori Light Tank A:SNIPER
+Kamisori Light Tank B:SCOUT
+Kamisori Light Tank C:SCOUT
+Kamisori Light Tank R:SCOUT
+Galleon Light Tank GAL-106:SCOUT
+Galleon Light Tank GAL-106M:SCOUT
+Galleon Light Tank GAL-200R:AMBUSHER
+Galleon Light Tank GAL-201:SCOUT
+Galleon Light Tank GAL-300:STRIKER
+Galleon Light Tank C:STRIKER
+Buzzard Hover Tank :STRIKER
+Falcon Hover Tank :STRIKER
+Hawk Hover Tank (LTV-4):STRIKER
+Axel Heavy Tank IIC :BRAWLER
+Axel Heavy Tank IIC (XL):BRAWLER
+Patton Tank (Taurian):BRAWLER
+Patton Tank (Ultra):BRAWLER
+Patton Tank (XL):BRAWLER
+Phantom T:SCOUT
+Phantom F:STRIKER
+Phantom G:SCOUT
+Phantom I:SCOUT
+Phantom J:STRIKER
+Phantom K:SNIPER
+Phantom L:SCOUT
+Phantom R:STRIKER
+Nightsky NGS-7S:STRIKER
+Penetrator PTR-8D:BRAWLER
+Gunslinger GUN-3ERD:JUGGERNAUT

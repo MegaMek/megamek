@@ -1,11 +1,11 @@
-Version:1.1
+Version:1.3
 Warhammer
 C 3
-
+mul id:7566
 Config:Biped
 techbase:Clan
-era:2850
-source:Rec Guide:ilClan #7 - Clan Invasion
+era:2862
+source:Rec Guide:ilClan #7 - Early Succession War
 rules level:2
 
 mass:70

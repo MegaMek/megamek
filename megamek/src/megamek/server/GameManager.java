@@ -39,6 +39,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.EmailService;
+import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
@@ -443,12 +444,6 @@ public class GameManager implements IGameManager {
         if (sFile.endsWith(".gz")) {
             sFile = sFile.replace(".gz", "");
         }
-        XStream xstream = new XStream();
-
-        // This will make save games much smaller
-        // by using a more efficient means of referencing
-        // objects in the XML graph
-        xstream.setMode(XStream.ID_REFERENCES);
 
         String sFinalFile = sFile;
         if (!sFinalFile.endsWith(MMConstants.SAVE_FILE_EXT)) {
@@ -464,8 +459,7 @@ public class GameManager implements IGameManager {
         try (OutputStream os = new FileOutputStream(sFinalFile + ".gz");
              OutputStream gzo = new GZIPOutputStream(os);
              Writer writer = new OutputStreamWriter(gzo, StandardCharsets.UTF_8)) {
-
-            xstream.toXML(getGame(), writer);
+            SerializationHelper.getSaveGameXStream().toXML(getGame(), writer);
         } catch (Exception e) {
             LogManager.getLogger().error("Unable to save file: " + sFinalFile, e);
         }

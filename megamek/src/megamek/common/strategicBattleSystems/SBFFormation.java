@@ -20,18 +20,17 @@ package megamek.common.strategicBattleSystems;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
-import megamek.common.alphaStrike.*;
+import megamek.common.alphaStrike.ASDamageVector;
+import megamek.common.alphaStrike.ASSpecialAbilityCollector;
+import megamek.common.alphaStrike.BattleForceSUA;
 import megamek.common.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static megamek.common.alphaStrike.ASUnitType.*;
-import static megamek.common.alphaStrike.ASUnitType.BM;
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.common.strategicBattleSystems.SBFElementType.AS;
-import static megamek.common.strategicBattleSystems.SBFElementType.LA;
+import static megamek.common.strategicBattleSystems.SBFElementType.*;
 
 public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFormatter {
     
@@ -185,124 +184,6 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         return trspMovementMode.code;
     }
 
-//
-//    /**
-//     * NEW version - Adds a Special Unit Ability that is not associated with any
-//     * additional information or number, e.g. RCN.
-//     */
-//    public void addSPA(BattleForceSUA spa) {
-//        specialAbilities.put(spa, null);
-//    }
-//
-//    /**
-//     * NEW version - Adds a Special Unit Ability associated with an integer number such as C3M#. If
-//     * that SPA is already present, the given number is added to the one already present. If the present
-//     * number is a Double type value, that type is preserved.
-//     */
-//    public void addSPA(BattleForceSUA spa, int number) {
-//        if (!specialAbilities.containsKey(spa)) {
-//            specialAbilities.put(spa, number);
-//        } else {
-//            if (specialAbilities.get(spa) instanceof Integer) {
-//                specialAbilities.put(spa, (int) specialAbilities.get(spa) + number);
-//            } else if (specialAbilities.get(spa) instanceof Double) {
-//                specialAbilities.put(spa, (double) specialAbilities.get(spa) + number);
-//            }
-//        }
-//    }
-//
-//    /**
-//     * NEW version - Adds a Special Unit Ability associated with a possibly non-integer number such
-//     * as MHQ2. If that SPA is already present, the given number is added to the one already present.
-//     * if the previosly present number was an integer, it will be converted to a Double type value.
-//     */
-//    public void addSPA(BattleForceSUA spa, double number) {
-//        if (!specialAbilities.containsKey(spa)) {
-//            specialAbilities.put(spa, number);
-//        } else {
-//            if (specialAbilities.get(spa) instanceof Integer) {
-//                specialAbilities.put(spa, (int)specialAbilities.get(spa) + number);
-//            } else if (specialAbilities.get(spa) instanceof Double) {
-//                specialAbilities.put(spa, (double)specialAbilities.get(spa) + number);
-//            }
-//        }
-//    }
-//
-//    /**
-//     * NEW version - Replaces the value associated with a Special Unit Ability with the given Object.
-//     * The previously present associated Object, if any, is discarded. If the ability was not present,
-//     * it is added.
-//     */
-//    public void replaceSPA(BattleForceSUA spa, Object newValue) {
-//        specialAbilities.put(spa, newValue);
-//    }
-//
-//    /**
-//     * NEW version - Adds a Special Unit Ability associated with a single damage value such as IF2. If
-//     * that SPA is already present, the new damage value replaces the former.
-//     */
-//    public void addSPA(BattleForceSUA spa, ASDamage damage) {
-//        specialAbilities.put(spa, damage);
-//    }
-//
-//    /**
-//     * NEW version - Adds a Special Unit Ability associated with a full damage vector such as LRM1/2/2. If
-//     * that SPA is already present, the new damage value replaces the former.
-//     */
-//    public void addSPA(BattleForceSUA spa, ASDamageVector damage) {
-//        specialAbilities.put(spa, damage);
-//    }
-//
-//    /**
-//     * NEW version - Adds a Special Unit Ability associated with a whole ASArcSummary such as TUR. If
-//     * that SPA is already present, the new value replaces the former.
-//     */
-//    public void addSPA(BattleForceSUA spa, ASSpecialAbilityCollection value) {
-//        specialAbilities.put(spa, value);
-//    }
-//
-//    /** NEW version - Adds the TUR Special Unit Ability with a List<List<Object>>. */
-//    public void addTurSPA(List<List<Object>> turAbility) {
-//        specialAbilities.put(TUR, turAbility);
-//    }
-//
-//    /** NEW version - Adds the LAM Special Unit Ability with a LAM movement map. */
-//    public void addLamSPA(Map<String, Integer> specialMoves) {
-//        specialAbilities.put(LAM, specialMoves);
-//    }
-//
-//    /** NEW version - Adds the BIM Special Unit Ability with a LAM movement map. */
-//    public void addBimSPA(Map<String, Integer> specialMoves) {
-//        specialAbilities.put(BIM, specialMoves);
-//    }
-//
-//    public Object getSPA(BattleForceSUA spa) {
-//        return specialAbilities.get(spa);
-//    }
-//
-//    public boolean hasSPA(BattleForceSUA spa) {
-//        return specialAbilities.containsKey(spa);
-//    }
-//
-//    public String getSpecialsString() {
-//        return specialAbilities.keySet().stream()
-//                .filter(this::showSpecial)
-//                .map(spa -> formatSPAString(spa, getSPA(spa)))
-//                .sorted(String.CASE_INSENSITIVE_ORDER)
-//                .collect(Collectors.joining(","));
-//    }
-
-    public boolean showSpecial(BattleForceSUA spa) {
-        //TODO
-        if ((type == SBFElementType.BM) && (spa == SOA || spa == SRCH)) {
-            return false;
-        }
-        if ((type == SBFElementType.V) && (spa == SRCH)) {
-            return false;
-        }
-        return true;
-    }
-
     public static String formatSPAString(BattleForceSUA spa, @Nullable Object spaObject) {
         if (spa == TUR) {
             return "TUR(" + spaObject + ")";
@@ -390,18 +271,6 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
     @Override
     public String getSpecialsDisplayString(String delimiter, BattleForceSUAFormatter element) {
         return specialAbilities.getSpecialsDisplayString(delimiter, element);
-    }
-
-    @Override
-    public boolean showSUA(BattleForceSUA sua) {
-        return true;
-//        return sua.isDoor()
-//                || (element.isLargeAerospace() && (sua == STD))
-//                || (element.usesCapitalWeapons() && sua.isAnyOf(MSL, SCAP, CAP))
-//                || (element.isType(BM, PM) && (sua == SOA))
-//                || (element.isType(CV, BM) && (sua == SRCH))
-//                || (!element.isLargeAerospace() && sua.isDoor())
-//                || (hasAutoSeal(element) && (sua == SEAL));
     }
 
     @Override

@@ -19,6 +19,7 @@
 package megamek.client.ui.dialogs;
 
 import megamek.client.ui.baseComponents.AbstractDialog;
+import megamek.client.ui.swing.AlphaStrikeStatsTablePanel;
 import megamek.client.ui.swing.MMToggleButton;
 import megamek.client.ui.swing.SBFViewPanel;
 import megamek.client.ui.swing.util.UIUtil;
@@ -39,9 +40,11 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
     private final Game game;
     private Collection<SBFFormation> formations;
     private final MMToggleButton pilotToggle = new MMToggleButton("Include Pilot");
+    private final MMToggleButton elementsToggle = new MMToggleButton("Show Elements");
     private final JButton clipBoardButton = new JButton("Copy to Clipboard");
     private JScrollPane scrollPane = new JScrollPane();
     private final JPanel centerPanel = new JPanel();
+    private SBFViewPanel statsPanel;
 
     public StrategicBattleForceStatsDialog(JFrame frame, Collection<Force> fo, Game gm) {
         super(frame, true, "SBFStatsDialog", "SBFStatsDialog.title");
@@ -58,8 +61,10 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
         var optionsPanel = new UIUtil.FixedYPanel(new FlowLayout(FlowLayout.LEFT));
         optionsPanel.add(Box.createHorizontalStrut(25));
         optionsPanel.add(pilotToggle);
+        optionsPanel.add(elementsToggle);
         optionsPanel.add(clipBoardButton);
         pilotToggle.addActionListener(e -> setupTable());
+        elementsToggle.addActionListener(e -> statsPanel.showElements(elementsToggle.isSelected()));
         clipBoardButton.addActionListener(e -> copyToClipboard());
 
         setupTable();
@@ -78,7 +83,8 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
                 .map(f -> new SBFFormationConverter(f, game, pilotToggle.isSelected()).convert())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        scrollPane = new JScrollPane(new SBFViewPanel(getFrame(), formations));
+        statsPanel = new SBFViewPanel(getFrame(), formations);
+        scrollPane = new JScrollPane(statsPanel.getPanel());
         centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
     }

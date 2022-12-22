@@ -21,10 +21,11 @@ package megamek.common.strategicBattleSystems;
 import megamek.common.alphaStrike.*;
 import megamek.common.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.common.alphaStrike.BattleForceSUA.FLK;
 
 /**
  * Represents an SBF Unit (Ground SBF Unit or Aerospace Flight) which contains between 1 and 6 AlphaStrike
@@ -46,6 +47,7 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
     private ASDamageVector damage = ASDamageVector.ZERO;
     private int pointValue = 0;
     private final SBFSpecialAbilityCollection specialAbilities = new SBFSpecialAbilityCollection();
+    private List<AlphaStrikeElement> elements;
 
     public String getName() {
         return name;
@@ -159,18 +161,16 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
         this.damage = damage;
     }
 
-    public SBFSpecialAbilityCollection getSpecialAbilities() {
-        return specialAbilities;
+    public void setElements(List<AlphaStrikeElement> elements) {
+        this.elements = elements;
     }
 
-    public boolean showSpecial(BattleForceSUA spa) {
-        if ((type == SBFElementType.BM) && (spa == SOA || spa == SRCH)) {
-            return false;
-        }
-        if ((type == SBFElementType.V) && (spa == SRCH)) {
-            return false;
-        }
-        return true;
+    public List<AlphaStrikeElement> getElements() {
+        return new ArrayList<>(elements);
+    }
+
+    public SBFSpecialAbilityCollection getSpecialAbilities() {
+        return specialAbilities;
     }
 
     /** Returns true if this SBF Unit is of the given type. */
@@ -210,6 +210,12 @@ public class SBFUnit implements ASSpecialAbilityCollector, BattleForceSUAFormatt
 
     @Override
     public boolean showSUA(BattleForceSUA sua) {
+        if ((type == SBFElementType.BM) && (sua == SOA || sua == SRCH)) {
+            return false;
+        }
+        if ((type == SBFElementType.V) && (sua == SRCH)) {
+            return false;
+        }
         return true;
     }
 

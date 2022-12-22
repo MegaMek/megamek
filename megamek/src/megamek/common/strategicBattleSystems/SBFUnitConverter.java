@@ -35,14 +35,14 @@ public class SBFUnitConverter {
 
     //TODO: How do MAS/LMAS/STL work? If all have a mix of them, the unit gets all?
 
-    private final Collection<AlphaStrikeElement> elements;
-    private final Collection<AlphaStrikeElement> elementsBaseSkill;
+    private final List<AlphaStrikeElement> elements;
+    private final List<AlphaStrikeElement> elementsBaseSkill;
     private final SBFUnit unit = new SBFUnit();
     private final CalculationReport report;
     private int roundedAverageMove = 0;
 
-    SBFUnitConverter(Collection<AlphaStrikeElement> elements, String name,
-                     Collection<AlphaStrikeElement> elementsBaseSkill, CalculationReport report) {
+    SBFUnitConverter(List<AlphaStrikeElement> elements, String name,
+                     List<AlphaStrikeElement> elementsBaseSkill, CalculationReport report) {
         this.elements = elements;
         unit.setName(Objects.requireNonNullElse(name, "Unknown"));
         this.elementsBaseSkill = elementsBaseSkill;
@@ -62,6 +62,8 @@ public class SBFUnitConverter {
             report.addLine("Error: No elements.", "");
             return unit;
         }
+
+        unit.setElements(elements);
 
         calcUnitType();
         calcUnitSize();

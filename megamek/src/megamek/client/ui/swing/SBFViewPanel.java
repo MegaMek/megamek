@@ -32,19 +32,41 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SBFViewPanel extends JPanel {
+public class SBFViewPanel {
 
     public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
     public static final int COLS = 13;
     
-    private int elements = 0;
+    private int cellCount = 0;
     private final JFrame parent;
     private final Map<AlphaStrikeElement, FlexibleCalculationReport> reports = new HashMap<>();
+    private boolean showElements = false;
+    private final Collection<SBFFormation> formations;
+    private final Box contentPane = Box.createVerticalBox();
+    private final JPanel sbfPane = new JPanel(new SpringLayout());
+    private final JPanel asPane = new JPanel(new SpringLayout());
 
     public SBFViewPanel(JFrame parent, Collection<SBFFormation> formations) {
         this.parent = parent;
-        setLayout(new SpringLayout());
+        this.formations = formations;
+        contentPane.add(sbfPane);
+        contentPane.add(asPane);
+        updatePanel();
+    }
+
+    public void showElements(boolean showElements) {
+        this.showElements = showElements;
+        updatePanel();
+    }
+
+    public JComponent getPanel() {
+        return contentPane;
+    }
+
+    private void updatePanel() {
+        sbfPane.removeAll();
+        cellCount = 0;
 
         for (SBFFormation formation : formations) {
             addFormationHeaders();
@@ -83,8 +105,16 @@ public class SBFViewPanel extends JPanel {
             }
             addSpacer();
         }
+        SpringUtilities.makeCompactGrid(sbfPane, cellCount / COLS, COLS, 5, 5, 1, 5);
 
-        SpringUtilities.makeCompactGrid(this, elements / COLS, COLS, 5, 5, 1, 5);
+        if (showElements) {
+            for (SBFFormation formation : formations) {
+                for (SBFUnit unit : formation.getUnits()) {
+                    var p = new AlphaStrikeStatsTablePanel(unit.getElements());
+                    contentPane.add(p);
+                }
+            }
+        }
     }
 
     private void addConversionInfo(FlexibleCalculationReport conversionReport,
@@ -94,7 +124,8 @@ public class SBFViewPanel extends JPanel {
         button.setEnabled(conversionReport != null);
         button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport).setVisible(true));
         panel.add(button);
-        add(panel);
+        sbfPane.add(panel);
+        cellCount++;
     }
 
     private void addGridElement(String text) {
@@ -113,8 +144,8 @@ public class SBFViewPanel extends JPanel {
         var panel = new UIUtil.FixedYPanel(new FlowLayout(alignment));
         panel.setBackground(bgColor);
         panel.add(new JLabel(text));
-        add(panel);
-        elements++;
+        sbfPane.add(panel);
+        cellCount++;
     }
 
     private void addHeader(String text, float alignment) {
@@ -122,14 +153,14 @@ public class SBFViewPanel extends JPanel {
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         var textLabel = new JLabel(text);
         textLabel.setAlignmentX(alignment);
-        textLabel.setFont(getFont().deriveFont(Font.BOLD));
+        textLabel.setFont(sbfPane.getFont().deriveFont(Font.BOLD));
         textLabel.setForeground(UIUtil.uiLightBlue());
         panel.add(Box.createVerticalStrut(8));
         panel.add(textLabel);
         panel.add(Box.createVerticalStrut(5));
         panel.add(new JSeparator());
-        add(panel);
-        elements++;
+        sbfPane.add(panel);
+        cellCount++;
     }
 
     private void addHeader(String text) {
@@ -170,8 +201,8 @@ public class SBFViewPanel extends JPanel {
 
     private void addSpacer() {
         for (int i = 0; i < COLS; i++) {
-            add(Box.createVerticalStrut(12));
-            elements++;
+            sbfPane.add(Box.createVerticalStrut(12));
+            cellCount++;
         }
     }
 

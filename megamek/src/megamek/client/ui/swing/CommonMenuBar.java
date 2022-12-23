@@ -355,15 +355,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
             if (guiScale > ClientGUI.MIN_GUISCALE) {
                 GUIP.setValue(GUIPreferences.GUI_SCALE, guiScale - 0.1);
             }
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_MINI_MAP)) {
-            GUIP.toggleMinimapEnabled();
-            
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_UNIT_DISPLAY)) {
-            GUIP.toggleUnitDisplay();
-            
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_KEYBINDS_OVERLAY)) {
-            GUIP.toggleKeybindsOverlay();
-
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_PLANETARYCONDITIONS_OVERLAY)) {
             GUIP.togglePlanetaryConditionsOverlay();
 

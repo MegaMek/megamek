@@ -239,6 +239,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String MSG_POINTBLANKSHOTMSG = Messages.getString("ClientGUI.PointBlankShot.Message");
     private static final String MSG_POINTBLANKSHOTTITLE = Messages.getString("ClientGUI.PointBlankShot.Title");
     private static final String MSG_CLIENTTITLESUFFIX = Messages.getString("ClientGUI.clientTitleSuffix");
+    private static final String MSG_FAILEDTOLOADAUDIFILE = Messages.getString("ClientGUI.failedToLoadAudioFile");
     private static final String MSG_CHATTERBOXMEGAMEK = Messages.getString("ChatterBox.Megamek");
     private static final String MSG_GAMESAVEDIALOGMSG = Messages.getString("ClientGUI.gameSaveDialogMessage");
     private static final String MSG_GAMESAVEFIRST = Messages.getString("ClientGUI.gameSaveFirst");
@@ -429,7 +430,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
         final File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
         if (!file.exists()) {
-            LogManager.getLogger().error("Failed to load audio file named " + GUIP.getSoundBingFilename());
+            LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIP.getSoundBingFilename());
             return;
         }
 

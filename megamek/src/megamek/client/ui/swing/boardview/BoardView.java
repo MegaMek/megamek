@@ -1029,7 +1029,14 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
+        Rectangle viewRect = scrollpane.getVisibleRect();
+
         if (!isTileImagesLoaded()) {
+            MetalTheme theme = new DefaultMetalTheme();
+            g.setColor(theme.getControl());
+            g.fillRect(-getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight());
+            g.setColor(theme.getControlTextColor());
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50);
             if (!tileManager.isStarted()) {
                 LogManager.getLogger().info("Loading images for board");
@@ -1040,7 +1047,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             return;
         }
 
-        Rectangle viewRect = scrollpane.getVisibleRect();
         if (bvBgShouldTile && (bvBgImage != null)) {
             Rectangle clipping = g.getClipBounds();
             int x = 0;

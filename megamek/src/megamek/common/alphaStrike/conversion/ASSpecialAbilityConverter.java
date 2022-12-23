@@ -548,6 +548,13 @@ public class ASSpecialAbilityConverter {
         if (element.getFullArmor() == 0) {
             element.getSpecialAbilities().removeSUA(BAR);
         }
+
+        // A unit with ENE doesn't need any type of CASE
+        if (element.hasSUA(ENE)) {
+            element.getSpecialAbilities().removeSUA(CASE);
+            element.getSpecialAbilities().removeSUA(CASEII);
+            element.getSpecialAbilities().removeSUA(CASEP);
+        }
     }
 
     /** Adds the sua(s) to the element and writes a report line for each, if it is not yet present. */

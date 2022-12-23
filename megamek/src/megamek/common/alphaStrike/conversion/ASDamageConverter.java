@@ -719,9 +719,11 @@ public class ASDamageConverter {
      * Only used for the damage specials LRM, SRM, TOR, IATM, AC, FLK
      */
     protected static boolean qualifiesForSpecial(double[] damage, BattleForceSUA dmgType) {
-        if (dmgType.isAnyOf(FLK, TOR, IF, REAR, TUR, MSL, CAP, SCAP, STD, PNT)
+        if (dmgType.isAnyOf(FLK, TOR, REAR, TUR, MSL, CAP, SCAP, STD, PNT)
                 && damage[0] + damage[1] + damage[2] + damage[3] > 0) {
             return true;
+        } else if (dmgType == IF) {
+            return damage[2] > 0;
         } else {
             return roundUpToTenth(damage[1]) >= 1;
         }

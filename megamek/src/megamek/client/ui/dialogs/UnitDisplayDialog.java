@@ -31,15 +31,14 @@ import java.awt.event.WindowEvent;
 
 public class UnitDisplayDialog extends JDialog {
     //region Variable Declarations
-    private UnitDisplay unitDisplay;
-
     private final ClientGUI clientGUI;
+    private static final String MSG_TITLE = Messages.getString("ClientGUI.MechDisplay");
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
-        super(frame, Messages.getString("ClientGUI.MechDisplay"), false);
+        super(frame, MSG_TITLE, false);
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
@@ -65,6 +64,31 @@ public class UnitDisplayDialog extends JDialog {
         this.clientGUI = clientGUI;
     }
     //endregion Constructors
+
+    private void savePref() {
+        if ((this.getSize().width * this.getSize().height) > 0) {
+            if (GUIP.getUnitDisplayStartTabbed()) {
+                GUIP.setUnitDisplayPosX(this.getLocation().x);
+                GUIP.setUnitDisplayPosY(this.getLocation().y);
+                GUIP.setUnitDisplaySizeWidth(this.getSize().width);
+                GUIP.setUnitDisplaySizeHeight(this.getSize().height);
+            } else {
+                GUIP.setUnitDisplayNontabbedPosX(this.getLocation().x);
+                GUIP.setUnitDisplayNontabbedPosY(this.getLocation().y);
+                GUIP.setUnitDisplayNonTabbedSizeWidth(this.getSize().width);
+                GUIP.setUnitDisplayNonTabbedSizeHeight(this.getSize().height);
+                clientGUI.getUnitDisplay().saveSplitterLoc();
+            }
+        }
+    }
+
+    @Override
+    protected void processWindowEvent(WindowEvent e) {
+        super.processWindowEvent(e);
+        if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
+            savePref();
+        }
+    }
 
     /**
      * In addition to the default Dialog processKeyEvent, this method

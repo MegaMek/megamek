@@ -199,6 +199,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_ENABLED = "MiniReportEnabled";
     public static final String MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE = "MiniReportAutoDiplayReportPhase";
     public static final String MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE = "MiniReportAutoDiplayNonReportPhase";
+    public static final String MINI_REPORT_LOCATION = "MiniReportLocation";
     public static final String PLAYER_lIST_POS_X = "PlayerListPosX";
     public static final String PLAYER_lIST_POS_Y = "PlayerListPosY";
     public static final String PLAYER_lIST_ENABLED = "PlayerListEnabled";
@@ -518,6 +519,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_ENABLED, true);
         store.setDefault(MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE, MSG_SHOW);
         store.setDefault(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, MSG_HIDE);
+        store.setDefault(MINI_REPORT_LOCATION, 0);
 
         store.setDefault(PLAYER_lIST_ENABLED, true);
         store.setDefault(PLAYER_lIST_POS_X, 200);
@@ -958,6 +960,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public String getMiniReportAutoDisplayNonReportPhase() {
         return store.getString(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE);
+    }
+
+    public int getMiniReportLocaton() {
+        return store.getInt(MINI_REPORT_LOCATION);
     }
 
     public boolean getPlayerListEnabled() {
@@ -1570,6 +1576,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMiniReportAutoDisplayNonReportPhase(String s) {
         store.setValue(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, s);
+    }
+
+    public void toggleMiniReportLocation() {
+        store.setValue(MINI_REPORT_LOCATION, ((getInt(MINI_REPORT_LOCATION)+1)%3));
+    }
+
+    public void setMiniReportLocation(int i) {
+        store.setValue(MINI_REPORT_LOCATION, i);
     }
 
     public void setPlayerListEnabled(boolean b) {

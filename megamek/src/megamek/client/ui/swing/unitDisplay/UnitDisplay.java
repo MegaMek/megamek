@@ -23,9 +23,14 @@ import megamek.client.ui.swing.UnitDisplayOrderPreferences;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.common.Entity;
+import megamek.common.Report;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -39,7 +44,7 @@ import java.util.ArrayList;
  * Displays the info for a mech. This is also a sort of interface for special
  * movement and firing actions.
  */
-public class UnitDisplay extends JPanel {
+public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
     private JButton butSwitchView;
@@ -191,9 +196,6 @@ public class UnitDisplay extends JPanel {
         splitB1.setDividerLocation(GUIP.getUnitDisplaySplitB1Loc());
         splitC1.setDividerLocation(GUIP.getUnitDisplaySplitC1Loc());
 
-        butSwitchView.setPreferredSize(new Dimension(250,20));
-        butSwitchLocation.setPreferredSize(new Dimension(250,20));
-
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 1, 1, 1);
         c.weightx = 1.0;
@@ -250,6 +252,9 @@ public class UnitDisplay extends JPanel {
         else {
             setDisplayNonTabbed();
         }
+
+        adaptToGUIScale();
+        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -668,5 +673,17 @@ public class UnitDisplay extends JPanel {
     @Nullable
     public ClientGUI getClientGUI() {
         return clientgui;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
     }
 }

@@ -56,6 +56,8 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
                 assign("Visual Camo, not Mimetic", LMAS);
             } else if (misc.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
                 assign("Vehicle Mine Dispenser", MDS, 1);
+            } else if (misc.getType().hasFlag(MiscType.F_MINE)) {
+                assign("Conventional Mine", MDS, 1);
             } else if (misc.getType().hasFlag(MiscType.F_TOOLS)
                     && ((misc.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER)) {
                 assign("Minesweeper", MSW);

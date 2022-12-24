@@ -42,27 +42,34 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
     @Override
     protected void processDamage() {
-        report.addEmptyLine();
-        report.addLine("--- Damage:", "");
-        int baseRange = 0;
-        if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryWeaponsPerSquad() >= 2)) {
-            baseRange = infantry.getSecondaryWeapon().getInfantryRange();
-        } else if (infantry.getPrimaryWeapon() != null) {
-            baseRange = infantry.getPrimaryWeapon().getInfantryRange();
+
+        if (infantry.hasFieldWeapon()) {
+            processSDamage();
+            processMDamage();
+            processLDamage();
+            processFrontSpecialDamage(AC);
+            processFrontSpecialDamage(FLK);
+        } else {
+            int baseRange = 0;
+            if ((infantry.getSecondaryWeapon() != null) && (infantry.getSecondaryWeaponsPerSquad() >= 2)) {
+                baseRange = infantry.getSecondaryWeapon().getInfantryRange();
+            } else if (infantry.getPrimaryWeapon() != null) {
+                baseRange = infantry.getPrimaryWeapon().getInfantryRange();
+            }
+            int range = baseRange * 3;
+            finalSDamage = ASDamage.createDualRoundedUp(getConvInfantryStandardDamage());
+            String maxRangeText = "Range: S";
+            if (range > 3) {
+                finalMDamage = finalSDamage;
+                maxRangeText = "Ranges: S, M";
+            }
+            if (range > 15) {
+                finalLDamage = finalSDamage;
+                maxRangeText = "Ranges: S, M, L";
+            }
+            report.addLine("Final Damage", "", finalSDamage + "");
+            report.addLine("Range:", range + " hexes", maxRangeText);
         }
-        int range = baseRange * 3;
-        finalSDamage = ASDamage.createDualRoundedUp(getConvInfantryStandardDamage());
-        String maxRangeText = "Range: S";
-        if (range > 3) {
-            finalMDamage = finalSDamage;
-            maxRangeText = "Ranges: S, M";
-        }
-        if (range > 15) {
-            finalLDamage = finalSDamage;
-            maxRangeText = "Ranges: S, M, L";
-        }
-        report.addLine("Final Damage", "", finalSDamage + "");
-        report.addLine("Range:", range + " hexes", maxRangeText);
 
         processHT();
     }

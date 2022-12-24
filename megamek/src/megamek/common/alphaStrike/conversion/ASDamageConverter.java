@@ -163,6 +163,7 @@ public class ASDamageConverter {
             processSpecialDamage(IATM, turretLocation);
             processSpecialDamage(TOR, turretLocation);
             processSpecialDamage(REL, turretLocation);
+            processHT(turretLocation);
         }
     }
 
@@ -529,24 +530,29 @@ public class ASDamageConverter {
 
     /** Determines if the element has the HT ability and what the value is. Overridden for CI. */
     protected void processHT() {
+        processHT(0);
+    }
+
+    /** Determines if the element has the HT ability and what the value is. Overridden for CI. */
+    protected void processHT(int location) {
         report.startTentativeSection();
         report.addEmptyLine();
         report.addLine("--- Heat Damage (HT):", "");
-        int[] heatDamageValues = assembleHeatDamage();
+        int[] heatDamageValues = assembleHeatDamage(location);
         if (heatDamageValues[0] + heatDamageValues[1] + heatDamageValues[2] > 0) {
-            determineFinalHT(heatDamageValues);
+            determineFinalHT(heatDamageValues, location);
             report.endTentativeSection();
         } else {
             report.discardTentativeSection();
         }
     }
 
-    protected int[] assembleHeatDamage() {
+    protected int[] assembleHeatDamage(int location) {
         int totalHeatS = 0;
         int totalHeatM = 0;
         int totalHeatL = 0;
         for (Mounted weapon : weaponsList) {
-            double locationMultiplier = ASLocationMapper.damageLocationMultiplier(entity, 0, weapon);
+            double locationMultiplier = ASLocationMapper.damageLocationMultiplier(entity, location, weapon);
             WeaponType weaponType = (WeaponType) weapon.getType();
             int heatS = weaponType.getAlphaStrikeHeatDamage(RANGE_BAND_SHORT);
             int heatM = weaponType.getAlphaStrikeHeatDamage(RANGE_BAND_MEDIUM);
@@ -564,13 +570,13 @@ public class ASDamageConverter {
         return new int[] {totalHeatS, totalHeatM, totalHeatL};
     }
 
-    protected void determineFinalHT(int[] heatDamageValues) {
+    protected void determineFinalHT(int[] heatDamageValues, int location) {
         int htS = resultingHTValue(heatDamageValues[0]);
         int htM = resultingHTValue(heatDamageValues[1]);
         int htL = resultingHTValue(heatDamageValues[2]);
         if (htS + htM + htL > 0) {
             ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(htS, htM, htL);
-            locations[0].setSUA(HT, finalHtValue);
+            locations[location].setSUA(HT, finalHtValue);
             report.addLine("Final Ability", "", "HT" + finalHtValue);
         } else {
             report.addLine("Final Ability", "No HT", "");

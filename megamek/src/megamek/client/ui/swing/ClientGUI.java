@@ -1070,13 +1070,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 unitDisplay.saveSplitterLoc();
             }
 
-            if ((panA1.isVisible()) &&  (panA1.getComponents().length > 0)) {
-                GUIP.setSplitPaneALocation(splitPaneA.getDividerLocation());
-            }
-
-            if ((panB2.isVisible()) &&  (panB2.getComponents().length > 0)) {
-                GUIP.setSplitPaneBLocation(splitPaneB.getDividerLocation());
-            }
+            saveSplitPaneLocations();
         }
 
         // Ruler display
@@ -1628,7 +1622,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
-    public void setUnitDisplayLocation(boolean visible) {
+    private void saveSplitPaneLocations() {
         if ((panA1.isVisible()) &&  (panA1.getComponents().length > 0)) {
             GUIP.setSplitPaneALocation(splitPaneA.getDividerLocation());
         }
@@ -1636,28 +1630,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if ((panB2.isVisible()) &&  (panB2.getComponents().length > 0)) {
             GUIP.setSplitPaneBLocation(splitPaneB.getDividerLocation());
         }
+    }
 
-        switch (GUIP.getUnitDisplayLocaton()) {
-            case 0:
-                getUnitDisplayDialog().add(getUnitDisplay());
-                getUnitDisplayDialog().setVisible(visible);
-                break;
-            case 1:
-                panA1.add(getUnitDisplay());
-                getUnitDisplayDialog().setVisible(false);
-                panA1.setVisible(visible);
-                panA1.revalidate();
-                splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
-                break;
-            case 2:
-                panB2.add(getUnitDisplay());
-                getUnitDisplayDialog().setVisible(false);
-                panB2.setVisible(visible);
-                panB2.revalidate();
-                splitPaneB.setDividerLocation(GUIP.getSplitPaneBDividerLocaton());
-                break;
-        }
-
+    private void hideEmptyPaneRefresh() {
         if (panA1.getComponents().length <= 0) {
             panA1.setVisible(false);
             splitPaneA.setDividerLocation(0.0);
@@ -1674,6 +1649,36 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         panA1.repaint();
         panB2.revalidate();
         panB2.repaint();
+    }
+
+    public void setUnitDisplayLocation(boolean visible) {
+        saveSplitPaneLocations();
+
+        switch (GUIP.getUnitDisplayLocaton()) {
+            case 0:
+                getUnitDisplayDialog().add(getUnitDisplay());
+                getUnitDisplayDialog().setVisible(visible);
+                getUnitDisplay().setTitleVisible(false);
+                break;
+            case 1:
+                panA1.add(getUnitDisplay());
+                getUnitDisplayDialog().setVisible(false);
+                panA1.setVisible(visible);
+                panA1.revalidate();
+                splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
+                getUnitDisplay().setTitleVisible(true);
+                break;
+            case 2:
+                panB2.add(getUnitDisplay());
+                getUnitDisplayDialog().setVisible(false);
+                panB2.setVisible(visible);
+                panB2.revalidate();
+                splitPaneB.setDividerLocation(GUIP.getSplitPaneBDividerLocaton());
+                getUnitDisplay().setTitleVisible(true);
+                break;
+        }
+
+        hideEmptyPaneRefresh();
     }
 
     private boolean fillPopup(Coords coords) {
@@ -2120,7 +2125,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             // This update is for reports that get sent at odd times,
             // currently Tactical Genius reroll requests and when
             // a player wishes to continue moving after a fall.
-            if (getClient().getGame().getPhase() == GamePhase.INITIATIVE_REPORT) {
+            if (getClient().getGame().getPhase().isInitiativeReport()) {
                 miniReportDisplayAddReportPages();
                 reportDisplayResetDone();
                 // Check if the player deserves an active reroll button

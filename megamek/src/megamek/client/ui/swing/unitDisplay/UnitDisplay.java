@@ -65,6 +65,7 @@ public class UnitDisplay extends JPanel {
     private ExtraPanel ePan;
     private ClientGUI clientgui;
     private Entity currentlyDisplaying;
+    private JLabel labTitle;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
 
     public static final String NON_TABBED_GENERAL = "General";
@@ -108,6 +109,8 @@ public class UnitDisplay extends JPanel {
         super(new GridBagLayout());
         this.clientgui = clientgui;
 
+        labTitle = new JLabel("Title");
+
         tabStrip = new MechPanelTabStrip(this);
         displayP = new JPanel(new CardLayout());
         mPan = new SummaryPanel(this);
@@ -124,6 +127,9 @@ public class UnitDisplay extends JPanel {
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
+
+        ((GridBagLayout) getLayout()).setConstraints(labTitle, c);
+        add(labTitle);
 
         ((GridBagLayout) getLayout()).setConstraints(tabStrip, c);
         add(tabStrip);
@@ -380,6 +386,10 @@ public class UnitDisplay extends JPanel {
         }
     }
 
+    public void setTitleVisible(boolean b) {
+        labTitle.setVisible(b);
+    }
+
     /**
      * Register the keyboard commands that the UnitDisplay should process
      *
@@ -566,6 +576,7 @@ public class UnitDisplay extends JPanel {
 
         if (clientgui != null) {
             clientgui.getUnitDisplayDialog().setTitle(enName);
+            labTitle.setText(enName);
         }
 
         currentlyDisplaying = en;

@@ -146,6 +146,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE = "UnitDisplayAutoDiplayReportPhase";
     public static final String UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE = "UnitDisplayAutoDiplayNonReportPhase";
     public static final String UNIT_DISPLAY_ENABLED = "UnitDisplayEnabled";
+    public static final String UNIT_DISPLAY_LOCATION = "UnitDisplayLocation";
+    public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
+    public static final String SPLIT_PANE_B_DIVIDER_LOCATION = "SplitPaneBDividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
@@ -400,7 +403,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, false);
         store.setDefault(SHOW_COORDS, true);
-        store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
+        store.setDefault(ADVANCED_BUTTONS_PER_ROW, 12);
         store.setDefault(ADVANCED_ROUND_REPORT_SPRITES, true);
 
         setDefault(ADVANCED_HEAT_COLOR_5, DEFAULT_HEAT_5_COLOR);
@@ -459,6 +462,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, MSG_HIDE);
         store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, MSG_SHOW);
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
+        store.setDefault(UNIT_DISPLAY_LOCATION, 0);
+        store.setDefault(SPLIT_PANE_A_DIVIDER_LOCATION, 300);
+        store.setDefault(SPLIT_PANE_B_DIVIDER_LOCATION, 300);
 
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -728,6 +734,18 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getUnitDisplayEnabled() {
         return store.getBoolean(UNIT_DISPLAY_ENABLED);
+    }
+
+    public int getUnitDisplayLocaton() {
+        return store.getInt(UNIT_DISPLAY_LOCATION);
+    }
+
+    public int getSplitPaneADividerLocaton() {
+        return store.getInt(SPLIT_PANE_A_DIVIDER_LOCATION);
+    }
+
+    public int getSplitPaneBDividerLocaton() {
+        return store.getInt(SPLIT_PANE_B_DIVIDER_LOCATION);
     }
 
     public boolean getCoordsEnabled() {
@@ -1320,6 +1338,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setUnitDisplayEnabled(boolean b) {
         store.setValue(UNIT_DISPLAY_ENABLED, b);
+    }
+
+    public void toggleUnitDisplayLocation() {
+        store.setValue(UNIT_DISPLAY_LOCATION, ((getInt(UNIT_DISPLAY_LOCATION)+1)%3));
+    }
+
+    public void setUnitDisplayLocation(int i) {
+        store.setValue(UNIT_DISPLAY_LOCATION, i);
+    }
+
+    public void setSplitPaneALocation(int i) {
+        store.setValue(SPLIT_PANE_A_DIVIDER_LOCATION, i);
+    }
+
+    public void setSplitPaneBLocation(int i) {
+        store.setValue(SPLIT_PANE_B_DIVIDER_LOCATION, i);
     }
 
     public void toggleCoords() {

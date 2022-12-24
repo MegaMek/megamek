@@ -22,6 +22,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -37,10 +38,22 @@ public class UnitDisplayDialog extends JDialog {
     //endregion Variable Declarations
 
     //region Constructors
-    public UnitDisplayDialog(final JFrame frame, final UnitDisplay unitDisplay,
-                             final ClientGUI clientGUI) {
+    public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        setUnitDisplay(unitDisplay);
+
+        if (GUIP.getUnitDisplayStartTabbed()) {
+            this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
+            this.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
+        }
+        else {
+            this.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
+            this.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
+        }
+
+        UIUtil.updateWindowBounds(this);
+        this.setResizable(true);
+        this.setFocusable(false);
+        this.setFocusableWindowState(false);
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -52,16 +65,6 @@ public class UnitDisplayDialog extends JDialog {
         this.clientGUI = clientGUI;
     }
     //endregion Constructors
-
-    //region Getters/Setters
-    public UnitDisplay getUnitDisplay() {
-        return unitDisplay;
-    }
-
-    public void setUnitDisplay(final UnitDisplay unitDisplay) {
-        this.unitDisplay = unitDisplay;
-    }
-    //endregion Getters/Setters
 
     /**
      * In addition to the default Dialog processKeyEvent, this method

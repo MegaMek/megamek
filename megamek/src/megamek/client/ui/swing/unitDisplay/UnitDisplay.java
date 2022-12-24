@@ -16,6 +16,7 @@ package megamek.client.ui.swing.unitDisplay;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitDisplayOrderPreferences;
@@ -42,6 +43,7 @@ public class UnitDisplay extends JPanel {
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
     private JButton butSwitchView;
+    private JButton butSwitchLocation;
     private JPanel panA1;
     private JPanel panA2;
     private JPanel panB1;
@@ -148,6 +150,7 @@ public class UnitDisplay extends JPanel {
         splitB1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitC1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         butSwitchView = new JButton("switch view");
+        butSwitchLocation = new JButton("switch location");
 
         splitABC.setOneTouchExpandable(true);
         splitBC.setOneTouchExpandable(true);
@@ -182,41 +185,56 @@ public class UnitDisplay extends JPanel {
         splitB1.setDividerLocation(GUIP.getUnitDisplaySplitB1Loc());
         splitC1.setDividerLocation(GUIP.getUnitDisplaySplitC1Loc());
 
-        butSwitchView.setPreferredSize(new Dimension(500,20));
+        butSwitchView.setPreferredSize(new Dimension(250,20));
+        butSwitchLocation.setPreferredSize(new Dimension(250,20));
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 1, 1, 1);
         c.weightx = 1.0;
         c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.WEST;
 
         ((GridBagLayout) getLayout()).setConstraints(butSwitchView, c);
         add(butSwitchView);
+
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.EAST;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(butSwitchLocation, c);
+        add(butSwitchLocation);
 
         butSwitchView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (clientgui != null) {
-                    Container unitDisplayContainer = clientgui.unitDisplay.getRootPane().getParent();
+                    UnitDisplayDialog unitDisplayDialog = clientgui.getUnitDisplayDialog();
                     if (!(GUIP.getUnitDisplayStartTabbed())) {
                         saveSplitterLoc();
-                        GUIP.setUnitDisplayNontabbedPosX(unitDisplayContainer.getLocation().x);
-                        GUIP.setUnitDisplayNontabbedPosY(unitDisplayContainer.getLocation().y);
-                        GUIP.setUnitDisplayNonTabbedSizeWidth(unitDisplayContainer.getSize().width);
-                        GUIP.setUnitDisplayNonTabbedSizeHeight(unitDisplayContainer.getSize().height);
-                        unitDisplayContainer.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
-                        unitDisplayContainer.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
+                        GUIP.setUnitDisplayNontabbedPosX(unitDisplayDialog.getLocation().x);
+                        GUIP.setUnitDisplayNontabbedPosY(unitDisplayDialog.getLocation().y);
+                        GUIP.setUnitDisplayNonTabbedSizeWidth(unitDisplayDialog.getSize().width);
+                        GUIP.setUnitDisplayNonTabbedSizeHeight(unitDisplayDialog.getSize().height);
+                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
+                        unitDisplayDialog.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
                         setDisplayTabbed();
                     } else {
-                        GUIP.setUnitDisplayPosX(unitDisplayContainer.getLocation().x);
-                        GUIP.setUnitDisplayPosY(unitDisplayContainer.getLocation().y);
-                        GUIP.setUnitDisplaySizeWidth(unitDisplayContainer.getSize().width);
-                        GUIP.setUnitDisplaySizeHeight(unitDisplayContainer.getSize().height);
-                        unitDisplayContainer.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
-                        unitDisplayContainer.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
+                        GUIP.setUnitDisplayPosX(unitDisplayDialog.getLocation().x);
+                        GUIP.setUnitDisplayPosY(unitDisplayDialog.getLocation().y);
+                        GUIP.setUnitDisplaySizeWidth(unitDisplayDialog.getSize().width);
+                        GUIP.setUnitDisplaySizeHeight(unitDisplayDialog.getSize().height);
+                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
+                        unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
                         setDisplayNonTabbed();
                     }
                 }
+            }
+        });
+
+        butSwitchLocation.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GUIP.toggleUnitDisplayLocation();
             }
         });
 

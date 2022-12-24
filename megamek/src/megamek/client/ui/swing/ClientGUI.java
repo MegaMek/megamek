@@ -293,8 +293,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public ChatterBox2 cb2;
     private BoardView bv;
     private Component bvc;
+    private JPanel panTop;
+    private JSplitPane splitPaneA;
+    private JSplitPane splitPaneB;
+    private JPanel panA1;
+    private JPanel panB1;
+    private JPanel panB2;
+
     public UnitDisplay unitDisplay;
-    private JDialog unitDisplayDialog;
+    private UnitDisplayDialog unitDisplayDialog;
     public JDialog minimapW;
     private MapMenu popup;
     private UnitOverview uo;
@@ -413,7 +420,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         this.unitDisplay = unitDisplay;
     }
 
-    public JDialog getUnitDisplayDialog() {
+    public UnitDisplayDialog getUnitDisplayDialog() {
         return unitDisplayDialog;
     }
 
@@ -428,7 +435,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         if (GUIP.getSoundBingFilename() == null) {
             return;
         }
-        final File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
+        final File file = new File(GUIP.getSoundBingFilename());
         if (!file.exists()) {
             LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIP.getSoundBingFilename());
             return;
@@ -528,6 +535,27 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName(CG_BOARDVIEW);
+
+            panTop = new JPanel(new BorderLayout());
+            panA1 = new JPanel(new BorderLayout());
+            panB1 = new JPanel(new BorderLayout());
+            panB2 = new JPanel(new BorderLayout());
+            splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+            splitPaneB = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+
+            splitPaneA.setDividerSize(10);
+            splitPaneB.setDividerSize(10);
+            splitPaneA.setResizeWeight(0.5);
+            splitPaneB.setResizeWeight(0.5);
+
+            splitPaneA.setLeftComponent(panA1);
+            splitPaneA.setRightComponent(splitPaneB);
+            splitPaneB.setLeftComponent(panB1);
+            splitPaneB.setRightComponent(panB2);
+
+            panB1.add(bvc);
+            panTop.add(splitPaneA);
+
             bv.addBoardViewListener(this);
             client.setBoardView(bv);
         } catch (Exception ex) {
@@ -587,34 +615,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         setUnitDisplay(new UnitDisplay(this, controller));
         getUnitDisplay().addMechDisplayListener(bv);
 
-        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), getUnitDisplay(), this));
-
-        if (GUIP.getUnitDisplayStartTabbed()) {
-            getUnitDisplayDialog().setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
-            getUnitDisplayDialog().setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
-        }
-        else {
-            getUnitDisplayDialog().setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
-            getUnitDisplayDialog().setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
-        }
-
-        UIUtil.updateWindowBounds(getUnitDisplayDialog());
-        getUnitDisplayDialog().setResizable(true);
-        getUnitDisplayDialog().setFocusable(false);
-        getUnitDisplayDialog().setFocusableWindowState(false);
-        getUnitDisplayDialog().add(getUnitDisplay());
+        setUnitDisplayDialog(new UnitDisplayDialog(getFrame(), this));
+        getUnitDisplayDialog().setVisible(false);
 
         Ruler.color1 = GUIP.getRulerColor1();
         Ruler.color2 = GUIP.getRulerColor2();
         ruler = new Ruler(frame, client, bv);
-        ruler.setLocation(
-                GUIP.getRulerPosX(),
-                GUIP.getRulerPosY()
-        );
-        ruler.setSize(
-                GUIP.getRulerSizeHeight(),
-                GUIP.getRulerSizeWidth()
-        );
+        ruler.setLocation(GUIP.getRulerPosX(), GUIP.getRulerPosY());
+        ruler.setSize(GUIP.getRulerSizeHeight(), GUIP.getRulerSizeWidth());
         UIUtil.updateWindowBounds(ruler);
 
         minimapW = Minimap.createMinimap(frame, getBoardView(), getClient().getGame(), this);
@@ -1061,6 +1069,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 GUIP.setUnitDisplayNonTabbedSizeHeight(getUnitDisplayDialog().getSize().height);
                 unitDisplay.saveSplitterLoc();
             }
+
+            if ((panA1.isVisible()) &&  (panA1.getComponents().length > 0)) {
+                GUIP.setSplitPaneALocation(splitPaneA.getDividerLocation());
+            }
+
+            if ((panB2.isVisible()) &&  (panB2.getComponents().length > 0)) {
+                GUIP.setSplitPaneBLocation(splitPaneB.getDividerLocation());
+            }
         }
 
         // Ruler display
@@ -1276,7 +1292,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_SELECTARTYAUTOHITHEXDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1287,7 +1303,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_DEPLOYMINEFIELDDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1298,7 +1314,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_DEPLOYMENTDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1310,7 +1326,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_TARGETINGPHASEDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1323,7 +1339,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_PREMOVEMENTDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1334,7 +1350,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_MOVEMENTDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1346,7 +1362,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_OFFBOARDDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1358,7 +1374,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_PREFIRING;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1369,7 +1385,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_FIRINGDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1380,7 +1396,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_POINTBLANKSHOTDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1391,7 +1407,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_PHYSICALDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 panSecondary.add(component, secondary);
@@ -1419,7 +1435,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 secondary = CG_REPORTDISPLAY;
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
-                    panMain.add(bvc, main);
+                    panMain.add(panTop, main);
                 }
                 currPhaseDisplay = (StatusBarPhaseDisplay) component;
                 if (!secondaryNames.containsValue(secondary)) {
@@ -1608,8 +1624,56 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         if (getUnitDisplayDialog() != null) {
-            getUnitDisplayDialog().setVisible(visible);
+            setUnitDisplayLocation(visible);
         }
+    }
+
+    public void setUnitDisplayLocation(boolean visible) {
+        if ((panA1.isVisible()) &&  (panA1.getComponents().length > 0)) {
+            GUIP.setSplitPaneALocation(splitPaneA.getDividerLocation());
+        }
+
+        if ((panB2.isVisible()) &&  (panB2.getComponents().length > 0)) {
+            GUIP.setSplitPaneBLocation(splitPaneB.getDividerLocation());
+        }
+
+        switch (GUIP.getUnitDisplayLocaton()) {
+            case 0:
+                getUnitDisplayDialog().add(getUnitDisplay());
+                getUnitDisplayDialog().setVisible(visible);
+                break;
+            case 1:
+                panA1.add(getUnitDisplay());
+                getUnitDisplayDialog().setVisible(false);
+                panA1.setVisible(visible);
+                panA1.revalidate();
+                splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
+                break;
+            case 2:
+                panB2.add(getUnitDisplay());
+                getUnitDisplayDialog().setVisible(false);
+                panB2.setVisible(visible);
+                panB2.revalidate();
+                splitPaneB.setDividerLocation(GUIP.getSplitPaneBDividerLocaton());
+                break;
+        }
+
+        if (panA1.getComponents().length <= 0) {
+            panA1.setVisible(false);
+            splitPaneA.setDividerLocation(0.0);
+        }
+
+        if (panB2.getComponents().length <= 0) {
+            panB2.setVisible(false);
+            splitPaneB.setDividerLocation(1.0);
+        }
+
+        getUnitDisplayDialog().revalidate();
+        getUnitDisplayDialog().repaint();
+        panA1.revalidate();
+        panA1.repaint();
+        panB2.revalidate();
+        panB2.repaint();
     }
 
     private boolean fillPopup(Coords coords) {
@@ -2683,6 +2747,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case GUIPreferences.GUI_SCALE:
                 adaptToGUIScale();
+                break;
+            case GUIPreferences.UNIT_DISPLAY_LOCATION:
+                setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
                 break;
             default:
         }

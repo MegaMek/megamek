@@ -93,6 +93,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     /** Creates and lays out a new deployment phase display for the specified client. */
     public DeploymentDisplay(ClientGUI clientgui) {      
         super(clientgui);
@@ -285,12 +287,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         // Check nag for doomed planetary conditions
         String reason = game.getPlanetaryConditions().whyDoomed(en, game);
-        if ((reason != null) && GUIPreferences.getInstance().getNagForDoomed()) {
+        if ((reason != null) && GUIP.getNagForDoomed()) {
             String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title"); 
             String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[] {reason}); 
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForDoomed(false);
+                GUIP.setNagForDoomed(false);
             }
             if (!response.getAnswer()) {
                 return;

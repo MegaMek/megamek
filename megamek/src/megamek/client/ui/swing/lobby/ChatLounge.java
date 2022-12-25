@@ -345,6 +345,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final String MSG_VIEWGAMEBOARDTOOLTIP = Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip");
     private static final String MSG_VIEWGAMEBOARD = Messages.getString("BoardSelectionDialog.ViewGameBoard");
     private static final String MSG_FIGHTERSQUADRONBOMBERROR = Messages.getString("FighterSquadron.bomberror");
+    private static final String MSG_MAPSETUPXMLFILES = Messages.getString("ChatLounge.map.SetupXMLfiles");
+
+
 
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
@@ -2155,7 +2158,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public String getDescription() {
-            return "Map Setup XML files";
+            return MSG_MAPSETUPXMLFILES;
         }
     };
     

@@ -557,9 +557,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();
+            panA1.setVisible(false);
             panA1.setLayout(new BoxLayout(panA1, BoxLayout.Y_AXIS));
             panB1 = new JPanel(new BorderLayout());
             panB2 = new JPanel();
+            panB2.setVisible(false);
             panB2.setLayout(new BoxLayout(panB2, BoxLayout.Y_AXIS));
             splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
             splitPaneB = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -1630,19 +1632,19 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     private void saveSplitPaneLocations() {
-        if ((panA1.isVisible()) &&  (panA1.getComponents().length > 0)) {
+        if (panA1.isVisible()) {
             GUIP.setSplitPaneALocation(splitPaneA.getDividerLocation());
         }
 
-        if ((panB2.isVisible()) &&  (panB2.getComponents().length > 0)) {
+        if (panB2.isVisible()) {
             GUIP.setSplitPaneBLocation(splitPaneB.getDividerLocation());
         }
     }
 
-    private void hideEmptyPannels() {
+    private void hideEmptyPanel(JPanel p, JSplitPane sp, Double d) {
         Boolean b = false;
 
-        for (Component comp : panA1.getComponents()) {
+        for (Component comp : p.getComponents()) {
             if (comp.isVisible()) {
                 b = true;
                 break;
@@ -1650,26 +1652,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
 
         if (!b) {
-            panA1.setVisible(false);
-            splitPaneA.setDividerLocation(0.0);
+            p.setVisible(false);
+            sp.setDividerLocation(d);
         } else {
-            panA1.setVisible(true);
-        }
-
-        b = false;
-
-        for (Component comp : panB2.getComponents()) {
-            if (comp.isVisible()) {
-                b = true;
-                break;
-            }
-        }
-
-        if (!b) {
-            panB2.setVisible(false);
-            splitPaneB.setDividerLocation(1.0);
-        } else {
-            panB2.setVisible(true);
+            p.setVisible(true);
         }
     }
 
@@ -1691,7 +1677,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 getUnitDisplayDialog().setVisible(visible);
                 getUnitDisplay().setVisible(visible);
                 getUnitDisplay().setTitleVisible(false);
-                hideEmptyPannels();
+                hideEmptyPanel(panA1, splitPaneA, 0.0);
+                hideEmptyPanel(panB2, splitPaneB, 1.0);
                 break;
             case 1:
                 panA1.add(getUnitDisplay());
@@ -1700,7 +1687,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 getUnitDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.7)));
                 getUnitDisplay().setVisible(visible);
                 getUnitDisplay().setTitleVisible(true);
-                hideEmptyPannels();
+                hideEmptyPanel(panA1, splitPaneA, 0.0);
+                hideEmptyPanel(panB2, splitPaneB, 1.0);
+                revalidatePanels();
                 splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
                 break;
             case 2:
@@ -1710,7 +1699,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 getUnitDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.7)));
                 getUnitDisplay().setVisible(visible);
                 getUnitDisplay().setTitleVisible(true);
-                hideEmptyPannels();
+                hideEmptyPanel(panA1, splitPaneA, 0.0);
+                hideEmptyPanel(panB2, splitPaneB, 1.0);
+                revalidatePanels();
                 splitPaneB.setDividerLocation(GUIP.getSplitPaneBDividerLocaton());
                 break;
         }
@@ -1726,7 +1717,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
                 getMiniReportDisplayDialog().setVisible(visible);
                 getMiniReportDisplay().setVisible(visible);
-                hideEmptyPannels();
+                hideEmptyPanel(panA1, splitPaneA, 0.0);
+                hideEmptyPanel(panB2, splitPaneB, 1.0);
                 break;
             case 1:
                 panA1.add(getMiniReportDisplay());
@@ -1735,17 +1727,19 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 getMiniReportDisplay().setMinimumSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
                 getMiniReportDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
                 getMiniReportDisplay().setVisible(visible);
-                hideEmptyPannels();
+                hideEmptyPanel(panA1, splitPaneA, 0.0);
+                hideEmptyPanel(panB2, splitPaneB, 1.0);
                 splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
                 break;
             case 2:
                 panB2.add(getMiniReportDisplay());
-                getUnitDisplayDialog().setVisible(false);
+                getMiniReportDisplay().setVisible(false);
                 panB2.revalidate();
                 getMiniReportDisplay().setMinimumSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
                 getMiniReportDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
                 getMiniReportDisplay().setVisible(visible);
-                hideEmptyPannels();
+                hideEmptyPanel(panA1, splitPaneA, 0.0);
+                hideEmptyPanel(panB2, splitPaneB, 1.0);
                 splitPaneB.setDividerLocation(GUIP.getSplitPaneBDividerLocaton());
                 break;
         }

@@ -285,39 +285,30 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         }
     }
 
+    private JScrollPane loadHtmlScrollPane(String t) {
+        JTextPane ta = new JTextPane();
+        Report.setupStylesheet(ta);
+        ta.addHyperlinkListener(this);
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        ta.setEditorKit(toolKit);
+        ta.setText("<pre>" + t + "</pre>");
+        ta.setEditable(false);
+        ta.setOpaque(false);
+        ta.setCaretPosition(0);
+        return new JScrollPane(ta);
+    }
+
     public void addReportPages() {
         int numRounds = currentClient.getGame().getRoundCount();
         tabs.removeAll();
 
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
-            JTextPane ta = new JTextPane();
-            Report.setupStylesheet(ta);
-            ta.addHyperlinkListener(this);
-            BASE64ToolKit toolKit = new BASE64ToolKit();
-            ta.setEditorKit(toolKit);
-            ta.setText("<pre>" + text + "</pre>");
-            ta.setEditable(false);
-            ta.setOpaque(false);
-            ta.setCaretPosition(0);
-            JScrollPane sp = new JScrollPane(ta);
-            tabs.add(MSG_ROUND + " " + round, sp);
+            tabs.add(MSG_ROUND + " " + round, loadHtmlScrollPane(text));
         }
 
         // add the new current phase tab
-        JTextPane ta = new JTextPane();
-        Report.setupStylesheet(ta);
-        ta.addHyperlinkListener(this);
-
-        BASE64ToolKit toolKit = new BASE64ToolKit();
-        ta.setEditorKit(toolKit);
-        ta.setText("<pre>" + currentClient.phaseReport + "</pre>");
-        ta.setEditable(false);
-        ta.setOpaque(false);
-        ta.setCaretPosition(0);
-
-        JScrollPane sp = new JScrollPane(ta);
-        tabs.add(MSG_PHASE, sp);
+        tabs.add(MSG_PHASE, loadHtmlScrollPane(currentClient.phaseReport));
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
         tabs.setMinimumSize(new Dimension(0, 0));

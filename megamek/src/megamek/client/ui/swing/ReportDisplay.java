@@ -69,6 +69,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     private Map<ReportCommand, MegamekButton> buttons;
     private boolean rerolled; // have we rerolled an init?
 
+    private static final String RD_REPORTDIPLAY = "ReportDisplay.";
+    private static final String RD_TOOLTIP = ".tooltip";
+
+    private static final String MSG_DONE = Messages.getString("ReportDisplay.Done");
+
     /**
      * Creates and lays out a new movement phase display for the specified
      * clientgui.getClient().
@@ -84,10 +89,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
 
         buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
         for (ReportCommand cmd : ReportCommand.values()) {
-            String title = Messages.getString("ReportDisplay." + cmd.getCmd());
+            String title = Messages.getString(RD_REPORTDIPLAY + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "ReportDisplay." + cmd.getCmd() + ".tooltip";
+            String ttKey = RD_REPORTDIPLAY + cmd.getCmd() + RD_TOOLTIP;
             if (Messages.keyExists(ttKey)) {
                 newButton.setToolTipText(Messages.getString(ttKey));
             }
@@ -98,7 +103,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
-        butDone.setText("<html><b>" + Messages.getString("ReportDisplay.Done") + "</b></html>");
+        butDone.setText(MSG_DONE);
         butDone.setEnabled(false);
 
         setupButtonPanel();
@@ -207,8 +212,9 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         }
 
         rerolled = false;
+        GamePhase phase = clientgui.getClient().getGame().getPhase();
 
-        switch (clientgui.getClient().getGame().getPhase()) {
+        switch (phase) {
             case INITIATIVE_REPORT:
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
@@ -218,10 +224,10 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
             case END_REPORT:
             case VICTORY:
                 resetButtons();
-                setStatusBarText(clientgui.getClient().getGame().getPhase().toString());
+                setStatusBarText(phase.toString());
                 break;
             default:
-                setStatusBarText(clientgui.getClient().getGame().getPhase().toString());
+                setStatusBarText(phase.toString());
                 break;
         }
     }

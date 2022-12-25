@@ -62,7 +62,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
     private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
     private static final String MSG_DETAILS = Messages.getString("MiniReportDisplay.Details");
-    private static final String MSG_OKAY= Messages.getString("Okay");
+    private static final String MSG_SWITCHLOCATION = Messages.getString("MiniReportDisplay.SwitchLocation");
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
@@ -75,7 +75,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         currentClient = clientgui.getClient();
         currentClient.getGame().addGameListener(gameListener);
 
-        butSwitchLocation = new JButton("switch location");
+        butSwitchLocation = new JButton(MSG_SWITCHLOCATION);
         butSwitchLocation.addActionListener(this);
         butPlayerSearchUp = new JButton(MSG_ARROWUP);
         butPlayerSearchUp.addActionListener(this);

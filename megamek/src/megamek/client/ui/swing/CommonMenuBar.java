@@ -401,6 +401,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boolean isBoardView = isInGameBoardView || isBoardEditor;
         boolean canSave = !phase.isUnknown() && !phase.isSelection() && !phase.isExchange()
                 && !phase.isVictory() && !phase.isStartingScenario();
+        boolean isNotVictory = !phase.isVictory();
         
         viewAccessibilityWindow.setEnabled(false);
         
@@ -433,8 +434,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardOpen.setEnabled(isBoardEditor || isMainMenu);
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
-        fileUnitsReinforce.setEnabled(isLobby || isInGame);
-        fileUnitsReinforceRAT.setEnabled(isLobby || isInGame);
+        fileUnitsReinforce.setEnabled((isLobby || isInGame) && isNotVictory);
+        fileUnitsReinforceRAT.setEnabled((isLobby || isInGame) && isNotVictory);
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);
@@ -460,7 +461,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleFiringSolutions.setEnabled(isInGameBoardView);
         viewMovementEnvelope.setEnabled(isInGameBoardView);
         viewMovModEnvelope.setEnabled(isInGameBoardView);
-        gameRoundReport.setEnabled((isInGame && canSave));
+        gameRoundReport.setEnabled((isInGame));
         viewMekDisplay.setEnabled(isInGameBoardView);
         fireSaveWeaponOrder.setEnabled(isInGameBoardView);
     }

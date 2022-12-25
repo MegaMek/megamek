@@ -16,6 +16,7 @@ package megamek.client.ui.swing.unitDisplay;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -26,9 +27,7 @@ import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.common.Entity;
-import megamek.common.Report;
 import megamek.common.annotations.Nullable;
-import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import org.apache.logging.log4j.LogManager;
@@ -93,6 +92,9 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     public static final int NON_TABBED_THREE_INDEX = 3;
     public static final int NON_TABBED_FOUR_INDEX = 4;
     public static final int NON_TABBED_FIVE_INDEX = 5;
+
+    private static final String MSG_SWITCHLOCATION = Messages.getString("UnitDisplay.SwitchLocation");
+    private static final String MSG_SWITCHVIEW = Messages.getString("UnitDisplay.SwitchView");
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
@@ -160,8 +162,8 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         splitA1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitB1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitC1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        butSwitchView = new JButton("switch view");
-        butSwitchLocation = new JButton("switch location");
+        butSwitchView = new JButton(MSG_SWITCHVIEW);
+        butSwitchLocation = new JButton(MSG_SWITCHLOCATION);
 
         splitABC.setOneTouchExpandable(true);
         splitBC.setOneTouchExpandable(true);
@@ -262,7 +264,6 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
      *
      */
     private void setDisplayTabbed() {
-
         tabStrip.setVisible(true);
 
         displayP.removeAll();

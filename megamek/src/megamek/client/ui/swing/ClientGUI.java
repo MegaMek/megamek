@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -263,7 +264,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String MSG_CFRDOMINOTITLE = Messages.getString("CFRDomino.Title");
     private static final String MSG_CFRDOMINOMSG = Messages.getString("CFRDomino.Message");
     private static final String MSG_CFRDOMINOFORWARD = Messages.getString("CFRDomino.Forward");
-    private static final String MSG_CFRDOMINOFBACKWARD = Messages.getFormattedString("CFRDomino.Backward");
+    private static final String MSG_CFRDOMINOFBACKWARD = Messages.getString("CFRDomino.Backward");
     private static final String MSG_CFRDOMINONOACTION = Messages.getString("CFRDomino.NoAction");
     private static final String MSG_CFRAMASSIGNTITLE = Messages.getString("CFRAMSAssign.Title");
     private static final String MSG_CFRAMASSIGNMSG = Messages.getString("CFRAMSAssign.Message");
@@ -753,7 +754,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      */
     public void showPlayerList() {
         if (playerListDialog == null) {
-            playerListDialog = new PlayerListDialog(frame, client);
+            playerListDialog = new PlayerListDialog(frame, client, false);
         }
         playerListDialog.setVisible(true);
     }
@@ -856,8 +857,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FILE_UNITS_REINFORCE:
                 ignoreHotKeys = true;
-                PlayerListDialog playerListDialog = new PlayerListDialog(frame, client);
-                playerListDialog.setModal(true);
+                PlayerListDialog playerListDialog = new PlayerListDialog(frame, client, true);
                 playerListDialog.setVisible(true);
                 loadListFile(playerListDialog.getSelected(), true);
                 ignoreHotKeys = false;
@@ -2313,7 +2313,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     stepBackward.compile(client.getGame(), e, false);
                     
                     String title = MSG_CFRDOMINOTITLE;
-                    String msg = Messages.getFormattedString(MSG_CFRDOMINOMSG, e.getDisplayName());
+                    String msg = MessageFormat.format(MSG_CFRDOMINOMSG, e.getDisplayName());
                     int choice;
                     Object[] options;
                     MovePath[] paths;
@@ -2321,8 +2321,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     if (stepForward.isMoveLegal() && stepBackward.isMoveLegal()) {
                         options = new Object[3];
                         paths = new MovePath[3];
-                        options[0] = Messages.getFormattedString(MSG_CFRDOMINOFORWARD, stepForward.getMpUsed());
-                        options[1] = Messages.getFormattedString(MSG_CFRDOMINOFBACKWARD, stepForward.getMpUsed());
+                        options[0] = MessageFormat.format(MSG_CFRDOMINOFORWARD, stepForward.getMpUsed());
+                        options[1] = MessageFormat.format(MSG_CFRDOMINOFBACKWARD, stepForward.getMpUsed());
                         options[2] = MSG_CFRDOMINONOACTION;
                         paths[0] = stepForward;
                         paths[1] = stepBackward;
@@ -2331,7 +2331,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     } else if (stepForward.isMoveLegal()) {
                         options = new Object[2];
                         paths = new MovePath[2];
-                        options[0] = Messages.getFormattedString(MSG_CFRDOMINOFORWARD, stepForward.getMpUsed());
+                        options[0] = MessageFormat.format(MSG_CFRDOMINOFORWARD, stepForward.getMpUsed());
                         options[1] = MSG_CFRDOMINONOACTION;
                         paths[0] = stepForward;
                         paths[1] = null;
@@ -2339,8 +2339,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     } else { // No request is sent if both moves are illegal
                         options = new Object[2];
                         paths = new MovePath[2];
-                        options[0] = Messages.getFormattedString(MSG_CFRDOMINOFBACKWARD,
-                                new Object[] { stepForward.getMpUsed() });
+                        options[0] = MessageFormat.format(MSG_CFRDOMINOFBACKWARD, new Object[] { stepForward.getMpUsed() });
                         options[1] = MSG_CFRDOMINONOACTION;
                         paths[0] = stepBackward;
                         paths[1] = null;
@@ -2371,8 +2370,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     }
                     
                     optionType = JOptionPane.OK_CANCEL_OPTION;
-                    title = Messages.getFormattedString(MSG_CFRAMASSIGNTITLE, new Object[] { e.getDisplayName() });
-                    msg = Messages.getFormattedString(MSG_CFRAMASSIGNMSG, new Object[] { e.getDisplayName() });
+                    title = MessageFormat.format(MSG_CFRAMASSIGNTITLE, new Object[] { e.getDisplayName() });
+                    msg = MessageFormat.format(MSG_CFRAMASSIGNMSG, new Object[] { e.getDisplayName() });
                     result = JOptionPane.showInputDialog(frame, msg, title,
                             JOptionPane.QUESTION_MESSAGE, null, 
                            amsOptions.toArray(), null);
@@ -2404,8 +2403,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     }
 
                     optionType = JOptionPane.OK_CANCEL_OPTION;
-                    title = Messages.getFormattedString(MSG_CFAPDSASSIGNTITLE, new Object[] { e.getDisplayName() });
-                    msg = Messages.getFormattedString(MSG_CFAPDSASSIGNMSG, new Object[] { e.getDisplayName() });
+                    title = MessageFormat.format(MSG_CFAPDSASSIGNTITLE, new Object[] { e.getDisplayName() });
+                    msg = MessageFormat.format(MSG_CFAPDSASSIGNMSG, new Object[] { e.getDisplayName() });
                     result = JOptionPane.showInputDialog(frame, msg, title,
                             JOptionPane.QUESTION_MESSAGE, null,
                             apdsOptions.toArray(), null);
@@ -2435,8 +2434,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     bv.highlight(attacker.getPosition());
                     bv.select(target.getPosition());
                     bv.cursor(target.getPosition());
-                    msg = Messages.getFormattedString(MSG_POINTBLANKSHOTMSG,
-                            target.getShortName(), attacker.getShortName());
+                    msg = MessageFormat.format(MSG_POINTBLANKSHOTMSG, target.getShortName(), attacker.getShortName());
                     title = MSG_POINTBLANKSHOTTITLE;
                     // Ask whether the player wants to take a PBS or not
                     int pbsChoice = JOptionPane.showConfirmDialog(frame, msg,

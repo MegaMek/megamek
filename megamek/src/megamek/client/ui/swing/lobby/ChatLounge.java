@@ -84,6 +84,7 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.io.*;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
@@ -2077,7 +2078,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             selectedFile = new File(selectedFile.getPath() + CL_KEY_FILEEXTENTION_XML);
         }
         if (selectedFile.exists()) {
-            String msg = Messages.getFormattedString(MSG_MAPSAVESETUPREPLACE, selectedFile.getName());
+            String msg = MessageFormat.format(MSG_MAPSAVESETUPREPLACE, selectedFile.getName());
             if (!MMConfirmDialog.confirm(clientgui.frame, MSG_MAPCONFIRMREPLACE, msg)) {
                 return;
             }

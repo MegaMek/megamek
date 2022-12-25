@@ -1130,7 +1130,7 @@ public class GameManager implements IGameManager {
      * Called at the beginning of certain phases to make every player not ready.
      */
     private void resetPlayersDone() {
-        if (getGame().getPhase().isReport()) {
+        if ((getGame().getPhase().isReport()) && (!getGame().getPhase().isVictory())) {
             return;
         }
 

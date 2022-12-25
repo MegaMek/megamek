@@ -181,6 +181,7 @@ public enum GamePhase {
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;
@@ -209,6 +210,7 @@ public enum GamePhase {
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;

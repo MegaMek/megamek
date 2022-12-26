@@ -4,7 +4,7 @@ VERSION HISTORY:
 + PR #4062: Add OS Thunderbolts
 + Issue #2652: TacOps BA crits
 + Issue #2945: RHS failure chance errata
-+ PRs #4070, #4069, #4065, #4067: Alpha Strike conversion corrections (see Issue #3961)
++ PRs/Issues #4070, #4069, #4065, #4067, #4073: Alpha Strike conversion corrections (see Issue #3961)
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

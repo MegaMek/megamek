@@ -549,6 +549,4 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(item, menu, command);
         item.setMnemonic(mnemonic);
     }
-    
-    
 }

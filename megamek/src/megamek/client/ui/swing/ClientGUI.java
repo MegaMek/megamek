@@ -490,14 +490,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         frame.setJMenuBar(menuBar);
 
         if (GUIP.getWindowSizeHeight() != 0) {
-            frame.setLocation(
-                    GUIP.getWindowPosX(),
-                    GUIP.getWindowPosY()
-            );
-            frame.setSize(
-                    GUIP.getWindowSizeWidth(),
-                    GUIP.getWindowSizeHeight()
-            );
+            frame.setLocation(GUIP.getWindowPosX(), GUIP.getWindowPosY());
+            frame.setSize(GUIP.getWindowSizeWidth(), GUIP.getWindowSizeHeight());
         } else {
             frame.setSize(800, 600);
         }
@@ -1707,7 +1701,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     getUnitDisplayDialog().setVisible(visible);
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(false);
-                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
                 case 1:
                     panA1.add(bvc);
@@ -1716,7 +1710,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     getUnitDisplayDialog().setVisible(false);
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(true);
-                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
             }
         }
@@ -1756,7 +1750,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
                     getMiniReportDisplayDialog().setVisible(visible);
                     getMiniReportDisplay().setVisible(visible);
-                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
                 case 1:
                     panA1.add(bvc);
@@ -1764,7 +1758,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     panA2.add(getMiniReportDisplay());
                     getMiniReportDisplayDialog().setVisible(false);
                     getMiniReportDisplay().setVisible(visible);
-                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    hideEmptyPanel(panA2, splitPaneA, 1.0);
                     break;
             }
         }

@@ -187,11 +187,10 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
             String playerDisplay = String.format("%-12s", player.getName());
             comboPlayer.addItem(playerDisplay);
         }
-        if (comboPlayer.getItemCount() == 1) {
-            comboPlayer.setEnabled(false);
-        }
         comboPlayer.setSelectedItem(lastChoice);
-        if (comboPlayer.getSelectedIndex() < 0) {
+        if (comboPlayer.getItemCount() <= 1) {
+            comboPlayer.setEnabled(false);
+        } else if (comboPlayer.getSelectedIndex() < 0) {
             comboPlayer.setSelectedIndex(0);
         }
     }

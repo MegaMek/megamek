@@ -162,11 +162,9 @@ public class ASLocationMapper {
             case 0:
                 if (location == Jumpship.LOC_NOSE) {
                     return 1;
-                } else  if (en.isSpheroid() && (location == Jumpship.LOC_FLS || location == Jumpship.LOC_FRS)
-                        && !rearMounted) {
-                    return 0.5;
+                } else {
+                    return (location == Jumpship.LOC_FLS || location == Jumpship.LOC_FRS) ? 0.5 : 0;
                 }
-                break;
             case 1:
                 return (location == Jumpship.LOC_FLS || location == Jumpship.LOC_ALS) ? 0.5 : 0;
             case 2:

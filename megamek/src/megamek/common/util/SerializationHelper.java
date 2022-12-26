@@ -49,7 +49,6 @@ public class SerializationHelper {
                 megamek.common.Coords.class,
                 megamek.common.CriticalSlot.class,
                 megamek.common.Game.class,
-                megamek.common.GameTurn.class,
                 megamek.common.Hex.class,
                 megamek.common.Mounted.class,
                 megamek.common.Player.class,
@@ -60,6 +59,7 @@ public class SerializationHelper {
                 megamek.common.Report.class,
                 megamek.server.SmokeCloud.class,
         });
+        xStream.allowTypeHierarchy(megamek.common.GameTurn.class);
         xStream.allowTypeHierarchy(megamek.common.ITechnology.class);
         xStream.allowTypeHierarchy(megamek.common.Transporter.class);
         xStream.allowTypeHierarchy(megamek.common.actions.EntityAction.class);

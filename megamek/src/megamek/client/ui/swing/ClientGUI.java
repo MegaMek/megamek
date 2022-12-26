@@ -556,10 +556,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             panTop = new JPanel(new BorderLayout());
             panA1 = new JPanel();
             panA1.setVisible(false);
-            panA1.setLayout(new BoxLayout(panA1, BoxLayout.Y_AXIS));
             panA2 = new JPanel();
             panA2.setVisible(false);
-            panA2.setLayout(new BoxLayout(panA2, BoxLayout.Y_AXIS));
 
             splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
@@ -1656,11 +1654,23 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         getUnitDisplayDialog().repaint();
         panA1.revalidate();
         panA1.repaint();
+        panA2.revalidate();
+        panA2.repaint();
+    }
+
+    private void setDockAxis() {
+        if (GUIP.getAdvancedDockMultipleOnYAxis()) {
+            panA1.setLayout(new BoxLayout(panA1, BoxLayout.Y_AXIS));
+            panA2.setLayout(new BoxLayout(panA2, BoxLayout.Y_AXIS));
+        } else {
+            panA1.setLayout(new BoxLayout(panA1, BoxLayout.X_AXIS));
+            panA2.setLayout(new BoxLayout(panA2, BoxLayout.X_AXIS));
+        }
     }
 
     public void setUnitDisplayLocation(boolean visible) {
         saveSplitPaneLocations();
-
+        setDockAxis();
 
         if (GUIP.getAdvancedDockOnLeft()) {
             switch (GUIP.getUnitDisplayLocaton()) {
@@ -1716,6 +1726,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     public void setMiniReportLocation(boolean visible) {
         saveSplitPaneLocations();
+        setDockAxis();
 
         if (GUIP.getAdvancedDockOnLeft()) {
             switch (GUIP.getMiniReportLocaton()) {
@@ -2842,6 +2853,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 setMiniReportVisible(GUIP.getMiniReportEnabled());
                 break;
             case GUIPreferences.ADVANCED_DOCK_ON_LEFT:
+                setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
+                setMiniReportVisible(GUIP.getMiniReportEnabled());
+                break;
+            case GUIPreferences.ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS:
                 setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
                 setMiniReportVisible(GUIP.getMiniReportEnabled());
                 break;

@@ -114,6 +114,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_PLANETARY_CONDITIONS_SHOW_INDICATORS = "AdvancedPlanetaryConditionsShowIndicators";
     public static final String ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION = "AdvancedUnitToolTipSeenByResolution";
     public static final String ADVANCED_DOCK_ON_LEFT = "AdvancedDockOnLeft";
+    public static final String ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS = "AdvancedDockMultipleOnYAxis";
 
     /* --End advanced settings-- */
 
@@ -149,7 +150,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String UNIT_DISPLAY_ENABLED = "UnitDisplayEnabled";
     public static final String UNIT_DISPLAY_LOCATION = "UnitDisplayLocation";
     public static final String SPLIT_PANE_A_DIVIDER_LOCATION = "SplitPaneADividerLocation";
-    public static final String SPLIT_PANE_B_DIVIDER_LOCATION = "SplitPaneBDividerLocation";
     public static final String GAME_SUMMARY_BOARD_VIEW = "GameSummaryBoardView";
     public static final String GAME_SUMMARY_MINIMAP = "GameSummaryMinimap";
     public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
@@ -430,6 +430,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_REPORT_COLOR_LINK, DEFAULT_REPORT_LINK_COLOR);
         setDefault(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, 3);
         setDefault(ADVANCED_DOCK_ON_LEFT, true);
+        setDefault(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, true);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -467,7 +468,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
         store.setDefault(SPLIT_PANE_A_DIVIDER_LOCATION, 300);
-        store.setDefault(SPLIT_PANE_B_DIVIDER_LOCATION, 300);
 
         store.setDefault(GAME_SUMMARY_BOARD_VIEW, false);
         store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
@@ -746,10 +746,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getSplitPaneADividerLocaton() {
         return store.getInt(SPLIT_PANE_A_DIVIDER_LOCATION);
-    }
-
-    public int getSplitPaneBDividerLocaton() {
-        return store.getInt(SPLIT_PANE_B_DIVIDER_LOCATION);
     }
 
     public boolean getCoordsEnabled() {
@@ -1360,10 +1356,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SPLIT_PANE_A_DIVIDER_LOCATION, i);
     }
 
-    public void setSplitPaneBLocation(int i) {
-        store.setValue(SPLIT_PANE_B_DIVIDER_LOCATION, i);
-    }
-
     public void toggleCoords() {
         store.setValue(SHOW_COORDS, !getBoolean(SHOW_COORDS));
     }
@@ -1961,6 +1953,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(ADVANCED_DOCK_ON_LEFT);
     }
 
+    public boolean getAdvancedDockMultipleOnYAxis() {
+        return getBoolean(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -2051,6 +2047,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setAdvancedDockOnLeft(Boolean state) {
         store.setValue(ADVANCED_DOCK_ON_LEFT, state);
+    }
+
+    public void setAdvancedDockMultipleOnYAxis(Boolean state) {
+        store.setValue(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, state);
     }
 
     /**

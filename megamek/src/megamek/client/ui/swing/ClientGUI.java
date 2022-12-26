@@ -297,10 +297,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private Component bvc;
     private JPanel panTop;
     private JSplitPane splitPaneA;
-    private JSplitPane splitPaneB;
     private JPanel panA1;
-    private JPanel panB1;
-    private JPanel panB2;
+    private JPanel panA2;
 
     public UnitDisplay unitDisplay;
     private UnitDisplayDialog unitDisplayDialog;
@@ -559,24 +557,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             panA1 = new JPanel();
             panA1.setVisible(false);
             panA1.setLayout(new BoxLayout(panA1, BoxLayout.Y_AXIS));
-            panB1 = new JPanel(new BorderLayout());
-            panB2 = new JPanel();
-            panB2.setVisible(false);
-            panB2.setLayout(new BoxLayout(panB2, BoxLayout.Y_AXIS));
+            panA2 = new JPanel();
+            panA2.setVisible(false);
+            panA2.setLayout(new BoxLayout(panA2, BoxLayout.Y_AXIS));
+
             splitPaneA = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-            splitPaneB = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
             splitPaneA.setDividerSize(10);
-            splitPaneB.setDividerSize(10);
             splitPaneA.setResizeWeight(0.5);
-            splitPaneB.setResizeWeight(0.5);
 
             splitPaneA.setLeftComponent(panA1);
-            splitPaneA.setRightComponent(splitPaneB);
-            splitPaneB.setLeftComponent(panB1);
-            splitPaneB.setRightComponent(panB2);
+            splitPaneA.setRightComponent(panA2);
 
-            panB1.add(bvc, BorderLayout.CENTER);
             panTop.add(splitPaneA, BorderLayout.CENTER);
 
             bv.addBoardViewListener(this);
@@ -1632,13 +1624,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     private void saveSplitPaneLocations() {
-        if (panA1.isVisible()) {
+        if ((panA1.isVisible()) && (panA2.isVisible())) {
             GUIP.setSplitPaneALocation(splitPaneA.getDividerLocation());
         }
+    }
 
-        if (panB2.isVisible()) {
-            GUIP.setSplitPaneBLocation(splitPaneB.getDividerLocation());
-        }
+    private void setsetDividerLocations() {
+        splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
     }
 
     private void hideEmptyPanel(JPanel p, JSplitPane sp, Double d) {
@@ -1664,87 +1656,113 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         getUnitDisplayDialog().repaint();
         panA1.revalidate();
         panA1.repaint();
-        panB2.revalidate();
-        panB2.repaint();
     }
 
     public void setUnitDisplayLocation(boolean visible) {
         saveSplitPaneLocations();
 
-        switch (GUIP.getUnitDisplayLocaton()) {
-            case 0:
-                getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
-                getUnitDisplayDialog().setVisible(visible);
-                getUnitDisplay().setVisible(visible);
-                getUnitDisplay().setTitleVisible(false);
-                hideEmptyPanel(panA1, splitPaneA, 0.0);
-                hideEmptyPanel(panB2, splitPaneB, 1.0);
-                break;
-            case 1:
-                panA1.add(getUnitDisplay());
-                getUnitDisplayDialog().setVisible(false);
-                getUnitDisplay().setMinimumSize(new Dimension(0, (int)(panTop.getHeight() * 0.7)));
-                getUnitDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.7)));
-                getUnitDisplay().setVisible(visible);
-                getUnitDisplay().setTitleVisible(true);
-                hideEmptyPanel(panA1, splitPaneA, 0.0);
-                hideEmptyPanel(panB2, splitPaneB, 1.0);
-                revalidatePanels();
-                splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
-                break;
-            case 2:
-                panB2.add(getUnitDisplay());
-                getUnitDisplayDialog().setVisible(false);
-                getUnitDisplay().setMinimumSize(new Dimension(0, (int)(panTop.getHeight() * 0.7)));
-                getUnitDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.7)));
-                getUnitDisplay().setVisible(visible);
-                getUnitDisplay().setTitleVisible(true);
-                hideEmptyPanel(panA1, splitPaneA, 0.0);
-                hideEmptyPanel(panB2, splitPaneB, 1.0);
-                revalidatePanels();
-                splitPaneB.setDividerLocation(GUIP.getSplitPaneBDividerLocaton());
-                break;
+
+        if (GUIP.getAdvancedDockOnLeft()) {
+            switch (GUIP.getUnitDisplayLocaton()) {
+                case 0:
+                    panA2.add(bvc);
+                    panA2.setVisible(true);
+                    getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
+                    getUnitDisplayDialog().setVisible(visible);
+                    getUnitDisplay().setVisible(visible);
+                    getUnitDisplay().setTitleVisible(false);
+                    hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    break;
+                case 1:
+                    panA2.add(bvc);
+                    panA2.setVisible(true);
+                    panA1.add(getUnitDisplay());
+                    getUnitDisplayDialog().setVisible(false);
+                    getUnitDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
+                    getUnitDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
+                    getUnitDisplay().setVisible(visible);
+                    getUnitDisplay().setTitleVisible(true);
+                    hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    break;
+            }
+        } else  {
+            switch (GUIP.getUnitDisplayLocaton()) {
+                case 0:
+                    panA1.add(bvc);
+                    panA1.setVisible(true);
+                    getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
+                    getUnitDisplayDialog().setVisible(visible);
+                    getUnitDisplay().setVisible(visible);
+                    getUnitDisplay().setTitleVisible(false);
+                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    break;
+                case 1:
+                    panA1.add(bvc);
+                    panA1.setVisible(true);
+                    panA2.add(getUnitDisplay());
+                    getUnitDisplayDialog().setVisible(false);
+                    getUnitDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
+                    getUnitDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
+                    getUnitDisplay().setVisible(visible);
+                    getUnitDisplay().setTitleVisible(true);
+                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    break;
+            }
         }
 
+        setsetDividerLocations();
         revalidatePanels();
     }
 
     public void setMiniReportLocation(boolean visible) {
         saveSplitPaneLocations();
 
-        switch (GUIP.getMiniReportLocaton()) {
-            case 0:
-                getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
-                getMiniReportDisplayDialog().setVisible(visible);
-                getMiniReportDisplay().setVisible(visible);
-                hideEmptyPanel(panA1, splitPaneA, 0.0);
-                hideEmptyPanel(panB2, splitPaneB, 1.0);
-                break;
-            case 1:
-                panA1.add(getMiniReportDisplay());
-                getMiniReportDisplayDialog().setVisible(false);
-                panA1.revalidate();
-                getMiniReportDisplay().setMinimumSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
-                getMiniReportDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
-                getMiniReportDisplay().setVisible(visible);
-                hideEmptyPanel(panA1, splitPaneA, 0.0);
-                hideEmptyPanel(panB2, splitPaneB, 1.0);
-                splitPaneA.setDividerLocation(GUIP.getSplitPaneADividerLocaton());
-                break;
-            case 2:
-                panB2.add(getMiniReportDisplay());
-                getMiniReportDisplay().setVisible(false);
-                panB2.revalidate();
-                getMiniReportDisplay().setMinimumSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
-                getMiniReportDisplay().setPreferredSize(new Dimension(0, (int)(panTop.getHeight() * 0.3)));
-                getMiniReportDisplay().setVisible(visible);
-                hideEmptyPanel(panA1, splitPaneA, 0.0);
-                hideEmptyPanel(panB2, splitPaneB, 1.0);
-                splitPaneB.setDividerLocation(GUIP.getSplitPaneBDividerLocaton());
-                break;
+        if (GUIP.getAdvancedDockOnLeft()) {
+            switch (GUIP.getMiniReportLocaton()) {
+                case 0:
+                    panA2.add(bvc);
+                    panA2.setVisible(true);
+                    getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
+                    getMiniReportDisplayDialog().setVisible(visible);
+                    getMiniReportDisplay().setVisible(visible);
+                    hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    break;
+                case 1:
+                    panA2.add(bvc);
+                    panA2.setVisible(true);
+                    panA1.add(getMiniReportDisplay());
+                    getMiniReportDisplayDialog().setVisible(false);
+                    getMiniReportDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
+                    getMiniReportDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
+                    getMiniReportDisplay().setVisible(visible);
+                    hideEmptyPanel(panA1, splitPaneA, 0.0);
+                    break;
+            }
+        } else {
+            switch (GUIP.getMiniReportLocaton()) {
+                case 0:
+                    panA1.add(bvc);
+                    panA1.setVisible(true);
+                    getMiniReportDisplayDialog().add(getMiniReportDisplay(), BorderLayout.CENTER);
+                    getMiniReportDisplayDialog().setVisible(visible);
+                    getMiniReportDisplay().setVisible(visible);
+                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    break;
+                case 1:
+                    panA1.add(bvc);
+                    panA1.setVisible(true);
+                    panA2.add(getMiniReportDisplay());
+                    getMiniReportDisplayDialog().setVisible(false);
+                    getMiniReportDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
+                    getMiniReportDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
+                    getMiniReportDisplay().setVisible(visible);
+                    hideEmptyPanel(panA2, splitPaneA, 0.0);
+                    break;
+            }
         }
 
         revalidatePanels();
+        setsetDividerLocations();
     }
 
     private boolean fillPopup(Coords coords) {
@@ -2821,6 +2839,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
                 break;
             case GUIPreferences.MINI_REPORT_LOCATION:
+                setMiniReportVisible(GUIP.getMiniReportEnabled());
+                break;
+            case GUIPreferences.ADVANCED_DOCK_ON_LEFT:
+                setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
                 setMiniReportVisible(GUIP.getMiniReportEnabled());
                 break;
             default:

@@ -1650,6 +1650,11 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     private void revalidatePanels() {
+        getUnitDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
+        getUnitDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
+        getMiniReportDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
+        getMiniReportDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
+
         getUnitDisplayDialog().revalidate();
         getUnitDisplayDialog().repaint();
         panA1.revalidate();
@@ -1688,8 +1693,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     panA2.setVisible(true);
                     panA1.add(getUnitDisplay());
                     getUnitDisplayDialog().setVisible(false);
-                    getUnitDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
-                    getUnitDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(true);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
@@ -1711,8 +1714,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     panA1.setVisible(true);
                     panA2.add(getUnitDisplay());
                     getUnitDisplayDialog().setVisible(false);
-                    getUnitDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
-                    getUnitDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.7)));
                     getUnitDisplay().setVisible(visible);
                     getUnitDisplay().setTitleVisible(true);
                     hideEmptyPanel(panA2, splitPaneA, 0.0);
@@ -1743,8 +1744,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     panA2.setVisible(true);
                     panA1.add(getMiniReportDisplay());
                     getMiniReportDisplayDialog().setVisible(false);
-                    getMiniReportDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
-                    getMiniReportDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA1, splitPaneA, 0.0);
                     break;
@@ -1764,8 +1763,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     panA1.setVisible(true);
                     panA2.add(getMiniReportDisplay());
                     getMiniReportDisplayDialog().setVisible(false);
-                    getMiniReportDisplay().setMinimumSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
-                    getMiniReportDisplay().setPreferredSize(new Dimension(0, (int) (panTop.getHeight() * 0.3)));
                     getMiniReportDisplay().setVisible(visible);
                     hideEmptyPanel(panA2, splitPaneA, 0.0);
                     break;

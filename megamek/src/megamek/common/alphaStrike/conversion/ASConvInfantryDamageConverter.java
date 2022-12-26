@@ -42,7 +42,6 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
 
     @Override
     protected void processDamage() {
-
         if (infantry.hasFieldWeapon()) {
             processSDamage();
             processMDamage();
@@ -57,15 +56,17 @@ public class ASConvInfantryDamageConverter extends ASDamageConverter {
                 baseRange = infantry.getPrimaryWeapon().getInfantryRange();
             }
             int range = baseRange * 3;
+            String maxRangeText;
             finalSDamage = ASDamage.createDualRoundedUp(getConvInfantryStandardDamage());
-            String maxRangeText = "Range: S";
-            if (range > 3) {
-                finalMDamage = finalSDamage;
-                maxRangeText = "Ranges: S, M";
-            }
             if (range > 15) {
                 finalLDamage = finalSDamage;
+                finalMDamage = finalSDamage;
                 maxRangeText = "Ranges: S, M, L";
+            } else if (range > 3) {
+                finalMDamage = finalSDamage;
+                maxRangeText = "Ranges: S, M";
+            } else {
+                maxRangeText  = "Range: S";
             }
             report.addLine("Final Damage", "", finalSDamage + "");
             report.addLine("Range:", range + " hexes", maxRangeText);

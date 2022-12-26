@@ -849,9 +849,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                 break;
             case FILE_UNITS_REINFORCE:
                 ignoreHotKeys = true;
-                PlayerListDialog playerListDialog = new PlayerListDialog(frame, client, true);
-                playerListDialog.setVisible(true);
-                loadListFile(playerListDialog.getSelected(), true);
+                PlayerListDialog pld = new PlayerListDialog(frame, client, true);
+                pld.setVisible(true);
+                loadListFile(pld.getSelected(), true);
                 ignoreHotKeys = false;
                 break;
             case FILE_UNITS_REINFORCE_RAT:
@@ -1632,7 +1632,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     private void hideEmptyPanel(JPanel p, JSplitPane sp, Double d) {
-        Boolean b = false;
+        boolean b = false;
 
         for (Component comp : p.getComponents()) {
             if (comp.isVisible()) {

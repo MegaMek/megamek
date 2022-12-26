@@ -142,14 +142,12 @@ final class ASMovementConverter {
             jumpingMP = ((BattleArmor)entity).getJumpMP(true, true, true);
         }
 
-        // ensure a minimum base movement of 2"
-        walkingMP = Math.max(walkingMP, 1);
         report.addLine("Walking MP:", Integer.toString(walkingMP));
         report.addLine("Jumping MP:", Integer.toString(jumpingMP));
         String movementCode = getMovementCode(conversionData);
         element.setPrimaryMovementMode(movementCode);
 
-        if (walkingMP > jumpingMP) {
+        if ((walkingMP > jumpingMP) || (jumpingMP == 0)) {
             result.put(movementCode, walkingMP * 2);
             report.addLine("Walking MP > Jumping MP", walkingMP + " x 2", walkingMP * 2 + "\"" + movementCode);
         } else {

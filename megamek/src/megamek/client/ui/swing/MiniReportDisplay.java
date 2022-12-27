@@ -358,7 +358,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                     setVisible(false);
                     break;
                 default:
-                    if ((!e.getNewPhase().equals((e.getOldPhase()))) && (e.getNewPhase().isReport())){
+                    if ((!e.getNewPhase().equals((e.getOldPhase())))
+                            && ((e.getNewPhase().isReport()) || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 1)))){
                         addReportPages();
                         updatePlayerChoice();
                         updateEntityChoice();

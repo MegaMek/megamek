@@ -187,20 +187,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         add(menu);
         menu.setMnemonic(VK_G);
         
-        initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT);
-        GUIP.setMiniReportEnabled(false);
-        gameRoundReport.setSelected(false);
-        menu.addSeparator();
-        
         initMenuItem(gameReplacePlayer, menu, FILE_GAME_REPLACE_PLAYER, VK_R);
-        initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST);
-        GUIP.setMinimapEnabled(false);
-        gamePlayerList.setSelected(false);
         menu.addSeparator();
         
         initMenuItem(gameGameOptions, menu, VIEW_GAME_OPTIONS, VK_O);
         initMenuItem(gamePlayerSettings, menu, VIEW_PLAYER_SETTINGS);
-        menu.addSeparator();
         initMenuItem(fileUnitsCopy, menu, FILE_UNITS_COPY);
         fileUnitsCopy.setAccelerator(KeyStroke.getKeyStroke(VK_C, CTRL_DOWN_MASK));
         initMenuItem(fileUnitsPaste, menu, FILE_UNITS_PASTE);
@@ -259,19 +250,31 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(viewIncGUIScale, menu, VIEW_INCGUISCALE);
         initMenuItem(viewDecGUIScale, menu, VIEW_DECGUISCALE);
         menu.addSeparator();
+
+        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
+        GUIP.setUnitDisplayEnabled(false);
+        viewMekDisplay.setSelected(false);
+        initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M);
+        GUIP.setMinimapEnabled(false);
+        viewMinimap.setSelected(false);
+        initMenuItem(gameRoundReport, menu, VIEW_ROUND_REPORT);
+        GUIP.setMiniReportEnabled(false);
+        gameRoundReport.setSelected(false);
+        initMenuItem(gamePlayerList, menu, VIEW_PLAYER_LIST);
+        GUIP.setPlayerListEnabled(false);
+        gamePlayerList.setSelected(false);
+        initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY);
+        viewKeybindsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
+        initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY);
+        viewPlanetaryConditionsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY));
+        initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
+        menu.addSeparator();
         
         initMenuItem(viewResetWindowPositions, menu, VIEW_RESET_WINDOW_POSITIONS);
         initMenuItem(viewAccessibilityWindow, menu, VIEW_ACCESSIBILITY_WINDOW, VK_A);
         viewAccessibilityWindow.setMnemonic(KeyEvent.VK_A);
         menu.addSeparator();
-        
-        initMenuItem(viewKeybindsOverlay, menu, VIEW_KEYBINDS_OVERLAY);
-        viewKeybindsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_KEYBINDS_OVERLAY));
 
-        initMenuItem(viewPlanetaryConditionsOverlay, menu, VIEW_PLANETARYCONDITIONS_OVERLAY);
-        viewPlanetaryConditionsOverlay.setSelected(GUIP.getBoolean(GUIPreferences.SHOW_PLANETARYCONDITIONS_OVERLAY));
-
-        initMenuItem(viewUnitOverview, menu, VIEW_UNIT_OVERVIEW);
         viewUnitOverview.setSelected(GUIP.getShowUnitOverview());
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
@@ -279,14 +282,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         toggleIsometric.setSelected(GUIP.getIsometricEnabled());
         initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEXCOORDS, VK_G);
         initMenuItem(viewLabels, menu, VIEW_LABELS);
-        menu.addSeparator();
-        
-        initMenuItem(viewMekDisplay, menu, VIEW_UNIT_DISPLAY, VK_D);
-        GUIP.setUnitDisplayEnabled(false);
-        viewMekDisplay.setSelected(false);
-        initMenuItem(viewMinimap, menu, VIEW_MINI_MAP, VK_M);
-        GUIP.setMinimapEnabled(false);
-        viewMinimap.setSelected(false);
         menu.addSeparator();
         
         initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN);

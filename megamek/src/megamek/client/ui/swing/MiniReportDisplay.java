@@ -109,7 +109,6 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         JPanel panelMain = new JPanel(new BorderLayout());
 
         tabs = new JTabbedPane();
-        addReportPages();
         panelMain.add(tabs, BorderLayout.CENTER);
         panelMain.add(sp, BorderLayout.SOUTH);
         panelMain.setMinimumSize(new Dimension(0, 0));

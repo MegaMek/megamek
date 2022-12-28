@@ -47,6 +47,7 @@ public class SerializationHelper {
                 megamek.client.bot.princess.BehaviorSettings.class,
                 megamek.common.Board.class,
                 megamek.common.Coords.class,
+                megamek.common.CompositeTechLevel.DateRange.class,
                 megamek.common.CriticalSlot.class,
                 megamek.common.Game.class,
                 megamek.common.Hex.class,

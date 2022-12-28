@@ -196,21 +196,8 @@ public class BombAttackHandler extends WeaponHandler {
                             moF = -typeModifiedToHit.getMoS() - 2;
                         }
                     }
-                    if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
-                        // Need to determine location in flight path
-                        int idx = 0;
-                        for (; idx < ae.getPassedThrough().size(); idx++) {
-                            if (ae.getPassedThrough().get(idx).equals(coords)) {
-                                break;
-                            }
-                        }
-                        // Retrieve facing at current step in flight path
-                        int facing = ae.getPassedThroughFacing().get(idx);
-                        // Scatter, based on location and facing
-                        drop = Compute.scatterAltitudeBombs(coords, facing);
-                    } else {
-                        drop = Compute.scatterDiveBombs(coords, moF);
-                    }
+
+                    drop = Compute.scatter(coords, moF);
 
                     if (game.getBoard().contains(drop)) {
                         // misses and scatters to another hex

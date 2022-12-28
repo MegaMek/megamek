@@ -1014,11 +1014,6 @@ public class SmallCraft extends Aero {
     }
 
     @Override
-    public int getTakeOffLength() {
-        return 20;
-    }
-
-    @Override
     public int getLandingLength() {
         return 8;
     }

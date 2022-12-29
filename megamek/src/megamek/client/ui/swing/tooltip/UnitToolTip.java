@@ -356,6 +356,43 @@ public final class UnitToolTip {
                         result.append(systemBar(good, hits, locDestroyed));
                         result.append("</FONT>\n");
                     }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;H:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;UL:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;LL:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;F:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    result.append("</TD>\n<TD>\n");
                     result.append("</TD>\n<TD>\n");
                     break;
                 case 6:

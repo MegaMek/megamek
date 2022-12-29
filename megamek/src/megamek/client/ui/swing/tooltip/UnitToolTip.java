@@ -813,6 +813,29 @@ public final class UnitToolTip {
             result.append(addToTT("BV", BR, currentBV, initialBV, percentage));
         }
 
+        String damageLevel;
+        switch (entity.getDamageLevel()) {
+            case Entity.DMG_CRIPPLED:
+                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
+                damageLevel += "&nbsp;&nbsp;CRIPPLED";
+                damageLevel += "</FONT>";
+                break;
+            case Entity.DMG_HEAVY:
+                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
+                damageLevel += "&nbsp;&nbsp;HEAVY DMG";
+                damageLevel += "</FONT>";
+                break;
+            case Entity.DMG_MODERATE:
+                damageLevel = "&nbsp;&nbsp;MODERATE DMG";
+                break;
+            case Entity.DMG_LIGHT:
+                damageLevel = "&nbsp;&nbsp;LIGHT DMG";
+                break;
+            default:
+                damageLevel = "&nbsp;&nbsp;UNDAMAGED";
+        }
+        result.append(damageLevel);
+
         // Actual Movement
         if (!isGunEmplacement) {
             // "Has not yet moved" only during movement phase
@@ -1129,30 +1152,6 @@ public final class UnitToolTip {
             }
             result.append(jj);
         }
-
-        result.append("<BR>");
-        String damageLevel;
-        switch (entity.getDamageLevel()) {
-            case Entity.DMG_CRIPPLED:
-                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
-                damageLevel += "CRIPPLED";
-                damageLevel += "</FONT>";
-                break;
-            case Entity.DMG_HEAVY:
-                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
-                damageLevel += "HEAVY DMG";
-                damageLevel += "</FONT>";
-                break;
-            case Entity.DMG_MODERATE:
-                damageLevel = "MODERATE DMG";
-                break;
-            case Entity.DMG_LIGHT:
-                damageLevel = "LIGHT DMG";
-                break;
-            default:
-                damageLevel = "UNDAMAGED";
-        }
-        result.append(damageLevel);
 
         // Armor and Internals
         if (entity.isConventionalInfantry()) {

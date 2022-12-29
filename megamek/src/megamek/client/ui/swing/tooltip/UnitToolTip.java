@@ -780,6 +780,8 @@ public final class UnitToolTip {
                     loadout = ((Aero) entity).getBombChoices();
                 } else if (entity instanceof LandAirMech) {
                     loadout = ((LandAirMech) entity).getBombChoices();
+                } else if (entity instanceof VTOL) {
+                    loadout = ((VTOL) entity).getBombChoices();
                 } else {
                     return result;
                 }

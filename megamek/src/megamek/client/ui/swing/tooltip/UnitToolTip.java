@@ -277,6 +277,24 @@ public final class UnitToolTip {
                         result.append(systemBar(good, hits, locDestroyed));
                         result.append("</FONT>\n");
                     }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
+                    if ((good + hits) > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;S:&nbsp;");
+                        result.append("</FONT>\n<");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    if ((good + hits) > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;L:&nbsp;");
+                        result.append("</FONT>\n<");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
                     result.append("</TD>\n<TD>\n");
                     break;
                 case 2:
@@ -290,7 +308,15 @@ public final class UnitToolTip {
                         result.append(systemBar(good, hits, locDestroyed));
                         result.append("</FONT>\n");
                     }
-                    result.append("</TD>\n<TD>\n");
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    if ((good + hits) > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;L:&nbsp;");
+                        result.append("</FONT>\n<");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
                     break;
                 case 4:
                 case 5:

@@ -4612,7 +4612,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Battle Armor bomb racks (Micro bombs) use gunnery skill and no other mods per TWp228 2018 errata
         if ((atype != null) && (atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
             if (ae.getPosition().equals(target.getPosition())) {
-                toHit = new ToHitData(ae.getCrew().getPiloting(), Messages.getString("WeaponAttackAction.GunSkill"));
+                toHit = new ToHitData(ae.getCrew().getGunnery(), Messages.getString("WeaponAttackAction.GunSkill"));
             } else { 
                 toHit = new ToHitData(TargetRoll.IMPOSSIBLE, Messages.getString("WeaponAttackAction.OutOfRange"));
             }

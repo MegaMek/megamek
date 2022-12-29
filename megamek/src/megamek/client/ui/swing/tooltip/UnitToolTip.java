@@ -193,48 +193,189 @@ public final class UnitToolTip {
         String internalChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
         Color colorDamaged = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
         StringBuilder result = new StringBuilder();
-        result.append("<TABLE CELLSPACING=0 CELLPADDING=0><TBODY>");
+        result.append("<TABLE CELLSPACING=0 CELLPADDING=0>\n<TBODY>\n");
         for (int loc = 0 ; loc < entity.locations(); loc++) {
             // do not show locations that do not support/have armor/internals like HULL on Aero
             if (hideArmorLocation(entity, loc)) {
                 continue;
             }
-            result.append("<TR><TD>");
-            if (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED ||
-                    entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED) {
+
+            boolean locDestroyed = (entity.getInternal(loc) == IArmorState.ARMOR_DOOMED || entity.getInternal(loc) == IArmorState.ARMOR_DESTROYED);
+            result.append("<TR>\n<TD>\n");
+            if (locDestroyed) {
                 // Destroyed location
-                result.append("</TD><TD></TD><TD>");
+                result.append("</TD>\n<TD>\n</TD>\n<TD>\n");
                 result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                 result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + ":&nbsp;");
-                result.append("</FONT></TD><TD>");
-                result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
+                result.append("</FONT>\n</TD>\n<TD>\n");
                 result.append(destroyedLocBar(entity.getOArmor(loc, true)));
-                result.append("</FONT>");
+                result.append("</TD>\n<TD>\n");
             } else {
                 // Rear armor
                 if (entity.hasRearArmor(loc)) {
                     result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                     result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + "R:&nbsp;");
-                    result.append("</FONT></TD><TD>");
+                    result.append("</FONT>\n</TD>\n<TD>\n");
                     result.append(intactLocBar(entity.getOArmor(loc, true), entity.getArmor(loc, true), armorChar));
-                    result.append("</TD><TD>");
+                    result.append("</TD>\n<TD>\n");
                 } else {
                     // No rear armor: empty table cells instead
                     // At small font sizes, writing one character at the correct font size is 
                     // necessary to prevent the table rows from being spaced non-beautifully
-                    result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA) + "&nbsp;</FONT></TD><TD>");
-                    result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA) + "&nbsp;</FONT></TD><TD>");
+                    result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA) + "&nbsp;</FONT>\n</TD>\n<TD>\n");
+                    result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA) + "&nbsp;</FONT>\n</TD>\n<TD>\n");
                 }
                 // Front armor
                 result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                 result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + ":&nbsp;");
-                result.append("</FONT></TD><TD>");
+                result.append("</FONT>\n</TD>\n<TD>\n");
                 result.append(intactLocBar(entity.getOInternal(loc), entity.getInternal(loc), internalChar));
                 result.append(intactLocBar(entity.getOArmor(loc), entity.getArmor(loc), armorChar));
-                result.append("</TD></TR>");
+                result.append("</TD>\n<TD>\n");
             }
+
+            int hits = 0;
+            int good = 0;
+            switch (loc) {
+                case 0:
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
+                    if ((good + hits) > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;S:&nbsp;");
+                        result.append("</FONT>\n<");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    if ((good + hits) > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;L:&nbsp;");
+                        result.append("</FONT>\n<");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    result.append("</TD>\n<TD>\n");
+                    break;
+                case 1:
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;E:&nbsp;");
+                        result.append("</FONT>\n<");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;G:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    result.append("</TD>\n<TD>\n");
+                    break;
+                case 2:
+                case 3:
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;E:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    result.append("</TD>\n<TD>\n");
+                    break;
+                case 4:
+                case 5:
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;S:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;UA:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;LA:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;H:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    result.append("</TD>\n<TD>\n");
+                    break;
+                case 6:
+                case 7:
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;H:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;UL:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;LL:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
+                    hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
+                    if ((good + hits)  > 0) {
+                        result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
+                        result.append("&nbsp;&nbsp;F:&nbsp;");
+                        result.append("</FONT>\n");
+                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append("</FONT>\n");
+                    }
+                    result.append("</TD>\n<TD>\n");
+                    break;
+            }
+            result.append("</TD>\n</TR>\n\n");
         }
-        result.append("</TBODY></TABLE>");
+        result.append("</TBODY>\n</TABLE>\n");
         return result;
     }
     
@@ -248,7 +389,7 @@ public final class UnitToolTip {
         String destroyedChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
         return locBar(orig, orig, destroyedChar, true);
     }
-    
+
     /** 
      * Used for intact locations.
      * Returns a string representing armor or internal structure of the location.
@@ -298,24 +439,56 @@ public final class UnitToolTip {
             if (numIntact > 15 && numIntact + numDmgd > 30) {
                 int tensIntact = (numIntact - 1) / 10;
                 result.append(dChar + "x" + tensIntact * 10 + " ");
-                result.append(repeat(dChar, numIntact - 10 * tensIntact) + "</FONT>");
+                result.append(repeat(dChar, numIntact - 10 * tensIntact) + "</FONT>\n");
             } else {
-                result.append(repeat(dChar, numIntact) + "</FONT>");
+                result.append(repeat(dChar, numIntact) + "</FONT>\n");
             }
         }
         if (numPartial > 0) {
             result.append(guiScaledFontHTML(colorPartialDmg, TT_SMALLFONT_DELTA));
-            result.append(repeat(dChar, numPartial) + "</FONT>");
+            result.append(repeat(dChar, numPartial) + "</FONT>\n");
         }
         if (numDmgd > 0) {
             result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
             if (numDmgd > 15 && numIntact + numDmgd > 30) {
                 int tensDmgd = (numDmgd - 1) / 10;
                 result.append(dChar + "x" + tensDmgd * 10 + " ");
-                result.append(repeat(dChar, numDmgd - 10 * tensDmgd) + "</FONT>");
+                result.append(repeat(dChar, numDmgd - 10 * tensDmgd) + "</FONT>\n");
             } else {
-                result.append(repeat(dChar, numDmgd) + "</FONT>");
+                result.append(repeat(dChar, numDmgd) + "</FONT>\n");
             }
+        }
+        return result;
+    }
+
+    private static StringBuilder systemBar(int good, int bad, boolean destroyed) {
+        // Internal Structure can be zero, e.g. in Aero
+        if ((good + bad) == 0) {
+            return new StringBuilder("");
+        }
+
+        StringBuilder result = new StringBuilder();
+        GUIPreferences guip = GUIPreferences.getInstance();
+        Color colorIntact = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_INTACT);
+        Color colorDamaged = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
+        String dChar =  guip.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
+        String iChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
+
+        if (good > 0)  {
+            if (!destroyed) {
+                result.append(guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA));
+                result.append(repeat(iChar, good));
+                result.append("</FONT>\n");
+            } else {
+                result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
+                result.append(repeat(dChar, good));
+                result.append("</FONT>\n");
+            }
+        }
+        if (bad > 0) {
+            result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
+            result.append(repeat(dChar, bad));
+            result.append("</FONT>\n");
         }
         return result;
     }
@@ -645,6 +818,11 @@ public final class UnitToolTip {
                 if (entity.isMakingDfa()) { 
                     result.append(addToTT("DFA", NOBR));
                 }
+
+                if (entity.isUnjammingRAC()) {
+                    result.append("<BR>");
+                    result.append("Unjamming RAC");
+                }
             }
         }
 
@@ -791,6 +969,7 @@ public final class UnitToolTip {
             }
         }
         result.append("</I></FONT>");
+        result.append("</I></FONT>");
         return result;
     }
     
@@ -798,35 +977,106 @@ public final class UnitToolTip {
     private static StringBuilder entityValues(Entity entity) {
         StringBuilder result = new StringBuilder();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
+        int hipHits = 0;
+        int actuatorHits = 0;
+        int legsDestroyed = 0;
+
+        if ((!(entity instanceof Infantry)) && (!(entity instanceof FighterSquadron)) && (!(entity instanceof GunEmplacement))) {
+            if (entity instanceof Mech) {
+                if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
+                    for (Mounted m : entity.getMisc()) {
+                        if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                            if (m.isHit() || entity.isLocationBad(m.getLocation())) {
+                                legsDestroyed++;
+                            }
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < entity.locations(); i++) {
+                        if (entity.locationIsLeg(i)) {
+                            if (!entity.isLocationBad(i)) {
+                                if (((Mech) entity).legHasHipCrit(i)) {
+                                    hipHits++;
+                                    if ((entity.getGame() == null) || (!entity.getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE))) {
+                                        continue;
+                                    }
+                                }
+                                actuatorHits += ((Mech) entity).countLegActuatorCrits(i);
+                            }
+                            else {
+                                legsDestroyed++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int jumpJet = 0;
+        int jumpJetDistroyed = 0;
+        int jumpBooster = 0;
+        int jumpBoosterDistroyed = 0;
+
+        if ((entity instanceof Mech) || (entity instanceof Tank)) {
+            for (Mounted mounted : entity.getMisc()) {
+                if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                    jumpJet++;
+                    if (mounted.isDestroyed() || mounted.isBreached()) {
+                        jumpJetDistroyed++;
+                    }
+                }
+                if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
+                    jumpBooster++;
+                    if (mounted.isDestroyed() || mounted.isBreached()) {
+                        jumpBoosterDistroyed++;
+                    }
+                }
+            }
+        }
+
         // Unit movement ability
         if (!isGunEmplacement) {
-            int walkMP = entity.getWalkMP(false, false,false);
-            int runMP = entity.getRunMP(false, false,false);
-            int jumpMP = entity.getJumpMP(false);
+            int walkMP = entity.getOriginalWalkMP();
+            int runMP = entity.getOriginalRunMP();
+            int jumpMP = entity.getOriginalJumpMP();
             result.append(addToTT("Movement", NOBR , walkMP,  runMP));
 
-            if (entity.getJumpMP() > 0) {
+            if (jumpMP > 0) {
                 result.append("/" + jumpMP);
             }
+
+            int walkMPModified = entity.getWalkMP(true, false,false);
+            int runMPModified = entity.getRunMP(true, false, false);
+            int jumpMPModified = entity.getJumpMP(true);
+
+            if ((walkMP != walkMPModified) || (runMP != runMPModified) || (jumpMP != jumpMPModified)) {
+                result.append(DOT_SPACER);
+                result.append(walkMPModified + "/" + runMPModified);
+                if (jumpMPModified > 0) {
+                    result.append("/" + jumpMPModified);
+                }
+                if (entity.getGame().getPlanetaryConditions().getGravity()  != 1.0) {
+                    result.append(DOT_SPACER + entity.getGame().getPlanetaryConditions().getGravity() + "g");
+                }
+                int walkMPNoHeat = entity.getWalkMP(true, true,false);
+                int runMPNoHeat = entity.getRunMP(true, true, false);
+                if ((walkMPNoHeat != walkMPModified) || (runMPNoHeat != runMPModified)) {
+                    result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + "\uD83D\uDD25</FONT>");
+                }
+            }
+
             if (entity instanceof Tank) {
                 result.append(DOT_SPACER + entity.getMovementModeAsString());
             }
 
-            int walkMPGravity = entity.getWalkMP(true, false,false);
-            int runMPGravity = entity.getRunMP(true, false, false);
-            int jumpMPGravity = entity.getJumpMP(true);
+            int weatherMod = entity.getGame().getPlanetaryConditions().getMovementMods(entity);
 
-            if ((walkMP != walkMPGravity) || (runMP != runMPGravity) || (jumpMP != jumpMPGravity)){
-                result.append(" (");
-                result.append(walkMPGravity);
-                result.append("/" + runMPGravity);
-                if (entity.getJumpMP() > 0) {
-                    result.append("/" + jumpMPGravity);
-                }
-                if (entity instanceof Tank) {
-                    result.append(DOT_SPACER + entity.getMovementModeAsString());
-                }
-                result.append(")(" + entity.getGame().getPlanetaryConditions().getGravity() + ")");
+            if (weatherMod != 0) {
+                result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + "\u2602" + "</FONT>");
+            }
+
+            if ((legsDestroyed > 0) || (hipHits > 0) || (actuatorHits > 0) || (jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0) || (entity.isImmobile()) || (entity.isGyroDestroyed())) {
+                result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + "\uD83D\uDD27" + "</FONT>");
             }
         }
         
@@ -838,6 +1088,45 @@ public final class UnitToolTip {
                 result.append(addToTT("InfSpec", BR, Infantry.getSpecializationName(spec)));
             }
         }
+
+        if ((jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0)) {
+            result.append("<BR>");
+            String jj = "";
+            if (jumpJetDistroyed > 0) {
+                jj = "Jump Jets " + (jumpJet - jumpJetDistroyed) + "/" + jumpJet;
+            }
+            if (jumpBoosterDistroyed > 0)  {
+                jj += "; Jump Booster " + (jumpBooster - jumpBoosterDistroyed) + "/" + jumpBooster;
+            }
+            if (jj.startsWith(";")) {
+                jj = jj.substring(2);
+            }
+            result.append(jj);
+        }
+
+        result.append("<BR>");
+        String damageLevel;
+        switch (entity.getDamageLevel()) {
+            case Entity.DMG_CRIPPLED:
+                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
+                damageLevel += "CRIPPLED";
+                damageLevel += "</FONT>";
+                break;
+            case Entity.DMG_HEAVY:
+                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
+                damageLevel += "HEAVY DMG";
+                damageLevel += "</FONT>";
+                break;
+            case Entity.DMG_MODERATE:
+                damageLevel = "MODERATE DMG";
+                break;
+            case Entity.DMG_LIGHT:
+                damageLevel = "LIGHT DMG";
+                break;
+            default:
+                damageLevel = "UNDAMAGED";
+        }
+        result.append(damageLevel);
 
         // Armor and Internals
         if (entity.isConventionalInfantry()) {

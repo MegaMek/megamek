@@ -83,6 +83,7 @@ public final class UnitToolTip {
         String clanStr = entity.isClan() && !entity.isMixedTech() ? " [Clan] " : "";
         result.append(entity.getChassis()).append(clanStr);
         result.append(" (").append((int)entity.getWeight()).append("t)");
+        result.append("&nbsp;&nbsp;" + entity.getEntityTypeName(entity.getEntityType()));
         result.append("<BR>").append(owner.getName());
         result.append(UIUtil.guiScaledFontHTML(UIUtil.uiGray()));
         result.append(MessageFormat.format(" [ID: {0}] </FONT>", entity.getId()));
@@ -129,6 +130,9 @@ public final class UnitToolTip {
             result.append(ecmInfo(entity));
             result.append("</FONT>");
         }
+
+        // Bomb List
+        result.append(bombList(entity));
 
         // StratOps quirks, chassis and weapon
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
@@ -762,6 +766,43 @@ public final class UnitToolTip {
             }
         }
         result.append("</TABLE>");
+        return result;
+    }
+
+    private static StringBuilder bombList(Entity entity) {
+        StringBuilder result = new StringBuilder();
+
+        if (entity.isBomber()) {
+            int[] loadout = { };
+
+            if (entity.getGame().getPhase().isLounge()) {
+                if (entity instanceof Aero) {
+                    loadout = ((Aero) entity).getBombChoices();
+                } else if (entity instanceof LandAirMech) {
+                    loadout = ((LandAirMech) entity).getBombChoices();
+                } else {
+                    return result;
+                }
+            } else {
+                loadout = entity.getBombLoadout();
+            }
+            result.append("<TABLE CELLSPACING=0 CELLPADDING=0 " + guiScaledFontHTML(uiTTWeaponColor()).substring(1) + "\n");
+            for (int i = 0; i < loadout.length; i++) {
+                int count = loadout[i];
+
+                if (count > 0) {
+                    result.append("<TR>\n<TD>\n");
+                    result.append(count + "\n");
+                    result.append("</TD>\n<TD>\n");
+                    result.append("&nbsp;x&nbsp;\n");
+                    result.append("</TD>\n<TD>\n");
+                    result.append(BombType.getBombName(i) + "\n");
+                    result.append("</TD>\n</TR>\n");
+                }
+            }
+            result.append("</TABLE>\n");
+        }
+
         return result;
     }
 

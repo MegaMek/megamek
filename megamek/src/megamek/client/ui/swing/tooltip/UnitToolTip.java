@@ -45,6 +45,8 @@ public final class UnitToolTip {
     /** The font size reduction for Quirks */
     final static float TT_SMALLFONT_DELTA = -0.2f;
 
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
     /** Returns the unit tooltip with values that are relevant in the lobby. */
     public static StringBuilder getEntityTipLobby(Entity entity, Player localPlayer,
             MapSettings mapSettings) {
@@ -75,7 +77,6 @@ public final class UnitToolTip {
         StringBuilder result = new StringBuilder();
         result.append("<TABLE BORDER=0 BGCOLOR=" + BGCOLOR + " width=100%><TR><TD>");
         Game game = entity.getGame();
-        GUIPreferences guip = GUIPreferences.getInstance();
 
         // Unit Chassis and Player
         Player owner = game.getPlayer(entity.getOwnerId());
@@ -99,8 +100,7 @@ public final class UnitToolTip {
             }
             result.append(inGameValues(entity, localPlayer));
             if (pilotInfo) {
-                result.append(PilotToolTip.getPilotTipShort(entity,
-                        GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)));
+                result.append(PilotToolTip.getPilotTipShort(entity, GUIP.getBoolean(GUIPreferences.SHOW_PILOT_PORTRAIT_TT)));
             } else {
                 result.append("<BR>");
             }
@@ -117,13 +117,13 @@ public final class UnitToolTip {
         result.append("</FONT>");
 
         // Status bar visual representation of armor and IS 
-        if (guip.getBoolean(GUIPreferences.SHOW_ARMOR_MINIVIS_TT)) {
+        if (GUIP.getBoolean(GUIPreferences.SHOW_ARMOR_MINIVIS_TT)) {
             result.append(scaledHTMLSpacer(3));
             result.append(addArmorMiniVisToTT(entity));
         }
 
         // Weapon List
-        if (guip.getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
+        if (GUIP.getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
             result.append(scaledHTMLSpacer(3));
             result.append(guiScaledFontHTML());
             result.append(weaponList(entity));
@@ -189,13 +189,12 @@ public final class UnitToolTip {
 
     /** Returns the graphical Armor representation. */
     private static StringBuilder addArmorMiniVisToTT(Entity entity) {
-        GUIPreferences guip = GUIPreferences.getInstance();
-        String armorChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_ARMOR_CHAR);
+        String armorChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_ARMOR_CHAR);
         if (entity.isCapitalScale()) {
-            armorChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_CAP_ARMOR_CHAR);
+            armorChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_CAP_ARMOR_CHAR);
         }
-        String internalChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
-        Color colorDamaged = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
+        String internalChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
+        Color colorDamaged = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
         StringBuilder result = new StringBuilder();
         result.append("<TABLE CELLSPACING=0 CELLPADDING=0>\n<TBODY>\n");
         for (int loc = 0 ; loc < entity.locations(); loc++) {
@@ -452,8 +451,7 @@ public final class UnitToolTip {
      * The location has the given orig original Armor/IS. 
      */
     private static StringBuilder destroyedLocBar(int orig) {
-        GUIPreferences guip = GUIPreferences.getInstance();
-        String destroyedChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
+        String destroyedChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
         return locBar(orig, orig, destroyedChar, true);
     }
 
@@ -480,11 +478,10 @@ public final class UnitToolTip {
         }
         
         StringBuilder result = new StringBuilder();
-        GUIPreferences guip = GUIPreferences.getInstance();
-        Color colorIntact = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_INTACT);
-        Color colorPartialDmg = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG);
-        Color colorDamaged = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
-        int visUnit = guip.getInt(GUIPreferences.ADVANCED_ARMORMINI_UNITS_PER_BLOCK);
+        Color colorIntact = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_INTACT);
+        Color colorPartialDmg = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_PARTIAL_DMG);
+        Color colorDamaged = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
+        int visUnit = GUIP.getInt(GUIPreferences.ADVANCED_ARMORMINI_UNITS_PER_BLOCK);
         
         if (destroyed) {
             colorIntact = colorDamaged;
@@ -535,11 +532,10 @@ public final class UnitToolTip {
         }
 
         StringBuilder result = new StringBuilder();
-        GUIPreferences guip = GUIPreferences.getInstance();
-        Color colorIntact = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_INTACT);
-        Color colorDamaged = guip.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
-        String dChar =  guip.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
-        String iChar = guip.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
+        Color colorIntact = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_INTACT);
+        Color colorDamaged = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
+        String dChar =  GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_DESTROYED_CHAR);
+        String iChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
 
         if (good > 0)  {
             if (!destroyed) {
@@ -896,12 +892,12 @@ public final class UnitToolTip {
         String damageLevel;
         switch (entity.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
-                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
+                damageLevel = guiScaledFontHTML(GUIP.getWarningColor());
                 damageLevel += "&nbsp;&nbsp;CRIPPLED";
                 damageLevel += "</FONT>";
                 break;
             case Entity.DMG_HEAVY:
-                damageLevel = guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor());
+                damageLevel = guiScaledFontHTML(GUIP.getWarningColor());
                 damageLevel += "&nbsp;&nbsp;HEAVY DMG";
                 damageLevel += "</FONT>";
                 break;
@@ -923,7 +919,7 @@ public final class UnitToolTip {
                 result.append(addToTT("NotYetMoved", BR));
             } else if ((entity.isDone() && game.getPhase().isMovement())
                     || game.getPhase().isFiring()) {
-                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForMovement(entity.moved)));
+                result.append(guiScaledFontHTML(GUIP.getColorForMovement(entity.moved)));
                 int tmm = Compute.getTargetMovementModifier(game, entity.getId()).getValue();
                 if (entity.moved == EntityMovementType.MOVE_NONE) {
                     result.append(addToTT("NoMove", BR, tmm));
@@ -971,7 +967,7 @@ public final class UnitToolTip {
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
             int heat = entity.heat;
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getColorForHeat(heat)));
+            result.append(guiScaledFontHTML(GUIP.getColorForHeat(heat)));
             if (heat == 0) {
                 result.append(addToTT("Heat0", BR));
             } else {
@@ -985,7 +981,7 @@ public final class UnitToolTip {
         if (isGunEmplacement) {
             GunEmplacement emp = (GunEmplacement) entity; 
             if (emp.isTurret() && emp.isTurretLocked(emp.getLocTurret())) {
-                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+                result.append(guiScaledFontHTML(GUIP.getWarningColor()));
                 result.append(addToTT("TurretLocked", BR));
                 result.append("</FONT>");
             }
@@ -993,14 +989,14 @@ public final class UnitToolTip {
 
         // Unit Immobile
         if (!isGunEmplacement && entity.isImmobile()) {
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(guiScaledFontHTML(GUIP.getWarningColor()));
             result.append(addToTT("Immobile", BR));
             result.append("</FONT>");
         }
 
         // Unit Prone
         if (!isGunEmplacement && entity.isProne()) {
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(guiScaledFontHTML(GUIP.getWarningColor()));
             result.append(addToTT("Prone", BR));
             result.append("</FONT>");
         }
@@ -1039,7 +1035,7 @@ public final class UnitToolTip {
             StringBuffer tempList = new StringBuffer();
             boolean teamVision = game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_TEAM_VISION);
-            int seenByResolution = GUIPreferences.getInstance().getAdvancedUnitToolTipSeenByResolution();
+            int seenByResolution = GUIP.getAdvancedUnitToolTipSeenByResolution();
             String tmpStr = "";
 
             dance: for (Player player :  entity.getWhoCanSee()) {
@@ -1190,7 +1186,7 @@ public final class UnitToolTip {
                 int walkMPNoHeat = entity.getWalkMP(true, true,false);
                 int runMPNoHeat = entity.getRunMP(true, true, false);
                 if ((walkMPNoHeat != walkMPModified) || (runMPNoHeat != runMPModified)) {
-                    result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + "\uD83D\uDD25</FONT>");
+                    result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDD25</FONT>");
                 }
             }
 
@@ -1201,11 +1197,11 @@ public final class UnitToolTip {
             int weatherMod = entity.getGame().getPlanetaryConditions().getMovementMods(entity);
 
             if (weatherMod != 0) {
-                result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + "\u2602" + "</FONT>");
+                result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\u2602" + "</FONT>");
             }
 
             if ((legsDestroyed > 0) || (hipHits > 0) || (actuatorHits > 0) || (jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0) || (entity.isImmobile()) || (entity.isGyroDestroyed())) {
-                result.append(DOT_SPACER + guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + "\uD83D\uDD27" + "</FONT>");
+                result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDD27" + "</FONT>");
             }
         }
         
@@ -1253,7 +1249,7 @@ public final class UnitToolTip {
                                                     MapSettings mapSettings) {
         StringBuilder result = new StringBuilder();
         // Critical (red) warnings
-        result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
+        result.append(guiScaledFontHTML(GUIP.getWarningColor()));
         if (entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()) != null) {
             result.append("<BR>Cannot survive " + entity.getGame().getPlanetaryConditions().whyDoomed(entity, entity.getGame()));
         }
@@ -1311,11 +1307,11 @@ public final class UnitToolTip {
 
         if (entity.partOfForce()) {
             // Get the my / ally / enemy color and desaturate it
-            Color color = GUIPreferences.getInstance().getEnemyUnitColor();
+            Color color = GUIP.getEnemyUnitColor();
             if (entity.getOwnerId() == localPlayer.getId()) {
-                color = GUIPreferences.getInstance().getMyUnitColor();
+                color = GUIP.getMyUnitColor();
             } else if (!localPlayer.isEnemyOf(entity.getOwner())) {
-                color = GUIPreferences.getInstance().getAllyUnitColor();
+                color = GUIP.getAllyUnitColor();
             }
             color = addGray(color, 128).brighter();
             result.append(guiScaledFontHTML(color)).append("<BR>");

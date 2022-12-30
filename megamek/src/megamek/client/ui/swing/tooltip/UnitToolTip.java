@@ -1161,13 +1161,16 @@ public final class UnitToolTip {
                     }
                 }
                 if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
-                    paritalWing++;
-                    if (mounted.isDestroyed() || mounted.isBreached()) {
-                        paritalWingDistroyed++;
-                    }
+                    int eNum = entity.getEquipmentNum(mounted);
+                    paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
+                    paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
+                    paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
+                    paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
                 }
             }
         }
+        paritalWing += paritalWingDistroyed;
+
 
         // Unit movement ability
         if (!isGunEmplacement) {

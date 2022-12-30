@@ -313,7 +313,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
         for (MoveCommand cmd : MoveCommand.values()) {
             String title = Messages.getString("MovementDisplay." + cmd.getCmd());
-            if ((title.equals(Messages.getString("MovementDisplay." + MoveCommand.MOVE_UNJAM.getCmd()))) &&
+            if ((clientgui != null) &&
+                    (title.equals(Messages.getString("MovementDisplay." + MoveCommand.MOVE_UNJAM.getCmd()))) &&
                     (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
                 title += "/AC";
             }

@@ -1143,6 +1143,8 @@ public final class UnitToolTip {
         int jumpJetDistroyed = 0;
         int jumpBooster = 0;
         int jumpBoosterDistroyed = 0;
+        int paritalWing = 0;
+        int paritalWingDistroyed = 0;
 
         if ((entity instanceof Mech) || (entity instanceof Tank)) {
             for (Mounted mounted : entity.getMisc()) {
@@ -1156,6 +1158,12 @@ public final class UnitToolTip {
                     jumpBooster++;
                     if (mounted.isDestroyed() || mounted.isBreached()) {
                         jumpBoosterDistroyed++;
+                    }
+                }
+                if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                    paritalWing++;
+                    if (mounted.isDestroyed() || mounted.isBreached()) {
+                        paritalWingDistroyed++;
                     }
                 }
             }
@@ -1202,7 +1210,8 @@ public final class UnitToolTip {
                 result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\u2602" + "</FONT>");
             }
 
-            if ((legsDestroyed > 0) || (hipHits > 0) || (actuatorHits > 0) || (jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0) || (entity.isImmobile()) || (entity.isGyroDestroyed())) {
+            if ((legsDestroyed > 0) || (hipHits > 0) || (actuatorHits > 0) || (jumpJetDistroyed > 0) || (paritalWingDistroyed > 0)
+                    || (jumpBoosterDistroyed > 0) || (entity.isImmobile()) || (entity.isGyroDestroyed())) {
                 result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDD27" + "</FONT>");
             }
         }
@@ -1216,7 +1225,7 @@ public final class UnitToolTip {
             }
         }
 
-        if ((jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0)) {
+        if ((jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0) || (paritalWingDistroyed > 0)) {
             result.append("<BR>");
             String jj = "";
             if (jumpJetDistroyed > 0) {
@@ -1224,6 +1233,9 @@ public final class UnitToolTip {
             }
             if (jumpBoosterDistroyed > 0)  {
                 jj += "; Jump Booster " + (jumpBooster - jumpBoosterDistroyed) + "/" + jumpBooster;
+            }
+            if (paritalWingDistroyed > 0)  {
+                jj += "; Partial Wing " + (paritalWing - paritalWingDistroyed) + "/" + paritalWing;
             }
             if (jj.startsWith(";")) {
                 jj = jj.substring(2);

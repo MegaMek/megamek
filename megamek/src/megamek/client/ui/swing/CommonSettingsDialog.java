@@ -133,6 +133,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private final JCheckBox nagForPSR = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR"));
     private final JCheckBox nagForWiGELanding = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForWiGELanding"));
     private final JCheckBox nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction"));
+    private final JCheckBox nagForNoUnJamRAC = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForUnJamRAC"));
     private final JCheckBox animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove"));
     private final JCheckBox showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks"));
     private final JCheckBox soundMute = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMute"));
@@ -436,6 +437,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         comps.add(checkboxEntry(nagForPSR, null));
         comps.add(checkboxEntry(nagForWiGELanding, null));
         comps.add(checkboxEntry(nagForNoAction, null));
+        comps.add(checkboxEntry(nagForNoUnJamRAC, null));
         comps.add(checkboxEntry(getFocus, null));
         comps.add(checkboxEntry(mouseWheelZoom, null));
         comps.add(checkboxEntry(mouseWheelZoomFlip, null));
@@ -560,6 +562,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             nagForPSR.setSelected(gs.getNagForPSR());
             nagForWiGELanding.setSelected(gs.getNagForWiGELanding());
             nagForNoAction.setSelected(gs.getNagForNoAction());
+            nagForNoUnJamRAC.setSelected(gs.getNagForNoUnJamRAC());
             animateMove.setSelected(gs.getShowMoveStep());
             showWrecks.setSelected(gs.getShowWrecks());
             soundMute.setSelected(gs.getSoundMute());
@@ -778,6 +781,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         gs.setNagForPSR(nagForPSR.isSelected());
         gs.setNagForWiGELanding(nagForWiGELanding.isSelected());
         gs.setNagForNoAction(nagForNoAction.isSelected());
+        gs.setNagForNoUnJamRAC(nagForNoUnJamRAC.isSelected());
         gs.setShowMoveStep(animateMove.isSelected());
         gs.setShowWrecks(showWrecks.isSelected());
         gs.setSoundMute(soundMute.isSelected());

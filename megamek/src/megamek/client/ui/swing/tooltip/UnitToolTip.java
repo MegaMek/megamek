@@ -194,7 +194,6 @@ public final class UnitToolTip {
             armorChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_CAP_ARMOR_CHAR);
         }
         String internalChar = GUIP.getString(GUIPreferences.ADVANCED_ARMORMINI_IS_CHAR);
-        Color colorDamaged = GUIP.getColor(GUIPreferences.ADVANCED_ARMORMINI_COLOR_DAMAGED);
         StringBuilder result = new StringBuilder();
         result.append("<TABLE CELLSPACING=0 CELLPADDING=0>\n<TBODY>\n");
         for (int loc = 0 ; loc < entity.locations(); loc++) {
@@ -947,6 +946,9 @@ public final class UnitToolTip {
                 if (entity.isUnjammingRAC()) {
                     result.append("<BR>");
                     result.append("Unjamming RAC");
+                    if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
+                        result.append("/AC");
+                    }
                 }
             }
         }

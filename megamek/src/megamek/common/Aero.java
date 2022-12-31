@@ -373,10 +373,6 @@ public class Aero extends Entity implements IAero, IBomber {
         return j;
     }
 
-    public int getBombLoad(int t) {
-        return Math.max(0, t - (int) Math.ceil(getBombPoints() / 5.0));
-    }
-
     /**
      * This is the same as getWalkMP, but does not divide by 2 when grounded
      *
@@ -521,6 +517,11 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void clearBombChoices() {
         Arrays.fill(bombChoices, 0);
+    }
+
+    @Override
+    public int getBombLoad(int t) {
+        return Math.max(0, t - (int) Math.ceil(getBombPoints() / 5.0));
     }
 
     public void setWhoFirst() {

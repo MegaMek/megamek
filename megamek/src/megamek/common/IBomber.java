@@ -52,6 +52,11 @@ public interface IBomber {
      * Sets the count of each bomb to zero
      */
     void clearBombChoices();
+
+    /**
+     * @return The load for bombs currently on unit
+     */
+    int getBombLoad(int t);
     
     /**
      * @param cost The cost of the bomb to be mounted

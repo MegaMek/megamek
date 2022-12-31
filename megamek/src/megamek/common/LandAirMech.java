@@ -1128,6 +1128,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
+    public int getBombLoad(int t) {
+        // bombs don't impact movement
+        return 0;
+    }
+
+    @Override
     public Targetable getVTOLBombTarget() {
         return airmechBombTarget;
     }

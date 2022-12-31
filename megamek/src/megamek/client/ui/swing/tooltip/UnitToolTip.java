@@ -770,12 +770,8 @@ public final class UnitToolTip {
             int[] loadout = { };
 
             if (entity.getGame().getPhase().isLounge()) {
-                if (entity instanceof Aero) {
-                    loadout = ((Aero) entity).getBombChoices();
-                } else if (entity instanceof LandAirMech) {
-                    loadout = ((LandAirMech) entity).getBombChoices();
-                } else if (entity instanceof VTOL) {
-                    loadout = ((VTOL) entity).getBombChoices();
+                if (entity instanceof IBomber) {
+                    loadout = ((IBomber) entity).getBombChoices();
                 } else {
                     return result;
                 }
@@ -1103,11 +1099,13 @@ public final class UnitToolTip {
     private static StringBuilder entityValues(Entity entity) {
         StringBuilder result = new StringBuilder();
         boolean isGunEmplacement = entity instanceof GunEmplacement;
-        int hipHits = 0;
-        int actuatorHits = 0;
-        int legsDestroyed = 0;
 
-        if ((!(entity instanceof Infantry)) && (!(entity instanceof FighterSquadron)) && (!(entity instanceof GunEmplacement))) {
+        // Unit movement ability
+        if (!isGunEmplacement) {
+            int hipHits = 0;
+            int actuatorHits = 0;
+            int legsDestroyed = 0;
+
             if (entity instanceof Mech) {
                 if (entity.getMovementMode() == EntityMovementMode.TRACKED) {
                     for (Mounted m : entity.getMisc()) {
@@ -1136,46 +1134,43 @@ public final class UnitToolTip {
                     }
                 }
             }
-        }
 
-        int jumpJet = 0;
-        int jumpJetDistroyed = 0;
-        int jumpBooster = 0;
-        int jumpBoosterDistroyed = 0;
-        int paritalWing = 0;
-        int paritalWingDistroyed = 0;
-        int partialWingWeaterMod = 0;
+            int jumpJet = 0;
+            int jumpJetDistroyed = 0;
+            int jumpBooster = 0;
+            int jumpBoosterDistroyed = 0;
+            int paritalWing = 0;
+            int paritalWingDistroyed = 0;
+            int partialWingWeaterMod = 0;
 
-        if ((entity instanceof Mech) || (entity instanceof Tank)) {
-            for (Mounted mounted : entity.getMisc()) {
-                if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                    jumpJet++;
-                    if (mounted.isDestroyed() || mounted.isBreached()) {
-                        jumpJetDistroyed++;
+            if ((entity instanceof Mech) || (entity instanceof Tank)) {
+                for (Mounted mounted : entity.getMisc()) {
+                    if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                        jumpJet++;
+                        if (mounted.isDestroyed() || mounted.isBreached()) {
+                            jumpJetDistroyed++;
+                        }
+                    }
+                    if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
+                        jumpBooster++;
+                        if (mounted.isDestroyed() || mounted.isBreached()) {
+                            jumpBoosterDistroyed++;
+                        }
+                    }
+                    if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                        int eNum = entity.getEquipmentNum(mounted);
+                        paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
+                        paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
+                        paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
+                        paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
+
+                        partialWingWeaterMod = ((Mech) entity).getPartialWingJumpAtmoBonus() - ((Mech) entity).getPartialWingJumpWeightClassBonus();
                     }
                 }
-                if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)) {
-                    jumpBooster++;
-                    if (mounted.isDestroyed() || mounted.isBreached()) {
-                        jumpBoosterDistroyed++;
-                    }
-                }
-                if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
-                    int eNum = entity.getEquipmentNum(mounted);
-                    paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
-                    paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
-                    paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
-                    paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
 
-                    partialWingWeaterMod = ((Mech) entity).getPartialWingJumpAtmoBonus() - ((Mech) entity).getPartialWingJumpWeightClassBonus();
-                }
+                paritalWing += paritalWingDistroyed;
             }
-        }
-        paritalWing += paritalWingDistroyed;
 
-
-        // Unit movement ability
-        if (!isGunEmplacement) {
             int walkMP = entity.getOriginalWalkMP();
             int runMP = entity.getOriginalRunMP();
             int jumpMP = entity.getOriginalJumpMP();
@@ -1196,7 +1191,7 @@ public final class UnitToolTip {
                     result.append("/" + jumpMPModified);
                 }
                 if (entity.getGame().getPlanetaryConditions().getGravity()  != 1.0) {
-                    result.append(DOT_SPACER + entity.getGame().getPlanetaryConditions().getGravity() + "g");
+                    result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + entity.getGame().getPlanetaryConditions().getGravity() + "g</FONT>");
                 }
                 int walkMPNoHeat = entity.getWalkMP(true, true,false);
                 int runMPNoHeat = entity.getRunMP(true, true, false);
@@ -1209,14 +1204,12 @@ public final class UnitToolTip {
                 result.append(DOT_SPACER + entity.getMovementModeAsString());
             }
 
-            int bombMod = 0;
-
-            if (entity.isAero()) {
-                bombMod = ((Aero) entity).getBombLoad(walkMP);
-            }
-
-            if (bombMod != 0) {
-                result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDCA3" + "</FONT>");
+            if (entity instanceof IBomber) {
+                int bombMod = 0;
+                bombMod = ((IBomber) entity).getBombLoad(walkMP);
+                if (bombMod != 0) {
+                    result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDCA3" + "</FONT>");
+                }
             }
 
             int weatherMod = entity.getGame().getPlanetaryConditions().getMovementMods(entity);
@@ -1229,6 +1222,40 @@ public final class UnitToolTip {
                     || (jumpBoosterDistroyed > 0) || (entity.isImmobile()) || (entity.isGyroDestroyed())) {
                 result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDD27" + "</FONT>");
             }
+
+            if ((entity instanceof BipedMech) || (entity instanceof TripodMech)) {
+                int shieldMod = 0;
+                if (entity.hasShield()) {
+                    shieldMod -= entity.getNumberOfShields(MiscType.S_SHIELD_LARGE);
+                    shieldMod -= entity.getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
+                }
+
+                if (shieldMod != 0) {
+                    result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\u26E8" + "</FONT>");
+                }
+            }
+
+            if (entity.hasModularArmor()) {
+                result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\u27EC\u25AE" + "</FONT>");
+            }
+
+            if ((jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0) || (paritalWingDistroyed > 0)) {
+                result.append("<BR>");
+                String jj = "";
+                if (jumpJetDistroyed > 0) {
+                    jj = "Jump Jets " + (jumpJet - jumpJetDistroyed) + "/" + jumpJet;
+                }
+                if (jumpBoosterDistroyed > 0)  {
+                    jj += "; Jump Booster " + (jumpBooster - jumpBoosterDistroyed) + "/" + jumpBooster;
+                }
+                if (paritalWingDistroyed > 0)  {
+                    jj += "; Partial Wing " + (paritalWing - paritalWingDistroyed) + "/" + paritalWing;
+                }
+                if (jj.startsWith(";")) {
+                    jj = jj.substring(2);
+                }
+                result.append(jj);
+            }
         }
         
         // Infantry specialization like SCUBA
@@ -1238,24 +1265,6 @@ public final class UnitToolTip {
             if (spec > 0) {
                 result.append(addToTT("InfSpec", BR, Infantry.getSpecializationName(spec)));
             }
-        }
-
-        if ((jumpJetDistroyed > 0) || (jumpBoosterDistroyed > 0) || (paritalWingDistroyed > 0)) {
-            result.append("<BR>");
-            String jj = "";
-            if (jumpJetDistroyed > 0) {
-                jj = "Jump Jets " + (jumpJet - jumpJetDistroyed) + "/" + jumpJet;
-            }
-            if (jumpBoosterDistroyed > 0)  {
-                jj += "; Jump Booster " + (jumpBooster - jumpBoosterDistroyed) + "/" + jumpBooster;
-            }
-            if (paritalWingDistroyed > 0)  {
-                jj += "; Partial Wing " + (paritalWing - paritalWingDistroyed) + "/" + paritalWing;
-            }
-            if (jj.startsWith(";")) {
-                jj = jj.substring(2);
-            }
-            result.append(jj);
         }
 
         // Armor and Internals

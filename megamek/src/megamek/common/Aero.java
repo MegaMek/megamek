@@ -373,6 +373,10 @@ public class Aero extends Entity implements IAero, IBomber {
         return j;
     }
 
+    public int getBombLoad(int t) {
+        return Math.max(0, t - (int) Math.ceil(getBombPoints() / 5.0));
+    }
+
     /**
      * This is the same as getWalkMP, but does not divide by 2 when grounded
      *
@@ -389,7 +393,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
         // get bomb load
-        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
+        j = getBombLoad(j);
 
         if (hasModularArmor()) {
             j--;

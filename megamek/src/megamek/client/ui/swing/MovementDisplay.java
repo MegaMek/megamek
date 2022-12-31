@@ -78,7 +78,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED;
 
-    private boolean isUnJamming;
+    private boolean isUnJammingRAC;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be carried out during the
@@ -1197,7 +1197,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        if ((ce().canUnjamRAC() && GUIPreferences.getInstance().getNagForNoUnJamRAC()) && (!isUnJamming)){
+        if ((ce().canUnjamRAC()) && (GUIPreferences.getInstance().getNagForNoUnJamRAC()) && (!isUnJammingRAC)){
             // confirm this action
             String title = "Unjam?";
             String body = "This unit has jammed weapons.\n\nAre you really done?\r\n";
@@ -2007,7 +2007,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (ce == null) {
             return;
         }
-        isUnJamming = false;
+        isUnJammingRAC = false;
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         setUnjamEnabled(ce.canUnjamRAC()
                 && ((gear == MovementDisplay.GEAR_LAND)
@@ -4319,7 +4319,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setUnjamEnabled(false);
             } else  if (clientgui.doYesNoDialog(title, msg)) {
                 cmd.addStep(MoveStepType.UNJAM_RAC);
-                isUnJamming = true;
+                isUnJammingRAC = true;
                 ready();
                 // If ready() fires, it will call endMyTurn, which sets cen to
                 // Entity.NONE. If this doesn't happen, it means that the

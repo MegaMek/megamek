@@ -691,7 +691,6 @@ public final class UnitToolTip {
                     }
                 }
             }
-
         }
         
         // Print to Tooltip
@@ -1145,6 +1144,7 @@ public final class UnitToolTip {
         int jumpBoosterDistroyed = 0;
         int paritalWing = 0;
         int paritalWingDistroyed = 0;
+        int partialWingWeaterMod = 0;
 
         if ((entity instanceof Mech) || (entity instanceof Tank)) {
             for (Mounted mounted : entity.getMisc()) {
@@ -1166,6 +1166,8 @@ public final class UnitToolTip {
                     paritalWing += entity.getGoodCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
                     paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_RT);
                     paritalWingDistroyed += entity.getBadCriticals(CriticalSlot.TYPE_EQUIPMENT, eNum, Mech.LOC_LT);
+
+                    partialWingWeaterMod = ((Mech) entity).getPartialWingJumpAtmoBonus() - ((Mech) entity).getPartialWingJumpWeightClassBonus();
                 }
             }
         }
@@ -1207,9 +1209,19 @@ public final class UnitToolTip {
                 result.append(DOT_SPACER + entity.getMovementModeAsString());
             }
 
+            int bombMod = 0;
+
+            if (entity.isAero()) {
+                bombMod = ((Aero) entity).getBombLoad(walkMP);
+            }
+
+            if (bombMod != 0) {
+                result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDCA3" + "</FONT>");
+            }
+
             int weatherMod = entity.getGame().getPlanetaryConditions().getMovementMods(entity);
 
-            if (weatherMod != 0) {
+            if ((weatherMod != 0) || (partialWingWeaterMod != 0)) {
                 result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\u2602" + "</FONT>");
             }
 

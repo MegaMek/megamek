@@ -42,6 +42,7 @@ import org.apache.logging.log4j.LogManager;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -4566,6 +4567,34 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+    /** @return True when this unit has a RISC Super-Cooled Myomer System (even if the SCM is destroyed). */
+    public boolean hasSCM() {
+        return miscList.stream().anyMatch(m -> m.is(EquipmentTypeLookup.SCM));
+    }
+
+    /** @return True when this unit has an operable RISC Super-Cooled Myomer System. */
+    public boolean hasWorkingSCM() {
+        return miscList.stream().filter(m -> m.is(EquipmentTypeLookup.SCM)).anyMatch(Mounted::isOperable);
+    }
+
+    public int damagedSCMCritCount() {
+        return scmCritStateCount(CriticalSlot::isDamaged);
+    }
+
+    protected int scmCritStateCount(Predicate<CriticalSlot> slotState) {
+        int stateAppliesCount = 0;
+        for (int location = 0; location < locations(); location++) {
+            for (int index = 0; index < crits[location].length; index++) {
+                final CriticalSlot slot = crits[location][index];
+                if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                        && slot.getMount().is(EquipmentTypeLookup.SCM) && slotState.test(slot)) {
+                    stateAppliesCount++;
+                }
+            }
+        }
+        return stateAppliesCount;
+    }
+
     /**
      * Returns the amount of heat that the entity can sink each turn.
      */
@@ -4742,32 +4771,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * the location
      */
     public int getGoodCriticals(int type, int index, int loc) {
-        int operational = 0;
-        Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            m = getEquipment(index);
-        }
-
-        int numberOfCriticals = getNumberOfCriticals(loc);
-        for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
-
-            //  Check to see if this crit mounts the supplied item
-            //  For systems, we can compare the index, but for equipment we
-            //  need to get the Mounted that is mounted in that index and
-            //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (!ccs.isDestroyed() && !ccs.isBreached()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        operational++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
-                                                                                                                      .getMount2()))) {
-                        operational++;
-                    }
-                }
-            }
-        }
-        return operational;
+        return critStateCount(type, index, loc, cs -> !cs.isDestroyed() && !cs.isBreached());
     }
 
     /**
@@ -4775,74 +4779,41 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * location or missing along with it (if it was blown off).
      */
     public int getBadCriticals(int type, int index, int loc) {
-        int hits = 0;
-        Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            m = getEquipment(index);
-        }
-
-        int numberOfCriticals = getNumberOfCriticals(loc);
-        for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
-
-            //  Check to see if this crit mounts the supplied item
-            //  For systems, we can compare the index, but for equipment we
-            //  need to get the Mounted that is mounted in that index and
-            //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (ccs.isDestroyed() || ccs.isBreached() || ccs.isMissing()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && 
-                            ((m != null) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2())))) {
-                        hits++;
-                    }
-                }
-            }
-        }
-        return hits;
+        return critStateCount(type, index, loc, cs -> cs.isDestroyed() || cs.isBreached() || cs.isMissing());
     }
 
     /**
      * Number of slots damaged (but not breached) in a location
      */
     public int getDamagedCriticals(int type, int index, int loc) {
-        int hits = 0;
-        Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            m = getEquipment(index);
-        }
-
-        int numberOfCriticals = getNumberOfCriticals(loc);
-        for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
-
-            //  Check to see if this crit mounts the supplied item
-            //  For systems, we can compare the index, but for equipment we
-            //  need to get the Mounted that is mounted in that index and
-            //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (ccs.isDamaged()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
-                                                                                                                      .getMount2()))) {
-                        hits++;
-                    }
-                }
-            }
-        }
-        return hits;
+        return critStateCount(type, index, loc, CriticalSlot::isDamaged);
     }
 
     /**
      * Number of slots doomed, missing or destroyed in a location
      */
     public int getHitCriticals(int type, int index, int loc) {
-        int hits = 0;
+        return critStateCount(type, index, loc, cs -> cs.isDamaged() || cs.isBreached() || cs.isMissing());
+    }
+
+    /**
+     * @returns the number of critical slots of the equipment given as index for {@link #getEquipment(int)} in
+     * location loc wherein the type is the critical slot type that fit the slot state given as slotState Predicate
+     * such as {@link CriticalSlot#isDestroyed()}. The critslots tested are only those in location loc except
+     * for Super-Cooled Myomer where all locations are considered.
+     */
+    protected int critStateCount(int type, int index, int loc, Predicate<CriticalSlot> slotState) {
+        int stateAppliesCount = 0;
         Mounted m = null;
         if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
+            if (m == null) {
+                LogManager.getLogger().error("Null Equipment found in equipment list of entity " + this);
+                return 0;
+            }
+            if ((this instanceof Mech) && m.is(EquipmentTypeLookup.SCM)) {
+                return ((Mech) this).scmCritStateCount(slotState);
+            }
         }
 
         int numberOfCriticals = getNumberOfCriticals(loc);
@@ -4853,18 +4824,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             //  For systems, we can compare the index, but for equipment we
             //  need to get the Mounted that is mounted in that index and
             //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (ccs.isDamaged() || ccs.isBreached() || ccs.isMissing()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
-                                                                                                                      .getMount2()))) {
-                        hits++;
-                    }
+            if ((ccs != null) && (ccs.getType() == type) && slotState.test(ccs)) {
+                if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
+                    stateAppliesCount++;
+                } else if ((type == CriticalSlot.TYPE_EQUIPMENT)
+                        && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    stateAppliesCount++;
                 }
             }
         }
-        return hits;
+        return stateAppliesCount;
     }
 
     protected abstract int[] getNoOfSlots();

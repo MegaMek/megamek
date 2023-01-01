@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -822,30 +823,6 @@ public abstract class Mech extends Entity {
             }
         }
         return false;
-    }
-
-    /** @return True when this unit has a RISC Super-Cooled Myomer System (even if the SCM is destroyed). */
-    public boolean hasSCM() {
-        return miscList.stream().anyMatch(m -> m.is(EquipmentTypeLookup.SCM));
-    }
-
-    /** @return True when this unit has an operable RISC Super-Cooled Myomer System. */
-    public boolean hasWorkingSCM() {
-        return miscList.stream().filter(m -> m.is(EquipmentTypeLookup.SCM)).anyMatch(Mounted::isOperable);
-    }
-
-    public long destroyedSCMCritCount() {
-        int destroyedCount = 0;
-        for (int location = 0; location < locations(); location++) {
-            for (int index = 0; index < crits[location].length; index++) {
-                final CriticalSlot slot = crits[location][index];
-                if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                        && slot.getMount().is(EquipmentTypeLookup.SCM) && slot.isDestroyed()) {
-                    destroyedCount++;
-                }
-            }
-        }
-        return destroyedCount;
     }
 
     /**
@@ -1717,7 +1694,7 @@ public abstract class Mech extends Entity {
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
-        capacity -= destroyedSCMCritCount();
+        capacity -= damagedSCMCritCount();
 
         return Math.max(capacity, 0);
     }

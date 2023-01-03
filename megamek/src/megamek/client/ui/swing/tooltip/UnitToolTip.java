@@ -239,58 +239,65 @@ public final class UnitToolTip {
 
             int hits = 0;
             int good = 0;
+            boolean bad = false;
             switch (loc) {
                 case 0:
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc) > 0);
                     if ((good + hits) > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;S:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc) > 0);
                     if ((good + hits) > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;L:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     result.append("</TD>\n<TD>\n");
                     break;
                 case 1:
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;E:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;G:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, loc) > 0);
                     if ((good + hits) > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;S:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc) > 0);
                     if ((good + hits) > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;L:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     result.append("</TD>\n<TD>\n");
                     break;
@@ -298,86 +305,96 @@ public final class UnitToolTip {
                 case 3:
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;E:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT, loc) > 0);
                     if ((good + hits) > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;L:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     break;
                 case 4:
                 case 5:
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;S:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;UA:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;LA:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;H:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;H:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;UL:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;LL:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;F:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     result.append("</TD>\n<TD>\n");
                     result.append("</TD>\n<TD>\n");
@@ -386,35 +403,39 @@ public final class UnitToolTip {
                 case 7:
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;H:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;UL:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;LL:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     good = entity.getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
                     hits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc);
+                    bad = (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0);
                     if ((good + hits)  > 0) {
                         result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
                         result.append("&nbsp;&nbsp;F:&nbsp;");
                         result.append("</FONT>\n");
-                        result.append(systemBar(good, hits, locDestroyed));
+                        result.append(systemBar(good, hits, bad));
                     }
                     result.append("</TD>\n<TD>\n");
                     break;
@@ -524,7 +545,7 @@ public final class UnitToolTip {
                 result.append("</FONT>\n");
             } else {
                 result.append(guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA));
-                result.append(repeat(dChar, good));
+                result.append(repeat(iChar, good));
                 result.append("</FONT>\n");
             }
         }

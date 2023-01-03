@@ -74,7 +74,7 @@ jar {
         attributes "Main-Class" : mainClassName
         attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
             .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
-        attributes "Add-Opens" : java.base/java.util java.base/java.util.concurrent
+        attributes "Add-Opens" : 'java.base/java.util java.base/java.util.concurrent'
         attributes "Build-Date" : LocalDateTime.now()
     }
 }

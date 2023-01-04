@@ -64,7 +64,7 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
         optionsPanel.add(elementsToggle);
         optionsPanel.add(clipBoardButton);
         pilotToggle.addActionListener(e -> setupTable());
-        elementsToggle.addActionListener(e -> statsPanel.showElements(elementsToggle.isSelected()));
+        elementsToggle.addActionListener(e -> setupTable());
         clipBoardButton.addActionListener(e -> copyToClipboard());
 
         setupTable();
@@ -83,8 +83,8 @@ public class StrategicBattleForceStatsDialog extends AbstractDialog {
                 .map(f -> new SBFFormationConverter(f, game, pilotToggle.isSelected()).convert())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-        statsPanel = new SBFViewPanel(getFrame(), formations);
-        scrollPane = new JScrollPane(statsPanel.getPanel());
+        statsPanel = new SBFViewPanel(getFrame(), formations, elementsToggle.isSelected());
+        scrollPane.setViewportView(statsPanel.getPanel());
         centerPanel.add(scrollPane);
         UIUtil.adjustDialog(this);
     }

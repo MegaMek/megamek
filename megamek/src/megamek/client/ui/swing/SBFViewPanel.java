@@ -29,181 +29,163 @@ import megamek.common.strategicBattleSystems.SBFUnit;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SBFViewPanel {
 
-    public static final int DEFAULT_WIDTH = 360;
     public static final int DEFAULT_HEIGHT = 600;
     public static final int COLS = 13;
     
-    private int cellCount = 0;
     private final JFrame parent;
-    private final Map<AlphaStrikeElement, FlexibleCalculationReport> reports = new HashMap<>();
-    private boolean showElements = false;
+    private final boolean showElements;
     private final Collection<SBFFormation> formations;
     private final Box contentPane = Box.createVerticalBox();
-    private final JPanel sbfPane = new JPanel(new SpringLayout());
-    private final JPanel asPane = new JPanel(new SpringLayout());
 
-    public SBFViewPanel(JFrame parent, Collection<SBFFormation> formations) {
+    public SBFViewPanel(JFrame parent, Collection<SBFFormation> formations, boolean showElements) {
         this.parent = parent;
         this.formations = formations;
-        contentPane.add(sbfPane);
-        contentPane.add(asPane);
-        updatePanel();
-    }
-
-    public void showElements(boolean showElements) {
         this.showElements = showElements;
-        updatePanel();
+        updatePanel2();
     }
 
     public JComponent getPanel() {
         return contentPane;
     }
 
-    private void updatePanel() {
-        sbfPane.removeAll();
-        cellCount = 0;
-
+    private void updatePanel2() {
+        contentPane.removeAll();
         for (SBFFormation formation : formations) {
-            addFormationHeaders();
-            addGridElement(formation.getName(), UIUtil.uiDarkBlue(), FlowLayout.LEFT);
-            addGridElement(formation.getType().toString(), UIUtil.uiDarkBlue());
-            addGridElement(formation.getSize() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getMovement() + formation.getMovementCode() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getJumpMove() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getTrspMovement() + formation.getTrspMovementCode() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getTmm() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getTactics() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getMorale() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getSkill() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getPointValue() + "", UIUtil.uiDarkBlue());
-            addGridElement(formation.getSpecialsDisplayString(", ", formation) + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
-            addConversionInfo((FlexibleCalculationReport) formation.getConversionReport(), null, parent);
-
-            addUnitHeaders();
-            int row = 1;
-            for (SBFUnit unit : formation.getUnits()) {
-                boolean oddRow = (row++ % 2) == 1;
-                Color bgColor = oddRow ? UIUtil.alternateTableBGColor() : null;
-                addGridElement("  " + unit.getName(), bgColor, FlowLayout.LEFT);
-                addGridElement(unit.getType().toString(), bgColor);
-                addGridElement(unit.getSize() + "", bgColor);
-                addGridElement(unit.getMovement() + unit.getMovementCode(), bgColor);
-                addGridElement(unit.getJumpMove() + "", bgColor);
-                addGridElement(unit.getTrspMovement() + unit.getTrspMovementCode(), bgColor);
-                addGridElement(unit.getTmm() + "", bgColor);
-                addGridElement(unit.getArmor() + "", bgColor);
-                addGridElement(unit.getDamage() + "", bgColor);
-                addGridElement(unit.getSkill() + "", bgColor);
-                addGridElement(unit.getPointValue() + "", bgColor);
-                addGridElement(unit.getSpecialsDisplayString(", ", unit), bgColor, FlowLayout.LEFT);
-                addGridElement("", bgColor);
-            }
-            addSpacer();
-        }
-        SpringUtilities.makeCompactGrid(sbfPane, cellCount / COLS, COLS, 5, 5, 1, 5);
-
-        if (showElements) {
-            for (SBFFormation formation : formations) {
-                for (SBFUnit unit : formation.getUnits()) {
-                    var p = new AlphaStrikeStatsTablePanel(unit.getElements());
-                    contentPane.add(p);
-                }
-            }
+            contentPane.add(formationPanel(formation));
         }
     }
 
-    private void addConversionInfo(FlexibleCalculationReport conversionReport,
+    private Component formationPanel(SBFFormation formation) {
+        Box formationPanel = Box.createVerticalBox();
+        JPanel summaryPanel = new JPanel(new SpringLayout());
+
+        addFormationHeaders(summaryPanel);
+        addGridElement(summaryPanel, formation.getName(), UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+        addGridElement(summaryPanel, formation.getType().toString(), UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getSize() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getMovement() + formation.getMovementCode() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getJumpMove() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getTrspMovement() + formation.getTrspMovementCode() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getTmm() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getTactics() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getMorale() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getSkill() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getPointValue() + "", UIUtil.uiDarkBlue());
+        addGridElement(summaryPanel, formation.getSpecialsDisplayString(", ", formation) + "", UIUtil.uiDarkBlue(), FlowLayout.LEFT);
+        addConversionInfo(summaryPanel, (FlexibleCalculationReport) formation.getConversionReport(), null, parent);
+
+        addUnitHeaders(summaryPanel);
+        int row = 1;
+        for (SBFUnit unit : formation.getUnits()) {
+            boolean oddRow = (row++ % 2) == 1;
+            Color bgColor = oddRow ? UIUtil.alternateTableBGColor() : null;
+            addGridElement(summaryPanel, "  " + unit.getName(), bgColor, FlowLayout.LEFT);
+            addGridElement(summaryPanel, unit.getType().toString(), bgColor);
+            addGridElement(summaryPanel, unit.getSize() + "", bgColor);
+            addGridElement(summaryPanel, unit.getMovement() + unit.getMovementCode(), bgColor);
+            addGridElement(summaryPanel, unit.getJumpMove() + "", bgColor);
+            addGridElement(summaryPanel, unit.getTrspMovement() + unit.getTrspMovementCode(), bgColor);
+            addGridElement(summaryPanel, unit.getTmm() + "", bgColor);
+            addGridElement(summaryPanel, unit.getArmor() + "", bgColor);
+            addGridElement(summaryPanel, unit.getDamage() + "", bgColor);
+            addGridElement(summaryPanel, unit.getSkill() + "", bgColor);
+            addGridElement(summaryPanel, unit.getPointValue() + "", bgColor);
+            addGridElement(summaryPanel, unit.getSpecialsDisplayString(", ", unit), bgColor, FlowLayout.LEFT);
+            addGridElement(summaryPanel, "", bgColor);
+        }
+        SpringUtilities.makeCompactGrid(summaryPanel, summaryPanel.getComponentCount() / COLS, COLS, 5, 5, 1, 5);
+        formationPanel.add(summaryPanel);
+
+        if (showElements) {
+            for (SBFUnit unit : formation.getUnits()) {
+                var p = new AlphaStrikeStatsTablePanel(unit.getElements());
+                formationPanel.add(p);
+            }
+        }
+        formationPanel.add(Box.createVerticalStrut(25));
+        return formationPanel;
+    }
+
+
+    private void addConversionInfo(JComponent targetPanel, FlexibleCalculationReport conversionReport,
                                    AlphaStrikeElement element, JFrame frame) {
         var panel = new UIUtil.FixedYPanel();
         JButton button = new JButton("?");
         button.setEnabled(conversionReport != null);
         button.addActionListener(e -> new ASConversionInfoDialog(frame, conversionReport).setVisible(true));
         panel.add(button);
-        sbfPane.add(panel);
-        cellCount++;
+        targetPanel.add(panel);
     }
 
-    private void addGridElement(String text) {
-        addGridElement(text,null, FlowLayout.CENTER);
+    private void addGridElement(JComponent targetPanel, String text) {
+        addGridElement(targetPanel, text, null, FlowLayout.CENTER);
     }
 
-    private void addGridElement(String text, Color bgColor) {
-        addGridElement(text, bgColor, FlowLayout.CENTER);
+    private void addGridElement(JComponent targetPanel, String text, Color bgColor) {
+        addGridElement(targetPanel, text, bgColor, FlowLayout.CENTER);
     }
 
-    private void addGridElement(String text, int alignment) {
-        addGridElement(text,null, alignment);
+    private void addGridElement(JComponent targetPanel, String text, int alignment) {
+        addGridElement(targetPanel, text,null, alignment);
     }
 
-    private void addGridElement(String text, Color bgColor, int alignment) {
+    private void addGridElement(JComponent targetPanel, String text, Color bgColor, int alignment) {
         var panel = new UIUtil.FixedYPanel(new FlowLayout(alignment));
         panel.setBackground(bgColor);
         panel.add(new JLabel(text));
-        sbfPane.add(panel);
-        cellCount++;
+        targetPanel.add(panel);
     }
 
-    private void addHeader(String text, float alignment) {
+    private void addHeader(JComponent targetPanel, String text, float alignment) {
         var panel = new UIUtil.FixedYPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
         var textLabel = new JLabel(text);
         textLabel.setAlignmentX(alignment);
-        textLabel.setFont(sbfPane.getFont().deriveFont(Font.BOLD));
+//        textLabel.setFont(sbfPane.getFont().deriveFont(Font.BOLD));
         textLabel.setForeground(UIUtil.uiLightBlue());
         panel.add(Box.createVerticalStrut(8));
         panel.add(textLabel);
         panel.add(Box.createVerticalStrut(5));
         panel.add(new JSeparator());
-        sbfPane.add(panel);
-        cellCount++;
+        targetPanel.add(panel);
     }
 
-    private void addHeader(String text) {
-        addHeader(text, JComponent.CENTER_ALIGNMENT);
+    private void addHeader(JComponent targetPanel, String text) {
+        addHeader(targetPanel, text, JComponent.CENTER_ALIGNMENT);
     }
 
-    private void addFormationHeaders() {
-        addHeader(" Formation", JComponent.LEFT_ALIGNMENT);
-        addHeader("Type");
-        addHeader("Size");
-        addHeader("Move");
-        addHeader("JUMP");
-        addHeader("T. Move");
-        addHeader("TMM");
-        addHeader("Tactics");
-        addHeader("Morale");
-        addHeader("Skill");
-        addHeader("PV");
-        addHeader("Specials");
-        addHeader("Conversion");
+    private void addFormationHeaders(JComponent targetPanel) {
+        addHeader(targetPanel, " Formation", JComponent.LEFT_ALIGNMENT);
+        addHeader(targetPanel, "Type");
+        addHeader(targetPanel, "Size");
+        addHeader(targetPanel, "Move");
+        addHeader(targetPanel, "JUMP");
+        addHeader(targetPanel, "T. Move");
+        addHeader(targetPanel, "TMM");
+        addHeader(targetPanel, "Tactics");
+        addHeader(targetPanel, "Morale");
+        addHeader(targetPanel, "Skill");
+        addHeader(targetPanel, "PV");
+        addHeader(targetPanel, "Specials");
+        addHeader(targetPanel, "Conversion");
     }
 
-    private void addUnitHeaders() {
-        addHeader("   Unit", JComponent.LEFT_ALIGNMENT);
-        addHeader(" ");
-        addHeader(" ");
-        addHeader(" ");
-        addHeader(" ");
-        addHeader(" ");
-        addHeader(" ");
-        addHeader("Arm");
-        addHeader("Dmg");
-        addHeader(" ");
-        addHeader(" ");
-        addHeader(" ");
-        addHeader(" ");
+    private void addUnitHeaders(JComponent targetPanel) {
+        addHeader(targetPanel, "   Unit", JComponent.LEFT_ALIGNMENT);
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, "Arm");
+        addHeader(targetPanel, "Dmg");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
+        addHeader(targetPanel, " ");
     }
-
-    private void addSpacer() {
-        for (int i = 0; i < COLS; i++) {
-            sbfPane.add(Box.createVerticalStrut(12));
-            cellCount++;
-        }
-    }
-
 }

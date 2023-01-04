@@ -316,7 +316,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if ((clientgui != null) &&
                     (title.equals(Messages.getString("MovementDisplay." + MoveCommand.MOVE_UNJAM.getCmd()))) &&
                     (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
-                title += "/AC";
+                title += Messages.getString("BoardView1.Tooltip.AndAC");
             }
             MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
             String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
@@ -1199,8 +1199,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if ((ce().canUnjamRAC()) && (GUIPreferences.getInstance().getNagForNoUnJamRAC()) && (!isUnJammingRAC)){
             // confirm this action
-            String title = "Unjam?";
-            String body = "This unit has jammed weapons.\n\nAre you really done?\r\n";
+            String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
+            String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoUnJamRAC(false);

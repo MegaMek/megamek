@@ -54,7 +54,7 @@ public class ASDamageConverter {
     protected int rearLocation;
     protected int turretLocation;
 
-    private final Map<WeaponType, Boolean> ammoForWeapon = new HashMap<>();
+    private final Map<WeaponType, Double> ammoModifier = new HashMap<>();
     protected final boolean hasTargetingComputer;
     protected List<Mounted> weaponsList;
     protected double rawSDamage;
@@ -358,7 +358,7 @@ public class ASDamageConverter {
 
     protected double getDamageMultiplier(Mounted weapon, WeaponType weaponType) {
         // Low ammo count
-        double damageModifier = ammoForWeapon.getOrDefault(weaponType, true) ? 1 : 0.75;
+        double damageModifier = ammoModifier.getOrDefault(weaponType, 1d);
 
         // Oneshot or Fusillade
         if (weaponType.hasFlag(WeaponType.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
@@ -409,7 +409,14 @@ public class ASDamageConverter {
                     || weaponType.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
                 divisor = 2;
             }
-            ammoForWeapon.put(weaponType, ammoCount / weaponCount.get(weaponType) >= 10 * divisor);
+
+            if (ammoCount / weaponCount.get(weaponType) >= 10 * divisor) {
+                ammoModifier.put(weaponType, 1d);
+            } else if (ammoCount > 0) {
+                ammoModifier.put(weaponType, 0.75);
+            } else {
+                ammoModifier.put(weaponType, 0d);
+            }
         }
     }
 

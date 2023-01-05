@@ -2906,6 +2906,7 @@ public class MoveStep implements Serializable {
         final int prevEl = prevStep.getElevation();
         final EntityMovementMode moveMode = getEntity()
                 .getMovementMode();
+        final Entity en = getEntity();
         final Hex srcHex = game.getBoard().getHex(prev);
         final Hex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = getEntity() instanceof Infantry;
@@ -2946,10 +2947,16 @@ public class MoveStep implements Serializable {
             // Fog
             switch (game.getPlanetaryConditions().getFog()) {
                 case PlanetaryConditions.FOG_LIGHT:
-                    mp += 1;
+                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)) {
+                        mp += 1;
+                    }
                     break;
                 case PlanetaryConditions.FOG_HEAVY:
-                    mp += 2;
+                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)) {
+                        mp += 2;
+                    } else {
+                        mp+=1;
+                    }
                     break;
             }
             // Light

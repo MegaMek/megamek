@@ -10,6 +10,7 @@ VERSION HISTORY:
 + PR #4077: Fix SmallCraft and DropShip landing lengths
 + Data: Rec Guide 27 and other unit fixes.
 + Issue #4066: Incorrect item size on BA AP Gauss Rifle
++ PR #4087: Alpha Strike damage conversion will now ignore ammo weapons that lack ammo
 + PR #4084: Java 17: Manifest File Add-Opens
 + Updating XStream to 1.4.19 from 1.4.14
  

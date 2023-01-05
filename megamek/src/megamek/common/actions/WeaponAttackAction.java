@@ -2777,33 +2777,34 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             weatherToHitMods.addModifier(weatherMod, game.getPlanetaryConditions().getWeatherDisplayableName());
         }
 
+        PlanetaryConditions pc = new PlanetaryConditions();
         // wind mods (not in space)
         if (!game.getBoard().inSpace()) {
             int windCond = game.getPlanetaryConditions().getWindStrength();
             if (windCond == PlanetaryConditions.WI_MOD_GALE) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
+                    weatherToHitMods.addModifier(1, pc.getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_STRONG_GALE) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    weatherToHitMods.addModifier(1, PlanetaryConditions.getWindDisplayableName(windCond));
+                    weatherToHitMods.addModifier(1, pc.getWindDisplayableName(windCond));
                 } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
+                    weatherToHitMods.addModifier(2, pc.getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_STORM) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
+                    weatherToHitMods.addModifier(2, pc.getWindDisplayableName(windCond));
                 } else if (wtype != null && wtype.hasFlag(WeaponType.F_MISSILE)) {
-                    weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
+                    weatherToHitMods.addModifier(3, pc.getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_TORNADO_F13) {
                 if (wtype != null && wtype.hasFlag(WeaponType.F_ENERGY)) {
-                    weatherToHitMods.addModifier(2, PlanetaryConditions.getWindDisplayableName(windCond));
+                    weatherToHitMods.addModifier(2, pc.getWindDisplayableName(windCond));
                 } else {
-                    weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
+                    weatherToHitMods.addModifier(3, pc.getWindDisplayableName(windCond));
                 }
             } else if (windCond == PlanetaryConditions.WI_TORNADO_F4) {
-                weatherToHitMods.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
+                weatherToHitMods.addModifier(3, pc.getWindDisplayableName(windCond));
             }
         }
 

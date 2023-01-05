@@ -261,7 +261,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
 
-    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
+    private String msg_reportkeywords = Messages.getString("CommonSettingsDialog.ReportKeywords");
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
@@ -500,7 +500,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         addLineSpacer(comps);
 
-        JLabel reportKeywordsLabel = new JLabel(MSG_REPORTKEYWORDS + ": ");
+        JLabel reportKeywordsLabel = new JLabel(msg_reportkeywords + ": ");
         reportKeywordsTextPane = new JTextPane();
         row = new ArrayList<>();
         row.add(reportKeywordsLabel);

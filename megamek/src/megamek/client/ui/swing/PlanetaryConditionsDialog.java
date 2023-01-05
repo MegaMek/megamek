@@ -232,25 +232,26 @@ public class PlanetaryConditionsDialog extends ClientDialog {
     
     /** Fills the dialog comboboxes. */
     private void setupCombos() {
-        for (int i = 0; i < PlanetaryConditions.L_SIZE; i++) {
-            comLight.addItem(PlanetaryConditions.getLightDisplayableName(i));
+        PlanetaryConditions pc = new PlanetaryConditions();
+        for (int i = 0; i < pc.l_size; i++) {
+            comLight.addItem(pc.getLightDisplayableName(i));
         }
-        for (int i = 0; i < PlanetaryConditions.WE_SIZE; i++) {
-            comWeather.addItem(PlanetaryConditions.getWeatherDisplayableName(i));
+        for (int i = 0; i < pc.we_size; i++) {
+            comWeather.addItem(pc.getWeatherDisplayableName(i));
         }
-        for (int i = 0; i < PlanetaryConditions.WI_SIZE; i++) {
-            comWind.addItem(PlanetaryConditions.getWindDisplayableName(i));
-            comWindFrom.addItem(PlanetaryConditions.getWindDisplayableName(i));
-            comWindTo.addItem(PlanetaryConditions.getWindDisplayableName(i));
+        for (int i = 0; i < pc.wi_size; i++) {
+            comWind.addItem(pc.getWindDisplayableName(i));
+            comWindFrom.addItem(pc.getWindDisplayableName(i));
+            comWindTo.addItem(pc.getWindDisplayableName(i));
         }
-        for (int i = 0; i < PlanetaryConditions.DIR_SIZE; i++) {
-            comWindDirection.addItem(PlanetaryConditions.getWindDirDisplayableName(i));
+        for (int i = 0; i < pc.dir_size; i++) {
+            comWindDirection.addItem(pc.getWindDirDisplayableName(i));
         }
-        for (int i = 0; i < PlanetaryConditions.ATMO_SIZE; i++) {
-            comAtmosphere.addItem(PlanetaryConditions.getAtmosphereDisplayableName(i));
+        for (int i = 0; i < pc.atmo_size; i++) {
+            comAtmosphere.addItem(pc.getAtmosphereDisplayableName(i));
         }
-        for (int i = 0; i < PlanetaryConditions.FOG_SIZE; i++) {
-            comFog.addItem(PlanetaryConditions.getFogDisplayableName(i));
+        for (int i = 0; i < pc.fog_size; i++) {
+            comFog.addItem(pc.getFogDisplayableName(i));
         }
     }
     

@@ -358,7 +358,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
-    
+
+    private ReportDisplay reportDisply;
     private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
@@ -755,25 +756,13 @@ public class ClientGUI extends JPanel implements BoardViewListener,
 
     public void reportDisplayResetDone() {
         if (!getClient().getLocalPlayer().isDone()) {
-            for (String s : phaseComponents.keySet()) {
-                JComponent comp = phaseComponents.get(s);
-                if (comp instanceof ReportDisplay) {
-                    ((ReportDisplay) comp).setDoneEnabled(true);
-                    break;
-                }
-            }
+            reportDisply.setDoneEnabled(true);
         }
     }
 
     public void reportDisplayResetRerollInitiative() {
         if ((!getClient().getLocalPlayer().isDone()) && (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer()))) {
-            for (String s : phaseComponents.keySet()) {
-                JComponent comp = phaseComponents.get(s);
-                if (comp instanceof ReportDisplay) {
-                    ((ReportDisplay) comp).resetRerollInitiativeEnabled();
-                    break;
-                }
-            }
+            reportDisply.resetRerollInitiativeEnabled();
         }
     }
 
@@ -1411,26 +1400,19 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             case PHYSICAL_REPORT:
             case END_REPORT:
             case VICTORY:
-                component = null;
-                for (String s : phaseComponents.keySet()) {
-                    JComponent comp = phaseComponents.get(s);
-                    if (comp instanceof ReportDisplay) {
-                        component = comp;
-                        break;
-                    }
-                }
-                if (component == null) {
-                    component = new ReportDisplay(this);
-                }
                 main = CG_BOARDVIEW;
                 secondary = CG_REPORTDISPLAY;
-                component.setName(secondary);
+                if (reportDisply == null) {
+                    reportDisply = new ReportDisplay(this);
+                    reportDisply.setName(secondary);
+                }
                 if (!mainNames.containsValue(main)) {
                     panMain.add(panTop, main);
                 }
-                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                currPhaseDisplay = reportDisply;
+                component = reportDisply;
                 if (!secondaryNames.containsValue(secondary)) {
-                    panSecondary.add(component, secondary);
+                    panSecondary.add(reportDisply, secondary);
                 }
                 break;
             default:

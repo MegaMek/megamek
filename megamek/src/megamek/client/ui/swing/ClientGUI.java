@@ -768,6 +768,26 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
+    public void resetWindowPositions() {
+        if (minimapW != null) {
+            minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
+        }
+        if (getUnitDisplayDialog() != null) {
+            getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
+        }
+        if (miniReportDisplayDialog!= null) {
+            miniReportDisplayDialog.setBounds(0, 0, miniReportDisplayDialog.getWidth(), miniReportDisplayDialog.getHeight());
+        }
+        if (playerListDialog != null) {
+            playerListDialog.setBounds(0, 0, playerListDialog.getWidth(), playerListDialog.getHeight());
+        }
+        if (gameOptionsDialog!= null) {
+            gameOptionsDialog.setBounds(0, 0, gameOptionsDialog.getWidth(), gameOptionsDialog.getHeight());
+        }
+        if (setdlg != null) {
+            setdlg.setBounds(0, 0, setdlg.getWidth(), setdlg.getHeight());
+        }
+    }
 
     /**
      * Implement the <code>ActionListener</code> interface.
@@ -776,10 +796,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     public void actionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
             case VIEW_RESET_WINDOW_POSITIONS:
-                minimapW.setBounds(0, 0, minimapW.getWidth(), minimapW.getHeight());
-                getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());
-                miniReportDisplay.setBounds(0, 0, miniReportDisplay.getWidth(), miniReportDisplay.getHeight());
-                playerListDialog.setBounds(0, 0, playerListDialog.getWidth(), playerListDialog.getHeight());
+                resetWindowPositions();
                 break;
             case FILE_GAME_SAVE:
                 saveGame();

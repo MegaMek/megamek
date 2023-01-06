@@ -21,6 +21,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.IlluminationLevel;
+import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.Weapon;
@@ -2459,6 +2460,13 @@ public class Compute {
     public static void modifyPhysicalBTHForAdvantages(final Entity attacker, final Entity target,
                                                       final ToHitData toHit, final Game game) {
         Objects.requireNonNull(attacker);
+
+        if (attacker.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)
+                && !target.isIlluminated()
+                && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS)
+                || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK))) {
+            toHit.addModifier(-1, "light specialist");
+        }
 
         if (attacker.hasAbility(OptionsConstants.PILOT_MELEE_SPECIALIST)
                 && (attacker instanceof Mech)) {

@@ -2962,13 +2962,23 @@ public class MoveStep implements Serializable {
             // Light
             switch (game.getPlanetaryConditions().getLight()) {
                 case PlanetaryConditions.L_FULL_MOON:
-                    mp += 1;
+                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
+                        mp += 1;
+                    }
                     break;
                 case  PlanetaryConditions.L_MOONLESS:
-                    mp += 2;
+                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
+                        mp += 2;
+                    } else {
+                        mp += 1;
+                    }
                     break;
                 case PlanetaryConditions.L_PITCH_BLACK:
-                    mp += 3;
+                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
+                        mp += 3;
+                    } else {
+                        mp += 1;
+                    }
                     break;
             }
         }

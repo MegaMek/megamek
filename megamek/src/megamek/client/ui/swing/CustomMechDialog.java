@@ -758,6 +758,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (OptionsConstants.MISC_ENV_SPECIALIST.equals(option.getName())) {
             optionComp.addValue(Crew.ENVSPC_NONE);
             optionComp.addValue(Crew.ENVSPC_FOG);
+            optionComp.addValue(Crew.ENVSPC_LIGHT);
         }
 
         gridbag.setConstraints(optionComp, c);

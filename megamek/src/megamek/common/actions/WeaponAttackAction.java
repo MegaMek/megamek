@@ -3034,6 +3034,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
         }
 
+        // Light Specialist
+        if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
+            if (!te.isIlluminated()
+                    && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)
+                    || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_FULL_MOON)
+                    || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS)
+                    || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK))) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
+            } else if (te.isIlluminated()
+                    && game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
+            }
+        }
+
         // quirks
         
         // Flat -1 for Accurate Weapon

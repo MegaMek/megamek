@@ -755,13 +755,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     public void reportDisplayResetDone() {
-        if (!getClient().getLocalPlayer().isDone()) {
+        if ((reportDisply != null ) && (!getClient().getLocalPlayer().isDone())) {
             reportDisply.setDoneEnabled(true);
         }
     }
 
     public void reportDisplayResetRerollInitiative() {
-        if ((!getClient().getLocalPlayer().isDone()) && (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer()))) {
+        if ((reportDisply != null )
+                && (!getClient().getLocalPlayer().isDone())
+                && (getClient().getGame().hasTacticalGenius(getClient().getLocalPlayer()))) {
             reportDisply.resetRerollInitiativeEnabled();
         }
     }

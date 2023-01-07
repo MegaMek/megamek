@@ -38,6 +38,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * The game class is the root of all data about the game in progress. Both the
  * Client and the Server should have one of these objects, and it is their job to
@@ -62,15 +64,12 @@ public class Game extends AbstractGame implements Serializable {
 
     private MapSettings mapSettings = MapSettings.getInstance();
 
-    private final List<Entity> entities = new CopyOnWriteArrayList<>();
-    private Hashtable<Integer, Entity> entityIds = new Hashtable<>();
-
     /**
      * Track entities removed from the game (probably by death)
      */
     private Vector<Entity> vOutOfGame = new Vector<>();
 
-    private Vector<Team> teams = new Vector<>();
+//    private Vector<Team> teams = new Vector<>();
 
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
@@ -146,12 +145,6 @@ public class Game extends AbstractGame implements Serializable {
 
     // smoke clouds
     private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
-
-    /**
-     * The forces present in the game. The top level force holds all forces and force-less entities
-     * and should therefore not be shown.
-     */
-    private Forces forces = new Forces(this);
 
     private transient Vector<GameListener> gameListeners = new Vector<>();
     
@@ -298,12 +291,7 @@ public class Game extends AbstractGame implements Serializable {
     protected void clearMinefieldsHelper() {
         minefields.clear();
         vibrabombs.removeAllElements();
-
-        Enumeration<Player> iter = getPlayers();
-        while (iter.hasMoreElements()) {
-            Player player = iter.nextElement();
-            player.removeMinefields();
-        }
+        getPlayersList().forEach(Player::removeMinefields);
     }
 
     public Vector<Minefield> getVibrabombs() {
@@ -340,21 +328,6 @@ public class Game extends AbstractGame implements Serializable {
             this.options = options;
             processGameEvent(new GameSettingsChangeEvent(this));
         }
-    }
-
-    /**
-     * Return an enumeration of teams in the game
-     */
-    @Override
-    public Enumeration<Team> getTeams() {
-        return teams.elements();
-    }
-
-    /**
-     * Return the current number of teams in the game.
-     */
-    public int getNoOfTeams() {
-        return teams.size();
     }
 
     /**
@@ -436,30 +409,8 @@ public class Game extends AbstractGame implements Serializable {
                 }
             }
         }
-        teams = initTeams;
-    }
-
-    /**
-     * Return an enumeration of player in the game
-     */
-    public Enumeration<Player> getPlayers() {
-        return players.elements();
-    }
-
-    /**
-     * @return a clone of the {@link #players} vector sorted by id
-     */
-    public Vector<Player> getPlayersVectorSorted() {
-        Vector<Player> clone = new Vector<>(getPlayersVector());
-        clone.sort(Comparator.comparingInt(Player::getId));
-        return clone;
-    }
-
-    /**
-     * Return the current number of active players in the game.
-     */
-    public int getNoOfPlayers() {
-        return players.size();
+        teams.clear();
+        teams.addAll(initTeams);
     }
 
     @Override
@@ -489,18 +440,13 @@ public class Game extends AbstractGame implements Serializable {
         processGameEvent(new GamePlayerChangeEvent(this, player));
     }
 
-    @Override
-    public List<InGameObject> getInGameObjects(Collection<Integer> idList) {
-        return new ArrayList<>(entities);
-    }
-
     /**
      * Returns the number of entities owned by the player, regardless of their
      * status.
      */
     public int getAllEntitiesOwnedBy(Player player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.getOwner().equals(player)) {
                 count++;
             }
@@ -518,7 +464,7 @@ public class Game extends AbstractGame implements Serializable {
      */
     public int getLiveEntitiesOwnedBy(Player player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
                     && !entity.isCarcass()) {
                 count++;
@@ -533,7 +479,7 @@ public class Game extends AbstractGame implements Serializable {
      */
     public int getLiveDeployedEntitiesOwnedBy(Player player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
                 && !entity.isCarcass()
                 && !entity.isOffBoard() && !entity.isCaptured()) {
@@ -549,7 +495,7 @@ public class Game extends AbstractGame implements Serializable {
      */
     public int getLiveCommandersOwnedBy(Player player) {
         int count = 0;
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
                     && !entity.isCarcass()
                     && entity.isCommander() && !entity.isOffBoard()
@@ -564,7 +510,7 @@ public class Game extends AbstractGame implements Serializable {
      * @return true if the player has a valid unit with the Tactical Genius pilot special ability.
      */
     public boolean hasTacticalGenius(Player player) {
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.hasAbility(OptionsConstants.MISC_TACTICAL_GENIUS)
                     && entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()
                     && !entity.isCarcass() && !entity.getCrew().isUnconscious()) {
@@ -583,7 +529,7 @@ public class Game extends AbstractGame implements Serializable {
 
         boolean friendlyFire = getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
-        for (Entity otherEntity : entities) {
+        for (Entity otherEntity : inGameTWEntities()) {
             // Even if friendly fire is acceptable, do not shoot yourself
             // Enemy units not on the board can not be shot.
             if ((otherEntity.getPosition() != null)
@@ -787,7 +733,7 @@ public class Game extends AbstractGame implements Serializable {
     public void setupRoundDeployment() {
         deploymentTable = new Hashtable<>();
 
-        for (Entity ent : entities) {
+        for (Entity ent : inGameTWEntities()) {
             if (ent.isDeployed()) {
                 continue;
             }
@@ -849,8 +795,9 @@ public class Game extends AbstractGame implements Serializable {
     /**
      * @return an enumeration of all the entities in the game.
      */
+    @Deprecated
     public Iterator<Entity> getEntities() {
-        return entities.iterator();
+        return inGameTWEntities().iterator();
     }
 
     /**
@@ -859,12 +806,12 @@ public class Game extends AbstractGame implements Serializable {
      * to the end of the list if necessary, returning null if there are no entities.
      */
     public @Nullable Entity getPreviousEntityFromList(final @Nullable Entity current) {
-        if ((current != null) && entities.contains(current)) {
-            int prev = entities.indexOf(current) - 1;
+        if ((current != null) && inGameTWEntities().contains(current)) {
+            int prev = inGameTWEntities().indexOf(current) - 1;
             if (prev < 0) {
-                prev = entities.size() - 1; // wrap around to end
+                prev = inGameTWEntities().size() - 1; // wrap around to end
             }
-            return entities.get(prev);
+            return inGameTWEntities().get(prev);
         }
         return null;
     }
@@ -875,12 +822,12 @@ public class Game extends AbstractGame implements Serializable {
      * the beginning of the list if necessary, returning null if there are no entities.
      */
     public @Nullable Entity getNextEntityFromList(final @Nullable Entity current) {
-        if ((current != null) && entities.contains(current)) {
-            int next = entities.indexOf(current) + 1;
-            if (next >= entities.size()) {
+        if ((current != null) && inGameTWEntities().contains(current)) {
+            int next = inGameTWEntities().indexOf(current) + 1;
+            if (next >= inGameTWEntities().size()) {
                 next = 0; // wrap-around to beginning
             }
-            return entities.get(next);
+            return inGameTWEntities().get(next);
         }
         return null;
     }
@@ -889,14 +836,14 @@ public class Game extends AbstractGame implements Serializable {
      * @return the actual vector for the entities
      */
     public List<Entity> getEntitiesVector() {
-        return Collections.unmodifiableList(entities);
+        return Collections.unmodifiableList(inGameTWEntities());
     }
 
     public synchronized void setEntitiesVector(List<Entity> entities) {
         // checkPositionCacheConsistency();
-        this.entities.clear();
-        this.entities.addAll(entities);
-        reindexEntities();
+//        this.entities.clear();
+//        this.entities.addAll(entities);
+        reindexEntities(entities);
         resetEntityPositionLookup();
         processGameEvent(new GameEntityNewEvent(this, entities));
     }
@@ -973,7 +920,7 @@ public class Game extends AbstractGame implements Serializable {
 
             // Walk through the entities in the game, and add all
             // members of the C3 network to the output Vector.
-            for (Entity unit : entities) {
+            for (Entity unit : inGameTWEntities()) {
                 if (entity.equals(unit) || entity.onSameC3NetworkAs(unit)) {
                     members.addElement(unit);
                 }
@@ -1013,7 +960,7 @@ public class Game extends AbstractGame implements Serializable {
         if (entity.hasC3()) {
             // Walk through the entities in the game, and add all
             // sub-members of the C3 network to the output Vector.
-            for (Entity unit : entities) {
+            for (Entity unit : inGameTWEntities()) {
                 if (entity.equals(unit) || unit.C3MasterIs(entity)) {
                     members.addElement(unit);
                 }
@@ -1038,7 +985,7 @@ public class Game extends AbstractGame implements Serializable {
         Vector<Entity> atPos;
 
         // Walk through the entities in this game.
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             // Get the vector for this entity's position.
             final Coords coords = entity.getPosition();
             if (coords != null) {
@@ -1133,7 +1080,7 @@ public class Game extends AbstractGame implements Serializable {
     public Enumeration<Entity> getCarcassEntities() {
         Vector<Entity> carcasses = new Vector<>();
         
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.isCarcass()) {
                 carcasses.addElement(entity);
             }
@@ -1146,7 +1093,7 @@ public class Game extends AbstractGame implements Serializable {
      * Return the current number of entities in the game.
      */
     public int getNoOfEntities() {
-        return entities.size();
+        return inGameTWEntities().size();
     }
 
     /**
@@ -1191,11 +1138,10 @@ public class Game extends AbstractGame implements Serializable {
         }
     }
 
-    /**
-     * Returns the entity with the given id number, if any.
-     */
+    /** @return The entity with the given id number, if any. */
     public @Nullable Entity getEntity(final int id) {
-        return entityIds.get(id);
+        InGameObject possibleEntity = inGameObjects.get(id);
+        return (possibleEntity instanceof Entity) ? (Entity) possibleEntity : null;
     }
 
     /**
@@ -1281,16 +1227,13 @@ public class Game extends AbstractGame implements Serializable {
             // We don't want to be resetting a UUID that exists already!
             entity.setC3UUID();
         }
-        // Add this Entity, ensuring that it's id is unique
+        // Add this Entity, ensuring that its id is unique
         int id = entity.getId();
-        if (!entityIds.containsKey(id)) {
-            entityIds.put(id, entity);
-        } else {
+        if (inGameObjects.containsKey(id)) {
             id = getNextEntityId();
             entity.setId(id);
-            entityIds.put(id, entity);
         }
-        entities.add(entity);
+        inGameObjects.put(id, entity);
         updateEntityPositionLookup(entity, null);
 
         if (id > lastEntityId) {
@@ -1323,8 +1266,7 @@ public class Game extends AbstractGame implements Serializable {
             addEntity(entity);
         } else {
             entity.setGame(this);
-            entities.set(entities.indexOf(oldEntity), entity);
-            entityIds.put(id, entity);
+            inGameObjects.put(id, entity);
             // Get the collection of positions
             HashSet<Coords> oldPositions = oldEntity.getOccupiedCoords();
             // Update position lookup table
@@ -1351,7 +1293,8 @@ public class Game extends AbstractGame implements Serializable {
      * @return <code>true</code> if an entity with the specified id number exists in this game.
      */
     public boolean hasEntity(int entityId) {
-        return entityIds.containsKey(entityId);
+        Optional<InGameObject> possibleEntity = getInGameObject(entityId);
+        return possibleEntity.isPresent() && possibleEntity.get() instanceof Entity;
     }
 
     /**
@@ -1359,16 +1302,12 @@ public class Game extends AbstractGame implements Serializable {
      * (probably due to double-blind) ignore it.
      */
     public synchronized void removeEntity(int id, int condition) {
-        // always attempt to remove the entity with this ID from the entities collection
-        // as it may have gotten stuck there.
-        entities.removeIf(ent -> (ent.getId() == id));
-        
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
             return;
         }
 
-        entityIds.remove(id);
+        inGameObjects.remove(id);
         removeEntityPositionLookup(toRemove);
 
         toRemove.setRemovalCondition(condition);
@@ -1413,8 +1352,7 @@ public class Game extends AbstractGame implements Serializable {
 
         roundCount = 0;
 
-        entities.clear();
-        entityIds.clear();
+        inGameObjects.clear();
         entityPosLookup.clear();
 
         vOutOfGame.removeAllElements();
@@ -1455,14 +1393,14 @@ public class Game extends AbstractGame implements Serializable {
      * Regenerates the entities by id hashtable by going thru all entities in
      * the Vector
      */
-    private void reindexEntities() {
-        entityIds.clear();
+    private void reindexEntities(List<Entity> entities) {
+        inGameObjects.clear();
         lastEntityId = 0;
 
         // Add these entities to the game.
         for (Entity entity : entities) {
             final int id = entity.getId();
-            entityIds.put(id, entity);
+            inGameObjects.put(id, entity);
 
             if (id > lastEntityId) {
                 lastEntityId = id;
@@ -1471,7 +1409,7 @@ public class Game extends AbstractGame implements Serializable {
         // We need to ensure that each entity has the proper Game reference
         // however, the entityIds Hashmap must be fully formed before this
         // is called, since setGame also calls setGame for loaded Entities
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             entity.setGame(this);
         }
     }
@@ -1483,7 +1421,7 @@ public class Game extends AbstractGame implements Serializable {
      * @param c the coordinates to search at
      */
     public Entity getFirstEntity(Coords c) {
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (c.equals(entity.getPosition()) && entity.isTargetable()) {
                 return entity;
             }
@@ -1499,7 +1437,7 @@ public class Game extends AbstractGame implements Serializable {
      * @param currentEntity the entity that is firing
      */
     public Entity getFirstEnemyEntity(Coords c, Entity currentEntity) {
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (c.equals(entity.getPosition()) && entity.isTargetable()
                 && entity.isEnemyOf(currentEntity)) {
                 return entity;
@@ -1543,7 +1481,7 @@ public class Game extends AbstractGame implements Serializable {
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         // checkPositionCacheConsistency();
         // Make sure the look-up is initialized
-        if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
+        if (entityPosLookup.isEmpty() && !inGameTWEntities().isEmpty()) {
             resetEntityPositionLookup();
         }
         Set<Integer> posEntities = entityPosLookup.get(c);
@@ -1580,7 +1518,7 @@ public class Game extends AbstractGame implements Serializable {
      */
     public synchronized List<Entity> getAllOffboardEnemyEntities(Player player) {
         List<Entity> vector = new ArrayList<>();
-        for (Entity e : entities) {
+        for (Entity e : inGameTWEntities()) {
             if (e.getOwner().isEnemyOf(player) && e.isOffBoard() && !e.isDestroyed() && e.isDeployed()) {
                 vector.add(e);
             }
@@ -1765,7 +1703,7 @@ public class Game extends AbstractGame implements Serializable {
             return -1;
         }
 
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
@@ -1779,11 +1717,11 @@ public class Game extends AbstractGame implements Serializable {
      * @return the next selectable entity that can act this turn, or null if none can.
      */
     public @Nullable Entity getNextEntity(int start) {
-        if (entities.isEmpty()) {
+        if (inGameTWEntities().isEmpty()) {
             return null;
         }
-        start = start % entities.size();
-        int entityId = entities.get(start).getId();
+        start = start % inGameTWEntities().size();
+        int entityId = inGameTWEntities().get(start).getId();
         return getEntity(getNextEntityNum(getTurn(), entityId));
     }
 
@@ -1793,24 +1731,26 @@ public class Game extends AbstractGame implements Serializable {
      * @return the entity id of the next entity that can move during the specified turn
      */
     public int getNextEntityNum(final @Nullable GameTurn turn, int start) {
+        List<Entity> sortedEntities = inGameTWEntities();
+        sortedEntities.sort(Comparator.comparingInt(Entity::getId));
         // If we don't have a turn, return ENTITY_NONE
         if (turn == null) {
             return Entity.NONE;
         }
         boolean hasLooped = false;
-        int i = (entities.indexOf(entityIds.get(start)) + 1) % entities.size();
+        int i = (sortedEntities.indexOf(getEntity(start)) + 1) % sortedEntities.size();
         if (i == -1) {
             //This means we were given an invalid entity ID, punt
             return Entity.NONE;
         }
         int startingIndex = i;
         while (!((hasLooped == true) && (i == startingIndex))) {
-            final Entity entity = entities.get(i);
+            final Entity entity = sortedEntities.get(i);
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
             i++;
-            if (i == entities.size()) {
+            if (i == sortedEntities.size()) {
                 i = 0;
                 hasLooped = true;
             }
@@ -1825,25 +1765,27 @@ public class Game extends AbstractGame implements Serializable {
      * @return the entity id of the previous entity that can move during the specified turn
      */
     public int getPrevEntityNum(GameTurn turn, int start) {
+        List<Entity> sortedEntities = inGameTWEntities();
+        sortedEntities.sort(Comparator.comparingInt(Entity::getId));
         boolean hasLooped = false;
-        int i = (entities.indexOf(entityIds.get(start)) - 1) % entities.size();
+        int i = (sortedEntities.indexOf(getEntity(start)) - 1) % sortedEntities.size();
         if (i == -2) {
             //This means we were given an invalid entity ID, punt
             return -1;
         }
         if (i == -1) {
             //This means we were given an invalid entity ID, punt
-            i = entities.size() - 1;
+            i = sortedEntities.size() - 1;
         }
         int startingIndex = i;
         while (!((hasLooped == true) && (i == startingIndex))) {
-            final Entity entity = entities.get(i);
+            final Entity entity = sortedEntities.get(i);
             if (turn.isValidEntity(entity, this)) {
                 return entity.getId();
             }
             i--;
             if (i < 0) {
-                i = entities.size() - 1;
+                i = sortedEntities.size() - 1;
                 hasLooped = true;
             }
         }
@@ -1860,7 +1802,7 @@ public class Game extends AbstractGame implements Serializable {
         if (turn == null) {
             return -1;
         }
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (turn.isValidEntity(entity, this) && entity.shouldDeploy(getRoundCount())) {
                 return entity.getId();
             }
@@ -1873,8 +1815,8 @@ public class Game extends AbstractGame implements Serializable {
      */
     public int getNextDeployableEntityNum(GameTurn turn, int start) {
         if (start >= 0) {
-            for (int i = start; i < entities.size(); i++) {
-                final Entity entity = entities.get(i);
+            for (int i = start; i < inGameTWEntities().size(); i++) {
+                final Entity entity = inGameTWEntities().get(i);
                 if (turn.isValidEntity(entity, this) && entity.shouldDeploy(getRoundCount())) {
                     return entity.getId();
                 }
@@ -1892,7 +1834,7 @@ public class Game extends AbstractGame implements Serializable {
      */
     public ArrayList<Entity> getPlayerEntities(Player player, boolean hide) {
         ArrayList<Entity> output = new ArrayList<>();
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.isPartOfFighterSquadron() && hide) {
                 continue;
             }
@@ -1912,7 +1854,7 @@ public class Game extends AbstractGame implements Serializable {
      */
     public ArrayList<Integer> getPlayerEntityIds(Player player, boolean hide) {
         ArrayList<Integer> output = new ArrayList<>();
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (entity.isPartOfFighterSquadron() && hide) {
                 continue;
             }
@@ -1961,7 +1903,7 @@ public class Game extends AbstractGame implements Serializable {
         Player player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
                     && (entity instanceof Infantry)) {
                 remaining++;
@@ -1979,7 +1921,7 @@ public class Game extends AbstractGame implements Serializable {
         Player player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
                     && (entity instanceof Protomech)) {
                 remaining++;
@@ -1997,7 +1939,7 @@ public class Game extends AbstractGame implements Serializable {
         Player player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
                     && (entity instanceof Tank)) {
                 remaining++;
@@ -2015,7 +1957,7 @@ public class Game extends AbstractGame implements Serializable {
         Player player = getPlayer(playerId);
         int remaining = 0;
 
-        for (Entity entity : entities) {
+        for (Entity entity : inGameTWEntities()) {
             if (player.equals(entity.getOwner()) && entity.isSelectableThisTurn()
                     && (entity instanceof Mech)) {
                 remaining++;
@@ -2268,8 +2210,8 @@ public class Game extends AbstractGame implements Serializable {
     public void rollInitAndResolveTies() {
         if (getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             Vector<TurnOrdered> vRerolls = new Vector<>();
-            for (int i = 0; i < entities.size(); i++) {
-                Entity e = entities.get(i);
+            for (int i = 0; i < inGameTWEntities().size(); i++) {
+                Entity e = inGameTWEntities().get(i);
                 if (initiativeRerollRequests.contains(getTeamForPlayer(e.getOwner()))) {
                     vRerolls.add(e);
                 }
@@ -3335,7 +3277,7 @@ public class Game extends AbstractGame implements Serializable {
 
     private void resetEntityPositionLookup() {
         entityPosLookup.clear();
-        for (Entity e : entities) {
+        for (Entity e : inGameTWEntities()) {
             updateEntityPositionLookup(e, null);
         }
     }
@@ -3362,7 +3304,7 @@ public class Game extends AbstractGame implements Serializable {
         List<Integer> entitiesInVector = new ArrayList<>();
         int entitiesInCacheCount = countEntitiesInCache(entitiesInCache);
         int entityVectorSize = 0;
-        for (Entity e : entities) {
+        for (Entity e : inGameTWEntities()) {
             if (e.getPosition() != null) {
                 entityVectorSize++;
                 entitiesInVector.add(e.getId());
@@ -3373,7 +3315,7 @@ public class Game extends AbstractGame implements Serializable {
         if ((entitiesInCacheCount != entityVectorSize) && !getPhase().isDeployment()
                 && !getPhase().isExchange() && !getPhase().isLounge()
                 && !getPhase().isInitiativeReport() && !getPhase().isInitiative()) {
-            LogManager.getLogger().warn("Entities vector has " + entities.size()
+            LogManager.getLogger().warn("Entities vector has " + inGameTWEntities().size()
                     + " but pos lookup cache has " + entitiesInCache.size() + "entities!");
             List<Integer> missingIds = new ArrayList<>();
             for (Integer id : entitiesInVector) {
@@ -3383,7 +3325,7 @@ public class Game extends AbstractGame implements Serializable {
             }
             LogManager.getLogger().info("Missing ids: " + missingIds);
         }
-        for (Entity e : entities) {
+        for (Entity e : inGameTWEntities()) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
                 HashSet<Integer> ents = entityPosLookup.get(c);
@@ -3418,15 +3360,6 @@ public class Game extends AbstractGame implements Serializable {
         }
         return uuid.toString();
 
-    }
-
-    public synchronized Forces getForces() {
-        return forces;
-    }
-
-    @Override
-    public List<InGameObject> getInGameObjects() {
-        return new ArrayList<>(entities);
     }
 
     /**
@@ -3466,5 +3399,10 @@ public class Game extends AbstractGame implements Serializable {
         this.mapSettings = mapSettings;
         // clean up linux/macOS/Windows paths
         this.mapSettings.adjustPathSeparator();
+    }
+
+    /** @return The TW Units (Entity) currently in the game. */
+    public List<Entity> inGameTWEntities() {
+        return inGameObjects.values().stream().filter(o -> o instanceof Entity).map(o -> (Entity) o).collect(toList());
     }
 }

@@ -320,13 +320,6 @@ public class Client implements IClientCommandHandler {
         return PreferenceManager.getClientPreferences().keepGameLog();
     }
 
-    /**
-     * Return an enumeration of the players in the game
-     */
-    public Enumeration<Player> getPlayers() {
-        return game.getPlayers();
-    }
-
     public Entity getEntity(int id) {
         return game.getEntity(id);
     }

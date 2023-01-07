@@ -20,25 +20,30 @@ package megamek.common;
 
 import megamek.common.force.Forces;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * This is a base class to derive all types of Game (TW, AS, BF, SBF...) from. Any such game will have players, units
+ * (InGameObjects) and Forces (even if empty); the base class manages these.
+ */
 public abstract class AbstractGame implements IGame {
 
     /** The players present in the game mapped to their id as key. */
     protected final ConcurrentHashMap<Integer, Player> players = new ConcurrentHashMap<>();
 
-    // Not yet used, should replace Entity-List
-    protected final ConcurrentHashMap<Integer, Entity> inGameObjects = new ConcurrentHashMap<>();
+    /** The InGameObjects (units such as Entity and others) present in the game mapped to their id as key. */
+    protected final ConcurrentHashMap<Integer, InGameObject> inGameObjects = new ConcurrentHashMap<>();
+
+    /** The teams present in the game. */
+    protected final CopyOnWriteArrayList<Team> teams = new CopyOnWriteArrayList<>();
 
     /**
      * The forces present in the game. The top level force holds all forces and force-less entities
      * and should therefore not be shown.
      */
-    private final Forces forces = new Forces(this);
+    protected Forces forces = new Forces(this);
 
     @Override
     public Player getPlayer(int id) {
@@ -46,8 +51,36 @@ public abstract class AbstractGame implements IGame {
     }
 
     @Override
+    @Deprecated
     public Vector<Player> getPlayersVector() {
         return new Vector<>(players.values());
+    }
+
+    @Override
+    public List<Team> getTeamsList() {
+        return new ArrayList<>(teams);
+    }
+
+    @Override
+    @Deprecated
+    public Enumeration<Team> getTeams() {
+        return Collections.enumeration(teams);
+    }
+
+    @Override
+    public int getNoOfTeams() {
+        return teams.size();
+    }
+
+    @Override
+    @Deprecated
+    public Enumeration<Player> getPlayers() {
+        return players.elements();
+    }
+
+    @Override
+    public List<Player> getPlayersList() {
+        return new ArrayList<>(players.values());
     }
 
     @Override
@@ -56,12 +89,12 @@ public abstract class AbstractGame implements IGame {
     }
 
     @Override
-    public List<InGameObject> getInGameObjects(Collection<Integer> idList) {
-        return new ArrayList<>(inGameObjects.values());
+    public Forces getForces() {
+        return forces;
     }
 
     @Override
-    public Forces getForces() {
-        return forces;
+    public List<InGameObject> getInGameObjects() {
+        return new ArrayList<>(inGameObjects.values());
     }
 }

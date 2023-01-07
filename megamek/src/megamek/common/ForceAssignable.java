@@ -37,7 +37,7 @@ public interface ForceAssignable extends InGameObject {
      * The String contains all forces from top to bottom separated by backslash
      * with no backslash at beginning or end. Each force is followed by a unique id
      * separated by the vertical bar. E.g.
-     * <BR><BR>Regiment|1\Battalion B|11\Alpha Company|18\Battle Lance II|112
+     * <BR><BR>Regiment|1||Battalion B|11||Alpha Company|18||Battle Lance II|112
      *
      * <BR><BR>If this is not empty, the server will attempt to reconstruct the force
      * hierarchy when it receives this entity and will empty the string.
@@ -80,7 +80,10 @@ public interface ForceAssignable extends InGameObject {
      * @return A filtered list of all Entities in the given list
      */
     static List<Entity> filterToEntityList(List<ForceAssignable> forceAssignableList) {
-        return forceAssignableList.stream().filter(a -> a instanceof Entity).map(a -> (Entity) a).collect(Collectors.toList());
+        return forceAssignableList.stream()
+                .filter(a -> a instanceof Entity)
+                .map(a -> (Entity) a)
+                .collect(Collectors.toList());
     }
 
     /**

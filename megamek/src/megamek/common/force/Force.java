@@ -192,11 +192,11 @@ public final class Force implements Serializable {
     }
     
     /** 
-     * Returns true if the provided entity is among the force's direct members. 
-     * Does NOT check if the entity is part of any subforce. 
+     * Returns true if the provided unit is among the force's direct members.
+     * Does NOT check if the unit is part of any subforce.
      */
-    public boolean containsEntity(ForceAssignable entity) {
-        return containsEntity(entity.getId());
+    public boolean containsEntity(ForceAssignable unit) {
+        return containsEntity(unit.getId());
     }
     
     /** 
@@ -208,11 +208,11 @@ public final class Force implements Serializable {
     }
     
     /** 
-     * Returns the index of the provided entity in the list of direct members of this force.
-     * Returns -1 if the entity is no direct member of this force.  
+     * Returns the index of the provided unit in the list of direct members of this force.
+     * Returns -1 if the unit is no direct member of this force.
      */
-    public int entityIndex(ForceAssignable entity) {
-        return entities.indexOf(entity.getId());
+    public int entityIndex(ForceAssignable unit) {
+        return entities.indexOf(unit.getId());
     }
     
     /** 
@@ -242,12 +242,12 @@ public final class Force implements Serializable {
         return Collections.unmodifiableList(subForces);
     }
     
-    void addEntity(ForceAssignable entity) {
-        entities.add(entity.getId());
+    void addEntity(ForceAssignable unit) {
+        entities.add(unit.getId());
     }
     
-    void removeEntity(ForceAssignable entity) {
-        entities.remove((Integer) entity.getId());
+    void removeEntity(ForceAssignable unit) {
+        entities.remove((Integer) unit.getId());
     }
     
     /** Removes the given id from the list of subordinated entities. */
@@ -280,11 +280,11 @@ public final class Force implements Serializable {
     }
     
     /** Moves up the given entityId by one position if possible. Returns true when an actual change occurred. */
-    boolean moveUp(int entityId) {
-        if (!containsEntity(entityId)) {
+    boolean moveUp(int unitId) {
+        if (!containsEntity(unitId)) {
             return false;
         }
-        int index = entities.indexOf(entityId);
+        int index = entities.indexOf(unitId);
         if (index > 0) {
             Collections.swap(entities, index, index - 1);
             return true;
@@ -292,12 +292,12 @@ public final class Force implements Serializable {
         return false;
     }
     
-    /** Moves down the given entityId by one position if possible. Returns true when an actual change occurred. */
-    boolean moveDown(int entityId) {
-        if (!containsEntity(entityId)) {
+    /** Moves down the given unitId by one position if possible. Returns true when an actual change occurred. */
+    boolean moveDown(int unitId) {
+        if (!containsEntity(unitId)) {
             return false;
         }
-        int index = entities.indexOf(entityId);
+        int index = entities.indexOf(unitId);
         if (index < entities.size() - 1) {
             Collections.swap(entities, index, index + 1);
             return true;

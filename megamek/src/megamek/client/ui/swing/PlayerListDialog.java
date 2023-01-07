@@ -16,11 +16,14 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Team;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Comparator;
+import java.util.List;
 
 public class PlayerListDialog extends JDialog {
 
@@ -55,6 +58,13 @@ public class PlayerListDialog extends JDialog {
         refreshPlayerList(playerList, client, false);
     }
 
+    /** @return The game's players list sorted by id. */
+    private static List<Player> sortedPlayerList(IGame game) {
+        List<Player> playerList = game.getPlayersList();
+        playerList.sort(Comparator.comparingInt(Player::getId));
+        return playerList;
+    }
+
     /**
      * Refreshes the player list component with information from the game
      * object.
@@ -63,7 +73,7 @@ public class PlayerListDialog extends JDialog {
             Client client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
 
-        for (Player player : client.getGame().getPlayersVectorSorted()) {
+        for (Player player : sortedPlayerList(client.getGame())) {
             StringBuffer playerDisplay = new StringBuffer(String.format("%-12s", player.getName()));
 
             // Append team information
@@ -124,7 +134,7 @@ public class PlayerListDialog extends JDialog {
 
     public Player getSelected() {
         if (!playerList.isSelectionEmpty()) {
-            return client.getGame().getPlayersVectorSorted().elementAt(playerList.getSelectedIndex());
+            return sortedPlayerList(client.getGame()).get(playerList.getSelectedIndex());
         }
 
         return null;

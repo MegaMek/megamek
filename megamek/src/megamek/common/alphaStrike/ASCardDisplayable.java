@@ -146,7 +146,7 @@ public interface ASCardDisplayable extends BTObject {
         return getMovement().containsKey(mode);
     }
 
-    /** @return True if this AS element is a fighter (AF, CF). */
+    /** @return True if this AS element is a fighter (AF, CF) or an Aero SV (Fixed Wing Support). */
     default boolean isFighter() {
         return getASUnitType().isAnyOf(AF, CF) || isAerospaceSV();
     }

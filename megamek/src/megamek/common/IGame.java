@@ -41,19 +41,19 @@ public interface IGame {
      */
     @Nullable Player getPlayer(int id);
 
-    /**
-     * @return an enumeration of {@link Player players} in the game
-     */
+    /** @return An enumeration of {@link Player players} in the game. */
     @Deprecated
     Enumeration<Player> getPlayers();
 
-    /**
-     * @return The current players as a list.
-     */
+    /** @return The current players as a list. */
+    @Deprecated
     Vector<Player> getPlayersVector();
 
+    /** @return The current players as a list. Implementations should make sure that this list can be safely modified. */
+    List<Player> getPlayersList();
+
     /**
-     * Adds the player to the game with the id
+     * Adds the given Player to the game with the given game-unique id.
      *
      * @param id The game-unique id of this player
      * @param player The Player object
@@ -67,23 +67,24 @@ public interface IGame {
      */
     void removePlayer(int id);
 
-    /**
-     * @return the current number of active players in the game.
-     */
+    /** @return The current number of active players in the game. This includes observers but not ghosts. */
     int getNoOfPlayers();
 
-    /**
-     * @return an enumeration of the teams in the game.
-     */
+    /** @return an enumeration of the teams in the game. */
+    @Deprecated
     Enumeration<Team> getTeams();
 
-    /**
-     * @return An unused id
-     */
+    /** @return The teams in the game. Implementations should make sure that this list can be safely modified. */
+    List<Team> getTeamsList();
+
+    /** @return The number of teams in the game. */
+    int getNoOfTeams();
+
+    /** @return The next free id for InGameObjects (units and others). */
     int getNextEntityId();
 
     /**
-     * @return the number of entities owned by the player, regardless of their
+     * @return the number of units owned by the player, regardless of their
      *         status, as long as they are in the game.
      */
     default int getEntitiesOwnedBy(Player player) {
@@ -111,7 +112,7 @@ public interface IGame {
     /** @return A list of all InGameObjects of this game. This list is copied and may be safely modified. */
     List<InGameObject> getInGameObjects();
 
-    /** @return A list of all InGameObjects of this game with the given ids. This list may be safely modified. */
+    /** @return A list of all InGameObjects of this game with the given ids. The returned list may be safely modified. */
     default List<InGameObject> getInGameObjects(Collection<Integer> idList) {
         return getInGameObjects().stream().filter(o -> idList.contains(o.getId())).collect(Collectors.toList());
     }

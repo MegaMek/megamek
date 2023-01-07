@@ -3841,19 +3841,33 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * @return Returns the autoEject.
+     * @return unit has an ejection seat
      */
-    public boolean isAutoEject() {
-        boolean hasEjectSeat = (getCockpitType() != COCKPIT_TORSO_MOUNTED) && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+    public boolean hasEjectSeat() {
+        // Ejection Seat
+        boolean result = true;
+        // torso mounted cockpits don't have an ejection seat
+        if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED
+                || hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT)) {
+            result = false;
+        }
         if (isIndustrial()) {
+            result = false;
             // industrials can only eject when they have an ejection seat
-            for (Mounted misc : miscList) {
+            for (Mounted misc : getMisc()) {
                 if (misc.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
-                    hasEjectSeat = true;
+                    result = true;
                 }
             }
         }
-        return autoEject && hasEjectSeat;
+        return result;
+    }
+
+    /**
+     * @return Returns the autoEject.
+     */
+    public boolean isAutoEject() {
+        return autoEject && hasEjectSeat();
     }
 
     /**

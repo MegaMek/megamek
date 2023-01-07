@@ -222,6 +222,13 @@ class PlayerTable extends JTable {
                 result.append("</FONT>");
             }
 
+            if (player.getSingleBlind()) {
+                result.append(UIUtil.DOT_SPACER);
+                result.append(guiScaledFontHTML(uiGreen()));
+                result.append("\uD83D\uDC41");
+                result.append("</FONT>");
+            }
+
             setText(result.toString());
 
             setIconTextGap(scaleForGUI(10));

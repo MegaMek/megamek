@@ -106,7 +106,7 @@ public class GameOptions extends AbstractOptions {
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); 
         addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, true); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false); 
@@ -145,7 +145,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_SINGLE_BLIND_BOTS, false);
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); 
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMS, false);

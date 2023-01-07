@@ -31,6 +31,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 
+import javax.swing.text.Position;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -206,6 +207,28 @@ class LobbyMekCellFormatter {
         // Controls the separator dot character
         boolean firstEntry = true;
 
+        // Start Position
+        int sp = entity.getStartingPos(true);
+        int spe = entity.getStartingPos(false);
+        if ((!entity.isOffBoard())
+                && (sp >= 0)
+                && (sp <= IStartingPositions.START_LOCATION_NAMES.length)) {
+            firstEntry = dotSpacer(result, firstEntry);
+            if (spe != Board.START_NONE) {
+                result.append(guiScaledFontHTML(uiLightGreen()));
+            }
+            result.append(" Start:" + IStartingPositions.START_LOCATION_NAMES[sp]);
+            int so = entity.getStartingOffset(true);
+            int sw = entity.getStartingWidth(true);
+            if ((so != 0) || (sw != 3)) {
+                result.append(", O:" + so);
+                result.append(", W:" + sw);
+            }
+            if (spe != Board.START_NONE) {
+                result.append("</FONT>");
+            }
+        }
+
         // Invalid Design
         if (forceView) {
             if (!entity.isDesignValid()) {
@@ -246,7 +269,6 @@ class LobbyMekCellFormatter {
         } 
 
         if (entity.hasC3()) {
-
             if (entity.getC3Master() == null) {
                 if (entity.hasC3S()) {
                     firstEntry = dotSpacer(result, firstEntry);
@@ -308,8 +330,6 @@ class LobbyMekCellFormatter {
             result.append("</I></FONT>");
 
         } else { // Hide deployment info when a unit is carried
-            
-
             if (entity.isHidden() && mapType == MapSettings.MEDIUM_GROUND) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(getString("ChatLounge.compact.hidden"));
@@ -329,14 +349,11 @@ class LobbyMekCellFormatter {
         if (entity.isOffBoard()) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysOffBoard"));
-            
+            result.append(", Dir: " + entity.getOffBoardDirection());
+            result.append(", Dis:" + entity.getOffBoardDistance());
         } else if (entity.getDeployRound() > 0) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysAfterRound", entity.getDeployRound()));
-            if (entity.getStartingPos(false) != Board.START_NONE) {
-                result.append(getString("ChatLounge.deploysAfterZone", 
-                        IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)]));
-            }
         }
         result.append("</FONT>");
         

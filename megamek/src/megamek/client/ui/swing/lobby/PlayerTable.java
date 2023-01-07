@@ -188,6 +188,12 @@ class PlayerTable extends JTable {
             result.append(guiScaledFontHTML());
             if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
                 result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+                int so = player.getStartOffset();
+                int sw = player.getStartWidth();
+                if ((so != 0) || (sw != 3)) {
+                    result.append(", O:" + so);
+                    result.append(", W:" + sw);
+                }
             } else {
                 result.append("Start: None");
             }

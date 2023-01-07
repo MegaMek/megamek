@@ -212,7 +212,7 @@ class LobbyMekCellFormatter {
         int spe = entity.getStartingPos(false);
         if ((!entity.isOffBoard())
                 && (sp >= 0)
-                && (sp <= IStartingPositions.START_LOCATION_NAMES.length)) {
+                && (sp < IStartingPositions.START_LOCATION_NAMES.length)) {
             firstEntry = dotSpacer(result, firstEntry);
             if (spe != Board.START_NONE) {
                 result.append(guiScaledFontHTML(uiLightGreen()));

@@ -232,7 +232,8 @@ public final class UnitToolTip {
                 // Rear armor
                 if (entity.hasRearArmor(loc)) {
                     result.append(guiScaledFontHTML(TT_SMALLFONT_DELTA));
-                    result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + "R:&nbsp;");
+                    String msg_abbr_rear = Messages.getString("BoardView1.Tooltip.AbbreviationRear");
+                    result.append("&nbsp;&nbsp;" + locationHeader(entity, loc) + msg_abbr_rear + "&nbsp;");
                     result.append("</FONT>\n</TD>\n<TD>\n");
                     result.append(intactLocBar(entity.getOArmor(loc, true), entity.getArmor(loc, true), armorChar));
                     result.append("</TD>\n<TD>\n");

@@ -880,12 +880,12 @@ public final class UnitToolTip {
         result.append(guiScaledFontHTML());
         if (entity.hasActiveECM()) {
             result.append(ECM_SIGN).append(" ");
-            String msg_ecmsource = Messages.getString("BoardView1.Tooltip.ecmSource");
+            String msg_ecmsource = Messages.getString("BoardView1.ecmSource");
             result.append(msg_ecmsource);
         }
         if (entity.hasActiveECCM()) {
             result.append(ECM_SIGN).append(" ");
-            String msg_eccmsource = Messages.getString("BoardView1.Tooltip.eccmSource");
+            String msg_eccmsource = Messages.getString("BoardView1.eccmSource");
             result.append(msg_eccmsource);
         }
         result.append("</FONT>\n");
@@ -1253,7 +1253,7 @@ public final class UnitToolTip {
             if (entity instanceof IBomber) {
                 int bombMod = 0;
                 bombMod = ((IBomber) entity).getBombLoad(walkMP);
-                if (bombMod != 0) {
+                if (bombMod != walkMP) {
                     result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDCA3" + "</FONT>\n");
                 }
             }

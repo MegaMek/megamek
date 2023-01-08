@@ -351,7 +351,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
         // get bomb load
-        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
+        j = getBombLoad(j);
 
         if (hasModularArmor()) {
             j--;

@@ -191,8 +191,8 @@ class PlayerTable extends JTable {
                 int so = player.getStartOffset();
                 int sw = player.getStartWidth();
                 if ((so != 0) || (sw != 3)) {
-                    result.append(", O:" + so);
-                    result.append(", W:" + sw);
+                    result.append(", " + so);
+                    result.append(", " + sw);
                 }
             } else {
                 result.append("Start: None");

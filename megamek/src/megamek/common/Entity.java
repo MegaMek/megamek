@@ -14379,11 +14379,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void damageSystem(int type, int slot, int hits) {
         for (int loc = 0; loc < locations(); loc++) {
-            damageSystem(type, slot, loc, hits);
+            hits -= damageSystem(type, slot, loc, hits);
         }
     }
 
-    public void damageSystem(int type, int slot, int loc, int hits) {
+    public int damageSystem(int type, int slot, int loc, int hits) {
         int nhits = 0;
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot cs = getCritical(loc, i);
@@ -14409,6 +14409,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
         }
+        return nhits;
     }
 
     // Most units cannot eject.

@@ -221,8 +221,8 @@ class LobbyMekCellFormatter {
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
             if ((so != 0) || (sw != 3)) {
-                result.append(", O:" + so);
-                result.append(", W:" + sw);
+                result.append(", " + so);
+                result.append(", " + sw);
             }
             if (spe != Board.START_NONE) {
                 result.append("</FONT>");
@@ -349,8 +349,8 @@ class LobbyMekCellFormatter {
         if (entity.isOffBoard()) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysOffBoard"));
-            result.append(", Dir: " + entity.getOffBoardDirection());
-            result.append(", Dis:" + entity.getOffBoardDistance());
+            result.append(",  " + entity.getOffBoardDirection());
+            result.append(", " + entity.getOffBoardDistance());
         } else if (entity.getDeployRound() > 0) {
             firstEntry = dotSpacer(result, firstEntry);
             result.append(getString("ChatLounge.deploysAfterRound", entity.getDeployRound()));

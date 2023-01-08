@@ -58,10 +58,6 @@ public class Game extends AbstractGame implements Serializable {
      */
     public final Version version = MMConstants.VERSION;
 
-    private Vector<Player> players = new Vector<>();
-    private Hashtable<Integer, Player> playerIds = new Hashtable<>();
-    private Vector<Team> teams = new Vector<>();
-
     private GameOptions options = new GameOptions();
 
     private Board board = new Board();

@@ -34,7 +34,9 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Shows reports, with an Okay JButton
@@ -192,7 +194,9 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         lastChoice = (lastChoice != null ? lastChoice : name);
         comboPlayer.removeAllItems();
         comboPlayer.setEnabled(true);
-        for (Player player  : currentClient.getGame().getPlayersVectorSorted()) {
+        List<Player> sortedPlayerList = currentClient.getGame().getPlayersList();
+        sortedPlayerList.sort(Comparator.comparingInt(Player::getId));
+        for (Player player : sortedPlayerList) {
             String playerDisplay = String.format("%-12s", player.getName());
             comboPlayer.addItem(playerDisplay);
         }

@@ -2707,7 +2707,7 @@ public class GameManager implements IGameManager {
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false);
         } else {
             // Roll for initiative on the teams.
-            TurnOrdered.rollInitiative(game.getTeamsVector(),
+            TurnOrdered.rollInitiative(game.getTeams(),
                     game.getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)
                             && !game.shouldDeployThisRound());
         }
@@ -2969,8 +2969,7 @@ public class GameManager implements IGameManager {
         Hashtable<Team, TurnVectors> allTeamTurns = new Hashtable<>(nTeams);
         Hashtable<Team, int[]> evenTrackers = new Hashtable<>(nTeams);
         int numTeamsMoving = 0;
-        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements(); ) {
-            final Team team = loop.nextElement();
+        for (Team team : game.getTeams()) {
             allTeamTurns.put(team, team.determineTeamOrder(game));
 
             // Track both the number of times we've checked the team for
@@ -2985,7 +2984,7 @@ public class GameManager implements IGameManager {
         }
 
         // Now, generate the global order of all teams' turns.
-        TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(), game);
+        TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeams(), game);
 
         // Now, we collect everything into a single vector.
         Vector<GameTurn> turns = initGameTurnsWithStranded(team_order);
@@ -3167,9 +3166,7 @@ public class GameManager implements IGameManager {
                 }
             }
         } else {
-            for (Enumeration<Team> i = game.getTeams(); i.hasMoreElements(); ) {
-                final Team team = i.nextElement();
-
+            for (Team team : game.getTeams()) {
                 // Teams with no active players can be ignored
                 if (team.isObserverTeam()) {
                     continue;
@@ -10966,11 +10963,7 @@ public class GameManager implements IGameManager {
      * @param mf The <code>Minefield</code> to be revealed
      */
     private void revealMinefield(Minefield mf) {
-        Enumeration<Team> teams = game.getTeams();
-        while (teams.hasMoreElements()) {
-            Team team = teams.nextElement();
-            revealMinefield(team, mf);
-        }
+        game.getTeams().forEach(team -> revealMinefield(team, mf));
     }
 
     /**
@@ -11012,12 +11005,10 @@ public class GameManager implements IGameManager {
      * LOS. If so, then it reveals the mine
      */
     private void checkForRevealMinefield(Minefield mf, Entity layer) {
-        Enumeration<Team> teams = game.getTeams();
         // loop through each team and determine if they can see the mine, then
         // loop through players on team
         // and reveal the mine
-        while (teams.hasMoreElements()) {
-            Team team = teams.nextElement();
+        for (Team team : game.getTeams()) {
             boolean canSee = false;
 
             // the players own team can always see the mine
@@ -12665,9 +12656,7 @@ public class GameManager implements IGameManager {
             int teamId = player.getTeam();
 
             if (teamId != Player.TEAM_NONE) {
-                Enumeration<Team> teams = game.getTeams();
-                while (teams.hasMoreElements()) {
-                    Team team = teams.nextElement();
+                for (Team team : game.getTeams()) {
                     if (team.getId() == teamId) {
                         Enumeration<Player> players = team.getPlayers();
                         while (players.hasMoreElements()) {
@@ -34142,9 +34131,8 @@ public class GameManager implements IGameManager {
         int damage_bonus = Math.max(0, game.getPlanetaryConditions().getWindStrength()
                 - PlanetaryConditions.WI_MOD_GALE);
         // cycle through each team and damage 1d6 airborne VTOL/WiGE
-        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements(); ) {
-            Team team = loop.nextElement();
-            Vector<Integer> airborne = team.getAirborneVTOL();
+        for (Team team : game.getTeams()) {
+            Vector<Integer> airborne = getAirborneVTOL(team);
             if (!airborne.isEmpty()) {
                 // how many units are affected
                 int unitsAffected = Math.min(Compute.d6(), airborne.size());
@@ -34164,6 +34152,21 @@ public class GameManager implements IGameManager {
         }
         Report.addNewline(vPhaseReport);
         return vFullReport;
+    }
+
+    /**
+     * cycle through entities on team and collect all the airborne VTOL/WIGE
+     *
+     * @return a vector of relevant entity ids
+     */
+    public Vector<Integer> getAirborneVTOL(Team team) {
+        // a vector of unit ids
+        Vector<Integer> units = new Vector<>();
+        for (Enumeration<Player> loop = team.getPlayers(); loop.hasMoreElements(); ) {
+            Player player = loop.nextElement();
+            units.addAll(player.getAirborneVTOL());
+        }
+        return units;
     }
 
     /**

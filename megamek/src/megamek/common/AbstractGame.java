@@ -46,6 +46,11 @@ public abstract class AbstractGame implements IGame {
     protected Forces forces = new Forces(this);
 
     @Override
+    public Forces getForces() {
+        return forces;
+    }
+
+    @Override
     public Player getPlayer(int id) {
         return players.get(id);
     }
@@ -54,22 +59,6 @@ public abstract class AbstractGame implements IGame {
     @Deprecated
     public Vector<Player> getPlayersVector() {
         return new Vector<>(players.values());
-    }
-
-    @Override
-    public List<Team> getTeamsList() {
-        return new ArrayList<>(teams);
-    }
-
-    @Override
-    @Deprecated
-    public Enumeration<Team> getTeams() {
-        return Collections.enumeration(teams);
-    }
-
-    @Override
-    public int getNoOfTeams() {
-        return teams.size();
     }
 
     @Override
@@ -89,8 +78,13 @@ public abstract class AbstractGame implements IGame {
     }
 
     @Override
-    public Forces getForces() {
-        return forces;
+    public List<Team> getTeams() {
+        return new ArrayList<>(teams);
+    }
+
+    @Override
+    public int getNoOfTeams() {
+        return teams.size();
     }
 
     @Override

@@ -69,8 +69,6 @@ public class Game extends AbstractGame implements Serializable {
      */
     private Vector<Entity> vOutOfGame = new Vector<>();
 
-//    private Vector<Team> teams = new Vector<>();
-
     private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
     /**
@@ -331,14 +329,6 @@ public class Game extends AbstractGame implements Serializable {
     }
 
     /**
-     * @return an immutable clone of the vector of teams. Each element is one of the teams in the
-     * game.
-     */
-    public List<Team> getTeamsVector() {
-        return Collections.unmodifiableList(teams);
-    }
-
-    /**
      * @return a player's team, which may be null if they do not have a team
      */
     public @Nullable Team getTeamForPlayer(Player p) {
@@ -366,8 +356,7 @@ public class Game extends AbstractGame implements Serializable {
 
         // Get all NO_TEAM players. If team_initiative is false, all
         // players are on their own teams for initiative purposes.
-        for (Enumeration<Player> i = getPlayers(); i.hasMoreElements(); ) {
-            final Player player = i.nextElement();
+        for (Player player : getPlayersList()) {
             // Ignore players not on a team
             if (player.getTeam() == Player.TEAM_UNASSIGNED) {
                 continue;
@@ -383,8 +372,7 @@ public class Game extends AbstractGame implements Serializable {
             // Now, go through all the teams, and add the appropriate player
             for (int t = Player.TEAM_NONE + 1; t < Player.TEAM_NAMES.length; t++) {
                 Team new_team = null;
-                for (Enumeration<Player> i = getPlayers(); i.hasMoreElements(); ) {
-                    final Player player = i.nextElement();
+                for (Player player : getPlayersList()) {
                     if (player.getTeam() == t) {
                         if (new_team == null) {
                             new_team = new Team(t);
@@ -400,7 +388,7 @@ public class Game extends AbstractGame implements Serializable {
         }
 
         // May need to copy state over from previous teams, such as initiative
-        if ((teams != null) && !getPhase().isLounge()) {
+        if (!getPhase().isLounge()) {
             for (Team newTeam : initTeams) {
                 for (Team oldTeam : teams) {
                     if (newTeam.equals(oldTeam)) {
@@ -1281,9 +1269,6 @@ public class Game extends AbstractGame implements Serializable {
         }
     }
 
-    /**
-     * @return int containing an unused entity id
-     */
     @Override
     public int getNextEntityId() {
         return lastEntityId + 1;

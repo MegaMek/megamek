@@ -31,9 +31,22 @@ import java.util.stream.Collectors;
  */
 public interface IGame {
 
+    @Nullable
+    GameTurn getTurn();
+
     GameOptions getOptions();
 
     GamePhase getPhase();
+
+    /**
+     * @return Whether there is an active claim for victory.
+     */
+    boolean isForceVictory();
+
+    /** @return The Forces present in this game. Can be empty, but not null. */
+    Forces getForces();
+
+    // PLAYERS //////////////
 
     /**
      * @param id a player id
@@ -70,15 +83,17 @@ public interface IGame {
     /** @return The current number of active players in the game. This includes observers but not ghosts. */
     int getNoOfPlayers();
 
-    /** @return an enumeration of the teams in the game. */
-    @Deprecated
-    Enumeration<Team> getTeams();
+    // TEAMS //////////////
 
     /** @return The teams in the game. Implementations should make sure that this list can be safely modified. */
-    List<Team> getTeamsList();
+    List<Team> getTeams();
 
     /** @return The number of teams in the game. */
     int getNoOfTeams();
+
+    void setupTeams();
+
+    // UNITS //////////////
 
     /** @return The next free id for InGameObjects (units and others). */
     int getNextEntityId();
@@ -90,19 +105,6 @@ public interface IGame {
     default int getEntitiesOwnedBy(Player player) {
         return (int) getInGameObjects().stream().filter(o -> o.getOwnerId() == player.getId()).count();
     }
-
-    @Nullable
-    GameTurn getTurn();
-
-    void setupTeams();
-
-    /**
-     * @return Whether there is an active claim for victory.
-     */
-    boolean isForceVictory();
-
-    /** @return The Forces present in this game. Can be empty, but not null. */
-    Forces getForces();
 
     /** @return The InGameObject associated with the given id, if there is one. */
     default Optional<InGameObject> getInGameObject(int id) {

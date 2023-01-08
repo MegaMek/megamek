@@ -196,7 +196,7 @@ public class TeamOverviewPanel extends JPanel {
         /** Updates the stored data from the provided game. */
         public void updateTable(Game game) {
             clearData();
-            for (Team team: game.getTeamsVector()) {
+            for (Team team: game.getTeams()) {
                 teams.add(team);
                 teamID.add(team.getId());
                 teamNames.add(team.toString());

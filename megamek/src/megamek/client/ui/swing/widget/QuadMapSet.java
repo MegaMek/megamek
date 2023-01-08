@@ -15,6 +15,7 @@
  */
 package megamek.client.ui.swing.widget;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
@@ -123,9 +124,9 @@ public class QuadMapSet implements DisplayMapSet {
 
     private Image heatImage;
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public QuadMapSet(JComponent c, UnitDisplay unitDisplay) {

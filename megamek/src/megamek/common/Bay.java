@@ -14,11 +14,11 @@
 */
 package megamek.common;
 
-import megamek.common.enums.GamePhase;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * Represents a volume of space set aside for carrying cargo of some sort
@@ -220,7 +220,7 @@ public class Bay implements Transporter, ITechnology {
         }
 
         currentSpace -= spaceForUnit(unit);
-        if ((unit.game.getPhase() != GamePhase.DEPLOYMENT) && (unit.game.getPhase() != GamePhase.LOUNGE)) {
+        if (!unit.getGame().getPhase().isDeployment() && !unit.getGame().getPhase().isLounge()) {
             loadedThisTurn += 1;
         }
 
@@ -239,17 +239,12 @@ public class Bay implements Transporter, ITechnology {
     @Override
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
-        Vector<Entity> loaded = new Vector<>();
-        for (int unit : troops) {
-            Entity entity = game.getEntity(unit);
-            
-            if (entity != null) {
-                loaded.add(game.getEntity(unit));
-            }
-        }
-        return loaded;
+        return troops.stream()
+                .map(unit -> game.getEntity(unit))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(Vector::new));
     }
-    
+
     /**
      * Generate a raw list of the Ids stored in troops. 
      * Used by MHQ in cases where we can't get the entities via Game

@@ -337,7 +337,7 @@ public class OptionsConstants {
     public static final String ADVANCED_TACOPS_GHOST_TARGET= "tacops_ghost_target";  
     public static final String ADVANCED_GHOST_TARGET_MAX= "ghost_target_max";  
     public static final String ADVANCED_TACOPS_DIG_IN= "tacops_dig_in";  
-    public static final String ADVANCED_TACOPS_BA_WEIGHT= "tacops_ba_weight";  
+    public static final String ADVANCED_TACOPS_BA_WEIGHT= "tacops_ba_weight";
     public static final String ADVANCED_TACOPS_TAKE_COVER= "tacops_take_cover";  
     public static final String ADVANCED_TACOPS_ANGEL_ECM= "tacops_angel_ecm";  
     public static final String ADVANCED_TACOPS_BATTLE_WRECK= "tacops_battle_wreck";  
@@ -442,7 +442,8 @@ public class OptionsConstants {
     public static final String ADVGRNDMOV_TACOPS_TAKING_DAMAGE= "tacops_taking_damage";  
     public static final String ADVGRNDMOV_TACOPS_LEG_DAMAGE= "tacops_leg_damage";  
     public static final String ADVGRNDMOV_TACOPS_WALK_BACKWARDS= "tacops_walk_backwards";  
-    public static final String ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE= "tacops_fast_infantry_move";  
+    public static final String ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE= "tacops_fast_infantry_move";
+    public static final String ADVANCED_TACOPS_INF_PAVE_BONUS= "tacops_inf_pave_bonus";
     public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT= "vehicle_lance_movement";  
     public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER= "vehicle_lance_movement_number";  
     public static final String ADVGRNDMOV_TURN_MODE = "vehicle_turn_mode";  

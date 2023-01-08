@@ -723,15 +723,12 @@ public class Infantry extends Entity {
     public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<>();
 
-        Report r = new Report(7025);
-        r.type = Report.PUBLIC;
+        Report r = new Report(7025, Report.PUBLIC);
         r.addDesc(this);
         vDesc.addElement(r);
 
-        r = new Report(7041);
-        r.type = Report.PUBLIC;
+        r = new Report(7041, Report.PUBLIC);
         r.add(getCrew().getGunnery());
-        r.newlines = 0;
         vDesc.addElement(r);
 
         r = new Report(7070, Report.PUBLIC);
@@ -1031,13 +1028,13 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleFor(GamePhase phase) {
-        if ((turnsLayingExplosives > 0) && (phase != GamePhase.PHYSICAL)) {
+        if ((turnsLayingExplosives > 0) && !phase.isPhysical()) {
             return false;
-        }
-        if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
+        } else if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             return false;
+        } else {
+            return super.isEligibleFor(phase);
         }
-        return super.isEligibleFor(phase);
     }
 
     @Override
@@ -1495,6 +1492,16 @@ public class Infantry extends Entity {
 
     public boolean isSquad() {
         return squadCount == 1;
+    }
+
+    @Override
+    public boolean isEligibleForPavementBonus() {
+        if ((game != null)
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS)) {
+            return movementMode == EntityMovementMode.TRACKED || movementMode == EntityMovementMode.WHEELED || movementMode == EntityMovementMode.INF_MOTORIZED || movementMode == EntityMovementMode.HOVER;
+        } else {
+            return false;
+        }
     }
 
     @Override

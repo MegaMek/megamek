@@ -1,0 +1,142 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Maxim Heavy Hover Transport
+</Name>
+
+<Model>
+(Escort)
+</Model>
+
+<mul id:>
+9312
+</mul id:>
+
+<year>
+3101
+</year>
+
+<originalBuildYear>
+3101
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+25
+23
+23
+16
+20
+</armor>
+
+<Body Equipment>
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+IS Ammo MG - Full
+IS Streak SRM 6 Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISMML5
+ISMML5
+</Front Equipment>
+
+<Right Equipment>
+ISSRM2IOS
+</Right Equipment>
+
+<Left Equipment>
+ISSRM2IOS
+</Left Equipment>
+
+<Rear Equipment>
+ISMML5
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+Machine Gun
+Machine Gun
+ISMGA
+ISStreakSRM6
+</Turret Equipment>
+
+<capabilities>
+The Maxim transport fulfilled an infantryman's dream. Its single infantry bay is configured to carry an entire foot platoon with enough space for them to check their weapons and move around comfortably.
+The seats are all padded and face the centre of the vehicle, allowing infantry to communicate with one another and boost morale. Unlike other craft, the crew of the Maxim can deflate the rear portion of the hover skirt when disembarking or mounting up. In a combat situation, the Maxim also performs admirably. With its short- and long-range missiles, the hovertank can provide cover fire in any direction for a debarking infantry platoon.
+</capabilities>
+
+<overview>
+While many infantry transports have been popular, none have reached the iconic status of the Maxim.
+</overview>
+
+<deployment>
+No Information on this variant
+</deployment>
+
+<history>
+Nobody anticipated how quickly the Maxim would become a success after it was designed and manufactured by Maxim Transport Industries, a start-up company on Al Na'ir led by a retired infantry general. The Maxim has spread to every corner of the Inner Sphere and is now considered the standard for troop transports. Many units rejoiced at the prospect of being able to transport their infantry platoons in a single vehicle rather than three or four separate vehicles. The company thrived and later opened plants on Skye and Sian, with plans to open plants on Atreus and Kathil once several more vehicles could be produced. While the Maxim was a huge success, many of MTI's other forays into the military market were abysmal failures, and the company barely survived. During the beginning of 3037, a massive scandal erupted throughout the company, effectively ending it. Accusations of inappropriate behaviour among coworkers, embezzlement, and rumours of bizarre hazing rituals led to the company's demise and dissolution. Sensing an opportunity, prominent corporations purchased nearby Maxim facilities at low rates, and in the case of the Sian facility, with armed force.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown Fuel Cell
+ARMOR:Unknown Ferro-Fibrous
+COMMUNICATIONS:Scarborough Talky-2
+TARGETING:Scarborough Tracky 1
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #26 - Late Republic
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -186,9 +186,13 @@ public class ClientDialog extends JDialog {
      * by {@link java.awt.Container#getComponent(int)}. 
      */
     public void guiScale() {
-        UIUtil.adjustDialog(getContentPane());
+        adaptToGUIScale();
         pack();
         center();
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this,  UIUtil.FONT_SCALE1);
     }
 
 }

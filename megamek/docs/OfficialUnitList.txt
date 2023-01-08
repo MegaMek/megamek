@@ -1221,7 +1221,7 @@ Lee (Aerospace Carrier)|
 Lee (Armor Carrier)|
 Lee (BattleMech Carrier)|
 Drone M-3|
-Model 96C ‚ÄúHowdah‚Äù SDS Command Ship|
+Model 96C ìHowdahî SDS Command Ship|
 Pueblo (2673)|
 Jumbo (Standard)|
 Polaris (Standard)|
@@ -2919,7 +2919,7 @@ Assault Commando Ebon Magistrate Shock Troops|
 Field Medic Magistracy Medical Corp|
 Foot Infantry Raventhir's Infantry Guard|
 Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard; Magistracy Cavaliers|
-Skaret Assassins J√†rnF√≤lk|
+Skaret Assassins J‡rnFÚlk|
 Ceremonial Guard Caesar's Royal Guard; Marion Hegemony|
 Pirate Lady Death's 'Pacification' Squads|
 Foot Ballistic Rifle Hastati V|
@@ -2984,6 +2984,24 @@ Mechanized Wheeled Platoon (Rifle AA)|
 Motorized Platoon (Rifle AA)|
 Foot Platoon (Flechette)|
 Motorized Platoon (Flechette)|
+Foot Platoon, Taurian (Flamer)|
+Foot Platoon, Taurian (Laser)|
+Foot Platoon, Taurian (LRM)|
+Foot Platoon, Taurian (MG)|
+Foot Platoon, Taurian (Rifle)|
+Foot Platoon, Taurian (SRM)|
+Jump Platoon, Taurian (Flamer)|
+Jump Platoon, Taurian (Laser)|
+Jump Platoon, Taurian (LRM)|
+Jump Platoon, Taurian (MG)|
+Jump Platoon, Taurian (Rifle)|
+Jump Platoon, Taurian (SRM)|
+Motorized Platoon, Taurian (Flamer)|
+Motorized Platoon, Taurian (Laser)|
+Motorized Platoon, Taurian (LRM)|
+Motorized Platoon, Taurian (MG)|
+Motorized Platoon, Taurian (Rifle)|
+Motorized Platoon, Taurian (SRM)|
 Field Gun Infantry Platoon (AC/10) (Standard)|
 Clan Foot Point (Anti-'Mech) (Flamer)|
 Clan Foot Point (Anti-'Mech) (Laser)|
@@ -4161,7 +4179,6 @@ Pouncer B|
 Pouncer C|
 Pouncer D|
 Pouncer E|
-Pouncer F|
 Pouncer H|
 Pouncer Prime|
 Prometheus (Standard)|
@@ -4295,7 +4312,6 @@ Cestus CTS-7A|
 Chameleon CLN-7V|
 Chameleon CLN-7W|
 Chameleon CLN-7Z|
-Chameleon TRC-4B|
 Crossbow A|
 Crossbow B|
 Crossbow C|
@@ -6533,6 +6549,17 @@ Atlas II AS7-DK-H|
 Flashman FLS-10E|
 Grand Dragon DRG-12K|
 Stalker STK-9F|
+Chameleon CLN-8V|
+Chameleon CLN-9V|
+Chameleon TRC-4B|
+Pouncer F|
+Pouncer G|
+Pouncer I|
+Pouncer T|
+Pouncer W|
+Pouncer X|
+Vindicator VND-7L|
+Wraith TR5|
 BattleMaster BLR-3M-DC|
 BattleMaster BLR-6C|
 BattleMaster BLR-6G|
@@ -6723,6 +6750,11 @@ Stealth STH-1D (Anna)|
 Thanatos TNS-4S (Felix)|
 Wolf Trap (Tora) WFT-1 (Daitama)|
 Templar III TLR2-J 'Arthur'|
+Hel HL-1|
+Hel HL-2|
+Tiburon 2|
+Toro TR-B-12|
+Toro TR-B-9|
 Centurion CN10-J|
 Centurion CN10-W|
 Gyrfalcon 5|
@@ -7624,10 +7656,6 @@ Challenger MBT X|
 Challenger MBT XI|
 Challenger MBT XII|
 Condor Heavy Hover Tank (Laser)|
-Demolisher Heavy Tank (Arrow IV)|
-Demolisher Heavy Tank (Clan)|
-Demolisher Heavy Tank (Gauss)|
-Demolisher Heavy Tank (MRM)|
 Drillson Heavy Hover Tank (ERLL)|
 Drillson Heavy Hover Tank (Streak)|
 Fulcrum Heavy Hovertank II|
@@ -8159,7 +8187,7 @@ Zibler Fast Strike Tank (D)|
 Zibler Fast Strike Tank (Prime)|
 Cizin Hover Tank (Standard)|
 Cizin Hover Tank (Support)|
-Kamakiri Attack VTOL (Gauss)|
+Kamakiri Attack VTOL (Gauss) 'Shi Kamakiri'|
 Kamakiri Attack VTOL (Standard)|
 Mamono IFV (Standard)|
 Narukami Heavy Tank NK-1C|
@@ -8359,6 +8387,17 @@ Sleipnir APC Tank (SRM)|
 Sleipnir APC Tank (Standard)|
 Vargr APC Tank (LRM)|
 Vargr APC Tank (Standard)|
+Bulldog Medium Tank (Chemical)|
+Bulldog Medium Tank (ERLL)|
+Bulldog Medium Tank (LB-X)|
+Bulldog Medium Tank (Plasma)|
+Demolisher Heavy Tank (Arrow IV)|
+Demolisher Heavy Tank (Cell)|
+Demolisher Heavy Tank (Clan)|
+Demolisher Heavy Tank (Gauss)|
+Demolisher Heavy Tank (MRM)|
+Demolisher Heavy Tank (Reinforced)|
+Pegasus Scout Hover Tank (Upgrade)|
 Hoverbike (Laser)|
 Hoverbike (MG)|
 Hoverbike|
@@ -8622,7 +8661,7 @@ Hwacha Urban Combat Vehicle HW1|
 Nike Air Defense Platform (Standard)|
 White Tip Submarine (Standard)|
 Centipede Scout Car Commando|
-Demolisher Heavy Tank II-X|
+Demolisher II Heavy Tank II-X|
 Rommel Tank (Howitzer) Prototype|
 Buffalo Drone Bomb (Standard)|
 Condor Heavy Hover Tank (Fission)|

@@ -25,7 +25,6 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.*;
@@ -36,7 +35,6 @@ import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.AbstractOptions;
@@ -79,7 +77,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_NON_VECTORED = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO;
     public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED;
-    private TurnTimer tt;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be carried out during the
@@ -940,8 +937,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
         }
         selectEntity(clientgui.getClient().getFirstEntityNum());
-        // check if there should be a turn timer running
-        tt = TurnTimer.init(this, clientgui.getClient());
+
+        startTimer();
     }
 
     /**
@@ -950,11 +947,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private synchronized void endMyTurn() {
         final Entity ce = ce();
 
-        // get rid of still running timer, if turn is concluded before time is up
-        if (tt != null) {
-            tt.stopTimer();
-            tt = null;
-        }
+        stopTimer();
 
         // end my turn, then.
         disableButtons();
@@ -4075,6 +4068,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
+    private void setStatusBarTextOthersTurn(@Nullable Player player) {
+        String playerName = (player != null) ? player.getName() : "Unknown";
+        setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName));
+    }
+
     //
     // GameListener
     //
@@ -4096,10 +4094,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // if all our entities are actually done, don't start up the turn.
         if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
                 .stream().allMatch(Entity::isDone)) {
+            setStatusBarTextOthersTurn(e.getPlayer());
             return;
         }
 
-        if (clientgui.getClient().getGame().getPhase() != GamePhase.MOVEMENT) {
+        if (!clientgui.getClient().getGame().getPhase().isMovement()) {
             // ignore
             return;
         }
@@ -4117,13 +4116,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     && (clientgui.getClient().getGame().getTurn() instanceof UnloadStrandedTurn)) {
                 setStatusBarText(Messages.getString("MovementDisplay.waitForAnother"));
             } else {
-                String playerName;
-                if (e.getPlayer() != null) {
-                    playerName = e.getPlayer().getName();
-                } else {
-                    playerName = "Unknown";
-                }
-                setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName));
+                setStatusBarTextOthersTurn(e.getPlayer());
             }
         }
     }

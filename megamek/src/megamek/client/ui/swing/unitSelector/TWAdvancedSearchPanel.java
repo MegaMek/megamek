@@ -19,8 +19,10 @@
  */
 package megamek.client.ui.swing.unitSelector;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 
 import javax.swing.*;
@@ -221,8 +223,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
 
         // Set up Weapon Class table
-        scrTableWeaponType.setMinimumSize(new Dimension(850, 150));
-        scrTableWeaponType.setPreferredSize(new Dimension(850, 150));
         weaponTypesModel = new WeaponClassTableModel();
         tblWeaponType = new MegamekTable(weaponTypesModel,WeaponClassTableModel.COL_NAME);
         TableColumn wpsTypeCol = tblWeaponType.getColumnModel().getColumn(WeaponClassTableModel.COL_QTY);
@@ -231,22 +231,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponTypesSorter = new TableRowSorter<>(weaponTypesModel);
         tblWeaponType.setRowSorter(weaponTypesSorter);
         tblWeaponType.addKeyListener(this);
-        for (int i = 0; i < WeaponClassTableModel.N_COL; i++) {
-            TableColumn column = tblWeaponType.getColumnModel().getColumn(i);
-            if ((i == WeaponClassTableModel.COL_QTY)) {
-                column.setPreferredWidth(40);
-            } else {
-                column.setPreferredWidth(310);
-            }
-        }
-        tblWeaponType.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeaponType.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeaponType.getSelectionModel().addListSelectionListener(this);
+        for (int i = 0; i < weaponTypesModel.getColumnCount(); i++) {
+            tblWeaponType.getColumnModel().getColumn(i).setPreferredWidth(weaponTypesModel.getPreferredWidth(i));
+        }
         scrTableWeaponType.setViewportView(tblWeaponType);
 
-
         // Setup Weapons Table
-        scrTableWeapons.setMinimumSize(new Dimension(850, 150));
-        scrTableWeapons.setPreferredSize(new Dimension(850, 150));
         weaponsModel = new WeaponsTableModel();
         tblWeapons = new MegamekTable(weaponsModel, WeaponsTableModel.COL_NAME);
         TableColumn wpsCol = tblWeapons.getColumnModel().getColumn(
@@ -256,27 +248,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponsSorter = new TableRowSorter<>(weaponsModel);
         tblWeapons.setRowSorter(weaponsSorter);
         tblWeapons.addKeyListener(this);
-        for (int i = 0; i < WeaponsTableModel.N_COL; i++) {
-            TableColumn column = tblWeapons.getColumnModel().getColumn(i);
-            if (i == WeaponsTableModel.COL_QTY) {
-                column.setPreferredWidth(40);
-            } else if (i == WeaponsTableModel.COL_IS_CLAN) {
-                column.setPreferredWidth(75);
-            } else if (i == WeaponsTableModel.COL_NAME) {
-                column.setPreferredWidth(310);
-            } else if (i == WeaponsTableModel.COL_LEVEL) {
-                column.setPreferredWidth(100);
-            } else {
-                column.setPreferredWidth(50);
-            }
-        }
-        tblWeapons.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblWeapons.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblWeapons.getSelectionModel().addListSelectionListener(this);
+        for (int i = 0; i < weaponsModel.getColumnCount(); i++) {
+            tblWeapons.getColumnModel().getColumn(i).setPreferredWidth(weaponsModel.getPreferredWidth(i));
+        }
         scrTableWeapons.setViewportView(tblWeapons);
 
         // Setup Equipment Table
-        scrTableEquipment.setMinimumSize(new java.awt.Dimension(850, 150));
-        scrTableEquipment.setPreferredSize(new java.awt.Dimension(850, 150));
         equipmentModel = new EquipmentTableModel();
         tblEquipment = new MegamekTable(equipmentModel,
                 EquipmentTableModel.COL_NAME);
@@ -287,22 +266,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         equipmentSorter = new TableRowSorter<>(equipmentModel);
         tblEquipment.setRowSorter(equipmentSorter);
         tblEquipment.addKeyListener(this);
-        for (int i = 0; i < EquipmentTableModel.N_COL; i++) {
-            TableColumn column = tblEquipment.getColumnModel().getColumn(i);
-            if (i == EquipmentTableModel.COL_NAME) {
-                column.setPreferredWidth(400);
-            } else if (i == EquipmentTableModel.COL_COST) {
-                column.setPreferredWidth(175);
-            } else if (i == EquipmentTableModel.COL_LEVEL) {
-                column.setPreferredWidth(100);
-            } else if (i == EquipmentTableModel.COL_QTY) {
-                column.setPreferredWidth(40);
-            } else {
-                column.setPreferredWidth(75);
-            }
-        }
-        tblEquipment.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tblEquipment.setFont(new Font(MMConstants.FONT_MONOSPACED, Font.PLAIN, 12));
         tblEquipment.getSelectionModel().addListSelectionListener(this);
+        for (int i = 0; i < equipmentModel.getColumnCount(); i++) {
+            tblEquipment.getColumnModel().getColumn(i).setPreferredWidth(equipmentModel.getPreferredWidth(i));
+        }
         scrTableEquipment.setViewportView(tblEquipment);
 
         // Populate Tables
@@ -328,18 +296,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
-        Dimension size = new Dimension(325, 50);
-        txtEqExp.setPreferredSize(size);
-        expScroller.setPreferredSize(size);
-        expScroller.setMaximumSize(size);
 
         // Layout
         GridBagConstraints c = new GridBagConstraints();
         setLayout(new GridBagLayout());
 
+        c.weighty = 0;
+        c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(0, 0, 0, 0);
-
         c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
         this.add(lblWalk, c);
@@ -352,15 +316,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(panWalk, c);
         c.gridx = 3; c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
-        c.weighty = 1;
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel();
         cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
         this.add(cockpitPanel, c);
-        c.insets = new Insets(0, 0, 0, 0);
-        c.weighty = 0;
 
         c.gridx = 0; c.gridy = 1;
         c.anchor = GridBagConstraints.WEST;
@@ -375,15 +336,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(panJump, c);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
-        c.weighty = 1;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
         internalsPanel.add(cboInternalsType,BorderLayout.EAST);
         this.add(internalsPanel, c);
-        c.weighty = 0;
-        c.insets = new Insets(0, 0, 0, 0);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
@@ -393,17 +351,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 1;
         this.add(cArmor, c);
         c.gridx = 3;
-        c.weighty = 1;
         c.insets = new Insets(0, 40, 0, 0);
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);
         armorPanel.add(cboArmorType,BorderLayout.EAST);
         this.add(armorPanel, c);
-        c.weighty = 0;
 
         c.anchor = GridBagConstraints.CENTER;
-
         c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblTableFilters, c);
@@ -424,34 +379,37 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 0; c.gridy++;
         this.add(lblWeaponClass, c);
 
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridwidth = 4;
+        c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeaponType, c);
         c.gridwidth = 1;
 
+        c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblWeapons, c);
 
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridwidth = 4;
+        c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeapons, c);
-        c.gridwidth = 1;
 
+        c.fill = GridBagConstraints.NONE;
         c.gridwidth = 1;
         c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
         this.add(lblEquipment, c);
 
-
+        c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 0, 0, 0);
-        c.gridwidth = 4;
+        c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableEquipment, c);
-        c.gridwidth = 1;
 
+        c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
         JPanel btnPanel = new JPanel();
@@ -468,9 +426,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         // Filter Expression
         c.gridx = 0; c.gridy++;
         this.add(lblEqExpTxt, c);
-        c.fill = GridBagConstraints.BOTH;
         c.gridwidth = 4;
         c.gridx = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
         this.add(expScroller, c);
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
@@ -977,6 +935,17 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             return N_COL;
         }
 
+        public int getPreferredWidth(int col) {
+            switch (col) {
+                case COL_QTY:
+                    return 40;
+                case COL_NAME:
+                    return 310;
+                default:
+                    return 0;
+            }
+        }
+
         @Override
         public String getColumnName(int column) {
             switch (column) {
@@ -1078,6 +1047,31 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         @Override
         public int getColumnCount() {
             return N_COL;
+        }
+
+        public int getPreferredWidth(int col) {
+            switch (col) {
+                case COL_QTY:
+                    return 40;
+                case COL_NAME:
+                    return 310;
+                case COL_IS_CLAN:
+                    return 75;
+                case COL_DMG:
+                    return 50;
+                case COL_HEAT:
+                    return 50;
+                case COL_SHORT:
+                    return 50;
+                case COL_MED:
+                    return 50;
+                case COL_LONG:
+                    return 50;
+                case COL_LEVEL:
+                    return 100;
+                default:
+                    return 0;
+            }
         }
 
         @Override
@@ -1205,6 +1199,23 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         @Override
         public int getColumnCount() {
             return N_COL;
+        }
+
+        public int getPreferredWidth(int col) {
+            switch (col) {
+                case COL_QTY:
+                    return 40;
+                case COL_NAME:
+                    return 400;
+                case COL_IS_CLAN:
+                    return 75;
+                case COL_COST:
+                    return 175;
+                case COL_LEVEL:
+                    return 100;
+                default:
+                    return 0;
+            }
         }
 
         @Override
@@ -1579,4 +1590,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
     }
 
+    public void adaptToGUIScale() {
+        scrTableWeaponType.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+        scrTableWeaponType.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(350)));
+        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(350)));
+        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+    }
 }

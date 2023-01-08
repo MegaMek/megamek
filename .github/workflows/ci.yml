@@ -24,7 +24,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ] # For CI/CD running on *nix is sufficient
         java-distribution: [ temurin ]
-        java-version: [ 11 ]
+        java-version: [ 11, 17 ]
       fail-fast: false
 
     steps:

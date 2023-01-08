@@ -18,6 +18,7 @@ package megamek.client.ui.swing;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
 import org.apache.logging.log4j.LogManager;
@@ -93,6 +94,7 @@ public class CommonAboutDialog extends JDialog {
         JButton butClose = new ButtonEsc(new CloseAction(this));
 
         // Assemble all
+        setLayout(new BorderLayout());
         JPanel middlePanel = new JPanel();
         middlePanel.setLayout(new BoxLayout(middlePanel, BoxLayout.Y_AXIS));
         add(panTitle, BorderLayout.PAGE_START);
@@ -102,9 +104,15 @@ public class CommonAboutDialog extends JDialog {
         add(middlePanel, BorderLayout.CENTER);
         add(butClose, BorderLayout.PAGE_END);
 
+        adaptToGUIScale();
+
         // Place in the middle of the screen
         pack();
         setLocationRelativeTo(parentFrame);
         setResizable(false);
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
     }
 }

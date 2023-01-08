@@ -57,9 +57,6 @@ public class ASLocationMapper {
     public static double damageLocationMultiplier(Entity en, int loc, Mounted mount) {
         if (locationName(en, loc).startsWith("TUR") && (en instanceof Mech) && mount.isMechTurretMounted()) {
             return 1;
-        } else if (locationName(en, loc).startsWith("TUR") && (en instanceof Tank)
-                && (mount.isPintleTurretMounted() || mount.isSponsonTurretMounted())) {
-            return 1;
         } else if (en instanceof Warship) {
             return getWarShipLocationMultiplier(loc, mount.getLocation());
         } else if (en instanceof Jumpship) {
@@ -81,7 +78,8 @@ public class ASLocationMapper {
             // Don't count squad support weapons, these are handled separately
             return ((mount.getLocation() <= 1) && !mount.isSquadSupportWeapon()) ? 1 : 0;
         } else if (en instanceof Infantry) {
-            return (loc == mount.getLocation()) ? 1 : 0;
+            // CI only ever have loc == 0 (no TUR, REAR, arcs); do not count standard weapons when it has field guns
+            return (!((Infantry) en).hasFieldWeapon() || (mount.getLocation() == Infantry.LOC_FIELD_GUNS)) ? 1 : 0;
         } else if (en instanceof TripodMech) {
             return getTripodMekLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
         } else if (en instanceof QuadVee) {
@@ -164,11 +162,9 @@ public class ASLocationMapper {
             case 0:
                 if (location == Jumpship.LOC_NOSE) {
                     return 1;
-                } else  if (en.isSpheroid() && (location == Jumpship.LOC_FLS || location == Jumpship.LOC_FRS)
-                        && !rearMounted) {
-                    return 0.5;
+                } else {
+                    return (location == Jumpship.LOC_FLS || location == Jumpship.LOC_FRS) ? 0.5 : 0;
                 }
-                break;
             case 1:
                 return (location == Jumpship.LOC_FLS || location == Jumpship.LOC_ALS) ? 0.5 : 0;
             case 2:

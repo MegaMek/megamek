@@ -132,7 +132,7 @@ public class ConfigurableASCardPanel extends JPanel {
     private void updateFont() {
         String selectedItem = (String) fontChooser.getSelectedItem();
         if ((selectedItem == null) || selectedItem.isBlank()) {
-            cardPanel.setCardFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
+            cardPanel.setCardFont(new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 14));
         } else {
             cardPanel.setCardFont(Font.decode(selectedItem));
             GUIPreferences.getInstance().setAsCardFont(selectedItem);

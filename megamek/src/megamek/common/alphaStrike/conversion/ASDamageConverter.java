@@ -54,7 +54,7 @@ public class ASDamageConverter {
     protected int rearLocation;
     protected int turretLocation;
 
-    private final Map<WeaponType, Boolean> ammoForWeapon = new HashMap<>();
+    private final Map<WeaponType, Double> ammoModifier = new HashMap<>();
     protected final boolean hasTargetingComputer;
     protected List<Mounted> weaponsList;
     protected double rawSDamage;
@@ -163,6 +163,7 @@ public class ASDamageConverter {
             processSpecialDamage(IATM, turretLocation);
             processSpecialDamage(TOR, turretLocation);
             processSpecialDamage(REL, turretLocation);
+            processHT(turretLocation);
         }
     }
 
@@ -357,7 +358,7 @@ public class ASDamageConverter {
 
     protected double getDamageMultiplier(Mounted weapon, WeaponType weaponType) {
         // Low ammo count
-        double damageModifier = ammoForWeapon.getOrDefault(weaponType, true) ? 1 : 0.75;
+        double damageModifier = ammoModifier.getOrDefault(weaponType, 1d);
 
         // Oneshot or Fusillade
         if (weaponType.hasFlag(WeaponType.F_ONESHOT) && !(weaponType instanceof CLFussilade)) {
@@ -408,7 +409,14 @@ public class ASDamageConverter {
                     || weaponType.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
                 divisor = 2;
             }
-            ammoForWeapon.put(weaponType, ammoCount / weaponCount.get(weaponType) >= 10 * divisor);
+
+            if (ammoCount / weaponCount.get(weaponType) >= 10 * divisor) {
+                ammoModifier.put(weaponType, 1d);
+            } else if (ammoCount > 0) {
+                ammoModifier.put(weaponType, 0.75);
+            } else {
+                ammoModifier.put(weaponType, 0d);
+            }
         }
     }
 
@@ -529,24 +537,29 @@ public class ASDamageConverter {
 
     /** Determines if the element has the HT ability and what the value is. Overridden for CI. */
     protected void processHT() {
+        processHT(0);
+    }
+
+    /** Determines if the element has the HT ability and what the value is. Overridden for CI. */
+    protected void processHT(int location) {
         report.startTentativeSection();
         report.addEmptyLine();
         report.addLine("--- Heat Damage (HT):", "");
-        int[] heatDamageValues = assembleHeatDamage();
+        int[] heatDamageValues = assembleHeatDamage(location);
         if (heatDamageValues[0] + heatDamageValues[1] + heatDamageValues[2] > 0) {
-            determineFinalHT(heatDamageValues);
+            determineFinalHT(heatDamageValues, location);
             report.endTentativeSection();
         } else {
             report.discardTentativeSection();
         }
     }
 
-    protected int[] assembleHeatDamage() {
+    protected int[] assembleHeatDamage(int location) {
         int totalHeatS = 0;
         int totalHeatM = 0;
         int totalHeatL = 0;
         for (Mounted weapon : weaponsList) {
-            double locationMultiplier = ASLocationMapper.damageLocationMultiplier(entity, 0, weapon);
+            double locationMultiplier = ASLocationMapper.damageLocationMultiplier(entity, location, weapon);
             WeaponType weaponType = (WeaponType) weapon.getType();
             int heatS = weaponType.getAlphaStrikeHeatDamage(RANGE_BAND_SHORT);
             int heatM = weaponType.getAlphaStrikeHeatDamage(RANGE_BAND_MEDIUM);
@@ -564,13 +577,13 @@ public class ASDamageConverter {
         return new int[] {totalHeatS, totalHeatM, totalHeatL};
     }
 
-    protected void determineFinalHT(int[] heatDamageValues) {
+    protected void determineFinalHT(int[] heatDamageValues, int location) {
         int htS = resultingHTValue(heatDamageValues[0]);
         int htM = resultingHTValue(heatDamageValues[1]);
         int htL = resultingHTValue(heatDamageValues[2]);
         if (htS + htM + htL > 0) {
             ASDamageVector finalHtValue = ASDamageVector.createNormRndDmg(htS, htM, htL);
-            locations[0].setSUA(HT, finalHtValue);
+            locations[location].setSUA(HT, finalHtValue);
             report.addLine("Final Ability", "", "HT" + finalHtValue);
         } else {
             report.addLine("Final Ability", "No HT", "");
@@ -719,9 +732,11 @@ public class ASDamageConverter {
      * Only used for the damage specials LRM, SRM, TOR, IATM, AC, FLK
      */
     protected static boolean qualifiesForSpecial(double[] damage, BattleForceSUA dmgType) {
-        if (dmgType.isAnyOf(FLK, TOR, IF, REAR, TUR, MSL, CAP, SCAP, STD, PNT)
+        if (dmgType.isAnyOf(FLK, TOR, REAR, TUR, MSL, CAP, SCAP, STD, PNT)
                 && damage[0] + damage[1] + damage[2] + damage[3] > 0) {
             return true;
+        } else if (dmgType == IF) {
+            return damage[2] > 0;
         } else {
             return roundUpToTenth(damage[1]) >= 1;
         }

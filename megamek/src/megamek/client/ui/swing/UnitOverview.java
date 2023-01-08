@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing;
 
+import megamek.MMConstants;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
@@ -35,7 +36,7 @@ public class UnitOverview implements IDisplayable {
      */
     public static final int ICON_NAME_MAX_LENGTH = 52;
 
-    private static final Font FONT = new Font("SansSerif", Font.PLAIN, 10);
+    private static final Font FONT = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
     private static final int DIST_TOP = 5;
     private static final int DIST_SIDE = 5;
     private static final int ICON_WIDTH = 56;

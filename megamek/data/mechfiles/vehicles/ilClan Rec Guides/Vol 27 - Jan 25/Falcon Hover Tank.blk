@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Falcon Hover Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<mul id:>
+4154
+</mul id:>
+
+<year>
+3023
+</year>
+
+<originalBuildYear>
+3023
+</originalBuildYear>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+cargobay:0.5:1:1
+</transporters>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+24
+16
+16
+16
+16
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-6
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+SRM 6
+SRM 6
+Medium Laser
+</Turret Equipment>
+
+<manufacturer>
+Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Richvale
+</primaryFactory>
+
+<systemManufacturers>
+ARMOR:ProtecTech Light
+COMMUNICATIONS:Basix 200
+TARGETING:OptiSight-12
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #27 - Jihad
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

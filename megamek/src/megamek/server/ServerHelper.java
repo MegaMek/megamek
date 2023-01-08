@@ -96,6 +96,9 @@ public class ServerHelper {
             vPhaseReport.add(r);
         }
 
+        // Add or subtract heat due to extreme temperatures TO:AR p60
+        adjustHeatExtremeTemp(game, entity, vPhaseReport);
+
         // Combat computers help manage heat
         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
             int reduce = Math.min(entity.heatBuildup, 4);
@@ -398,7 +401,45 @@ public class ServerHelper {
             vPhaseReport.addAll(s.destroyEntity(entity, "pilot death", true));
         }
     }
-    
+
+	public static void adjustHeatExtremeTemp(Game game, Entity entity, Vector<Report> vPhaseReport) {
+        Report r;
+        int tempDiff = game.getPlanetaryConditions().getTemperatureDifference(50, -30);
+        boolean heatArmor = false;
+        boolean laserHS = false;
+
+        if (entity instanceof Mech) {
+            laserHS = ((Mech) entity).hasLaserHeatSinks();
+            heatArmor = ((Mech) entity).hasIntactHeatDissipatingArmor();
+        }
+
+        if (game.getBoard().inSpace() || (tempDiff == 0) || laserHS) {
+            return;
+        } else {
+            if (game.getPlanetaryConditions().getTemperature() > 50) {
+                int heatToAdd = tempDiff;
+                if (heatArmor) {
+                    heatToAdd /= 2;
+                }
+                entity.heatFromExternal += heatToAdd;
+                r = new Report(5020);
+                r.subject = entity.getId();
+                r.add(heatToAdd);
+                vPhaseReport.add(r);
+                if (heatArmor) {
+                    r = new Report(5550);
+                    vPhaseReport.add(r);
+                }
+            } else {
+                entity.heatFromExternal -= tempDiff;
+                r = new Report(5025);
+                r.subject = entity.getId();
+                r.add(tempDiff);
+                vPhaseReport.add(r);
+            }
+        }
+    }
+
     /**
      * Helper function that causes an entity to sink to the bottom of the water
      * hex it's currently in.
@@ -445,9 +486,21 @@ public class ServerHelper {
                 hex.addTerrain(new Terrain(Terrains.MAGMA, 2));
                 gameManager.sendChangedHex(curPos);
                 for (Entity en : entity.getGame().getEntitiesVector(curPos)) {
-                    gameManager.doMagmaDamage(en, false);
+                    if (en != entity) {
+                        gameManager.doMagmaDamage(en, false);
+                    }
                 }
             }
+        }
+    }
+
+    /**
+     * Check for movement into magma hex and apply damage.
+     */
+    public static void checkEnteringMagma(Hex hex, int elevation, Entity entity, GameManager gameManager) {
+
+        if ((hex.terrainLevel(Terrains.MAGMA) == 2) && (elevation == 0) && (entity.getMovementMode() != EntityMovementMode.HOVER)) {
+            gameManager.doMagmaDamage(entity, false);
         }
     }
 
@@ -642,6 +695,30 @@ public class ServerHelper {
                 entity.setBloodStalkerTarget(Entity.BLOOD_STALKER_TARGET_CLEARED);
                 gameManager.entityUpdate(entity.getId());
             }
+        }
+    }
+
+    /**
+     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds
+     * of consecutive use, IO p.89. The first round of use means consecutiveRounds = 1; this is
+     * the minimum as 0 rounds of use would not trigger a roll.
+     * @param consecutiveRounds The rounds the RHS has been used
+     * @return The roll target number to avoid failure
+     */
+    public static int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
+        switch (consecutiveRounds) {
+            case 1:
+                return 3;
+            case 2:
+                return 5;
+            case 3:
+                return 7;
+            case 4:
+                return 10;
+            case 5:
+                return 11;
+            default:
+                return TargetRoll.AUTOMATIC_FAIL;
         }
     }
 }

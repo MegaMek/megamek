@@ -1,23 +1,22 @@
 /*
  * MegaMek - Copyright (C) 2020 - The MegaMek Team
  *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
  *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ * for more details.
  */
-
 package megamek.client.ui.swing.boardview;
 
-import java.awt.Font;
-import java.awt.Rectangle;
-
+import megamek.MMConstants;
 import megamek.common.Entity;
+
+import java.awt.*;
 
 /**
  * Sprite for an wreck. Consists of an image, drawn from the Tile Manager
@@ -31,15 +30,14 @@ class WreckSprite extends AbstractWreckSprite {
 
         String shortName = entity.getShortName();
 
-        Font font = new Font("SansSerif", Font.PLAIN, 10);
-        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
-                shortName) + 1, bv.getFontMetrics(font).getAscent());
+        Font font = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 10);
+        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(shortName) + 1,
+                bv.getFontMetrics(font).getAscent());
         Rectangle tempBounds = new Rectangle(bv.hex_size).union(modelRect);
         if (secondaryPos == -1) {
             tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
         } else {
-            tempBounds.setLocation(bv.getHexLocation(entity
-                    .getSecondaryPositions().get(secondaryPos)));
+            tempBounds.setLocation(bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos)));
         }
 
         bounds = tempBounds;

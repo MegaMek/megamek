@@ -440,8 +440,10 @@ public class Terrain implements Serializable {
                     }
                     return 1;
                 }
-                if ((moveMode == EntityMovementMode.WHEELED) || (moveMode == EntityMovementMode.INF_JUMP)
-                        || (moveMode == EntityMovementMode.INF_LEG) || (moveMode == EntityMovementMode.INF_MOTORIZED)) {
+                if ((moveMode == EntityMovementMode.WHEELED) || (e.isConventionalInfantry() &&
+                        ((moveMode == EntityMovementMode.INF_JUMP)
+                          || (moveMode == EntityMovementMode.INF_LEG)
+                          || (moveMode == EntityMovementMode.INF_MOTORIZED)))) {
                     return 1;
                 }
                 return 0;

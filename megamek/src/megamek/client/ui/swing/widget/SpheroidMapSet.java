@@ -14,23 +14,15 @@
  */
 package megamek.client.ui.swing.widget;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.awt.Polygon;
-import java.util.Vector;
-
-import javax.swing.JComponent;
-
+import megamek.MMConstants;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
-import megamek.common.Aero;
-import megamek.common.Configuration;
-import megamek.common.Dropship;
-import megamek.common.Entity;
-import megamek.common.SmallCraft;
+import megamek.common.*;
 import megamek.common.util.fileUtils.MegaMekFile;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Vector;
 
 /**
  * Class which keeps set of all areas required to 
@@ -66,9 +58,9 @@ public class SpheroidMapSet implements DisplayMapSet{
     private Polygon aftArmor = new Polygon (new int[] { 0, 20, 80, 100 },
             new int[] { 150, 200, 200, 150 }, 4);
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public SpheroidMapSet(JComponent c, UnitDisplay unitDisplay) {

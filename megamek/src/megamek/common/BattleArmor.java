@@ -589,19 +589,25 @@ public class BattleArmor extends Infantry {
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, AimingMode aimingMode,
                                    int cover) {
+        return rollHitLocation(side, aimedLocation, aimingMode, false);
+    }
 
+    /**
+     * Battle Armor units can only get hit in undestroyed troopers.
+     *
+     * @param isAttackingConvInfantry Set to true when attacked by CI, as these cannot score TacOps crits
+     */
+    public HitData rollHitLocation(int side, int aimedLocation, AimingMode aimingMode,
+                                   boolean isAttackingConvInfantry) {
         // If this squad was killed, target trooper 1 (just because).
         if (isDoomed()) {
             return new HitData(1);
         }
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-
             int roll = Compute.d6(2);
-
             if ((5 < roll) && (roll < 9)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                        true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
 
@@ -612,8 +618,7 @@ public class BattleArmor extends Infantry {
         // Remember that there's one more location than the number of troopers.
         // In http://forums.classicbattletech.com/index.php/topic,43203.0.html,
         // "previously destroyed includes the current phase" for rolling hits on
-        // a squad,
-        // modifying previous ruling in the AskThePM FAQ.
+        // a squad, modifying previous ruling in the AskThePM FAQ.
         while ((loc >= locations())
                 || (IArmorState.ARMOR_NA == this.getInternal(loc))
                 || (IArmorState.ARMOR_DESTROYED == this.getInternal(loc))
@@ -621,16 +626,13 @@ public class BattleArmor extends Infantry {
             loc = Compute.d6();
         }
 
-        int critLocation = Compute.d6();
-        // TacOps p. 108 Trooper takes a crit if a second roll is the same
-        // location as the first.
+        // TO:AR p.108: Trooper takes a crit if a second roll is the same location as the first.
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS)
-                && (loc == critLocation)) {
+                && (loc == Compute.d6()) && !isAttackingConvInfantry) {
             return new HitData(loc, false, HitData.EFFECT_CRITICAL);
         }
         // Hit that trooper.
         return new HitData(loc);
-
     }
 
     @Override
@@ -1046,6 +1048,12 @@ public class BattleArmor extends Infantry {
      */
     public int getLongStealthMod() {
         return longStealthMod;
+    }
+
+    // Only for ground vehicles and certain infantry
+    @Override
+    public boolean isEligibleForPavementBonus() {
+        return false;
     }
 
     /**

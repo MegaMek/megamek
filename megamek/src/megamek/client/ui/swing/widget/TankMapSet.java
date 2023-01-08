@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing.widget;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
@@ -84,9 +85,9 @@ public class TankMapSet implements DisplayMapSet {
             new int[] { 39, 39, 54, 74, 89, 89 }, new int[] { 139, 160, 187,
                     187, 160, 139 }, 6);
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_LABEL = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize"));
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN,
+    private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
             GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize"));
 
     public TankMapSet(JComponent c, UnitDisplay unitDisplay) {

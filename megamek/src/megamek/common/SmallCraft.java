@@ -904,4 +904,9 @@ public class SmallCraft extends Aero {
     public boolean isLargeAerospace() {
         return true;
     }
+
+    @Override
+    public int getLandingLength() {
+        return 8;
+    }
 }

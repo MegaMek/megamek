@@ -19,7 +19,6 @@
 package megamek.common.enums;
 
 import megamek.MegaMek;
-import megamek.common.util.EncodeControl;
 
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -44,7 +43,7 @@ public enum BasementType {
     //region Constructors
     BasementType(final String name, final int depth) {
         final ResourceBundle resources = ResourceBundle.getBundle("megamek.common.messages",
-                MegaMek.getMMOptions().getLocale(), new EncodeControl());
+                MegaMek.getMMOptions().getLocale());
         this.name = resources.getString(name);
         this.depth = depth;
     }

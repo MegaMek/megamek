@@ -1,7 +1,22 @@
 VERSION HISTORY:
 ----------------
-0.49.11-SNAPSHOT
-+ Issue #3776 - Add 0 as a selectable weapon/equipment quantity in advanced search
+0.49.12-SNAPSHOT
++ PR #4062: Add OS Thunderbolts
++ Issue #2652: TacOps BA crits
++ Issue #2945: RHS failure chance errata
++ PRs/Issues #4070, #4069, #4065, #4067, #4073: Alpha Strike conversion corrections (see Issue #3961)
++ Issue #4028: Update altitude bomb scatter handling to current errata (by MoF); 
+               BA micro bomb attacks now use gunnery and only scatter one space per TW p228
++ PR #4077: Fix SmallCraft and DropShip landing lengths
++ Data: Rec Guide 27 and other unit fixes.
++ Issue #4066: Incorrect item size on BA AP Gauss Rifle
++ PR #4087: Alpha Strike damage conversion will now ignore ammo weapons that lack ammo
++ PR #4084: Java 17: Manifest File Add-Opens
++ Issue #4088: Improved Autocannon/2 on ASF is listed as doing 20/0/0 damage
++ Updating XStream to 1.4.19 from 1.4.14
+ 
+0.49.11 (2022-12-22 1500 UTC)
++ Issue #3776: Add 0 as a selectable weapon/equipment quantity in advanced search
 + PR #3908: Connections Rework: Logging Modernization
 + PR #3910: Remove unused modes from TAG weapons
 + PR #3929: Fix slots used by engines in Conventional Fighters
@@ -19,16 +34,45 @@ VERSION HISTORY:
 + Issue #3959: Long last target names display properly on extra unit display panel
 + Issue #2757: Bulletproofing for when DFA target is eliminated prior to DFA resolution
 + Issue #3902: Advantages display on the bottom of unit info card
-+ RFE #2715: Tooltip displays original vs modified movement due to planetary conditions
-+ Data: Updated sprites and camos. Data fixes for #3962,#3913,#3907, #3905, #3933, #3867
++ Issue #2715: Tooltip displays original vs modified movement due to planetary conditions
++ Data: Updated sprites and camos. Data fixes for #3962, #3913, #3907, #3905, #3933, #3867
 + Data: TP Foster RATS #3930 - Thanks Stonewall072
-+ PR #3970 - AS conversion fixes
-+ PR #3971 - Implements #3747 add option to adjust the seen by in the unit tool tip
-+ PR #3972 - AS conversion fixes round 2
-+ Issue #3980 - Prototype ER Large Laser Wrong Stats for Aerospace Units
-+ PR #3989 - AS Conversion fixes round 3
++ PR #3970: AS conversion fixes
++ Issue #3414: Add option to adjust the seen by in the unit tool tip
++ PR #3972: AS conversion fixes round 2
++ Issue #3980: Prototype ER Large Laser Wrong Stats for Aerospace Units
++ PR #3989L AS Conversion fixes round 3
 + Issue #3978: Line wrap for long sensor texts in the Unit Display's sensor tab
 + Issue #3975: Allow the report display dialog to be always active during a game
++ PR #3997: Fixing Missing DockingCollar Handling in Unit Load
++ PR #3992: Update Alpha Strike conversion to newest errata
++ Issue #2842: Fix an issue where Thin Snow would increase MP costs for BA
++ PR #4007: Allow loading .mtf Mek files with split weapons on CT+H locations
++ Issue #3939: Prevent Null Entities in a Bay's Loaded Units
++ Issue #3984: Stuka-K5b2 data issues
++ Issue #3985: ER Small Pulse Laser Incorrect Aerospace Range
++ Issue #3906: Turn timer in seconds
++ Issue #3054: TO Infantry Movement on Pavement optional rule
++ Issue #4003, #4039, #4047: Add search functionality to the mini report dialog; configure keywords in the Client Settings
++ Issue #3818: Airborne Aerospace Units Unaffected By Extreme Temperatures
++ Issue #3727: Magma crust breakthrough and liquid magma damage not working as expected
++ Issues #543, #2959, #3982: Scale the Client GUI using the GUI scale
++ Issue #2684: Fix target being cleared when selecting a new weapon
++ PR #4015, #4036, #4037: Further Alpha Strike conversion errata and corrections
++ Issue #3375: Fix Player's Turn text not being updated in some circumstances
++ Issue #4013: Turn timer continues to run when you close the main window
++ PR #4017: Fix border move indication for vehicles
++ Issue #4022: Fixing Uncaught NPE when Address Bind is Already in Use
++ PR #3996: MMXMLUtility: Removing Deprecated Methods
++ Issue #3709: Removed  searchlight customization checkboxes for units that receive external searchlights automatically
++ Issue #3811: Fix formatting issue with the Infantry victory report
++ Issue #4021: Preventing Save Game Loading Player Name NPE
++ PR #3969: Add an overlay for Planetary Conditions
++ Issue #2695: Improve game options tooltips
++ PR #4049: Player Java 17 Support
++ PR #4055: Expand FOV Highlight Disk Size Option Dimension for Display Scaling
++ PR #4057: Allow Report Display Split Pane to Resize
++ Issue #4058: Fixing Default Fluff Image Paths
 + Updating to Apache Commons Text 1.10.0 from 1.9
 + Updating to FlatLAF 2.6 from 2.4
 + Updating to Jackson XML 2.14.1 from 2.13.3
@@ -36,7 +80,7 @@ VERSION HISTORY:
 + Updating to JUnit 5.9.1 from 5.9.0
 + Updating to Launch4j 2.5.4 from 2.5.3
 + Updating to Log4j 2.19.0 from 2.18.0
-+ Updating to Mockito 4.9.0 from 4.6.1
++ Updating to Mockito 4.10.0 from 4.6.1
 
 0.49.10 (2022-09-12 1500 UTC)
 + Data: Shorten RAT names for FM3145

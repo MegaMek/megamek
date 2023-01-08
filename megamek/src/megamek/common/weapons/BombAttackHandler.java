@@ -207,7 +207,7 @@ public class BombAttackHandler extends WeaponHandler {
                         // Retrieve facing at current step in flight path
                         int facing = ae.getPassedThroughFacing().get(idx);
                         // Scatter, based on location and facing
-                        drop = Compute.scatterAltitudeBombs(coords, facing);
+                        drop = Compute.scatterAltitudeBombs(coords, facing, moF);
                     } else {
                         drop = Compute.scatterDiveBombs(coords, moF);
                     }

@@ -116,8 +116,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); 
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); 
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false); 
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false);
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false);
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false); 
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false); 
@@ -222,7 +222,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false); 
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); 
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false);
+        addOption(advancedGroundMovement, OptionsConstants.ADVANCED_TACOPS_INF_PAVE_BONUS, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4); 
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION, false); 
@@ -470,18 +471,18 @@ public class GameOptions extends AbstractOptions {
      * @param indent the indent to write at
      */
     public void writeToXML(final PrintWriter pw, int indent) {
-        MMXMLUtility.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOptions");
+        MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOptions");
         for (final Enumeration<IOptionGroup> groups = getGroups(); groups.hasMoreElements(); ) {
             final IOptionGroup group = groups.nextElement();
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
-                MMXMLUtility.writeSimpleXMLOpenIndentedLine(pw, indent++, "gameOption");
+                MMXMLUtility.writeSimpleXMLOpenTag(pw, indent++, "gameOption");
                 MMXMLUtility.writeSimpleXMLTag(pw, indent, "name", option.getName());
                 MMXMLUtility.writeSimpleXMLTag(pw, indent, "value", option.getValue().toString());
-                MMXMLUtility.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOption");
+                MMXMLUtility.writeSimpleXMLCloseTag(pw, --indent, "gameOption");
             }
         }
-        MMXMLUtility.writeSimpleXMLCloseIndentedLine(pw, --indent, "gameOptions");
+        MMXMLUtility.writeSimpleXMLCloseTag(pw, --indent, "gameOptions");
     }
 
     /**

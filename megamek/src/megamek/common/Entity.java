@@ -3901,12 +3901,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // we can't use during this phase... do we?
         for (Mounted mounted : getWeaponList()) {
             // TAG only in the correct phase...
-            if ((mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                         .getPhase() != GamePhase.OFFBOARD))
-                || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                             .getPhase() == GamePhase.OFFBOARD))
-                //No AMS, unless it's in 'weapon' mode
-                || (mounted.getType().hasFlag(WeaponType.F_AMS) && !mounted.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
+            if ((mounted.getType().hasFlag(WeaponType.F_TAG) && !getGame().getPhase().isOffboard())
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG) && getGame().getPhase().isOffboard())
+                    // No AMS, unless it's in 'weapon' mode
+                    || (mounted.getType().hasFlag(WeaponType.F_AMS) && !mounted.curMode().equals(Weapon.MODE_AMS_MANUAL))) {
                 continue;
             }
 
@@ -3964,24 +3962,20 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 || (mounted.getLinked().getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
-            if ((mounted.getType().hasFlag(WeaponType.F_TAG)
-                    && (game.getPhase() != GamePhase.OFFBOARD))
-                    || (!mounted.getType().hasFlag(WeaponType.F_TAG)
-                            && (game.getPhase()
-                                    == GamePhase.OFFBOARD))) {
+            if ((mounted.getType().hasFlag(WeaponType.F_TAG) && !getGame().getPhase().isOffboard())
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG) && getGame().getPhase().isOffboard())) {
                 return false;
             }
 
             // Artillery or Bearings-only missiles only in the targeting phase...
-            if (!(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
-                    || mounted.isInBearingsOnlyMode()
-                    || (this.getAltitude() == 0
-                            && mounted.getType() instanceof CapitalMissileWeapon))
-                && (game.getPhase() == GamePhase.TARGETING)) {
+            if (getGame().getPhase().isTargeting()
+                    && !(mounted.getType().hasFlag(WeaponType.F_ARTILLERY)
+                            || mounted.isInBearingsOnlyMode()
+                            || ((this.getAltitude() == 0) && (mounted.getType() instanceof CapitalMissileWeapon)))) {
                 return false;
             }
             // No Bearings-only missiles in the firing phase
-            if (mounted.isInBearingsOnlyMode() && game.getPhase() == GamePhase.FIRING) {
+            if (mounted.isInBearingsOnlyMode() && getGame().getPhase().isFiring()) {
                 return false;
             }
 
@@ -7001,7 +6995,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
-            && crew.isPilotingFatigued()) {
+                && crew.isPilotingFatigued()) {
             roll.addModifier(1, "fatigue");
         }
 
@@ -7009,7 +7003,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             roll.addModifier(taserInterference, "taser interference");
         }
 
-        if ((game.getPhase() == GamePhase.MOVEMENT) && isPowerReverse()) {
+        if (getGame().getPhase().isMovement() && isPowerReverse()) {
             roll.addModifier(1, "power reverse");
         }
 
@@ -7035,10 +7029,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         PlanetaryConditions conditions = game.getPlanetaryConditions();
         // check light conditions for "running" entities
         if ((moveType == EntityMovementType.MOVE_RUN)
-            || (moveType == EntityMovementType.MOVE_SPRINT)
-            || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-            || (moveType == EntityMovementType.MOVE_OVER_THRUST)
-            || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
+                || (moveType == EntityMovementType.MOVE_SPRINT)
+                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                || (moveType == EntityMovementType.MOVE_OVER_THRUST)
+                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
             int lightPenalty = conditions.getLightPilotPenalty();
             if (lightPenalty > 0) {
                 roll.addModifier(lightPenalty,
@@ -8097,8 +8091,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
             if (next.canLoad(unit)
-                && (!checkElev || (unit.getElevation() == getElevation()))
-                && ((bayNumber == -1) || (((Bay) next).getBayNumber() == bayNumber))) {
+                    && (!checkElev || (unit.getElevation() == getElevation()))
+                    && ((bayNumber == -1)
+                        || ((next instanceof Bay) && (((Bay) next).getBayNumber() == bayNumber))
+                        || ((next instanceof DockingCollar) && (((DockingCollar) next).getCollarNumber() == bayNumber)))) {
                 next.load(unit);
                 unit.setTargetBay(-1); // Reset the target bay for later.
                 return;
@@ -8106,8 +8102,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // If we got to this point, then we can't load the unit.
-        throw new IllegalArgumentException(getShortName() + " can not load "
-                                           + unit.getShortName());
+        throw new IllegalArgumentException(getShortName() + " can not load " + unit.getShortName());
     }
 
     public void load(Entity unit, boolean checkElev) {
@@ -8143,7 +8138,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                     choice = 2;
                 }
                 if (nextbay instanceof SmallCraftBay) {
-                choice = 1;
+                    choice = 1;
                 }
             }
         }
@@ -9740,13 +9735,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         }
 
         // Hidden units are always eligible for PRE phases
-        if ((phase == GamePhase.PREMOVEMENT) || (phase == GamePhase.PREFIRING)) {
+        if (phase.isPremovement() || phase.isPrefiring()) {
             return isHidden();
         }
 
         // Hidden units shouldn't be counted for turn order, unless deploying or firing (spotting)
-        if (isHidden() && (phase != GamePhase.DEPLOYMENT)
-                && (phase != GamePhase.FIRING)) {
+        if (isHidden() && !phase.isDeployment() && !phase.isFiring()) {
             return false;
         }
 
@@ -9774,9 +9768,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * future
      */
     public boolean canAssist(GamePhase phase) {
-        if ((phase != GamePhase.PHYSICAL)
-            && (phase != GamePhase.FIRING)
-            && (phase != GamePhase.OFFBOARD)) {
+        if (!phase.isPhysical() && !phase.isFiring() && !phase.isOffboard()) {
             return false;
         }
         // if you're charging or finding a club, it's already declared
@@ -15251,8 +15243,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         return 1;
     }
-    
-    
+
     // Getters and setters for sensor contacts and firing solutions. Currently, only used in space combat
     /**
      * Retrieves the IDs of all entities that this entity has detected with sensors
@@ -15524,4 +15515,9 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * <P>This method does nothing by default and must be overridden for unit types that get Clan CASE.
      */
     public void addClanCase() { }
+
+    /** @return True for unit types that have an automatic external searchlight (Meks and Tanks). */
+    public boolean getsAutoExternalSearchlight() {
+        return false;
+    }
 }

@@ -17,7 +17,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.battlevalue.AeroBVCalculator;
 import megamek.common.cost.AeroCostCalculator;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.GamePhase;
 import megamek.common.options.OptionsConstants;
 import org.apache.logging.log4j.LogManager;
 
@@ -2296,7 +2295,7 @@ public class Aero extends Entity implements IAero, IBomber {
         // capital fighters can load other capital fighters (becoming squadrons)
         // but not in the deployment phase
         if (isCapitalFighter() && !unit.isEnemyOf(this) && unit.isCapitalFighter() && (getId() != unit.getId())
-                && (game.getPhase() != GamePhase.DEPLOYMENT)) {
+                && !getGame().getPhase().isDeployment()) {
             return true;
         }
 

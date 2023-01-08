@@ -14,17 +14,13 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,6 +47,7 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
@@ -262,6 +259,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         c.weightx = 0.0;
         c.weighty = 0.5;
         add(panUnitTypeOptions, c);
+
+        adaptToGUIScale();
 
         if (!RATGenerator.getInstance().isInitialized()) {
             RATGenerator.getInstance().registerListener(this);
@@ -1223,6 +1222,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             generatedUnits = list;
             txtNoFormation.setVisible(list == null || list.isEmpty());
         }
-    }    
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
+    }
 }
 

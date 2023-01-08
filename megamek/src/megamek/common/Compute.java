@@ -6021,10 +6021,11 @@ public class Compute {
      * TW pg 246.  The scatter only happens in the "front" three facings.
      *
      * @param coords The <code>Coords</code> to scatter from
-     * @param facing
+     * @param facing Direction we were going at the time the bomb was dropped
+     * @param moF How badly we failed
      * @return the <code>Coords</code> scattered to and distance (moF)
      */
-    public static Coords scatterAltitudeBombs(Coords coords, int facing) {
+    public static Coords scatterAltitudeBombs(Coords coords, int facing, int moF) {
         int dir = 0;
         int scatterDirection = Compute.d6(1);
         switch (scatterDirection) {
@@ -6041,8 +6042,8 @@ public class Compute {
                 dir = (facing + 1) % 6;
                 break;
         }
-        int dist = Compute.d6(1);
-        return coords.translated(dir, dist);
+
+        return coords.translated(dir, moF);
     }
 
     /**

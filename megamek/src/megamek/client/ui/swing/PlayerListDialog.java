@@ -16,16 +16,19 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Team;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
 
-public class PlayerListDialog extends JDialog {
+public class PlayerListDialog extends JDialog implements IPreferenceChangeListener {
 
     private static final long serialVersionUID = 7270469195373150106L;
 
@@ -36,7 +39,7 @@ public class PlayerListDialog extends JDialog {
     public PlayerListDialog(JFrame parent, Client client) {
         super(parent, Messages.getString("PlayerListDialog.title"), false);
         this.client = client;
-        
+
         add(playerList, BorderLayout.CENTER);
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_END);
@@ -44,6 +47,10 @@ public class PlayerListDialog extends JDialog {
 
         refreshPlayerList();
         setMinimumSize(new Dimension(300, 260));
+
+        adaptToGUIScale();
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
+
         pack();
         setResizable(false);
         setLocation(parent.getLocation().x + (parent.getSize().width / 2) 
@@ -138,5 +145,18 @@ public class PlayerListDialog extends JDialog {
         }
 
         return null;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+        setMinimumSize(new Dimension(UIUtil.scaleForGUI(300), UIUtil.scaleForGUI(260)));
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
     }
 }

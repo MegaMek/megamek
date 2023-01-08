@@ -31,7 +31,7 @@ dependencies {
     implementation 'com.formdev:flatlaf:2.6'
     implementation 'com.github.ikkisoft:SerialKiller:master-SNAPSHOT'
     implementation 'com.sun.mail:jakarta.mail:2.0.1'
-    implementation 'com.thoughtworks.xstream:xstream:1.4.14'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.19'
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.0'
     implementation 'org.apache.commons:commons-text:1.10.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
@@ -40,13 +40,13 @@ dependencies {
     runtimeOnly 'org.glassfish.jaxb:jaxb-runtime:4.0.1'
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
-    testImplementation 'org.mockito:mockito-core:4.9.0'
+    testImplementation 'org.mockito:mockito-core:4.10.0'
 }
 
 mainClassName = 'megamek.MegaMek'
 
 ext {
-    mmJvmOptions = ['-Xmx2048m']
+    mmJvmOptions = ['-Xmx2048m', '--add-opens', 'java.base/java.util=ALL-UNNAMED', '--add-opens', 'java.base/java.util.concurrent=ALL-UNNAMED']
     data = 'data'
     unitFiles = "${data}/mechfiles"
     rats = "${data}/rat"
@@ -64,12 +64,17 @@ ext {
     scriptTemplate = "${scriptsDir}/startScriptTemplate.txt"
 }
 
+run {
+    jvmArgs = mmJvmOptions
+}
+
 jar {
     archiveFileName = 'MegaMek.jar'
     manifest {
         attributes "Main-Class" : mainClassName
         attributes "Class-Path" : project.sourceSets.main.runtimeClasspath.files
             .findAll { it.name.endsWith(".jar") }.collect { "${lib}/${it.name}" }.join(' ')
+        attributes "Add-Opens" : 'java.base/java.util java.base/java.util.concurrent'
         attributes "Build-Date" : LocalDateTime.now()
     }
 }

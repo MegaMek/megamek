@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.lobby;
 
+import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
@@ -77,8 +78,7 @@ public class TeamOverviewPanel extends JPanel {
         colModel.getColumn(TOMCOLS.HIDDEN.ordinal()).setCellRenderer(centerRenderer);
         scrTeams.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         add(scrTeams);
-        
-        adaptToGUIScale();
+
         refreshData();
     }
     
@@ -124,12 +124,6 @@ public class TeamOverviewPanel extends JPanel {
         }
     };
     
-    /** Adapts the row heights and headers to the current GUI scaling. */
-    public void adaptToGUIScale() {
-        teamOverviewModel.updateRowHeights();
-        refreshTableHeader();
-    }
-
     /** Refreshes the headers, setting the header names and gui scaling them. */
     public void refreshTableHeader() {
         JTableHeader header = teamOverviewTable.getTableHeader();
@@ -422,7 +416,7 @@ public class TeamOverviewPanel extends JPanel {
             Vector<?> playerList = (Vector<?>) value;
             int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
             int size = scaleForGUI(2 * baseSize);
-            Font font = new Font("Dialog", Font.PLAIN, scaleForGUI(baseSize));
+            Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(baseSize));
             for (Object obj: playerList) {
                 if (!(obj instanceof Player)) {
                     continue;

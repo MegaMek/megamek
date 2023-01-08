@@ -471,6 +471,10 @@ public class ASSpecialAbilityConverter {
         if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOMB_BAY)) {
             return true;
         }
+        // According to ASC p.123 Booby Traps count as explosive contrary to TO AUE p.109
+        if ((equipment.getType() instanceof MiscType) && equipment.getType().hasFlag(F_BOOBY_TRAP)) {
+            return true;
+        }
         // Oneshot weapons internally have normal ammo allocated to them which must
         // be disqualified as explosive; such ammo has no location
         return equipment.getType().isExplosive(null) && (equipment.getExplosionDamage() > 0)
@@ -538,6 +542,18 @@ public class ASSpecialAbilityConverter {
                             AlphaStrikeHelper.formatAbility(CT, element.getSpecialAbilities(), element, ", "));
                 }
             }
+        }
+
+        // Armor 0 elements cannot get BAR
+        if (element.getFullArmor() == 0) {
+            element.getSpecialAbilities().removeSUA(BAR);
+        }
+
+        // A unit with ENE doesn't need any type of CASE
+        if (element.hasSUA(ENE)) {
+            element.getSpecialAbilities().removeSUA(CASE);
+            element.getSpecialAbilities().removeSUA(CASEII);
+            element.getSpecialAbilities().removeSUA(CASEP);
         }
     }
 

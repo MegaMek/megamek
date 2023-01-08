@@ -6544,4 +6544,9 @@ public abstract class Mech extends Entity {
     public boolean isIndustrialMek() {
         return isIndustrial();
     }
+
+    @Override
+    public boolean getsAutoExternalSearchlight() {
+        return true;
+    }
 }

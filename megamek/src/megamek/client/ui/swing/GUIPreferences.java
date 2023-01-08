@@ -943,7 +943,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(NAG_FOR_NO_UNJAMRAC);
     }
 
-
     public boolean getNagForPSR() {
         return store.getBoolean(NAG_FOR_PSR);
     }
@@ -963,7 +962,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForLaunchDoors() {
         return store.getBoolean(NAG_FOR_LAUNCH_DOORS);
     }
-
 
     public boolean getNagForMechanicalJumpFallDamage() {
         return store.getBoolean(NAG_FOR_MECHANICAL_FALL_DAMAGE);

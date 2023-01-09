@@ -314,7 +314,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         for (MoveCommand cmd : MoveCommand.values()) {
             String title = Messages.getString("MovementDisplay." + cmd.getCmd());
             if ((clientgui != null) &&
-                    (title.equals(Messages.getString("MovementDisplay." + MoveCommand.MOVE_UNJAM.getCmd()))) &&
+                    (cmd == MoveCommand.MOVE_UNJAM) &&
                     (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
                 title += Messages.getString("BoardView1.Tooltip.AndAC");
             }

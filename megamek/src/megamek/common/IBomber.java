@@ -54,9 +54,9 @@ public interface IBomber {
     void clearBombChoices();
 
     /**
-     * @return The load for bombs currently on unit
+     * @return The calculates movement factoring in the load of bombs currently on unit, t is current movement
      */
-    int getBombLoad(int t);
+    int reduceMPByBombLoad(int t);
     
     /**
      * @param cost The cost of the bomb to be mounted

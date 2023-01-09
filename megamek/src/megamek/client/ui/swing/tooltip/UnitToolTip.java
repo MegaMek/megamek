@@ -662,11 +662,7 @@ public final class UnitToolTip {
             int[] loadout = { };
 
             if (entity.getGame().getPhase().isLounge()) {
-                if (entity instanceof IBomber) {
-                    loadout = ((IBomber) entity).getBombChoices();
-                } else {
-                    return result;
-                }
+                loadout = ((IBomber) entity).getBombChoices();
             } else {
                 loadout = entity.getBombLoadout();
             }
@@ -1120,7 +1116,7 @@ public final class UnitToolTip {
 
             if (entity instanceof IBomber) {
                 int bombMod = 0;
-                bombMod = ((IBomber) entity).getBombLoad(walkMP);
+                bombMod = ((IBomber) entity).reduceMPByBombLoad(walkMP);
                 if (bombMod != walkMP) {
                     result.append(DOT_SPACER + guiScaledFontHTML(GUIP.getWarningColor()) + "\uD83D\uDCA3" + "</FONT>\n");
                 }

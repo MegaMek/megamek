@@ -1891,6 +1891,15 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bing();
         }
 
+        private void setWeaponOrderPrefs() {
+            for (Iterator<Entity> ents = client.getGame().getEntities(); ents.hasNext();) {
+                Entity entity = ents.next();
+                if ((entity.getOwner().equals(client.getLocalPlayer())) && (!entity.getWeaponSortOrder().isCustom())) {
+                        entity.setWeaponSortOrder(GUIP.getDefaultWeaponSortOrder());
+                }
+            }
+        }
+
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             // This is a really lame place for this, but I couldn't find a
@@ -1906,7 +1915,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.setChatterBoxActive(false);            
 
             // Swap to this phase's panel.
-            switchPanel(getClient().getGame().getPhase());
+            GamePhase phase = getClient().getGame().getPhase();
+            switchPanel(phase);
+
+            if (phase.isFiring())  {
+                setWeaponOrderPrefs();
+            }
 
             menuBar.setPhase(getClient().getGame().getPhase());
             validate();

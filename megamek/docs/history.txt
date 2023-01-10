@@ -13,6 +13,7 @@ VERSION HISTORY:
 + PR #4087: Alpha Strike damage conversion will now ignore ammo weapons that lack ammo
 + PR #4084: Java 17: Manifest File Add-Opens
 + Issue #4088: Improved Autocannon/2 on ASF is listed as doing 20/0/0 damage
++ PR #4096: Fix Unit Display weapon order bugs
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

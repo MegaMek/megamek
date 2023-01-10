@@ -524,6 +524,9 @@ public class UnitDisplay extends JPanel {
      * Displays the specified entity in the panel.
      */
     public void displayEntity(Entity en) {
+        if (en == null) {
+            return;
+        }
         String enName = en.getShortName();
         switch (en.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:

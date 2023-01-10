@@ -443,6 +443,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         return miniReportDisplayDialog;
     }
 
+    public PlayerListDialog getPlayerListDialog() {
+        return playerListDialog;
+    }
+
     public void setMiniReportDisplayDialog(final MiniReportDisplayDialog miniReportDisplayDialog) {
         this.miniReportDisplayDialog = miniReportDisplayDialog;
     }
@@ -456,7 +460,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
         final File file = new File(GUIP.getSoundBingFilename());
         if (!file.exists()) {
-            LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIP.getSoundBingFilename());
+            LogManager.getLogger().error(msg_failedtoloadaudifile + " " + GUIP.getSoundBingFilename());
             return;
         }
 
@@ -1487,17 +1491,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         GamePhase phase = getClient().getGame().getPhase();
 
         if (phase.isReport()) {
-            String action = GUIP.getMinimapAutoDisplayReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getMinimapAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setMinimapEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setMinimapEnabled(false);
             }
         } else if (phase.isOnMap()) {
-            String action = GUIP.getMinimapAutoDisplayNonReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getMinimapAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setMinimapEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setMinimapEnabled(false);
             }
         }
@@ -1507,17 +1511,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         GamePhase phase = getClient().getGame().getPhase();
 
         if (phase.isReport()) {
-            String action = GUIP.getMiniReportAutoDisplayReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getMiniReportAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setMiniReportEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setMiniReportEnabled(false);
             }
         } else if (phase.isOnMap()) {
-            String action = GUIP.getMiniReportAutoDisplayNonReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getMiniReportAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setMiniReportEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setMiniReportEnabled(false);
             }
         }
@@ -1527,17 +1531,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         GamePhase phase = getClient().getGame().getPhase();
 
         if (phase.isReport()) {
-            String action = GUIP.getPlayerListAutoDisplayReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getPlayerListAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setPlayerListEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setPlayerListEnabled(false);
             }
         } else if (phase.isOnMap()) {
-            String action = GUIP.getPlayerListAutoDisplayNonReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getPlayerListAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setPlayerListEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setPlayerListEnabled(false);
             }
         }
@@ -1577,17 +1581,17 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         GamePhase phase = getClient().getGame().getPhase();
 
         if (phase.isReport()) {
-            String action = GUIP.getUnitDisplayAutoDisplayReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getUnitDisplayAutoDisplayReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setUnitDisplayEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setUnitDisplayEnabled(false);
             }
         } else if (phase.isOnMap()) {
-            String action = GUIP.getUnitDisplayAutoDisplayNonReportPhase();
-            if (action.equals(MSG_SHOW)) {
+            int action = GUIP.getUnitDisplayAutoDisplayNonReportPhase();
+            if (action == GUIPreferences.SHOW) {
                 GUIP.setUnitDisplayEnabled(true);
-            } else if (action.equals(MSG_HIDE)) {
+            } else if (action == GUIPreferences.HIDE) {
                 GUIP.setUnitDisplayEnabled(false);
             }
         }
@@ -2435,8 +2439,6 @@ public class ClientGUI extends JPanel implements BoardViewListener,
                     }
 
                     optionType = JOptionPane.OK_CANCEL_OPTION;
-                    title = MessageFormat.format(MSG_CFAPDSASSIGNTITLE, new Object[] { e.getDisplayName() });
-                    msg = MessageFormat.format(MSG_CFAPDSASSIGNMSG, new Object[] { e.getDisplayName() });
                     title = MessageFormat.format(msg_cfapdsassigntitle, new Object[] { e.getDisplayName() });
                     msg = MessageFormat.format(msg_cfapdsassignmsg, new Object[] { e.getDisplayName() });
                     result = JOptionPane.showInputDialog(frame, msg, title,

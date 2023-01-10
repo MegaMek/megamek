@@ -275,25 +275,25 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
 
-    private String msg_reportkeywords = Messages.getString("CommonSettingsDialog.ReportKeywords");
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
-    private static final String MSG_UNITDISPLAY = Messages.getString("CommonMenuBar.viewMekDisplay");
-    private static final String MSG_MINIMAP = Messages.getString("CommonMenuBar.viewMinimap");
-    private static final String MSG_MINIREPORT = Messages.getString("CommonMenuBar.viewRoundReport");
-    private static final String MSG_PLAYERLIST = Messages.getString("CommonMenuBar.viewPlayerList");
-    private static final String MSG_SHOW = Messages.getString("ClientGUI.Show");
-    private static final String MSG_HIDE = Messages.getString("ClientGUI.Hide");
-    private static final String MSG_MANUAL = Messages.getString("ClientGUI.Manual");
-    private static final String MSG_REPORTPHASES = Messages.getString("CommonSettingsDialog.ReportPhases");
-    private static final String MSG_NONREPORTPHASES = Messages.getString("CommonSettingsDialog.NonReportPhases");
-    private static final String MSG_MAIN = Messages.getString("CommonSettingsDialog.Main");
-    private static final String MSG_GRAPHICS = Messages.getString("CommonSettingsDialog.Graphics");
-    private static final String MSG_KEYBINDS = Messages.getString("CommonSettingsDialog.KeyBinds");
-    private static final String MSG_BUTTONORDER = Messages.getString("CommonSettingsDialog.ButtonOrder");
-    private static final String MSG_UNITDISPLAYORDER = Messages.getString("CommonSettingsDialog.UnitDisplayOrder");
-    private static final String MSG_AUTODISPLAY = Messages.getString("CommonSettingsDialog.AutoDisplay");
-    private static final String MSG_ADVANCED = Messages.getString("CommonSettingsDialog.Advanced");
+    private String msg_reportkeywords = Messages.getString("CommonSettingsDialog.ReportKeywords");
+    private String msg_unitdisplay = Messages.getString("CommonMenuBar.viewMekDisplay");
+    private String msg_minimap = Messages.getString("CommonMenuBar.viewMinimap");
+    private String msg_minireport = Messages.getString("CommonMenuBar.viewRoundReport");
+    private String msg_playerlist = Messages.getString("CommonMenuBar.viewPlayerList");
+    private String msg_show = Messages.getString("ClientGUI.Show");
+    private String msg_hide = Messages.getString("ClientGUI.Hide");
+    private String msg_manual = Messages.getString("ClientGUI.Manual");
+    private String msg_reportphases = Messages.getString("CommonSettingsDialog.ReportPhases");
+    private String msg_nonreportphases = Messages.getString("CommonSettingsDialog.NonReportPhases");
+    private String msg_main = Messages.getString("CommonSettingsDialog.Main");
+    private String msg_graphics = Messages.getString("CommonSettingsDialog.Graphics");
+    private String msg_keybinds = Messages.getString("CommonSettingsDialog.KeyBinds");
+    private String msg_buttonorder = Messages.getString("CommonSettingsDialog.ButtonOrder");
+    private String msg_unitdisplayorder = Messages.getString("CommonSettingsDialog.UnitDisplayOrder");
+    private String msg_autodisplay = Messages.getString("CommonSettingsDialog.AutoDisplay");
+    private String msg_advanced = Messages.getString("CommonSettingsDialog.Advanced");
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
     public CommonSettingsDialog(JFrame owner, ClientGUI cg) {
@@ -330,13 +330,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         JScrollPane autoDisplayPane = new JScrollPane(getPhasePanel());
         autoDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        panTabs.add(MSG_MAIN, settingsPane);
-        panTabs.add(MSG_GRAPHICS, graphicsPane);
-        panTabs.add(MSG_KEYBINDS, keyBindPane);
-        panTabs.add(MSG_BUTTONORDER, getButtonOrderPanel());
-        panTabs.add(MSG_UNITDISPLAYORDER, unitDisplayPane);
-        panTabs.add(MSG_AUTODISPLAY, autoDisplayPane);
-        panTabs.add(MSG_ADVANCED, advancedSettingsPane);
+        panTabs.add(msg_main, settingsPane);
+        panTabs.add(msg_graphics, graphicsPane);
+        panTabs.add(msg_keybinds, keyBindPane);
+        panTabs.add(msg_buttonorder, getButtonOrderPanel());
+        panTabs.add(msg_unitdisplayorder, unitDisplayPane);
+        panTabs.add(msg_autodisplay, autoDisplayPane);
+        panTabs.add(msg_advanced, advancedSettingsPane);
 
         adaptToGUIScale();
 
@@ -1037,14 +1037,14 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             }
         }
 
-        GUIP.setUnitDisplayAutoDisplayReportPhase((String) unitDisplayAutoDisplayReportCombo.getSelectedItem());
-        GUIP.setUnitDisplayAutoDisplayNonReportPhase((String) unitDisplayAutoDisplayNonReportCombo.getSelectedItem());
-        GUIP.setMinimapAutoDisplayReportPhase((String) miniMapAutoDisplayReportCombo.getSelectedItem());
-        GUIP.setMinimapAutoDisplayNonReportPhase((String) miniMapAutoDisplayNonReportCombo.getSelectedItem());
-        GUIP.setMiniReportAutoDisplayReportPhase((String) miniReportAutoDisplayReportCombo.getSelectedItem());
-        GUIP.setMiniReportAutoDisplayNonReportPhase((String) miniReportAutoDisplayNonReportCombo.getSelectedItem());
-        GUIP.setPlayerListAutoDisplayReportPhase((String) playerListAutoDisplayReportCombo.getSelectedItem());
-        GUIP.setPlayerListAutoDisplayNonReportPhase((String) playerListAutoDisplayNonReportCombo.getSelectedItem());
+        GUIP.setUnitDisplayAutoDisplayReportPhase(unitDisplayAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setUnitDisplayAutoDisplayNonReportPhase(unitDisplayAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setMinimapAutoDisplayReportPhase(miniMapAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setMinimapAutoDisplayNonReportPhase(miniMapAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setMiniReportAutoDisplayReportPhase(miniReportAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setMiniReportAutoDisplayNonReportPhase(miniReportAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setPlayerListAutoDisplayReportPhase(playerListAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setPlayerListAutoDisplayNonReportPhase(playerListAutoDisplayNonReportCombo.getSelectedIndex());
 
         setVisible(false);
     }
@@ -1474,124 +1474,124 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         JPanel outer = new JPanel();
         outer.setLayout(new BoxLayout(outer, BoxLayout.PAGE_AXIS));
 
-        JLabel unitDisplayLabel = new JLabel(MSG_UNITDISPLAY);
+        JLabel unitDisplayLabel = new JLabel(msg_unitdisplay);
         row = new ArrayList<>();
         row.add(unitDisplayLabel);
         comps.add(row);
 
-        JLabel phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        JLabel phaseLabel = new JLabel(msg_reportphases + ": ");
         unitDisplayAutoDisplayReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayReportCombo.addItem(MSG_SHOW);
-        unitDisplayAutoDisplayReportCombo.addItem(MSG_HIDE);
-        unitDisplayAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        unitDisplayAutoDisplayReportCombo.addItem(msg_show);
+        unitDisplayAutoDisplayReportCombo.addItem(msg_hide);
+        unitDisplayAutoDisplayReportCombo.addItem(msg_manual);
         unitDisplayAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        unitDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayReportPhase());
+        unitDisplayAutoDisplayReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayReportPhase());
         row.add(phaseLabel);
         row.add(unitDisplayAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(msg_nonreportphases + ": ");
         unitDisplayAutoDisplayNonReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        unitDisplayAutoDisplayNonReportCombo.addItem(msg_show);
+        unitDisplayAutoDisplayNonReportCombo.addItem(msg_hide);
+        unitDisplayAutoDisplayNonReportCombo.addItem(msg_manual);
         unitDisplayAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        unitDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
+        unitDisplayAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
         row.add(phaseLabel);
         row.add(unitDisplayAutoDisplayNonReportCombo);
         comps.add(row);
 
         addLineSpacer(comps);
 
-        JLabel miniMapLabel = new JLabel(MSG_MINIMAP);
+        JLabel miniMapLabel = new JLabel(msg_minimap);
         row = new ArrayList<>();
         row.add(miniMapLabel);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        phaseLabel = new JLabel(msg_reportphases + ": ");
         miniMapAutoDisplayReportCombo = new JComboBox<>();
-        miniMapAutoDisplayReportCombo.addItem(MSG_SHOW);
-        miniMapAutoDisplayReportCombo.addItem(MSG_HIDE);
-        miniMapAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        miniMapAutoDisplayReportCombo.addItem(msg_show);
+        miniMapAutoDisplayReportCombo.addItem(msg_hide);
+        miniMapAutoDisplayReportCombo.addItem(msg_manual);
         miniMapAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniMapAutoDisplayReportCombo.setSelectedItem(GUIP.getMinimapAutoDisplayReportPhase());
+        miniMapAutoDisplayReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayReportPhase());
         row.add(phaseLabel);
         row.add(miniMapAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(msg_nonreportphases + ": ");
         miniMapAutoDisplayNonReportCombo = new JComboBox<>();
-        miniMapAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        miniMapAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        miniMapAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        miniMapAutoDisplayNonReportCombo.addItem(msg_show);
+        miniMapAutoDisplayNonReportCombo.addItem(msg_hide);
+        miniMapAutoDisplayNonReportCombo.addItem(msg_manual);
         miniMapAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniMapAutoDisplayNonReportCombo.setSelectedItem(GUIP.getMinimapAutoDisplayNonReportPhase());
+        miniMapAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayNonReportPhase());
         row.add(phaseLabel);
         row.add(miniMapAutoDisplayNonReportCombo);
         comps.add(row);
 
         addLineSpacer(comps);
 
-        JLabel miniReportLabel = new JLabel(MSG_MINIREPORT);
+        JLabel miniReportLabel = new JLabel(msg_minireport);
         row = new ArrayList<>();
         row.add(miniReportLabel);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        phaseLabel = new JLabel(msg_reportphases + ": ");
         miniReportAutoDisplayReportCombo = new JComboBox<>();
-        miniReportAutoDisplayReportCombo.addItem(MSG_SHOW);
-        miniReportAutoDisplayReportCombo.addItem(MSG_HIDE);
-        miniReportAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        miniReportAutoDisplayReportCombo.addItem(msg_show);
+        miniReportAutoDisplayReportCombo.addItem(msg_hide);
+        miniReportAutoDisplayReportCombo.addItem(msg_manual);
         miniReportAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniReportAutoDisplayReportCombo.setSelectedItem(GUIP.getMiniReportAutoDisplayReportPhase());
+        miniReportAutoDisplayReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayReportPhase());
         row.add(phaseLabel);
         row.add(miniReportAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(msg_nonreportphases + ": ");
         miniReportAutoDisplayNonReportCombo = new JComboBox<>();
-        miniReportAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        miniReportAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        miniReportAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        miniReportAutoDisplayNonReportCombo.addItem(msg_show);
+        miniReportAutoDisplayNonReportCombo.addItem(msg_hide);
+        miniReportAutoDisplayNonReportCombo.addItem(msg_manual);
         miniReportAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        miniReportAutoDisplayNonReportCombo.setSelectedItem(GUIP.getMiniReportAutoDisplayNonReportPhase());
+        miniReportAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayNonReportPhase());
         row.add(phaseLabel);
         row.add(miniReportAutoDisplayNonReportCombo);
         comps.add(row);
 
         addLineSpacer(comps);
 
-        JLabel playerListLabel = new JLabel(MSG_PLAYERLIST);
+        JLabel playerListLabel = new JLabel(msg_playerlist);
         row = new ArrayList<>();
         row.add(playerListLabel);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        phaseLabel = new JLabel(msg_reportphases + ": ");
         playerListAutoDisplayReportCombo = new JComboBox<>();
-        playerListAutoDisplayReportCombo.addItem(MSG_SHOW);
-        playerListAutoDisplayReportCombo.addItem(MSG_HIDE);
-        playerListAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        playerListAutoDisplayReportCombo.addItem(msg_show);
+        playerListAutoDisplayReportCombo.addItem(msg_hide);
+        playerListAutoDisplayReportCombo.addItem(msg_manual);
         playerListAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        playerListAutoDisplayReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayReportPhase());
+        playerListAutoDisplayReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayReportPhase());
         row.add(phaseLabel);
         row.add(playerListAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(msg_nonreportphases + ": ");
         playerListAutoDisplayNonReportCombo = new JComboBox<>();
-        playerListAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        playerListAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        playerListAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        playerListAutoDisplayNonReportCombo.addItem(msg_show);
+        playerListAutoDisplayNonReportCombo.addItem(msg_hide);
+        playerListAutoDisplayNonReportCombo.addItem(msg_manual);
         playerListAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
-        playerListAutoDisplayNonReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayNonReportPhase());
+        playerListAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayNonReportPhase());
         row.add(phaseLabel);
         row.add(playerListAutoDisplayNonReportCombo);
         comps.add(row);

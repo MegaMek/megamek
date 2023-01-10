@@ -68,10 +68,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
-    public MiniReportDisplay(JFrame parent, ClientGUI clientgui) {
-        super(parent, "", false);
-        this.setTitle(msg_title);
-
+    public MiniReportDisplay(ClientGUI clientgui) {
         if (clientgui == null) {
             return;
         }
@@ -307,11 +304,11 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
-            tabs.add(MSG_ROUND + " " + round, loadHtmlScrollPane(text));
+            tabs.add(msg_round + " " + round, loadHtmlScrollPane(text));
         }
 
         // add the new current phase tab
-        tabs.add(MSG_PHASE, loadHtmlScrollPane(currentClient.phaseReport));
+        tabs.add(msg_phase, loadHtmlScrollPane(currentClient.phaseReport));
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
         tabs.setMinimumSize(new Dimension(0, 0));
@@ -358,7 +355,6 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             switch (e.getOldPhase()) {
                 case VICTORY:
-                    currentClientgui.getMiniReportDisplayDialog().savePref();
                     setVisible(false);
                     break;
                 default:

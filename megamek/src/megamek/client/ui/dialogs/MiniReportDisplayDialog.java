@@ -32,12 +32,13 @@ public class MiniReportDisplayDialog extends JDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
+    private String msg_title = Messages.getString("MiniReportDisplay.title");
     //endregion Variable Declarations
 
     //region Constructors
     public MiniReportDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
-        super(frame, MSG_TITLE, false);
+        super(frame, "", false);
+        this.setTitle(msg_title);
 
         this.setLocation(GUIP.getMiniReportPosX(), GUIP.getMiniReportPosY());
         this.setSize(GUIP.getMiniReportSizeWidth(), GUIP.getMiniReportSizeHeight());
@@ -58,18 +59,14 @@ public class MiniReportDisplayDialog extends JDialog {
     }
     //endregion Constructors
 
-    public void savePref() {
-        GUIP.setMiniReportSizeWidth(getSize().width);
-        GUIP.setMiniReportSizeHeight(getSize().height);
-        GUIP.setMiniReportPosX(getLocation().x);
-        GUIP.setMiniReportPosY(getLocation().y);
-    }
-
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            savePref();
+            GUIP.setMiniReportSizeWidth(getSize().width);
+            GUIP.setMiniReportSizeHeight(getSize().height);
+            GUIP.setMiniReportPosX(getLocation().x);
+            GUIP.setMiniReportPosY(getLocation().y);
         }
     }
 

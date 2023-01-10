@@ -32,13 +32,14 @@ import java.awt.event.WindowEvent;
 public class UnitDisplayDialog extends JDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
-    private static final String MSG_TITLE = Messages.getString("ClientGUI.MechDisplay");
+    private String msg_title = Messages.getString("ClientGUI.MechDisplay");
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
-        super(frame, MSG_TITLE, false);
+        super(frame, "", false);
+        this.setTitle(msg_title);
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
@@ -65,28 +66,24 @@ public class UnitDisplayDialog extends JDialog {
     }
     //endregion Constructors
 
-    private void savePref() {
-        if ((this.getSize().width * this.getSize().height) > 0) {
-            if (GUIP.getUnitDisplayStartTabbed()) {
-                GUIP.setUnitDisplayPosX(this.getLocation().x);
-                GUIP.setUnitDisplayPosY(this.getLocation().y);
-                GUIP.setUnitDisplaySizeWidth(this.getSize().width);
-                GUIP.setUnitDisplaySizeHeight(this.getSize().height);
-            } else {
-                GUIP.setUnitDisplayNontabbedPosX(this.getLocation().x);
-                GUIP.setUnitDisplayNontabbedPosY(this.getLocation().y);
-                GUIP.setUnitDisplayNonTabbedSizeWidth(this.getSize().width);
-                GUIP.setUnitDisplayNonTabbedSizeHeight(this.getSize().height);
-                clientGUI.getUnitDisplay().saveSplitterLoc();
-            }
-        }
-    }
-
     @Override
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            savePref();
+            if ((getSize().width * getSize().height) > 0) {
+                if (GUIP.getUnitDisplayStartTabbed()) {
+                    GUIP.setUnitDisplayPosX(getLocation().x);
+                    GUIP.setUnitDisplayPosY(getLocation().y);
+                    GUIP.setUnitDisplaySizeWidth(getSize().width);
+                    GUIP.setUnitDisplaySizeHeight(getSize().height);
+                } else {
+                    GUIP.setUnitDisplayNontabbedPosX(getLocation().x);
+                    GUIP.setUnitDisplayNontabbedPosY(getLocation().y);
+                    GUIP.setUnitDisplayNonTabbedSizeWidth(getSize().width);
+                    GUIP.setUnitDisplayNonTabbedSizeHeight(getSize().height);
+                    clientGUI.getUnitDisplay().saveSplitterLoc();
+                }
+            }
         }
     }
 

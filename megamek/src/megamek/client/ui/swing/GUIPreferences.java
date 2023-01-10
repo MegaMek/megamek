@@ -201,11 +201,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE = "MiniReportAutoDiplayReportPhase";
     public static final String MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE = "MiniReportAutoDiplayNonReportPhase";
     public static final String MINI_REPORT_LOCATION = "MiniReportLocation";
-    public static final String PLAYER_lIST_POS_X = "PlayerListPosX";
-    public static final String PLAYER_lIST_POS_Y = "PlayerListPosY";
-    public static final String PLAYER_lIST_ENABLED = "PlayerListEnabled";
-    public static final String PLAYER_lIST_AUTO_DISPLAY_REPORT_PHASE = "PlayerListAutoDiplayReportPhase";
-    public static final String PLAYER_lIST_AUTO_DISPLAY_NONREPORT_PHASE = "PlayerListAutoDiplayNonReportPhase";
+    public static final String PLAYER_LIST_POS_X = "PlayerListPosX";
+    public static final String PLAYER_LIST_POS_Y = "PlayerListPosY";
+    public static final String PLAYER_LIST_ENABLED = "PlayerListEnabled";
+    public static final String PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE = "PlayerListAutoDiplayReportPhase";
+    public static final String PLAYER_LIST_AUTO_DISPLAY_NONREPORT_PHASE = "PlayerListAutoDiplayNonReportPhase";
     public static final String MINI_MAP_COLOURS = "MinimapColours";
     public static final String MINI_MAP_ENABLED = "MinimapEnabled";
     public static final String MINI_MAP_POS_X = "MinimapPosX";
@@ -298,10 +298,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static String RAT_PAD_BV = "RATPadBV";
     public static String RAT_SELECTED_RAT = "RATSelectedRAT";
 
-    private static final String MSG_SHOW = Messages.getString("ClientGUI.Show");
-    private static final String MSG_HIDE = Messages.getString("ClientGUI.Hide");
-    private static final String MSG_MANUAL = Messages.getString("ClientGUI.Manual");
-
     // common colors
     public static final Color DEFAULT_WHITE = Color.WHITE;
     public static final Color DEFAULT_BLACK = Color.BLACK;
@@ -346,6 +342,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final Color DEFAULT_MAP_GREEN = new Color(40, 210, 40);  // light green
 
     protected static GUIPreferences instance = new GUIPreferences();
+
+    public static final int HIDE = 0;
+    public static final int SHOW = 1;
+    public static final int MAUNAL = 2;
 
     public static GUIPreferences getInstance() {
         return instance;
@@ -463,8 +463,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(UNIT_DISPLAY_SPLIT_A1_LOC, 900);
         store.setDefault(UNIT_DISPLAY_SPLIT_B1_LOC, 500);
         store.setDefault(UNIT_DISPLAY_SPLIT_C1_LOC, 500);
-        store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, MSG_HIDE);
-        store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, MSG_SHOW);
+        store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, 0);
+        store.setDefault(UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, 1);
         store.setDefault(UNIT_DISPLAY_ENABLED, true);
         store.setDefault(UNIT_DISPLAY_LOCATION, 0);
         store.setDefault(SPLIT_PANE_A_DIVIDER_LOCATION, 300);
@@ -507,8 +507,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(MINI_MAP_COLOURS, "defaultminimap.txt");
         store.setDefault(MINI_MAP_ENABLED, true);
-        store.setDefault(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, MSG_HIDE);
-        store.setDefault(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, MSG_SHOW);
+        store.setDefault(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, 0);
+        store.setDefault(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, 1);
 
         store.setDefault(MMSYMBOL, true);
         store.setDefault(MINIMUM_SIZE_HEIGHT, 200);
@@ -519,15 +519,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MINI_REPORT_SIZE_HEIGHT, 300);
         store.setDefault(MINI_REPORT_SIZE_WIDTH, 400);
         store.setDefault(MINI_REPORT_ENABLED, true);
-        store.setDefault(MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE, MSG_SHOW);
-        store.setDefault(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, MSG_HIDE);
+        store.setDefault(MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE, 1);
+        store.setDefault(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, 0);
         store.setDefault(MINI_REPORT_LOCATION, 0);
 
-        store.setDefault(PLAYER_lIST_ENABLED, true);
-        store.setDefault(PLAYER_lIST_POS_X, 200);
-        store.setDefault(PLAYER_lIST_POS_Y, 150);
-        store.setDefault(PLAYER_lIST_AUTO_DISPLAY_REPORT_PHASE, MSG_SHOW);
-        store.setDefault(PLAYER_lIST_AUTO_DISPLAY_NONREPORT_PHASE, MSG_HIDE);
+        store.setDefault(PLAYER_LIST_ENABLED, true);
+        store.setDefault(PLAYER_LIST_POS_X, 200);
+        store.setDefault(PLAYER_LIST_POS_Y, 150);
+        store.setDefault(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, 1);
+        store.setDefault(PLAYER_LIST_AUTO_DISPLAY_NONREPORT_PHASE, 0);
 
         store.setDefault(MOUSE_WHEEL_ZOOM, true);
         store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
@@ -728,12 +728,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(UNIT_DISPLAY_NONTABBED_SIZE_WIDTH);
     }
 
-    public String getUnitDisplayAutoDisplayReportPhase() {
-        return store.getString(UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE);
+    public int getUnitDisplayAutoDisplayReportPhase() {
+        return store.getInt(UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE);
     }
 
-    public String getUnitDisplayAutoDisplayNonReportPhase() {
-        return store.getString(UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE);
+    public int getUnitDisplayAutoDisplayNonReportPhase() {
+        return store.getInt(UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE);
     }
 
     public boolean getUnitDisplayEnabled() {
@@ -928,12 +928,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(MINI_MAP_ENABLED);
     }
 
-    public String getMinimapAutoDisplayReportPhase() {
-        return store.getString(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE);
+    public int getMinimapAutoDisplayReportPhase() {
+        return store.getInt(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE);
     }
 
-    public String getMinimapAutoDisplayNonReportPhase() {
-        return store.getString(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE);
+    public int getMinimapAutoDisplayNonReportPhase() {
+        return store.getInt(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE);
     }
 
     public int getMinimapPosX() {
@@ -952,12 +952,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(MINI_REPORT_ENABLED);
     }
 
-    public String getMiniReportAutoDisplayReportPhase() {
-        return store.getString(MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE);
+    public int getMiniReportAutoDisplayReportPhase() {
+        return store.getInt(MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE);
     }
 
-    public String getMiniReportAutoDisplayNonReportPhase() {
-        return store.getString(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE);
+    public int getMiniReportAutoDisplayNonReportPhase() {
+        return store.getInt(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE);
     }
 
     public int getMiniReportLocaton() {
@@ -965,23 +965,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public boolean getPlayerListEnabled() {
-        return store.getBoolean(PLAYER_lIST_ENABLED);
+        return store.getBoolean(PLAYER_LIST_ENABLED);
     }
 
     public int getPlayerListPosX() {
-        return store.getInt(PLAYER_lIST_POS_X);
+        return store.getInt(PLAYER_LIST_POS_X);
     }
 
     public int getPlayerListPosY() {
-        return store.getInt(PLAYER_lIST_POS_Y);
+        return store.getInt(PLAYER_LIST_POS_Y);
     }
 
-    public String getPlayerListAutoDisplayReportPhase() {
-        return store.getString(PLAYER_lIST_AUTO_DISPLAY_REPORT_PHASE);
+    public int getPlayerListAutoDisplayReportPhase() {
+        return store.getInt(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE);
     }
 
-    public String getPlayerListAutoDisplayNonReportPhase() {
-        return store.getString(PLAYER_lIST_AUTO_DISPLAY_NONREPORT_PHASE);
+    public int getPlayerListAutoDisplayNonReportPhase() {
+        return store.getInt(PLAYER_LIST_AUTO_DISPLAY_NONREPORT_PHASE);
     }
 
     public boolean getIsometricEnabled() {
@@ -1328,12 +1328,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(UNIT_DISPLAY_NONTABBED_SIZE_WIDTH, i);
     }
 
-    public void setUnitDisplayAutoDisplayReportPhase(String s) {
-        store.setValue(UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, s);
+    public void setUnitDisplayAutoDisplayReportPhase(int i) {
+        store.setValue(UNIT_DISPLAY_AUTO_DISPLAY_REPORT_PHASE, i);
     }
 
-    public void setUnitDisplayAutoDisplayNonReportPhase(String s) {
-        store.setValue(UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, s);
+    public void setUnitDisplayAutoDisplayNonReportPhase(int i) {
+        store.setValue(UNIT_DISPLAY_AUTO_DISPLAY_NONREPORT_PHASE, i);
     }
 
     public void toggleUnitDisplay() {
@@ -1540,12 +1540,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_MAP_ZOOM, zoom);
     }
 
-    public void setMinimapAutoDisplayReportPhase(String s) {
-        store.setValue(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, s);
+    public void setMinimapAutoDisplayReportPhase(int i) {
+        store.setValue(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, i);
     }
 
-    public void setMinimapAutoDisplayNonReportPhase(String s) {
-        store.setValue(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, s);
+    public void setMinimapAutoDisplayNonReportPhase(int i) {
+        store.setValue(MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE, i);
     }
 
     public void setMiniReportEnabled(boolean b) {
@@ -1564,12 +1564,12 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MINI_REPORT_POS_Y, i);
     }
 
-    public void setMiniReportAutoDisplayReportPhase(String s) {
-        store.setValue(MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE, s);
+    public void setMiniReportAutoDisplayReportPhase(int i) {
+        store.setValue(MINI_REPORT_AUTO_DISPLAY_REPORT_PHASE, i);
     }
 
-    public void setMiniReportAutoDisplayNonReportPhase(String s) {
-        store.setValue(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, s);
+    public void setMiniReportAutoDisplayNonReportPhase(int i) {
+        store.setValue(MINI_REPORT_AUTO_DISPLAY_NONREPORT_PHASE, i);
     }
 
     public void toggleMiniReportLocation() {
@@ -1581,7 +1581,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setPlayerListEnabled(boolean b) {
-        store.setValue(PLAYER_lIST_ENABLED, b);
+        store.setValue(PLAYER_LIST_ENABLED, b);
     }
 
     public void togglePlayerListEnabled() {
@@ -1589,19 +1589,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     public void setPlayerListPosX(int i) {
-        store.setValue(PLAYER_lIST_POS_X, i);
+        store.setValue(PLAYER_LIST_POS_X, i);
     }
 
     public void setPlayerListPosY(int i) {
-        store.setValue(PLAYER_lIST_POS_Y, i);
+        store.setValue(PLAYER_LIST_POS_Y, i);
     }
 
-    public void setPlayerListAutoDisplayReportPhase(String s) {
-        store.setValue(PLAYER_lIST_AUTO_DISPLAY_REPORT_PHASE, s);
+    public void setPlayerListAutoDisplayReportPhase(int i) {
+        store.setValue(PLAYER_LIST_AUTO_DISPLAY_REPORT_PHASE, i);
     }
 
-    public void setPlayerListAutoDisplayNonReportPhase(String s) {
-        store.setValue(PLAYER_lIST_AUTO_DISPLAY_NONREPORT_PHASE, s);
+    public void setPlayerListAutoDisplayNonReportPhase(int i) {
+        store.setValue(PLAYER_LIST_AUTO_DISPLAY_NONREPORT_PHASE, i);
     }
 
     public void setBoardEditLoadHeight(int i) {

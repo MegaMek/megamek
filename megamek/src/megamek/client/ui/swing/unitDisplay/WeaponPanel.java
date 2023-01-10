@@ -2650,6 +2650,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             displaySelected();
         } else if (ev.getSource().equals(comboWeaponSortOrder)) {
             setWeaponComparator(comboWeaponSortOrder.getSelectedItem());
+            if (entity.getOwner().equals(unitDisplay.getClientGUI().getClient().getLocalPlayer())) {
+                unitDisplay.getClientGUI().getClient().sendEntityWeaponOrderUpdate(entity);
+            }
         }
         onResize();
     }

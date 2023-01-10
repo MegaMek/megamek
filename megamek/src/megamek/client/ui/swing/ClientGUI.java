@@ -1891,13 +1891,12 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bing();
         }
 
-        private void setWeaponOrderPrefs(GamePhase oldPhase) {
+        private void setWeaponOrderPrefs() {
             for (Iterator<Entity> ents = client.getGame().getEntities(); ents.hasNext();) {
                 Entity entity = ents.next();
                 if ((entity.getOwner().equals(client.getLocalPlayer()))
                         && (!entity.getWeaponSortOrder().isCustom())
-                        && ((!entity.isDeployed()))
-                        || (oldPhase.isUnknown())) {
+                        && (!entity.isDeployed())) {
                     entity.setWeaponSortOrder(GUIP.getDefaultWeaponSortOrder());
                     client.sendEntityWeaponOrderUpdate(entity);
                 }
@@ -1922,8 +1921,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             GamePhase phase = getClient().getGame().getPhase();
             switchPanel(phase);
 
-            if ((e.getOldPhase().isUnknown()) || (phase.isDeployment()))  {
-                setWeaponOrderPrefs(e.getOldPhase());
+            if (phase.isDeployment())  {
+                setWeaponOrderPrefs();
             }
 
             menuBar.setPhase(phase);

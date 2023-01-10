@@ -3048,6 +3048,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
+        // Rain Specialist
+        if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_RAIN
+                    && ae.isConventionalInfantry()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
+            }
+            if  (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_RAIN
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_RAIN
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
+            }
+        }
         // quirks
         
         // Flat -1 for Accurate Weapon

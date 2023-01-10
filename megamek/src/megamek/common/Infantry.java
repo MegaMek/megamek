@@ -379,6 +379,14 @@ public class Infantry extends Entity {
                 mp = Math.max(mp + weatherMod, 0);
             }
         }
+        if (null != game) {
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN
+                    && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+                if (mp !=0 || getMovementMode().isMotorizedInfantry()) {
+                    mp += 1;
+                }
+            }
+        }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
         }

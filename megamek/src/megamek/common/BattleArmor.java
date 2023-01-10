@@ -450,6 +450,11 @@ public class BattleArmor extends Infantry {
                 j = Math.max(j + weatherMod, 0);
             }
         }
+        if (null != game) {
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+                j += 1;
+            }
+        }
         if (gravity) {
             j = applyGravityEffectsOnMP(j);
         }

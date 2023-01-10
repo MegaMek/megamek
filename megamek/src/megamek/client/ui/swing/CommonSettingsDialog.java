@@ -1481,8 +1481,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         JLabel phaseLabel = new JLabel(msg_reportphases + ": ");
         unitDisplayAutoDisplayReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayReportCombo.addItem(msg_show);
         unitDisplayAutoDisplayReportCombo.addItem(msg_hide);
+        unitDisplayAutoDisplayReportCombo.addItem(msg_show);
         unitDisplayAutoDisplayReportCombo.addItem(msg_manual);
         unitDisplayAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
@@ -1493,8 +1493,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         phaseLabel = new JLabel(msg_nonreportphases + ": ");
         unitDisplayAutoDisplayNonReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayNonReportCombo.addItem(msg_show);
         unitDisplayAutoDisplayNonReportCombo.addItem(msg_hide);
+        unitDisplayAutoDisplayNonReportCombo.addItem(msg_show);
         unitDisplayAutoDisplayNonReportCombo.addItem(msg_manual);
         unitDisplayAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
@@ -1512,8 +1512,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         phaseLabel = new JLabel(msg_reportphases + ": ");
         miniMapAutoDisplayReportCombo = new JComboBox<>();
-        miniMapAutoDisplayReportCombo.addItem(msg_show);
         miniMapAutoDisplayReportCombo.addItem(msg_hide);
+        miniMapAutoDisplayReportCombo.addItem(msg_show);
         miniMapAutoDisplayReportCombo.addItem(msg_manual);
         miniMapAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
@@ -1524,8 +1524,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         phaseLabel = new JLabel(msg_nonreportphases + ": ");
         miniMapAutoDisplayNonReportCombo = new JComboBox<>();
-        miniMapAutoDisplayNonReportCombo.addItem(msg_show);
         miniMapAutoDisplayNonReportCombo.addItem(msg_hide);
+        miniMapAutoDisplayNonReportCombo.addItem(msg_show);
         miniMapAutoDisplayNonReportCombo.addItem(msg_manual);
         miniMapAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
@@ -1543,8 +1543,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         phaseLabel = new JLabel(msg_reportphases + ": ");
         miniReportAutoDisplayReportCombo = new JComboBox<>();
-        miniReportAutoDisplayReportCombo.addItem(msg_show);
         miniReportAutoDisplayReportCombo.addItem(msg_hide);
+        miniReportAutoDisplayReportCombo.addItem(msg_show);
         miniReportAutoDisplayReportCombo.addItem(msg_manual);
         miniReportAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
@@ -1555,8 +1555,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         phaseLabel = new JLabel(msg_nonreportphases + ": ");
         miniReportAutoDisplayNonReportCombo = new JComboBox<>();
-        miniReportAutoDisplayNonReportCombo.addItem(msg_show);
         miniReportAutoDisplayNonReportCombo.addItem(msg_hide);
+        miniReportAutoDisplayNonReportCombo.addItem(msg_show);
         miniReportAutoDisplayNonReportCombo.addItem(msg_manual);
         miniReportAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
@@ -1574,8 +1574,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         phaseLabel = new JLabel(msg_reportphases + ": ");
         playerListAutoDisplayReportCombo = new JComboBox<>();
-        playerListAutoDisplayReportCombo.addItem(msg_show);
         playerListAutoDisplayReportCombo.addItem(msg_hide);
+        playerListAutoDisplayReportCombo.addItem(msg_show);
         playerListAutoDisplayReportCombo.addItem(msg_manual);
         playerListAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
@@ -1586,8 +1586,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         phaseLabel = new JLabel(msg_nonreportphases + ": ");
         playerListAutoDisplayNonReportCombo = new JComboBox<>();
-        playerListAutoDisplayNonReportCombo.addItem(msg_show);
         playerListAutoDisplayNonReportCombo.addItem(msg_hide);
+        playerListAutoDisplayNonReportCombo.addItem(msg_show);
         playerListAutoDisplayNonReportCombo.addItem(msg_manual);
         playerListAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();

@@ -212,6 +212,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         }
 
         rerolled = false;
+
         GamePhase phase = clientgui.getClient().getGame().getPhase();
 
         switch (phase) {
@@ -240,5 +241,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
         clientgui.getBoardView().removeKeyListener(this);
+
     }
 }

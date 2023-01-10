@@ -20,17 +20,17 @@ package megamek.utilities;
 
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
-
 import java.io.File;
+
 /**
  * This util will go through all available units and filter them according to the filter() method and
  * print out any units that match the filter.
  */
 public class FilteredUnitListTool {
 
-    private static boolean filter(final Entity entity) {
+    private static boolean filter(final Entity entity, final MechSummary summary) {
         boolean passesFilter;
-        // Between the lines, set passesFilter to any sort of check on entity that, when true,
+        // Between the lines, set passesFilter to any sort of check on entity or MechSummary that, when true,
         // should make the unit be listed.
         // E.g. when looking for all SV with a fusion engine, use:
         // passesFilter = entity.isSupportVehicle() && entity.getEngine().isFusion();
@@ -38,22 +38,22 @@ public class FilteredUnitListTool {
         // passesFilter = entity instanceof Mech && entity.isPrimitive() && entity.getGyroType() == Mech.GYRO_STANDARD;
         // SV with amphibious chassis:
         // passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_AMPHIBIOUS);
+        // Note that the MechSummary contains Alpha Strike values and can be filtered using those.
         // --------------------
-        passesFilter = entity.isSupportVehicle() && entity.hasWorkingMisc(MiscType.F_DUNE_BUGGY);
+        passesFilter = entity instanceof BattleArmor && entity.getMovementMode().isJumpInfantry() && entity.getJumpMP() == 0;
 
         // --------------------
         return passesFilter;
     }
-
 
     // No changes necessary after here:
     public static void main(String[] args) {
         MechSummaryCache cache = MechSummaryCache.getInstance(true);
         System.out.println("Filtering...");
         int countFound = 0;
-        for (MechSummary mech : cache.getAllMechs()) {
-            Entity entity = loadEntity(mech.getSourceFile(), mech.getEntryName());
-            if ((entity != null) && filter(entity)) {
+        for (MechSummary unitSummary : cache.getAllMechs()) {
+            Entity entity = loadEntity(unitSummary.getSourceFile(), unitSummary.getEntryName());
+            if ((entity != null) && filter(entity, unitSummary)) {
                 System.out.println(entity.getShortName());
                 countFound++;
             }
@@ -69,4 +69,6 @@ public class FilteredUnitListTool {
             return null;
         }
     }
+
+    private FilteredUnitListTool() { }
 }

@@ -29,22 +29,22 @@ public class RandomMapPanelBasic extends JPanel {
 
     private static final long serialVersionUID = -6971330721623187856L;
     
-    private static final String NONE = Messages.getString("RandomMapDialog.uiNONE");
-    private static final String LOW = Messages.getString("RandomMapDialog.uiLow");
-    private static final String MEDIUM = Messages.getString("RandomMapDialog.uiMedium");
-    private static final String HIGH = Messages.getString("RandomMapDialog.uiHigh");
-    private static final String[] LOW_HIGH_CHOICES = new String[]{NONE, LOW, MEDIUM, HIGH};
+    private String msg_none = Messages.getString("RandomMapDialog.uiNONE");
+    private String msg_low = Messages.getString("RandomMapDialog.uiLow");
+    private String msg_medium = Messages.getString("RandomMapDialog.uiMedium");
+    private String msg_high = Messages.getString("RandomMapDialog.uiHigh");
+    private String[] LOW_HIGH_CHOICES = new String[]{msg_none, msg_low, msg_medium, msg_high};
 
     private MapSettings mapSettings;
 
     private final JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT);
 
     // Civilization
-    private static final String CT_HUB = "HUB";
-    private static final String CT_GRID = "GRID";
-    private static final String CT_METRO = "METRO";
-    private static final String CT_TOWN = "TOWN";
-    private static final String[] CT_CHOICES = new String[]{NONE, CT_GRID, CT_HUB, CT_METRO, CT_TOWN};
+    private String msg_ct_hub = "HUB";
+    private String msg_ct_grid = "GRID";
+    private String msg_ct_metro = "METRO";
+    private String msg_ct_town = "TOWN";
+    private String[] CT_CHOICES = new String[]{msg_none, msg_ct_grid, msg_ct_hub, msg_ct_metro, msg_ct_town};
     private final CheckpointComboBox<String> cityTypeCombo = new CheckpointComboBox<>(CT_CHOICES);
     private final CheckpointComboBox<String> fortifiedCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
     private final CheckpointComboBox<String> pavementCombo = new CheckpointComboBox<>(LOW_HIGH_CHOICES);
@@ -194,13 +194,13 @@ public class RandomMapPanelBasic extends JPanel {
     
     private String convert(int value, int low, int med, int high) {
         if (value >= high) {
-            return HIGH;
+            return msg_high;
         } else if (value >= med) {
-            return MEDIUM;
+            return msg_medium;
         } else if (value >= low) {
-            return LOW;
+            return msg_low;
         }
-        return NONE;
+        return msg_none;
     }
 
     private JScrollPane setupNaturalFeaturesPanel() {
@@ -284,25 +284,25 @@ public class RandomMapPanelBasic extends JPanel {
 
     private String convertMountain(int peaks, int minHeight, int minWidth, int style) {
         if (MapSettings.MOUNTAIN_SNOWCAPPED == style) {
-            return HIGH;
+            return msg_high;
         }
 
         if (minWidth >= 10) {
-            return HIGH;
+            return msg_high;
         }
 
         if (minHeight >= 8) {
-            return HIGH;
+            return msg_high;
         }
         if (minHeight >= 6) {
-            return MEDIUM;
+            return msg_low;
         }
 
         if (peaks < 1) {
-            return NONE;
+            return msg_none;
         }
 
-        return LOW;
+        return msg_low;
     }
 
     private String percentageToRange(int value) {
@@ -486,9 +486,9 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupCity(String cityType, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(cityType)) {
+        if (msg_none.equalsIgnoreCase(cityType)) {
             mapSettings.setCityParams(0, cityType, 0, 0, 0, 0, 0, 0);
-        } else if (NONE.equalsIgnoreCase(cityType)) {
+        } else if (msg_none.equalsIgnoreCase(cityType)) {
             mapSettings.setCityParams(3, cityType, 10, 50, 1, 3, 75, 60);
         } else {
             mapSettings.setCityParams(16, cityType, 10, 100, 1, 6, 75, 60);
@@ -496,11 +496,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupMountains(String mountainsValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(mountainsValue)) {
+        if (msg_none.equalsIgnoreCase(mountainsValue)) {
             mapSettings.setMountainParams(0, 7, 10, 4, 6, 0);
-        } else if (LOW.equalsIgnoreCase(mountainsValue)) {
+        } else if (msg_low.equalsIgnoreCase(mountainsValue)) {
             mapSettings.setMountainParams(1, 7, 10, 4, 6, 0);
-        } else if (MEDIUM.equalsIgnoreCase(mountainsValue)) {
+        } else if (msg_medium.equalsIgnoreCase(mountainsValue)) {
             mapSettings.setMountainParams(2, 7, 10, 6, 8, 0);
         } else {
             mapSettings.setMountainParams(3, 9, 14, 8, 10, MapSettings.MOUNTAIN_SNOWCAPPED);
@@ -508,11 +508,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupCraters(String cratersValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(cratersValue)) {
+        if (msg_none.equalsIgnoreCase(cratersValue)) {
             mapSettings.setCraterParam(0, 0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(cratersValue)) {
+        } else if (msg_low.equalsIgnoreCase(cratersValue)) {
             mapSettings.setCraterParam(25, 1, 3, 1, 3);
-        } else if (MEDIUM.equalsIgnoreCase(cratersValue)) {
+        } else if (msg_medium.equalsIgnoreCase(cratersValue)) {
             mapSettings.setCraterParam(50, 3, 8, 1, 5);
         } else {
             mapSettings.setCraterParam(75, 6, 14, 3, 9);
@@ -520,11 +520,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupIce(String iceValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(iceValue)) {
+        if (msg_none.equalsIgnoreCase(iceValue)) {
             mapSettings.setIceParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(iceValue)) {
+        } else if (msg_low.equalsIgnoreCase(iceValue)) {
             mapSettings.setIceParams(2, 6, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(iceValue)) {
+        } else if (msg_medium.equalsIgnoreCase(iceValue)) {
             mapSettings.setIceParams(2, 5, 3, 8);
         } else {
             mapSettings.setIceParams(5, 10, 3, 7);
@@ -532,11 +532,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupFortified(String fortifiedValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(fortifiedValue)) {
+        if (msg_none.equalsIgnoreCase(fortifiedValue)) {
             mapSettings.setFortifiedParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(fortifiedValue)) {
+        } else if (msg_low.equalsIgnoreCase(fortifiedValue)) {
             mapSettings.setFortifiedParams(1, 2, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(fortifiedValue)) {
+        } else if (msg_medium.equalsIgnoreCase(fortifiedValue)) {
             mapSettings.setFortifiedParams(2, 4, 2, 3);
         } else {
             mapSettings.setFortifiedParams(2, 4, 3, 6);
@@ -544,11 +544,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupRubble(String rubbleValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(rubbleValue)) {
+        if (msg_none.equalsIgnoreCase(rubbleValue)) {
             mapSettings.setRubbleParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(rubbleValue)) {
+        } else if (msg_low.equalsIgnoreCase(rubbleValue)) {
             mapSettings.setRubbleParams(2, 6, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(rubbleValue)) {
+        } else if (msg_medium.equalsIgnoreCase(rubbleValue)) {
             mapSettings.setRubbleParams(3, 8, 2, 5);
         } else {
             mapSettings.setRubbleParams(5, 10, 3, 7);
@@ -556,11 +556,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupPavement(String pavementValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(pavementValue)) {
+        if (msg_none.equalsIgnoreCase(pavementValue)) {
             mapSettings.setPavementParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(pavementValue)) {
+        } else if (msg_low.equalsIgnoreCase(pavementValue)) {
             mapSettings.setPavementParams(2, 6, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(pavementValue)) {
+        } else if (msg_medium.equalsIgnoreCase(pavementValue)) {
             mapSettings.setPavementParams(3, 8, 2, 5);
         } else {
             mapSettings.setPavementParams(5, 10, 3, 7);
@@ -568,11 +568,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupSwamps(String swampsValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(swampsValue)) {
+        if (msg_none.equalsIgnoreCase(swampsValue)) {
             mapSettings.setSwampParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(swampsValue)) {
+        } else if (msg_low.equalsIgnoreCase(swampsValue)) {
             mapSettings.setSwampParams(2, 6, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(swampsValue)) {
+        } else if (msg_medium.equalsIgnoreCase(swampsValue)) {
             mapSettings.setSwampParams(3, 8, 2, 5);
         } else {
             mapSettings.setSwampParams(5, 10, 3, 7);
@@ -580,11 +580,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupPlantedFields(String fieldsValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(fieldsValue)) {
+        if (msg_none.equalsIgnoreCase(fieldsValue)) {
             mapSettings.setPlantedFieldParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(fieldsValue)) {
+        } else if (msg_low.equalsIgnoreCase(fieldsValue)) {
             mapSettings.setPlantedFieldParams(2, 6, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(fieldsValue)) {
+        } else if (msg_medium.equalsIgnoreCase(fieldsValue)) {
             mapSettings.setPlantedFieldParams(3, 8, 2, 5);
         } else {
             mapSettings.setPlantedFieldParams(5, 10, 3, 7);
@@ -592,11 +592,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupSand(String sandsValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(sandsValue)) {
+        if (msg_none.equalsIgnoreCase(sandsValue)) {
             mapSettings.setSandParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(sandsValue)) {
+        } else if (msg_low.equalsIgnoreCase(sandsValue)) {
             mapSettings.setSandParams(2, 6, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(sandsValue)) {
+        } else if (msg_medium.equalsIgnoreCase(sandsValue)) {
             mapSettings.setSandParams(3, 8, 2, 5);
         } else {
             mapSettings.setSandParams(5, 10, 3, 7);
@@ -604,11 +604,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupRoughs(String roughsValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(roughsValue)) {
+        if (msg_none.equalsIgnoreCase(roughsValue)) {
             mapSettings.setRoughParams(0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(roughsValue)) {
+        } else if (msg_low.equalsIgnoreCase(roughsValue)) {
             mapSettings.setRoughParams(2, 6, 1, 2);
-        } else if (MEDIUM.equalsIgnoreCase(roughsValue)) {
+        } else if (msg_medium.equalsIgnoreCase(roughsValue)) {
             mapSettings.setRoughParams(3, 8, 2, 5);
         } else {
             mapSettings.setRoughParams(5, 10, 3, 7);
@@ -616,11 +616,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupLakes(String lakesValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(lakesValue)) {
+        if (msg_none.equalsIgnoreCase(lakesValue)) {
             mapSettings.setWaterParams(0, 0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(lakesValue)) {
+        } else if (msg_low.equalsIgnoreCase(lakesValue)) {
             mapSettings.setWaterParams(1, 5, 1, 5, 20);
-        } else if (MEDIUM.equalsIgnoreCase(lakesValue)) {
+        } else if (msg_medium.equalsIgnoreCase(lakesValue)) {
             mapSettings.setWaterParams(2, 5, 6, 10, 30);
         } else {
             mapSettings.setWaterParams(3, 6, 8, 15, 45);
@@ -628,11 +628,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     private void setupWoods(String woodsValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(woodsValue)) {
+        if (msg_none.equalsIgnoreCase(woodsValue)) {
             mapSettings.setForestParams(0, 0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(woodsValue)) {
+        } else if (msg_low.equalsIgnoreCase(woodsValue)) {
             mapSettings.setForestParams(3, 6, 3, 6, 20);
-        } else if (MEDIUM.equalsIgnoreCase(woodsValue)) {
+        } else if (msg_medium.equalsIgnoreCase(woodsValue)) {
             mapSettings.setForestParams(4, 8, 3, 10, 30);
         } else {
             mapSettings.setForestParams(6, 10, 8, 13, 45);
@@ -640,11 +640,11 @@ public class RandomMapPanelBasic extends JPanel {
     }
     
     private void setupFoliage(String foliageValue, MapSettings mapSettings) {
-        if (NONE.equalsIgnoreCase(foliageValue)) {
+        if (msg_none.equalsIgnoreCase(foliageValue)) {
             mapSettings.setFoliageParams(0, 0, 0, 0, 0);
-        } else if (LOW.equalsIgnoreCase(foliageValue)) {
+        } else if (msg_low.equalsIgnoreCase(foliageValue)) {
             mapSettings.setFoliageParams(3, 6, 3, 6, 20);
-        } else if (MEDIUM.equalsIgnoreCase(foliageValue)) {
+        } else if (msg_medium.equalsIgnoreCase(foliageValue)) {
             mapSettings.setFoliageParams(4, 8, 3, 10, 30);
         } else {
             mapSettings.setFoliageParams(6, 10, 8, 13, 45);
@@ -654,24 +654,24 @@ public class RandomMapPanelBasic extends JPanel {
     private void setupHills(String hillsValue, MapSettings mapSettings) {
         int percent = rangeToPercentage(hillsValue);
         int range = 0;
-        if (LOW.equalsIgnoreCase(hillsValue)) {
+        if (msg_low.equalsIgnoreCase(hillsValue)) {
             range = 3;
-        } else if (MEDIUM.equalsIgnoreCase(hillsValue)) {
+        } else if (msg_medium.equalsIgnoreCase(hillsValue)) {
             range = 5;
-        } else if (HIGH.equalsIgnoreCase(hillsValue)) {
+        } else if (msg_high.equalsIgnoreCase(hillsValue)) {
             range = 8;
         }
         mapSettings.setElevationParams(percent, range, 0);
     }
 
     private int rangeToPercentage(String range) {
-        if (NONE.equalsIgnoreCase(range)) {
+        if (msg_none.equalsIgnoreCase(range)) {
             return 0;
         }
-        if (LOW.equals(range)) {
+        if (msg_low.equals(range)) {
             return 25;
         }
-        if (MEDIUM.equals(range)) {
+        if (msg_medium.equals(range)) {
             return 50;
         }
         return 75;

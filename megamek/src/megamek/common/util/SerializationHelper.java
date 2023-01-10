@@ -47,11 +47,12 @@ public class SerializationHelper {
                 megamek.client.bot.princess.BehaviorSettings.class,
                 megamek.common.Board.class,
                 megamek.common.Coords.class,
+                megamek.common.CompositeTechLevel.DateRange.class,
                 megamek.common.CriticalSlot.class,
                 megamek.common.Game.class,
-                megamek.common.GameTurn.class,
                 megamek.common.Hex.class,
                 megamek.common.Mounted.class,
+                megamek.common.PilotingRollData.class,
                 megamek.common.Player.class,
                 megamek.common.Sensor.class,
                 megamek.common.TargetRollModifier.class,
@@ -60,6 +61,8 @@ public class SerializationHelper {
                 megamek.common.Report.class,
                 megamek.server.SmokeCloud.class,
         });
+        xStream.allowTypeHierarchy(megamek.common.Crew.class);
+        xStream.allowTypeHierarchy(megamek.common.GameTurn.class);
         xStream.allowTypeHierarchy(megamek.common.ITechnology.class);
         xStream.allowTypeHierarchy(megamek.common.Transporter.class);
         xStream.allowTypeHierarchy(megamek.common.actions.EntityAction.class);

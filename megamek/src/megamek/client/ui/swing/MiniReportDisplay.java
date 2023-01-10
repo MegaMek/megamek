@@ -56,17 +56,22 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
 
-    private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
-    private static final String MSG_PHASE = Messages.getString("MiniReportDisplay.Phase");
-    private static final String MSG_DAMAGE = Messages.getString("MiniReportDisplay.Damage");
-    private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
-    private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
-    private static final String MSG_DETAILS = Messages.getString("MiniReportDisplay.Details");
-    private static final String MSG_SWITCHLOCATION = Messages.getString("MiniReportDisplay.SwitchLocation");
+    private String msg_title = Messages.getString("MiniReportDisplay.title");
+    private String msg_round = Messages.getString("MiniReportDisplay.Round");
+    private String msg_phase = Messages.getString("MiniReportDisplay.Phase");
+    private String msg_damage = Messages.getString("MiniReportDisplay.Damage");
+    private String msg_arrowup = Messages.getString("MiniReportDisplay.ArrowUp");
+    private String msg_arrowdown = Messages.getString("MiniReportDisplay.ArrowDown");
+    private String msg_details = Messages.getString("MiniReportDisplay.Details");
+    private String msg_okay= Messages.getString("Okay");
+    private String msg_switchlocation = Messages.getString("MiniReportDisplay.SwitchLocation");
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
-    public MiniReportDisplay(ClientGUI clientgui) {
+    public MiniReportDisplay(JFrame parent, ClientGUI clientgui) {
+        super(parent, "", false);
+        this.setTitle(msg_title);
+
         if (clientgui == null) {
             return;
         }
@@ -75,19 +80,19 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         currentClient = clientgui.getClient();
         currentClient.getGame().addGameListener(gameListener);
 
-        butSwitchLocation = new JButton(MSG_SWITCHLOCATION);
+        butSwitchLocation = new JButton(msg_switchlocation);
         butSwitchLocation.addActionListener(this);
-        butPlayerSearchUp = new JButton(MSG_ARROWUP);
+        butPlayerSearchUp = new JButton(msg_arrowup);
         butPlayerSearchUp.addActionListener(this);
-        butPlayerSearchDown = new JButton(MSG_ARROWDOWN);
+        butPlayerSearchDown = new JButton(msg_arrowdown);
         butPlayerSearchDown.addActionListener(this);
-        butEntitySearchUp = new JButton(MSG_ARROWUP);
+        butEntitySearchUp = new JButton(msg_arrowup);
         butEntitySearchUp.addActionListener(this);
-        butEntitySearchDown = new JButton(MSG_ARROWDOWN);
+        butEntitySearchDown = new JButton(msg_arrowdown);
         butEntitySearchDown.addActionListener(this);
-        butQuickSearchUp = new JButton(MSG_ARROWUP);
+        butQuickSearchUp = new JButton(msg_arrowup);
         butQuickSearchUp.addActionListener(this);
-        butQuickSearchDown = new JButton(MSG_ARROWDOWN);
+        butQuickSearchDown = new JButton(msg_arrowdown);
         butQuickSearchDown.addActionListener(this);
 
         setLayout(new BorderLayout());
@@ -233,7 +238,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
     private void updateQuickChoice() {
         String lastChoice = (String) comboQuick.getSelectedItem();
-        lastChoice = (lastChoice != null ? lastChoice : MSG_DAMAGE);
+        lastChoice = (lastChoice != null ? lastChoice : msg_damage);
         comboQuick.removeAllItems();
         comboQuick.setEnabled(true);
         String[] keywords =  CP.getReportKeywords().split("\n");
@@ -335,7 +340,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(currentClientgui, desc, MSG_DETAILS,
+                JOptionPane.showMessageDialog(currentClientgui, desc, msg_details,
                         JOptionPane.PLAIN_MESSAGE);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {

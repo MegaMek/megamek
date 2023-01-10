@@ -25,7 +25,6 @@ import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.options.OptionsConstants;
 
 import static megamek.common.alphaStrike.BattleForceSUA.*;
-import static megamek.common.alphaStrike.BattleForceSUA.MEC;
 
 public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter {
 
@@ -54,8 +53,6 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
             if (misc.getType().hasFlag(MiscType.F_VISUAL_CAMO)
                     && !misc.getType().getName().equals(BattleArmor.MIMETIC_ARMOR)) {
                 assign("Visual Camo, not Mimetic", LMAS);
-            } else if (misc.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
-                assign("Vehicle Mine Dispenser", MDS, 1);
             } else if (misc.getType().hasFlag(MiscType.F_TOOLS)
                     && ((misc.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER)) {
                 assign("Minesweeper", MSW);
@@ -113,6 +110,5 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
         if ((entity instanceof BattleArmor) && ((BattleArmor) entity).canDoMechanizedBA()) {
             assign("BA / Mech.", MEC);
         }
-
     }
 }

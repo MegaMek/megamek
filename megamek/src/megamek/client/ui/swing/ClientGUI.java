@@ -1867,6 +1867,18 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
+    private void setWeaponOrderPrefs(boolean prefChange) {
+        for (Iterator<Entity> ents = client.getGame().getEntities(); ents.hasNext();) {
+            Entity entity = ents.next();
+            if ((entity.getOwner().equals(client.getLocalPlayer()))
+                    && (!entity.getWeaponSortOrder().isCustom())
+                    && ((!entity.isDeployed()) || (prefChange))) {
+                entity.setWeaponSortOrder(GUIP.getDefaultWeaponSortOrder());
+                client.sendEntityWeaponOrderUpdate(entity);
+            }
+        }
+    }
+
     private GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePlayerChange(GamePlayerChangeEvent evt) {
@@ -1906,9 +1918,14 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             bv.setChatterBoxActive(false);            
 
             // Swap to this phase's panel.
-            switchPanel(getClient().getGame().getPhase());
+            GamePhase phase = getClient().getGame().getPhase();
+            switchPanel(phase);
 
-            menuBar.setPhase(getClient().getGame().getPhase());
+            if (phase.isDeployment())  {
+                setWeaponOrderPrefs(false);
+            }
+
+            menuBar.setPhase(phase);
             validate();
             cb.moveToEnd();
         }
@@ -2550,6 +2567,9 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             maybeShowUnitDisplay();
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
+        } else if (e.getName().equals(GUIPreferences.DEFAULT_WEAPON_SORT_ORDER)) {
+            setWeaponOrderPrefs(true);
+            getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
         }
         
     }

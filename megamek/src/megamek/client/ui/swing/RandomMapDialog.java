@@ -43,8 +43,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 7758433698878123806L;
     // Views.
-    private static final String VIEW_BASIC = Messages.getString("RandomMapDialog.Normal");
-    private static final String VIEW_ADVANCED = Messages.getString("RandomMapDialog.Advanced");
+    private String msg_view_basic = Messages.getString("RandomMapDialog.Normal");
+    private String msg_view_advanced = Messages.getString("RandomMapDialog.Advanced");
 
     // External helpers.
     private final JFrame PARENT;
@@ -58,8 +58,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     // View switching objects.
     private final RandomMapPanelBasic basicPanel;
     private final RandomMapPanelAdvanced advancedPanel;
-    private final JRadioButton basicButton = new JRadioButton(VIEW_BASIC);
-    private final JRadioButton advancedButton = new JRadioButton(VIEW_ADVANCED);
+    private final JRadioButton basicButton = new JRadioButton(msg_view_basic);
+    private final JRadioButton advancedButton = new JRadioButton(msg_view_advanced);
     private final CardLayout cardLayout = new CardLayout(0, 0);
     private final JPanel mainDisplay = new JPanel();
 
@@ -139,12 +139,12 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         contentPanel.add(setupControlsPanel(), BorderLayout.SOUTH);
 
         add(contentPanel);
-        switchView(VIEW_BASIC, true);
+        switchView(msg_view_basic, true);
     }
 
     private void switchView(String viewName, boolean initializing) {
         // Copy the updated map settings to the other panel.
-        if (!initializing && VIEW_ADVANCED.equalsIgnoreCase(viewName)) {
+        if (!initializing && msg_view_advanced.equalsIgnoreCase(viewName)) {
             mapSettings = basicPanel.getMapSettings();
             if (mapSettings == null) {
                 basicButton.setSelected(true);
@@ -166,8 +166,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
     private void setupMainPanel() {
         mainDisplay.setLayout(cardLayout);
-        mainDisplay.add(basicPanel, VIEW_BASIC);
-        mainDisplay.add(advancedPanel, VIEW_ADVANCED);
+        mainDisplay.add(basicPanel, msg_view_basic);
+        mainDisplay.add(advancedPanel, msg_view_advanced);
         mainDisplay.setBorder(new LineBorder(Color.black, 1));
     }
 
@@ -448,9 +448,9 @@ public class RandomMapDialog extends JDialog implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (basicButton.equals(e.getSource())) {
-            switchView(VIEW_BASIC, false);
+            switchView(msg_view_basic, false);
         } else if (advancedButton.equals(e.getSource())) {
-            switchView(VIEW_ADVANCED, false);
+            switchView(msg_view_advanced, false);
         } else if (loadButton.equals(e.getSource())) {
             doLoad();
         } else if (saveButton.equals(e.getSource())) {
@@ -497,10 +497,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
                 guip.getInt(GUIPreferences.RND_MAP_POS_Y));
         // Restore the advanced view if it was used last
         if (guip.getBoolean(GUIPreferences.RND_MAP_ADVANCED)) {
-            switchView(VIEW_ADVANCED, false);
+            switchView(msg_view_advanced, false);
             advancedButton.setSelected(true);
         } else {
-            switchView(VIEW_BASIC, false);
+            switchView(msg_view_basic, false);
             basicButton.setSelected(true);
         }
     }

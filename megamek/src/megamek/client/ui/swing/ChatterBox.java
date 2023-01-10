@@ -50,9 +50,9 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
     private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
 
-    private static final String MSG_MEGAMEK = Messages.getString("ChatterBox.Megamek");
-    private static final String MSG_DONE = Messages.getString("ChatterBox.ImDone");
-    private static final String MSG_ENTITIESADDED = Messages.getString("ChatterBox.entitiesAdded");
+    private String msg_megamek = Messages.getString("ChatterBox.Megamek");
+    private String msg_done = Messages.getString("ChatterBox.ImDone");
+    private String msg_entitiesadded = Messages.getString("ChatterBox.entitiesAdded");
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
@@ -84,7 +84,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
                 PlayerListDialog.refreshPlayerList(playerList, client);
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
-                    systemMessage(e.getNumberOfEntities() + " " + MSG_ENTITIESADDED);
+                    systemMessage(e.getNumberOfEntities() + " " + msg_entitiesadded);
                 }
             }
 
@@ -113,7 +113,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
-        butDone = new JButton(MSG_DONE);
+        butDone = new JButton(msg_done);
         butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
@@ -175,7 +175,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        chatArea.append("\n" + MSG_MEGAMEK + " " + message);
+        chatArea.append("\n" + msg_megamek + " " + message);
         moveToEnd();
     }
 

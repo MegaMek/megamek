@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
 
 public class ReplacePlayersDialog extends AbstractButtonDialog {
     
-    private static final String PRINCESS_STRING = Messages.getString("ReplacePlayersDialog.princess");
-    private static final String NOREPLACE_STRING = Messages.getString("ReplacePlayersDialog.noReplacement");
+    private String msg_princess_string = Messages.getString("ReplacePlayersDialog.princess");
+    private String msg_noreplace_string = Messages.getString("ReplacePlayersDialog.noReplacement");
     
     /** A ClientGUI given to the dialog. */
     private final ClientGUI clientGui;
@@ -86,8 +86,8 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     protected Container createCenterPane() {
         // Construct the available replacements for the ComboBox chooser
         Vector<String> replacements = new Vector<>();
-        replacements.add(NOREPLACE_STRING);
-        replacements.add(PRINCESS_STRING);
+        replacements.add(msg_noreplace_string);
+        replacements.add(msg_princess_string);
         
         var gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(ghostPlayers.size() + 2, 4, 2, 2));
@@ -119,7 +119,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
             var chooser = new JComboBox<>(replacements);
             playerChoosers.put(ghost, chooser);
             if (savedSettingsExist) {
-                chooser.setSelectedItem(PRINCESS_STRING);
+                chooser.setSelectedItem(msg_princess_string);
                 botConfigs.put(ghost, savedSettings.get(ghost.getName()));
             }
             chooser.addActionListener(e -> updateButtonStates());
@@ -159,7 +159,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
     private void updateButtonStates() {
         for (Player ghost : ghostPlayers) {
             JButton button = configButtons.get(ghost);
-            button.setEnabled(playerChoosers.get(ghost).getSelectedItem().equals(PRINCESS_STRING));
+            button.setEnabled(playerChoosers.get(ghost).getSelectedItem().equals(msg_princess_string));
         }
     }
 
@@ -174,7 +174,7 @@ public class ReplacePlayersDialog extends AbstractButtonDialog {
         var result = new HashMap<String, BehaviorSettings>();
         for (Player ghost : ghostPlayers) {
             JComboBox<String> chooser = playerChoosers.get(ghost);
-            if (chooser.getSelectedItem().equals(PRINCESS_STRING)) {
+            if (chooser.getSelectedItem().equals(msg_princess_string)) {
                 result.put(ghost.getName(), botConfigs.get(ghost));
             }
         }

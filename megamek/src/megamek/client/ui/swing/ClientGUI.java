@@ -2569,6 +2569,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
             adaptToGUIScale();
         } else if (e.getName().equals(GUIPreferences.DEFAULT_WEAPON_SORT_ORDER)) {
             setWeaponOrderPrefs(true);
+            getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
         }
         
     }

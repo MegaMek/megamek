@@ -10,11 +10,7 @@ import java.util.ArrayList;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
-import megamek.common.Compute;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.Targetable;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -237,6 +233,13 @@ class AttackSprite extends Sprite {
     @Override
     public boolean isInside(Point point) {
         return attackPoly.contains(point.x - bounds.x, point.y - bounds.y);
+    }
+
+    public boolean isInside(Coords mcoords) {
+        IdealHex s = new IdealHex(ae.getPosition());
+        IdealHex e = new IdealHex(target.getPosition());
+        IdealHex m = new IdealHex(mcoords);
+        return m.isIntersectedBy(s.cx, s.cy, e.cx, e.cy);
     }
 
     public int getEntityId() {

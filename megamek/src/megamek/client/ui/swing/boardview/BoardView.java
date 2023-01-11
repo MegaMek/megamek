@@ -5555,15 +5555,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        // check if it's on any attacks
-        for (AttackSprite aSprite : attackSprites) {
-            if (aSprite.isInside(point)) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
-                txt.append(aSprite.getTooltip().toString());
-                txt.append("</FONT></TD></TR></TABLE>");
-            }
-        }
-        
         // Add wreck info
         var wreckList = useIsometric() ? isometricWreckSprites : wreckSprites;
         for (var wSprite : wreckList) {
@@ -5599,6 +5590,15 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             txt.append(" in this hex...</FONT>");
             txt.append("</TD></TR></TABLE>");
+        }
+
+        // check if it's on any attacks
+        for (AttackSprite aSprite : attackSprites) {
+            if (aSprite.isInside(mcoords)) {
+                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append(aSprite.getTooltip().toString());
+                txt.append("</FONT></TD></TR></TABLE>");
+            }
         }
 
         // Artillery attacks

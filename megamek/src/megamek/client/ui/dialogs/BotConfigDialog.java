@@ -54,7 +54,7 @@ import static megamek.common.Terrains.*;
 public class BotConfigDialog extends AbstractButtonDialog implements ActionListener, 
         ListSelectionListener, ChangeListener {
 
-    private String msg_savegame_config = Messages.getString("BotConfigDialog.previousConfig");
+    private static final String SAVEGAME_CONFIG = Messages.getString("BotConfigDialog.previousConfig");
     private static final String OK_ACTION = "Ok_Action";
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
@@ -686,7 +686,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         if (presetsList.isSelectionEmpty()) {
             chosenPreset = null;
         } else {
-            if (presetsList.getSelectedValue().equals(msg_savegame_config)) {
+            if (presetsList.getSelectedValue().equals(SAVEGAME_CONFIG)) {
                 princessBehavior = saveGameBehavior;
                 // A savegame Configuration cannot be saved to:
                 chosenPreset = null;
@@ -715,7 +715,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {
-            presets.add(0, msg_savegame_config);
+            presets.add(0, SAVEGAME_CONFIG);
         }
         
         // Other local bot Configurations
@@ -766,7 +766,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             if (preset.startsWith(UIUtil.BOT_MARKER)) {
                 comp.setForeground(UIUtil.uiLightBlue());
             }
-            if (preset.equals(msg_savegame_config)) {
+            if (preset.equals(SAVEGAME_CONFIG)) {
                 comp.setForeground(UIUtil.uiGreen());
             }
             return comp;

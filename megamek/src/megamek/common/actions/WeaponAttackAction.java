@@ -3061,6 +3061,25 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
             }
         }
+
+        // Snow Specialist
+        if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW
+                    && ae.isConventionalInfantry()) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM
+                    && (wtype !=null && wtype.hasFlag(WeaponType.F_MISSILE))) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+        }
+
         // quirks
         
         // Flat -1 for Accurate Weapon

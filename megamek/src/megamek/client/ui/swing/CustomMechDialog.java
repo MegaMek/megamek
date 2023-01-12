@@ -760,6 +760,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.addValue(Crew.ENVSPC_FOG);
             optionComp.addValue(Crew.ENVSPC_LIGHT);
             optionComp.addValue(Crew.ENVSPC_RAIN);
+            optionComp.addValue(Crew.ENVSPC_SNOW);
         }
 
         gridbag.setConstraints(optionComp, c);

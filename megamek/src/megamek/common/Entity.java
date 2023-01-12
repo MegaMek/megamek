@@ -7099,6 +7099,19 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
             }
         }
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+            if (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+            if ((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
+                    || conditions.getWeather() == PlanetaryConditions.WE_SLEET
+                    || conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM)
+                    && isAirborneVTOLorWIGE()) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+        }
+
         return roll;
     }
 

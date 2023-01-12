@@ -386,6 +386,13 @@ public class Infantry extends Entity {
                     mp += 1;
                 }
             }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
+                        || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
+                        && getOriginalWalkMP() != 0) {
+                    mp += 1;
+                }
+            }
         }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
@@ -430,6 +437,12 @@ public class Infantry extends Entity {
                 return 0;
             } else if (windCond == PlanetaryConditions.WI_MOD_GALE) {
                 mp--;
+            }
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
+                if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
+                        && game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM) {
+                    mp += 1;
+                }
             }
         }
         return Math.max(mp, 0);

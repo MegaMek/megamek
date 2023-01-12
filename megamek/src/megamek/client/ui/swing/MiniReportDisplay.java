@@ -54,20 +54,19 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     private ClientGUI currentClientgui;
     private Client currentClient;
 
-    private String msg_title = Messages.getString("MiniReportDisplay.title");
-    private String msg_round = Messages.getString("MiniReportDisplay.Round");
-    private String msg_phase = Messages.getString("MiniReportDisplay.Phase");
-    private String msg_damage = Messages.getString("MiniReportDisplay.Damage");
-    private String msg_arrowup = Messages.getString("MiniReportDisplay.ArrowUp");
-    private String msg_arrowdown = Messages.getString("MiniReportDisplay.ArrowDown");
-    private String msg_details = Messages.getString("MiniReportDisplay.Details");
-    private String msg_okay= Messages.getString("Okay");
+    private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
+    private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
+    private static final String MSG_PHASE = Messages.getString("MiniReportDisplay.Phase");
+    private static final String MSG_DAMAGE = Messages.getString("MiniReportDisplay.Damage");
+    private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
+    private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
+    private static final String MSG_DETAILS = Messages.getString("MiniReportDisplay.Details");
+    private static final String MSG_OKAY= Messages.getString("Okay");
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
     public MiniReportDisplay(JFrame parent, ClientGUI clientgui) {
-        super(parent, "", false);
-        this.setTitle(msg_title);
+        super(parent, MSG_TITLE, false);
 
         if (clientgui == null) {
             return;
@@ -77,19 +76,19 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         currentClient = clientgui.getClient();
         currentClient.getGame().addGameListener(gameListener);
 
-        butOkay = new JButton(msg_okay);
+        butOkay = new JButton(MSG_OKAY);
         butOkay.addActionListener(this);
-        butPlayerSearchUp = new JButton(msg_arrowup);
+        butPlayerSearchUp = new JButton(MSG_ARROWUP);
         butPlayerSearchUp.addActionListener(this);
-        butPlayerSearchDown = new JButton(msg_arrowdown);
+        butPlayerSearchDown = new JButton(MSG_ARROWDOWN);
         butPlayerSearchDown.addActionListener(this);
-        butEntitySearchUp = new JButton(msg_arrowup);
+        butEntitySearchUp = new JButton(MSG_ARROWUP);
         butEntitySearchUp.addActionListener(this);
-        butEntitySearchDown = new JButton(msg_arrowdown);
+        butEntitySearchDown = new JButton(MSG_ARROWDOWN);
         butEntitySearchDown.addActionListener(this);
-        butQuickSearchUp = new JButton(msg_arrowup);
+        butQuickSearchUp = new JButton(MSG_ARROWUP);
         butQuickSearchUp.addActionListener(this);
-        butQuickSearchDown = new JButton(msg_arrowdown);
+        butQuickSearchDown = new JButton(MSG_ARROWDOWN);
         butQuickSearchDown.addActionListener(this);
 
         setLayout(new BorderLayout());
@@ -245,7 +244,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
 
     private void updateQuickChoice() {
         String lastChoice = (String) comboQuick.getSelectedItem();
-        lastChoice = (lastChoice != null ? lastChoice : msg_damage);
+        lastChoice = (lastChoice != null ? lastChoice : MSG_DAMAGE);
         comboQuick.removeAllItems();
         comboQuick.setEnabled(true);
         String[] keywords =  PreferenceManager.getClientPreferences().getReportKeywords().split("\n");
@@ -336,7 +335,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
             ta.setOpaque(false);
             ta.setCaretPosition(0);
             JScrollPane sp = new JScrollPane(ta);
-            tabs.add(msg_round + " " + round, sp);
+            tabs.add(MSG_ROUND + " " + round, sp);
         }
 
         // add the new current phase tab
@@ -352,7 +351,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         ta.setCaretPosition(0);
 
         JScrollPane sp = new JScrollPane(ta);
-        tabs.add(msg_phase, sp);
+        tabs.add(MSG_PHASE, sp);
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
     }
@@ -380,7 +379,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(currentClientgui, desc, msg_details,
+                JOptionPane.showMessageDialog(currentClientgui, desc, MSG_DETAILS,
                         JOptionPane.PLAIN_MESSAGE);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {

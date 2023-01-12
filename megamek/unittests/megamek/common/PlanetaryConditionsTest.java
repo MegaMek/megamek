@@ -166,14 +166,13 @@ public class PlanetaryConditionsTest {
 
     @Test
     public void testGetTemperatureDisplayableName() {
-        PlanetaryConditions pc = new PlanetaryConditions();
         // Extreme Heat
-        assertEquals("51 (Extreme Heat)", pc.getTemperatureDisplayableName(51));
+        assertEquals("51 (Extreme Heat)", PlanetaryConditions.getTemperatureDisplayableName(51));
 
         // Extreme Cold
-        assertEquals("-31 (Extreme Cold)", pc.getTemperatureDisplayableName(-31));
+        assertEquals("-31 (Extreme Cold)", PlanetaryConditions.getTemperatureDisplayableName(-31));
 
         // Regular temperature
-        assertEquals("25", pc.getTemperatureDisplayableName(25));
+        assertEquals("25", PlanetaryConditions.getTemperatureDisplayableName(25));
     }
 }

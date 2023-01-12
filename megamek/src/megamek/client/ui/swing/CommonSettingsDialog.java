@@ -1,7 +1,7 @@
 /*
  * MegaMek
  * Copyright (c) 2003-2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021-2022 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,16 +47,14 @@ import java.util.List;
 import java.util.*;
 
 /** The Client Settings Dialog offering GUI options concerning tooltips, map display, keybinds etc. */
-public class CommonSettingsDialog extends AbstractButtonDialog implements
-        ItemListener, FocusListener, ListSelectionListener,
-        ChangeListener {
+public class CommonSettingsDialog extends AbstractButtonDialog implements ItemListener,
+        FocusListener, ListSelectionListener, ChangeListener {
 
     /**
      * A class for storing information about an GUIPreferences advanced option.
      * @author arlith
      */
     private static class AdvancedOptionData implements Comparable<AdvancedOptionData> {
-
         public String option;
         public AdvancedOptionData(String option) {
             this.option = option;
@@ -260,8 +258,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovHighlightAlpha;
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
-
-    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
@@ -500,7 +496,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         addLineSpacer(comps);
 
-        JLabel reportKeywordsLabel = new JLabel(MSG_REPORTKEYWORDS + ": ");
+        JLabel reportKeywordsLabel = new JLabel(Messages.getString("CommonSettingsDialog.ReportKeywords") + ": ");
         reportKeywordsTextPane = new JTextPane();
         row = new ArrayList<>();
         row.add(reportKeywordsLabel);

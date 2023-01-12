@@ -23,9 +23,6 @@ import java.util.Objects;
  * <code>start</code> function
  */
 public abstract class AbstractCommandLineParser {
-
-    private static final String INCORRECT_ARGUMENTS_MESSAGE = Messages.getString("MegaMek.Help.IncorrectArguments");
-
     /**
      * Exception thrown in case of error
      */
@@ -173,8 +170,8 @@ public abstract class AbstractCommandLineParser {
      * @return <code>String</code> error message for user
      */
     public String formatErrorMessage(Exception e) {
-        return (INCORRECT_ARGUMENTS_MESSAGE + e.getMessage() + '\n'
-                + help());
+        // FIXME : Wind do this now - I should never be localized nor done like this
+        return (Messages.getString("MegaMek.Help.IncorrectArguments") + e.getMessage() + '\n' + help());
     }
 
     /**

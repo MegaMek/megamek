@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2021-2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,10 +51,8 @@ import java.util.stream.Collectors;
 import static megamek.common.Terrains.*;
 
 /** A dialog box to configure (Princess) bot properties. */
-public class BotConfigDialog extends AbstractButtonDialog implements ActionListener, 
+public class BotConfigDialog extends AbstractButtonDialog implements ActionListener,
         ListSelectionListener, ChangeListener {
-
-    private static final String SAVEGAME_CONFIG = Messages.getString("BotConfigDialog.previousConfig");
     private static final String OK_ACTION = "Ok_Action";
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
@@ -686,7 +684,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         if (presetsList.isSelectionEmpty()) {
             chosenPreset = null;
         } else {
-            if (presetsList.getSelectedValue().equals(SAVEGAME_CONFIG)) {
+            if (presetsList.getSelectedValue().equals(Messages.getString("BotConfigDialog.previousConfig"))) {
                 princessBehavior = saveGameBehavior;
                 // A savegame Configuration cannot be saved to:
                 chosenPreset = null;
@@ -715,7 +713,7 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
         
         // Add the Configuration from a save game, if any to the top of the list
         if (saveGameBehavior != null) {
-            presets.add(0, SAVEGAME_CONFIG);
+            presets.add(0, Messages.getString("BotConfigDialog.previousConfig"));
         }
         
         // Other local bot Configurations
@@ -766,7 +764,8 @@ public class BotConfigDialog extends AbstractButtonDialog implements ActionListe
             if (preset.startsWith(UIUtil.BOT_MARKER)) {
                 comp.setForeground(UIUtil.uiLightBlue());
             }
-            if (preset.equals(SAVEGAME_CONFIG)) {
+
+            if (preset.equals(Messages.getString("BotConfigDialog.previousConfig"))) {
                 comp.setForeground(UIUtil.uiGreen());
             }
             return comp;

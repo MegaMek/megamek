@@ -241,6 +241,5 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
         clientgui.getBoardView().removeKeyListener(this);
-
     }
 }

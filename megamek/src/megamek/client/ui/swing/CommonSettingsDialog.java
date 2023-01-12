@@ -276,8 +276,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedNumStripesSlider;
 
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
-
-    private String msg_reportkeywords = Messages.getString("CommonSettingsDialog.ReportKeywords");
+    
+    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
     private String msg_unitdisplay = Messages.getString("CommonMenuBar.viewMekDisplay");
     private String msg_minimap = Messages.getString("CommonMenuBar.viewMinimap");
     private String msg_minireport = Messages.getString("CommonMenuBar.viewRoundReport");
@@ -533,7 +533,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
         addLineSpacer(comps);
 
-        JLabel reportKeywordsLabel = new JLabel(msg_reportkeywords + ": ");
+        JLabel reportKeywordsLabel = new JLabel(MSG_REPORTKEYWORDS + ": ");
         reportKeywordsTextPane = new JTextPane();
         row = new ArrayList<>();
         row.add(reportKeywordsLabel);

@@ -5450,6 +5450,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         Hex mhex = game.getBoard().getHex(mcoords);
 
         StringBuffer txt = new StringBuffer(HTML_BEGIN);
+        txt.append("<div WIDTH=500>");
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
             appendTerrainTooltip(txt, mhex);
@@ -5694,6 +5695,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
         }
 
+        txt.append("</div>");
         return txt.toString();
     }
 
@@ -5850,7 +5852,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         txt.append(" width=6></TD><TD>");
 
         // Entity tooltip
-        txt.append("<div WIDTH=500>" +  UnitToolTip.getEntityTipGame(entity, getLocalPlayer()) + "</div");
+        txt.append(UnitToolTip.getEntityTipGame(entity, getLocalPlayer()));
         txt.append("</TD></TR></TABLE>");
     }
 

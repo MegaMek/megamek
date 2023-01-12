@@ -7,6 +7,8 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
@@ -267,8 +269,23 @@ class AttackSprite extends Sprite {
         final WeaponType wtype = (WeaponType) entity.getEquipment(
                 attack.getWeaponId()).getType();
         final String roll = attack.toHit(this.boardView1.game).getValueAsString();
-        final String table = attack.toHit(this.boardView1.game).getTableDesc();
-        weaponDescs.add(wtype.getName() + Messages.getString("BoardView1.needs") + roll + " " + table);
+        String table = attack.toHit(this.boardView1.game).getTableDesc();
+        if (!table.isEmpty()) {
+            table = " " + table;
+        }
+        boolean b = false;
+        ListIterator<String> i = weaponDescs.listIterator();
+        while (i.hasNext()) {
+             String s = i.next();
+            if (s.contains(wtype.getName())) {
+                i.set(s + ", " + roll + table);
+                b = true;
+            }
+        }
+
+        if (!b) {
+            weaponDescs.add(wtype.getName() + Messages.getString("BoardView1.needs") + roll + table);
+        }
     }
 
     public void addWeapon(KickAttackAction attack) {
@@ -390,7 +407,7 @@ class AttackSprite extends Sprite {
         tipString.append(Integer.toHexString(attackColor.getRGB() & 0xFFFFFF));
         tipString.append(">");
         tipString.append(attackerDesc
-                + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc);
+                + "&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + "&nbsp;&nbsp;" + targetDesc);
         tipString.append("</FONT>");
         for (String wpD: weaponDescs) {
             tipString.append("<BR>"+wpD);

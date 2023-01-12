@@ -222,6 +222,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     private static final String MSG_FATALERRORMSG = Messages.getString("ClientGUI.FatalError.message");
     private static final String MSG_SKINNINGHELPPATH = Messages.getString("ClientGUI.skinningHelpPath");
     private static final String MSG_SKINNINGHELPPATHTITLE = Messages.getString("ClientGUI.skinningHelpPath.title");
+    private static final  String MSG_FAILEDTOLOADAUDIFILE = Messages.getString("ClientGUI.failedToLoadAudioFile");
     private static final String MSG_FILESAVESERVERDIALOGMSG = Messages.getString("ClientGUI.FileSaveServerDialog.message");
     private static final String MSG_FILESAVESERVERDIALOGTITTLE = Messages.getString("ClientGUI.FileSaveServerDialog.title");
     private static final String MSG_OPENUNITLISTFILEDIALOGNOREINFORCETITILE = Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceTitle");
@@ -457,7 +458,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
         final File file = new File(GUIP.getSoundBingFilename());
         if (!file.exists()) {
-            LogManager.getLogger().error(msg_failedtoloadaudifile + " " + GUIP.getSoundBingFilename());
+            LogManager.getLogger().error(MSG_FAILEDTOLOADAUDIFILE + " " + GUIP.getSoundBingFilename());
             return;
         }
 

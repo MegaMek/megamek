@@ -43,26 +43,26 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
     private JButton butOkay;
     private boolean modal;
 
-    private String msg_okay = Messages.getString("Okay");
-    private String msg_title = Messages.getString("PlayerListDialog.title");
-    private String msg_noteam = Messages.getString("PlayerListDialog.NoTeam");
-    private String msg_team = Messages.getString("PlayerListDialog.Team");
-    private String msg_teamless = Messages.getString("PlayerListDialog.TeamLess");
-    private String msg_player_gm = Messages.getString("PlayerListDialog.player_gm");
-    private String msg_player_ghost = Messages.getString("PlayerListDialog.player_ghost");
-    private String msg_player_bot = Messages.getString("PlayerListDialog.player_bot");
-    private String msg_player_human = Messages.getString("PlayerListDialog.player_human");
-    private String msg_player_observer = Messages.getString("PlayerListDialog.player_observer");
-    private String msg_player_done = Messages.getString("PlayerListDialog.player_done");
-    private String msg_player_seeall = Messages.getString("PlayerListDialog.player_seeall");
-    private String msg_player_singleblind = Messages.getString("PlayerListDialog.player_singleblind");
-    private String msg_player_ignoredoubleblind = Messages.getString("PlayerListDialog.player_ignoreDoubleBlind");
+    private static final String MSG_OKAY = Messages.getString("Okay");
+    private static final String MSG_TITLE = Messages.getString("PlayerListDialog.title");
+    private static final String MSG_NOTEAM = Messages.getString("PlayerListDialog.NoTeam");
+    private static final String MSG_TEAM = Messages.getString("PlayerListDialog.Team");
+    private static final String MSG_TEAMLESS = Messages.getString("PlayerListDialog.TeamLess");
+    private static final String MSG_PLAYER_GM = Messages.getString("PlayerListDialog.player_gm");
+    private static final String MSG_PLAYER_GHOST = Messages.getString("PlayerListDialog.player_ghost");
+    private static final String MSG_PLAYER_BOT = Messages.getString("PlayerListDialog.player_bot");
+    private static final String MSG_PLAYER_HUMAN = Messages.getString("PlayerListDialog.player_human");
+    private static final String MSG_PLAYER_OBSERVER = Messages.getString("PlayerListDialog.player_observer");
+    private static final String MSG_PLAYER_DONE = Messages.getString("PlayerListDialog.player_done");
+    private static final String MSG_PLAYER_SEEALL = Messages.getString("PlayerListDialog.player_seeall");
+    private static final String MSG_PLAYER_SINGLEBLIND = Messages.getString("PlayerListDialog.player_singleblind");
+    private static final String MSG_PLAYER_IGNOREDOUBLEBLIND = Messages.getString("PlayerListDialog.player_ignoreDoubleBlind");
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public PlayerListDialog(JFrame parent, Client client, boolean modal) {
         super(parent, "", false);
-        this.setTitle(msg_title);
+        this.setTitle(MSG_TITLE);
         this.client = client;
         this.modal = modal;
 
@@ -72,7 +72,7 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_END);
 
-        butOkay = new JButton(msg_okay);
+        butOkay = new JButton(MSG_OKAY);
         butOkay.addActionListener(this);
         add(butOkay, BorderLayout.PAGE_END);
 
@@ -125,46 +125,46 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
                 Team team = client.getGame().getTeamForPlayer(player);
                 if (team != null) {
                     if (team.getId() == Player.TEAM_NONE) {
-                        playerDisplay.append(msg_noteam);
+                        playerDisplay.append(MSG_NOTEAM);
                     } else {
-                        playerDisplay.append(MessageFormat.format(msg_team, team.getId()));
+                        playerDisplay.append(MessageFormat.format(MSG_TEAM, team.getId()));
                     }
                 } else {
-                    playerDisplay.append(msg_teamless);
+                    playerDisplay.append(MSG_TEAMLESS);
                 }
             }
 
             if (player.isGameMaster()) {
-                playerDisplay.append(msg_player_gm);
+                playerDisplay.append(MSG_PLAYER_GM);
             }
 
             if (player.isGhost()) {
-                playerDisplay.append(msg_player_ghost);
+                playerDisplay.append(MSG_PLAYER_GHOST);
             } else {
                 if (player.isBot()) {
-                    playerDisplay.append(msg_player_bot);
+                    playerDisplay.append(MSG_PLAYER_BOT);
                 } else {
-                    playerDisplay.append(msg_player_human);
+                    playerDisplay.append(MSG_PLAYER_HUMAN);
                 }
                 if (player.isObserver()) {
-                    playerDisplay.append(msg_player_observer);
+                    playerDisplay.append(MSG_PLAYER_OBSERVER);
                 } else if (player.isDone()) {
-                    playerDisplay.append(msg_player_done);
+                    playerDisplay.append(MSG_PLAYER_DONE);
                 }
             }
 
             // this may be too much detail long term, but is useful for understanding the modes
             // during testing
             if (player.getSeeAll()) {
-                playerDisplay.append(msg_player_seeall);
+                playerDisplay.append(MSG_PLAYER_SEEALL);
             }
 
             if (player.getSingleBlind()) {
-                playerDisplay.append(msg_player_singleblind);
+                playerDisplay.append(MSG_PLAYER_SINGLEBLIND);
             }
 
             if (player.canIgnoreDoubleBlind()) {
-                playerDisplay.append(msg_player_ignoredoubleblind);
+                playerDisplay.append(MSG_PLAYER_IGNOREDOUBLEBLIND);
             }
 
             ((DefaultListModel<String>) playerList.getModel()).addElement(playerDisplay.toString());

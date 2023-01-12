@@ -93,8 +93,8 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     public static final int NON_TABBED_FOUR_INDEX = 4;
     public static final int NON_TABBED_FIVE_INDEX = 5;
 
-    private String msg_switchlocation = Messages.getString("UnitDisplay.SwitchLocation");
-    private String msg_switchview = Messages.getString("UnitDisplay.SwitchView");
+    private static final String MSG_SWITCHLOCATION = Messages.getString("UnitDisplay.SwitchLocation");
+    private static final String MSG_SWITCHVIEW = Messages.getString("UnitDisplay.SwitchView");
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
@@ -162,8 +162,8 @@ public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
         splitA1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitB1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitC1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        butSwitchView = new JButton(msg_switchview);
-        butSwitchLocation = new JButton(msg_switchlocation);
+        butSwitchView = new JButton(MSG_SWITCHVIEW);
+        butSwitchLocation = new JButton(MSG_SWITCHLOCATION);
 
         splitABC.setOneTouchExpandable(true);
         splitBC.setOneTouchExpandable(true);

@@ -32,14 +32,14 @@ import java.awt.event.WindowEvent;
 public class UnitDisplayDialog extends JDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
-    private String msg_title = Messages.getString("ClientGUI.MechDisplay");
+    private static final String MSG_TITLE = Messages.getString("ClientGUI.MechDisplay");
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     //endregion Variable Declarations
 
     //region Constructors
     public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, "", false);
-        this.setTitle(msg_title);
+        this.setTitle(MSG_TITLE);
 
         if (GUIP.getUnitDisplayStartTabbed()) {
             this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());

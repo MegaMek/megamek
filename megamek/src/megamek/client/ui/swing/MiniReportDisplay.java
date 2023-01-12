@@ -304,11 +304,11 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
-            tabs.add(msg_round + " " + round, loadHtmlScrollPane(text));
+            tabs.add(MSG_ROUND + " " + round, loadHtmlScrollPane(text));
         }
 
         // add the new current phase tab
-        tabs.add(msg_phase, loadHtmlScrollPane(currentClient.phaseReport));
+        tabs.add(MSG_PHASE, loadHtmlScrollPane(currentClient.phaseReport));
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
         tabs.setMinimumSize(new Dimension(0, 0));

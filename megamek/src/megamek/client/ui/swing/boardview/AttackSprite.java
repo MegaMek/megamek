@@ -56,6 +56,12 @@ class AttackSprite extends Sprite {
 
     private final Targetable target;
 
+    private Coords aCoord;
+    private Coords tCoord;
+    private IdealHex aHex;
+    private IdealHex tHex;
+
+
     public AttackSprite(BoardView boardView1, final AttackAction attack) {
         super(boardView1);
         this.boardView1 = boardView1;
@@ -64,6 +70,10 @@ class AttackSprite extends Sprite {
         targetId = attack.getTargetId();
         ae = this.boardView1.game.getEntity(attack.getEntityId());
         target = this.boardView1.game.getTarget(targetType, targetId);
+        aCoord = ae.getPosition();
+        tCoord = target.getPosition();
+        aHex = new IdealHex(aCoord);
+        tHex = new IdealHex(tCoord);
 
         // color?
         attackColor = ae.getOwner().getColour().getColour();
@@ -236,10 +246,9 @@ class AttackSprite extends Sprite {
     }
 
     public boolean isInside(Coords mcoords) {
-        IdealHex s = new IdealHex(ae.getPosition());
-        IdealHex e = new IdealHex(target.getPosition());
-        IdealHex m = new IdealHex(mcoords);
-        return m.isIntersectedBy(s.cx, s.cy, e.cx, e.cy);
+        IdealHex mHex = new IdealHex(mcoords);
+
+        return ((mHex.isIntersectedBy(aHex.cx, aHex.cy, tHex.cx, tHex.cy)) && (mcoords.between(aCoord, tCoord)));
     }
 
     public int getEntityId() {

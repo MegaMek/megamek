@@ -2955,7 +2955,7 @@ public class MoveStep implements Serializable {
                     if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)) {
                         mp += 2;
                     } else {
-                        mp+=1;
+                        mp += 1;
                     }
                     break;
             }

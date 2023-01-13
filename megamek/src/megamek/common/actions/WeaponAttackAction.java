@@ -3080,6 +3080,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
 
+        // Wind Specialist
+        if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_MOD_GALE
+                    && (wtype !=null && wtype.hasFlag(WeaponType.F_MISSILE))) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
+            }
+            if (wtype !=null && wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
+                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STRONG_GALE
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STORM)) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F4) {
+                toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+        }
+
+
         // quirks
         
         // Flat -1 for Accurate Weapon

@@ -7111,6 +7111,33 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
         }
+        if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
+                && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
+            if (conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE && isAirborneVTOLorWIGE()) {
+                roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+            if (conditions.getWeather() == PlanetaryConditions.WI_STRONG_GALE) {
+                if (this instanceof Mech || isAirborne()
+                        || isAirborneVTOLorWIGE() || getMovementMode() == EntityMovementMode.HOVER) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+            }
+            if (conditions.getWeather() == PlanetaryConditions.WI_STORM) {
+                if (this instanceof Mech || isAirborneVTOLorWIGE()
+                        || getMovementMode() == EntityMovementMode.HOVER) {
+                    roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+                if (isAirborne()) {
+                    roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
+                }
+            }
+            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F13) {
+                roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F4) {
+                roll.addModifier(-3, Messages.getString("WeaponAttackAction.WindSpec"));
+            }
+        }
 
         return roll;
     }

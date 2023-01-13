@@ -78,6 +78,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_ALL = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_INF | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL | CMD_AERO | CMD_AERO_VECTORED;
 
+    private boolean isUnJammingRAC;
+
     /**
      * This enumeration lists all of the possible ActionCommands that can be carried out during the
      * movement phase. Each command has a string for the command plus a flag that determines what
@@ -313,6 +315,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
         for (MoveCommand cmd : MoveCommand.values()) {
             String title = Messages.getString("MovementDisplay." + cmd.getCmd());
+            if ((clientgui != null) &&
+                    (cmd == MoveCommand.MOVE_UNJAM) &&
+                    (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
+                title += Messages.getString("BoardView1.Tooltip.AndAC");
+            }
             MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
             String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
             if (Messages.keyExists(ttKey)) {
@@ -1188,6 +1195,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
+        if ((ce().canUnjamRAC()) && (GUIPreferences.getInstance().getNagForNoUnJamRAC()) && (!isUnJammingRAC)){
+            // confirm this action
+            String title = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.title");
+            String body = Messages.getString("MovementDisplay.ConfirmUnJamRACDlg.message");
+            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+            if (!response.getShowAgain()) {
+                GUIPreferences.getInstance().setNagForNoUnJamRAC(false);
+            }
+
+            if (!response.getAnswer()) {
+                return;
+            }
+        }
+
         cmd.clipToPossible();
         if ((cmd.length() == 0) && !ce().isAirborne() && GUIP.getNagForNoAction()) {
             // Hmm... no movement steps, confirm this action
@@ -1979,6 +2000,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (ce == null) {
             return;
         }
+        isUnJammingRAC = false;
         GameOptions opts = clientgui.getClient().getGame().getOptions();
         setUnjamEnabled(ce.canUnjamRAC()
                 && ((gear == MovementDisplay.GEAR_LAND)
@@ -4288,6 +4310,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setUnjamEnabled(false);
             } else  if (clientgui.doYesNoDialog(title, msg)) {
                 cmd.addStep(MoveStepType.UNJAM_RAC);
+                isUnJammingRAC = true;
                 ready();
                 // If ready() fires, it will call endMyTurn, which sets cen to
                 // Entity.NONE. If this doesn't happen, it means that the

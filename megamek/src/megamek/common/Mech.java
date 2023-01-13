@@ -1230,15 +1230,21 @@ public abstract class Mech extends Entity {
         return Math.max(jump, 0);
     }
 
-    /**
-     * Gives the bonus to Jump MP conferred by a mech partial wing.
-     *
-     * @param mount
-     *            The mounted location of the Wing
-     * @return The Jump MP bonus conferred by the wing
-     */
-    public int getPartialWingJumpBonus(Mounted mount) {
+
+    public int getPartialWingJumpWeightClassBonus()  {
         int bonus;
+
+        if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
+            bonus = 2;
+        } else {
+            bonus = 1;
+        }
+
+        return bonus;
+    }
+    public int getPartialWingJumpAtmoBonus()  {
+        int bonus;
+
         if (game != null) {
             if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
                 switch (game.getPlanetaryConditions().getAtmosphere()) {
@@ -1275,12 +1281,23 @@ public abstract class Mech extends Entity {
                 }
             }
         } else {
-            if ((getWeightClass() <= EntityWeightClass.WEIGHT_MEDIUM)) {
-                bonus = 2;
-            } else {
-                bonus = 1;
-            }
+            bonus = getPartialWingJumpWeightClassBonus();
         }
+
+        return bonus;
+    }
+
+    /**
+     * Gives the bonus to Jump MP conferred by a mech partial wing.
+     *
+     * @param mount
+     *            The mounted location of the Wing
+     * @return The Jump MP bonus conferred by the wing
+     */
+    public int getPartialWingJumpBonus(Mounted mount) {
+        int bonus;
+
+        bonus = getPartialWingJumpAtmoBonus();
 
         // subtract jumping bonus for damaged criticals
         bonus -= getBadCriticals(CriticalSlot.TYPE_EQUIPMENT,

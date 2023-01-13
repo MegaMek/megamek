@@ -222,6 +222,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_MAP_ED_README = "NagForMapEdReadme";
     public static final String NAG_FOR_MASC = "NagForMASC";
     public static final String NAG_FOR_NO_ACTION = "NagForNoAction";
+    public static final String NAG_FOR_NO_UNJAMRAC = "NagForNoUNJAMRAC";
     public static final String NAG_FOR_PSR = "NagForPSR";
     public static final String NAG_FOR_README = "NagForReadme";
     public static final String NAG_FOR_SPRINT = "NagForSprint";
@@ -537,6 +538,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_MAP_ED_README, true);
         store.setDefault(NAG_FOR_MASC, true);
         store.setDefault(NAG_FOR_NO_ACTION, true);
+        store.setDefault(NAG_FOR_NO_UNJAMRAC, true);
         store.setDefault(NAG_FOR_PSR, true);
         store.setDefault(NAG_FOR_README, true);
         store.setDefault(NAG_FOR_SPRINT, true);
@@ -1048,6 +1050,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(NAG_FOR_NO_ACTION);
     }
 
+    public boolean getNagForNoUnJamRAC() {
+        return store.getBoolean(NAG_FOR_NO_UNJAMRAC);
+    }
+
     public boolean getNagForPSR() {
         return store.getBoolean(NAG_FOR_PSR);
     }
@@ -1067,7 +1073,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getNagForLaunchDoors() {
         return store.getBoolean(NAG_FOR_LAUNCH_DOORS);
     }
-
 
     public boolean getNagForMechanicalJumpFallDamage() {
         return store.getBoolean(NAG_FOR_MECHANICAL_FALL_DAMAGE);
@@ -1650,6 +1655,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setNagForNoAction(boolean b) {
         store.setValue(NAG_FOR_NO_ACTION, b);
+    }
+
+    public void setNagForNoUnJamRAC(boolean b) {
+        store.setValue(NAG_FOR_NO_UNJAMRAC, b);
     }
 
     public void setNagForPSR(boolean b) {

@@ -404,7 +404,7 @@ class LobbyMekCellFormatter {
             if ((mech.hasEjectSeat()) && (!mech.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(guiScaledFontHTML(uiYellow()));
-                result.append(WARNING_SIGN + "<I>");
+                result.append(WARNING_SIGN + "\u23CF<I>");
                 result.append(msg_autoejectdisabled);
                 result.append("</I></FONT>");
             }
@@ -417,7 +417,7 @@ class LobbyMekCellFormatter {
                     && (!aero.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(guiScaledFontHTML(uiYellow()));
-                result.append(WARNING_SIGN + "<I>");
+                result.append(WARNING_SIGN + "\u23CF<I>");
                 result.append(msg_autoejectdisabled);
                 result.append("</I></FONT>");
             }
@@ -707,7 +707,7 @@ class LobbyMekCellFormatter {
             if ((mech.hasEjectSeat()) && (!mech.isAutoEject())) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()));
                 result.append(guiScaledFontHTML(uiYellow()));
-                result.append(WARNING_SIGN + "</FONT>");
+                result.append(WARNING_SIGN + "\u23CF</FONT>");
             }
         }
         if ((entity instanceof Aero)
@@ -718,13 +718,12 @@ class LobbyMekCellFormatter {
                     && (!aero.isAutoEject())) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()));
                 result.append(guiScaledFontHTML(uiYellow()));
-                result.append(WARNING_SIGN + "</FONT>");
+                result.append(WARNING_SIGN + "\u23CF</FONT>");
             }
         }
         
         return LobbyUtility.abbreviateUnitName(result.toString()); 
     }
-
     
     /** 
      * Creates and returns the display content of the C3-MekTree cell for the given entity and 
@@ -815,7 +814,6 @@ class LobbyMekCellFormatter {
 
         return result.toString();
     }
-
     
     /** 
      * Creates and returns the display content of the Pilot column for the given entity and

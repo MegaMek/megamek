@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - The MegaMek Team. All Rights Reserved.
+ * Copyright (c) 2023 - The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -18,6 +18,7 @@
  */
 package megamek.client.ui.swing.lobby.sorters;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.lobby.MekTableModel;
@@ -26,14 +27,14 @@ import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
 
-/** A Lobby Mek Table sorter that sorts by 1) player 2) tonnage. */
+/** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
 public class PlayerUnitRoleSorter implements MekTableSorter {
 
     private ClientGUI clientGui;
     private Sorting direction;
     private int d;
 
-    /** A Lobby Mek Table sorter that sorts by 1) player 2) tonnage. */
+    /** A Lobby Mek Table sorter that sorts by 1) player 2) unit role. */
     public PlayerUnitRoleSorter(ClientGUI cg, Sorting dir) {
         clientGui = cg;
         direction = dir;
@@ -74,7 +75,9 @@ public class PlayerUnitRoleSorter implements MekTableSorter {
 
     @Override
     public String getDisplayName() {
-        return "Player, Unit Role";
+        String msg_player = Messages.getString("ChatLounge.Player");
+        String msg_unitrole = Messages.getString("ChatLounge.UnitRole");
+        return msg_player + ", " + msg_unitrole;
     }
 
     @Override

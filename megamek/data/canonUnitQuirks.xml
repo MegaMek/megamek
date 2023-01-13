@@ -16641,6 +16641,20 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>prototype</quirk>
 		<quirk>trailer_hitch</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Axel Heavy Tank</chassis>
+		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
+		<quirk>poor_target_short</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Axel Heavy Tank IIC</chassis>
+		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
+		<quirk>poor_target_short</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Ballista Self-Propelled Artillery Tank</chassis>
@@ -16973,6 +16987,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Tank</unitType>
 		<quirk>imp_target_long</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Browning Mobile HQ</chassis>
+		<unitType>Tank</unitType>
+		<quirk>imp_com</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Bulwark Assault Vehicle</chassis>
@@ -17019,6 +17040,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>trailer_hitch</quirk>
 		<quirk>obsolete</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Buzzard Hover Tank</chassis>
+		<unitType>Tank</unitType>
+		<quirk>ramshackle</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Carter Medical Emergency Response Vehicle</chassis>
@@ -17050,6 +17077,13 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>(Standard)</model>
 		<unitType>Tank</unitType>
 		<quirk>low_profile</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Command Van</chassis>
+		<unitType>Tank</unitType>
+		<quirk>imp_com</quirk>
+		<quirk>difficult_maintain</quirk>
 	</unit>
 
 	<unit>
@@ -17158,6 +17192,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 	</unit>
 
 	<unit>
+		<chassis>Falcon Hover Tank</chassis>
+		<unitType>Tank</unitType>
+		<quirk>ramshackle</quirk>
+	</unit>
+
+	<unit>
 		<chassis>Fensalir Combat WiGE</chassis>
 		<model>(XXL)</model>
 		<unitType>Tank</unitType>
@@ -17186,6 +17226,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>prototype</quirk>
 		<quirk>anti_air</quirk>
 		<quirk>trailer_hitch</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Galleon Light Tank</chassis>
+		<unitType>Tank</unitType>
+		<quirk>ubiquitous_is</quirk>
 	</unit>
 
 	<unit>
@@ -17226,6 +17272,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Tank</unitType>
 		<quirk>easy_maintain</quirk>
 	</unit>
+		
+	<unit>
+		<chassis>Hawk Hover Tank</chassis>
+		<unitType>Tank</unitType>
+		<quirk>ramshackle</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Heavy NLRM Carrier</chassis>
@@ -17253,6 +17305,14 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>hard_pilot</quirk>
 		<quirk>non_standard</quirk>
 		<quirk>distracting</quirk>
+	</unit>
+	
+	<unit>
+		<chassis>Hetzer Wheeled Assault Gun</chassis>
+		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
+		<quirk>bad_rep_is</quirk>
+		<quirk>poor_work</quirk>
 	</unit>
 
 	<unit>
@@ -17507,13 +17567,21 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Tank</unitType>
 		<quirk>anti_air</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>Patton Tank</chassis>
+		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
+		<quirk>poor_target_short</quirk>
+	</unit>
 
 	<unit>
-		<chassis>Patton Tank-SB</chassis>
-		<model>all</model>
+		<chassis>Patton Tank</chassis>
+		<model>-SB</model>
 		<unitType>Tank</unitType>
 		<quirk>prototype</quirk>
-		<quirk>trailer_hitch</quirk>
+		<quirk>low_profile</quirk>
+		<quirk>poor_target_short</quirk>
 	</unit>
 
 	<unit>
@@ -17628,14 +17696,12 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>trailer_hitch</quirk>
 		<quirk>obsolete</quirk>
 	</unit>
-
+		
 	<unit>
 		<chassis>Rommel Tank</chassis>
-		<model>(Howitzer) Production</model>
 		<unitType>Tank</unitType>
+		<quirk>low_profile</quirk>
 		<quirk>poor_target_short</quirk>
-		<quirk>distracting</quirk>
-		<quirk>trailer_hitch</quirk>
 	</unit>
 
 	<unit>

@@ -54,10 +54,11 @@ class LobbyMekCellFormatter {
 
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
+        GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
-                && game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
+                && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             result.append(DOT_SPACER);
             if (entity instanceof Infantry) {
@@ -99,14 +100,14 @@ class LobbyMekCellFormatter {
                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
                 || (!entity.isDesignValid())) {
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(guiScaledFontHTML(GUIP.getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
             hasCritical = true;
         }
 
         // Unit Name
         if (hasCritical) {
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(guiScaledFontHTML(GUIP.getWarningColor()));
         } else if (hasWarning) {
             result.append(guiScaledFontHTML(uiYellow()));
         } else {
@@ -137,7 +138,7 @@ class LobbyMekCellFormatter {
         if (!forceView) {
             if (!entity.isDesignValid()) {
                 result.append(DOT_SPACER);
-                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+                result.append(guiScaledFontHTML(GUIP.getWarningColor()));
                 result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
             }
         }
@@ -178,13 +179,12 @@ class LobbyMekCellFormatter {
                 result.append(pilot.getDesc(0));
             }
 
-            final boolean rpgSkills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
+            final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
             result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
             if (pilot.countOptions() > 0) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
                 result.append(Messages.getString("ChatLounge.abilities"));
             }
-
 
             // Owner
             if (!localPlayer.equals(owner)) {
@@ -193,14 +193,11 @@ class LobbyMekCellFormatter {
                 result.append("\u2691 ");
                 result.append(entity.getOwner().getName()).append("</FONT>");
             }
-        
 
             // Info sign (i)
             result.append(guiScaledFontHTML(uiGreen()));
             result.append("&nbsp;  \u24D8</FONT>");
-
         }
-        
 
         // SECOND OR THIRD LINE in Force View / Table
         result.append( "<BR>");
@@ -235,11 +232,10 @@ class LobbyMekCellFormatter {
         if (forceView) {
             if (!entity.isDesignValid()) {
                 firstEntry = dotSpacer(result, firstEntry);
-                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+                result.append(guiScaledFontHTML(GUIP.getWarningColor()));
                 result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
             }
         }
-        
 
         // C3 ...
         if (entity.hasC3i()) {
@@ -388,7 +384,7 @@ class LobbyMekCellFormatter {
                     result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
                     result.append(aero.getAltitude());
                 } 
-                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                if (options.booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
                     result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
                     result.append(aero.getCurrentFuel());
                 }
@@ -437,10 +433,11 @@ class LobbyMekCellFormatter {
     static String formatUnitCompact(Entity entity, ChatLounge lobby, boolean forceView) {
         Client client = lobby.getClientgui().getClient();
         Game game = client.getGame();
+        GameOptions options = game.getOptions();
         Player localPlayer = client.getLocalPlayer();
         Player owner = entity.getOwner();
         boolean hideEntity = owner.isEnemyOf(localPlayer)
-                && game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
+                && options.booleanOption(OptionsConstants.BASE_BLIND_DROP);
         if (hideEntity) {
             String value = "<HTML><NOBR>&nbsp;&nbsp;";
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
@@ -467,17 +464,16 @@ class LobbyMekCellFormatter {
             }
             return value + guiScaledFontHTML() + DOT_SPACER + uType + DOT_SPACER;
         }
-        
 
         StringBuilder result = new StringBuilder("<HTML><NOBR>&nbsp;&nbsp;" + guiScaledFontHTML());
         boolean isCarried = entity.getTransportId() != Entity.NONE;
         int mapType = lobby.mapSettings.getMedium();
         
-        Color color = GUIPreferences.getInstance().getEnemyUnitColor();
+        Color color = GUIP.getEnemyUnitColor();
         if (owner.getId() == localPlayer.getId()) {
-            color = GUIPreferences.getInstance().getMyUnitColor();
+            color = GUIP.getMyUnitColor();
         } else if (!localPlayer.isEnemyOf(owner)) {
-            color = GUIPreferences.getInstance().getAllyUnitColor();
+            color = GUIP.getAllyUnitColor();
         }
         color = addGray(color, 128).brighter();
 
@@ -499,7 +495,7 @@ class LobbyMekCellFormatter {
                 || (entity.doomedOnGround() && mapType == MapSettings.MEDIUM_GROUND)
                 || (entity.doomedInSpace() && mapType == MapSettings.MEDIUM_SPACE)
                 || (!entity.isDesignValid())) {
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor())); 
+            result.append(guiScaledFontHTML(GUIP.getWarningColor()));
             result.append(WARNING_SIGN + "</FONT>");
         }
 
@@ -541,7 +537,7 @@ class LobbyMekCellFormatter {
                 result.append(pilot.getDesc(0));
             }
 
-            final boolean rpgSkills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
+            final boolean rpgSkills = options.booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
             result.append(" (" + pilot.getSkillsAsString(rpgSkills) + ")");
             if (pilot.countOptions() > 0) {
                 result.append(DOT_SPACER + guiScaledFontHTML(uiQuirksColor()));
@@ -557,11 +553,10 @@ class LobbyMekCellFormatter {
             }
         }
 
-
         // Invalid unit design
         if (!entity.isDesignValid()) {
             result.append(DOT_SPACER);
-            result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
+            result.append(guiScaledFontHTML(GUIP.getWarningColor()));
             result.append("\u26D4 </FONT>").append(Messages.getString("ChatLounge.invalidDesign"));
         }
 
@@ -620,7 +615,6 @@ class LobbyMekCellFormatter {
             }
             result.append("</FONT>");
         }
-
 
         // Loaded onto another unit
         if (isCarried) {
@@ -681,7 +675,7 @@ class LobbyMekCellFormatter {
                     result.append(", " + Messages.getString("ChatLounge.compact.altitude") + ": ");
                     result.append(aero.getAltitude());
                 } 
-                if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
+                if (options.booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
                     result.append(", " + Messages.getString("ChatLounge.compact.fuel") + ": ");
                     result.append(aero.getCurrentFuel());
                 }
@@ -735,11 +729,11 @@ class LobbyMekCellFormatter {
         Player owner = game.getPlayer(ownerId);
         
         // Get the my / ally / enemy color and desaturate it
-        Color color = GUIPreferences.getInstance().getEnemyUnitColor();
+        Color color = GUIP.getEnemyUnitColor();
         if (ownerId == localPlayer.getId()) {
-            color = GUIPreferences.getInstance().getMyUnitColor();
+            color = GUIP.getMyUnitColor();
         } else if (!localPlayer.isEnemyOf(owner)) {
-            color = GUIPreferences.getInstance().getAllyUnitColor();
+            color = GUIP.getAllyUnitColor();
         }
         color = addGray(color, 128).brighter();
 
@@ -911,6 +905,4 @@ class LobbyMekCellFormatter {
         }
         return false;
     }
-    
-
 }

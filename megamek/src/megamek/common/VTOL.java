@@ -293,6 +293,11 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
+    public boolean isNightwalker() {
+        return false;
+    }
+
+    @Override
     public boolean doomedInSpace() {
         return true;
     }

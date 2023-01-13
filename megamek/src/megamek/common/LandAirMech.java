@@ -1143,6 +1143,15 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
+    public boolean isNightwalker() {
+        if (isAirborne()) {
+            return false;
+        } else {
+            return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_TM_NIGHTWALKER);
+        }
+    }
+
+    @Override
     public int getCurrentVelocity() {
         // if using advanced movement then I just want to sum up
         // the different vectors

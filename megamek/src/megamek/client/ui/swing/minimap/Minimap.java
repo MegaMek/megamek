@@ -162,7 +162,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                 GUIP.setMinimapEnabled(false);
             }
         });
-        
+
         result.add(new Minimap(result, game, bv, cg));
         result.pack();
         return result;
@@ -510,7 +510,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     addRoadElements(h, j, k);
                     // Color invalid hexes red when in the Map Editor
                     if ((game != null) && game.getPhase().isUnknown() && !h.isValid(null)) {
-                        gg.setColor(GUIPreferences.getInstance().getWarningColor());
+                        gg.setColor(GUIP.getWarningColor());
                         paintCoord(gg, j, k, true);
                     }
                 }
@@ -1342,11 +1342,12 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     private final GameListener gameListener = new GameListenerAdapter() {
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            if (GUIPreferences.getInstance().getGameSummaryMinimap()
+            if (GUIP.getGameSummaryMinimap()
                     && (e.getOldPhase().isDeployment() || e.getOldPhase().isMovement()
                             || e.getOldPhase().isTargeting() || e.getOldPhase().isPremovement()
                             || e.getOldPhase().isPrefiring() || e.getOldPhase().isFiring()
                             || e.getOldPhase().isPhysical())) {
+
                 File dir = new File(Configuration.gameSummaryImagesMMDir(), game.getUUIDString());
                 if (!dir.exists()) {
                     dir.mkdirs();

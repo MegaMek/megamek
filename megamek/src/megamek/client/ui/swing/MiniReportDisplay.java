@@ -39,8 +39,8 @@ import java.util.Iterator;
 /**
  * Shows reports, with an Okay JButton
  */
-public class MiniReportDisplay extends JDialog implements ActionListener, HyperlinkListener, IPreferenceChangeListener {
-    private JButton butOkay;
+public class MiniReportDisplay extends JPanel implements ActionListener, HyperlinkListener, IPreferenceChangeListener {
+    private JButton butSwitchLocation;
     private JTabbedPane tabs;  
     private JButton butPlayerSearchUp;
     private JButton butPlayerSearchDown;
@@ -53,6 +53,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     private JComboBox<String> comboQuick = new JComboBox<>();
     private ClientGUI currentClientgui;
     private Client currentClient;
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
 
     private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
     private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
@@ -61,12 +63,11 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
     private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
     private static final String MSG_DETAILS = Messages.getString("MiniReportDisplay.Details");
-    private static final String MSG_OKAY= Messages.getString("Okay");
+    private static final String MSG_SWITCHLOCATION = Messages.getString("MiniReportDisplay.SwitchLocation");
 
     private static final int MRD_MAXNAMELENGHT = 60;
 
-    public MiniReportDisplay(JFrame parent, ClientGUI clientgui) {
-        super(parent, MSG_TITLE, false);
+    public MiniReportDisplay(ClientGUI clientgui) {
 
         if (clientgui == null) {
             return;
@@ -76,8 +77,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         currentClient = clientgui.getClient();
         currentClient.getGame().addGameListener(gameListener);
 
-        butOkay = new JButton(MSG_OKAY);
-        butOkay.addActionListener(this);
+        butSwitchLocation = new JButton(MSG_SWITCHLOCATION);
+        butSwitchLocation.addActionListener(this);
         butPlayerSearchUp = new JButton(MSG_ARROWUP);
         butPlayerSearchUp.addActionListener(this);
         butPlayerSearchDown = new JButton(MSG_ARROWDOWN);
@@ -94,41 +95,32 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         setLayout(new BorderLayout());
 
         JPanel p = new JPanel();
-        p.add(BorderLayout.EAST, comboPlayer);
-        p.add(BorderLayout.EAST, butPlayerSearchUp);
-        p.add(BorderLayout.EAST, butPlayerSearchDown);
-        p.add(BorderLayout.EAST, comboEntity);
-        p.add(BorderLayout.EAST, butEntitySearchUp);
-        p.add(BorderLayout.EAST, butEntitySearchDown);
-        p.add(BorderLayout.EAST, comboQuick);
-        p.add(BorderLayout.EAST, butQuickSearchUp);
-        p.add(BorderLayout.EAST, butQuickSearchDown);
+        p.setLayout(new BoxLayout(p, BoxLayout.X_AXIS));
+        p.add(comboPlayer);
+        p.add(butPlayerSearchUp);
+        p.add(butPlayerSearchDown);
+        p.add(comboEntity);
+        p.add(butEntitySearchUp);
+        p.add(butEntitySearchDown);
+        p.add(comboQuick);
+        p.add(butQuickSearchUp);
+        p.add(butQuickSearchDown);
+        p.add(butSwitchLocation);
 
-        p.add(BorderLayout.WEST, butOkay);
         JScrollPane sp = new JScrollPane(p);
-        add(BorderLayout.SOUTH, sp);
-        
-        setupReportTabs();
-                
-        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
-                GUIPreferences.getInstance().getMiniReportSizeHeight());
+        JPanel panelMain = new JPanel(new BorderLayout());
+
+        tabs = new JTabbedPane();
+        panelMain.add(tabs, BorderLayout.CENTER);
+        panelMain.add(sp, BorderLayout.SOUTH);
+        panelMain.setMinimumSize(new Dimension(0, 0));
+        add(panelMain, BorderLayout.CENTER);
+
         doLayout();
-        setLocation(GUIPreferences.getInstance().getMiniReportPosX(),
-                GUIPreferences.getInstance().getMiniReportPosY());
-
-        // closing the window is the same as hitting butOkay
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                actionPerformed(new ActionEvent(butOkay,
-                        ActionEvent.ACTION_PERFORMED, butOkay.getText()));
-            }
-        });
-
         adaptToGUIScale();
-        GUIPreferences.getInstance().addPreferenceChangeListener(this);
-        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
-        butOkay.requestFocus();
+
+        GUIP.addPreferenceChangeListener(this);
+        CP.addPreferenceChangeListener(this);
     }
 
     private void searchTextPane(String searchPattern, Boolean searchDown) {
@@ -196,11 +188,10 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
             String playerDisplay = String.format("%-12s", player.getName());
             comboPlayer.addItem(playerDisplay);
         }
-        if (comboPlayer.getItemCount() == 1) {
-            comboPlayer.setEnabled(false);
-        }
         comboPlayer.setSelectedItem(lastChoice);
-        if (comboPlayer.getSelectedIndex() < 0) {
+        if (comboPlayer.getItemCount() <= 1) {
+            comboPlayer.setEnabled(false);
+        } else if (comboPlayer.getSelectedIndex() < 0) {
             comboPlayer.setSelectedIndex(0);
         }
     }
@@ -247,7 +238,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         lastChoice = (lastChoice != null ? lastChoice : MSG_DAMAGE);
         comboQuick.removeAllItems();
         comboQuick.setEnabled(true);
-        String[] keywords =  PreferenceManager.getClientPreferences().getReportKeywords().split("\n");
+        String[] keywords =  CP.getReportKeywords().split("\n");
         for (String keyword : keywords) {
             comboQuick.addItem(keyword);
         }
@@ -271,9 +262,8 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        if (ae.getSource().equals(butOkay)) {
-            savePref();
-            setVisible(false);
+        if (ae.getSource().equals(butSwitchLocation)) {
+            GUIP.toggleMiniReportLocation();
         } else if (ae.getSource().equals(butPlayerSearchDown)) {
             String searchPattern = comboPlayer.getSelectedItem().toString().trim();
             searchTextPane(searchPattern, true);
@@ -295,28 +285,17 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         }
     }
 
-    @Override
-    protected void processWindowEvent(WindowEvent e) {
-        super.processWindowEvent(e);
-        if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            savePref();
-        }
-    }
-
-
-    private void setupReportTabs() {
-        tabs = new JTabbedPane();
-
-        addReportPages();
-        
-        add(BorderLayout.CENTER, tabs);
-    }
-
-    private void savePref() {
-        GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
-        GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
-        GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
-        GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
+    private JScrollPane loadHtmlScrollPane(String t) {
+        JTextPane ta = new JTextPane();
+        Report.setupStylesheet(ta);
+        ta.addHyperlinkListener(this);
+        BASE64ToolKit toolKit = new BASE64ToolKit();
+        ta.setEditorKit(toolKit);
+        ta.setText("<pre>" + t + "</pre>");
+        ta.setEditable(false);
+        ta.setOpaque(false);
+        ta.setCaretPosition(0);
+        return new JScrollPane(ta);
     }
 
     public void addReportPages() {
@@ -325,35 +304,14 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
 
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
-            JTextPane ta = new JTextPane();
-            ReportDisplay.setupStylesheet(ta);
-            ta.addHyperlinkListener(this);
-            BASE64ToolKit toolKit = new BASE64ToolKit();
-            ta.setEditorKit(toolKit);
-            ta.setText("<pre>" + text + "</pre>");
-            ta.setEditable(false);
-            ta.setOpaque(false);
-            ta.setCaretPosition(0);
-            JScrollPane sp = new JScrollPane(ta);
-            tabs.add(MSG_ROUND + " " + round, sp);
+            tabs.add(MSG_ROUND + " " + round, loadHtmlScrollPane(text));
         }
 
         // add the new current phase tab
-        JTextPane ta = new JTextPane();
-        ReportDisplay.setupStylesheet(ta);
-        ta.addHyperlinkListener(this);
-
-        BASE64ToolKit toolKit = new BASE64ToolKit();
-        ta.setEditorKit(toolKit);
-        ta.setText("<pre>" + currentClient.phaseReport + "</pre>");
-        ta.setEditable(false);
-        ta.setOpaque(false);
-        ta.setCaretPosition(0);
-
-        JScrollPane sp = new JScrollPane(ta);
-        tabs.add(MSG_PHASE, sp);
+        tabs.add(MSG_PHASE, loadHtmlScrollPane(currentClient.phaseReport));
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
+        tabs.setMinimumSize(new Dimension(0, 0));
     }
 
     private JComponent activePane() {
@@ -375,7 +333,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
                 Entity ent = currentClientgui.getClient().getGame().getEntity(id);
                 if (ent != null) {
                     currentClientgui.getUnitDisplay().displayEntity(ent);
-                    currentClientgui.setUnitDisplayVisible(true);
+                    GUIP.setUnitDisplayEnabled(true);
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
@@ -397,11 +355,11 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             switch (e.getOldPhase()) {
                 case VICTORY:
-                    savePref();
                     setVisible(false);
                     break;
                 default:
-                    if (!e.getNewPhase().equals((e.getOldPhase()))) {
+                    if ((!e.getNewPhase().equals((e.getOldPhase())))
+                            && ((e.getNewPhase().isReport()) || ((e.getNewPhase().isOnMap()) && (tabs.getTabCount() == 0)))){
                         addReportPages();
                         updatePlayerChoice();
                         updateEntityChoice();
@@ -411,7 +369,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
     };
 
     private void adaptToGUIScale() {
-        UIUtil.adjustDialog(this, UIUtil.FONT_SCALE1);
+        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
 
         for (int i = 0; i < tabs.getTabCount(); i++) {
             Component cp = tabs.getComponentAt(i);
@@ -419,7 +377,7 @@ public class MiniReportDisplay extends JDialog implements ActionListener, Hyperl
                 Component pane = ((JScrollPane) cp).getViewport().getView();
                 if (pane instanceof JTextPane) {
                     JTextPane tp = (JTextPane) pane;
-                    ReportDisplay.setupStylesheet(tp);
+                    Report.setupStylesheet(tp);
                     tp.setText(tp.getText());
                 }
             }

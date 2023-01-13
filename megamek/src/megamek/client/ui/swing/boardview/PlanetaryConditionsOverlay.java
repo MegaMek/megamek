@@ -153,7 +153,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
             }
         }
 
-        distSide = clientGui.getWidth() - (overlayWidth + 100);
+        distSide = clipBounds.width - (overlayWidth + 100);
 
         // draw the cached image to the boardview
         // uses Composite to draw the image with variable transparency

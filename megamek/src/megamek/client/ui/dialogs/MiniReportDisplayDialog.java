@@ -21,7 +21,6 @@ package megamek.client.ui.dialogs;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.UIUtil;
 
 import javax.swing.*;
@@ -29,26 +28,20 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class UnitDisplayDialog extends JDialog {
+public class MiniReportDisplayDialog extends JDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
-    private static final String MSG_TITLE = Messages.getString("ClientGUI.MechDisplay");
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
     //endregion Variable Declarations
 
     //region Constructors
-    public UnitDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
+    public MiniReportDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, "", false);
         this.setTitle(MSG_TITLE);
 
-        if (GUIP.getUnitDisplayStartTabbed()) {
-            this.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
-            this.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
-        }
-        else {
-            this.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
-            this.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
-        }
+        this.setLocation(GUIP.getMiniReportPosX(), GUIP.getMiniReportPosY());
+        this.setSize(GUIP.getMiniReportSizeWidth(), GUIP.getMiniReportSizeHeight());
 
         UIUtil.updateWindowBounds(this);
         this.setResizable(true);
@@ -58,7 +51,7 @@ public class UnitDisplayDialog extends JDialog {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent evt) {
-                GUIP.setUnitDisplayEnabled(false);
+                GUIP.setMiniReportEnabled(false);
             }
         });
 
@@ -70,20 +63,10 @@ public class UnitDisplayDialog extends JDialog {
     protected void processWindowEvent(WindowEvent e) {
         super.processWindowEvent(e);
         if ((e.getID() == WindowEvent.WINDOW_DEACTIVATED) || (e.getID() == WindowEvent.WINDOW_CLOSING)) {
-            if ((getSize().width * getSize().height) > 0) {
-                if (GUIP.getUnitDisplayStartTabbed()) {
-                    GUIP.setUnitDisplayPosX(getLocation().x);
-                    GUIP.setUnitDisplayPosY(getLocation().y);
-                    GUIP.setUnitDisplaySizeWidth(getSize().width);
-                    GUIP.setUnitDisplaySizeHeight(getSize().height);
-                } else {
-                    GUIP.setUnitDisplayNontabbedPosX(getLocation().x);
-                    GUIP.setUnitDisplayNontabbedPosY(getLocation().y);
-                    GUIP.setUnitDisplayNonTabbedSizeWidth(getSize().width);
-                    GUIP.setUnitDisplayNonTabbedSizeHeight(getSize().height);
-                    clientGUI.getUnitDisplay().saveSplitterLoc();
-                }
-            }
+            GUIP.setMiniReportSizeWidth(getSize().width);
+            GUIP.setMiniReportSizeHeight(getSize().height);
+            GUIP.setMiniReportPosX(getLocation().x);
+            GUIP.setMiniReportPosY(getLocation().y);
         }
     }
 

@@ -35,6 +35,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -222,8 +223,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     
     private JComboBox<String> tileSetChoice;
     private List<String> tileSets;
-    
     private final MMToggleButton choiceToggle = new MMToggleButton("Enable tabbing through this dialog page");
+
+    private JComboBox unitDisplayAutoDisplayReportCombo;
+    private JComboBox unitDisplayAutoDisplayNonReportCombo;
+    private JComboBox miniMapAutoDisplayReportCombo;
+    private JComboBox miniMapAutoDisplayNonReportCombo;
+    private JComboBox miniReportAutoDisplayReportCombo;
+    private JComboBox miniReportAutoDisplayNonReportCombo;
+    private JComboBox playerListAutoDisplayReportCombo;
+    private JComboBox playerListAutoDisplayNonReportCombo;
 
     /** Maps command strings to a JTextField for updating the modifier for the command. */
     private Map<String, JTextField> cmdModifierMap;
@@ -235,6 +244,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private Map<String, Integer> cmdKeyCodeMap; 
 
     private ClientGUI clientgui = null;
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final ClientPreferences CP = PreferenceManager.getClientPreferences();
+    private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
+    private static final ButtonOrderPreferences BOP = ButtonOrderPreferences.getInstance();
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru", "es" };
     
@@ -262,8 +276,25 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
 
-    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
+    
+    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
+    private static final String MSG_UNITDISPLAY = Messages.getString("CommonMenuBar.viewMekDisplay");
+    private static final String MSG_MINIMAP = Messages.getString("CommonMenuBar.viewMinimap");
+    private static final String MSG_MINIREPORT = Messages.getString("CommonMenuBar.viewRoundReport");
+    private static final String MSG_PLAYERLIST = Messages.getString("CommonMenuBar.viewPlayerList");
+    private static final String MSG_SHOW = Messages.getString("ClientGUI.Show");
+    private static final String MSG_HIDE = Messages.getString("ClientGUI.Hide");
+    private static final String MSG_MANUAL = Messages.getString("ClientGUI.Manual");
+    private static final String MSG_REPORTPHASES = Messages.getString("CommonSettingsDialog.ReportPhases");
+    private static final String MSG_NONREPORTPHASES = Messages.getString("CommonSettingsDialog.NonReportPhases");
+    private static final String MSG_MAIN = Messages.getString("CommonSettingsDialog.Main");
+    private static final String MSG_GRAPHICS = Messages.getString("CommonSettingsDialog.Graphics");
+    private static final String MSG_KEYBINDS = Messages.getString("CommonSettingsDialog.KeyBinds");
+    private static final String MSG_BUTTONORDER = Messages.getString("CommonSettingsDialog.ButtonOrder");
+    private static final String MSG_UNITDISPLAYORDER = Messages.getString("CommonSettingsDialog.UnitDisplayOrder");
+    private static final String MSG_AUTODISPLAY = Messages.getString("CommonSettingsDialog.AutoDisplay");
+    private static final String MSG_ADVANCED = Messages.getString("CommonSettingsDialog.Advanced");
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
     public CommonSettingsDialog(JFrame owner, ClientGUI cg) {
@@ -297,14 +328,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         advancedSettingsPane.getVerticalScrollBar().setUnitIncrement(16);
         JScrollPane unitDisplayPane = new JScrollPane(getUnitDisplayPanel());
         unitDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
+        JScrollPane autoDisplayPane = new JScrollPane(getPhasePanel());
+        autoDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
 
-
-        panTabs.add("Main", settingsPane);
-        panTabs.add("Graphics", graphicsPane);
-        panTabs.add("Key Binds", keyBindPane);
-        panTabs.add("Button Order", getButtonOrderPanel());
-        panTabs.add("Advanced", advancedSettingsPane);
-        panTabs.add("Unit Display Order", unitDisplayPane);
+        panTabs.add(MSG_MAIN, settingsPane);
+        panTabs.add(MSG_GRAPHICS, graphicsPane);
+        panTabs.add(MSG_KEYBINDS, keyBindPane);
+        panTabs.add(MSG_BUTTONORDER, getButtonOrderPanel());
+        panTabs.add(MSG_UNITDISPLAYORDER, unitDisplayPane);
+        panTabs.add(MSG_AUTODISPLAY, autoDisplayPane);
+        panTabs.add(MSG_ADVANCED, advancedSettingsPane);
 
         adaptToGUIScale();
 
@@ -325,12 +358,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private JScrollPane getUnitDisplayPane() {
         JPanel panel = new JPanel();
 
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C2));
 
         JList<String> listUnitDisplayNonTabbed = new JList<>(unitDisplayNonTabbed);
         listUnitDisplayNonTabbed.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -552,80 +585,74 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     public void setVisible(boolean visible) {
         // Initialize the dialog when it's being shown
         if (visible) {
-            GUIPreferences gs = GUIPreferences.getInstance();
-            ClientPreferences cs = PreferenceManager.getClientPreferences();
-
-            guiScale.setValue((int) (gs.getGUIScale() * 10));
-            autoEndFiring.setSelected(gs.getAutoEndFiring());
-            autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
-            nagForMASC.setSelected(gs.getNagForMASC());
-            nagForPSR.setSelected(gs.getNagForPSR());
-            nagForWiGELanding.setSelected(gs.getNagForWiGELanding());
-            nagForNoAction.setSelected(gs.getNagForNoAction());
-            nagForNoUnJamRAC.setSelected(gs.getNagForNoUnJamRAC());
-            animateMove.setSelected(gs.getShowMoveStep());
-            showWrecks.setSelected(gs.getShowWrecks());
-            soundMute.setSelected(gs.getSoundMute());
-            tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
-            tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
-            tooltipDistSupression.setText(Integer.toString(gs.getTooltipDistSuppression()));
-            showWpsinTT.setSelected(gs.getShowWpsinTT());
-            showArmorMiniVisTT.setSelected(gs.getshowArmorMiniVisTT());
-            showPilotPortraitTT.setSelected(gs.getshowPilotPortraitTT());
-            comboDefaultWeaponSortOrder.setSelectedItem(gs.getDefaultWeaponSortOrder());
-            mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
-            mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
+            guiScale.setValue((int) (GUIP.getGUIScale() * 10));
+            autoEndFiring.setSelected(GUIP.getAutoEndFiring());
+            autoDeclareSearchlight.setSelected(GUIP.getAutoDeclareSearchlight());
+            nagForMASC.setSelected(GUIP.getNagForMASC());
+            nagForPSR.setSelected(GUIP.getNagForPSR());
+            nagForWiGELanding.setSelected(GUIP.getNagForWiGELanding());
+            nagForNoAction.setSelected(GUIP.getNagForNoAction());          
+            nagForNoUnJamRAC.setSelected(GUIP.getNagForNoUnJamRAC());
+            animateMove.setSelected(GUIP.getShowMoveStep());
+            showWrecks.setSelected(GUIP.getShowWrecks());
+            soundMute.setSelected(GUIP.getSoundMute());
+            tooltipDelay.setText(Integer.toString(GUIP.getTooltipDelay()));
+            tooltipDismissDelay.setText(Integer.toString(GUIP.getTooltipDismissDelay()));
+            tooltipDistSupression.setText(Integer.toString(GUIP.getTooltipDistSuppression()));
+            showWpsinTT.setSelected(GUIP.getShowWpsinTT());
+            showArmorMiniVisTT.setSelected(GUIP.getshowArmorMiniVisTT());
+            showPilotPortraitTT.setSelected(GUIP.getshowPilotPortraitTT());
+            comboDefaultWeaponSortOrder.setSelectedItem(GUIP.getDefaultWeaponSortOrder());
+            mouseWheelZoom.setSelected(GUIP.getMouseWheelZoom());
+            mouseWheelZoomFlip.setSelected(GUIP.getMouseWheelZoomFlip());
 
             // Select the correct char set (give a nice default to start).
             unitStartChar.setSelectedIndex(0);
             for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
-                if (unitStartChar.getItemAt(loop).charAt(0) == PreferenceManager
-                        .getClientPreferences().getUnitStartChar()) {
+                if (unitStartChar.getItemAt(loop).charAt(0) == CP.getUnitStartChar()) {
                     unitStartChar.setSelectedIndex(loop);
                     break;
                 }
             }
 
-            maxPathfinderTime.setText(Integer.toString(cs.getMaxPathfinderTime()));
+            maxPathfinderTime.setText(Integer.toString(CP.getMaxPathfinderTime()));
 
-            keepGameLog.setSelected(cs.keepGameLog());
+            keepGameLog.setSelected(CP.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.isSelected());
-            gameLogFilename.setText(cs.getGameLogFilename());
-            // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
-            // gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
-            stampFilenames.setSelected(cs.stampFilenames());
+            gameLogFilename.setText(CP.getGameLogFilename());
+            stampFilenames.setSelected(CP.stampFilenames());
             stampFormat.setEnabled(stampFilenames.isSelected());
-            stampFormat.setText(cs.getStampFormat());
-            reportKeywordsTextPane.setText(cs.getReportKeywords());
-            showIPAddressesInChat.setSelected(cs.getShowIPAddressesInChat());
+            stampFormat.setText(CP.getStampFormat());
+            reportKeywordsTextPane.setText(CP.getReportKeywords());
+            showIPAddressesInChat.setSelected(CP.getShowIPAddressesInChat());
 
-            defaultAutoejectDisabled.setSelected(cs.defaultAutoejectDisabled());
-            useAverageSkills.setSelected(cs.useAverageSkills());
-            generateNames.setSelected(cs.generateNames());
-            showUnitId.setSelected(cs.getShowUnitId());
+            defaultAutoejectDisabled.setSelected(CP.defaultAutoejectDisabled());
+            useAverageSkills.setSelected(CP.useAverageSkills());
+            generateNames.setSelected(CP.generateNames());
+            showUnitId.setSelected(CP.getShowUnitId());
 
             int index = 0;
-            if (cs.getLocaleString().startsWith("de")) {
+            if (CP.getLocaleString().startsWith("de")) {
                 index = 1;
             }
-            if (cs.getLocaleString().startsWith("ru")) {
+            if (CP.getLocaleString().startsWith("ru")) {
                 index = 2;
             }
             displayLocale.setSelectedIndex(index);
 
-            showMapsheets.setSelected(gs.getShowMapsheets());
-            chkAntiAliasing.setSelected(gs.getAntiAliasing());
-            showDamageLevel.setSelected(gs.getShowDamageLevel());
-            showDamageDecal.setSelected(gs.getShowDamageDecal());
-            aOHexShadows.setSelected(gs.getAOHexShadows());
-            floatingIso.setSelected(gs.getFloatingIso());
-            mmSymbol.setSelected(gs.getMmSymbol());
-            levelhighlight.setSelected(gs.getLevelHighlight());
-            shadowMap.setSelected(gs.getShadowMap());
-            hexInclines.setSelected(gs.getHexInclines());
-            useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
-            entityOwnerColor.setSelected(gs.getUnitLabelBorder());
-            teamColoring.setSelected(gs.getTeamColoring());
+            showMapsheets.setSelected(GUIP.getShowMapsheets());
+            chkAntiAliasing.setSelected(GUIP.getAntiAliasing());
+            showDamageLevel.setSelected(GUIP.getShowDamageLevel());
+            showDamageDecal.setSelected(GUIP.getShowDamageDecal());
+            aOHexShadows.setSelected(GUIP.getAOHexShadows());
+            floatingIso.setSelected(GUIP.getFloatingIso());
+            mmSymbol.setSelected(GUIP.getMmSymbol());
+            levelhighlight.setSelected(GUIP.getLevelHighlight());
+            shadowMap.setSelected(GUIP.getShadowMap());
+            hexInclines.setSelected(GUIP.getHexInclines());
+            useSoftCenter.setSelected(GUIP.getBoolean("SOFTCENTER"));
+            entityOwnerColor.setSelected(GUIP.getUnitLabelBorder());
+            teamColoring.setSelected(GUIP.getTeamColoring());
 
             File dir = Configuration.hexesDir();
             tileSets = new ArrayList<>(Arrays.asList(dir.list((direc, name) -> name.endsWith(".tileset"))));
@@ -634,13 +661,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             for (int i = 0; i < tileSets.size(); i++) {
                 String name = tileSets.get(i);
                 tileSetChoice.addItem(name.substring(0, name.length() - 8));
-                if (name.equals(cs.getMapTileset())) {
+                if (name.equals(CP.getMapTileset())) {
                     tileSetChoice.setSelectedIndex(i);
                 }
             }
 
-            gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
-            gameSummaryMM.setSelected(gs.getGameSummaryMinimap());
+            gameSummaryBV.setSelected(GUIP.getGameSummaryBoardView());
+            gameSummaryMM.setSelected(GUIP.getGameSummaryMinimap());
 
             skinFiles.removeAllItems();
             List<String> xmlFiles = new ArrayList<>(Arrays
@@ -655,22 +682,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             // Select the default file first
             skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
             // If this select fails, the default skin will be selected
-            skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
+            skinFiles.setSelectedItem(GUIP.getSkinFile());
 
             uiThemes.removeAllItems();
             for (LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
                 uiThemes.addItem(new UITheme(lafInfo.getClassName(), lafInfo.getName()));
             }
-            uiThemes.setSelectedItem(new UITheme(GUIPreferences.getInstance().getUITheme()));
+            uiThemes.setSelectedItem(new UITheme(GUIP.getUITheme()));
 
-            fovInsideEnabled.setSelected(gs.getFovHighlight());
-            fovHighlightAlpha.setValue(gs.getFovHighlightAlpha());
-            fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
-            fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
-            fovOutsideEnabled.setSelected(gs.getFovDarken());
-            fovDarkenAlpha.setValue(gs.getFovDarkenAlpha());
-            numStripesSlider.setValue(gs.getFovStripes());
-            fovGrayscaleEnabled.setSelected(gs.getFovGrayscale());
+            fovInsideEnabled.setSelected(GUIP.getFovHighlight());
+            fovHighlightAlpha.setValue(GUIP.getFovHighlightAlpha());
+            fovHighlightRingsRadii.setText(GUIP.getFovHighlightRingsRadii());
+            fovHighlightRingsColors.setText(GUIP.getFovHighlightRingsColorsHsb() );
+            fovOutsideEnabled.setSelected(GUIP.getFovDarken());
+            fovDarkenAlpha.setValue(GUIP.getFovDarkenAlpha());
+            numStripesSlider.setValue(GUIP.getFovStripes());
+            fovGrayscaleEnabled.setSelected(GUIP.getFovGrayscale());
 
             fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
             fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
@@ -688,27 +715,27 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             stampFormatLabel.setEnabled(stampFilenames.isSelected());
             gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
 
-            getFocus.setSelected(gs.getFocus());
+            getFocus.setSelected(GUIP.getFocus());
             
-            savedFovHighlight = gs.getFovHighlight();
-            savedFovDarken = gs.getFovDarken();
-            savedFovGrayscale = gs.getFovGrayscale();
-            savedAOHexShadows = gs.getAOHexShadows();
-            savedShadowMap = gs.getShadowMap();
-            savedHexInclines = gs.getHexInclines();
-            savedLevelhighlight = gs.getLevelHighlight();
-            savedFloatingIso = gs.getFloatingIso();
-            savedMmSymbol = gs.getMmSymbol();
-            savedTeamColoring = gs.getTeamColoring();
-            savedUnitLabelBorder = gs.getUnitLabelBorder();
-            savedShowDamageDecal = gs.getShowDamageDecal();
-            savedShowDamageLabel = gs.getShowDamageLevel();
-            savedFovHighlightRingsRadii = gs.getFovHighlightRingsRadii();
-            savedFovHighlightRingsColors = gs.getFovHighlightRingsColorsHsb();
-            savedFovHighlightAlpha = gs.getFovHighlightAlpha();
-            savedFovDarkenAlpha = gs.getFovDarkenAlpha();
-            savedNumStripesSlider = gs.getFovStripes();
-            savedAntiAlias = gs.getAntiAliasing();
+            savedFovHighlight = GUIP.getFovHighlight();
+            savedFovDarken = GUIP.getFovDarken();
+            savedFovGrayscale = GUIP.getFovGrayscale();
+            savedAOHexShadows = GUIP.getAOHexShadows();
+            savedShadowMap = GUIP.getShadowMap();
+            savedHexInclines = GUIP.getHexInclines();
+            savedLevelhighlight = GUIP.getLevelHighlight();
+            savedFloatingIso = GUIP.getFloatingIso();
+            savedMmSymbol = GUIP.getMmSymbol();
+            savedTeamColoring = GUIP.getTeamColoring();
+            savedUnitLabelBorder = GUIP.getUnitLabelBorder();
+            savedShowDamageDecal = GUIP.getShowDamageDecal();
+            savedShowDamageLabel = GUIP.getShowDamageLevel();
+            savedFovHighlightRingsRadii = GUIP.getFovHighlightRingsRadii();
+            savedFovHighlightRingsColors = GUIP.getFovHighlightRingsColorsHsb();
+            savedFovHighlightAlpha = GUIP.getFovHighlightAlpha();
+            savedFovDarkenAlpha = GUIP.getFovDarkenAlpha();
+            savedNumStripesSlider = GUIP.getFovStripes();
+            savedAntiAlias = GUIP.getAntiAliasing();
             savedAdvancedOpt.clear();
             
             advancedKeys.clearSelection();
@@ -728,38 +755,46 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     /** Cancels any updates made in this dialog and closes it.  */
     @Override
     protected void cancelAction() {
-        GUIPreferences guip = GUIPreferences.getInstance();
-        guip.setFovHighlight(savedFovHighlight);
-        guip.setFovDarken(savedFovDarken);
-        guip.setFovGrayscale(savedFovGrayscale);
-        guip.setAOHexShadows(savedAOHexShadows);
-        guip.setShadowMap(savedShadowMap);
-        guip.setHexInclines(savedHexInclines);
-        guip.setLevelHighlight(savedLevelhighlight);
-        guip.setFloatingIso(savedFloatingIso);
-        guip.setMmSymbol(savedMmSymbol);
-        guip.setTeamColoring(savedTeamColoring);
-        guip.setUnitLabelBorder(savedUnitLabelBorder);
-        guip.setShowDamageDecal(savedShowDamageDecal);
-        guip.setShowDamageLevel(savedShowDamageLabel);
-        guip.setFovHighlightRingsRadii(savedFovHighlightRingsRadii);
-        guip.setFovHighlightRingsColorsHsb(savedFovHighlightRingsColors);
-        guip.setFovHighlightAlpha(savedFovHighlightAlpha);
-        guip.setFovDarkenAlpha(savedFovDarkenAlpha);
-        guip.setFovStripes(savedNumStripesSlider);
-        guip.setAntiAliasing(savedAntiAlias);
+        GUIP.setFovHighlight(savedFovHighlight);
+        GUIP.setFovDarken(savedFovDarken);
+        GUIP.setFovGrayscale(savedFovGrayscale);
+        GUIP.setAOHexShadows(savedAOHexShadows);
+        GUIP.setShadowMap(savedShadowMap);
+        GUIP.setHexInclines(savedHexInclines);
+        GUIP.setLevelHighlight(savedLevelhighlight);
+        GUIP.setFloatingIso(savedFloatingIso);
+        GUIP.setMmSymbol(savedMmSymbol);
+        GUIP.setTeamColoring(savedTeamColoring);
+        GUIP.setUnitLabelBorder(savedUnitLabelBorder);
+        GUIP.setShowDamageDecal(savedShowDamageDecal);
+        GUIP.setShowDamageLevel(savedShowDamageLabel);
+        GUIP.setFovHighlightRingsRadii(savedFovHighlightRingsRadii);
+        GUIP.setFovHighlightRingsColorsHsb(savedFovHighlightRingsColors);
+        GUIP.setFovHighlightAlpha(savedFovHighlightAlpha);
+        GUIP.setFovDarkenAlpha(savedFovDarkenAlpha);
+        GUIP.setFovStripes(savedNumStripesSlider);
+        GUIP.setAntiAliasing(savedAntiAlias);
          
         for (String option: savedAdvancedOpt.keySet()) {
-            GUIPreferences.getInstance().setValue(option, savedAdvancedOpt.get(option));
+            GUIP.setValue(option, savedAdvancedOpt.get(option));
         }
 
         unitDisplayNonTabbed.clear();
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
-        unitDisplayNonTabbed.addElement(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C1));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_A2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_B2));
+        unitDisplayNonTabbed.addElement(UDOP.getString(UnitDisplay.NON_TABBED_C2));
+
+        unitDisplayAutoDisplayReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayReportPhase());
+        unitDisplayAutoDisplayNonReportCombo.setSelectedItem(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
+        miniMapAutoDisplayReportCombo.setSelectedItem(GUIP.getMinimapAutoDisplayReportPhase());
+        miniMapAutoDisplayNonReportCombo.setSelectedItem(GUIP.getMinimapAutoDisplayNonReportPhase());
+        miniReportAutoDisplayReportCombo.setSelectedItem(GUIP.getMiniReportAutoDisplayReportPhase());
+        miniReportAutoDisplayNonReportCombo.setSelectedItem(GUIP.getMiniReportAutoDisplayNonReportPhase());
+        playerListAutoDisplayReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayReportPhase());
+        playerListAutoDisplayNonReportCombo.setSelectedItem(GUIP.getPlayerListAutoDisplayNonReportPhase());
 
         setVisible(false);
     }
@@ -767,77 +802,89 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     /** Update the settings from this dialog's values, then close it. */
     @Override
     protected void okAction() {
-        GUIPreferences gs = GUIPreferences.getInstance();
-        ClientPreferences cs = PreferenceManager.getClientPreferences();
+        GUIP.setShowDamageLevel(showDamageLevel.isSelected());
+        GUIP.setShowDamageDecal(showDamageDecal.isSelected());
+        GUIP.setUnitLabelBorder(entityOwnerColor.isSelected());
+        GUIP.setTeamColoring(teamColoring.isSelected());
+        GUIP.setAutoEndFiring(autoEndFiring.isSelected());
+        GUIP.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
+        GUIP.setDefaultWeaponSortOrder(Objects.requireNonNull(comboDefaultWeaponSortOrder.getSelectedItem()));
+        GUIP.setNagForMASC(nagForMASC.isSelected());
+        GUIP.setNagForPSR(nagForPSR.isSelected());
+        GUIP.setNagForWiGELanding(nagForWiGELanding.isSelected());
+        GUIP.setNagForNoAction(nagForNoAction.isSelected());      
+        GUIP.setNagForNoUnJamRAC(nagForNoUnJamRAC.isSelected());
+        GUIP.setShowMoveStep(animateMove.isSelected());
+        GUIP.setShowWrecks(showWrecks.isSelected());
+        GUIP.setSoundMute(soundMute.isSelected());
+        GUIP.setShowWpsinTT(showWpsinTT.isSelected());
+        GUIP.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
+        GUIP.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());
+        try {
+            GUIP.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        try {
+            GUIP.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        try {
+            GUIP.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
+        GUIP.setValue(GUIPreferences.GUI_SCALE, (float) (guiScale.getValue()) / 10);
+        CP.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
 
-        gs.setShowDamageLevel(showDamageLevel.isSelected());
-        gs.setShowDamageDecal(showDamageDecal.isSelected());
-        gs.setUnitLabelBorder(entityOwnerColor.isSelected());
-        gs.setTeamColoring(teamColoring.isSelected());
-        gs.setAutoEndFiring(autoEndFiring.isSelected());
-        gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
-        gs.setDefaultWeaponSortOrder(Objects.requireNonNull(comboDefaultWeaponSortOrder.getSelectedItem()));
-        gs.setNagForMASC(nagForMASC.isSelected());
-        gs.setNagForPSR(nagForPSR.isSelected());
-        gs.setNagForWiGELanding(nagForWiGELanding.isSelected());
-        gs.setNagForNoAction(nagForNoAction.isSelected());
-        gs.setNagForNoUnJamRAC(nagForNoUnJamRAC.isSelected());
-        gs.setShowMoveStep(animateMove.isSelected());
-        gs.setShowWrecks(showWrecks.isSelected());
-        gs.setSoundMute(soundMute.isSelected());
-        gs.setShowWpsinTT(showWpsinTT.isSelected());
-        gs.setshowArmorMiniVisTT(showArmorMiniVisTT.isSelected());
-        gs.setshowPilotPortraitTT(showPilotPortraitTT.isSelected());
-        gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
-        gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
-        gs.setTooltipDistSuppression(Integer.parseInt(tooltipDistSupression.getText()));
-        gs.setValue(GUIPreferences.GUI_SCALE, (float) (guiScale.getValue()) / 10);
-        cs.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
-        
-        gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
-        gs.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
+        GUIP.setMouseWheelZoom(mouseWheelZoom.isSelected());
+        GUIP.setMouseWheelZoomFlip(mouseWheelZoomFlip.isSelected());
 
-        cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
+        try {
+            CP.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
+        } catch (Exception ex) {
+            LogManager.getLogger().error("", ex);
+        }
 
-        gs.setGetFocus(getFocus.isSelected());
+        GUIP.setGetFocus(getFocus.isSelected());
 
-        cs.setKeepGameLog(keepGameLog.isSelected());
-        cs.setGameLogFilename(gameLogFilename.getText());
-        // cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
-        cs.setStampFilenames(stampFilenames.isSelected());
-        cs.setStampFormat(stampFormat.getText());
-        cs.setReportKeywords(reportKeywordsTextPane.getText());
-        cs.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
+        CP.setKeepGameLog(keepGameLog.isSelected());
+        CP.setGameLogFilename(gameLogFilename.getText());
+        CP.setStampFilenames(stampFilenames.isSelected());
+        CP.setStampFormat(stampFormat.getText());
+        CP.setReportKeywords(reportKeywordsTextPane.getText());
+        CP.setShowIPAddressesInChat(showIPAddressesInChat.isSelected());
 
-        cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
-        cs.setUseAverageSkills(useAverageSkills.isSelected());
-        cs.setGenerateNames(generateNames.isSelected());
-        cs.setShowUnitId(showUnitId.isSelected());
+        CP.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
+        CP.setUseAverageSkills(useAverageSkills.isSelected());
+        CP.setGenerateNames(generateNames.isSelected());
+        CP.setShowUnitId(showUnitId.isSelected());
         if ((clientgui != null) && (clientgui.getBoardView() != null)) {
             clientgui.getBoardView().updateEntityLabels();
         }
 
-        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
+        CP.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
 
-        gs.setShowMapsheets(showMapsheets.isSelected());
-        gs.setAOHexShadows(aOHexShadows.isSelected());
-        gs.setFloatingIso(floatingIso.isSelected());
-        gs.setMmSymbol(mmSymbol.isSelected());
-        gs.setLevelHighlight(levelhighlight.isSelected());
-        gs.setShadowMap(shadowMap.isSelected());
-        gs.setHexInclines(hexInclines.isSelected());
-        gs.setValue("SOFTCENTER", useSoftCenter.isSelected());
-        gs.setGameSummaryBoardView(gameSummaryBV.isSelected());
-        gs.setGameSummaryMinimap(gameSummaryMM.isSelected());
+        GUIP.setShowMapsheets(showMapsheets.isSelected());
+        GUIP.setAOHexShadows(aOHexShadows.isSelected());
+        GUIP.setFloatingIso(floatingIso.isSelected());
+        GUIP.setMmSymbol(mmSymbol.isSelected());
+        GUIP.setLevelHighlight(levelhighlight.isSelected());
+        GUIP.setShadowMap(shadowMap.isSelected());
+        GUIP.setHexInclines(hexInclines.isSelected());
+        GUIP.setValue("SOFTCENTER", useSoftCenter.isSelected());
+        GUIP.setGameSummaryBoardView(gameSummaryBV.isSelected());
+        GUIP.setGameSummaryMinimap(gameSummaryMM.isSelected());
 
         UITheme newUITheme = (UITheme) uiThemes.getSelectedItem();
-        String oldUITheme = gs.getUITheme();
+        String oldUITheme = GUIP.getUITheme();
         if (!oldUITheme.equals(newUITheme.getClassName())) {
-            gs.setUITheme(newUITheme.getClassName());
+            GUIP.setUITheme(newUITheme.getClassName());
         }
 
         String newSkinFile = (String) skinFiles.getSelectedItem();
-        String oldSkinFile = gs.getSkinFile();
+        String oldSkinFile = GUIP.getSkinFile();
         if (!oldSkinFile.equals(newSkinFile)) {
             boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
             if (!success) {
@@ -846,22 +893,22 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
                 String msg = Messages.getString("CommonSettingsDialog.skinFileFail.msg");
                 JOptionPane.showMessageDialog(getFrame(), msg, title, JOptionPane.ERROR_MESSAGE);
             } else {
-                gs.setSkinFile(newSkinFile);
+                GUIP.setSkinFile(newSkinFile);
             }            
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
             String tileSetFileName = tileSets.get(tileSetChoice.getSelectedIndex());
-            if (!cs.getMapTileset().equals(tileSetFileName) &&
+            if (!CP.getMapTileset().equals(tileSetFileName) &&
                     (clientgui != null) && (clientgui.getBoardView() != null))  {
                 clientgui.getBoardView().clearShadowMap();
             }
-            cs.setMapTileset(tileSetFileName);
+            CP.setMapTileset(tileSetFileName);
         }
 
-        ToolTipManager.sharedInstance().setInitialDelay(gs.getTooltipDelay());
-        if (gs.getTooltipDismissDelay() > 0) {
-            ToolTipManager.sharedInstance().setDismissDelay(gs.getTooltipDismissDelay());
+        ToolTipManager.sharedInstance().setInitialDelay(GUIP.getTooltipDelay());
+        if (GUIP.getTooltipDismissDelay() > 0) {
+            ToolTipManager.sharedInstance().setDismissDelay(GUIP.getTooltipDismissDelay());
         }
 
         // Check if any keybinds have changed and, if so, save them
@@ -880,13 +927,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         
         // Button Order
         // Movement
-        ButtonOrderPreferences bop = ButtonOrderPreferences.getInstance();
         boolean buttonOrderChanged = false;
         for (int i = 0; i < movePhaseCommands.getSize(); i++) {
             StatusBarPhaseDisplay.PhaseCommand cmd = movePhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
-                bop.setValue(cmd.getCmd(), i);
+                BOP.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
@@ -902,7 +948,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = deployPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
-                bop.setValue(cmd.getCmd(), i);
+                BOP.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
@@ -918,7 +964,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = firingPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
-                bop.setValue(cmd.getCmd(), i);
+                BOP.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
@@ -934,7 +980,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = physicalPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
-                bop.setValue(cmd.getCmd(), i);
+                BOP.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
@@ -950,7 +996,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             StatusBarPhaseDisplay.PhaseCommand cmd = targetingPhaseCommands.get(i);
             if (cmd.getPriority() != i) {
                 cmd.setPriority(i);
-                bop.setValue(cmd.getCmd(), i);
+                BOP.setValue(cmd.getCmd(), i);
                 buttonOrderChanged = true;
             }
         }
@@ -961,39 +1007,48 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         }
 
         // unit display non tabbed
-        if (!GUIPreferences.getInstance().getDisplayStartTabbed()) {
+        if (!GUIP.getUnitDisplayStartTabbed()) {
             boolean unitDisplayNonTabbedChanged = false;
             int s = unitDisplayNonTabbed.getSize();
 
-            if ((s > UnitDisplay.NON_TABBED_ZERO_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1)))) {
+            if ((s > UnitDisplay.NON_TABBED_ZERO_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX).equals(UDOP.getString(UnitDisplay.NON_TABBED_A1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_A1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX));
+                UDOP.setValue(UnitDisplay.NON_TABBED_A1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ZERO_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_ONE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1)))) {
+            if ((s > UnitDisplay.NON_TABBED_ONE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX).equals(UDOP.getString(UnitDisplay.NON_TABBED_B1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_B1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX));
+                UDOP.setValue(UnitDisplay.NON_TABBED_B1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_ONE_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_TWO_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX).equals( UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1)))) {
+            if ((s > UnitDisplay.NON_TABBED_TWO_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX).equals( UDOP.getString(UnitDisplay.NON_TABBED_C1)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_C1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX));
+                UDOP.setValue(UnitDisplay.NON_TABBED_C1,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_TWO_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_THREE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2)))) {
+            if ((s > UnitDisplay.NON_TABBED_THREE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX).equals(UDOP.getString(UnitDisplay.NON_TABBED_A2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_A2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX));
+                UDOP.setValue(UnitDisplay.NON_TABBED_A2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_THREE_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_FOUR_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX).equals(UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2)))) {
+            if ((s > UnitDisplay.NON_TABBED_FOUR_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX).equals(UDOP.getString(UnitDisplay.NON_TABBED_B2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_B2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX));
+                UDOP.setValue(UnitDisplay.NON_TABBED_B2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FOUR_INDEX));
             }
-            if ((s > UnitDisplay.NON_TABBED_FIVE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX).equals( UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2)))) {
+            if ((s > UnitDisplay.NON_TABBED_FIVE_INDEX) && (!unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX).equals( UDOP.getString(UnitDisplay.NON_TABBED_C2)))) {
                 unitDisplayNonTabbedChanged = true;
-                UnitDisplayOrderPreferences.getInstance().setValue(UnitDisplay.NON_TABBED_C2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX));
+                UDOP.setValue(UnitDisplay.NON_TABBED_C2,  unitDisplayNonTabbed.get(UnitDisplay.NON_TABBED_FIVE_INDEX));
             }
 
             if ((unitDisplayNonTabbedChanged) && (clientgui != null)) {
                 clientgui.unitDisplay.setDisplayNonTabbed();
             }
         }
+
+        GUIP.setUnitDisplayAutoDisplayReportPhase(unitDisplayAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setUnitDisplayAutoDisplayNonReportPhase(unitDisplayAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setMinimapAutoDisplayReportPhase(miniMapAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setMinimapAutoDisplayNonReportPhase(miniMapAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setMiniReportAutoDisplayReportPhase(miniReportAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setMiniReportAutoDisplayNonReportPhase(miniReportAutoDisplayNonReportCombo.getSelectedIndex());
+        GUIP.setPlayerListAutoDisplayReportPhase(playerListAutoDisplayReportCombo.getSelectedIndex());
+        GUIP.setPlayerListAutoDisplayNonReportPhase(playerListAutoDisplayNonReportCombo.getSelectedIndex());
 
         setVisible(false);
     }
@@ -1002,7 +1057,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     @Override
     public void itemStateChanged(ItemEvent event) {
         Object source = event.getItemSelectable();
-        GUIPreferences guip = GUIPreferences.getInstance();
         if (source.equals(keepGameLog)) {
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             stampFormatLabel.setEnabled(stampFilenames.isSelected());
@@ -1012,7 +1066,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             stampFormat.setEnabled(stampFilenames.isSelected());
             stampFormatLabel.setEnabled(stampFilenames.isSelected());
         } else if (source.equals(fovInsideEnabled)) {
-            guip.setFovHighlight(fovInsideEnabled.isSelected());
+            GUIP.setFovHighlight(fovInsideEnabled.isSelected());
             fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
             fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
             fovHighlightRingsColors.setEnabled(fovInsideEnabled.isSelected());
@@ -1020,36 +1074,36 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             fovHighlightRingsRadiiLabel.setEnabled(fovInsideEnabled.isSelected());
             highlightAlphaLabel.setEnabled(fovInsideEnabled.isSelected());
         } else if (source.equals(fovOutsideEnabled)) {
-            guip.setFovDarken(fovOutsideEnabled.isSelected());
+            GUIP.setFovDarken(fovOutsideEnabled.isSelected());
             fovDarkenAlpha.setEnabled(fovOutsideEnabled.isSelected());
             numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
             darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
             numStripesLabel.setEnabled(fovOutsideEnabled.isSelected());
             fovGrayscaleEnabled.setEnabled(fovOutsideEnabled.isSelected());
         } else if (source.equals(fovGrayscaleEnabled)) {
-            guip.setFovGrayscale(fovGrayscaleEnabled.isSelected());
+            GUIP.setFovGrayscale(fovGrayscaleEnabled.isSelected());
         } else if (source.equals(aOHexShadows)) {
-            guip.setAOHexShadows(aOHexShadows.isSelected());
+            GUIP.setAOHexShadows(aOHexShadows.isSelected());
         } else if (source.equals(shadowMap)) {
-            guip.setShadowMap(shadowMap.isSelected());
+            GUIP.setShadowMap(shadowMap.isSelected());
         } else if (source.equals(hexInclines)) {
-            guip.setHexInclines(hexInclines.isSelected());
+            GUIP.setHexInclines(hexInclines.isSelected());
         } else if (source.equals(levelhighlight)) {
-            guip.setLevelHighlight(levelhighlight.isSelected());
+            GUIP.setLevelHighlight(levelhighlight.isSelected());
         } else if (source.equals(floatingIso)) {
-            guip.setFloatingIso(floatingIso.isSelected());
+            GUIP.setFloatingIso(floatingIso.isSelected());
         } else if (source.equals(mmSymbol)) {
-            guip.setMmSymbol(mmSymbol.isSelected());
+            GUIP.setMmSymbol(mmSymbol.isSelected());
         } else if (source.equals(teamColoring)) {
-            guip.setTeamColoring(teamColoring.isSelected());
+            GUIP.setTeamColoring(teamColoring.isSelected());
         } else if (source.equals(entityOwnerColor)) {
-            guip.setUnitLabelBorder(entityOwnerColor.isSelected());
+            GUIP.setUnitLabelBorder(entityOwnerColor.isSelected());
         } else if (source.equals(showDamageDecal)) {
-            guip.setShowDamageDecal(showDamageDecal.isSelected());
+            GUIP.setShowDamageDecal(showDamageDecal.isSelected());
         } else if (source.equals(showDamageLevel)) {
-            guip.setShowDamageLevel(showDamageLevel.isSelected());
+            GUIP.setShowDamageLevel(showDamageLevel.isSelected());
         } else if (source.equals(chkAntiAliasing)) {
-            guip.setAntiAliasing(chkAntiAliasing.isSelected());
+            GUIP.setAntiAliasing(chkAntiAliasing.isSelected());
         }
     }
 
@@ -1059,7 +1113,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     @Override
     public void focusLost(FocusEvent e) {
         Object src = e.getSource();
-        GUIPreferences guip = GUIPreferences.getInstance();          
+        GUIPreferences guip = GUIP;
         if (src.equals(fovHighlightRingsRadii)) {
             guip.setFovHighlightRingsRadii(fovHighlightRingsRadii.getText());
             return;
@@ -1417,6 +1471,137 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
         markDuplicateBinds();
         return outer;
     }
+
+    private JPanel getPhasePanel() {
+        List<List<Component>> comps = new ArrayList<>();
+        ArrayList<Component> row;
+        JPanel outer = new JPanel();
+        outer.setLayout(new BoxLayout(outer, BoxLayout.PAGE_AXIS));
+
+        JLabel unitDisplayLabel = new JLabel(MSG_UNITDISPLAY);
+        row = new ArrayList<>();
+        row.add(unitDisplayLabel);
+        comps.add(row);
+
+        JLabel phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        unitDisplayAutoDisplayReportCombo = new JComboBox<>();
+        unitDisplayAutoDisplayReportCombo.addItem(MSG_HIDE);
+        unitDisplayAutoDisplayReportCombo.addItem(MSG_SHOW);
+        unitDisplayAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        unitDisplayAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        unitDisplayAutoDisplayReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayReportPhase());
+        row.add(phaseLabel);
+        row.add(unitDisplayAutoDisplayReportCombo);
+        comps.add(row);
+
+        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        unitDisplayAutoDisplayNonReportCombo = new JComboBox<>();
+        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_HIDE);
+        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_SHOW);
+        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        unitDisplayAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        unitDisplayAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
+        row.add(phaseLabel);
+        row.add(unitDisplayAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        JLabel miniMapLabel = new JLabel(MSG_MINIMAP);
+        row = new ArrayList<>();
+        row.add(miniMapLabel);
+        comps.add(row);
+
+        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        miniMapAutoDisplayReportCombo = new JComboBox<>();
+        miniMapAutoDisplayReportCombo.addItem(MSG_HIDE);
+        miniMapAutoDisplayReportCombo.addItem(MSG_SHOW);
+        miniMapAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        miniMapAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        miniMapAutoDisplayReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayReportPhase());
+        row.add(phaseLabel);
+        row.add(miniMapAutoDisplayReportCombo);
+        comps.add(row);
+
+        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        miniMapAutoDisplayNonReportCombo = new JComboBox<>();
+        miniMapAutoDisplayNonReportCombo.addItem(MSG_HIDE);
+        miniMapAutoDisplayNonReportCombo.addItem(MSG_SHOW);
+        miniMapAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        miniMapAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        miniMapAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayNonReportPhase());
+        row.add(phaseLabel);
+        row.add(miniMapAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        JLabel miniReportLabel = new JLabel(MSG_MINIREPORT);
+        row = new ArrayList<>();
+        row.add(miniReportLabel);
+        comps.add(row);
+
+        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        miniReportAutoDisplayReportCombo = new JComboBox<>();
+        miniReportAutoDisplayReportCombo.addItem(MSG_HIDE);
+        miniReportAutoDisplayReportCombo.addItem(MSG_SHOW);
+        miniReportAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        miniReportAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        miniReportAutoDisplayReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayReportPhase());
+        row.add(phaseLabel);
+        row.add(miniReportAutoDisplayReportCombo);
+        comps.add(row);
+
+        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        miniReportAutoDisplayNonReportCombo = new JComboBox<>();
+        miniReportAutoDisplayNonReportCombo.addItem(MSG_HIDE);
+        miniReportAutoDisplayNonReportCombo.addItem(MSG_SHOW);
+        miniReportAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        miniReportAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        miniReportAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayNonReportPhase());
+        row.add(phaseLabel);
+        row.add(miniReportAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        addLineSpacer(comps);
+
+        JLabel playerListLabel = new JLabel(MSG_PLAYERLIST);
+        row = new ArrayList<>();
+        row.add(playerListLabel);
+        comps.add(row);
+
+        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        playerListAutoDisplayReportCombo = new JComboBox<>();
+        playerListAutoDisplayReportCombo.addItem(MSG_HIDE);
+        playerListAutoDisplayReportCombo.addItem(MSG_SHOW);
+        playerListAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        playerListAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        playerListAutoDisplayReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayReportPhase());
+        row.add(phaseLabel);
+        row.add(playerListAutoDisplayReportCombo);
+        comps.add(row);
+
+        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        playerListAutoDisplayNonReportCombo = new JComboBox<>();
+        playerListAutoDisplayNonReportCombo.addItem(MSG_HIDE);
+        playerListAutoDisplayNonReportCombo.addItem(MSG_SHOW);
+        playerListAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        playerListAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
+        row = new ArrayList<>();
+        playerListAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayNonReportPhase());
+        row.add(phaseLabel);
+        row.add(playerListAutoDisplayNonReportCombo);
+        comps.add(row);
+
+        return createSettingsPanel(comps);
+    }
     
     private void updateKeybindsFocusTraversal() {
         for (KeyCommandBind kcb : KeyCommandBind.values()) {
@@ -1476,7 +1661,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     }
     
     private void markTextfield(JTextField field, String errorMsg) {
-        field.setForeground(errorMsg != null ? GUIPreferences.getInstance().getWarningColor() : null);
+        field.setForeground(errorMsg != null ? GUIP.getWarningColor() : null);
         field.setToolTipText(errorMsg);
     }
     
@@ -1581,7 +1766,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
     private JPanel getAdvancedSettingsPanel() {
         JPanel p = new JPanel();
 
-        String[] s = GUIPreferences.getInstance().getAdvancedProperties();
+        String[] s = GUIP.getAdvancedProperties();
         AdvancedOptionData[] opts = new AdvancedOptionData[s.length];
         for (int i = 0; i < s.length; i++) {
             s[i] = s[i].substring(s[i].indexOf("Advanced") + 8);
@@ -1618,7 +1803,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
             return;
         }
         if (event.getSource().equals(advancedKeys) && !advancedKeys.isSelectionEmpty()) {
-            advancedValue.setText(GUIPreferences.getInstance().getString(
+            advancedValue.setText(GUIP.getString(
                     "Advanced" + advancedKeys.getSelectedValue().option));
             advancedKeyIndex = advancedKeys.getSelectedIndex();
         }
@@ -1626,13 +1811,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements
 
     @Override
     public void stateChanged(ChangeEvent evt) {
-        GUIPreferences guip = GUIPreferences.getInstance();
         if (evt.getSource().equals(fovHighlightAlpha)) {
-            guip.setFovHighlightAlpha(Math.max(0, Math.min(255, fovHighlightAlpha.getValue())));
+            GUIP.setFovHighlightAlpha(Math.max(0, Math.min(255, fovHighlightAlpha.getValue())));
         } else if (evt.getSource().equals(fovDarkenAlpha)) {
-            guip.setFovDarkenAlpha(Math.max(0, Math.min(255, fovDarkenAlpha.getValue())));
+            GUIP.setFovDarkenAlpha(Math.max(0, Math.min(255, fovDarkenAlpha.getValue())));
         } else if (evt.getSource().equals(numStripesSlider)) {
-            guip.setFovStripes(numStripesSlider.getValue());
+            GUIP.setFovStripes(numStripesSlider.getValue());
         }
     }
 

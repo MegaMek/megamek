@@ -4676,7 +4676,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Hyper-Assault Gauss Rifle/20 Ammo";
-        ammo.shortName = "HAG 20";
+        ammo.shortName = "HAG/20";
         ammo.setInternalName(ammo.name);
         ammo.addLookupName("CLHAG20 Ammo");
         ammo.addLookupName("Clan HAG 20 Ammo");
@@ -4702,7 +4702,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Hyper-Assault Gauss Rifle/30 Ammo";
-        ammo.shortName = "HAG 30";
+        ammo.shortName = "HAG/30";
         ammo.setInternalName(ammo.name);
         ammo.addLookupName("CLHAG30 Ammo");
         ammo.addLookupName("Clan HAG 30 Ammo");
@@ -4727,7 +4727,7 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Hyper-Assault Gauss Rifle/40 Ammo";
-        ammo.shortName = "HAG 40";
+        ammo.shortName = "HAG/40";
         ammo.setInternalName(ammo.name);
         ammo.addLookupName("CLHAG40 Ammo");
         ammo.addLookupName("Clan HAG 40 Ammo");

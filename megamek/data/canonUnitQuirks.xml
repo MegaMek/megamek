@@ -1914,6 +1914,18 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Infantry</unitType>
 		<quirk>fast_reload</quirk>
 	</unit>
+	
+	<unit>
+		<chassis>TinStar BattleArmor</chassis>
+		<unitType>Infantry</unitType>
+		<quirk>easy_maintain</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<location>Squad</location>
+			<slot>2</slot>
+			<weaponName>ISBASupportPPC</weaponName>
+		</weaponQuirk>
+	</unit>
 
 	<unit>
 		<chassis>Tornado PA(L)</chassis>
@@ -4754,27 +4766,27 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>prototype</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>LT</location>
-			<slot>3</slot>
-			<weaponName>autocannon/2</weaponName>
-		</weaponQuirk>
-		<weaponQuirk>
-			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>LT</location>
-			<slot>4</slot>
-			<weaponName>autocannon/2</weaponName>
-		</weaponQuirk>
-		<weaponQuirk>
-			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>RT</location>
 			<slot>3</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>RT</location>
 			<slot>4</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>3</slot>
+			<weaponName>Autocannon/2</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>4</slot>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 	</unit>
 
@@ -9896,25 +9908,55 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>RT</location>
 			<slot>6</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>RT</location>
 			<slot>7</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>LT</location>
 			<slot>6</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>LT</location>
 			<slot>7</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
+		</weaponQuirk>
+	</unit>	
+	
+	<unit>
+		<chassis>Mauler</chassis>
+		<model>MAL-1K</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RT</location>
+			<slot>6</slot>
+			<weaponName>Light Auto Cannon/5</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RT</location>
+			<slot>8</slot>
+			<weaponName>Light Auto Cannon/5</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>6</slot>
+			<weaponName>Light Auto Cannon/5</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LT</location>
+			<slot>8</slot>
+			<weaponName>Light Auto Cannon/5</weaponName>
 		</weaponQuirk>
 	</unit>
 	
@@ -9926,25 +9968,25 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>RT</location>
 			<slot>6</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>RT</location>
 			<slot>7</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>LT</location>
 			<slot>6</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>LT</location>
 			<slot>7</slot>
-			<weaponName>autocannon/2</weaponName>
+			<weaponName>Autocannon/2</weaponName>
 		</weaponQuirk>
 	</unit>
 	
@@ -9984,45 +10026,15 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Mech</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>LA</location>
-			<slot>2</slot>
-			<weaponName>ISLBXAC10</weaponName>
-		</weaponQuirk>
-		<weaponQuirk>
-			<weaponQuirkName>stable_weapon</weaponQuirkName>
 			<location>RA</location>
 			<slot>2</slot>
 			<weaponName>ISLBXAC10</weaponName>
 		</weaponQuirk>
-	</unit>
-	
-	<unit>
-		<chassis>Mauler</chassis>
-		<model>MAL-1K</model>
-		<unitType>Mech</unitType>
 		<weaponQuirk>
 			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>RT</location>
-			<slot>6</slot>
-			<weaponName>Light Auto Cannon/5</weaponName>
-		</weaponQuirk>
-		<weaponQuirk>
-			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>RT</location>
-			<slot>8</slot>
-			<weaponName>Light Auto Cannon/5</weaponName>
-		</weaponQuirk>
-		<weaponQuirk>
-			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>LT</location>
-			<slot>6</slot>
-			<weaponName>Light Auto Cannon/5</weaponName>
-		</weaponQuirk>
-		<weaponQuirk>
-			<weaponQuirkName>stable_weapon</weaponQuirkName>
-			<location>LT</location>
-			<slot>8</slot>
-			<weaponName>Light Auto Cannon/5</weaponName>
+			<location>LA</location>
+			<slot>2</slot>
+			<weaponName>ISLBXAC10</weaponName>
 		</weaponQuirk>
 	</unit>
 
@@ -10031,6 +10043,18 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<model>MAL-4X 'Todesbote'</model>
 		<unitType>Mech</unitType>
 		<quirk>hyper_actuator</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Hyper Velocity Auto Cannon/10</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>stable_weapon</weaponQuirkName>
+			<location>LA</location>
+			<slot>3</slot>
+			<weaponName>Hyper Velocity Auto Cannon/10</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>

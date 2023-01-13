@@ -90,14 +90,41 @@ Machine Gun
 Machine Gun
 </Turret Equipment>
 
-<history>
-The unit is 12.5 tons overweight. The unit in the TRO has been built wrong(IS calculated as if not Super-Heavy) and will likely be impossible to fix.  Included only for completeness.
-</history>
-
 <source>
-XTR Corporations
+XTR Corporations - Jihad
 </source>
 
 <tonnage>
 125.0
 </tonnage>
+
+<capabilities>
+For point-blank anti-infantry protection, the SturmFeur carries two huge missile racks backed up by machine guns. The SturmFeur is extensively armored, more so than many frontline tanks, in comparison to many other fire-support vehicles. The SturmFeur's 19-and-a-half tons of armor allow it to resist massive damage, which is appreciated by missile carrier operators who are used to paper-thin armor that disintegrates (as the sailors will tell you) "when given a filthy look."
+</capabilities>
+
+<overview>
+The SturmFeur debuted in 3018. At that time, it was the largest combat vehicle dedicated to providing missile support in the Inner Sphere. The unit is 12.5 tons overweight. The unit in the TRO has been built wrong(IS calculated as if not Super-Heavy) and will likely be impossible to fix.  Included only for completeness.
+</overview>
+
+<deployment>
+Using a SturmFeur chassis, the Kalki was designed by Kallon Industries to provide missile artillery support to ground units. Unfortunately, even expanding the chassis to a staggering 125 tons and downsizing the engine only allowed the designers to incorporate a single Cruise Missile 50 launcher. Also problematic was the greatly reduced top speed. To reduce costs and make more room for the Cruise Missile launcher, the top speed was reduced to approximately 32 km/h. Though it carried a decent amount of armor protection, the increased size of the vehicle resulted in the armor being considerably thinner in all locations. The largest problem, however, was the sheer size of the missiles. The Kalki only had enough room to carry a single missile for the launcher, meaning it had to be reloaded from an external source after every shot. Considering the missiles weigh as much as a Commando, this was a deadly shortcoming. Kallon shelved the project in the 3070s. 
+</deployment>
+
+<history>
+During the Fourth Succession War, conventional units particularly valued the SturmFeur. Its low profile proved to be the scourge of many Free Worlds League and Kuritan troops, who came under fire from these tanks that seemed to be able to hide behind even the most minor piece of terrain. It took a few ambushes for these troops to stop taking supposedly abandoned villages and parking lots for granted. It was considerably more popular among units stationed on worlds bordering the Periphery who obtained them. The majority of bandit gangs used lighter BattleMechs with less weaponry and armor. When confronted by these raiders, the SturmFeurs would deploy in a staggered formation, such that when bandits closed in on one tank in an attempt to get out of range of its missiles, they would find themselves within ideal range of the remaining defenders. To the chagrin of the attackers, the targeted SturmFeur's substantial armor allowed it to survive the attacks. Others have combined it with Demolishers, who require cover fire as they approach. Outside of the Federated Commonwealth coalition, however, very few units exhibited interest, preferring the far less expensive (albeit more vulnerable) LRM Carrier for support. Those who do obtain a SturmFeur sometimes use it as a command vehicle for their fire-support troops, depending on its substantial armor to keep the commanders alive.
+</history>
+
+<manufacturer>
+Kallon Weapon Industries
+</manufacturer>
+
+<primaryFactory>
+Kirklin
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Fusion 250
+ARMOR:StarSlab/7
+COMMUNICATIONS:JoLex Systems
+TARGETING:StratSight v.9
+</systemManufacturers>

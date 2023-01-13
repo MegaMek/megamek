@@ -151,4 +151,20 @@ Foot Actuator
 -Empty-
 -Empty-
 
+overview:Originally intended as a mobile incendiary ’Mech, the Firestarter evolved into a decent scouting and reconnaissance platform.
 
+capabilities:Despite being shielded by five and a half tons of armor and capable of jumping 180 meters, the Firestarter was powerless against medium or heavyweight opponents. Instead, an entire strategy was built around its ability to cause wildfires, with strategically positioned blazes routing an opponent or covering a withdrawal and impeding any pursuit. Firestarter MechWarriors enjoyed setting fire to densely forested areas when enemy 'Mechs marched through them, as well as any buildings where the enemy was hiding. 
+Other applications for the 'Mech included scorched earth tactics, though this grew less common as it became more important to capture rather than destroy the declining amount of precious resources, or leading units of Wasps and Stingers in deep penetration scouting and light raiding operations.This approach altered in the later Succession Wars when it was discovered that the Firestarter could not only set flames to prevent an enemy from following it, but also clear ambush spots for the advancing of friendly forces.
+
+deployment:The -M3 is a modification of the -M2 Firestarter introduced in 3104 that has been optimized for artillery spotting. The 'Mech has removed the three flamers mounted in the left arm, replacing them with a single ER small laser, added a TAG laser designator to the right torso, allowing it to spot for artillery, and MASC, which allows it to move at up to 129.6 km/h. The -M3 also dropped a single double heat sink but added another half ton of armor, giving it a total of seven and a half tons of standard armor.
+
+history:Firestarters, both ancient and contemporary, can still be found in abundance among planetary militias and House troops. Even though Blakist forces have taken over CMW's principal plant on Coventry, spare parts are still accessible from other Firestarter producers (including LAW, Ceres Metals, Defiance, and Independence Weaponry). Loki field offices near the Circinus Federation frontier are concerned about reports of a new variety using endo steel technology on Federation- occupied worlds. With its particular load-out, this new variation appears to be designed to spread chaos and destruction. Firestarters have also been seen in Level II formations with Blakist soldiers in their Protectorate, most frequently at "police demonstrations" and guarding suspected prison sites. These versions are thought to be Coventry goods.
+
+manufacturer:Coventry Metal Works
+primaryfactory:Coventry
+systemmanufacturer:CHASSIS:Foundation Ultralight Endo Steel
+systemmanufacturer:ENGINE:Omni 210
+systemmanufacturer:ARMOR: Durallex Nova
+systemmanufacturer:JUMPJET:Luxor Load Lifters
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Cyclops 9 with TAG

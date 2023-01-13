@@ -17,6 +17,7 @@ VERSION HISTORY:
 + PR #4096: Fix Unit Display weapon order bugs
 + PR #4078: Various unit tooltip improvements
 + PR #4030: show game board in all the game phases 
++ Data: Various Data fixes (RAT name shortening, New Rec Guides)
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

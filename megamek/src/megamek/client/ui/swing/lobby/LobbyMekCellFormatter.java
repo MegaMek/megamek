@@ -700,6 +700,27 @@ class LobbyMekCellFormatter {
             result.append(guiScaledFontHTML(uiGreen(), 0.3f));
             result.append("&nbsp;  \u24D8");
         }
+
+        // Auto Eject
+        if (entity instanceof Mech) {
+            Mech mech = ((Mech) entity);
+            if ((mech.hasEjectSeat()) && (!mech.isAutoEject())) {
+                result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()));
+                result.append(guiScaledFontHTML(uiYellow()));
+                result.append(WARNING_SIGN + "</FONT>");
+            }
+        }
+        if ((entity instanceof Aero)
+                && (!(entity instanceof Jumpship))
+                && (!(entity instanceof SmallCraft))) {
+            Aero aero = ((Aero) entity);
+            if ((aero.hasEjectSeat())
+                    && (!aero.isAutoEject())) {
+                result.append(DOT_SPACER + guiScaledFontHTML(uiGreen()));
+                result.append(guiScaledFontHTML(uiYellow()));
+                result.append(WARNING_SIGN + "</FONT>");
+            }
+        }
         
         return LobbyUtility.abbreviateUnitName(result.toString()); 
     }

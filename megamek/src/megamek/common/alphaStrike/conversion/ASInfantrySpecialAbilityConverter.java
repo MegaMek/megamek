@@ -57,7 +57,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
                     && ((misc.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER)) {
                 assign("Minesweeper", MSW);
             } else if (misc.getType().hasFlag(MiscType.F_PARAFOIL)) {
-                assign(misc, PARA);
+                assign(misc, PAR);
             } else if (misc.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
                 assign(misc, XMEC);
             }
@@ -94,7 +94,7 @@ public class ASInfantrySpecialAbilityConverter extends ASSpecialAbilityConverter
             assign("Mountain Troops", MTN);
         }
         if (infantry.hasSpecialization(Infantry.PARATROOPS)) {
-            assign("Paratroopers", PARA);
+            assign("Paratroopers", PAR);
         }
         if (infantry.hasSpecialization(Infantry.SCUBA)) {
             assign("Scuba Gear", UMU);

@@ -31,7 +31,6 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.CollectionUtil;
 import megamek.common.util.CrewSkillSummaryUtil;
 
-import javax.swing.text.Position;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
@@ -42,6 +41,8 @@ import static megamek.client.ui.swing.lobby.MekTableModel.DOT_SPACER;
 import static megamek.client.ui.swing.util.UIUtil.*;
 
 class LobbyMekCellFormatter {
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     
     /** 
      * Creates and returns the display content of the Unit column for the given entity and
@@ -217,7 +218,8 @@ class LobbyMekCellFormatter {
             if (spe != Board.START_NONE) {
                 result.append(guiScaledFontHTML(uiLightGreen()));
             }
-            result.append(" Start:" + IStartingPositions.START_LOCATION_NAMES[sp]);
+            String msg_start = Messages.getString("ChatLounge.Start");
+            result.append(" " + msg_start + ":" + IStartingPositions.START_LOCATION_NAMES[sp]);
             int so = entity.getStartingOffset(true);
             int sw = entity.getStartingWidth(true);
             if ((so != 0) || (sw != 3)) {
@@ -291,7 +293,8 @@ class LobbyMekCellFormatter {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(guiScaledFontHTML(uiC3Color()) + Messages.getString("ChatLounge.C3CC"));
                 if (entity.hasC3MM()) {
-                    result.append(MessageFormat.format(" ({0}M, {1}S free)", 
+                    String msg_freec3mnodes = Messages.getString("ChatLounge.FreeC3MNodes");
+                    result.append(MessageFormat.format(" " + msg_freec3mnodes,
                             entity.calculateFreeC3MNodes(), entity.calculateFreeC3Nodes()));
                 } else {
                     result.append(getString("ChatLounge.C3MNodes", entity.calculateFreeC3MNodes()));
@@ -399,13 +402,14 @@ class LobbyMekCellFormatter {
         }
 
         // Auto Eject
+        String msg_autoejectdisabled = Messages.getString("ChatLounge.AutoEjectDisabled");
         if (entity instanceof Mech) {
             Mech mech = ((Mech) entity);
             if ((mech.hasEjectSeat()) && (!mech.isAutoEject())) {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(guiScaledFontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "<I>");
-                result.append("Auto Eject Disabled");
+                result.append(msg_autoejectdisabled);
                 result.append("</I></FONT>");
             }
         }
@@ -418,7 +422,7 @@ class LobbyMekCellFormatter {
                 firstEntry = dotSpacer(result, firstEntry);
                 result.append(guiScaledFontHTML(uiYellow()));
                 result.append(WARNING_SIGN + "<I>");
-                result.append("Auto Eject Disabled");
+                result.append(msg_autoejectdisabled);
                 result.append("</I></FONT>");
             }
         }
@@ -579,7 +583,10 @@ class LobbyMekCellFormatter {
         // C3 ...
         if (entity.hasC3i() || entity.hasNavalC3()) {
             result.append(DOT_SPACER + guiScaledFontHTML(uiC3Color()));
-            String c3Name = entity.hasC3i() ? "C3i" : "NC3";
+            String msg_c3i = Messages.getString("ChatLounge.C3i");
+            String msg_nc3 = Messages.getString("ChatLounge.NC3");
+
+            String c3Name = entity.hasC3i() ? msg_c3i : msg_nc3;
             if (entity.calculateFreeC3Nodes() >= 5) {
                 result.append(c3Name + UNCONNECTED_SIGN);
             } else {
@@ -589,21 +596,25 @@ class LobbyMekCellFormatter {
         } 
 
         if (entity.hasC3()) {
+            String msg_c3sabrv = Messages.getString("ChatLounge.C3SAbrv");
+            String msg_c3m = Messages.getString("ChatLounge.C3M");
+            String msg_c3mcc = Messages.getString("ChatLounge.C3MCC");
+
             result.append(DOT_SPACER + guiScaledFontHTML(uiC3Color()));
             if (entity.getC3Master() == null) {
                 if (entity.hasC3S()) {
-                    result.append("C3S" + UNCONNECTED_SIGN); 
+                    result.append(msg_c3sabrv + UNCONNECTED_SIGN);
                 }  
                 if (entity.hasC3M()) {
-                    result.append("C3M"); 
+                    result.append(msg_c3m);
                 }
             } else if (entity.C3MasterIs(entity)) {
-                result.append("C3M (CC)");
+                result.append(msg_c3mcc);
             } else {
                 if (entity.hasC3S()) {
-                    result.append("C3S" + CONNECTED_SIGN); 
+                    result.append(msg_c3sabrv + CONNECTED_SIGN);
                 } else {
-                    result.append("C3M" + CONNECTED_SIGN); 
+                    result.append(msg_c3m + CONNECTED_SIGN);
                 }
                 result.append(entity.getC3Master().getChassis());
             }
@@ -769,13 +780,15 @@ class LobbyMekCellFormatter {
         result.append(DOT_SPACER);
         int totalBv = fullEntities.stream().filter(e -> !e.isPartOfFighterSquadron()).mapToInt(Entity::calculateBattleValue).sum();
         if (totalBv > 0) {
-            result.append("BV ").append(String.format("%,d", totalBv));
+            String msg_bvplain = Messages.getString("ChatLounge.BVplain");
+            result.append(msg_bvplain + " ").append(String.format("%,d", totalBv));
             // Unit Type
             long unittypes = fullEntities.stream().map(e -> Entity.getEntityMajorTypeName(e.getEntityType())).distinct().count();
             result.append(guiScaledFontHTML(color, size));
             result.append(DOT_SPACER);
             if (unittypes > 1) {
-                result.append(" Mixed");
+                String msg_mixed = Messages.getString("ChatLounge.Mixed");
+                result.append(" " + msg_mixed);
             } else if (unittypes == 1) {
                 Entity entity = CollectionUtil.anyOneElement(fullEntities);
                 result.append(UnitType.getTypeName(entity.getUnitType()));

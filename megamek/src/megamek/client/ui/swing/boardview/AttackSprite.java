@@ -407,7 +407,7 @@ class AttackSprite extends Sprite {
         tipString.append(Integer.toHexString(attackColor.getRGB() & 0xFFFFFF));
         tipString.append(">");
         tipString.append(attackerDesc
-                + "&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + "&nbsp;&nbsp;" + targetDesc);
+                + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + "&nbsp;&nbsp;" + targetDesc);
         tipString.append("</FONT>");
         for (String wpD: weaponDescs) {
             tipString.append("<BR>"+wpD);

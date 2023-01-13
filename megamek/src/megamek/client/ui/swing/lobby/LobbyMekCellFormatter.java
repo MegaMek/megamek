@@ -22,8 +22,11 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.swing.util.PlayerColour;
 import megamek.common.*;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.force.Force;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
@@ -133,6 +136,14 @@ class LobbyMekCellFormatter {
         result.append(formatter.format(entity.getWeight()));
         result.append(Messages.getString("ChatLounge.Tons"));
         result.append("</FONT>");
+
+        // Alpha Strike Unit Role
+        if (ASConverter.canConvert(entity)) {
+            FlexibleCalculationReport report = new FlexibleCalculationReport();
+            AlphaStrikeElement element = ASConverter.convert(entity, false, report);
+            result.append(DOT_SPACER);
+            result.append(element.getRole());
+        }
         
         // Invalid Design
         if (!forceView) {

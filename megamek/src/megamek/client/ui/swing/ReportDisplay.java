@@ -72,8 +72,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     private static final String RD_REPORTDIPLAY = "ReportDisplay.";
     private static final String RD_TOOLTIP = ".tooltip";
 
-    private static final String MSG_DONE = Messages.getString("ReportDisplay.Done");
-
     /**
      * Creates and lays out a new movement phase display for the specified
      * clientgui.getClient().
@@ -103,7 +101,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
-        butDone.setText(MSG_DONE);
+        butDone.setText(Messages.getString("ReportDisplay.Done"));
         butDone.setEnabled(false);
 
         setupButtonPanel();

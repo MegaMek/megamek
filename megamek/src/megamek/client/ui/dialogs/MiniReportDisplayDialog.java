@@ -32,13 +32,12 @@ public class MiniReportDisplayDialog extends JDialog {
     //region Variable Declarations
     private final ClientGUI clientGUI;
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-    private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
     //endregion Variable Declarations
 
     //region Constructors
     public MiniReportDisplayDialog(final JFrame frame, final ClientGUI clientGUI) {
         super(frame, "", false);
-        this.setTitle(MSG_TITLE);
+        this.setTitle(Messages.getString("MiniReportDisplay.title"));
 
         this.setLocation(GUIP.getMiniReportPosX(), GUIP.getMiniReportPosY());
         this.setSize(GUIP.getMiniReportSizeWidth(), GUIP.getMiniReportSizeHeight());

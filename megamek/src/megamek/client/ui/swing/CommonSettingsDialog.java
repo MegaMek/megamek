@@ -274,24 +274,6 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
     private int savedFovDarkenAlpha;
     private int savedNumStripesSlider;
     HashMap<String, String> savedAdvancedOpt = new HashMap<>();
-    
-    private static final String MSG_REPORTKEYWORDS = Messages.getString("CommonSettingsDialog.ReportKeywords");
-    private static final String MSG_UNITDISPLAY = Messages.getString("CommonMenuBar.viewMekDisplay");
-    private static final String MSG_MINIMAP = Messages.getString("CommonMenuBar.viewMinimap");
-    private static final String MSG_MINIREPORT = Messages.getString("CommonMenuBar.viewRoundReport");
-    private static final String MSG_PLAYERLIST = Messages.getString("CommonMenuBar.viewPlayerList");
-    private static final String MSG_SHOW = Messages.getString("ClientGUI.Show");
-    private static final String MSG_HIDE = Messages.getString("ClientGUI.Hide");
-    private static final String MSG_MANUAL = Messages.getString("ClientGUI.Manual");
-    private static final String MSG_REPORTPHASES = Messages.getString("CommonSettingsDialog.ReportPhases");
-    private static final String MSG_NONREPORTPHASES = Messages.getString("CommonSettingsDialog.NonReportPhases");
-    private static final String MSG_MAIN = Messages.getString("CommonSettingsDialog.Main");
-    private static final String MSG_GRAPHICS = Messages.getString("CommonSettingsDialog.Graphics");
-    private static final String MSG_KEYBINDS = Messages.getString("CommonSettingsDialog.KeyBinds");
-    private static final String MSG_BUTTONORDER = Messages.getString("CommonSettingsDialog.ButtonOrder");
-    private static final String MSG_UNITDISPLAYORDER = Messages.getString("CommonSettingsDialog.UnitDisplayOrder");
-    private static final String MSG_AUTODISPLAY = Messages.getString("CommonSettingsDialog.AutoDisplay");
-    private static final String MSG_ADVANCED = Messages.getString("CommonSettingsDialog.Advanced");
 
     /** Constructs the Client Settings Dialog with a clientgui (used within the client, i.e. in lobby and game). */
     public CommonSettingsDialog(JFrame owner, ClientGUI cg) {
@@ -328,13 +310,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         JScrollPane autoDisplayPane = new JScrollPane(getPhasePanel());
         autoDisplayPane.getVerticalScrollBar().setUnitIncrement(16);
 
-        panTabs.add(MSG_MAIN, settingsPane);
-        panTabs.add(MSG_GRAPHICS, graphicsPane);
-        panTabs.add(MSG_KEYBINDS, keyBindPane);
-        panTabs.add(MSG_BUTTONORDER, getButtonOrderPanel());
-        panTabs.add(MSG_UNITDISPLAYORDER, unitDisplayPane);
-        panTabs.add(MSG_AUTODISPLAY, autoDisplayPane);
-        panTabs.add(MSG_ADVANCED, advancedSettingsPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.Main"), settingsPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.Graphics"), graphicsPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.KeyBinds"), keyBindPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.ButtonOrder"), getButtonOrderPanel());
+        panTabs.add(Messages.getString("CommonSettingsDialog.UnitDisplayOrder"), unitDisplayPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.AutoDisplay"), autoDisplayPane);
+        panTabs.add(Messages.getString("CommonSettingsDialog.Advanced"), advancedSettingsPane);
 
         adaptToGUIScale();
 
@@ -1475,16 +1457,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         JPanel outer = new JPanel();
         outer.setLayout(new BoxLayout(outer, BoxLayout.PAGE_AXIS));
 
-        JLabel unitDisplayLabel = new JLabel(MSG_UNITDISPLAY);
+        JLabel unitDisplayLabel = new JLabel(Messages.getString("CommonMenuBar.viewMekDisplay"));
         row = new ArrayList<>();
         row.add(unitDisplayLabel);
         comps.add(row);
 
-        JLabel phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        JLabel phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.ReportPhases") + ": ");
         unitDisplayAutoDisplayReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayReportCombo.addItem(MSG_HIDE);
-        unitDisplayAutoDisplayReportCombo.addItem(MSG_SHOW);
-        unitDisplayAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        unitDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        unitDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        unitDisplayAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         unitDisplayAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         unitDisplayAutoDisplayReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayReportPhase());
@@ -1492,11 +1474,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(unitDisplayAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.NonReportPhases") + ": ");
         unitDisplayAutoDisplayNonReportCombo = new JComboBox<>();
-        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        unitDisplayAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        unitDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        unitDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        unitDisplayAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         unitDisplayAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         unitDisplayAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getUnitDisplayAutoDisplayNonReportPhase());
@@ -1506,16 +1488,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        JLabel miniMapLabel = new JLabel(MSG_MINIMAP);
+        JLabel miniMapLabel = new JLabel(Messages.getString("CommonMenuBar.viewMinimap"));
         row = new ArrayList<>();
         row.add(miniMapLabel);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.ReportPhases") + ": ");
         miniMapAutoDisplayReportCombo = new JComboBox<>();
-        miniMapAutoDisplayReportCombo.addItem(MSG_HIDE);
-        miniMapAutoDisplayReportCombo.addItem(MSG_SHOW);
-        miniMapAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        miniMapAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        miniMapAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        miniMapAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         miniMapAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         miniMapAutoDisplayReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayReportPhase());
@@ -1523,11 +1505,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(miniMapAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.NonReportPhases") + ": ");
         miniMapAutoDisplayNonReportCombo = new JComboBox<>();
-        miniMapAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        miniMapAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        miniMapAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        miniMapAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        miniMapAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        miniMapAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         miniMapAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         miniMapAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMinimapAutoDisplayNonReportPhase());
@@ -1537,16 +1519,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        JLabel miniReportLabel = new JLabel(MSG_MINIREPORT);
+        JLabel miniReportLabel = new JLabel(Messages.getString("CommonMenuBar.viewRoundReport"));
         row = new ArrayList<>();
         row.add(miniReportLabel);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.ReportPhases") + ": ");
         miniReportAutoDisplayReportCombo = new JComboBox<>();
-        miniReportAutoDisplayReportCombo.addItem(MSG_HIDE);
-        miniReportAutoDisplayReportCombo.addItem(MSG_SHOW);
-        miniReportAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        miniReportAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        miniReportAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        miniReportAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         miniReportAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         miniReportAutoDisplayReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayReportPhase());
@@ -1554,11 +1536,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(miniReportAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.NonReportPhases") + ": ");
         miniReportAutoDisplayNonReportCombo = new JComboBox<>();
-        miniReportAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        miniReportAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        miniReportAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        miniReportAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        miniReportAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        miniReportAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         miniReportAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         miniReportAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getMiniReportAutoDisplayNonReportPhase());
@@ -1568,16 +1550,16 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
 
         addLineSpacer(comps);
 
-        JLabel playerListLabel = new JLabel(MSG_PLAYERLIST);
+        JLabel playerListLabel = new JLabel(Messages.getString("CommonMenuBar.viewPlayerList"));
         row = new ArrayList<>();
         row.add(playerListLabel);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_REPORTPHASES + ": ");
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.ReportPhases") + ": ");
         playerListAutoDisplayReportCombo = new JComboBox<>();
-        playerListAutoDisplayReportCombo.addItem(MSG_HIDE);
-        playerListAutoDisplayReportCombo.addItem(MSG_SHOW);
-        playerListAutoDisplayReportCombo.addItem(MSG_MANUAL);
+        playerListAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        playerListAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        playerListAutoDisplayReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         playerListAutoDisplayReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         playerListAutoDisplayReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayReportPhase());
@@ -1585,11 +1567,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog implements ItemLi
         row.add(playerListAutoDisplayReportCombo);
         comps.add(row);
 
-        phaseLabel = new JLabel(MSG_NONREPORTPHASES + ": ");
+        phaseLabel = new JLabel(Messages.getString("CommonSettingsDialog.NonReportPhases") + ": ");
         playerListAutoDisplayNonReportCombo = new JComboBox<>();
-        playerListAutoDisplayNonReportCombo.addItem(MSG_HIDE);
-        playerListAutoDisplayNonReportCombo.addItem(MSG_SHOW);
-        playerListAutoDisplayNonReportCombo.addItem(MSG_MANUAL);
+        playerListAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Hide"));
+        playerListAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Show"));
+        playerListAutoDisplayNonReportCombo.addItem(Messages.getString("ClientGUI.Manual"));
         playerListAutoDisplayNonReportCombo.setMaximumSize(new Dimension(150, 40));
         row = new ArrayList<>();
         playerListAutoDisplayNonReportCombo.setSelectedIndex(GUIP.getPlayerListAutoDisplayNonReportPhase());

@@ -14,7 +14,6 @@
 package megamek.common.commandline;
 
 import megamek.MMConstants;
-import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
@@ -22,9 +21,6 @@ import megamek.server.Server;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 
 public class ClientServerCommandLineParser extends AbstractCommandLineParser {
 
@@ -122,7 +118,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                     try {
                         switch (ClientServerCommandLineFlag.parseFromString(tokenValue)) {
                             case HELP:
-                                MegaMek.printToOut(help());
+                                LogManager.getLogger().info(help());
                                 System.exit(0);
                             case PORT:
                                 nextToken();
@@ -161,10 +157,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                                 break;
                         }
                     } catch (ParseException ex) {
-                        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-                        out.print("Incorrect arguments:" + ex.getMessage() + '\n' + help());
-                        out.close();
-                        MegaMek.printToOut(help());
+                        LogManager.getLogger().error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
                         throw ex;
                     }
                     break;

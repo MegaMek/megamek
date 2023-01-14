@@ -150,20 +150,6 @@ public class MegaMek {
         }
     }
 
-    public static void printToOut(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-        out.print(text);
-        out.flush();
-        out.close();
-    }
-
-    public static void printToErr(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.err));
-        out.print(text);
-        out.flush();
-        out.close();
-    }
-
     public static SuitePreferences getMMPreferences() {
         return mmPreferences;
     }
@@ -250,7 +236,6 @@ public class MegaMek {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
             LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
-            MegaMek.printToErr("Incorrect arguments:" + e.getMessage() + '\n' + parser.help() + "\n");
             System.exit(1);
         }
 
@@ -293,9 +278,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            final String message = "Incorrect arguments:" + e.getMessage() + '\n' + parser.help();
-            LogManager.getLogger().error(message, e);
-            MegaMek.printToErr(message + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help(), e);
             System.exit(1);
         }
 

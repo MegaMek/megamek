@@ -35,7 +35,7 @@ public class DedicatedServer {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
         }
 
         ClientServerCommandLineParser.Resolver resolver = parser.getResolver(

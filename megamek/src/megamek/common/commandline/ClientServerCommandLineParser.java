@@ -162,7 +162,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
                         }
                     } catch (ParseException ex) {
                         PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-                        out.print(formatErrorMessage(ex));
+                        out.print("Incorrect arguments:" + ex.getMessage() + '\n' + help());
                         out.close();
                         MegaMek.printToOut(help());
                         throw ex;
@@ -275,7 +275,7 @@ public class ClientServerCommandLineParser extends AbstractCommandLineParser {
             try {
                 parser.parse();
             } catch (AbstractCommandLineParser.ParseException e) {
-                LogManager.getLogger().error(parser.formatErrorMessage(e));
+                LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             }
 
             String playerName = parser.getPlayerName();

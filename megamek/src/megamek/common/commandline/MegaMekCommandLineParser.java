@@ -132,7 +132,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                 }
             } catch (ParseException ex) {
                 PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-                out.print(formatErrorMessage(ex));
+                out.print("Incorrect arguments:" + ex.getMessage() + '\n' + help());
                 out.close();
                 MegaMek.printToOut(help());
                 throw ex;

@@ -13,8 +13,6 @@
  */
 package megamek.common.commandline;
 
-import megamek.client.ui.Messages;
-
 import java.util.Objects;
 
 /**
@@ -163,16 +161,6 @@ public abstract class AbstractCommandLineParser {
 
     protected boolean hasNext() {
         return position < argsLen;
-    }
-
-    /**
-     *
-     * @return <code>String</code> error message for user
-     */
-    public String formatErrorMessage(Exception e) {
-        // FIXME : Logging messages should never be localized, nor done through secondary methods
-        // FIXME : Just use normal logging, not this awful setup
-        return (Messages.getString("MegaMek.Help.IncorrectArguments") + e.getMessage() + '\n' + help());
     }
 
     /**

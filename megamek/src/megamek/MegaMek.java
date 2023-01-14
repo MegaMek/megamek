@@ -105,7 +105,7 @@ public class MegaMek {
                 startGUI();
             }
         } catch (MegaMekCommandLineParser.ParseException e) {
-            LogManager.getLogger().fatal(parser.formatErrorMessage(e));
+            LogManager.getLogger().fatal("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             System.exit(1);
         }
     }
@@ -249,8 +249,8 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
+            MegaMek.printToErr("Incorrect arguments:" + e.getMessage() + '\n' + parser.help() + "\n");
             System.exit(1);
         }
 
@@ -293,8 +293,9 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            final String message = "Incorrect arguments:" + e.getMessage() + '\n' + parser.help();
+            LogManager.getLogger().error(message, e);
+            MegaMek.printToErr(message + "\n");
             System.exit(1);
         }
 

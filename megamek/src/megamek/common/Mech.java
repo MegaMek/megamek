@@ -1658,6 +1658,7 @@ public abstract class Mech extends Entity {
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
         int activeCount = getActiveSinks();
+        boolean isDoubleHeatSink = false;
 
         for (Mounted mounted : getMisc()) {
             if (mounted.isDestroyed() || mounted.isBreached()) {
@@ -1671,9 +1672,11 @@ public abstract class Mech extends Entity {
                     && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
+                isDoubleHeatSink = true;
             } else if (mounted.getType().hasFlag(
                     MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
+                isDoubleHeatSink = true;
             } else if (includePartialWing
                     && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
                     && // unless all crits are destroyed, we get the bonus
@@ -1686,6 +1689,7 @@ public abstract class Mech extends Entity {
                                             // once.
             }
         }
+        capacity -= damagedSCMCritCount() * (isDoubleHeatSink ? 2 : 1);
         // AirMech mode for LAMs confers the same heat benefits as a partial wing.
         if (includePartialWing && movementMode == EntityMovementMode.WIGE) {
             capacity += getPartialWingHeatBonus();
@@ -1694,7 +1698,6 @@ public abstract class Mech extends Entity {
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
-        capacity -= damagedSCMCritCount();
 
         return Math.max(capacity, 0);
     }

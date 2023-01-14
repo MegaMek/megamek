@@ -1489,7 +1489,7 @@ public class EquipmentType implements ITechnology {
 
     /**
      * Returns true if this equipment is any of those identified by the given type Strings. The
-     * given eTypes are compared to the internal name of this EquipmentType, not the (display) name!
+     * given typeInternalNames are compared to the internal name of this EquipmentType, not the (display) name!
      * Best use the constants defined in EquipmentTypeLookup.
      *
      * @param typeInternalName An Equipment internal name to check
@@ -1501,8 +1501,8 @@ public class EquipmentType implements ITechnology {
     }
 
     /**
-     * Returns true if this equipment is that identified by the given eType String. The
-     * given eType is compared to the internal name of this EquipmentType, not the (display) name!
+     * Returns true if this equipment is that identified by the given typeInternalName String. The
+     * given typeInternalName is compared to the internal name of this EquipmentType, not the (display) name!
      * Best use the constants defined in EquipmentTypeLookup. Calling this is equivalent to
      * {@link #isAnyOf(String, String...)} with only the one parameter.
      *

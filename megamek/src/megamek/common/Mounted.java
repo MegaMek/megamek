@@ -655,8 +655,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     /**
-     * Returns true if this Mounted's EquipmentType is that identified by the given eType String. The
-     * given eType is compared to the internal name of the EquipmentType of this Mounted,
+     * Returns true if this Mounted's EquipmentType is that identified by the given typeInternalName String. The
+     * given typeInternalName is compared to the internal name of the EquipmentType of this Mounted,
      * not the (display) name!
      * Best use the constants defined in EquipmentTypeLookup.
      *

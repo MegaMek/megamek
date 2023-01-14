@@ -122,31 +122,31 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JLabel lblTechLevel = new JLabel("");
 
     // Game Setup
-    private JButton butOptions = new JButton(MSG_BUTOPTIONS);
-    private JToggleButton butGroundMap = new JToggleButton(MSG_BUTGROUNDMAP);
-    private JToggleButton butLowAtmoMap = new JToggleButton(MSG_NAMELOWALTITUDEMAP);
-    private JToggleButton butHighAtmoMap = new JToggleButton(MSG_NAMEHIGHALTITUDEMAP);
-    private JToggleButton butSpaceMap = new JToggleButton(MSG_NAMESPACEMAP);
+    private JButton butOptions = new JButton(Messages.getString("ChatLounge.butOptions"));
+    private JToggleButton butGroundMap = new JToggleButton(Messages.getString("ChatLounge.butGroundMap"));
+    private JToggleButton butLowAtmoMap = new JToggleButton(Messages.getString("ChatLounge.name.lowAltitudeMap"));
+    private JToggleButton butHighAtmoMap = new JToggleButton(Messages.getString("ChatLounge.name.HighAltitudeMap"));
+    private JToggleButton butSpaceMap = new JToggleButton(Messages.getString("ChatLounge.name.spaceMap"));
     private ButtonGroup grpMap = new ButtonGroup();
 
     /* Unit Configuration Panel */
     private FixedYPanel panUnitInfo = new FixedYPanel();
-    private JButton butAdd = new JButton(MSG_BUTLOAD);
-    private JButton butArmy = new JButton(MSG_BUTARMY);
-    private JButton butSkills = new JButton(MSG_BUTSKILLS);
-    private JButton butNames = new JButton(MSG_BUTNAMES);
-    private JButton butLoadList = new JButton(MSG_BUTLOADLIST);
-    private JButton butSaveList = new JButton(MSG_BUTSAVELIST);
+    private JButton butAdd = new JButton(Messages.getString("ChatLounge.butLoad"));
+    private JButton butArmy = new JButton(Messages.getString("ChatLounge.butArmy"));
+    private JButton butSkills = new JButton(Messages.getString("ChatLounge.butSkills"));
+    private JButton butNames = new JButton(Messages.getString("ChatLounge.butNames"));
+    private JButton butLoadList = new JButton(Messages.getString("ChatLounge.butLoadList"));
+    private JButton butSaveList = new JButton(Messages.getString("ChatLounge.butSaveList"));
 
     /* Unit Table */
     private JTable mekTable;
     public JScrollPane scrMekTable;
-    private MMToggleButton butCompact = new MMToggleButton(MSG_BUTCOMPACT);
-    private MMToggleButton butShowUnitID = new MMToggleButton(MSG_BUTSHOWUNITID);
-    private JToggleButton butListView = new JToggleButton(MSG_BUTSORTABLEVIEW);
-    private JToggleButton butForceView = new JToggleButton(MSG_BUTFORCEVIEW);
-    private JButton butCollapse = new JButton(MSG_BUTCOLLAPSE);
-    private JButton butExpand = new JButton(MSG_BUTEXPAND);
+    private MMToggleButton butCompact = new MMToggleButton(Messages.getString("ChatLounge.butCompact"));
+    private MMToggleButton butShowUnitID = new MMToggleButton(Messages.getString("ChatLounge.butShowUnitID"));
+    private JToggleButton butListView = new JToggleButton(Messages.getString("ChatLounge.butSortableView"));
+    private JToggleButton butForceView = new JToggleButton(Messages.getString("ChatLounge.butForceView"));
+    private JButton butCollapse = new JButton(Messages.getString("ChatLounge.butCollapse"));
+    private JButton butExpand = new JButton(Messages.getString("ChatLounge.butExpand"));
     private MekTableModel mekModel;
     
     /* Force Tree */
@@ -158,10 +158,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private FixedYPanel panPlayerInfo;
     private JComboBox<String> comboTeam = new JComboBox<>();
     private JButton butCamo = new JButton();
-    private JButton butAddBot = new JButton(MSG_BUTADDBOT);
-    private JButton butRemoveBot = new JButton(MSG_BUTREMOVEBOT);
-    private JButton butConfigPlayer = new JButton(MSG_BUTCONFIGPLAYER);
-    private JButton butBotSettings = new JButton(MSG_BUTSETTINGS);
+    private JButton butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot"));
+    private JButton butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot"));
+    private JButton butConfigPlayer = new JButton(Messages.getString("ChatLounge.butConfigPlayer"));
+    private JButton butBotSettings = new JButton(Messages.getString("ChatLounge.butBotSettings"));
 
     private MekTableMouseAdapter mekTableMouseAdapter = new MekTableMouseAdapter();
     private PlayerTableModel playerModel = new PlayerTableModel();
@@ -169,40 +169,40 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private JScrollPane scrPlayers = new JScrollPane(tablePlayers);
 
     /* Map Settings Panel */
-    private JLabel lblMapWidth = new JLabel(MSG_LABELMAPWIDTH);
-    private JButton butMapGrowW = new JButton(MSG_BUTGROW);
-    private JButton butMapShrinkW = new JButton(MSG_BUTSHRINK);
+    private JLabel lblMapWidth = new JLabel(Messages.getString("ChatLounge.labMapWidth"));
+    private JButton butMapGrowW = new JButton(Messages.getString("ChatLounge.butGrow"));
+    private JButton butMapShrinkW = new JButton(Messages.getString("ChatLounge.butShrink"));
     private JTextField fldMapWidth = new JTextField(3);
-    private JLabel lblMapHeight = new JLabel(MSG_LABELMAPHEIGHT);
-    private JButton butMapGrowH = new JButton(MSG_BUTGROW);
-    private JButton butMapShrinkH = new JButton(MSG_BUTSHRINK);
+    private JLabel lblMapHeight = new JLabel(Messages.getString("ChatLounge.labMapHeight"));
+    private JButton butMapGrowH = new JButton(Messages.getString("ChatLounge.butGrow"));
+    private JButton butMapShrinkH = new JButton(Messages.getString("ChatLounge.butShrink"));
     private JTextField fldMapHeight = new JTextField(3);
     private FixedYPanel panMapHeight = new FixedYPanel();
     private FixedYPanel panMapWidth = new FixedYPanel();
     
-    private JLabel lblSpaceBoardWidth = new JLabel(MSG_LABELBOARDWIDTH);
+    private JLabel lblSpaceBoardWidth = new JLabel(Messages.getString("ChatLounge.labBoardWidth"));
     private JTextField fldSpaceBoardWidth = new JTextField(3);
-    private JLabel lblSpaceBoardHeight = new JLabel(MSG_LABELBOARDHEIGHT);
+    private JLabel lblSpaceBoardHeight = new JLabel(Messages.getString("ChatLounge.labBoardHeight"));
     private JTextField fldSpaceBoardHeight = new JTextField(3);
     private FixedYPanel panSpaceBoardHeight = new FixedYPanel();
     private FixedYPanel panSpaceBoardWidth = new FixedYPanel();
     
-    private JLabel lblBoardSize = new JLabel(MSG_LABELBOARDSIZE);
-    private JButton butHelp = new JButton(" " + MSG_BUTHELP + " ");
+    private JLabel lblBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"));
+    private JButton butHelp = new JButton(" " + Messages.getString("ChatLounge.butHelp") + " ");
 
-    private JButton butConditions = new JButton(MSG_BUTCONDITIONS);
-    private JButton butRandomMap = new JButton(MSG_BUTRANDOMMAP);
+    private JButton butConditions = new JButton(Messages.getString("ChatLounge.butConditions"));
+    private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings"));
     ArrayList<MapPreviewButton> mapButtons = new ArrayList<>(20);
     MapSettings mapSettings;
     private JPanel panGroundMap;
     @SuppressWarnings("rawtypes")
     private JComboBox<Comparable> comMapSizes;
-    private JButton butBoardPreview = new JButton(MSG_VIEWGAMEBOARD);
+    private JButton butBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard"));
     private JPanel panMapButtons = new JPanel();
     private JLabel lblBoardsAvailable = new JLabel();
     private JList<String> lisBoardsAvailable;
     private JScrollPane scrBoardsAvailable;
-    private JButton butSpaceSize = new JButton(MSG_BUTMAPSIZE);
+    private JButton butSpaceSize = new JButton(Messages.getString("ChatLounge.MapSize"));
     private Set<BoardDimensions> mapSizes = new TreeSet<>();
     boolean resetAvailBoardSelection = false;
     boolean resetSelectedBoards = true;
@@ -215,22 +215,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private ArrayList<String> serverBoards = new ArrayList<>();
     
     private JSplitPane splGroundMap;
-    private JLabel lblSearch = new JLabel(MSG_LABELSEARCH);
+    private JLabel lblSearch = new JLabel(Messages.getString("ChatLounge.labSearch"));
     private JTextField fldSearch = new JTextField(10);
-    private JButton butCancelSearch = new JButton(MSG_BUTCANCELSEARCH);
-    
+    private JButton butCancelSearch = new JButton(Messages.getString("ChatLounge.butCancelSearch"));
+
     private MekTableSorter activeSorter;
     private ArrayList<MekTableSorter> unitSorters = new ArrayList<>();
     private ArrayList<MekTableSorter> bvSorters = new ArrayList<>();
     
-    private JButton butAddY = new JButton(MSG_BUTADD);
-    private JButton butAddX = new JButton(MSG_BUTADD);
-    private JButton butSaveMapSetup = new JButton(MSG_MAPSAVESETUP + " *");
-    private JButton butLoadMapSetup = new JButton(MSG_MAPLOADSETUP);
+    private JButton butAddY = new JButton(Messages.getString("ChatLounge.butAdd"));
+    private JButton butAddX = new JButton(Messages.getString("ChatLounge.butAdd"));
+    private JButton butSaveMapSetup = new JButton(Messages.getString("ChatLounge.map.saveMapSetup") + " *");
+    private JButton butLoadMapSetup = new JButton(Messages.getString("ChatLounge.map.loadMapSetup"));
     
     /* Team Overview Panel */
     private TeamOverviewPanel panTeamOverview;
-    JButton butDetach = new JButton(MSG_BUTDETACH);
+    JButton butDetach = new JButton(Messages.getString("ChatLounge.butDetach"));
     private JSplitPane splitPaneMain;
     ClientDialog teamOverviewWindow;
         
@@ -258,92 +258,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final String CL_ACTIONCOMMAND_REMOVEBOT = "remove_bot";
     private static final String CL_ACTIONCOMMAND_BOTCONFIG = "BOTCONFIG";
     private static final String CL_ACTIONCOMMAND_CONFIGURE = "CONFIGURE";
-    private static final String CL_ACTIONCOMMAND_CAMO= "camo";
-
-    private static final String MSG_ERROR = Messages.getString("Error");
-    private static final String MSG_OKAY =  Messages.getString("Okay");
-    private static final String MSG_ALERTBOTTITLE = Messages.getString("ChatLounge.AlertBot.title");
-    private static final String MSG_ALERTBOTMESSAGE = Messages.getString("ChatLounge.AlertBot.message");
-    private static final String MSG_BOARDGENERATEDMESSAGE =  Messages.getString("ChatLounge.board.generatedMessage");
-    private static final String MSG_BOARDRANDOMLYSELECTEDMESSAGE = Messages.getString("ChatLounge.board.randomlySelectedMessage");
-    private static final String MSG_BOARDSEVERSIDB = Messages.getString("ChatLounge.board.serverSide");
-    private static final String MSG_BUTOPTIONS = Messages.getString("ChatLounge.butOptions");
-    private static final String MSG_BUTGROUNDMAP = Messages.getString("ChatLounge.butGroundMap");
-    private static final String MSG_BUTLOAD = Messages.getString("ChatLounge.butLoad");
-    private static final String MSG_BUTARMY = Messages.getString("ChatLounge.butArmy");
-    private static final String MSG_BUTSKILLS = Messages.getString("ChatLounge.butSkills");
-    private static final String MSG_BUTNAMES = Messages.getString("ChatLounge.butNames");
-    private static final String MSG_BUTLOADLIST = Messages.getString("ChatLounge.butLoadList");
-    private static final String MSG_BUTSAVELIST = Messages.getString("ChatLounge.butSaveList");
-    private static final String MSG_BUTCOMPACT = Messages.getString("ChatLounge.butCompact");
-    private static final String MSG_BUTSHOWUNITID = Messages.getString("ChatLounge.butShowUnitID");
-    private static final String MSG_BUTADDBOT = Messages.getString("ChatLounge.butAddBot");
-    private static final String MSG_BUTREMOVEBOT = Messages.getString("ChatLounge.butRemoveBot");
-    private static final String MSG_BUTCONFIGPLAYER = Messages.getString("ChatLounge.butConfigPlayer");
-    private static final String MSG_BUTSETTINGS = Messages.getString("ChatLounge.butBotSettings");
-    private static final String MSG_BUTCONDITIONS = Messages.getString("ChatLounge.butConditions");
-    private static final String MSG_BUTRANDOMMAP = Messages.getString("BoardSelectionDialog.GeneratedMapSettings");
-    private static final String MSG_BUTMAPSIZE= Messages.getString("ChatLounge.MapSize");
-    private static final String MSG_BUTHELP = Messages.getString("ChatLounge.butHelp");
-    private static final String MSG_BUTCANCELSEARCH = Messages.getString("ChatLounge.butCancelSearch");
-    private static final String MSG_BUTADD = Messages.getString("ChatLounge.butAdd");
-    private static final String MSG_BUTDETACH = Messages.getString("ChatLounge.butDetach");
-    private static final String MSG_BUTCOLLAPSE = Messages.getString("ChatLounge.butCollapse");
-    private static final String MSG_BUTEXPAND = Messages.getString("ChatLounge.butExpand");
-    private static final String MSG_BUTGROW = Messages.getString("ChatLounge.butGrow");
-    private static final String MSG_BUTSHRINK = Messages.getString("ChatLounge.butShrink");
-    private static final String MSG_BUTSORTABLEVIEW = Messages.getString("ChatLounge.butSortableView");
-    private static final String MSG_BUTFORCEVIEW = Messages.getString("ChatLounge.butForceView");
-    private static final String MSG_CUSTOMMAPSIZE = Messages.getString("ChatLounge.CustomMapSize");
-    private static final String MSG_FILENOTFOUND = Messages.getString("ChatLounge.fileNotFound");
-    private static final String MSG_IMPROPERCOMMAND = Messages.getString("ChatLounge.ImproperCommand");
-    private static final String MSG_GAMEYEAR = Messages.getString("ChatLounge.GameYear");
-    private static final String MSG_IMDONE = Messages.getString("ChatLounge.imDone");
-    private static final String MSG_LABELSEARCH = Messages.getString("ChatLounge.labSearch");
-    private static final String MSG_LABELBOARDWIDTH = Messages.getString("ChatLounge.labBoardWidth");
-    private static final String MSG_LABELBOARDHEIGHT = Messages.getString("ChatLounge.labBoardHeight");
-    private static final String MSG_LABELBOARDSIZE = Messages.getString("ChatLounge.labBoardSize");
-    private static final String MSG_LABELMAPWIDTH = Messages.getString("ChatLounge.labMapWidth");
-    private static final String MSG_LABELMAPHEIGHT = Messages.getString("ChatLounge.labMapHeight");
-    private static final String MSG_MAPLOADSETUP = Messages.getString("ChatLounge.map.loadMapSetup");
-    private static final String MSG_MAPSUMMARY = Messages.getString("ChatLounge.MapSummary");
-    private static final String MSG_NAMESELECTUNITS = Messages.getString("ChatLounge.name.selectUnits");
-    private static final String MSG_NAMESELECTMAP = Messages.getString("ChatLounge.name.SelectMap");
-    private static final String MSG_NAMETEAMOVERVIEW = Messages.getString("ChatLounge.name.teamOverview");
-    private static final String MSG_NAMEUNITSETUP = Messages.getString("ChatLounge.name.unitSetup");
-    private static final String MSG_NAMEPLAYERSETUP = Messages.getString("ChatLounge.name.playerSetup");
-    private static final String MSG_NAMEGROUNDMAP = Messages.getString("ChatLounge.name.groundMap");
-    private static final String MSG_NAMEATMOSPHERICMAP = Messages.getString("ChatLounge.name.atmosphericMap");
-    private static final String MSG_NAMESPACEMAP = Messages.getString("ChatLounge.name.spaceMap");
-    private static final String MSG_NAMELOWALTITUDEMAP = Messages.getString("ChatLounge.name.lowAltitudeMap");
-    private static final String MSG_NAMEHIGHALTITUDEMAP = Messages.getString("ChatLounge.name.HighAltitudeMap");
-    private static final String MSG_NOCMDRTITLE = Messages.getString("ChatLounge.noCmdr.title");
-    private static final String MSG_NOCMDRMSG = Messages.getString("ChatLounge.noCmdr.msg");
-    private static final String MSG_NOTDONE = Messages.getString("ChatLounge.notDone");
-    private static final String MSG_OVERLAPDEPLOYTITLE = Messages.getString("ChatLounge.OverlapDeploy.title");
-    private static final String MSG_OVERLAPDEPLOYMSG = Messages.getString("ChatLounge.OverlapDeploy.msg");
-    private static final String MSG_PROBLEMLOADINGMAPSETUP =  Messages.getString("ChatLounge.map.problemLoadMapSetup");
-    private static final String MSG_MAPPROBLEMSAVING = Messages.getString("ChatLounge.map.problemSaving");
-    private static final String MSG_MAPSUMMARYSELECTEDMAPS = Messages.getString("ChatLounge.MapSummarySelectedMaps");
-    private static final String MSG_MAPCONFIRMREPLACE = Messages.getString("ChatLounge.map.confirmReplace");
-    private static final String MSG_MAPSERVERSIDETIP = Messages.getString("ChatLounge.map.serverSideTip");
-    private static final String MSG_MAPSAVESETUPREPLACE = Messages.getString("ChatLounge.map.saveMapSetupReplace");
-    private static final String MSG_MAPSAVESETUP = Messages.getString("ChatLounge.map.saveMapSetup");
-    private static final String MSG_SELECTBOTORPLAYER = Messages.getString("ChatLounge.SelectBotOrPlayer");
-    private static final String MSG_MAPSEARCHTIP = Messages.getString("ChatLounge.map.searchTip");
-    private static final String MSG_MAPSAVESETUPTIP = Messages.getString("ChatLounge.map.saveMapSetupTip");
-    private static final String MSG_MAPTITLEMAPASSEMBLYHELP = Messages.getString("ChatLounge.map.title.mapAssemblyHelp");
-    private static final String MSG_TECHYEAR = Messages.getString("ChatLounge.TechLevel");
-    private static final String MSG_TOOLTIPTECHYEAR = Messages.getString("ChatLounge.tooltip.techYear");
-    private static final String MSG_TREEPATHMETHODREQUIRESENTITYFORCE = Messages.getString("ChatLounge.TreePath.methodRequiresEntityForce");
-    private static final String MSG_ABSTRACTHELPDIALOGNOHELPTITLE = Messages.getString("AbstractHelpDialog.noHelp.title");
-    private static final String MSG_ABSTRACTHELPDIALOGERRORREADING = Messages.getString("AbstractHelpDialog.errorReading");
-    private static final String MSG_BOARDEDITORCOULDNTINITIALIZE = Messages.getString("BoardEditor.CouldntInitialize");
-    private static final String MSG_BOARDEDITORFATALERROR = Messages.getString("BoardEditor.FatalError");
-    private static final String MSG_MAPSAVAILABLE = Messages.getString("BoardSelectionDialog.mapsAvailable");
-    private static final String MSG_VIEWGAMEBOARDTOOLTIP = Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip");
-    private static final String MSG_VIEWGAMEBOARD = Messages.getString("BoardSelectionDialog.ViewGameBoard");
-    private static final String MSG_FIGHTERSQUADRONBOMBERROR = Messages.getString("FighterSquadron.bomberror");
+    private static final String CL_ACTIONCOMMAND_CAMO = "camo";
 
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
@@ -355,9 +270,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         splitPaneMain.setDividerSize(15);
         splitPaneMain.setResizeWeight(0.95);
         JPanel p = new JPanel(new BorderLayout());
-        panTabs.add(MSG_NAMESELECTUNITS, panUnits);
-        panTabs.add(MSG_NAMESELECTMAP, panMap);
-        panTabs.add(MSG_NAMETEAMOVERVIEW, panTeam);
+        panTabs.add(Messages.getString("ChatLounge.name.selectUnits"), panUnits);
+        panTabs.add(Messages.getString("ChatLounge.name.SelectMap"), panMap);
+        panTabs.add(Messages.getString("ChatLounge.name.teamOverview"), panTeam);
         p.add(panTabs, BorderLayout.CENTER);
         splitPaneMain.setTopComponent(p);
         add(splitPaneMain);
@@ -510,7 +425,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panTeam.add(panTeamOverview);
         
         // setup (but don't show) the detached team overview window
-        teamOverviewWindow = new ClientDialog(clientgui.frame, MSG_NAMETEAMOVERVIEW, false);
+        teamOverviewWindow = new ClientDialog(clientgui.frame, Messages.getString("ChatLounge.name.teamOverview"), false);
         teamOverviewWindow.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
     }
     
@@ -518,7 +433,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     WindowListener teamOverviewWindowListener = new WindowAdapter() {
         @Override
         public void windowClosing(WindowEvent e) {
-            int i = panTabs.indexOfTab(MSG_NAMETEAMOVERVIEW);
+            int i = panTabs.indexOfTab(Messages.getString("ChatLounge.name.teamOverview"));
             Component cp = panTabs.getComponentAt(i);
             if (cp instanceof JPanel) {
                 ((JPanel) cp).add(panTeamOverview);
@@ -599,7 +514,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         butAdd.setActionCommand(CL_ACTIONCOMMAND_LOADMECH);
         butArmy.setEnabled(mscLoaded);
 
-        panUnitInfo.setBorder(BorderFactory.createTitledBorder(MSG_NAMEUNITSETUP));
+        panUnitInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.unitSetup")));
         panUnitInfo.setLayout(new BoxLayout(panUnitInfo, BoxLayout.PAGE_AXIS));
         JPanel panUnitInfoAdd = new JPanel(new GridLayout(2, 1, 2, 2));
         panUnitInfoAdd.setBorder(new EmptyBorder(0, 0, 2, 1));
@@ -632,7 +547,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         refreshCamoButton();
         
         panPlayerInfo = new FixedYPanel(new GridLayout(1, 2, 2, 2));
-        panPlayerInfo.setBorder(BorderFactory.createTitledBorder(MSG_NAMEPLAYERSETUP));
+        panPlayerInfo.setBorder(BorderFactory.createTitledBorder(Messages.getString("ChatLounge.name.playerSetup")));
         
         JPanel panPlayerInfoBts = new JPanel(new GridLayout(4, 1, 2, 2));
         panPlayerInfoBts.add(comboTeam);
@@ -740,14 +655,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     @SuppressWarnings("rawtypes")
     private void setupMapAssembly() {
-
         panGroundMap = new JPanel(new GridLayout(1, 1));
         panGroundMap.setBorder(new EmptyBorder(20, 10, 10, 10));
 
         panMapButtons.setLayout(new BoxLayout(panMapButtons, BoxLayout.PAGE_AXIS));
         // Resize the preview buttons when the panel is resized
         panMapButtons.addComponentListener(new ComponentAdapter() {
-
             @Override
             public void componentResized(ComponentEvent e) {
                 updateMapButtons();
@@ -778,7 +691,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         bottomPanel.add(butSaveMapSetup);
         bottomPanel.add(butLoadMapSetup);
 
-        butBoardPreview.setToolTipText(MSG_VIEWGAMEBOARDTOOLTIP);
+        butBoardPreview.setToolTipText(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip"));
 
         // The left side panel including the game map preview
         JPanel panMapPreview = new JPanel();
@@ -826,9 +739,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panGroundMap.add(splGroundMap);
 
         // setup the board preview window.
-        boardPreviewW = new ClientDialog(clientgui.frame, 
-                MSG_VIEWGAMEBOARD,
-                false);
+        boardPreviewW = new ClientDialog(clientgui.frame,
+                Messages.getString("BoardSelectionDialog.ViewGameBoard"), false);
         boardPreviewW.setLocationRelativeTo(clientgui.frame);
 
         try {
@@ -836,7 +748,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             previewBV.setDisplayInvalidHexInfo(false);
             previewBV.setUseLOSTool(false);
             boardPreviewW.add(previewBV.getComponent(true));
-            boardPreviewW.setSize(clientgui.frame.getWidth()/2, clientgui.frame.getHeight()/2);
+            boardPreviewW.setSize(clientgui.frame.getWidth() / 2, clientgui.frame.getHeight() / 2);
             // Most boards will be far too large on the standard zoom
             previewBV.zoomOut();
             previewBV.zoomOut();
@@ -844,8 +756,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             previewBV.zoomOut();
             boardPreviewW.center();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, MSG_BOARDEDITORCOULDNTINITIALIZE + e,
-                            MSG_BOARDEDITORFATALERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, Messages.getString("BoardEditor.CouldntInitialize") + e,
+                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE);
         }
         refreshMapButtons();
     }
@@ -962,7 +874,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         for (BoardDimensions size : mapSizes) {
             comMapSizes.addItem(size);
         }
-        comMapSizes.addItem(MSG_CUSTOMMAPSIZE);
+        comMapSizes.addItem(Messages.getString("ChatLounge.CustomMapSize"));
         comMapSizes.setSelectedIndex(oldSelection != -1 ? oldSelection : 0);
         comMapSizes.addActionListener(lobbyListener);
     }
@@ -974,7 +886,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private void refreshMapUI() {
         boolean inSpace = mapSettings.getMedium() == MapSettings.MEDIUM_SPACE;
         boolean onGround = mapSettings.getMedium() == MapSettings.MEDIUM_GROUND;
-        boolean customSize = comMapSizes.getSelectedItem().equals(MSG_CUSTOMMAPSIZE);
+        boolean customSize = Messages.getString("ChatLounge.CustomMapSize").equals(comMapSizes.getSelectedItem());
         lisBoardsAvailable.setEnabled(!inSpace);
         mapIcons.clear();
         butConditions.setEnabled(!inSpace);
@@ -1144,7 +1056,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                             buttonBoard = new Board(16, 17);
                             buttonBoard.load(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile());
                             StringBuffer errs = new StringBuffer();
-                            try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage +CL_KEY_FILEEXTENTION_BOARD).getFile())) {
+                            try (InputStream is = new FileInputStream(new MegaMekFile(Configuration.boardsDir(), boardForImage + CL_KEY_FILEEXTENTION_BOARD).getFile())) {
                                 buttonBoard.load(is, errs, true);
                                 BoardUtilities.flip(buttonBoard, rotateBoard, rotateBoard);
                             } catch (IOException ex) {
@@ -1177,7 +1089,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         panMapButtons.setVisible(true);
 
         lblBoardsAvailable.setText(mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " "
-                + MSG_MAPSAVAILABLE);
+                + Messages.getString("BoardSelectionDialog.mapsAvailable"));
         comMapSizes.removeActionListener(lobbyListener);
         int items = comMapSizes.getItemCount();
 
@@ -1203,7 +1115,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         GUIPreferences.AntiAliasifSet(g);
         int w = image.getWidth();
         int h = image.getHeight();
-        String text = MSG_BOARDSEVERSIDB;
+        String text = Messages.getString("ChatLounge.board.serverSide");
         int fontSize = Math.min(w / 10, UIUtil.scaleForGUI(16));
         g.setFont(new Font(MMConstants.FONT_DIALOG, Font.ITALIC, fontSize));
         FontMetrics fm = g.getFontMetrics(g.getFont());
@@ -1410,7 +1322,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * condition.
      */
     private void refreshDoneButton(boolean done) {
-        butDone.setText(done ? MSG_NOTDONE : MSG_IMDONE);
+        butDone.setText(done ? Messages.getString("ChatLounge.notDone") : Messages.getString("ChatLounge.imDone"));
     }
 
     /** Refreshes the state of the Done button with the state of the local player. */
@@ -1440,8 +1352,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
             // We can't load all of the squadrons bombs
             if (numLoadedBombs > ((IBomber) carried).getMaxBombPoints()) {
-                JOptionPane.showMessageDialog(clientgui.frame, MSG_FIGHTERSQUADRONBOMBERROR,
-                        MSG_FIGHTERSQUADRONBOMBERROR, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
+                        Messages.getString("FighterSquadron.bomberror"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -1841,7 +1753,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // list of entities with a list from a file.
                 Client c = getSelectedClient();
                 if (c == null) {
-                    clientgui.doAlertDialog(MSG_IMPROPERCOMMAND, MSG_SELECTBOTORPLAYER);
+                    clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
+                            Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
                 clientgui.loadListFile(c.getLocalPlayer());
@@ -1851,7 +1764,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 // list of entities to a file.
                 Client c = getSelectedClient();
                 if (c == null) {
-                    clientgui.doAlertDialog(MSG_IMPROPERCOMMAND, MSG_SELECTBOTORPLAYER);
+                    clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
+                            Messages.getString("ChatLounge.SelectBotOrPlayer"));
                     return;
                 }
                 clientgui.saveListFile(c.getGame().getPlayerEntities(c.getLocalPlayer(), false),
@@ -1883,7 +1797,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                 previewGameBoard();
                 
             } else if (ev.getSource().equals(comMapSizes)) {
-                if (comMapSizes.getSelectedItem().equals(MSG_CUSTOMMAPSIZE)) {
+                if (Messages.getString("ChatLounge.CustomMapSize").equals(comMapSizes.getSelectedItem())) {
                     refreshMapUI();
                 } else if (comMapSizes.getSelectedItem() != null) {
                     BoardDimensions size = (BoardDimensions) comMapSizes.getSelectedItem();
@@ -1966,7 +1880,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
             } else if (ev.getSource() == butHelp) {
                 File helpfile = new File(CL_KEY_FILEPATH_MAPASSEMBLYHELP);
-                final JDialog dialog = new ClientDialog(clientgui.frame, MSG_MAPTITLEMAPASSEMBLYHELP, true, true);
+                final JDialog dialog = new ClientDialog(clientgui.frame,
+                        Messages.getString("ChatLounge.map.title.mapAssemblyHelp"), true, true);
                 final int height = 600;
                 final int width = 600;
                 
@@ -1982,12 +1897,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements
                     tScroll.getVerticalScrollBar().setUnitIncrement(16);
                     dialog.add(tScroll, BorderLayout.CENTER);
                 } catch (Exception e) {
-                    dialog.setTitle(MSG_ABSTRACTHELPDIALOGNOHELPTITLE);
-                    pane.setText(MSG_ABSTRACTHELPDIALOGERRORREADING + e.getMessage());
+                    dialog.setTitle(Messages.getString("AbstractHelpDialog.noHelp.title"));
+                    pane.setText(Messages.getString("AbstractHelpDialog.errorReading") + e.getMessage());
                     LogManager.getLogger().error("", e);
                 }
 
-                JButton button = new DialogButton(MSG_OKAY);
+                JButton button = new DialogButton(Messages.getString("Okay"));
                 button.addActionListener(e -> dialog.setVisible(false));
                 JPanel okayPanel = new JPanel(new FlowLayout());
                 okayPanel.add(button);
@@ -2050,7 +1965,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             botClient.connect();
             clientgui.getBots().put(bcd.getBotName(), botClient);
         } catch (Exception e) {
-            clientgui.doAlertDialog(MSG_ALERTBOTTITLE, MSG_ALERTBOTMESSAGE);
+            clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"), Messages.getString("ChatLounge.AlertBot.message"));
             botClient.die();
         }
     }
@@ -2063,7 +1978,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void saveMapSetup() {
         JFileChooser fc = new JFileChooser(Configuration.dataDir() + CL_KEY_FILEPATH_MAPSETUP);
-        fc.setDialogTitle(MSG_MAPSAVESETUP);
+        fc.setDialogTitle(Messages.getString("ChatLounge.map.saveMapSetup"));
         fc.setMultiSelectionEnabled(false);
         fc.setAcceptAllFileFilterUsed(false);
         fc.setFileFilter(XMLFileFilter);
@@ -2077,15 +1992,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             selectedFile = new File(selectedFile.getPath() + CL_KEY_FILEEXTENTION_XML);
         }
         if (selectedFile.exists()) {
-            String msg = Messages.getFormattedString(MSG_MAPSAVESETUPREPLACE, selectedFile.getName());
-            if (!MMConfirmDialog.confirm(clientgui.frame, MSG_MAPCONFIRMREPLACE, msg)) {
+            String msg = Messages.getFormattedString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());
+            if (!MMConfirmDialog.confirm(clientgui.frame, Messages.getString("ChatLounge.map.confirmReplace"), msg)) {
                 return;
             }
         }
         try (OutputStream os = new FileOutputStream(selectedFile)) {
             MapSetup.save(os, mapSettings);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(clientgui.frame, MSG_MAPPROBLEMSAVING, MSG_ERROR, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(clientgui.frame,
+                    Messages.getString("ChatLounge.map.problemSaving"),
+                    Messages.getString("Error"), JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error("", ex);
         }
     }
@@ -2097,7 +2014,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      */
     private void loadMapSetup() {
         JFileChooser fc = new JFileChooser(Configuration.dataDir() + CL_KEY_FILEPATH_MAPSETUP);
-        fc.setDialogTitle(MSG_MAPLOADSETUP);
+        fc.setDialogTitle(Messages.getString("ChatLounge.map.loadMapSetup"));
         fc.setMultiSelectionEnabled(false);
         fc.setAcceptAllFileFilterUsed(false);
         fc.setFileFilter(XMLFileFilter);
@@ -2107,7 +2024,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             return;
         }
         if (!fc.getSelectedFile().exists()) {
-            JOptionPane.showMessageDialog(clientgui.frame, MSG_FILENOTFOUND);
+            JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("ChatLounge.fileNotFound"));
             return;
         }
         try (InputStream os = new FileInputStream(fc.getSelectedFile())) {
@@ -2118,7 +2035,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             clientgui.getClient().sendMapSettings(mapSettings);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(clientgui.frame,
-                    MSG_PROBLEMLOADINGMAPSETUP, MSG_ERROR, JOptionPane.ERROR_MESSAGE);
+                    Messages.getString("ChatLounge.map.problemLoadMapSetup"),
+                    Messages.getString("Error"), JOptionPane.ERROR_MESSAGE);
             LogManager.getLogger().error("", ex);
         }
     }
@@ -2225,34 +2143,34 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     /**OK Refreshes the Map Summary, Tech Level and Game Year labels. */
     private void refreshLabels() {
         GameOptions opts = clientgui.getClient().getGame().getOptions();
-        
-        String txt = MSG_GAMEYEAR;
+
+        String txt = Messages.getString("ChatLounge.GameYear");
         txt += opts.intOption(OptionsConstants.ALLOWED_YEAR);
         lblGameYear.setText(txt);
-        lblGameYear.setToolTipText(scaleStringForGUI(MSG_TOOLTIPTECHYEAR));
+        lblGameYear.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear")));
         
         String tlString = TechConstants.getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
         IOption tlOpt = opts.getOption(OptionsConstants.ALLOWED_TECHLEVEL);
         if (tlOpt != null) {
             tlString = tlOpt.stringValue();
         }
-        lblTechLevel.setText(MSG_TECHYEAR + tlString);
-        lblTechLevel.setToolTipText(scaleStringForGUI(MSG_TOOLTIPTECHYEAR));
+        lblTechLevel.setText(Messages.getString("ChatLounge.TechLevel") + tlString);
+        lblTechLevel.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.tooltip.techYear")));
         
-        txt = MSG_MAPSUMMARY;
+        txt = Messages.getString("ChatLounge.MapSummary");
         txt += (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) + " x " 
                 + (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
         if (butGroundMap.isSelected()) {
-            txt += MSG_NAMEGROUNDMAP;
+            txt += Messages.getString("ChatLounge.name.groundMap");
         } else if (butLowAtmoMap.isSelected()) {
-            txt += " " + MSG_NAMEATMOSPHERICMAP;
+            txt += " " + Messages.getString("ChatLounge.name.atmosphericMap");
         } else {
-            txt += " " + MSG_NAMESPACEMAP;
+            txt += " " + Messages.getString("ChatLounge.name.spaceMap");
         }
         lblMapSummary.setText(txt);
 
         StringBuilder selectedMaps = new StringBuilder();
-        selectedMaps.append(MSG_MAPSUMMARYSELECTEDMAPS);
+        selectedMaps.append(Messages.getString("ChatLounge.MapSummarySelectedMaps"));
         for (String map: mapSettings.getBoardsSelectedVector()) {
             selectedMaps.append("&nbsp;&nbsp;");
             if (map.startsWith(MapSettings.BOARD_SURPRISE)) {
@@ -2274,7 +2192,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         // enforce exclusive deployment zones in double blind
         for (Player player: client.getGame().getPlayersVector()) {
             if (!isValidStartPos(game, player)) {
-                clientgui.doAlertDialog(MSG_OVERLAPDEPLOYTITLE, MSG_OVERLAPDEPLOYMSG);
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.OverlapDeploy.title"),
+                        Messages.getString("ChatLounge.OverlapDeploy.msg"));
                 return;
             }
         }
@@ -2295,12 +2214,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             }
 
             if (!players.isEmpty()) {
-                String title = MSG_NOCMDRTITLE;
-                String msg = MSG_NOCMDRMSG;
+                String msg = Messages.getString("ChatLounge.noCmdr.msg");
                 for (String player : players) {
                     msg += player + "\n";
                 }
-                clientgui.doAlertDialog(title, msg);
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.noCmdr.title"), msg);
                 return;
             }
         }
@@ -3039,7 +2957,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             pathObjs[index++] = game().getEntity(entityId);
             return new TreePath(pathObjs);
         } else {
-            throw new IllegalArgumentException(MSG_TREEPATHMETHODREQUIRESENTITYFORCE);
+            throw new IllegalArgumentException(Messages.getString("ChatLounge.TreePath.methodRequiresEntityForce"));
         }
     }
     
@@ -3175,7 +3093,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         setTableRowHeights();
 
-        String searchTip = MSG_MAPSEARCHTIP + "<BR>";
+        String searchTip = Messages.getString("ChatLounge.map.searchTip") + "<BR>";
         searchTip += autoTagHTMLTable();
         fldSearch.setToolTipText(UIUtil.scaleStringForGUI(searchTip));
         
@@ -3185,8 +3103,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
         int scaledBorder = UIUtil.scaleForGUI(TEAMOVERVIEW_BORDER);
         panTeam.setBorder(new EmptyBorder(scaledBorder, scaledBorder, scaledBorder, scaledBorder));
 
-        butBoardPreview.setToolTipText(scaleStringForGUI(MSG_VIEWGAMEBOARDTOOLTIP));
-        butSaveMapSetup.setToolTipText(scaleStringForGUI(MSG_MAPSAVESETUPTIP));
+        butBoardPreview.setToolTipText(scaleStringForGUI(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip")));
+        butSaveMapSetup.setToolTipText(scaleStringForGUI(Messages.getString("ChatLounge.map.saveMapSetupTip")));
 
         Font scaledHelpFont = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, UIUtil.scaleForGUI(UIUtil.FONT_SCALE1 + 33));
         butHelp.setFont(scaledHelpFont);
@@ -3638,21 +3556,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements
      * a generated or surprise board. Adds info for serverside or invalid boards.
      */
     String createBoardTooltip(String boardName) {
-        String result = "";
+        String result;
         if (boardName.startsWith(MapSettings.BOARD_GENERATED)) {
-            result = MSG_BOARDGENERATEDMESSAGE;
+            result = Messages.getString("ChatLounge.board.generatedMessage");
         } else if (boardName.startsWith(MapSettings.BOARD_SURPRISE)) {
-            result = MSG_BOARDRANDOMLYSELECTEDMESSAGE;
+            result = Messages.getString("ChatLounge.board.randomlySelectedMessage");
             result += boardName.substring(MapSettings.BOARD_SURPRISE.length()).replace("\n", "<BR>");
         } else {
             result = boardName;
         }
+
         if (hasInvalidBoard(boardName)) {
             result += invalidBoardTip();
         }
+
         if (hasServerSideBoard(boardName)) {
-            result += MSG_MAPSERVERSIDETIP;
+            result += Messages.getString("ChatLounge.map.serverSideTip");
         }
+
         return result;
     }
     

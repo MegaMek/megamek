@@ -170,7 +170,8 @@ public abstract class AbstractCommandLineParser {
      * @return <code>String</code> error message for user
      */
     public String formatErrorMessage(Exception e) {
-        // FIXME : Wind do this now - I should never be localized nor done like this
+        // FIXME : Logging messages should never be localized, nor done through secondary methods
+        // FIXME : Just use normal logging, not this awful setup
         return (Messages.getString("MegaMek.Help.IncorrectArguments") + e.getMessage() + '\n' + help());
     }
 

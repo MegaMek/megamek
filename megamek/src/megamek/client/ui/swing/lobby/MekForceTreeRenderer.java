@@ -89,7 +89,7 @@ public class MekForceTreeRenderer extends DefaultTreeCellRenderer {
             if (showAsUnknown) {
                 setIcon(getToolkit().getImage(UNKNOWN_UNIT), size - 5);
             } else {
-                Camouflage camo = entity.getCamouflageOrElse(entity.getOwner().getCamouflage());
+                Camouflage camo = entity.getCamouflageOrElseOwners();
                 Image image = lobby.getClientgui().getBoardView().getTilesetManager().loadPreviewImage(entity, camo, this);
                 setIconTextGap(UIUtil.scaleForGUI(10));
                 setIcon(image, size);

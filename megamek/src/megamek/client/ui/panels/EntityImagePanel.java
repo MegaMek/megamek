@@ -93,6 +93,6 @@ public class EntityImagePanel extends JPanel {
 
         final Image base = MMStaticDirectoryManager.getMechTileset().imageFor(entity);
         getImageLabel().setIcon(new ImageIcon(new EntityImage(base, (Camouflage) camouflage, this, entity)
-                .loadPreviewImage()));
+                .loadPreviewImage(true)));
     }
 }

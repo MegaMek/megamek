@@ -379,7 +379,7 @@ public class CombatVehicleBVCalculator {
                         for (Enumeration<Team> e = combatVee.getGame().getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(combatVee.getGame())) {
+                                if (m.hasTAG()) {
                                     tagBV += atype.getBV(combatVee);
                                     tagText = "Tag: ";
                                 }

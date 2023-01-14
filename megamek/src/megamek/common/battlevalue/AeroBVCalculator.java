@@ -600,7 +600,7 @@ public class AeroBVCalculator {
                         for (Enumeration<Team> e = aero.getGame().getTeams(); e.hasMoreElements();) {
                             Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(aero.getGame())) {
+                                if (m.hasTAG()) {
                                     tagBV += atype.getBV(aero);
                                 }
                                 // A player can't be on two teams.

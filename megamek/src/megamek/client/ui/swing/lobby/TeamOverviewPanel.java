@@ -36,7 +36,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.List;
 
 import static megamek.client.ui.swing.util.UIUtil.*;
 
@@ -202,7 +202,7 @@ public class TeamOverviewPanel extends JPanel {
                 int hiddenBv = 0;
                 boolean[] unitCritical = { false, false, false, false, false };
                 boolean[] unitWarnings = { false, false, false, false, false };
-                for (Player teamMember: team.getPlayersVector()) {
+                for (Player teamMember: team.players()) {
                     // Get the "real" player object, as the team's may be wrong
                     Player player = game.getPlayer(teamMember.getId());
                     bv += player.getBV();
@@ -307,7 +307,7 @@ public class TeamOverviewPanel extends JPanel {
             TOMCOLS column = TOMCOLS.values()[col];
             switch (column) {
                 case TEAM:
-                    boolean isEnemy = !teams.get(row).getPlayersVector().contains(clientGui.getClient().getLocalPlayer());
+                    boolean isEnemy = !teams.get(row).players().contains(clientGui.getClient().getLocalPlayer());
                     Color color = isEnemy ? GUIPreferences.getInstance().getEnemyUnitColor() : GUIPreferences.getInstance().getMyUnitColor();
                     result.append(guiScaledFontHTML(color, textSizeDelta) + "&nbsp;");
                     result.append(teamNames.get(row) + "</FONT>");
@@ -335,7 +335,7 @@ public class TeamOverviewPanel extends JPanel {
                     break;
 
                 case MEMBERS:
-                    return teams.get(row).getPlayersVector();
+                    return teams.get(row).players();
 
                 case BV:
                     result.append(guiScaledFontHTML(textSizeDelta) + "<CENTER>");
@@ -408,12 +408,12 @@ public class TeamOverviewPanel extends JPanel {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, 
                 boolean hasFocus, int row, int column) {
 
-            if (!(value instanceof Vector<?>)) {
+            if (!(value instanceof List<?>)) {
                 return null;
             }
             removeAll();
             add(Box.createVerticalGlue());
-            Vector<?> playerList = (Vector<?>) value;
+            List<?> playerList = (List<?>) value;
             int baseSize = FONT_SCALE1 - (isDetached ? 2 : 0);
             int size = scaleForGUI(2 * baseSize);
             Font font = new Font(MMConstants.FONT_DIALOG, Font.PLAIN, scaleForGUI(baseSize));

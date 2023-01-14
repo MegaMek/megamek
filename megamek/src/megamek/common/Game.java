@@ -373,9 +373,8 @@ public class Game implements IGame, Serializable {
      */
     public @Nullable Team getTeamForPlayer(Player p) {
         for (Team team : teams) {
-            for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements(); ) {
-                final Player player = j.nextElement();
-                if (p.equals(player)) {
+            for (Player player : team.players()) {
+                if (player.equals(p)) {
                     return team;
                 }
             }

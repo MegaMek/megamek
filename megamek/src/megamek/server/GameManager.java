@@ -3146,7 +3146,7 @@ public class GameManager implements IGameManager {
                 // If there is only one non-observer player, list
                 // them as the 'team', and use the team initiative
                 if (team.getNonObserverSize() == 1) {
-                    final Player player = team.getNonObserverPlayers().nextElement();
+                    final Player player = team.nonObserverPlayers().get(0);
                     r = new Report(1015, Report.PUBLIC);
                     r.add(player.getColorForPlayer());
                     r.add(team.getInitiative().toString());
@@ -3157,8 +3157,7 @@ public class GameManager implements IGameManager {
                     r.add(Player.TEAM_NAMES[team.getId()]);
                     r.add(team.getInitiative().toString());
                     addReport(r);
-                    for (Enumeration<Player> j = team.getNonObserverPlayers(); j.hasMoreElements(); ) {
-                        final Player player = j.nextElement();
+                    for (Player player : team.nonObserverPlayers()) {
                         r = new Report(1015, Report.PUBLIC);
                         r.indent();
                         r.add(player.getName());
@@ -10964,9 +10963,7 @@ public class GameManager implements IGameManager {
      * @param mf   The <code>Minefield</code> to be revealed
      */
     public void revealMinefield(Team team, Minefield mf) {
-        Enumeration<Player> players = team.getPlayers();
-        while (players.hasMoreElements()) {
-            Player player = players.nextElement();
+        for (Player player : team.players()) {
             if (!player.containsMinefield(mf)) {
                 player.addMinefield(mf);
                 send(player.getId(), new Packet(PacketCommand.REVEAL_MINEFIELD, mf));
@@ -12653,9 +12650,7 @@ public class GameManager implements IGameManager {
                 while (teams.hasMoreElements()) {
                     Team team = teams.nextElement();
                     if (team.getId() == teamId) {
-                        Enumeration<Player> players = team.getPlayers();
-                        while (players.hasMoreElements()) {
-                            Player teamPlayer = players.nextElement();
+                        for (Player teamPlayer : team.players()) {
                             if (teamPlayer.getId() != player.getId()) {
                                 send(teamPlayer.getId(), new Packet(PacketCommand.DEPLOY_MINEFIELDS,
                                         minefields));

@@ -21,7 +21,7 @@ package megamek.common;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -32,8 +32,10 @@ import static org.mockito.Mockito.when;
 public class TeamTest {
 
     @Test
-    public void testTotalInitBonus() {
+    public void testTeam() {
         Team testTeam = new Team(1);
+        assertTrue(testTeam.isEmpty());
+
         // Setup Player 1
         Player mockPlayer1 = mock(Player.class);
         when(mockPlayer1.getConstantInitBonus()).thenReturn(0);
@@ -48,10 +50,10 @@ public class TeamTest {
         when(mockPlayer2.getCommandBonus()).thenReturn(0);
         // Setup Player 3
         Player mockPlayer3 = mock(Player.class);
-        when(mockPlayer2.getConstantInitBonus()).thenReturn(0);
-        when(mockPlayer2.getTurnInitBonus()).thenReturn(0);
-        when(mockPlayer2.getInitCompensationBonus()).thenReturn(0);
-        when(mockPlayer2.getCommandBonus()).thenReturn(0);
+        when(mockPlayer3.getConstantInitBonus()).thenReturn(0);
+        when(mockPlayer3.getTurnInitBonus()).thenReturn(0);
+        when(mockPlayer3.getInitCompensationBonus()).thenReturn(0);
+        when(mockPlayer3.getCommandBonus()).thenReturn(0);
 
         testTeam.addPlayer(mockPlayer1);
         testTeam.addPlayer(mockPlayer2);
@@ -62,6 +64,10 @@ public class TeamTest {
         // Sanity test
         int initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
         assertEquals(initBonus, 0);
+
+        assertEquals(3, testTeam.size());
+        assertEquals(3, testTeam.getNonObserverSize());
+        assertFalse(testTeam.isObserverTeam());
 
         when(mockPlayer1.getConstantInitBonus()).thenReturn(-1);
         when(mockPlayer2.getConstantInitBonus()).thenReturn(-2);
@@ -132,6 +138,29 @@ public class TeamTest {
         when(mockPlayer2.getInitCompensationBonus()).thenReturn(2);
         when(mockPlayer3.getInitCompensationBonus()).thenReturn(3);
         initBonus = testTeam.getTotalInitBonus(useInitCompBonus);
-        assertEquals(9, initBonus);        
+        assertEquals(9, initBonus);
+
+        // Setup Player 4
+        Player mockPlayer4 = mock(Player.class);
+        when(mockPlayer4.getConstantInitBonus()).thenReturn(0);
+        when(mockPlayer4.getTurnInitBonus()).thenReturn(0);
+        when(mockPlayer4.getInitCompensationBonus()).thenReturn(0);
+        when(mockPlayer4.getCommandBonus()).thenReturn(0);
+        when(mockPlayer4.isObserver()).thenReturn(true);
+
+        testTeam.addPlayer(mockPlayer4);
+        assertEquals(4, testTeam.size());
+        assertEquals(3, testTeam.getNonObserverSize());
+        assertFalse(testTeam.isObserverTeam());
+        assertFalse(testTeam.isEmpty());
+
+        testTeam.addPlayer(null);
+        assertEquals(4, testTeam.size());
+
+        Team testTeam2 = new Team(2);
+        testTeam2.addPlayer(mockPlayer4);
+        assertEquals(0, testTeam2.getNonObserverSize());
+        assertTrue(testTeam2.isObserverTeam());
+
     }
 }

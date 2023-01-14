@@ -632,6 +632,8 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         setMiniReportDisplayDialog(new MiniReportDisplayDialog(getFrame(), this));
         getMiniReportDisplayDialog().setVisible(false);
 
+        playerListDialog = new PlayerListDialog(frame, client, false);
+
         Ruler.color1 = GUIP.getRulerColor1();
         Ruler.color2 = GUIP.getRulerColor2();
         ruler = new Ruler(frame, client, bv);

@@ -352,7 +352,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        
         // Changes that are independent of the current state of MM
         // Boardview and others may listen to PreferenceChanges to detect these
         if (event.getActionCommand().equals(ClientGUI.VIEW_INCGUISCALE)) {
@@ -368,9 +367,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_PLANETARYCONDITIONS_OVERLAY)) {
             GUIP.togglePlanetaryConditionsOverlay();
 
-        } else if (event.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_HEXCOORDS)) {
-            boolean coordsShown = GUIP.getBoolean(GUIPreferences.SHOW_COORDS);
-            GUIP.setValue(GUIPreferences.SHOW_COORDS, !coordsShown);
         } else if (event.getActionCommand().equals(ClientGUI.VIEW_LABELS)) {
             GUIP.setUnitLabelStyle(GUIP.getUnitLabelStyle().next());
         }

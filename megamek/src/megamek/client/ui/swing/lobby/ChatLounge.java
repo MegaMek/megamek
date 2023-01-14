@@ -84,6 +84,7 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.io.*;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
@@ -110,7 +111,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     static final int MEKTREE_ROWHEIGHT_FULL = 40;
     private final static int TEAMOVERVIEW_BORDER = 45;
     private final static int MAP_POPUP_OFFSET = -2; // a slight offset so cursor sits inside popup
-    
+
     private JTabbedPane panTabs = new JTabbedPane();
     private JPanel panUnits = new JPanel();
     private JPanel panMap = new JPanel();
@@ -259,6 +260,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final String CL_ACTIONCOMMAND_BOTCONFIG = "BOTCONFIG";
     private static final String CL_ACTIONCOMMAND_CONFIGURE = "CONFIGURE";
     private static final String CL_ACTIONCOMMAND_CAMO = "camo";
+
+    private static final String MSG_MAPSETUPXMLFILES = Messages.getString("ChatLounge.map.SetupXMLfiles");
 
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
@@ -1992,7 +1995,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             selectedFile = new File(selectedFile.getPath() + CL_KEY_FILEEXTENTION_XML);
         }
         if (selectedFile.exists()) {
-            String msg = Messages.getFormattedString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());
+            String msg = Messages.getString("ChatLounge.map.saveMapSetupReplace", selectedFile.getName());
             if (!MMConfirmDialog.confirm(clientgui.frame, Messages.getString("ChatLounge.map.confirmReplace"), msg)) {
                 return;
             }
@@ -2072,7 +2075,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public String getDescription() {
-            return "Map Setup XML files";
+            return Messages.getString("ChatLounge.map.SetupXMLfiles");
         }
     };
     

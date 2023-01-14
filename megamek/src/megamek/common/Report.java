@@ -19,6 +19,7 @@ import megamek.client.ui.swing.util.UIUtil;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
+import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.io.Serializable;
@@ -559,6 +560,12 @@ public class Report implements Serializable {
         } catch (Exception ex) {
             LogManager.getLogger().error("Cannot add a new line", ex);
         }
+    }
+
+    public static void setupStylesheet(JTextPane pane) {
+        pane.setContentType("text/html");
+        StyleSheet styleSheet = ((HTMLEditorKit) pane.getEditorKit()).getStyleSheet();
+        Report.setupStylesheet(styleSheet);
     }
 
     public static void setupStylesheet(StyleSheet styleSheet) {

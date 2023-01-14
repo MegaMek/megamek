@@ -56,28 +56,44 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append('\n' + e.getMessage());
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
                 moveToEnd();
             }
 
             @Override
             public void gamePlayerChange(GamePlayerChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
+
                 if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
                     systemMessage(e.getNumberOfEntities() + " " + Messages.getString("ChatterBox.entitiesAdded"));
                 }
@@ -85,7 +101,10 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
             @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override

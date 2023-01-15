@@ -3145,7 +3145,8 @@ public class GameManager implements IGameManager {
                     GameTurn t = e.nextElement();
                     if (t instanceof GameTurn.SpecificEntityTurn) {
                         Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
-                        if (entity.getDeployRound() < game.getRoundCount()) {
+                        if ((entity.getDeployRound() < game.getRoundCount())
+                        || ((game.getRoundCount() > 1) && (entity.getDeployRound() == game.getRoundCount()))) {
                             r = new Report(1045);
                             r.subject = entity.getId();
                             r.addDesc(entity);

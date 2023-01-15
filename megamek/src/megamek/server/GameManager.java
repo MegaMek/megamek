@@ -3114,17 +3114,23 @@ public class GameManager implements IGameManager {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            r = new Report(1040, Report.PUBLIC);
+            if (deployment) {
+                r = new Report(1041, Report.PUBLIC);
+            } else {
+                r = new Report(1040, Report.PUBLIC);
+            }
             addReport(r);
             for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
                 GameTurn t = e.nextElement();
                 if (t instanceof GameTurn.SpecificEntityTurn) {
                     Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
-                    r = new Report(1045);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(entity.getInitiative().toString());
-                    addReport(r);
+                    if (entity.getDeployRound() <= game.getRoundCount()) {
+                        r = new Report(1045);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(entity.getInitiative().toString());
+                        addReport(r);
+                    }
                 } else {
                     Player player = game.getPlayer(t.getPlayerNum());
                     if (null != player) {
@@ -3198,8 +3204,39 @@ public class GameManager implements IGameManager {
                     addReport(r);
                 }
             }
-
         }
+
+        // remaining deployments
+        Comparator<Entity> comp = Comparator.comparingInt(Entity::getDeployRound);
+        comp = comp.thenComparingInt(Entity::getOwnerId);
+        comp = comp.thenComparingInt(Entity::getStartingPos);
+        List<Entity> ue = game.getEntitiesVector().stream().filter(e -> e.getDeployRound() > game.getRoundCount()).sorted(comp).toList();
+        if (!ue.isEmpty()) {
+            r = new Report(1060, Report.PUBLIC);
+            addReport(r);
+            int round = -1;
+
+            for (Entity entity : ue) {
+                if (round != entity.getDeployRound()) {
+                    round = entity.getDeployRound();
+                    r = new Report(1065, Report.PUBLIC);
+                    r.add(round);
+                    addReport(r);
+                }
+
+                r = new Report(1066);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                String s = IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos()];
+                r.add(s);
+                addReport(r);
+            }
+
+            r = new Report(1210, Report.PUBLIC);
+            r.newlines = 2;
+            addReport(r);
+        }
+
         if (!abbreviatedReport) {
             // we don't much care about wind direction and such in a hard vacuum
             if (!game.getBoard().inSpace()) {

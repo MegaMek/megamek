@@ -19,16 +19,20 @@
  */
 package megamek.common;
 
+import megamek.common.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Vector;
 
 import static java.util.stream.Collectors.toList;
 
 /**
  * The Team class holds information about a team. It holds the initiative for the team, and contains a
  * list of players on that team.
+ *
+ * Note that Team should be usable for any type of game (TW, AS, BF, SBF) and therefore should not
+ * make any direct use of Game, Entity, AlphaStrikeElement etc., instead using IGame and InGameObject if necessary.
  */
 public final class Team extends TurnOrdered {
 
@@ -66,8 +70,8 @@ public final class Team extends TurnOrdered {
         players.clear();
     }
 
-    /** Adds the given player to this team. */
-    public void addPlayer(Player player) {
+    /** Adds the given player to this team. Null players will not be added. */
+    public void addPlayer(@Nullable Player player) {
         if (player != null) {
             players.removeIf(p -> p.equals(player));
             players.add(player);
@@ -207,7 +211,7 @@ public final class Team extends TurnOrdered {
         return (getId() == Player.TEAM_NONE) ? "No Team" : "Team " + getId();
     }
 
-    // TODO : remove from Team
+    // TODO : this is Total Warfare specific, remove from Team
     public boolean hasTAG() {
         return players.stream().anyMatch(Player::hasTAG);
     }

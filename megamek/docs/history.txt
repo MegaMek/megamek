@@ -11,8 +11,17 @@ VERSION HISTORY:
 + Data: Rec Guide 27 and other unit fixes.
 + Issue #4066: Incorrect item size on BA AP Gauss Rifle
 + PR #4087: Alpha Strike damage conversion will now ignore ammo weapons that lack ammo
++ PR #4074, #4103: Alpha Strike conversion updates
 + PR #4084: Java 17: Manifest File Add-Opens
 + Issue #4088: Improved Autocannon/2 on ASF is listed as doing 20/0/0 damage
++ PR #4096: Fix Unit Display weapon order bugs
++ PR #4078: Various unit tooltip improvements
++ PR #4030: show game board in all the game phases 
++ Issue #4093: (Errata) Ensure a minimum weight and crit count of 1 for MASC
++ Data: Various Data fixes (RAT name shortening, New Rec Guides)
++ PR #4100: Base Components: Adding JDisableablePanel
++ PR #4094: Disconnecting Entity from MM's Force to facilitate other game types
++ PR #4111: Super Cooled Myomer is now operational in MM games
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

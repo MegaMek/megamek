@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-# Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -28,6 +28,10 @@ S-9
 3084
 </year>
 
+<originalBuildYear>
+3084
+</originalBuildYear>
+
 <type>
 IS Level 3
 </type>
@@ -35,6 +39,9 @@ IS Level 3
 <motion_type>
 VTOL
 </motion_type>
+
+<transporters>
+</transporters>
 
 <cruiseMP>
 10
@@ -61,14 +68,13 @@ VTOL
 </armor>
 
 <Body Equipment>
-Stealth
 ISGuardianECMSuite
 ISVTOLJetBooster
 IS Ammo Extended LRM-10
 </Body Equipment>
 
 <Front Equipment>
-ISExtendedLRM10
+Extended LRM 10
 </Front Equipment>
 
 <Right Equipment>
@@ -83,6 +89,42 @@ ISExtendedLRM10
 <Rotor Equipment>
 </Rotor Equipment>
 
+<capabilities>
+The aircraft itself is a standard rotary wing design. The two counter-rotating rotor systems negate the need for a tail rotor, as there is no drive torque to be canceled. Capable of speeds of 162 km/h, the Warrior can range across the battlefield with ease, Weapons are mated to an N&D Handsfree targeting and tracking system linked to the pilot's helmet, allowing the pilot to merely look at what he wants to target and pull the trigger. One ton of reloads each give the helicopter decent endurance in combat.
+</capabilities>
+
+<overview>
+First produced in 2950, the Warrior H-7 attack helicopter is a common sight across the Inner Sphere, serving as a highly mobile fire support unit.
+</overview>
+
+<deployment>
+Based on the experimental HX-9, this Warrior variant is produced by Tengo Aerospace for the CCAF. Using an XL fusion engine, Stealth Armor, and a VTOL Jet Booster, the VTOL is able to reach speeds of 216 km/h. The stealth armor makes it very difficult to target, and when not using for the armor the included Guardian ECM suite can interfere with enemy electronics. To increase the damage potential over the HX-9, the S-9 uses an Extended LRM-10 with a ton of ammunition. This weapon can reach out and hit enemy forces before they can answer, allowing the S-9 to harass enemy forces.
+</deployment>
+
+<history>
+Privately designed by Lockheed-CBM as a cheaper and more easily produced substitute for light BattleMechs in the notoriously top-heavy and sluggish Lyran Commonwealth Armed Forces' Third Succession War–era BattleMech regiments, the Lyran High Command originally dismissed the Warrior as a worthless "flying toy" in 2957 until the Ninth Battle of Hesperus that same year damaged Defiance Industries' facilities to the point the LCAF were desperate for any military hardware, placing heavy orders and ensuring continued production since.
+</history>
+
+<manufacturer>
+Tengo Aerospace
+</manufacturer>
+
+<primaryFactory>
+Sarna
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:GM 70 XL
+ARMOR:Hellespont Lite Stealth
+COMMUNICATIONS:Endicott Type 11 Maser w/Guardian ECM
+TARGETING:Dwyerson Mk XIX
+</systemManufacturers>
+
+<source>
+TRO Prototypes - Early Republic
+</source>
+
 <tonnage>
 21.0
 </tonnage>
+

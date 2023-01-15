@@ -597,8 +597,7 @@ public class AeroBVCalculator {
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(aero);
                     } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (aero.getGame() != null)) {
-                        for (Enumeration<Team> e = aero.getGame().getTeams(); e.hasMoreElements();) {
-                            Team m = e.nextElement();
+                        for (Team m : aero.getGame().getTeams()) {
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(aero.getGame())) {
                                     tagBV += atype.getBV(aero);

@@ -83,7 +83,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs and protomechs can be grappled");
         }
 
-        if (ae.getGrappled() != target.getTargetId()) {
+        if (ae.getGrappled() != target.getId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Not grappled");
         }
 

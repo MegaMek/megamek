@@ -72,6 +72,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         String cmd;
 
+        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
         /**
          * Priority that determines this buttons order
          */
@@ -778,7 +780,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        if (GUIPreferences.getInstance().getBoolean("FiringSolutions")) {
+        if (GUIP.getBoolean("FiringSolutions")) {
             setFiringSolutions();
         } else {
             clientgui.getBoardView().clearFiringSolutionData();
@@ -793,7 +795,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         Game game = clientgui.getClient().getGame();
         Player localPlayer = clientgui.getClient().getLocalPlayer();
-        if (!GUIPreferences.getInstance().getFiringSolutions()) {
+        if (!GUIP.getFiringSolutions()) {
             return;
         }
 
@@ -884,7 +886,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isFiring() && (next != null) && (ce() != null)
                 && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
+
         }
         cen = Entity.NONE;
         target(null);
@@ -1118,13 +1121,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && GUIP.getNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("FiringDisplay.DontFireDialog.title");
             String body = Messages.getString("FiringDisplay.DontFireDialog.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForNoAction(false);
+                GUIP.setNagForNoAction(false);
             }
 
             if (!response.getAnswer()) {
@@ -1133,8 +1136,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         // We need to nag for overheat on capital fighters
-        if ((ce() != null) && ce().isCapitalFighter()
-                && GUIPreferences.getInstance().getNagForOverheat()) {
+        if ((ce() != null) && ce().isCapitalFighter() && GUIP.getNagForOverheat()) {
             int totalheat = 0;
             for (EntityAction action : attacks) {
                 if (action instanceof WeaponAttackAction) {
@@ -1149,7 +1151,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 String body = Messages.getString("FiringDisplay.OverheatNag.message");
                 ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
                 if (!response.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForOverheat(false);
+                    GUIP.setNagForOverheat(false);
                 }
 
                 if (!response.getAnswer()) {
@@ -1315,9 +1317,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         switch (skillNames.get(input)) {
             case OptionsConstants.GUNNERY_BLOOD_STALKER:
                 // figure out when to clear Blood Stalker (when unit destroyed or flees or fly off no return)
-                ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getTargetId());
+                ActivateBloodStalkerAction bloodStalkerAction = new ActivateBloodStalkerAction(ce().getId(), target.getId());
                 attacks.add(0, bloodStalkerAction);
-                ce().setBloodStalkerTarget(target.getTargetId());
+                ce().setBloodStalkerTarget(target.getId());
                 break;
         }
 
@@ -1350,7 +1352,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen,
-                target.getTargetType(), target.getTargetId());
+                target.getTargetType(), target.getId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -1508,7 +1510,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         // declare searchlight, if possible
-        if (GUIPreferences.getInstance().getAutoDeclareSearchlight() && ce().isUsingSearchlight()) {
+        if (GUIP.getAutoDeclareSearchlight() && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 
@@ -1541,10 +1543,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     || (mounted.getType() instanceof CapitalMissileWeapon
                             && Compute.isGroundToGround(ce(), t)))) {
                 waa = new WeaponAttackAction(cen, t.getTargetType(),
-                        t.getTargetId(), weaponNum);
+                        t.getId(), weaponNum);
             } else {
                 waa = new ArtilleryAttackAction(cen, t.getTargetType(),
-                        t.getTargetId(), weaponNum, game);
+                        t.getId(), weaponNum, game);
             }
 
             // check for a bomb payload dialog
@@ -1608,8 +1610,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         updateClearWeaponJam();
 
         // check; if there are no ready weapons, you're done.
-        if ((nextWeapon == -1)
-            && GUIPreferences.getInstance().getAutoEndFiring()) {
+        if ((nextWeapon == -1) && GUIP.getAutoEndFiring()) {
             ready();
             return;
         }
@@ -1700,7 +1701,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        attacks.addElement(new SpotAction(cen, target.getTargetId()));
+        attacks.addElement(new SpotAction(cen, target.getId()));
 
     }
 
@@ -1801,7 +1802,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             if ((visibleTargets != null) && (target != null)) {
                 // Set last target ID, so next/prev target behaves correctly
                 for (int i = 0; i < visibleTargets.length; i++) {
-                    if (visibleTargets[i].getId() == target.getTargetId()) {
+                    if (visibleTargets[i].getId() == target.getId()) {
                         lastTargetID = i;
                         break;
                     }

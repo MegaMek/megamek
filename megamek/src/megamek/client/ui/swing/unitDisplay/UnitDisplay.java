@@ -16,15 +16,20 @@ package megamek.client.ui.swing.unitDisplay;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.Messages;
+import megamek.client.ui.dialogs.UnitDisplayDialog;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.UnitDisplayOrderPreferences;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import org.apache.logging.log4j.LogManager;
 
 import javax.swing.*;
@@ -38,10 +43,11 @@ import java.util.ArrayList;
  * Displays the info for a mech. This is also a sort of interface for special
  * movement and firing actions.
  */
-public class UnitDisplay extends JPanel {
+public class UnitDisplay extends JPanel implements IPreferenceChangeListener {
     // buttons & gizmos for top level
     private static final long serialVersionUID = -2060993542227677984L;
     private JButton butSwitchView;
+    private JButton butSwitchLocation;
     private JPanel panA1;
     private JPanel panA2;
     private JPanel panB1;
@@ -63,6 +69,7 @@ public class UnitDisplay extends JPanel {
     private ExtraPanel ePan;
     private ClientGUI clientgui;
     private Entity currentlyDisplaying;
+    private JLabel labTitle;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<>();
 
     public static final String NON_TABBED_GENERAL = "General";
@@ -86,6 +93,12 @@ public class UnitDisplay extends JPanel {
     public static final int NON_TABBED_FOUR_INDEX = 4;
     public static final int NON_TABBED_FIVE_INDEX = 5;
 
+    private static final String MSG_SWITCHLOCATION = Messages.getString("UnitDisplay.SwitchLocation");
+    private static final String MSG_SWITCHVIEW = Messages.getString("UnitDisplay.SwitchView");
+
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+    private static final UnitDisplayOrderPreferences UDOP = UnitDisplayOrderPreferences.getInstance();
+
     /**
      * Creates and lays out a new mech display.
      * 
@@ -103,6 +116,8 @@ public class UnitDisplay extends JPanel {
         super(new GridBagLayout());
         this.clientgui = clientgui;
 
+        labTitle = new JLabel("Title");
+
         tabStrip = new MechPanelTabStrip(this);
         displayP = new JPanel(new CardLayout());
         mPan = new SummaryPanel(this);
@@ -119,6 +134,9 @@ public class UnitDisplay extends JPanel {
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
+
+        ((GridBagLayout) getLayout()).setConstraints(labTitle, c);
+        add(labTitle);
 
         ((GridBagLayout) getLayout()).setConstraints(tabStrip, c);
         add(tabStrip);
@@ -144,7 +162,8 @@ public class UnitDisplay extends JPanel {
         splitA1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitB1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitC1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-        butSwitchView = new JButton("switch view");
+        butSwitchView = new JButton(MSG_SWITCHVIEW);
+        butSwitchLocation = new JButton(MSG_SWITCHLOCATION);
 
         splitABC.setOneTouchExpandable(true);
         splitBC.setOneTouchExpandable(true);
@@ -173,55 +192,71 @@ public class UnitDisplay extends JPanel {
         splitABC.setLeftComponent(splitA1);
         splitABC.setRightComponent(splitBC);
 
-        splitABC.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitABCLoc());
-        splitBC.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitBCLoc());
-        splitA1.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitA1Loc());
-        splitB1.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitB1Loc());
-        splitC1.setDividerLocation(GUIPreferences.getInstance().getDisplaySplitC1Loc());
-
-        butSwitchView.setPreferredSize(new Dimension(500,20));
+        splitABC.setDividerLocation(GUIP.getUnitDisplaySplitABCLoc());
+        splitBC.setDividerLocation(GUIP.getUnitDisplaySplitBCLoc());
+        splitA1.setDividerLocation(GUIP.getUnitDisplaySplitA1Loc());
+        splitB1.setDividerLocation(GUIP.getUnitDisplaySplitB1Loc());
+        splitC1.setDividerLocation(GUIP.getUnitDisplaySplitC1Loc());
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 1, 1, 1);
         c.weightx = 1.0;
         c.weighty = 0.0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.WEST;
 
         ((GridBagLayout) getLayout()).setConstraints(butSwitchView, c);
         add(butSwitchView);
+
+        c.weightx = 1.0;
+        c.anchor = GridBagConstraints.EAST;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        ((GridBagLayout) getLayout()).setConstraints(butSwitchLocation, c);
+        add(butSwitchLocation);
 
         butSwitchView.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (clientgui != null) {
-                    if (!(GUIPreferences.getInstance().getDisplayStartTabbed())) {
+                    UnitDisplayDialog unitDisplayDialog = clientgui.getUnitDisplayDialog();
+                    if (!(GUIP.getUnitDisplayStartTabbed())) {
                         saveSplitterLoc();
-                        GUIPreferences.getInstance().setDisplayNontabbedPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
-                        GUIPreferences.getInstance().setDisplayNontabbedPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
-                        GUIPreferences.getInstance().setDisplayNonTabbedSizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
-                        GUIPreferences.getInstance().setDisplayNonTabbedSizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
-                        clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayPosX(), GUIPreferences.getInstance().getDisplayPosY());
-                        clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplaySizeWidth(), GUIPreferences.getInstance().getDisplaySizeHeight());
+                        GUIP.setUnitDisplayNontabbedPosX(unitDisplayDialog.getLocation().x);
+                        GUIP.setUnitDisplayNontabbedPosY(unitDisplayDialog.getLocation().y);
+                        GUIP.setUnitDisplayNonTabbedSizeWidth(unitDisplayDialog.getSize().width);
+                        GUIP.setUnitDisplayNonTabbedSizeHeight(unitDisplayDialog.getSize().height);
+                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayPosX(), GUIP.getUnitDisplayPosY());
+                        unitDisplayDialog.setSize(GUIP.getUnitDisplaySizeWidth(), GUIP.getUnitDisplaySizeHeight());
                         setDisplayTabbed();
                     } else {
-                        GUIPreferences.getInstance().setDisplayPosX(clientgui.unitDisplay.getRootPane().getParent().getLocation().x);
-                        GUIPreferences.getInstance().setDisplayPosY(clientgui.unitDisplay.getRootPane().getParent().getLocation().y);
-                        GUIPreferences.getInstance().setDisplaySizeWidth(clientgui.unitDisplay.getRootPane().getParent().getSize().width);
-                        GUIPreferences.getInstance().setDisplaySizeHeight(clientgui.unitDisplay.getRootPane().getParent().getSize().height);
-                        clientgui.unitDisplay.getRootPane().getParent().setLocation(GUIPreferences.getInstance().getDisplayNontabbedPosX(), GUIPreferences.getInstance().getDisplayNontabbedPosY());
-                        clientgui.unitDisplay.getRootPane().getParent().setSize(GUIPreferences.getInstance().getDisplayNonTabbedSizeWidth(), GUIPreferences.getInstance().getDisplayNonTabbedSizeHeight());
+                        GUIP.setUnitDisplayPosX(unitDisplayDialog.getLocation().x);
+                        GUIP.setUnitDisplayPosY(unitDisplayDialog.getLocation().y);
+                        GUIP.setUnitDisplaySizeWidth(unitDisplayDialog.getSize().width);
+                        GUIP.setUnitDisplaySizeHeight(unitDisplayDialog.getSize().height);
+                        unitDisplayDialog.setLocation(GUIP.getUnitDisplayNontabbedPosX(), GUIP.getUnitDisplayNontabbedPosY());
+                        unitDisplayDialog.setSize(GUIP.getUnitDisplayNonTabbedSizeWidth(), GUIP.getUnitDisplayNonTabbedSizeHeight());
                         setDisplayNonTabbed();
                     }
                 }
             }
         });
 
-        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+        butSwitchLocation.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GUIP.toggleUnitDisplayLocation();
+            }
+        });
+
+        if (GUIP.getUnitDisplayStartTabbed()) {
             setDisplayTabbed();
         }
         else {
             setDisplayNonTabbed();
         }
+
+        adaptToGUIScale();
+        GUIP.addPreferenceChangeListener(this);
     }
 
     /**
@@ -229,7 +264,6 @@ public class UnitDisplay extends JPanel {
      *
      */
     private void setDisplayTabbed() {
-
         tabStrip.setVisible(true);
 
         displayP.removeAll();
@@ -252,7 +286,7 @@ public class UnitDisplay extends JPanel {
         displayP.revalidate();
         displayP.repaint();
 
-        GUIPreferences.getInstance().setDisplayStartTabbed(true);
+        GUIP.setUnitDisplayStartTabbed(true);
     }
 
     /**
@@ -277,19 +311,19 @@ public class UnitDisplay extends JPanel {
         sPan.setVisible(true);
         ePan.setVisible(true);
 
-        linkParentChild(UnitDisplay.NON_TABBED_A1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A1));
-        linkParentChild(UnitDisplay.NON_TABBED_B1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B1));
-        linkParentChild(UnitDisplay.NON_TABBED_C1, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C1));
-        linkParentChild(UnitDisplay.NON_TABBED_A2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_A2));
-        linkParentChild(UnitDisplay.NON_TABBED_B2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_B2));
-        linkParentChild(UnitDisplay.NON_TABBED_C2, UnitDisplayOrderPreferences.getInstance().getString(UnitDisplay.NON_TABBED_C2));
+        linkParentChild(UnitDisplay.NON_TABBED_A1, UDOP.getString(UnitDisplay.NON_TABBED_A1));
+        linkParentChild(UnitDisplay.NON_TABBED_B1, UDOP.getString(UnitDisplay.NON_TABBED_B1));
+        linkParentChild(UnitDisplay.NON_TABBED_C1, UDOP.getString(UnitDisplay.NON_TABBED_C1));
+        linkParentChild(UnitDisplay.NON_TABBED_A2, UDOP.getString(UnitDisplay.NON_TABBED_A2));
+        linkParentChild(UnitDisplay.NON_TABBED_B2, UDOP.getString(UnitDisplay.NON_TABBED_B2));
+        linkParentChild(UnitDisplay.NON_TABBED_C2, UDOP.getString(UnitDisplay.NON_TABBED_C2));
 
         displayP.add(splitABC);
 
         displayP.revalidate();
         displayP.repaint();
 
-        GUIPreferences.getInstance().setDisplayStartTabbed(false);
+        GUIP.setUnitDisplayStartTabbed(false);
     }
 
     /**
@@ -297,11 +331,11 @@ public class UnitDisplay extends JPanel {
     *
     */
     public void saveSplitterLoc() {
-        GUIPreferences.getInstance().setDisplaySplitABCLoc(splitABC.getDividerLocation());
-        GUIPreferences.getInstance().setDisplaySplitBCLoc(splitBC.getDividerLocation());
-        GUIPreferences.getInstance().setDisplaySplitA1Loc(splitA1.getDividerLocation());
-        GUIPreferences.getInstance().setDisplaySplitB1Loc(splitB1.getDividerLocation());
-        GUIPreferences.getInstance().setDisplaySplitC2Loc(splitC1.getDividerLocation());
+        GUIP.setUnitDisplaySplitABCLoc(splitABC.getDividerLocation());
+        GUIP.setUnitDisplaySplitBCLoc(splitBC.getDividerLocation());
+        GUIP.setUnitDisplaySplitA1Loc(splitA1.getDividerLocation());
+        GUIP.setUnitDisplaySplitB1Loc(splitB1.getDividerLocation());
+        GUIP.setUnitDisplaySplitC2Loc(splitC1.getDividerLocation());
     }
 
     /**
@@ -358,6 +392,10 @@ public class UnitDisplay extends JPanel {
         }
     }
 
+    public void setTitleVisible(boolean b) {
+        labTitle.setVisible(b);
+    }
+
     /**
      * Register the keyboard commands that the UnitDisplay should process
      *
@@ -381,7 +419,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+                        if (GUIP.getUnitDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SUMMARY);
                         }
 
@@ -405,7 +443,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+                        if (GUIP.getUnitDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.PILOT);
                         }
 
@@ -429,7 +467,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+                        if (GUIP.getUnitDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.ARMOR);
                         }
 
@@ -453,7 +491,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+                        if (GUIP.getUnitDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
                         }
 
@@ -477,7 +515,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+                        if (GUIP.getUnitDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.WEAPONS);
                         }
 
@@ -501,7 +539,7 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
-                        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+                        if (GUIP.getUnitDisplayStartTabbed()) {
                             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.EXTRAS);
                         }
 
@@ -524,6 +562,9 @@ public class UnitDisplay extends JPanel {
      * Displays the specified entity in the panel.
      */
     public void displayEntity(Entity en) {
+        if (en == null) {
+            return;
+        }
         String enName = en.getShortName();
         switch (en.getDamageLevel()) {
             case Entity.DMG_CRIPPLED:
@@ -544,6 +585,7 @@ public class UnitDisplay extends JPanel {
 
         if (clientgui != null) {
             clientgui.getUnitDisplayDialog().setTitle(enName);
+            labTitle.setText(enName);
         }
 
         currentlyDisplaying = en;
@@ -567,7 +609,7 @@ public class UnitDisplay extends JPanel {
      * Changes to the specified panel.
      */
     public void showPanel(String s) {
-        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+        if (GUIP.getUnitDisplayStartTabbed()) {
             ((CardLayout) displayP.getLayout()).show(displayP, s);
         }
 
@@ -591,7 +633,7 @@ public class UnitDisplay extends JPanel {
      * @param loc
      */
     public void showSpecificSystem(int loc) {
-        if (GUIPreferences.getInstance().getDisplayStartTabbed()) {
+        if (GUIP.getUnitDisplayStartTabbed()) {
             ((CardLayout) displayP.getLayout()).show(displayP, MechPanelTabStrip.SYSTEMS);
         }
 
@@ -635,5 +677,17 @@ public class UnitDisplay extends JPanel {
     @Nullable
     public ClientGUI getClientGUI() {
         return clientgui;
+    }
+
+    private void adaptToGUIScale() {
+        UIUtil.adjustContainer(this, UIUtil.FONT_SCALE1);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update the text size when the GUI scaling changes
+        if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
+            adaptToGUIScale();
+        }
     }
 }

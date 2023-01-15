@@ -85,7 +85,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         }
 
         if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {

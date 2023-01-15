@@ -3037,6 +3037,11 @@ public class Tank extends Entity {
     }
 
     @Override
+    public boolean isCombatVehicle() {
+        return !isSupportVehicle();
+    }
+
+    @Override
     public boolean getsAutoExternalSearchlight() {
         return true;
     }

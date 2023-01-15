@@ -42,6 +42,7 @@ import org.apache.logging.log4j.LogManager;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -49,7 +50,7 @@ import java.util.stream.IntStream;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Transporter, Targetable, RoundUpdated,
-        PhaseUpdated, ITechnology {
+        PhaseUpdated, ITechnology, ForceAssignable {
     private static final long serialVersionUID = 1430806396279853295L;
 
     public static final int DOES_NOT_TRACK_HEAT = 999;
@@ -780,21 +781,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      */
     private Set<Integer> offBoardShotObservers;
     
-    /** 
-     * A String representation of the force hierarchy this entity belongs to.
-     * The String contains all forces from top to bottom separated by backslash
-     * with no backslash at beginning or end. Each force is followed by a unique id
-     * separated by the vertical bar. E.g.
-     * Regiment|1\Battalion B|11\Alpha Company|18\Battle Lance II|112
-     * <P>If this is not empty, the server will attempt to resconstruct the force
-     * hierarchy when it receives this entity and will empty the string.
-     * This should be used for loading/saving MULs or transfer from other sources that
-     * don't have access to the current MM game's forces, such as MekHQ or the Force
-     * Generators. At all other times, forceId should be used instead. 
-     */
-    private String force = "";
-    
-    /** The force this entity belongs to. */
+    private String forceString = "";
     private int forceId = Force.NO_FORCE;
     
     /**
@@ -907,11 +894,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         setGameOptions();
     }
 
-    /**
-     * Returns the ID number of this Entity.
-     *
-     * @return ID Number.
-     */
+    @Override
     public int getId() {
         return id;
     }
@@ -1471,6 +1454,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         generateDisplayName();
     }
 
+    @Override
     public int getOwnerId() {
         return ownerId;
     }
@@ -1599,11 +1583,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     @Override
     public int getTargetType() {
         return Targetable.TYPE_ENTITY;
-    }
-
-    @Override
-    public int getTargetId() {
-        return getId();
     }
 
     @Override
@@ -4560,6 +4539,34 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return false;
     }
 
+    /** @return True when this unit has a RISC Super-Cooled Myomer System (even if the SCM is destroyed). */
+    public boolean hasSCM() {
+        return miscList.stream().anyMatch(m -> m.is(EquipmentTypeLookup.SCM));
+    }
+
+    /** @return True when this unit has an operable RISC Super-Cooled Myomer System. */
+    public boolean hasWorkingSCM() {
+        return miscList.stream().filter(m -> m.is(EquipmentTypeLookup.SCM)).anyMatch(Mounted::isOperable);
+    }
+
+    public int damagedSCMCritCount() {
+        return scmCritStateCount(CriticalSlot::isDamaged);
+    }
+
+    protected int scmCritStateCount(Predicate<CriticalSlot> slotState) {
+        int stateAppliesCount = 0;
+        for (int location = 0; location < locations(); location++) {
+            for (int index = 0; index < crits[location].length; index++) {
+                final CriticalSlot slot = crits[location][index];
+                if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                        && slot.getMount().is(EquipmentTypeLookup.SCM) && slotState.test(slot)) {
+                    stateAppliesCount++;
+                }
+            }
+        }
+        return stateAppliesCount;
+    }
+
     /**
      * Returns the amount of heat that the entity can sink each turn.
      */
@@ -4736,32 +4743,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * the location
      */
     public int getGoodCriticals(int type, int index, int loc) {
-        int operational = 0;
-        Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            m = getEquipment(index);
-        }
-
-        int numberOfCriticals = getNumberOfCriticals(loc);
-        for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
-
-            //  Check to see if this crit mounts the supplied item
-            //  For systems, we can compare the index, but for equipment we
-            //  need to get the Mounted that is mounted in that index and
-            //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (!ccs.isDestroyed() && !ccs.isBreached()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        operational++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
-                                                                                                                      .getMount2()))) {
-                        operational++;
-                    }
-                }
-            }
-        }
-        return operational;
+        return critStateCount(type, index, loc, cs -> !cs.isDestroyed() && !cs.isBreached());
     }
 
     /**
@@ -4769,74 +4751,41 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
      * location or missing along with it (if it was blown off).
      */
     public int getBadCriticals(int type, int index, int loc) {
-        int hits = 0;
-        Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            m = getEquipment(index);
-        }
-
-        int numberOfCriticals = getNumberOfCriticals(loc);
-        for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
-
-            //  Check to see if this crit mounts the supplied item
-            //  For systems, we can compare the index, but for equipment we
-            //  need to get the Mounted that is mounted in that index and
-            //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (ccs.isDestroyed() || ccs.isBreached() || ccs.isMissing()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && 
-                            ((m != null) && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2())))) {
-                        hits++;
-                    }
-                }
-            }
-        }
-        return hits;
+        return critStateCount(type, index, loc, cs -> cs.isDestroyed() || cs.isBreached() || cs.isMissing());
     }
 
     /**
      * Number of slots damaged (but not breached) in a location
      */
     public int getDamagedCriticals(int type, int index, int loc) {
-        int hits = 0;
-        Mounted m = null;
-        if (type == CriticalSlot.TYPE_EQUIPMENT) {
-            m = getEquipment(index);
-        }
-
-        int numberOfCriticals = getNumberOfCriticals(loc);
-        for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
-
-            //  Check to see if this crit mounts the supplied item
-            //  For systems, we can compare the index, but for equipment we
-            //  need to get the Mounted that is mounted in that index and
-            //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (ccs.isDamaged()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
-                                                                                                                      .getMount2()))) {
-                        hits++;
-                    }
-                }
-            }
-        }
-        return hits;
+        return critStateCount(type, index, loc, CriticalSlot::isDamaged);
     }
 
     /**
      * Number of slots doomed, missing or destroyed in a location
      */
     public int getHitCriticals(int type, int index, int loc) {
-        int hits = 0;
+        return critStateCount(type, index, loc, cs -> cs.isDamaged() || cs.isBreached() || cs.isMissing());
+    }
+
+    /**
+     * @returns the number of critical slots of the equipment given as index for {@link #getEquipment(int)} in
+     * location loc wherein the type is the critical slot type that fit the slot state given as slotState Predicate
+     * such as {@link CriticalSlot#isDestroyed()}. The critslots tested are only those in location loc except
+     * for Super-Cooled Myomer where all locations are considered.
+     */
+    protected int critStateCount(int type, int index, int loc, Predicate<CriticalSlot> slotState) {
+        int stateAppliesCount = 0;
         Mounted m = null;
         if (type == CriticalSlot.TYPE_EQUIPMENT) {
             m = getEquipment(index);
+            if (m == null) {
+                LogManager.getLogger().error("Null Equipment found in equipment list of entity " + this);
+                return 0;
+            }
+            if ((this instanceof Mech) && m.is(EquipmentTypeLookup.SCM)) {
+                return ((Mech) this).scmCritStateCount(slotState);
+            }
         }
 
         int numberOfCriticals = getNumberOfCriticals(loc);
@@ -4847,18 +4796,16 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             //  For systems, we can compare the index, but for equipment we
             //  need to get the Mounted that is mounted in that index and
             //  compare types.  Superheavies may have two Mounted in each crit
-            if ((ccs != null) && (ccs.getType() == type)) {
-                if (ccs.isDamaged() || ccs.isBreached() || ccs.isMissing()) {
-                    if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
-                        hits++;
-                    } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs
-                                                                                                                      .getMount2()))) {
-                        hits++;
-                    }
+            if ((ccs != null) && (ccs.getType() == type) && slotState.test(ccs)) {
+                if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
+                    stateAppliesCount++;
+                } else if ((type == CriticalSlot.TYPE_EQUIPMENT)
+                        && (m.equals(ccs.getMount()) || m.equals(ccs.getMount2()))) {
+                    stateAppliesCount++;
                 }
             }
         }
-        return hits;
+        return stateAppliesCount;
     }
 
     protected abstract int[] getNoOfSlots();
@@ -11503,23 +11450,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return reckless;
     }
 
-    /**
-     * Helper function to test whether an entity should be treated as an Aero unit (includes
-     * LAMs in fighter mode)
-     */
-    @Override
-    public boolean isAero() {
-        return false;
-    }
-
-    /**
-     * Helper function to determine whether an entity is an aero unit but not Small Craft/
-     * DropShip/JumpShip/WarShip.
-     */
-    public boolean isFighter() {
-        return isAero();
-    }
-
     public boolean isCapitalFighter() {
         return isCapitalFighter(false);
     }
@@ -14646,13 +14576,6 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     }
 
     /**
-     * @return the flag that determines if the Entity is a support vehicle
-     */
-    public boolean isSupportVehicle() {
-        return false;
-    }
-
-    /**
      * @return Whether the unit uses primitive or retrotech construction rules
      */
     public boolean isPrimitive() {
@@ -15387,25 +15310,25 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
     public boolean isOffBoardObserved(int teamID) {
         return offBoardShotObservers.contains(teamID);
     }
-    
+
+    @Override
     public String getForceString() {
-        return force;
+        return forceString;
     }
-    
+
+    @Override
     public void setForceString(String f) {
-        force = f;
+        forceString = f;
     }
-    
+
+    @Override
     public int getForceId() {
         return forceId;
     }
-    
+
+    @Override
     public void setForceId(int newId) {
         forceId = newId;
-    }
-    
-    public boolean partOfForce() {
-        return forceId != Force.NO_FORCE;
     }
     
     public void setBloodStalkerTarget(int value) {

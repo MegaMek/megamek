@@ -3206,38 +3206,38 @@ public class GameManager implements IGameManager {
             }
         }
 
-        // remaining deployments
-        Comparator<Entity> comp = Comparator.comparingInt(Entity::getDeployRound);
-        comp = comp.thenComparingInt(Entity::getOwnerId);
-        comp = comp.thenComparingInt(Entity::getStartingPos);
-        List<Entity> ue = game.getEntitiesVector().stream().filter(e -> e.getDeployRound() > game.getRoundCount()).sorted(comp).toList();
-        if (!ue.isEmpty()) {
-            r = new Report(1060, Report.PUBLIC);
-            addReport(r);
-            int round = -1;
+        if (!abbreviatedReport) {
+            // remaining deployments
+            Comparator<Entity> comp = Comparator.comparingInt(Entity::getDeployRound);
+            comp = comp.thenComparingInt(Entity::getOwnerId);
+            comp = comp.thenComparingInt(Entity::getStartingPos);
+            List<Entity> ue = game.getEntitiesVector().stream().filter(e -> e.getDeployRound() > game.getRoundCount()).sorted(comp).toList();
+            if (!ue.isEmpty()) {
+                r = new Report(1060, Report.PUBLIC);
+                addReport(r);
+                int round = -1;
 
-            for (Entity entity : ue) {
-                if (round != entity.getDeployRound()) {
-                    round = entity.getDeployRound();
-                    r = new Report(1065, Report.PUBLIC);
-                    r.add(round);
+                for (Entity entity : ue) {
+                    if (round != entity.getDeployRound()) {
+                        round = entity.getDeployRound();
+                        r = new Report(1065, Report.PUBLIC);
+                        r.add(round);
+                        addReport(r);
+                    }
+
+                    r = new Report(1066);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    String s = IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos()];
+                    r.add(s);
                     addReport(r);
                 }
 
-                r = new Report(1066);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                String s = IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos()];
-                r.add(s);
+                r = new Report(1210, Report.PUBLIC);
+                r.newlines = 2;
                 addReport(r);
             }
 
-            r = new Report(1210, Report.PUBLIC);
-            r.newlines = 2;
-            addReport(r);
-        }
-
-        if (!abbreviatedReport) {
             // we don't much care about wind direction and such in a hard vacuum
             if (!game.getBoard().inSpace()) {
                 // Wind direction and strength

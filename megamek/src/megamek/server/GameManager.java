@@ -23839,9 +23839,13 @@ public class GameManager implements IGameManager {
         reports.addElement(r);
 
         // Shield objects are not useless when they take one crit.
-        // Shields can be critted and still be usable.
         if ((eqType instanceof MiscType) && ((MiscType) eqType).isShield()) {
             mounted.setHit(false);
+        } else if (mounted.is(EquipmentTypeLookup.SCM)) {
+            // Super-Cooled Myomer remains functional until all its slots have been hit
+            if (en.damagedSCMCritCount() >= 6) {
+                mounted.setHit(true);
+            }
         } else {
             mounted.setHit(true);
         }

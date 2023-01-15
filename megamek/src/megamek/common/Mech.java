@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -825,19 +826,6 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * does this mech have SCM?
-     */
-    public boolean hasSCM() {
-        for (Mounted m : getEquipment()) {
-            if ((m.getType() instanceof MiscType)
-                    && m.getType().hasFlag(MiscType.F_SCM)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * does this mech have industrial TSM=
      *
      * @return
@@ -1169,8 +1157,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getSprintHeat() {
-        int extra = bDamagedCoolantSystem?1:0;
-        return extra + (hasEngine() ? getEngine().getSprintHeat() : 0);
+        int extra = bDamagedCoolantSystem ? 1 : 0;
+        return extra + (hasEngine() ? getEngine().getSprintHeat(this) : 0);
     }
 
     /**
@@ -1684,10 +1672,10 @@ public abstract class Mech extends Entity {
         return "Heat Sink";
     }
 
-    public int getHeatCapacity(boolean includePartialWing,
-            boolean includeRadicalHeatSink) {
+    public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
         int activeCount = getActiveSinks();
+        boolean isDoubleHeatSink = false;
 
         for (Mounted mounted : getMisc()) {
             if (mounted.isDestroyed() || mounted.isBreached()) {
@@ -1701,9 +1689,11 @@ public abstract class Mech extends Entity {
                     && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
+                isDoubleHeatSink = true;
             } else if (mounted.getType().hasFlag(
                     MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
+                isDoubleHeatSink = true;
             } else if (includePartialWing
                     && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
                     && // unless all crits are destroyed, we get the bonus
@@ -1716,6 +1706,7 @@ public abstract class Mech extends Entity {
                                             // once.
             }
         }
+        capacity -= damagedSCMCritCount() * (isDoubleHeatSink ? 2 : 1);
         // AirMech mode for LAMs confers the same heat benefits as a partial wing.
         if (includePartialWing && movementMode == EntityMovementMode.WIGE) {
             capacity += getPartialWingHeatBonus();
@@ -1725,7 +1716,7 @@ public abstract class Mech extends Entity {
             capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
 
-        return capacity;
+        return Math.max(capacity, 0);
     }
 
     /**

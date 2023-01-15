@@ -20,9 +20,6 @@ import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Team;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -68,8 +65,6 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         this.setTitle(MSG_TITLE);
         this.client = client;
         this.modal = modal;
-
-        client.getGame().addGameListener(gameListener);
 
         add(playerList, BorderLayout.CENTER);
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
@@ -203,18 +198,6 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
             }
         }
     }
-
-    private GameListener gameListener = new GameListenerAdapter() {
-        @Override
-        public void gamePhaseChange(GamePhaseChangeEvent e) {
-            switch (e.getOldPhase()) {
-                case VICTORY:
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     @Override
     protected void processWindowEvent(WindowEvent e) {

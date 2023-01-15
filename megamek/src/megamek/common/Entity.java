@@ -12812,7 +12812,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     /**
      * Determines if the pilot has the Nightwalker SPA
-     * @return true when pilots have the SPA and not
+     * @return true when pilots have the SPA and are not
      * in a flying vehicle.
      */
 

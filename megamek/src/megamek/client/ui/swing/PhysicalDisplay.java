@@ -61,6 +61,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         String cmd;
 
+        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
         /**
          * Priority that determines this buttons order
          */
@@ -273,7 +275,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
         if (clientgui.getClient().getGame().getPhase().isPhysical() && (null != next)
                 && (null != ce()) && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         target(null);
@@ -311,13 +313,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && GUIP.getNagForNoAction()) {
             // confirm this action
             ConfirmDialog response = clientgui.doYesNoBotherDialog(
                     Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.title"),
                     Messages.getString("PhysicalDisplay.DontPhysicalAttackDialog.message"));
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForNoAction(false);
+                GUIP.setNagForNoAction(false);
             }
             if (!response.getAnswer()) {
                 return;
@@ -457,7 +459,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -591,7 +593,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -619,7 +621,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -643,7 +645,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -681,7 +683,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -701,7 +703,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -777,7 +779,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -891,7 +893,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 
@@ -923,7 +925,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
-            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+            if (GUIP.getAutoDeclareSearchlight()) {
                 doSearchlight();
             }
 

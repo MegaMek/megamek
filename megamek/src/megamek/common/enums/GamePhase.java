@@ -181,6 +181,7 @@ public enum GamePhase {
             case FIRING_REPORT:
             case PHYSICAL_REPORT:
             case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;
@@ -202,6 +203,14 @@ public enum GamePhase {
             case PHYSICAL:
             case DEPLOY_MINEFIELDS:
             case SET_ARTILLERY_AUTOHIT_HEXES:
+            case INITIATIVE_REPORT:
+            case TARGETING_REPORT:
+            case MOVEMENT_REPORT:
+            case OFFBOARD_REPORT:
+            case FIRING_REPORT:
+            case PHYSICAL_REPORT:
+            case END_REPORT:
+            case VICTORY:
                 return true;
             default:
                 return false;

@@ -481,7 +481,7 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isFiring() && (next != null) && (ce() != null)
                 && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
         }
         cen = Entity.NONE;
         target(null);

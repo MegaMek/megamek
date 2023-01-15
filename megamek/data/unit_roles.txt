@@ -7592,3 +7592,49 @@ Phantom R:STRIKER
 Nightsky NGS-7S:STRIKER
 Penetrator PTR-8D:BRAWLER
 Gunslinger GUN-3ERD:JUGGERNAUT
+TinStar BattleArmor (Standard)(Sqd4):AMBUSHER
+TinStar BattleArmor (Standard)(Sqd5):AMBUSHER
+TinStar BattleArmor (Standard)(Sqd6):AMBUSHER
+TinStar BattleArmor (Original)(Sqd4):AMBUSHER
+TinStar BattleArmor (Original)(Sqd5):AMBUSHER
+TinStar BattleArmor (Original)(Sqd6):AMBUSHER
+Skulker Wheeled Scout Tank C:SCOUT
+Warrior Attack Helicopter H-7F:SCOUT
+Whirlwind Scout Hover Tank:SCOUT
+Whirlwind Scout Hover Tank (IFV):SCOUT
+Whirlwind Scout Hover Tank (AAA):SCOUT
+Mobile Long Tom Artillery LT-MOB-25F:MISSILE_BOAT
+SturmFeur Heavy Tank (Cell):MISSILE_BOAT
+SturmFeur Heavy Tank (Heavy Gauss):JUGGERNAUT
+SturmFeur Heavy Tank (WoB):JUGGERNAUT
+SturmFeur Heavy Tank (Steiner):JUGGERNAUT
+SturmFeur Heavy Tank (Assault):SNIPER
+SturmFeur Heavy Tank (Support) 'Gilmore':MISSILE_BOAT
+Firestarter FS9-M 'Mirage II':STRIKER
+Spector SPR-6F:STRIKER
+Cicada CDA-4A:STRIKER
+Devastator DVS-11:JUGGERNAUT
+Dragoon Battle Armor (Sqd4):AMBUSHER
+Dragoon Battle Armor (Sqd5):AMBUSHER
+Dragoon Battle Armor (Sqd6):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Dragoon Battle Armor (Advanced) (Sqd4):AMBUSHER
+Command Van:SCOUT
+Command Van (ICE):SCOUT
+Command Van (Q-Vehicle):SCOUT
+Browning Mobile Headquarters:SCOUT
+Browning Mobile Headquarters (Half-Track):SCOUT
+Hetzer Wheeled Assault Gun (Cell):AMBUSHER
+Hetzer Wheeled Assault Gun C:AMBUSHER
+Eurus MBT Prime:BRAWLER
+Eurus MBT A:BRAWLER
+Eurus MBT B:SNIPER
+Eurus MBT C:BRAWLER
+Eurus MBT D:BRAWLER
+Ontos Heavy Tank (Chem Laser):JUGGERNAUT
+Firefly FFL-5A:STRIKER
+Assassin ASN-109:SCOUT
+Dervish DV-11DK:MISSILE_BOAT
+Charger C:SCOUT
+Sagittaire SGT-14R:JUGGERNAUT

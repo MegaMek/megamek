@@ -149,4 +149,19 @@ Endo Steel
 -Empty-
 -Empty-
 
+overview:The Spector was originally designed by Norse Technologies to be a lighter version of the Exterminator BattleMech, made to hunt down light command 'Mechs.
 
+capabilities:The Spector was originally designed to use the advanced Null-Signature system, able to hide the 'Mech's radar and heat signatures, and Chameleon Light Polarization Shield, capable of obscuring the BattleMech's appearance. However, these technologies were lost during the Succession Wars and have not yet been replicated. The current incarnation of the Spector, SPR-5F, does not carry a Null Signature System nor the Chameleon LPS because of this.
+
+deployment:Even without its advanced stealth capabilities, the Spector that Norse-Storm BattleMechs reintroduced in 3053 is an impressive light 'Mech. The Spector has is built on a weight saving Norse XT-Light Type AE endo steel chassis, powered by a Magna 245 XL engine that gives it a top speed of 118.8 km/h, while seven HildCo Model 11c jump jets give it a jump ranged of 210 meters. Protection from enemy fire is provided by seven and a half tons of Starshield Light standard armor, while a Guardian ECM suite allows it to defend itself against advanced enemy targeting and range finding equipment. The Spector carries a Nightwind large laser as its primary weapon, backed up by a pair of Defiance B3M medium lasers and a single Defiance B4S small laser for close combat. While most consider this a light weapons payload for a 35 ton 'Mech, the Spector's superior mobility and mission profile do not require a very heavy weapons payload.
+
+history:The first Spector rolled off the assembly line on June 6th, 2639, and following extensive testing the SLDF ordered 600 units, the first run of which were delivered in April of 2640. The Star League's enthusiasm for the Spector is due to the BattleMechs stealth capabilities, combining both Chameleon Light Polarization Shield and a Null-Signature system. All Spectors, and all reports on them, were believed lost with the fall of the Star League until 3048, when rumors spread that the mercenary units McCarron's Armored Cavalry and Storm's Metal Thunder were fielding Spectors, presumably recovered from an ancient cache, although neither admitted to fielding vintage Star League era 'Mechs.
+
+manufacturer:Norse Technologies
+primaryfactory:Loxley
+systemmanufacturer:CHASSIS:Norse XT-Light Type AE (Endo)
+systemmanufacturer:ENGINE:Magna 245 XL
+systemmanufacturer:ARMOR:Starshield Light
+systemmanufacturer:JUMPJET:HildCo Model 11c
+systemmanufacturer:COMMUNICATIONS:AR-12 Sheathed Directional Beacon with Norse Guardian ECM Suite
+systemmanufacturer:TARGETING:DLK Type Phased Array Sensor System

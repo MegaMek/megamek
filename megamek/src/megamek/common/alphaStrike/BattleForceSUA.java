@@ -45,7 +45,7 @@ public enum BattleForceSUA {
     ATAC, DB, PL, TCP, SDCS,
     // TODO : PL, DB do not exist, TCP = Triple-Core Processor?
     // AlphaStrike only (this may be incorrect, WIP)
-    CRW, CR, DUN, EE, FC, FF, MTN, OVL, PARA, TSMX, RCA, RFA, HTC, TRN, SUBS, SUBW, JMPS, JMPW,
+    CRW, CR, DUN, EE, FC, FF, MTN, OVL, PAR, TSMX, RCA, RFA, HTC, TRN, SUBS, SUBW, JMPS, JMPW,
     CAP, SCAP, FUEL, MSL,
     // SBF
     AC3, COM,

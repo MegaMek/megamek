@@ -84,6 +84,7 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageProducer;
 import java.io.*;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
@@ -110,7 +111,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     static final int MEKTREE_ROWHEIGHT_FULL = 40;
     private final static int TEAMOVERVIEW_BORDER = 45;
     private final static int MAP_POPUP_OFFSET = -2; // a slight offset so cursor sits inside popup
-    
+
     private JTabbedPane panTabs = new JTabbedPane();
     private JPanel panUnits = new JPanel();
     private JPanel panMap = new JPanel();
@@ -344,6 +345,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements
     private static final String MSG_VIEWGAMEBOARDTOOLTIP = Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip");
     private static final String MSG_VIEWGAMEBOARD = Messages.getString("BoardSelectionDialog.ViewGameBoard");
     private static final String MSG_FIGHTERSQUADRONBOMBERROR = Messages.getString("FighterSquadron.bomberror");
+
+    private static final String MSG_MAPSETUPXMLFILES = Messages.getString("ChatLounge.map.SetupXMLfiles");
 
     /** Creates a new chat lounge for the clientgui.getClient(). */
     public ChatLounge(ClientGUI clientgui) {
@@ -2077,7 +2080,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
             selectedFile = new File(selectedFile.getPath() + CL_KEY_FILEEXTENTION_XML);
         }
         if (selectedFile.exists()) {
-            String msg = Messages.getFormattedString(MSG_MAPSAVESETUPREPLACE, selectedFile.getName());
+            String msg = MessageFormat.format(MSG_MAPSAVESETUPREPLACE, selectedFile.getName());
             if (!MMConfirmDialog.confirm(clientgui.frame, MSG_MAPCONFIRMREPLACE, msg)) {
                 return;
             }
@@ -2154,7 +2157,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements
 
         @Override
         public String getDescription() {
-            return "Map Setup XML files";
+            return MSG_MAPSETUPXMLFILES;
         }
     };
     

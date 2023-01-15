@@ -72,6 +72,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         String cmd;
 
+        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
+
         /**
          * Priority that determines this buttons order
          */
@@ -778,7 +780,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
             LogManager.getLogger().error("Tried to select non-existent entity " + en);
         }
 
-        if (GUIPreferences.getInstance().getBoolean("FiringSolutions")) {
+        if (GUIP.getBoolean("FiringSolutions")) {
             setFiringSolutions();
         } else {
             clientgui.getBoardView().clearFiringSolutionData();
@@ -793,7 +795,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         Game game = clientgui.getClient().getGame();
         Player localPlayer = clientgui.getClient().getLocalPlayer();
-        if (!GUIPreferences.getInstance().getFiringSolutions()) {
+        if (!GUIP.getFiringSolutions()) {
             return;
         }
 
@@ -884,7 +886,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isFiring() && (next != null) && (ce() != null)
                 && (next.getOwnerId() != ce().getOwnerId())) {
-            clientgui.setUnitDisplayVisible(false);
+            clientgui.maybeShowUnitDisplay();
+
         }
         cen = Entity.NONE;
         target(null);
@@ -1118,13 +1121,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
      */
     @Override
     public void ready() {
-        if (attacks.isEmpty() && GUIPreferences.getInstance().getNagForNoAction()) {
+        if (attacks.isEmpty() && GUIP.getNagForNoAction()) {
             // confirm this action
             String title = Messages.getString("FiringDisplay.DontFireDialog.title");
             String body = Messages.getString("FiringDisplay.DontFireDialog.message");
             ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
-                GUIPreferences.getInstance().setNagForNoAction(false);
+                GUIP.setNagForNoAction(false);
             }
 
             if (!response.getAnswer()) {
@@ -1133,8 +1136,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         // We need to nag for overheat on capital fighters
-        if ((ce() != null) && ce().isCapitalFighter()
-                && GUIPreferences.getInstance().getNagForOverheat()) {
+        if ((ce() != null) && ce().isCapitalFighter() && GUIP.getNagForOverheat()) {
             int totalheat = 0;
             for (EntityAction action : attacks) {
                 if (action instanceof WeaponAttackAction) {
@@ -1149,7 +1151,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 String body = Messages.getString("FiringDisplay.OverheatNag.message");
                 ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
                 if (!response.getShowAgain()) {
-                    GUIPreferences.getInstance().setNagForOverheat(false);
+                    GUIP.setNagForOverheat(false);
                 }
 
                 if (!response.getAnswer()) {
@@ -1508,7 +1510,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         // declare searchlight, if possible
-        if (GUIPreferences.getInstance().getAutoDeclareSearchlight() && ce().isUsingSearchlight()) {
+        if (GUIP.getAutoDeclareSearchlight() && ce().isUsingSearchlight()) {
             doSearchlight();
         }
 
@@ -1608,8 +1610,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         updateClearWeaponJam();
 
         // check; if there are no ready weapons, you're done.
-        if ((nextWeapon == -1)
-            && GUIPreferences.getInstance().getAutoEndFiring()) {
+        if ((nextWeapon == -1) && GUIP.getAutoEndFiring()) {
             ready();
             return;
         }

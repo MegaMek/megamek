@@ -351,7 +351,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
         // get bomb load
-        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
+        j = reduceMPByBombLoad(j);
 
         if (hasModularArmor()) {
             j--;
@@ -389,7 +389,7 @@ public class Aero extends Entity implements IAero, IBomber {
             }
         }
         // get bomb load
-        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
+        j = reduceMPByBombLoad(j);
 
         if (hasModularArmor()) {
             j--;
@@ -517,6 +517,11 @@ public class Aero extends Entity implements IAero, IBomber {
     @Override
     public void clearBombChoices() {
         Arrays.fill(bombChoices, 0);
+    }
+
+    @Override
+    public int reduceMPByBombLoad(int t) {
+        return Math.max(0, t - (int) Math.ceil(getBombPoints() / 5.0));
     }
 
     public void setWhoFirst() {

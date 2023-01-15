@@ -1130,7 +1130,7 @@ public class GameManager implements IGameManager {
      * Called at the beginning of certain phases to make every player not ready.
      */
     private void resetPlayersDone() {
-        if (getGame().getPhase().isReport()) {
+        if ((getGame().getPhase().isReport()) && (!getGame().getPhase().isVictory())) {
             return;
         }
 
@@ -1833,6 +1833,7 @@ public class GameManager implements IGameManager {
             case END_REPORT:
                 resetActivePlayersDone();
                 sendReport();
+                entityAllUpdate();
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }

@@ -274,6 +274,12 @@ public class VTOL extends Tank implements IBomber {
     }
 
     @Override
+    public int reduceMPByBombLoad(int t) {
+        // Per TacOps errata v3.0, movement reduction is per bomb rather than per 5 bomb points
+        return Math.max(0, (t - (int) this.getBombs().stream().filter(m -> (m.getUsableShotsLeft() > 0)).count()));
+    }
+
+    @Override
     public Targetable getVTOLBombTarget() {
         return bombTarget;
     }
@@ -584,15 +590,7 @@ public class VTOL extends Tank implements IBomber {
             j--;
         }
 
-        // Per TacOps errata v3.0, movement reduction is per bomb rather than per 5 bomb points
-        for (Mounted m : getBombs()) {
-            if (m.getUsableShotsLeft() > 0) {
-                j--;
-            }
-        }
-        if (j < 0) {
-            j = 0;
-        }
+        j = reduceMPByBombLoad(j);
 
         if (gravity) {
             j = applyGravityEffectsOnMP(j);

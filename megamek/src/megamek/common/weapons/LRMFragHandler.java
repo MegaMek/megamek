@@ -50,7 +50,7 @@ public class LRMFragHandler extends LRMHandler {
         if ((ae instanceof BattleArmor)
                 && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
                 && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
+                && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // against infantry, we have 1 hit

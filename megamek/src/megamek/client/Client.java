@@ -320,13 +320,6 @@ public class Client implements IClientCommandHandler {
         return PreferenceManager.getClientPreferences().keepGameLog();
     }
 
-    /**
-     * Return an enumeration of the players in the game
-     */
-    public Enumeration<Player> getPlayers() {
-        return game.getPlayers();
-    }
-
     public Entity getEntity(int id) {
         return game.getEntity(id);
     }
@@ -1013,7 +1006,12 @@ public class Client implements IClientCommandHandler {
         Set<Force> delForces = new HashSet<>();
         Set<Entity> delEntities = new HashSet<>();
         forceIds.stream().map(forces::getForce).forEach(delForces::add);
-        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
+        for (Force delForce : delForces) {
+            forces.getFullEntities(delForce).stream()
+                    .filter(e -> e instanceof Entity)
+                    .map(e -> (Entity) e)
+                    .forEach(delEntities::add);
+        }
 
         forces.deleteForces(delForces);
 

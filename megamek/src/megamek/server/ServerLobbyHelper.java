@@ -20,6 +20,7 @@ package megamek.server;
 
 import megamek.client.ui.swing.lobby.LobbyActions;
 import megamek.common.Entity;
+import megamek.common.ForceAssignable;
 import megamek.common.Game;
 import megamek.common.Player;
 import megamek.common.force.Force;
@@ -280,7 +281,7 @@ class ServerLobbyHelper {
         serverForces.removeIf(allSubForces::contains);
 
         for (Force force: serverForces) {
-            Collection<Entity> entities = forces.getFullEntities(force);
+            Collection<Entity> entities = ForceAssignable.filterToEntityList(forces.getFullEntities(force));
             forces.assignFullForces(force, newOwner);
             for (Entity entity: entities) {
                 entity.setOwner(newOwner);
@@ -469,7 +470,7 @@ class ServerLobbyHelper {
      * A force is editable to the sender of a command if any forces in its force chain
      * (this includes the force itself) is owned by the sender. This allows editing 
      * forces of other players if they are a subforce of one's own force.
-     * @see LobbyActions#isEditable(Force)
+     * See also LobbyActions.isEditable(Force)
      */
     static boolean isEditable(Force force, Game game, Player sender) {
         List<Force> chain = game.getForces().forceChain(force);

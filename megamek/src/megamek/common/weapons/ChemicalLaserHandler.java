@@ -58,7 +58,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
         if ((ae instanceof BattleArmor)
             && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
             && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)

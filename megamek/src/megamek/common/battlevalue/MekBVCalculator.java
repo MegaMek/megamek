@@ -963,8 +963,7 @@ public class MekBVCalculator {
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(mek);
                     } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (mek.getGame() != null)) {
-                        for (Enumeration<Team> e = mek.getGame().getTeams(); e.hasMoreElements(); ) {
-                            Team m = e.nextElement();
+                        for (Team m : mek.getGame().getTeams()) {
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG()) {
                                     tagBV += atype.getBV(mek);

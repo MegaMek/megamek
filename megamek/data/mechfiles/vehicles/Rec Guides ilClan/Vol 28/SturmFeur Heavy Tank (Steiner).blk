@@ -1,0 +1,147 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+SturmFeur Heavy Tank
+</Name>
+
+<Model>
+(Steiner)
+</Model>
+
+<mul id:>
+6967
+</mul id:>
+
+<year>
+3080
+</year>
+
+<originalBuildYear>
+3080
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+69
+66
+66
+50
+66
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+ISCASE
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+IS Ammo MML-9 LRM
+IS Ammo MML-9 LRM
+IS Ammo MML-9 SRM
+</Body Equipment>
+
+<Front Equipment>
+LRM 20
+ISMPod
+ISArtemisIV
+</Front Equipment>
+
+<Right Equipment>
+ISMPod
+</Right Equipment>
+
+<Left Equipment>
+ISMPod
+</Left Equipment>
+
+<Rear Equipment>
+ISMPod
+</Rear Equipment>
+
+<Turret Equipment>
+ISMML9
+ISMML9
+ISERMediumLaser
+ISERMediumLaser
+ISTAG
+ISArtemisIV
+ISArtemisIV
+</Turret Equipment>
+
+<capabilities>
+For point-blank anti-infantry protection, the SturmFeur carries two huge missile racks backed up by machine guns. The SturmFeur is extensively armored, more so than many frontline tanks, in comparison to many other fire-support vehicles. The SturmFeur's 19-and-a-half tons of armor allow it to resist massive damage, which is appreciated by missile carrier operators who are used to paper-thin armor that disintegrates (as the sailors will tell you) "when given a filthy look."
+</capabilities>
+
+<overview>
+The SturmFeur debuted in 3018. At that time, it was the largest combat vehicle dedicated to providing missile support in the Inner Sphere.
+</overview>
+
+<deployment>
+Adapted from the Word of Blake variant with heavy-duty M-Pods replaced the
+A-Pods, and defenses were further enhanced with an ECM system in lieu of the Blakist improved C3.
+</deployment>
+
+<history>
+During the Fourth Succession War, conventional units particularly valued the SturmFeur. Its low profile proved to be the scourge of many Free Worlds League and Kuritan troops, who came under fire from these tanks that seemed to be able to hide behind even the most minor piece of terrain. It took a few ambushes for these troops to stop taking supposedly abandoned villages and parking lots for granted. It was considerably more popular among units stationed on worlds bordering the Periphery who obtained them. The majority of bandit gangs used lighter BattleMechs with less weaponry and armor. When confronted by these raiders, the SturmFeurs would deploy in a staggered formation, such that when bandits closed in on one tank in an attempt to get out of range of its missiles, they would find themselves within ideal range of the remaining defenders. To the chagrin of the attackers, the targeted SturmFeur's substantial armor allowed it to survive the attacks. Others have combined it with Demolishers, who require cover fire as they approach. Outside of the Federated Commonwealth coalition, however, very few units exhibited interest, preferring the far less expensive (albeit more vulnerable) LRM Carrier for support. Those who do obtain a SturmFeur sometimes use it as a command vehicle for their fire-support troops, depending on its substantial armor to keep the commanders alive.
+</history>
+
+<manufacturer>
+Defiance Industries
+</manufacturer>
+
+<primaryFactory>
+Hesperus II
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Strand 255 Class B light Fusion
+ARMOR:Durallex Special Heavy Ferro-Fibrous
+COMMUNICATIONS:Angst 2100-b
+TARGETING:SturmFeur Highlight with BlindFire Radar
+</systemManufacturers>
+
+<source>
+Rec Guide:ilClan #28 - Jihad
+</source>
+
+<tonnage>
+85.0
+</tonnage>
+

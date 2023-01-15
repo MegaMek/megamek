@@ -50,9 +50,9 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
     private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
 
-    private String msg_megamek = Messages.getString("ChatterBox.Megamek");
-    private String msg_done = Messages.getString("ChatterBox.ImDone");
-    private String msg_entitiesadded = Messages.getString("ChatterBox.entitiesAdded");
+    private static final String MSG_MEGAMEK = Messages.getString("ChatterBox.Megamek");
+    private static final String MSG_DONE = Messages.getString("ChatterBox.ImDone");
+    private static final String MSG_ENTITIESADDED = Messages.getString("ChatterBox.entitiesAdded");
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
@@ -60,37 +60,56 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
             @Override
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append('\n' + e.getMessage());
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
                 moveToEnd();
             }
 
             @Override
             public void gamePlayerChange(GamePlayerChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gamePhaseChange(GamePhaseChangeEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
             public void gameEntityNew(GameEntityNewEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
+
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
-                    systemMessage(e.getNumberOfEntities() + " " + msg_entitiesadded);
+                    systemMessage(e.getNumberOfEntities() + " " + MSG_ENTITIESADDED);
                 }
             }
 
             @Override
             public void gameEntityRemove(GameEntityRemoveEvent e) {
-                PlayerListDialog.refreshPlayerList(playerList, client);
+                PlayerListDialog pld = clientgui.getPlayerListDialog();
+                if (pld != null) {
+                    pld.refreshPlayerList(playerList, client);
+                }
             }
 
             @Override
@@ -113,7 +132,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
-        butDone = new JButton(msg_done);
+        butDone = new JButton(MSG_DONE);
         butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
@@ -175,7 +194,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        chatArea.append("\n" + msg_megamek + " " + message);
+        chatArea.append("\n" + MSG_MEGAMEK + " " + message);
         moveToEnd();
     }
 

@@ -17,7 +17,6 @@ import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.GameManager;
-import megamek.server.Server;
 
 /**
  * @author Jason Tighe
@@ -48,7 +47,7 @@ public class ACWeaponHandler extends AmmoWeaponHandler {
         if ((ae instanceof BattleArmor)
             && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
             && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
+            && (ae.getSwarmTargetId() == target.getId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage

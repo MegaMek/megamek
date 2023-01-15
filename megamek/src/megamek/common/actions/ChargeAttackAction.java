@@ -31,7 +31,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     private static final long serialVersionUID = -3549351664290057785L;
 
     public ChargeAttackAction(Entity attacker, Targetable target) {
-        this(attacker.getId(), target.getTargetType(), target.getTargetId(),
+        this(attacker.getId(), target.getTargetType(), target.getId(),
              target.getPosition());
     }
 
@@ -78,7 +78,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         Entity te;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
+            targetId = target.getId();
         } else {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }

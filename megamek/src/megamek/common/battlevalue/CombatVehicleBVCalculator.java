@@ -22,7 +22,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -376,8 +375,7 @@ public class CombatVehicleBVCalculator {
                     if (tmpP.hasTAG()) {
                         tagBV += atype.getBV(combatVee);
                     } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (combatVee.getGame() != null)) {
-                        for (Enumeration<Team> e = combatVee.getGame().getTeams(); e.hasMoreElements();) {
-                            Team m = e.nextElement();
+                        for (Team m : combatVee.getGame().getTeams()) {
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG()) {
                                     tagBV += atype.getBV(combatVee);

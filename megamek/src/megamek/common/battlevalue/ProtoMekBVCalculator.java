@@ -22,7 +22,6 @@ import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.common.*;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -219,8 +218,7 @@ public class ProtoMekBVCalculator {
                 if (tmpP.hasTAG()) {
                     tagBV += atype.getBV(protoMek);
                 } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (protoMek.getGame() != null)) {
-                    for (Enumeration<Team> e = protoMek.getGame().getTeams(); e.hasMoreElements();) {
-                        Team m = e.nextElement();
+                    for (Team m : protoMek.getGame().getTeams()) {
                         if (m.getId() == tmpP.getTeam()) {
                             if (m.hasTAG()) {
                                 tagBV += atype.getBV(protoMek);

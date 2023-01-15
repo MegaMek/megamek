@@ -152,19 +152,20 @@ Jump Jet
 -Empty-
 
 
-Overview: The Firestarter is a specialized BattleMech. Its role is somewhat self evident; it has served as an incendiary 'Mech for centuries, and has only undergone minor updates that rarely detract from its primary role. Due to its value as a niche combatant, most Firestarters are not assigned to standard lances in a force's TOE. Instead, they are often attached to forces on a company or even regimental level, where they act as force multipliers for these larger commands. It was only the sudden and real shortage of BattleMechs during the Succession Wars that would lead to the inclusion of the Firestarter in more generalized commands.
+overview:Originally intended as a mobile incendiary ’Mech, the Firestarter evolved into a decent scouting and reconnaissance platform.
 
-Capabilities: The many Flamers on the Firestarter betray its main purpose. As an incendiary platform, the 'Mech is often deployed to scout, interdict, or screen other 'Mechs in wooded or grassy terrain. Its armor and firepower also make it effective against other lighter 'Mechs, and it can quickly break contact with hostile forces by starting fires as needed. The Succession Wars would bring forth a darker side of the Firestarter; many would be used for scorched-earth tactics, denying assets to the enemy even in retreat.
+capabilities:Despite being shielded by five and a half tons of armor and capable of jumping 180 meters, the Firestarter was powerless against medium or heavyweight opponents. Instead, an entire strategy was built around its ability to cause wildfires, with strategically positioned blazes routing an opponent or covering a withdrawal and impeding any pursuit. Firestarter MechWarriors enjoyed setting fire to densely forested areas when enemy 'Mechs marched through them, as well as any buildings where the enemy was hiding. 
+Other applications for the 'Mech included scorched earth tactics, though this grew less common as it became more important to capture rather than destroy the declining amount of precious resources, or leading units of Wasps and Stingers in deep penetration scouting and light raiding operations.This approach altered in the later Succession Wars when it was discovered that the Firestarter could not only set flames to prevent an enemy from following it, but also clear ambush spots for the advancing of friendly forces.
 
-Deployment: Argile Technologies produced many Firestarters during the height of the Star League. Although the company's destruction would temporarily stop production, Coventry MetalWorks would claim the design and continue manufacturing the design. The rarest "Mirage" FS9-M variant modified the chassis to turn the Firestarter into a more conventional scout 'Mech. Most concentrated in Lyran hands, the Skye Rangers commonly fielded at least a lance of the design until the FS9-M's extinction in the aftermath of the Jihad.
+deployment:Nicknamed the Mirage, this variant of the Firestarter debuted in 2893 and converts it from an incendiary 'Mech to a frontline 'Mech by removing the flamers and adding in their place two small lasers and three tons of armor. The variant was in production for only one year before the catastrophic battle which transformed the Argile plant, and the capital of Skye, into a desert wasteland. The Skye Rangers maintained several Mirages, including a lance with one arm painted black in commemoration.
 
-systemmanufacturer:CHASSIS:Argile
-systemmode:CHASSIS:H/09
-systemmanufacturer:ENGINE:Omni
-systemmode:ENGINE:210
-systemmanufacturer:ARMOR:Livingston
-systemmode:ARMOR:Ceramics
-systemmanufacturer:COMMUNICATIONS:Cyclops
-systemmode:COMMUNICATIONS:14
-systemmanufacturer:TARGETING:Tansech
-systemmode:TARGETING:C39-97
+history:Firestarters, both ancient and contemporary, can still be found in abundance among planetary militias and House troops. Even though Blakist forces have taken over CMW's principal plant on Coventry, spare parts are still accessible from other Firestarter producers (including LAW, Ceres Metals, Defiance, and Independence Weaponry). Loki field offices near the Circinus Federation frontier are concerned about reports of a new variety using endo steel technology on Federation- occupied worlds. With its particular load-out, this new variation appears to be designed to spread chaos and destruction. Firestarters have also been seen in Level II formations with Blakist soldiers in their Protectorate, most frequently at "police demonstrations" and guarding suspected prison sites. These versions are thought to be Coventry goods.
+
+manufacturer:Argile Technologies
+primaryfactory:Skye
+systemmanufacturer:CHASSIS:Argile H/09
+systemmanufacturer:ENGINE:Omni 210
+systemmanufacturer:ARMOR:Livingston Ceramics
+systemmanufacturer:JUMPJET:Luxor Load Lifters
+systemmanufacturer:COMMUNICATIONS:Cyclops 14
+systemmanufacturer:TARGETING:Tansech C30-97

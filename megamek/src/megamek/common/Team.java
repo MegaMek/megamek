@@ -245,16 +245,4 @@ public final class Team extends TurnOrdered {
     public void setInitCompensationBonus(int initCompBonus) {
         players.forEach(p -> p.setInitCompensationBonus(initCompBonus));
     }
-
-    /**
-     * cycle through entities on team and collect all the airborne VTOL/WIGE
-     *
-     * @return a vector of relevant entity ids
-     */
-    // TODO : remove from Team
-    public Vector<Integer> getAirborneVTOL() {
-        Vector<Integer> airborneVtolIDs = new Vector<>();
-        players.forEach(p -> airborneVtolIDs.addAll(p.getAirborneVTOL()));
-        return airborneVtolIDs;
-    }
 }

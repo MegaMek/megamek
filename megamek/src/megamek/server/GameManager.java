@@ -1130,7 +1130,7 @@ public class GameManager implements IGameManager {
      * Called at the beginning of certain phases to make every player not ready.
      */
     private void resetPlayersDone() {
-        if (getGame().getPhase().isReport()) {
+        if ((getGame().getPhase().isReport()) && (!getGame().getPhase().isVictory())) {
             return;
         }
 
@@ -1833,6 +1833,7 @@ public class GameManager implements IGameManager {
             case END_REPORT:
                 resetActivePlayersDone();
                 sendReport();
+                entityAllUpdate();
                 if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
@@ -2690,7 +2691,7 @@ public class GameManager implements IGameManager {
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false);
         } else {
             // Roll for initiative on the teams.
-            TurnOrdered.rollInitiative(game.getTeamsVector(),
+            TurnOrdered.rollInitiative(game.getTeams(),
                     game.getOptions().booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)
                             && !game.shouldDeployThisRound());
         }
@@ -2937,8 +2938,7 @@ public class GameManager implements IGameManager {
         Hashtable<Team, TurnVectors> allTeamTurns = new Hashtable<>(nTeams);
         Hashtable<Team, int[]> evenTrackers = new Hashtable<>(nTeams);
         int numTeamsMoving = 0;
-        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements(); ) {
-            final Team team = loop.nextElement();
+        for (Team team : game.getTeams()) {
             allTeamTurns.put(team, team.determineTeamOrder(game));
 
             // Track both the number of times we've checked the team for
@@ -2953,7 +2953,7 @@ public class GameManager implements IGameManager {
         }
 
         // Now, generate the global order of all teams' turns.
-        TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeamsVector(), game);
+        TurnVectors team_order = TurnOrdered.generateTurnOrder(game.getTeams(), game);
 
         // Now, we collect everything into a single vector.
         Vector<GameTurn> turns = initGameTurnsWithStranded(team_order);
@@ -3135,9 +3135,7 @@ public class GameManager implements IGameManager {
                 }
             }
         } else {
-            for (Enumeration<Team> i = game.getTeams(); i.hasMoreElements(); ) {
-                final Team team = i.nextElement();
-
+            for (Team team : game.getTeams()) {
                 // Teams with no active players can be ignored
                 if (team.isObserverTeam()) {
                     continue;
@@ -4496,7 +4494,7 @@ public class GameManager implements IGameManager {
                 addReport(r);
                 ChargeAttackAction caa = new ChargeAttackAction(entity.getId(),
                         crashDropShip.getTargetType(),
-                        crashDropShip.getTargetId(),
+                        crashDropShip.getId(),
                         crashDropShip.getPosition());
                 ToHitData toHit = caa.toHit(game, true);
                 resolveChargeDamage(entity, crashDropShip, toHit, direction);
@@ -4619,7 +4617,7 @@ public class GameManager implements IGameManager {
                             || (target instanceof Aero)) {
                         ChargeAttackAction caa = new ChargeAttackAction(
                                 entity.getId(), target.getTargetType(),
-                                target.getTargetId(), target.getPosition());
+                                target.getId(), target.getPosition());
                         ToHitData toHit = caa.toHit(game, true);
 
                         // roll
@@ -6718,7 +6716,7 @@ public class GameManager implements IGameManager {
                     if (target != null) {
                         ChargeAttackAction caa = new ChargeAttackAction(
                                 entity.getId(), target.getTargetType(),
-                                target.getTargetId(), target.getPosition());
+                                target.getId(), target.getPosition());
                         entity.setDisplacementAttack(caa);
                         game.addCharge(caa);
                         charge = caa;
@@ -6736,7 +6734,7 @@ public class GameManager implements IGameManager {
                     if (target != null) {
                         AirmechRamAttackAction raa = new AirmechRamAttackAction(
                                 entity.getId(), target.getTargetType(),
-                                target.getTargetId(), target.getPosition());
+                                target.getId(), target.getPosition());
                         entity.setDisplacementAttack(raa);
                         entity.setRamming(true);
                         game.addCharge(raa);
@@ -6773,7 +6771,7 @@ public class GameManager implements IGameManager {
 
                     // if it's a valid target, then simply pass along the type and ID
                     if (target != null) {
-                        targetID = target.getTargetId();
+                        targetID = target.getId();
                         targetType = target.getTargetType();
                         // if the target has become invalid somehow, or was incorrectly declared in the first place
                         // log the error, then put some defaults in for the DFA and proceed as if the target had been moved/destroyed
@@ -6815,7 +6813,7 @@ public class GameManager implements IGameManager {
                 if (entity.canRam()) {
                     Targetable target = step.getTarget(game);
                     RamAttackAction raa = new RamAttackAction(entity.getId(),
-                            target.getTargetType(), target.getTargetId(),
+                            target.getTargetType(), target.getId(),
                             target.getPosition());
                     entity.setRamming(true);
                     game.addRam(raa);
@@ -10949,11 +10947,7 @@ public class GameManager implements IGameManager {
      * @param mf The <code>Minefield</code> to be revealed
      */
     private void revealMinefield(Minefield mf) {
-        Enumeration<Team> teams = game.getTeams();
-        while (teams.hasMoreElements()) {
-            Team team = teams.nextElement();
-            revealMinefield(team, mf);
-        }
+        game.getTeams().forEach(team -> revealMinefield(team, mf));
     }
 
     /**
@@ -10993,12 +10987,10 @@ public class GameManager implements IGameManager {
      * LOS. If so, then it reveals the mine
      */
     private void checkForRevealMinefield(Minefield mf, Entity layer) {
-        Enumeration<Team> teams = game.getTeams();
         // loop through each team and determine if they can see the mine, then
         // loop through players on team
         // and reveal the mine
-        while (teams.hasMoreElements()) {
-            Team team = teams.nextElement();
+        for (Team team : game.getTeams()) {
             boolean canSee = false;
 
             // the players own team can always see the mine
@@ -12646,9 +12638,7 @@ public class GameManager implements IGameManager {
             int teamId = player.getTeam();
 
             if (teamId != Player.TEAM_NONE) {
-                Enumeration<Team> teams = game.getTeams();
-                while (teams.hasMoreElements()) {
-                    Team team = teams.nextElement();
+                for (Team team : game.getTeams()) {
                     if (team.getId() == teamId) {
                         for (Player teamPlayer : team.players()) {
                             if (teamPlayer.getId() != player.getId()) {
@@ -29197,7 +29187,7 @@ public class GameManager implements IGameManager {
         delForces.stream().map(forces::getFullSubForces).forEach(allSubForces::addAll);
         delForces.removeIf(allSubForces::contains);
         Set<Entity> delEntities = new HashSet<>();
-        delForces.stream().map(forces::getFullEntities).forEach(delEntities::addAll);
+        delForces.stream().map(forces::getFullEntities).map(ForceAssignable::filterToEntityList).forEach(delEntities::addAll);
 
         // Unload units and disconnect any C3 networks
         Set<Entity> updateCandidates = new HashSet<>();
@@ -31906,7 +31896,7 @@ public class GameManager implements IGameManager {
         if ((target != null) && (target instanceof Entity)) {
             Entity targetEntity = (Entity) target;
             targetEntity.setStruck(true);
-            targetEntity.addAttackedByThisTurn(target.getTargetId());
+            targetEntity.addAttackedByThisTurn(target.getId());
             creditKill(targetEntity, game.getEntity(cen));
         }
     }
@@ -34070,9 +34060,8 @@ public class GameManager implements IGameManager {
         int damage_bonus = Math.max(0, game.getPlanetaryConditions().getWindStrength()
                 - PlanetaryConditions.WI_MOD_GALE);
         // cycle through each team and damage 1d6 airborne VTOL/WiGE
-        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements(); ) {
-            Team team = loop.nextElement();
-            Vector<Integer> airborne = team.getAirborneVTOL();
+        for (Team team : game.getTeams()) {
+            Vector<Integer> airborne = getAirborneVTOL(team);
             if (!airborne.isEmpty()) {
                 // how many units are affected
                 int unitsAffected = Math.min(Compute.d6(), airborne.size());
@@ -34092,6 +34081,21 @@ public class GameManager implements IGameManager {
         }
         Report.addNewline(vPhaseReport);
         return vFullReport;
+    }
+
+    /**
+     * cycle through entities on team and collect all the airborne VTOL/WIGE
+     *
+     * @return a vector of relevant entity ids
+     */
+    public Vector<Integer> getAirborneVTOL(Team team) {
+        // a vector of unit ids
+        Vector<Integer> units = new Vector<>();
+        for (Enumeration<Player> loop = team.getPlayers(); loop.hasMoreElements(); ) {
+            Player player = loop.nextElement();
+            units.addAll(player.getAirborneVTOL());
+        }
+        return units;
     }
 
     /**

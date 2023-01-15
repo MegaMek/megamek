@@ -113,7 +113,7 @@ class LobbyMekPopup {
         // A set of all selected entities and all entities in selected forces and their subforces
         Set<Entity> joinedEntities = new HashSet<>(entities);
         for (Force force: forces) {
-            joinedEntities.addAll(game.getForces().getFullEntities(force));
+            joinedEntities.addAll(ForceAssignable.filterToEntityList(game.getForces().getFullEntities(force)));
         }  
 
         // Find certain unit features among all units the player can access

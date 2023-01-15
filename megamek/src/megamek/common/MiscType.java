@@ -559,7 +559,7 @@ public class MiscType extends EquipmentType {
                     return defaultRounding.round(e.getWeightEngine(entity, defaultRounding) / 10.0, entity);
                 }
 
-                return RoundWeight.nearestTon(entity.getWeight() * (isClan() ? 0.04 : 0.05));
+                return Math.max(RoundWeight.nearestTon(entity.getWeight() * (isClan() ? 0.04 : 0.05)), 1);
             }
         } else if (hasFlag(F_QUAD_TURRET) || hasFlag(F_SHOULDER_TURRET) || hasFlag(F_HEAD_TURRET)) {
             // Turrets weight 10% of the weight of equipment in them, not counting Heat Sinks, Ammo and Armor
@@ -1085,9 +1085,9 @@ public class MiscType extends EquipmentType {
             return 1 + (int) Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_MASC)) {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return (int) Math.round(entity.getWeight() / 25.0);
+                return Math.max((int) Math.round(entity.getWeight() / 25.0), 1);
             }
-            return (int) Math.round(entity.getWeight() / 20.0);
+            return Math.max((int) Math.round(entity.getWeight() / 20.0), 1);
 
         } else if ((entity instanceof Aero)
                 && (hasFlag(F_REACTIVE) || hasFlag(F_REFLECTIVE) || hasFlag(F_ANTI_PENETRATIVE_ABLATIVE)

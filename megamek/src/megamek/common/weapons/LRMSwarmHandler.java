@@ -272,10 +272,10 @@ public class LRMSwarmHandler extends LRMHandler {
                 vPhaseReport.addElement(r);
                 weapon.setUsedThisRound(false);
                 WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                        swarmTarget.getTargetId(), waa.getWeaponId());
+                        swarmTarget.getId(), waa.getWeaponId());
                 newWaa.setSwarmingMissiles(true);
                 newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-                newWaa.setOldTargetId(target.getTargetId());
+                newWaa.setOldTargetId(target.getId());
                 newWaa.setOldTargetType(target.getTargetType());
                 newWaa.setOriginalTargetId(waa.getOriginalTargetId());
                 newWaa.setOriginalTargetType(waa.getOriginalTargetType());
@@ -376,10 +376,10 @@ public class LRMSwarmHandler extends LRMHandler {
             vPhaseReport.addElement(r);
             weapon.setUsedThisRound(false);
             WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                    swarmTarget.getTargetId(), waa.getWeaponId());
+                    swarmTarget.getId(), waa.getWeaponId());
             newWaa.setSwarmingMissiles(true);
             newWaa.setSwarmMissiles(swarmMissilesNowLeft);
-            newWaa.setOldTargetId(target.getTargetId());
+            newWaa.setOldTargetId(target.getId());
             newWaa.setOldTargetType(target.getTargetType());
             newWaa.setOriginalTargetId(waa.getOriginalTargetId());
             newWaa.setOriginalTargetType(waa.getOriginalTargetType());

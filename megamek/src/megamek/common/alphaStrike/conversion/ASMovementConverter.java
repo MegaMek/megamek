@@ -265,8 +265,14 @@ final class ASMovementConverter {
                 report.addLine(type, "Infantry (motorized)", "m");
                 return "m";
             case INF_JUMP:
-                report.addLine(type, "Infantry (jump)", "j");
-                return "j";
+                if (entity.getJumpMP(false) > 0) {
+                    report.addLine(type, "Infantry (jump)", "j");
+                    return "j";
+                } else {
+                    // BA with DWP/DMP equipment may have their jump MP reduced to 0 and should count as leg
+                    report.addLine(type, "Infantry (jump MP reduced to 0)", "f");
+                    return "f";
+                }
             case WIGE:
                 report.addLine(type, "Wige", "g");
                 return "g";

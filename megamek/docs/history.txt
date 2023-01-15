@@ -21,6 +21,7 @@ VERSION HISTORY:
 + Data: Various Data fixes (RAT name shortening, New Rec Guides)
 + PR #4100: Base Components: Adding JDisableablePanel
 + PR #4094: Disconnecting Entity from MM's Force to facilitate other game types
++ PR #4111: Super Cooled Myomer is now operational in MM games
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

@@ -20,7 +20,9 @@ package megamek.common.alphaStrike;
 
 import megamek.client.ui.swing.calculationReport.CalculationReport;
 import megamek.client.ui.swing.calculationReport.DummyCalculationReport;
+import megamek.common.ForceAssignable;
 import megamek.common.UnitRole;
+import megamek.common.force.Force;
 import megamek.common.options.Quirks;
 
 import java.io.Serializable;
@@ -36,7 +38,7 @@ import java.util.Set;
  * @author Neoancient
  * @author Simon (Juliez)
  */
-public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
+public final class AlphaStrikeElement implements Serializable, ASCardDisplayable, ForceAssignable,
         ASSpecialAbilityCollector {
 
     static final int RANGEBANDS_SML = 3;
@@ -62,6 +64,11 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
     private int mulId = -1;
     private int pointValue;
     private transient CalculationReport conversionReport = new DummyCalculationReport();
+
+    private String forceString = "";
+    private int forceId = Force.NO_FORCE;
+    private int id;
+    private int ownerId;
 
     private ASUnitType asUnitType;
     private int size;
@@ -483,5 +490,35 @@ public class AlphaStrikeElement implements Serializable, ASCardDisplayable,
      */
     public Set<String> getMovementModes() {
         return movement.keySet();
+    }
+
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String getForceString() {
+        return forceString;
+    }
+
+    @Override
+    public void setForceString(String newForceString) {
+        forceString = newForceString;
+    }
+
+    @Override
+    public int getForceId() {
+        return forceId;
+    }
+
+    @Override
+    public void setForceId(int newId) {
+        forceId = newId;
+    }
+
+    @Override
+    public int getOwnerId() {
+        return ownerId;
     }
 }

@@ -685,10 +685,10 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 || (mounted.getType() instanceof CapitalMissileWeapon
                         && Compute.isGroundToGround(ce(), target)))) {
             waa = new WeaponAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum);
+                    target.getId(), weaponNum);
         } else {
             waa = new ArtilleryAttackAction(cen, target.getTargetType(),
-                    target.getTargetId(), weaponNum, game);
+                    target.getId(), weaponNum, game);
         }
 
         if ((mounted.getLinked() != null)

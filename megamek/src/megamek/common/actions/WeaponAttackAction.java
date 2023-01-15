@@ -504,7 +504,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                             || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (munition == AmmoType.M_SEMIGUIDED)) {
                 for (TagInfo ti : game.getTagInfo()) {
-                    if (target.getTargetId() == ti.target.getTargetId()) {
+                    if (target.getId() == ti.target.getId()) {
                         spotter = game.getEntity(ti.attackerId);
                     }
                 }
@@ -544,9 +544,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // Swarm should draw LoS between targets, not attacker, since
                 // we don't want LoS to be blocked
                 if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                    los = LosEffects.calculateLos(game, swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
+                    los = LosEffects.calculateLos(game, swarmPrimaryTarget.getId(), swarmSecondaryTarget);
                 } else {
-                    los = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), swarmPrimaryTarget);
+                    los = LosEffects.calculateLos(game, swarmSecondaryTarget.getId(), swarmPrimaryTarget);
                 }
             }
 
@@ -568,9 +568,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 // Swarm should draw LoS between targets, not attacker, since
                 // we don't want LoS to be blocked
                 if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                    los = LosEffects.calculateLos(game, swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
+                    los = LosEffects.calculateLos(game, swarmPrimaryTarget.getId(), swarmSecondaryTarget);
                 } else {
-                    los = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), swarmPrimaryTarget);
+                    los = LosEffects.calculateLos(game, swarmSecondaryTarget.getId(), swarmPrimaryTarget);
                 }
             } else {
                 // For everything else, set up a plain old LOS
@@ -1006,7 +1006,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.getGrappled() != Entity.NONE) {
             int grapple = ae.getGrappled();
             // It can only target the unit it is grappling with
-            if (grapple != target.getTargetId()) {
+            if (grapple != target.getId()) {
                 return Messages.getString("WeaponAttackAction.MustTargetGrappled");
             }
             if (weapon != null) {
@@ -1680,7 +1680,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                         }
 
                         WeaponAttackAction prevAttk = (WeaponAttackAction) ea;
-                        if ((prevAttk.getEntityId() == ae.getId()) && (prevAttk.getTargetId() != target.getTargetId())
+                        if ((prevAttk.getEntityId() == ae.getId()) && (prevAttk.getTargetId() != target.getId())
                                 && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                             return Messages.getString("WeaponAttackAction.CantSplitFire");
                         }
@@ -1863,7 +1863,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     if (prevAttack.getEntityId() == attackerId) {
                         Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                         if (prevWeapon.getType().getName().equals("Compact Narc")) {
-                            if (prevAttack.getTargetId() != target.getTargetId()) {
+                            if (prevAttack.getTargetId() != target.getId()) {
                                 return Messages.getString("WeaponAttackAction.OneTargetForCNarc");
                             }
                         }
@@ -1890,7 +1890,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                     WeaponAttackAction prevAttack = (WeaponAttackAction) o;
                     // Is this an attack from this entity to a different target?
-                    if (prevAttack.getEntityId() == ae.getId() && prevAttack.getTargetId() != target.getTargetId()) {
+                    if (prevAttack.getEntityId() == ae.getId() && prevAttack.getTargetId() != target.getId()) {
                         Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                         WeaponType prevWtype = (WeaponType) prevWeapon.getType();
                         if (prevWeapon.getType().hasFlag(WeaponType.F_TASER)
@@ -4175,7 +4175,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // target movement - ignore for pointblank shots from hidden units
         if ((te != null) && !isPointBlankShot) {
-            ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getTargetId());
+            ToHitData thTemp = Compute.getTargetMovementModifier(game, target.getId());
             toHit.append(thTemp);
             toSubtract += thTemp.getValue();
 
@@ -4328,7 +4328,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // blood stalker SPA
         if (ae.getBloodStalkerTarget() > Entity.NONE) {
-            if (ae.getBloodStalkerTarget() == target.getTargetId()) {
+            if (ae.getBloodStalkerTarget() == target.getId()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BloodStalkerTarget"));
             } else {
                 toHit.addModifier(+2, Messages.getString("WeaponAttackAction.BloodStalkerNonTarget"));
@@ -4804,7 +4804,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.addModifier(-toSubtract, Messages.getString("WeaponAttackAction.OriginalTargetMods"));
         toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt, aimingMode));
         toHit.append(Compute.getTargetTerrainModifier(game,
-                game.getTarget(swarmSecondaryTarget.getTargetType(), swarmSecondaryTarget.getTargetId()), eistatus,
+                game.getTarget(swarmSecondaryTarget.getTargetType(), swarmSecondaryTarget.getId()), eistatus,
                 inSameBuilding, underWater));
         toHit.setCover(LosEffects.COVER_NONE);
         
@@ -4829,9 +4829,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // attacker and the secondary target, but we have received rules
         // clarifications on the old forums indicating that this is correct
         if (swarmPrimaryTarget.getTargetType() != Targetable.TYPE_ENTITY) {
-            swarmlos = LosEffects.calculateLos(game, swarmSecondaryTarget.getTargetId(), target);
+            swarmlos = LosEffects.calculateLos(game, swarmSecondaryTarget.getId(), target);
         } else {
-            swarmlos = LosEffects.calculateLos(game, swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
+            swarmlos = LosEffects.calculateLos(game, swarmPrimaryTarget.getId(), swarmSecondaryTarget);
         }
 
         // reset cover
@@ -4846,7 +4846,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         // target in water?
         if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-            Entity oldEnt = game.getEntity(swarmSecondaryTarget.getTargetId());
+            Entity oldEnt = game.getEntity(swarmSecondaryTarget.getId());
             toHit.append(Compute.getTargetMovementModifier(game, oldEnt.getId()));
             // target in partial water - depth 1 for most units
             int partialWaterLevel = 1;

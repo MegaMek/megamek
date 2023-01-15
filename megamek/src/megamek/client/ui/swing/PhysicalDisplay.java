@@ -466,37 +466,37 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if ((leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)) {
                 attacks.addElement(new PunchAttackAction(cen, target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         PunchAttackAction.BOTH, leftBladeExtend,
                         rightBladeExtend, zweihandering));
                 if (isMeleeMaster && !zweihandering) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
+                            .getTargetType(), target.getId(),
                             PunchAttackAction.BOTH, leftBladeExtend,
                             rightBladeExtend, zweihandering));
                 }
             } else if (leftArm.getValue() < rightArm.getValue()) {
                 attacks.addElement(new PunchAttackAction(cen, target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         PunchAttackAction.LEFT, leftBladeExtend,
                         rightBladeExtend, zweihandering));
                 if (isMeleeMaster  && !zweihandering) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
+                            .getTargetType(), target.getId(),
                             PunchAttackAction.LEFT, leftBladeExtend,
                             rightBladeExtend, zweihandering));
                 }
             } else {
                 attacks.addElement(new PunchAttackAction(cen, target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         PunchAttackAction.RIGHT, leftBladeExtend,
                         rightBladeExtend, zweihandering));
                 if (isMeleeMaster && !zweihandering) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
-                            .getTargetType(), target.getTargetId(),
+                            .getTargetType(), target.getId(),
                             PunchAttackAction.RIGHT, leftBladeExtend,
                             rightBladeExtend, zweihandering));
                 }
@@ -517,7 +517,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         // create and queue a searchlight action
         SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(),
-                target.getTargetId());
+                target.getId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -598,11 +598,11 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
 
             attacks.addElement(new KickAttackAction(cen,
-                    target.getTargetType(), target.getTargetId(), attackSide));
+                    target.getTargetType(), target.getId(), attackSide));
             if (isMeleeMaster) {
                 // hit 'em again!
                 attacks.addElement(new KickAttackAction(cen, target
-                        .getTargetType(), target.getTargetId(), attackSide));
+                        .getTargetType(), target.getId(), attackSide));
             }
             ready();
         }
@@ -626,7 +626,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
 
             attacks.addElement(new PushAttackAction(cen,
-                    target.getTargetType(), target.getTargetId(), target
+                    target.getTargetType(), target.getId(), target
                             .getPosition()));
             ready();
         }
@@ -650,7 +650,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
 
             attacks.addElement(new TripAttackAction(cen,
-                    target.getTargetType(), target.getTargetId()));
+                    target.getTargetType(), target.getId()));
             ready();
         }
     }
@@ -687,7 +687,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 doSearchlight();
             }
 
-            attacks.addElement(new GrappleAttackAction(cen, target.getTargetType(), target.getTargetId()));
+            attacks.addElement(new GrappleAttackAction(cen, target.getTargetType(), target.getId()));
             ready();
         }
     }
@@ -707,7 +707,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 doSearchlight();
             }
 
-            attacks.addElement(new BreakGrappleAttackAction(cen, target.getTargetType(), target.getTargetId()));
+            attacks.addElement(new BreakGrappleAttackAction(cen, target.getTargetType(), target.getId()));
             ready();
         }
     }
@@ -717,7 +717,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      */
     public void vibroclawatt() {
         BAVibroClawAttackAction act = new BAVibroClawAttackAction(cen, target.getTargetType(),
-                target.getTargetId());
+                target.getId());
         ToHitData toHit = act.toHit(clientgui.getClient().getGame());
 
         String title = Messages.getString("PhysicalDisplay.BAVibroClawDialog.title",
@@ -784,7 +784,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
 
             attacks.addElement(new JumpJetAttackAction(cen, target
-                    .getTargetType(), target.getTargetId(), leg));
+                    .getTargetType(), target.getId(), leg));
             ready();
         }
     }
@@ -898,12 +898,12 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
 
             attacks.addElement(new ClubAttackAction(cen,
-                    target.getTargetType(), target.getTargetId(), club, ash
+                    target.getTargetType(), target.getId(), club, ash
                             .getAimTable(), zweihandering));
             if (isMeleeMaster && !zweihandering) {
                 // hit 'em again!
                 attacks.addElement(new ClubAttackAction(cen, target
-                        .getTargetType(), target.getTargetId(), club, ash
+                        .getTargetType(), target.getId(), club, ash
                         .getAimTable(), zweihandering));
             }
             ready();
@@ -930,7 +930,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             }
 
             attacks.addElement(new ProtomechPhysicalAttackAction(cen, target
-                    .getTargetType(), target.getTargetId()));
+                    .getTargetType(), target.getId()));
             ready();
         }
     }
@@ -944,7 +944,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             attacks.addElement(new LayExplosivesAttackAction(cen, target.getTargetType(),
-                    target.getTargetId()));
+                    target.getId()));
             ready();
         }
     }
@@ -1036,17 +1036,17 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                 switch (index) {
                     case 0:
                         attacks.addElement(new BrushOffAttackAction(cen, target
-                                .getTargetType(), target.getTargetId(),
+                                .getTargetType(), target.getId(),
                                 BrushOffAttackAction.LEFT));
                         break;
                     case 1:
                         attacks.addElement(new BrushOffAttackAction(cen, target
-                                .getTargetType(), target.getTargetId(),
+                                .getTargetType(), target.getId(),
                                 BrushOffAttackAction.RIGHT));
                         break;
                     case 2:
                         attacks.addElement(new BrushOffAttackAction(cen, target
-                                .getTargetType(), target.getTargetId(),
+                                .getTargetType(), target.getId(),
                                 BrushOffAttackAction.BOTH));
                         break;
                 }
@@ -1062,7 +1062,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if (input != null) {
                 disableButtons();
                 attacks.addElement(new BrushOffAttackAction(cen, target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         BrushOffAttackAction.LEFT));
                 ready();
 
@@ -1077,7 +1077,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if (input != null) {
                 disableButtons();
                 attacks.addElement(new BrushOffAttackAction(cen, target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         BrushOffAttackAction.RIGHT));
                 ready();
 
@@ -1091,7 +1091,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * Thrash at the target, unless the player cancels the action.
      */
     void thrash() {
-        ThrashAttackAction act = new ThrashAttackAction(cen, target.getTargetType(), target.getTargetId());
+        ThrashAttackAction act = new ThrashAttackAction(cen, target.getTargetType(), target.getId());
         ToHitData toHit = act.toHit(clientgui.getClient().getGame());
 
         String title = Messages.getString("PhysicalDisplay.TrashDialog.title", target.getDisplayName());

@@ -82,57 +82,57 @@ public class PhysicalOption {
     public AbstractAttackAction toAction() {
         switch (type) {
             case PUNCH_LEFT:
-                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
                         PunchAttackAction.LEFT);
             case PUNCH_RIGHT:
-                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
                         PunchAttackAction.RIGHT);
             case PUNCH_BOTH:
-                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
+                return new PunchAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
                         PunchAttackAction.BOTH);
             case KICK_LEFT:
-                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
+                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
                         KickAttackAction.LEFT);
             case KICK_RIGHT:
-                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getTargetId(),
+                return new KickAttackAction(attacker.getId(), target.getTargetType(), target.getId(),
                         KickAttackAction.RIGHT);
             case USE_CLUB:
                 if (club != null) {
                     return new ClubAttackAction(attacker.getId(), target.getTargetType(), target
-                            .getTargetId(), club, ToHitData.HIT_NORMAL, false);
+                            .getId(), club, ToHitData.HIT_NORMAL, false);
                 }
                 return null;
             case PUSH_ATTACK:
-                return new PushAttackAction(attacker.getId(), target.getTargetId(),
+                return new PushAttackAction(attacker.getId(), target.getId(),
                         target.getPosition());
             case TRIP_ATTACK:
                 return null; // Trip attack not implemented yet
             case BRUSH_LEFT:
                 if (target == null) {
                     return new BrushOffAttackAction(attacker.getId(), i_target
-                            .getTargetType(), i_target.getTargetId(),
+                            .getTargetType(), i_target.getId(),
                             BrushOffAttackAction.LEFT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         BrushOffAttackAction.LEFT);
             case BRUSH_RIGHT:
                 if (target == null) {
                     return new BrushOffAttackAction(attacker.getId(), i_target
-                            .getTargetType(), i_target.getTargetId(),
+                            .getTargetType(), i_target.getId(),
                             BrushOffAttackAction.RIGHT);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         BrushOffAttackAction.RIGHT);
             case BRUSH_BOTH:
                 if (target == null) {
                     return new BrushOffAttackAction(attacker.getId(), i_target
-                            .getTargetType(), i_target.getTargetId(),
+                            .getTargetType(), i_target.getId(),
                             BrushOffAttackAction.BOTH);
                 }
                 return new BrushOffAttackAction(attacker.getId(), target
-                        .getTargetType(), target.getTargetId(),
+                        .getTargetType(), target.getId(),
                         BrushOffAttackAction.BOTH);
                 /*
                  * case THRASH_INF : return new

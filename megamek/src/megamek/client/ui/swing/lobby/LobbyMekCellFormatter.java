@@ -722,7 +722,7 @@ class LobbyMekCellFormatter {
         }
         
         // BV
-        List<Entity> fullEntities = lobby.game().getForces().getFullEntities(force);
+        List<Entity> fullEntities = ForceAssignable.filterToEntityList(lobby.game().getForces().getFullEntities(force));
         result.append(guiScaledFontHTML(color, size));
         result.append(DOT_SPACER);
         int totalBv = fullEntities.stream().filter(e -> !e.isPartOfFighterSquadron()).mapToInt(Entity::calculateBattleValue).sum();

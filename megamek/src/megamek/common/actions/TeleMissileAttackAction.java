@@ -42,7 +42,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
     private boolean advancedPD = false; // true if advanced StratOps game rule is on
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
-        super(attacker.getId(), target.getTargetType(), target.getTargetId());
+        super(attacker.getId(), target.getTargetType(), target.getId());
     }
 
     public static int getDamageFor(Entity entity) {      

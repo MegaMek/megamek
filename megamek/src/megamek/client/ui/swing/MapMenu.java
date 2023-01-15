@@ -700,7 +700,7 @@ public class MapMenu extends JPopupMenu {
                     int weaponNum = weapToId.get(weapon);
                     // Used to determine if attack is valid
                     WeaponAttackAction waa = new WeaponAttackAction(myEntity.getId(),
-                            target.getTargetType(), target.getTargetId(), weaponNum);
+                            target.getTargetType(), target.getId(), weaponNum);
                     // Only fire weapons that have a chance to hit
                     int toHitVal = waa.toHit(game).getValue();
                     if (toHitVal <= 12) {

@@ -17,11 +17,9 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.UIUtil;
+import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Team;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 
@@ -32,6 +30,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
+import java.util.Comparator;
+import java.util.List;
 
 public class PlayerListDialog extends JDialog implements ActionListener, IPreferenceChangeListener {
 
@@ -65,8 +65,6 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         this.setTitle(MSG_TITLE);
         this.client = client;
         this.modal = modal;
-
-        client.getGame().addGameListener(gameListener);
 
         add(playerList, BorderLayout.CENTER);
         add(Box.createHorizontalStrut(20), BorderLayout.LINE_START);
@@ -109,6 +107,13 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
         refreshPlayerList(playerList, client, false);
     }
 
+    /** @return The game's players list sorted by id. */
+    private static List<Player> sortedPlayerList(IGame game) {
+        List<Player> playerList = game.getPlayersList();
+        playerList.sort(Comparator.comparingInt(Player::getId));
+        return playerList;
+    }
+
     /**
      * Refreshes the player list component with information from the game
      * object.
@@ -117,7 +122,7 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
             Client client, boolean displayTeam) {
         ((DefaultListModel<String>) playerList.getModel()).removeAllElements();
 
-        for (Player player : client.getGame().getPlayersVectorSorted()) {
+        for (Player player : sortedPlayerList(client.getGame())) {
             StringBuffer playerDisplay = new StringBuffer(String.format("%-12s", player.getName()));
 
             // Append team information
@@ -178,7 +183,7 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
 
     public Player getSelected() {
         if (!playerList.isSelectionEmpty()) {
-            return client.getGame().getPlayersVectorSorted().elementAt(playerList.getSelectedIndex());
+            return sortedPlayerList(client.getGame()).get(playerList.getSelectedIndex());
         }
 
         return null;
@@ -193,18 +198,6 @@ public class PlayerListDialog extends JDialog implements ActionListener, IPrefer
             }
         }
     }
-
-    private GameListener gameListener = new GameListenerAdapter() {
-        @Override
-        public void gamePhaseChange(GamePhaseChangeEvent e) {
-            switch (e.getOldPhase()) {
-                case VICTORY:
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     @Override
     protected void processWindowEvent(WindowEvent e) {

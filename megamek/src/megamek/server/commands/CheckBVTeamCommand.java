@@ -37,9 +37,7 @@ public class CheckBVTeamCommand extends ServerCommand {
         Player requestingPlayer = server.getGame().getPlayer(connId);
         
         server.sendServerChat(connId, "Remaining BV:");
-        Enumeration<Team> teamEnum = server.getGame().getTeams();
-        while (teamEnum.hasMoreElements()) {
-            Team team = teamEnum.nextElement();
+        for (Team team : server.getGame().getTeams()) {
             int initialTeamBV = 0;
             int currentTeamBV = 0;
             Enumeration<Player> playersEnum = team.getPlayers();

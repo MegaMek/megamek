@@ -130,10 +130,15 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     @Override
-    public int getTargetId() {
+    public int getId() {
         // All INarcPods of the same type from the
         // same team are interchangable targets.
         return ((team << 4) + type);
+    }
+
+    @Override
+    public int getOwnerId() {
+        return Player.PLAYER_NONE;
     }
 
     @Override

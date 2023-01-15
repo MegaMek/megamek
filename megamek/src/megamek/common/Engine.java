@@ -597,7 +597,7 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mech is walking.
      */
     public int getWalkHeat(Entity e) {
-        boolean hasSCM = ((e instanceof Mech) && ((Mech) e).hasWorkingSCM());
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
@@ -613,7 +613,7 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mech is running.
      */
     public int getRunHeat(Entity e) {
-        boolean hasSCM = ((e instanceof Mech) && ((Mech) e).hasWorkingSCM());
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:
@@ -629,7 +629,7 @@ public class Engine implements Serializable, ITechnology {
      * @return the heat generated while the mech is sprinting.
      */
     public int getSprintHeat(Entity e) {
-        boolean hasSCM = ((e instanceof Mech) && ((Mech) e).hasWorkingSCM());
+        boolean hasSCM = (e instanceof Mech) && e.hasWorkingSCM();
         switch (engineType) {
             case COMBUSTION_ENGINE:
             case FUEL_CELL:

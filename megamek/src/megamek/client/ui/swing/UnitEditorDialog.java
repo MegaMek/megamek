@@ -1164,6 +1164,7 @@ public class UnitEditorDialog extends JDialog {
                         || ((m != cs.getMount()) && (m != cs.getMount2()))) {
                     continue;
                 }
+
                 if (nhits < hits) {
                     cs.setHit(true);
                     cs.setDestroyed(true);

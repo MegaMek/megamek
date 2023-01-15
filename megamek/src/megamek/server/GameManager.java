@@ -3114,56 +3114,29 @@ public class GameManager implements IGameManager {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
-            if (deployment) {
-                r = new Report(1041, Report.PUBLIC);
-                addReport(r);
-                for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
-                    GameTurn t = e.nextElement();
-                    if (t instanceof GameTurn.SpecificEntityTurn) {
-                        Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
-                        if (entity.getDeployRound() == game.getRoundCount()) {
-                            r = new Report(1045);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(entity.getInitiative().toString());
-                            addReport(r);
-                        }
-                    } else {
-                        Player player = game.getPlayer(t.getPlayerNum());
-                        if (null != player) {
-                            r = new Report(1050, Report.PUBLIC);
-                            r.add(player.getColorForPlayer());
-                            addReport(r);
-                        }
+            r = new Report(1040, Report.PUBLIC);
+            addReport(r);
+            for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
+                GameTurn t = e.nextElement();
+                if (t instanceof GameTurn.SpecificEntityTurn) {
+                    Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
+                    if ((entity.getDeployRound() <= game.getRoundCount())
+                    || ((game.getRoundCount() > 1) && (entity.getDeployRound() == game.getRoundCount()))) {
+                        r = new Report(1045);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(entity.getInitiative().toString());
+                        addReport(r);
+                    }
+                } else {
+                    Player player = game.getPlayer(t.getPlayerNum());
+                    if (null != player) {
+                        r = new Report(1050, Report.PUBLIC);
+                        r.add(player.getColorForPlayer());
+                        addReport(r);
                     }
                 }
             }
-            if ((!deployment) || (game.getRoundCount() > 1)) {
-                r = new Report(1040, Report.PUBLIC);
-                addReport(r);
-                for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
-                    GameTurn t = e.nextElement();
-                    if (t instanceof GameTurn.SpecificEntityTurn) {
-                        Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
-                        if ((entity.getDeployRound() < game.getRoundCount())
-                        || ((game.getRoundCount() > 1) && (entity.getDeployRound() == game.getRoundCount()))) {
-                            r = new Report(1045);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(entity.getInitiative().toString());
-                            addReport(r);
-                        }
-                    } else {
-                        Player player = game.getPlayer(t.getPlayerNum());
-                        if (null != player) {
-                            r = new Report(1050, Report.PUBLIC);
-                            r.add(player.getColorForPlayer());
-                            addReport(r);
-                        }
-                    }
-                }
-            }
-
         } else {
             for (Team team : game.getTeams()) {
                 // Teams with no active players can be ignored

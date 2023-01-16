@@ -34128,8 +34128,7 @@ public class GameManager implements IGameManager {
     public Vector<Integer> getAirborneVTOL(Team team) {
         // a vector of unit ids
         Vector<Integer> units = new Vector<>();
-        for (Enumeration<Player> loop = team.getPlayers(); loop.hasMoreElements(); ) {
-            Player player = loop.nextElement();
+        for (Player player : team.players()) {
             units.addAll(player.getAirborneVTOL());
         }
         return units;

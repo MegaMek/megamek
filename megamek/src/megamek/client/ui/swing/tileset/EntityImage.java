@@ -466,7 +466,6 @@ public class EntityImage {
     /** Returns the damage decal based on damage level. */
     private Image getDamageDecal(Entity entity, int pos) {
         try {
-            var damage = dmgLevel;
             switch (dmgLevel) {
                 case Entity.DMG_LIGHT:
                     return getIM(PATH_LIGHT, entity.getShortName(), pos);

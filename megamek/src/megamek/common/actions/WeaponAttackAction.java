@@ -3029,7 +3029,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // SPA Environmental Specialist
         // Fog Specialist
         if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)
-                && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
+                && (wtype != null) && wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()
                 && (game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY)) {
             toHit.addModifier(-1, Messages.getString("WeaponAttackAction.FogSpec"));
         }

@@ -451,7 +451,7 @@ public class BattleArmor extends Infantry {
             }
         }
         if (null != game) {
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN) && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
                 j += 1;
             }
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)

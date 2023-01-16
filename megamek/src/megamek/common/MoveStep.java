@@ -2918,6 +2918,8 @@ public class MoveStep implements Serializable {
         final boolean isMech = getEntity() instanceof Mech;
         final boolean isAmphibious = cachedEntityState.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) || 
                 cachedEntityState.hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS);
+        final boolean isFogSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG);
+        final boolean isLightSpecialist = en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT);
         int nSrcEl = srcHex.getLevel() + prevEl;
         int nDestEl = destHex.getLevel() + elevation;
 
@@ -2947,12 +2949,12 @@ public class MoveStep implements Serializable {
             // Fog
             switch (game.getPlanetaryConditions().getFog()) {
                 case PlanetaryConditions.FOG_LIGHT:
-                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)) {
+                    if (!isFogSpecialist) {
                         mp += 1;
                     }
                     break;
                 case PlanetaryConditions.FOG_HEAVY:
-                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)) {
+                    if (!isFogSpecialist) {
                         mp += 2;
                     } else {
                         mp += 1;
@@ -2962,19 +2964,19 @@ public class MoveStep implements Serializable {
             // Light
             switch (game.getPlanetaryConditions().getLight()) {
                 case PlanetaryConditions.L_FULL_MOON:
-                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
+                    if (!isLightSpecialist) {
                         mp += 1;
                     }
                     break;
                 case  PlanetaryConditions.L_MOONLESS:
-                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
+                    if (!isLightSpecialist) {
                         mp += 2;
                     } else {
                         mp += 1;
                     }
                     break;
                 case PlanetaryConditions.L_PITCH_BLACK:
-                    if (!en.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_LIGHT)) {
+                    if (!isLightSpecialist) {
                         mp += 3;
                     } else {
                         mp += 1;

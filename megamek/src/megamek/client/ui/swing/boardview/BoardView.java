@@ -5459,6 +5459,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         txt.append("<div WIDTH=500>");
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
+            txt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%><TR><TD>");
             appendTerrainTooltip(txt, mhex);
 
             // Distance from the selected unit and a planned movement end point
@@ -5499,10 +5500,9 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         txt.append(Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM));
                     }
                 }
-
-                txt.append("</FONT></TD></TR></TABLE>");
             }
 
+            txt.append("</TD></TR></TABLE>");
             appendBuildingsTooltip(txt, mhex);
 
             if (displayInvalidHexInfo) {
@@ -5553,7 +5553,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
 
             txt.append("</TD></TR></TABLE>");
         }
-
 
         // check if it's on any flares
         for (FlareSprite fSprite : flareSprites) {
@@ -5714,7 +5713,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         Coords mcoords = mhex.getCoords();
-        txt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+        txt.append("<FONT color=\"black\">");
 
         txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
         txt.append("<br>");
@@ -5729,7 +5728,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 txt.append(name + "<BR>");
             }
         }
-        txt.append("</FONT></TD></TR></TABLE>");
+        txt.append("</FONT>");
 
     }
 
@@ -5849,7 +5848,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         // Table to add a bar to the left of an entity in
         // the player's color
         txt.append("<hr style=width:90% />");
-        txt.append("<TABLE><TR><TD BGCOLOR=#");
+        txt.append("<TABLE width=100% BGCOLOR=" + BGCOLOR + "><TR><TD BGCOLOR=#");
         String color = "C0C0C0";
         if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             color = entity.getOwner().getColour().getHexString();

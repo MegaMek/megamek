@@ -3207,7 +3207,7 @@ public class GameManager implements IGameManager {
             Comparator<Entity> comp = Comparator.comparingInt(Entity::getDeployRound);
             comp = comp.thenComparingInt(Entity::getOwnerId);
             comp = comp.thenComparingInt(Entity::getStartingPos);
-            List<Entity> ue = game.getEntitiesVector().stream().filter(e -> e.getDeployRound() > game.getRoundCount()).sorted(comp).toList();
+            List<Entity> ue = game.getEntitiesVector().stream().filter(e -> e.getDeployRound() > game.getRoundCount()).sorted(comp).collect(Collectors.toList());
             if (!ue.isEmpty()) {
                 r = new Report(1060, Report.PUBLIC);
                 addReport(r);

@@ -50,7 +50,6 @@ public class RandomUnitGeneratorTest {
         final String M8 = "Mech 8";
 
         RandomUnitGenerator testRug = spy(new RandomUnitGenerator());
-        testRug.initRats();
 
         Vector<String> testUnits = new Vector<>(4);
         Vector<Float> testWeights = new Vector<>(4);

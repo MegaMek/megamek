@@ -2965,7 +2965,7 @@ public class MoveStep implements Serializable {
                         mp += 3;
                         break;
                 }
-            } else {
+            } else if ((game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK)){
                 setRunProhibited(true);
             }
         }

@@ -220,7 +220,7 @@ public class ProtoMekBVCalculator {
                 } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (protoMek.getGame() != null)) {
                     for (Team m : protoMek.getGame().getTeams()) {
                         if (m.getId() == tmpP.getTeam()) {
-                            if (m.hasTAG(protoMek.getGame())) {
+                            if (m.hasTAG()) {
                                 tagBV += atype.getBV(protoMek);
                             }
                             // A player can't be on two teams.

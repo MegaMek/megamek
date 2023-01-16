@@ -965,7 +965,7 @@ public class MekBVCalculator {
                     } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (mek.getGame() != null)) {
                         for (Team m : mek.getGame().getTeams()) {
                             if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(mek.getGame())) {
+                                if (m.hasTAG()) {
                                     tagBV += atype.getBV(mek);
                                 }
                                 // A player can't be on two teams.

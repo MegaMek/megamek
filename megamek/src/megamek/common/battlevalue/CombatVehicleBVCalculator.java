@@ -377,7 +377,7 @@ public class CombatVehicleBVCalculator {
                     } else if ((tmpP.getTeam() != Player.TEAM_NONE) && (combatVee.getGame() != null)) {
                         for (Team m : combatVee.getGame().getTeams()) {
                             if (m.getId() == tmpP.getTeam()) {
-                                if (m.hasTAG(combatVee.getGame())) {
+                                if (m.hasTAG()) {
                                     tagBV += atype.getBV(combatVee);
                                     tagText = "Tag: ";
                                 }

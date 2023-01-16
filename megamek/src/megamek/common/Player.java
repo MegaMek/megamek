@@ -264,9 +264,6 @@ public final class Player extends TurnOrdered {
      */
     public void setGameMaster(boolean gameMaster) {
         this.gameMaster = gameMaster;
-        if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObserverStatus();
-        }
     }
 
     /** @return true if {@link #observer} flag is true and not in VICTORY phase*/
@@ -312,9 +309,6 @@ public final class Player extends TurnOrdered {
     /** set the {@link #observer} flag. Observers have no units ad no team */
     public void setObserver(boolean observer) {
         this.observer = observer;
-        if (game != null && game.getTeamForPlayer(this) != null) {
-            game.getTeamForPlayer(this).cacheObserverStatus();
-        }
     }
 
     /**

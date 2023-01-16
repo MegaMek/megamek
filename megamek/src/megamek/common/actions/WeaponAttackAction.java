@@ -3043,56 +3043,61 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
             } else if (te.isIlluminated()
-                    && game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK) {
+                    && (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.LightSpec"));
             }
         }
 
         // Rain Specialist
         if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_RAIN
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_RAIN)
                     && ae.isConventionalInfantry()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
             }
-            if  (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_RAIN
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_RAIN
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR) {
+
+            if  ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_RAIN)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_RAIN)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
             }
         }
 
         // Snow Specialist
         if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
                     && ae.isConventionalInfantry()) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM
-                    && (wtype !=null && wtype.hasFlag(WeaponType.F_MISSILE))) {
+
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
+                    && ((wtype !=null) && wtype.hasFlag(WeaponType.F_MISSILE))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
         }
 
         // Wind Specialist
         if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_MOD_GALE
-                    && (wtype !=null && wtype.hasFlag(WeaponType.F_MISSILE))) {
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_MOD_GALE)
+                    && (wtype !=null) && wtype.hasFlag(WeaponType.F_MISSILE)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
-            if (wtype !=null && wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
-                    && (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STRONG_GALE
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STORM)) {
+
+            if ((wtype !=null) && wtype.hasFlag(WeaponType.F_MISSILE) && wtype.hasFlag(WeaponType.F_BALLISTIC)
+                    && ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STRONG_GALE)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_STORM))) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
             }
-            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13
-                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F4) {
+
+            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13)
+                    || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F4)) {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
             }
         }

@@ -575,15 +575,17 @@ public class VTOL extends Tank implements IBomber {
             if (weatherMod != 0) {
                 j = Math.max(j + weatherMod, 0);
             }
+
             if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-                if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM) {
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)) {
                     j += 2;
                 }
-                if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET
-                        || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW
-                        || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW
-                        || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW
-                        || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES) {
+
+                if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SLEET)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_LIGHT_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_MOD_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                        || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)) {
                     j += 1;
                 }
             }

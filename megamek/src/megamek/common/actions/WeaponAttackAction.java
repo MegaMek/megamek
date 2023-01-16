@@ -3026,7 +3026,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         
         // VSP Lasers
 
-        //SPA Environmental Specialist
+        // SPA Environmental Specialist
         // Fog Specialist
         if (ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_FOG)
                 && wtype != null && wtype.hasFlag(WeaponType.F_ENERGY) && !game.getBoard().inSpace()

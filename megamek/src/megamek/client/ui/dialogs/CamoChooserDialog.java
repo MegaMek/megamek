@@ -90,7 +90,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
 
     @Override
     public Camouflage getSelectedItem() {
-        return useDefault ? new Camouflage() : ((Camouflage) super.getSelectedItem()).clone();
+        return isUseDefault() ? new Camouflage() : ((Camouflage) super.getSelectedItem()).clone();
     }
 
     @Override

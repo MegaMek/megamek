@@ -13905,6 +13905,10 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         return camouflage;
     }
 
+    public Camouflage getCamouflageOrElseOwners() {
+        return getCamouflageOrElse(getOwner().getCamouflage());
+    }
+
     public Camouflage getCamouflageOrElse(final Camouflage camouflage) {
         return getCamouflageOrElse(camouflage, true);
     }

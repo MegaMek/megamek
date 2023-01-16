@@ -5678,6 +5678,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
+        txt.append("</div>");
         txt.append(HTML_END);
 
         // Check to see if the tool tip is completely empty
@@ -5695,7 +5696,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             ToolTipManager.sharedInstance().setDismissDelay(dismissDelay);
         }
 
-        txt.append("</div>");
         return txt.toString();
     }
 

@@ -28,11 +28,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_BEGIN;
-import static megamek.client.ui.swing.tooltip.TipUtil.TABLE_END;
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiDarkBlue;
+import static megamek.client.ui.swing.util.UIUtil.uiGray;
 import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
 public final class PilotToolTip {
@@ -56,18 +56,18 @@ public final class PilotToolTip {
         
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
-        result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%><TR><TD>");
+
+        result.append("<hr style=width:90% />");
+        result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%><TR>");
 
         if (showPortrait) {
             result.append(crewPortraits(entity, showDefaultPortrait));
-            // Add a spacer cell
-            int dist = (int) (GUIPreferences.getInstance().getGUIScale() * 10);
-            result.append("<TD WIDTH=" + dist + "></TD>");
         }
 
         result.append(crewInfoCell(entity));
 
-        result.append(TABLE_END);
+        result.append("</TR></TABLE>");
+        result.append("<hr style=width:90% />");
         result.append(scaledHTMLSpacer(3));
         return result;
     }
@@ -77,6 +77,7 @@ public final class PilotToolTip {
         StringBuilder result = new StringBuilder();
         result.append(scaledHTMLSpacer(3));
         result.append(crewAdvs(entity, detailed));
+
         return result;
     }
     
@@ -85,6 +86,7 @@ public final class PilotToolTip {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
         StringBuilder result = new StringBuilder();
+        result.append("<TD>");
         result.append(guiScaledFontHTML());
         
         // Name / Callsign and Status for each crew member
@@ -118,6 +120,7 @@ public final class PilotToolTip {
         result.append(CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills));
         
         result.append("</FONT>");
+        result.append("</TD>");
         return result;
     }
     
@@ -149,7 +152,6 @@ public final class PilotToolTip {
             } catch (Exception e) {
                 LogManager.getLogger().error("", e);
             }
-            result.append("<TD WIDTH=3></TD>");
         }
         return result;
     }

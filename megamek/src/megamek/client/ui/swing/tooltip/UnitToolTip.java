@@ -75,7 +75,6 @@ public final class UnitToolTip {
         }
 
         StringBuilder result = new StringBuilder();
-        result.append("\n<TABLE BORDER=0 BGCOLOR=" + BGCOLOR + " width=100%>\n<TR>\n<TD>\n");
         Game game = entity.getGame();
 
         // Unit Chassis and Player
@@ -174,9 +173,10 @@ public final class UnitToolTip {
             result.append(scaledHTMLSpacer(3) + "\n");
             result.append(c3Info(entity));
         }
-        result.append("</TD>\n</TR>\n</TABLE>\n");
 
-        return result;
+        StringBuilder r = new StringBuilder();
+        r.append("<div BGCOLOR=" + BGCOLOR + ">" + result + "</div>");
+        return r;
     }
 
     private static boolean hideArmorLocation(Entity entity, int location) {

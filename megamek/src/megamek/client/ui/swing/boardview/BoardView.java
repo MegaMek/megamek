@@ -5463,7 +5463,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
                 int distance = selectedEntity.getPosition().distance(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%><TR><TD><FONT color=\"black\">");
+                txt.append("<FONT color=\"black\">");
                 if (distance == 1) {
                     txt.append(Messages.getString("BoardView1.Tooltip.Distance1"));
                 } else {
@@ -5683,8 +5683,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
         }
 
-        txt.append(HTML_END);
-
         // Check to see if the tool tip is completely empty
         if (txt.toString().equals(HTML_BEGIN +HTML_END)) {
             return "";
@@ -5846,7 +5844,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
         // Table to add a bar to the left of an entity in
         // the player's color
-        txt.append("<hr style=width:90%>");
+        txt.append("<hr style=width:90% />");
         txt.append("<TABLE><TR><TD BGCOLOR=#");
         String color = "C0C0C0";
         if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {

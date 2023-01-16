@@ -218,7 +218,7 @@ public class TripodMech extends Mech {
             if (weatherMod != 0) {
                 wmp = Math.max(wmp + weatherMod, 0);
             }
-            if(getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
+            if (getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)
                     && game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WI_TORNADO_F13) {
                 wmp += 1;
             }

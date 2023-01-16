@@ -7085,56 +7085,63 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_RAIN)) {
             if (conditions.getWeather() == PlanetaryConditions.WE_GUSTING_RAIN) {
-                if (this instanceof Mech || isAirborne()
-                        || getMovementMode() == EntityMovementMode.WHEELED
-                        || getMovementMode() == EntityMovementMode.TRACKED) {
+                if ((this instanceof Mech) || isAirborne()
+                        || (getMovementMode() == EntityMovementMode.WHEELED)
+                        || (getMovementMode() == EntityMovementMode.TRACKED)) {
                     roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                 }
-                if (isAirborneVTOLorWIGE() || getMovementMode() == EntityMovementMode.HOVER) {
+                if (isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
                     roll.addModifier(-2, Messages.getString("WeaponAttackAction.RainSpec"));
                 }
             }
-            if (conditions.getWeather() == PlanetaryConditions.WE_DOWNPOUR
-                    || conditions.getWeather() == PlanetaryConditions.WE_HEAVY_RAIN) {
+            if ((conditions.getWeather() == PlanetaryConditions.WE_DOWNPOUR)
+                    ||(conditions.getWeather() == PlanetaryConditions.WE_HEAVY_RAIN)) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
             }
         }
+
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_SNOW)) {
-            if (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
+            if ((conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
-            if ((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
-                    || conditions.getWeather() == PlanetaryConditions.WE_SLEET
-                    || conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM)
+            if (((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
+                    || (conditions.getWeather() == PlanetaryConditions.WE_SLEET)
+                    || (conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM))
                     && isAirborneVTOLorWIGE()) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
         }
+
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
-            if (conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE && isAirborneVTOLorWIGE()) {
+            if ((conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE && isAirborneVTOLorWIGE())) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
             }
-            if (conditions.getWeather() == PlanetaryConditions.WI_STRONG_GALE) {
-                if (this instanceof Mech || isAirborne()
-                        || isAirborneVTOLorWIGE() || getMovementMode() == EntityMovementMode.HOVER) {
+
+            if ((conditions.getWeather() == PlanetaryConditions.WI_STRONG_GALE)) {
+                if ((this instanceof Mech) || isAirborne()
+                        || isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
                     roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                 }
             }
-            if (conditions.getWeather() == PlanetaryConditions.WI_STORM) {
-                if (this instanceof Mech || isAirborneVTOLorWIGE()
-                        || getMovementMode() == EntityMovementMode.HOVER) {
+
+            if ((conditions.getWeather() == PlanetaryConditions.WI_STORM)) {
+                if ((this instanceof Mech) || isAirborneVTOLorWIGE()
+                        || (getMovementMode() == EntityMovementMode.HOVER)) {
                     roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
                 }
+
                 if (isAirborne()) {
                     roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
                 }
             }
-            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F13) {
+
+            if ((conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F13)) {
                 roll.addModifier(-2, Messages.getString("WeaponAttackAction.WindSpec"));
             }
-            if (conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F4) {
+
+            if ((conditions.getWeather() == PlanetaryConditions.WI_TORNADO_F4)) {
                 roll.addModifier(-3, Messages.getString("WeaponAttackAction.WindSpec"));
             }
         }

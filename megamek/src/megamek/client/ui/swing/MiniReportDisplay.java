@@ -58,15 +58,6 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final ClientPreferences CP =  PreferenceManager.getClientPreferences();
 
-    private static final String MSG_TITLE = Messages.getString("MiniReportDisplay.title");
-    private static final String MSG_ROUND = Messages.getString("MiniReportDisplay.Round");
-    private static final String MSG_PHASE = Messages.getString("MiniReportDisplay.Phase");
-    private static final String MSG_DAMAGE = Messages.getString("MiniReportDisplay.Damage");
-    private static final String MSG_ARROWUP = Messages.getString("MiniReportDisplay.ArrowUp");
-    private static final String MSG_ARROWDOWN = Messages.getString("MiniReportDisplay.ArrowDown");
-    private static final String MSG_DETAILS = Messages.getString("MiniReportDisplay.Details");
-    private static final String MSG_SWITCHLOCATION = Messages.getString("MiniReportDisplay.SwitchLocation");
-
     private static final int MRD_MAXNAMELENGHT = 60;
 
     public MiniReportDisplay(ClientGUI clientgui) {
@@ -79,19 +70,19 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
         currentClient = clientgui.getClient();
         currentClient.getGame().addGameListener(gameListener);
 
-        butSwitchLocation = new JButton(MSG_SWITCHLOCATION);
+        butSwitchLocation = new JButton(Messages.getString("MiniReportDisplay.SwitchLocation"));
         butSwitchLocation.addActionListener(this);
-        butPlayerSearchUp = new JButton(MSG_ARROWUP);
+        butPlayerSearchUp = new JButton(Messages.getString("MiniReportDisplay.ArrowUp"));
         butPlayerSearchUp.addActionListener(this);
-        butPlayerSearchDown = new JButton(MSG_ARROWDOWN);
+        butPlayerSearchDown = new JButton(Messages.getString("MiniReportDisplay.ArrowDown"));
         butPlayerSearchDown.addActionListener(this);
-        butEntitySearchUp = new JButton(MSG_ARROWUP);
+        butEntitySearchUp = new JButton(Messages.getString("MiniReportDisplay.ArrowUp"));
         butEntitySearchUp.addActionListener(this);
-        butEntitySearchDown = new JButton(MSG_ARROWDOWN);
+        butEntitySearchDown = new JButton(Messages.getString("MiniReportDisplay.ArrowDown"));
         butEntitySearchDown.addActionListener(this);
-        butQuickSearchUp = new JButton(MSG_ARROWUP);
+        butQuickSearchUp = new JButton(Messages.getString("MiniReportDisplay.ArrowUp"));
         butQuickSearchUp.addActionListener(this);
-        butQuickSearchDown = new JButton(MSG_ARROWDOWN);
+        butQuickSearchDown = new JButton(Messages.getString("MiniReportDisplay.ArrowDown"));
         butQuickSearchDown.addActionListener(this);
 
         setLayout(new BorderLayout());
@@ -239,7 +230,7 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
     private void updateQuickChoice() {
         String lastChoice = (String) comboQuick.getSelectedItem();
-        lastChoice = (lastChoice != null ? lastChoice : MSG_DAMAGE);
+        lastChoice = (lastChoice != null) ? lastChoice : Messages.getString("MiniReportDisplay.Damage");
         comboQuick.removeAllItems();
         comboQuick.setEnabled(true);
         String[] keywords =  CP.getReportKeywords().split("\n");
@@ -308,11 +299,11 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
 
         for (int round = 1; round <= numRounds; round++) {
             String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
-            tabs.add(MSG_ROUND + " " + round, loadHtmlScrollPane(text));
+            tabs.add(Messages.getString("MiniReportDisplay.Round") + " " + round, loadHtmlScrollPane(text));
         }
 
         // add the new current phase tab
-        tabs.add(MSG_PHASE, loadHtmlScrollPane(currentClient.phaseReport));
+        tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(currentClient.phaseReport));
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
         tabs.setMinimumSize(new Dimension(0, 0));
@@ -341,8 +332,8 @@ public class MiniReportDisplay extends JPanel implements ActionListener, Hyperli
                 }
             } else if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {
                 String desc = evtDesc.substring(Report.TOOLTIP_LINK.length());
-                JOptionPane.showMessageDialog(currentClientgui, desc, MSG_DETAILS,
-                        JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(currentClientgui, desc,
+                        Messages.getString("MiniReportDisplay.Details"), JOptionPane.PLAIN_MESSAGE);
             }
         } else if (evt.getEventType() == HyperlinkEvent.EventType.ENTERED) {
             if (evtDesc.startsWith(Report.TOOLTIP_LINK)) {

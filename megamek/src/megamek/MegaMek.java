@@ -105,7 +105,7 @@ public class MegaMek {
                 startGUI();
             }
         } catch (MegaMekCommandLineParser.ParseException e) {
-            LogManager.getLogger().fatal(parser.formatErrorMessage(e));
+            LogManager.getLogger().fatal("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             System.exit(1);
         }
     }
@@ -148,20 +148,6 @@ public class MegaMek {
         } catch (Exception ex) {
             LogManager.getLogger().error("Unable to redirect output to legacy.log", ex);
         }
-    }
-
-    public static void printToOut(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-        out.print(text);
-        out.flush();
-        out.close();
-    }
-
-    public static void printToErr(String text) {
-        PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.err));
-        out.print(text);
-        out.flush();
-        out.close();
     }
 
     public static SuitePreferences getMMPreferences() {
@@ -249,8 +235,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help());
             System.exit(1);
         }
 
@@ -293,8 +278,7 @@ public class MegaMek {
         try {
             parser.parse();
         } catch (AbstractCommandLineParser.ParseException e) {
-            LogManager.getLogger().error(parser.formatErrorMessage(e));
-            MegaMek.printToErr(parser.formatErrorMessage(e) + "\n");
+            LogManager.getLogger().error("Incorrect arguments:" + e.getMessage() + '\n' + parser.help(), e);
             System.exit(1);
         }
 

@@ -91,7 +91,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
             try {
                 switch (MegaMekCommandLineFlag.parseFromString(tokenVal)) {
                     case HELP:
-                        MegaMek.printToOut(help());
+                        LogManager.getLogger().info(help());
                         System.exit(0);
                     case EQDB:
                         processEquipmentDb();
@@ -131,10 +131,7 @@ public class MegaMekCommandLineParser extends AbstractCommandLineParser {
                         break;
                 }
             } catch (ParseException ex) {
-                PrintStream out = new PrintStream(new FileOutputStream(FileDescriptor.out));
-                out.print(formatErrorMessage(ex));
-                out.close();
-                MegaMek.printToOut(help());
+                LogManager.getLogger().error("Incorrect arguments:" + ex.getMessage() + '\n' + help());
                 throw ex;
             }
         }

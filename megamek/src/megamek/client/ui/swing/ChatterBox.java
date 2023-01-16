@@ -50,10 +50,6 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
     private static final String CB_KEY_ADVANCED_CHATBOXSIZE = "AdvancedChatboxSize";
 
-    private static final String MSG_MEGAMEK = Messages.getString("ChatterBox.Megamek");
-    private static final String MSG_DONE = Messages.getString("ChatterBox.ImDone");
-    private static final String MSG_ENTITIESADDED = Messages.getString("ChatterBox.entitiesAdded");
-
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
         client.getGame().addGameListener(new GameListenerAdapter() {
@@ -98,9 +94,8 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
                     pld.refreshPlayerList(playerList, client);
                 }
 
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
-                    systemMessage(e.getNumberOfEntities() + " " + MSG_ENTITIESADDED);
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                    systemMessage(e.getNumberOfEntities() + " " + Messages.getString("ChatterBox.entitiesAdded"));
                 }
             }
 
@@ -114,8 +109,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
             @Override
             public void gameEntityChange(GameEntityChangeEvent e) {
-                if (PreferenceManager.getClientPreferences()
-                        .getPrintEntityChange()) {
+                if (PreferenceManager.getClientPreferences().getPrintEntityChange()) {
                     systemMessage(e.toString());
                 }
             }
@@ -132,7 +126,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
         scrPlayers.setPreferredSize(new Dimension(250, chatArea.getHeight()));
         inputField = new JTextField();
         inputField.addKeyListener(this);
-        butDone = new JButton(MSG_DONE);
+        butDone = new JButton(Messages.getString("ChatterBox.ImDone"));
         butDone.setEnabled(false);
 
         chatPanel = new JPanel(new BorderLayout());
@@ -194,7 +188,7 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
-        chatArea.append("\n" + MSG_MEGAMEK + " " + message);
+        chatArea.append("\n" + Messages.getString("ChatterBox.MegaMek") + " " + message);
         moveToEnd();
     }
 
@@ -259,12 +253,12 @@ public class ChatterBox implements KeyListener, IPreferenceChangeListener {
 
     @Override
     public void keyReleased(KeyEvent ev) {
-        //ignored
+        // ignored
     }
 
     @Override
     public void keyTyped(KeyEvent ev) {
-        //ignored
+        // ignored
     }
 
     public void setMessage(String message) {

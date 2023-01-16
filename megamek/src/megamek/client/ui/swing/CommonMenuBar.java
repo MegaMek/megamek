@@ -19,24 +19,27 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.event.*;
-import java.util.*;
-
-import javax.swing.*;
-
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.UIUtil;
-
-import static megamek.client.ui.Messages.*;
-import megamek.common.*;
+import megamek.common.KeyBindParser;
 import megamek.common.enums.GamePhase;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
-import static megamek.client.ui.swing.ClientGUI.*;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static java.awt.event.KeyEvent.*;
-import static megamek.client.ui.swing.ClientGUI.FILE_UNITS_BROWSE;
+import static megamek.client.ui.Messages.getString;
+import static megamek.client.ui.swing.ClientGUI.*;
 
 /**
  * The menu bar that is used across MM, i.e. in the main menu, the board editor and
@@ -137,18 +140,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** Maps the Action Command to the respective MenuItem. */
     private final Map<String, JMenuItem> itemMap = new HashMap<>();
 
-    private static final String MSG_FILEMENU = Messages.getString("CommonMenuBar.FileMenu");
-    private static final String MSG_GAMEMENU = Messages.getString("CommonMenuBar.GameMenu");
-    private static final String MSG_BOARDMENU = Messages.getString("CommonMenuBar.BoardMenu");
-    private static final String MSG_FILEBOARDSAVEASIMAGE_TOOLTIP = Messages.getString("CommonMenuBar.fileBoardSaveAsImage.tooltip");
-    private static final String MSG_FILEBOARDSAVEASIMAGEUNITS_TOOLTIP = Messages.getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip");
-    private static final String MSG_BOARDREMOVE = Messages.getString("CommonMenuBar.boardRemove");
-    private static final String MSG_VIEWMENU = Messages.getString("CommonMenuBar.ViewMenu");
-    private static final String MSG_VIEWTOGGLEFOVDARKENTOOLTIP = Messages.getString("CommonMenuBar.viewToggleFovDarkenTooltip");
-    private static final String MSG_VIEWTOGGLEFIELDOFFIRETOOLTIP = Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip");
-    private static final String MSG_VIEWTOGGLEFIRINGSOLUTIONSTOOLTIP = Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip");
-    private static final String MSG_HELPMENU = Messages.getString("CommonMenuBar.HelpMenu");
-
     /** Creates a MegaMek menu bar for the given client (for the lobby or ingame). */
     public CommonMenuBar(Client parent) {
         this();
@@ -173,7 +164,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** Creates the common MegaMek menu bar. */
     public CommonMenuBar() {
         // Create the Game menu
-        JMenu menu = new JMenu(MSG_FILEMENU);
+        JMenu menu = new JMenu(Messages.getString("CommonMenuBar.FileMenu"));
         menu.setMnemonic(VK_F);
         add(menu);
         initMenuItem(gameLoad, menu, FILE_GAME_LOAD, VK_L);
@@ -183,7 +174,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(gameSaveServer, menu, FILE_GAME_SAVE_SERVER);
 
         // Create the Unit List sub-menu.
-        menu = new JMenu(MSG_GAMEMENU);
+        menu = new JMenu(Messages.getString("CommonMenuBar.GameMenu"));
         add(menu);
         menu.setMnemonic(VK_G);
         
@@ -208,7 +199,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(fireSaveWeaponOrder, menu, FIRE_SAVE_WEAPON_ORDER);
 
         // Create the Board sub-menu.
-        menu = new JMenu(MSG_BOARDMENU);
+        menu = new JMenu(Messages.getString("CommonMenuBar.BoardMenu"));
         menu.setMnemonic(VK_B);
         add(menu);
         initMenuItem(boardNew, menu, BOARD_NEW);
@@ -220,9 +211,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu.addSeparator();
         
         initMenuItem(boardSaveAsImage, menu, BOARD_SAVE_AS_IMAGE);
-        boardSaveAsImage.setToolTipText(MSG_FILEBOARDSAVEASIMAGE_TOOLTIP);
+        boardSaveAsImage.setToolTipText(Messages.getString("CommonMenuBar.fileBoardSaveAsImage.tooltip"));
         initMenuItem(boardSaveAsImageUnits, menu, BOARD_SAVE_AS_IMAGE_UNITS);
-        boardSaveAsImageUnits.setToolTipText(MSG_FILEBOARDSAVEASIMAGEUNITS_TOOLTIP);
+        boardSaveAsImageUnits.setToolTipText(Messages.getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip"));
         menu.addSeparator();
         
         initMenuItem(boardUndo, menu, BOARD_UNDO);
@@ -235,7 +226,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(boardClear, menu, BOARD_CLEAR);
         initMenuItem(boardFlatten, menu, BOARD_FLATTEN);
         initMenuItem(boardFlood, menu, BOARD_FLOOD);
-        boardRemove = new JMenu(MSG_BOARDREMOVE);
+        boardRemove = new JMenu(Messages.getString("CommonMenuBar.boardRemove"));
         menu.add(boardRemove);
         initMenuItem(boardRemoveForests, boardRemove, BOARD_REMOVE_FORESTS);
         initMenuItem(boardRemoveWater, boardRemove, BOARD_REMOVE_WATER);
@@ -243,7 +234,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(boardRemoveBuildings, boardRemove, BOARD_REMOVE_BUILDINGS);
         
         // Create the view menu.
-        menu = new JMenu(MSG_VIEWMENU);
+        menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu"));
         menu.setMnemonic(VK_V);
         add(menu);
         initMenuItem(viewClientSettings, menu, VIEW_CLIENT_SETTINGS, VK_S);
@@ -288,7 +279,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         
         initMenuItem(toggleFovDarken, menu, VIEW_TOGGLE_FOV_DARKEN);
         toggleFovDarken.setSelected(GUIP.getFovDarken()); 
-        toggleFovDarken.setToolTipText(MSG_VIEWTOGGLEFOVDARKENTOOLTIP);
+        toggleFovDarken.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovDarkenTooltip"));
         initMenuItem(viewLOSSetting, menu, VIEW_LOS_SETTING);
         initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT);
         toggleFovHighlight.setSelected(GUIP.getFovHighlight());
@@ -299,15 +290,15 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         
         initMenuItem(toggleFieldOfFire, menu, VIEW_TOGGLE_FIELD_OF_FIRE);
         toggleFieldOfFire.setSelected(GUIP.getShowFieldOfFire());
-        toggleFieldOfFire.setToolTipText(MSG_VIEWTOGGLEFIELDOFFIRETOOLTIP);
+        toggleFieldOfFire.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
         initMenuItem(toggleFiringSolutions, menu, VIEW_TOGGLE_FIRING_SOLUTIONS);
-        toggleFiringSolutions.setToolTipText(MSG_VIEWTOGGLEFIRINGSOLUTIONSTOOLTIP);
+        toggleFiringSolutions.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFiringSolutionsToolTip"));
         toggleFiringSolutions.setSelected(GUIP.getFiringSolutions());
         
         /* TODO: moveTraitor = createMenuItem(menu, getString("CommonMenuBar.moveTraitor"), MovementDisplay.MOVE_TRAITOR);  */
 
         // Create the Help menu
-        menu = new JMenu(MSG_HELPMENU);
+        menu = new JMenu(Messages.getString("CommonMenuBar.HelpMenu"));
         menu.setMnemonic(VK_H);
         add(menu);
         initMenuItem(helpContents, menu, HELP_CONTENTS);

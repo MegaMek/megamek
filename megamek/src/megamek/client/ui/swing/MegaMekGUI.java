@@ -452,8 +452,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         try {
             gameManager = new GameManager();
             server = new Server(serverPassword, port, gameManager, isRegister, metaServer, mailer, false);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.ServerStarted",
-                    server.getHost(), server.getPort(), server.isPassworded() ? "enabled" : "disabled") + "\n");
         } catch (IOException ex) {
             LogManager.getLogger().error("Could not create server socket on port " + port, ex);
             JOptionPane.showMessageDialog(frame,
@@ -512,10 +510,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             client.die();
             gui.die();
             frame.setVisible(true);
-            MegaMek.printToOut(String.format("Client failed to connect to %s:%d", client.getHost(), client.getPort()));
             return;
         }
-        MegaMek.printToOut(String.format("Client connected to %s:%d", client.getHost(), client.getPort()));
 
         // free some memory that's only needed in lounge
         // This normally happens in the deployment phase in Client, but
@@ -696,7 +692,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                     Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()),
                     Messages.getString("MegaMek.LoadGameAlert.title"), JOptionPane.ERROR_MESSAGE);
             frame.setVisible(true);
-            MegaMek.printToOut(Messages.getFormattedString("MegaMek.LoadGameAlert.message", file.getAbsolutePath()) + "\n");
             return;
         }
 

@@ -31,8 +31,6 @@ import java.io.File;
 import static megamek.client.ui.swing.tooltip.TipUtil.getOptionList;
 import static megamek.client.ui.swing.tooltip.TipUtil.scaledHTMLSpacer;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
-import static megamek.client.ui.swing.util.UIUtil.uiDarkBlue;
-import static megamek.client.ui.swing.util.UIUtil.uiGray;
 import static megamek.client.ui.swing.util.UIUtil.uiQuirksColor;
 
 public final class PilotToolTip {

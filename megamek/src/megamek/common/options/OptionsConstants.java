@@ -144,9 +144,8 @@ public class OptionsConstants {
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery"; 
     public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting"; 
     public static final String PILOT_ANIMAL_MIMIC= "animal_mimic"; 
-    // public static final String PILOT_CROSS_COUNTRY= "cross_country";
-    // 
-    public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver"; 
+    public static final String PILOT_CROSS_COUNTRY= "cross_country";
+    public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver";
     // public static final String PILOT_DUST_OFF= "dust_off"; 
     // public static final String PILOT_HVY_LIFTER= "hvy_lifter"; 
     // public static final String PILOT_HOPPER= "hopper"; 

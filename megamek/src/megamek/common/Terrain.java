@@ -372,6 +372,8 @@ public class Terrain implements Serializable {
     public int movementCost(Entity e) {
         EntityMovementMode moveMode = e.getMovementMode();
         int mp;
+        boolean isCrossCountry = e.hasAbility(OptionsConstants.PILOT_CROSS_COUNTRY);
+
         switch (type) {
             case Terrains.MAGMA:
                 return level - 1;
@@ -386,12 +388,24 @@ public class Terrain implements Serializable {
                 } else {
                     mp = 1;
                 }
+
+                if (isCrossCountry) {
+                    if (((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED))
+                            && (level == 6)) {
+                        mp *= 2;
+                    } else if ((moveMode == EntityMovementMode.WHEELED)) {
+                        mp *= 2;
+                    }
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                         && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
@@ -399,16 +413,27 @@ public class Terrain implements Serializable {
                 return Math.max(0, mp);
             case Terrains.WOODS:
                 mp = level;
+                if (isCrossCountry) {
+                    if ((level == 1) && ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WHEELED))) {
+                        mp *= 2;
+                    } else {
+                        mp *= 2;
+                    }
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
                     if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic"))) {
                         mp -= 1;
@@ -417,16 +442,23 @@ public class Terrain implements Serializable {
                 return Math.max(0, mp);
             case Terrains.JUNGLE:
                 mp = level +1;
+                if (isCrossCountry) {
+                    mp *= 2;
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_FOREST_RANGER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                         && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_ANIMAL_MIMIC)) {
                     if ((e.entityIsQuad()) || ((moveMode == EntityMovementMode.BIPED) && e.hasQuirk("animalistic"))) {
                         mp -= 1;
@@ -494,12 +526,24 @@ public class Terrain implements Serializable {
                 } else {
                     mp = 1;
                 }
+
+                if (isCrossCountry) {
+                    if (((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.TRACKED))
+                            && (level == 2)) {
+                        mp *= 2;
+                    } else if ((moveMode == EntityMovementMode.WHEELED)) {
+                        mp *= 2;
+                    }
+                }
+
                 if ((e instanceof Mech) && e.isSuperHeavy()) {
                     mp -= 1;
                 }
+
                 if (e.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
                     mp -= 1;
                 }
+
                 if ((e.hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                         && (moveMode == EntityMovementMode.INF_LEG))) {
                     mp -= 1;

@@ -26,7 +26,6 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.util.fileUtils.MegaMekFile;
-import megamek.client.ui.swing.tooltip.TipUtil;
 
 import javax.swing.*;
 import java.awt.*;

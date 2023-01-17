@@ -142,9 +142,11 @@ public class SummaryPanel extends PicMap {
             BoardView bv = unitDisplay.getClientGUI().getBoardView();
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
             if (bv != null && mhex != null) {
-                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%><TR><TD>");
-                bv.appendTerrainTooltip(hexTxt, mhex);
-                hexTxt.append("</TD></TR></TABLE>");
+                StringBuffer s = new StringBuffer();
+                bv.appendTerrainTooltip(s, mhex);
+                String col = "<TD>" + s + "</TD>";
+                String row = "<TR>" + col + "</TR>";
+                hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>");
                 bv.appendBuildingsTooltip(hexTxt, mhex);
             }
             hexTxt.append(PilotToolTip.getCrewAdvs(entity, true));

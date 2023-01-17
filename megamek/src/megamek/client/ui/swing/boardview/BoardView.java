@@ -5459,17 +5459,16 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         txt.append("<div WIDTH=500>");
         // Hex Terrain
         if (GUIP.getShowMapHexPopup() && (mhex != null)) {
-            txt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%><TR><TD>");
-            appendTerrainTooltip(txt, mhex);
+            StringBuffer s = new StringBuffer();
+            appendTerrainTooltip(s, mhex);
 
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && (selectedEntity.getPosition() != null)) {
                 int distance = selectedEntity.getPosition().distance(mcoords);
-                txt.append("<FONT color=\"black\">");
                 if (distance == 1) {
-                    txt.append(Messages.getString("BoardView1.Tooltip.Distance1"));
+                    s.append(Messages.getString("BoardView1.Tooltip.Distance1"));
                 } else {
-                    txt.append(Messages.getString("BoardView1.Tooltip.DistanceN", distance));
+                    s.append(Messages.getString("BoardView1.Tooltip.DistanceN", distance));
                 }
 
                 if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
@@ -5483,26 +5482,30 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
                         minSensorRange = 0;
                     }
-                    txt.append("<BR>");
+                    s.append("<BR>");
                     if ((distance > minSensorRange) && (distance <= maxSensorRange)) {
-                        txt.append(Messages.getString("BoardView1.Tooltip.SensorsHexInRange"));
+                        s.append(Messages.getString("BoardView1.Tooltip.SensorsHexInRange"));
                     } else {
-                        txt.append(Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange"));
+                        s.append(Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange"));
                     }
                 }
 
                 if (game.getPhase().isMovement() && (movementTarget != null)) {
-                    txt.append("<BR>");
+                    s.append("<BR>");
                     int disPM = movementTarget.distance(mcoords);
                     if (disPM == 1) {
-                        txt.append(Messages.getString("BoardView1.Tooltip.DistanceMove1"));
+                        s.append(Messages.getString("BoardView1.Tooltip.DistanceMove1"));
                     } else {
-                        txt.append(Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM));
+                        s.append(Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM));
                     }
                 }
             }
 
-            txt.append("</TD></TR></TABLE>");
+
+            String t = "<FONT color=\"black\">" + s + "</FONT>";
+            String col = "<TD>" + t + "</TD>";
+            String row = "<TR>" + col + "</TR>";
+            txt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>");
             appendBuildingsTooltip(txt, mhex);
 
             if (displayInvalidHexInfo) {
@@ -5713,10 +5716,8 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         }
 
         Coords mcoords = mhex.getCoords();
-        txt.append("<FONT color=\"black\">");
 
-        txt.append(Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()));
-        txt.append("<br>");
+        String s = Messages.getString("BoardView1.Tooltip.Hex", mcoords.getBoardNum(), mhex.getLevel()) + "<BR>";
 
         // cycle through the terrains and report types found
         for (int terType: mhex.getTerrainTypes()) {
@@ -5724,12 +5725,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             int ttl = mhex.getTerrain(terType).getLevel();
             String name = Terrains.getDisplayName(terType, ttl);
             if (name != null) {
-                name += (tf > 0) ? " (TF: " + tf + ")" : "";
-                txt.append(name + "<BR>");
+                String msg_tf =  Messages.getString("BoardView1.Tooltip.TF");
+                name += (tf > 0) ? " (" + msg_tf + ": " + tf + ")" : "";
+                s += name + "<BR>";
             }
         }
-        txt.append("</FONT>");
-
+        txt.append("<FONT color=\"black\">" + s + "</FONT>");
     }
 
     /**

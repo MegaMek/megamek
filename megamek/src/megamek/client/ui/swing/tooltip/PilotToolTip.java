@@ -13,6 +13,7 @@
 */  
 package megamek.client.ui.swing.tooltip;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.Configuration;
@@ -52,21 +53,21 @@ public final class PilotToolTip {
     private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait) {
         StringBuilder result = new StringBuilder();
         
-        // The crew info (names etc.) and portraits, if shown, are placed
-        // in a table side by side
-
         if (!detailed) {
             result.append("<HR STYLE=WIDTH:90% />");
         }
-        result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%><TR>");
 
+        // The crew info (names etc.) and portraits, if shown, are placed
+        // in a table side by side
+        String cols = "";
         if (showPortrait) {
-            result.append(crewPortraits(entity, showDefaultPortrait));
+            cols = crewPortraits(entity, showDefaultPortrait).toString();
         }
 
-        result.append(crewInfoCell(entity));
+        cols += crewInfoCell(entity).toString();
+        String row = "<TR>" + cols + "</TR>";
+        result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%>" + row + "</TABLE>");
 
-        result.append("</TR></TABLE>");
         if (!detailed) {
             result.append("<HR STYLE=WIDTH:90% />");
         } else {
@@ -88,9 +89,7 @@ public final class PilotToolTip {
     private static StringBuilder crewInfoCell(final Entity entity) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
-        StringBuilder result = new StringBuilder();
-        result.append("<TD>");
-        result.append(guiScaledFontHTML());
+        String s = "";
         
         // Name / Callsign and Status for each crew member
         for (int i = 0; i < crew.getSlotCount(); i++) {
@@ -99,31 +98,32 @@ public final class PilotToolTip {
             }
 
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
-                result.append(guiScaledFontHTML(UIUtil.uiNickColor()) + "<B>'" 
-                        + crew.getNickname(i).toUpperCase() + "'</B></FONT>");
+                String t = "<B>'" + crew.getNickname(i).toUpperCase() + "'</B>";
+                s += guiScaledFontHTML(UIUtil.uiNickColor()) + t + "</FONT>";
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
-                result.append(crew.getName(i));
+                s += crew.getName(i);
             } else {
-                result.append("Pilot");
+                s += Messages.getString("BoardView1.Tooltip.Pilot");
             }
 
             if (crew.getSlotCount() > 1) {
-                result.append(" \u2B1D " + crew.getCrewType().getRoleName(i));
+                s += " \u2B1D " + crew.getCrewType().getRoleName(i);
             }
             
             if (!crew.getStatusDesc(i).isEmpty()) {
-                result.append(guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()));
-                result.append(" (" + crew.getStatusDesc(i) + ")</FONT>");
+                s += guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
             }
-            result.append("<BR>");
+            s += "<BR>";
         }
         
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        result.append(CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills));
+        s += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
         
-        result.append("</FONT>");
-        result.append("</TD>");
+        s = guiScaledFontHTML() + s + "</FONT>";
+
+        StringBuilder result = new StringBuilder();
+        result.append("<TD>" + s + "</TD>");
         return result;
     }
     

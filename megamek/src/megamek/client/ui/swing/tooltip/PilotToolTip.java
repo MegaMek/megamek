@@ -55,7 +55,9 @@ public final class PilotToolTip {
         // The crew info (names etc.) and portraits, if shown, are placed
         // in a table side by side
 
-        result.append("<hr style=width:90% />");
+        if (!detailed) {
+            result.append("<HR STYLE=WIDTH:90% />");
+        }
         result.append("<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " width=100%><TR>");
 
         if (showPortrait) {
@@ -65,8 +67,11 @@ public final class PilotToolTip {
         result.append(crewInfoCell(entity));
 
         result.append("</TR></TABLE>");
-        result.append("<hr style=width:90% />");
-        result.append(scaledHTMLSpacer(3));
+        if (!detailed) {
+            result.append("<HR STYLE=WIDTH:90% />");
+        } else {
+            result.append(scaledHTMLSpacer(3));
+        }
         return result;
     }
 

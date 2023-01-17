@@ -5845,20 +5845,19 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (entity == null) {
             return;
         }
+
+        txt.append("<HR STYLE=WIDTH:90% />");
         // Table to add a bar to the left of an entity in
         // the player's color
-        txt.append("<hr style=width:90% />");
-        txt.append("<TABLE width=100% BGCOLOR=" + BGCOLOR + "><TR><TD BGCOLOR=#");
         String color = "C0C0C0";
         if (!EntityVisibilityUtils.onlyDetectedBySensors(localPlayer, entity)) {
             color = entity.getOwner().getColour().getHexString();
         }
-        txt.append(color);
-        txt.append(" width=6></TD><TD>");
-
+        String col1 = "<TD BGCOLOR=#" + color + " WIDTH=6></TD>";
         // Entity tooltip
-        txt.append(UnitToolTip.getEntityTipGame(entity, getLocalPlayer()));
-        txt.append("</TD></TR></TABLE>");
+        String col2 = "<TD>" + UnitToolTip.getEntityTipGame(entity, getLocalPlayer()) + "</TD>";
+        String row = "<TR>" + col1 + col2 +  "</TR>";
+        txt.append("<TABLE WIDTH=100% BGCOLOR=" + BGCOLOR + ">" + row + "</TABLE>");
     }
 
     private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {

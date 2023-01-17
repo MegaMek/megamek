@@ -5501,7 +5501,6 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-
             String t = "<FONT color=\"black\">" + s + "</FONT>";
             String col = "<TD>" + t + "</TD>";
             String row = "<TR>" + col + "</TR>";

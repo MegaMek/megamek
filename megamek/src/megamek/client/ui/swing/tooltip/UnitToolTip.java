@@ -174,9 +174,7 @@ public final class UnitToolTip {
             result.append(c3Info(entity));
         }
 
-        StringBuilder r = new StringBuilder();
-        r.append("<div BGCOLOR=" + BGCOLOR + ">" + result + "</div>");
-        return r;
+        return result;
     }
 
     private static boolean hideArmorLocation(Entity entity, int location) {

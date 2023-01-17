@@ -26,6 +26,7 @@ import megamek.client.ui.swing.tooltip.UnitToolTip;
 import megamek.client.ui.swing.widget.*;
 import megamek.common.*;
 import megamek.common.util.fileUtils.MegaMekFile;
+import megamek.client.ui.swing.tooltip.TipUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -123,7 +124,6 @@ public class SummaryPanel extends PicMap {
      * @param entity The Entity to display info for
      */
     public void displayMech(Entity entity) {
-
         Player localPlayer = unitDisplay.getClientGUI().getClient().getLocalPlayer();
 
         if (entity == null) {
@@ -138,18 +138,28 @@ public class SummaryPanel extends PicMap {
             // also allow cells do have bg colors
             StringBuffer hexTxt = new StringBuffer("");
             hexTxt.append(PilotToolTip.getPilotTipDetailed(entity, true));
-            hexTxt.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
+            StringBuffer p = new StringBuffer();
+            p.append(UnitToolTip.getEntityTipUnitDisplay(entity, localPlayer));
+            String col = "<TD>" + p + "</TD>";
+            String row = "<TR>" + col + "</TR>";
+            hexTxt.append("<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>");
+
             BoardView bv = unitDisplay.getClientGUI().getBoardView();
             Hex mhex = entity.getGame().getBoard().getHex(entity.getPosition());
             if (bv != null && mhex != null) {
                 StringBuffer s = new StringBuffer();
                 bv.appendTerrainTooltip(s, mhex);
-                String col = "<TD>" + s + "</TD>";
-                String row = "<TR>" + col + "</TR>";
+                col = "<TD>" + s + "</TD>";
+                row = "<TR>" + col + "</TR>";
                 hexTxt.append("<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>");
                 bv.appendBuildingsTooltip(hexTxt, mhex);
             }
-            hexTxt.append(PilotToolTip.getCrewAdvs(entity, true));
+
+            String t = PilotToolTip.getCrewAdvs(entity, true).toString();
+            col = "<TD>" + t + "</TD>";
+            row = "<TR>" + col + "</TR>";
+            hexTxt.append("<TABLE BGCOLOR=#313131 width=100%>" + row + "</TABLE>");
+
             unitInfo.setText(HTML_BEGIN + padLeft(hexTxt.toString()) + HTML_END);
         }
         unitInfo.setOpaque(false);

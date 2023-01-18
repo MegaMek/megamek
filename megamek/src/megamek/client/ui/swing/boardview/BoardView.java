@@ -78,6 +78,7 @@ import java.util.stream.Collectors;
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
 import static megamek.client.ui.swing.util.UIUtil.uiBlack;
+import static megamek.client.ui.swing.util.UIUtil.uiWhite;
 import static megamek.client.ui.swing.util.UIUtil.uiYellow;
 
 /**
@@ -5452,6 +5453,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         if (!game.getBoard().contains(mcoords)) {
             return null;
         }
+
         Hex mhex = game.getBoard().getHex(mcoords);
 
         String b = "";
@@ -5546,11 +5548,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 if (game.getBoard().isLegalDeployment(mcoords, cp)) {
                     if (!foundPlayer) {
                         foundPlayer = true;
-                        t += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader");
+                        t += Messages.getString("BoardView1.Tooltip.ArtyAutoHeader") + "<BR>";
                     }
 
                     f = "&nbsp;&nbsp;" + cp.getName();
-                    b = guiScaledFontHTML(cp.getColour().getColour()) + ">" + f + "</FONT>";
+                    b = guiScaledFontHTML(cp.getColour().getColour()) + f + "</FONT>";
                     t += "<B>"  + b + "</B>";
                     t += "<BR>";
                 }
@@ -5565,7 +5567,12 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 keybindText += "+";
             }
             keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
-            s += Messages.getString("BoardView1.Tooltip.ArtyAutoHint", keybindText);
+            i = Messages.getString("BoardView1.Tooltip.ArtyAutoHint1") + "<BR>";
+            i += Messages.getString("BoardView1.Tooltip.ArtyAutoHint2") + "<BR>";
+            i += Messages.getString("BoardView1.Tooltip.ArtyAutoHint3", keybindText);
+            t += "<I>" + i + "</I>";
+
+            t = guiScaledFontHTML(uiWhite()) + t + "</FONT>";
 
             String col = "<TD>" + t + "</TD>";
             String row = "<TR>" + col + "</TR>";
@@ -5597,7 +5604,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (var wSprite : wreckList) {
             if (wSprite.getPosition().equals(mcoords)) {
                 f = wSprite.getTooltip().toString();
-                t = guiScaledFontHTML() + f + "</FONT>";
+                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
                 String col = "<TD>" + t + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5656,11 +5663,16 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             if (aaa.getTurnsTilHit() == 1) {
-                t = Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", wpName, ammoName);
+                f = Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne1", wpName);
+                f += "<BR>&nbsp;&nbsp;";
+                f += Messages.getString("BoardView1.Tooltip.ArtilleryAttackOne2", ammoName);
             } else {
-                t = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", wpName, ammoName, aaa.getTurnsTilHit());
+                f = Messages.getString("BoardView1.Tooltip.ArtilleryAttackN1", wpName, aaa.getTurnsTilHit());
+                f += "<BR>&nbsp;&nbsp;";
+                f += Messages.getString("BoardView1.Tooltip.ArtilleryAttackN2", ammoName);
             }
 
+            t = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
             String col = "<TD>" + t + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5680,16 +5692,18 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
-                s += Messages.getString("BoardView1.ArtilleryAutohit");
+                f = Messages.getString("BoardView1.ArtilleryAutohit");
             } else {
-                s += Messages.getString("BoardView1.ArtilleryAdjustment", amod);
+                f = Messages.getString("BoardView1.ArtilleryAdjustment", amod);
             }
-            s += "<BR>";
+            f = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
+            s += f + "<BR>";
         }
 
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(mcoords);
         int round = game.getRoundCount();
         if (shdList != null) {
+            f = "";
             boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(mcoords);
             for (SpecialHexDisplay shd : shdList) {
                 boolean isTypeAutoHit = shd.getType() == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
@@ -5703,17 +5717,20 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                                 || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (localPlayer.equals(shd.getOwner())) {
-                            s += "Note: ";
+                            f += "Note: ";
                         } else {
-                            s += "Note (" + shd.getOwner().getName() + "): ";
+                            f += "Note (" + shd.getOwner().getName() + "): ";
                         }
                     }
                     String buf = shd.getInfo();
                     buf = buf.replaceAll("\\n", "<BR>");
-                    s += buf;
-                    s += "<BR>";
+                    f += buf;
+                    f = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
+                    f += "<BR>";
                 }
             }
+
+            s += f;
         }
 
         String d = "<DIV WIDTH=" + UIUtil.scaleForGUI(500) + ">" + s + "</DIV>";

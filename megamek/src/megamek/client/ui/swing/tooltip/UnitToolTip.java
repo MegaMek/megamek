@@ -196,8 +196,9 @@ public final class UnitToolTip {
     private static StringBuilder sysCrits(Entity entity, int type, int index, int loc, String l) {
         String s = "";
         String f = "";
-        int good = entity.getGoodCriticals(type, index, loc);
+        int total = entity.getNumberOfCriticals(type, index, loc);
         int hits = entity.getHitCriticals(type, index, loc);
+        int good = total - hits;
         boolean bad = (entity.getBadCriticals(type,index, loc) > 0);
 
         if ((good + hits) > 0) {
@@ -420,15 +421,15 @@ public final class UnitToolTip {
         if (good > 0)  {
             if (!destroyed) {
                 f = repeat(iChar, good);
-                s += guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + f + "</FONT>";
+                s = guiScaledFontHTML(colorIntact, TT_SMALLFONT_DELTA) + f + "</FONT>";
             } else {
                 f = repeat(iChar, good);
-                s += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + f + "</FONT>";
+                s = guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + f + "</FONT>";
             }
         }
         if (bad > 0) {
             f =repeat(dChar, bad);
-            s += guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + f + "</FONT>";
+            s = guiScaledFontHTML(colorDamaged, TT_SMALLFONT_DELTA) + f + "</FONT>";
         }
         return new StringBuilder().append(s);
     }

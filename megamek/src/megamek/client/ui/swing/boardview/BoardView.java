@@ -5507,7 +5507,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     } else {
                         i = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
                     }
-                    f += "</I>" + i + "</I>";
+                    f += "<I>" + i + "</I>";
                 }
             }
 

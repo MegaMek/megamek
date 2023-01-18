@@ -55,6 +55,7 @@ public class SerializationHelper {
                 megamek.common.PilotingRollData.class,
                 megamek.common.Player.class,
                 megamek.common.Sensor.class,
+                megamek.common.SpecialHexDisplay.class,
                 megamek.common.TargetRollModifier.class,
                 megamek.common.Team.class,
                 megamek.common.Terrain.class,

@@ -876,13 +876,13 @@ public final class UnitToolTip {
                 if (entity.isEvading()) {
                     i = addToTT("Evade", BR).toString();
                     f = "</I>" + i + "</I>";
-                    f = "<FONT COLOR=RED>" + f + "</FONT>";
+                    f = guiScaledFontHTML(GUIP.getWarningColor()) + f + "</FONT>";
                 }
 
                 if ((entity instanceof Infantry) && ((Infantry) entity).isTakingCover()) {
                     i = addToTT("TakingCover", BR).toString();
                     f = "</I>" + i + "</I>";
-                    f = "<FONT COLOR=RED>" + f + "</FONT>";
+                    f = guiScaledFontHTML(GUIP.getWarningColor()) + f + "</FONT>";
                 }
 
                 if (entity.isCharging()) {
@@ -892,7 +892,7 @@ public final class UnitToolTip {
                 if (entity.isMakingDfa()) {
                     i = addToTT("DFA", BR).toString();
                     f = "</I>" + i + "</I>";
-                    f = "<FONT COLOR=RED>" + f + "</FONT>";
+                    f = guiScaledFontHTML(GUIP.getWarningColor()) + f + "</FONT>";
                 }
 
                 if (entity.isUnjammingRAC()) {
@@ -989,7 +989,7 @@ public final class UnitToolTip {
             String msg_error = Messages.getString("ERROR");
             String sa = (swarmAttacker == null) ? msg_error : swarmAttacker.getDisplayName();
             f = addToTT("Swarmed", BR, sa).toString();
-            s += "<FONT COLOR=#FF0000>" + f + "</FONT>";
+            s += guiScaledFontHTML(GUIP.getWarningColor()) + f + "</FONT>";
         }
 
         // Spotting

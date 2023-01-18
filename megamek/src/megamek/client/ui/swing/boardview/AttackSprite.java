@@ -26,6 +26,8 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+
 /**
  * Sprite and info for an attack. Does not actually use the image buffer as
  * this can be horribly inefficient for long diagonal lines. Appears as an
@@ -377,7 +379,7 @@ class AttackSprite extends Sprite {
         String f = "";
 
         f = attackerDesc + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc;
-        s = "<FONT COLOR=#" + Integer.toHexString(attackColor.getRGB() & 0xFFFFFF) + ">" + f + "</FONT>";
+        s = guiScaledFontHTML(attackColor.getRGB()) + f + "</FONT>";
         for (String wpD: weaponDescs) {
             s += "<BR>"+wpD;
         }

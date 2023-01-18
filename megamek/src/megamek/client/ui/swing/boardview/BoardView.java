@@ -77,6 +77,8 @@ import java.util.stream.Collectors;
 
 import static megamek.client.ui.swing.tooltip.TipUtil.*;
 import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiBlack;
+import static megamek.client.ui.swing.util.UIUtil.uiYellow;
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
@@ -5492,7 +5494,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     } else {
                         f += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
                         String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
-                        f += "<FONT COLOR=RED>" + tmp + "<FONT>";
+                        f += guiScaledFontHTML(GUIP.getWarningColor()) + tmp + "<FONT>";
                         f += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
                     }
                 }
@@ -5509,7 +5511,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 }
             }
 
-            t = "<FONT color=\"black\">" + f + "</FONT>";
+            t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
             String col = "<TD>" + t + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + TERRAIN_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5548,7 +5550,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     }
 
                     f = "&nbsp;&nbsp;" + cp.getName();
-                    b = "<FONT COLOR=#" + cp.getColour().getHexString() + ">" + f + "</FONT>";
+                    b = guiScaledFontHTML(cp.getColour().getColour()) + ">" + f + "</FONT>";
                     t += "<B>"  + b + "</B>";
                     t += "<BR>";
                 }
@@ -5582,7 +5584,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
                 f = aSprite.getTooltip().toString();
-                t = "<FONT color=\"black\">" + f + "</FONT>";
+                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
                 String col = "<TD>" + t + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + ALT_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5629,7 +5631,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
             f += " in this hex...";
 
-            t = "<FONT COLOR=WHITE>" + f + "</FONT>";
+            t = guiScaledFontHTML(UIUtil.uiWhite()) + f + "</FONT>";
             String col = "<TD>" + t + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + BLOCK_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5790,7 +5792,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         bldg.getCurrentCF(mcoords), bldg.getMagnitude());
             }
 
-            t = "<FONT color=\"black\">" + f + "</FONT>";
+            t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
             String col = "<TD>" + t + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5806,7 +5808,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                         mhex.terrainLevel(Terrains.BLDG_ELEV), Terrains.getEditorName(Terrains.BUILDING),
                         mhex.terrainLevel(Terrains.BLDG_CF), Math.max(mhex.terrainLevel(Terrains.BLDG_ARMOR), 0),
                         BasementType.getType(mhex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).toString());
-                t = "<FONT color=\"black\">" + f + "</FONT>";
+                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
                 String col = "<TD>" + t + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5821,7 +5823,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 if (bldg.getBasementCollapsed(mcoords)) {
                     f += Messages.getString("BoardView1.Tooltip.BldgBasementCollapsed");
                 }
-                t = "<FONT color=\"black\">" + f + "</FONT>";
+                t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
                 String col = "<TD>" + t + "</TD>";
                 String row = "<TR>" + col + "</TR>";
                 String table = "<TABLE BORDER=0 BGCOLOR=" + BUILDING_BGCOLOR + " width=100%>" + row + "</TABLE>";
@@ -5842,7 +5844,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                 f = Messages.getString("BoardView1.Tooltip.Bridge",
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV), bldg.toString(), bldg.getCurrentCF(mcoords));
             }
-            t = "<FONT color=\"black\">" + f + "</FONT>";
+            t = guiScaledFontHTML(uiBlack()) + f + "</FONT>";
             String col = "<TD>" + t + "</TD>";
             String row = "<TR>" + col + "</TR>";
             String table = "<TABLE BORDER=0 BGCOLOR=" + LIGHT_BGCOLOR + " width=100%>" + row + "</TABLE>";

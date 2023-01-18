@@ -7090,10 +7090,12 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                         || (getMovementMode() == EntityMovementMode.TRACKED)) {
                     roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
                 }
+
                 if (isAirborneVTOLorWIGE() || (getMovementMode() == EntityMovementMode.HOVER)) {
                     roll.addModifier(-2, Messages.getString("WeaponAttackAction.RainSpec"));
                 }
             }
+
             if ((conditions.getWeather() == PlanetaryConditions.WE_DOWNPOUR)
                     ||(conditions.getWeather() == PlanetaryConditions.WE_HEAVY_RAIN)) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.RainSpec"));
@@ -7105,6 +7107,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             if (conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.SnowSpec"));
             }
+
             if (((conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES)
                     || (conditions.getWeather() == PlanetaryConditions.WE_SLEET)
                     || (conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM))
@@ -7115,7 +7118,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
         if (!hasAbility(OptionsConstants.UNOFF_ALLWEATHER)
                 && getCrew().getOptions().stringOption(OptionsConstants.MISC_ENV_SPECIALIST).equals(Crew.ENVSPC_WIND)) {
-            if (conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE && isAirborneVTOLorWIGE()) {
+            if ((conditions.getWeather() == PlanetaryConditions.WI_MOD_GALE) && isAirborneVTOLorWIGE()) {
                 roll.addModifier(-1, Messages.getString("WeaponAttackAction.WindSpec"));
             }
 

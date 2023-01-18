@@ -373,16 +373,14 @@ class AttackSprite extends Sprite {
 
     @Override
     public StringBuffer getTooltip() {
-        StringBuffer tipString = new StringBuffer();
-        tipString.append("<FONT COLOR=#");
-        tipString.append(Integer.toHexString(attackColor.getRGB() & 0xFFFFFF));
-        tipString.append(">");
-        tipString.append(attackerDesc
-                + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc);
-        tipString.append("</FONT>");
+        String s = "";
+        String f = "";
+
+        f = attackerDesc + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc;
+        s = "<FONT COLOR=#" + Integer.toHexString(attackColor.getRGB() & 0xFFFFFF) + ">" + f + "</FONT>";
         for (String wpD: weaponDescs) {
-            tipString.append("<BR>"+wpD);
+            s += "<BR>"+wpD;
         }
-        return tipString;
+        return new StringBuffer().append(s);
     }
 }

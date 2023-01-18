@@ -5456,6 +5456,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
         String f = "";
         String t = "";
         String s = "";
+        String i = "";
         StringBuffer sb = new StringBuffer();
         //StringBuffer txt = new StringBuffer();
 
@@ -5489,7 +5490,10 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     if ((distance > minSensorRange) && (distance <= maxSensorRange)) {
                         f += Messages.getString("BoardView1.Tooltip.SensorsHexInRange");
                     } else {
-                        f += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange");
+                        f += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange1");
+                        String tmp = Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange2");
+                        f += "<FONT COLOR=RED>" + tmp + "<FONT>";
+                        f += Messages.getString("BoardView1.Tooltip.SensorsHexNotInRange3");
                     }
                 }
 
@@ -5497,10 +5501,11 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
                     f += "<BR>";
                     int disPM = movementTarget.distance(mcoords);
                     if (disPM == 1) {
-                        f += Messages.getString("BoardView1.Tooltip.DistanceMove1");
+                        i = Messages.getString("BoardView1.Tooltip.DistanceMove1");
                     } else {
-                        f += Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
+                        i = Messages.getString("BoardView1.Tooltip.DistanceMoveN", disPM);
                     }
+                    f += "</I>" + i + "</I>";
                 }
             }
 

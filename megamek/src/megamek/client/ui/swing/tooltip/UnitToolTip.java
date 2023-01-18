@@ -813,6 +813,7 @@ public final class UnitToolTip {
         boolean isGunEmplacement = entity instanceof GunEmplacement;
         String s = "";
         String f = "";
+        String i = "";
         
         // BV Info
         // Hidden for invisible units when in double blind and hide enemy bv is selected
@@ -858,35 +859,44 @@ public final class UnitToolTip {
         if (!isGunEmplacement) {
             // "Has not yet moved" only during movement phase
             if (!entity.isDone() && game.getPhase().isMovement()) {
-                s += addToTT("NotYetMoved", BR);
+                i = addToTT("NotYetMoved", BR).toString();
+                s += "</I>" + i + "</I>";
             } else if ((entity.isDone() && game.getPhase().isMovement())
                     || game.getPhase().isFiring()) {
                 int tmm = Compute.getTargetMovementModifier(game, entity.getId()).getValue();
                 if (entity.moved == EntityMovementType.MOVE_NONE) {
-                    f += addToTT("NoMove", BR, tmm).toString();
+                    i = addToTT("NoMove", BR, tmm).toString().toString();
+                    f = "</I>" + i + "</I>";
                 } else {
-                    f += addToTT("MovementF", BR, entity.getMovementString(entity.moved),
+                    i = addToTT("MovementF", BR, entity.getMovementString(entity.moved),
                             entity.delta_distance, tmm).toString();
+                    f = "</I>" + i + "</I>";
                 }
                 // Special Moves
                 if (entity.isEvading()) {
-                    f += addToTT("Evade", NOBR).toString();
+                    i = addToTT("Evade", BR).toString();
+                    f = "</I>" + i + "</I>";
+                    f = "<FONT COLOR=RED>" + f + "</FONT>";
                 }
 
                 if ((entity instanceof Infantry) && ((Infantry) entity).isTakingCover()) {
-                    f += addToTT("TakingCover", NOBR).toString();
+                    i = addToTT("TakingCover", BR).toString();
+                    f = "</I>" + i + "</I>";
+                    f = "<FONT COLOR=RED>" + f + "</FONT>";
                 }
 
                 if (entity.isCharging()) {
-                    f += addToTT("Charging", BR).toString();
+                    f = addToTT("Charging", BR).toString();
                 }
 
                 if (entity.isMakingDfa()) {
-                    f += addToTT("DFA", NOBR).toString();
+                    i = addToTT("DFA", BR).toString();
+                    f = "</I>" + i + "</I>";
+                    f = "<FONT COLOR=RED>" + f + "</FONT>";
                 }
 
                 if (entity.isUnjammingRAC()) {
-                    f += "<BR>";
+                    f = "<BR>";
                     String msg_unjammingrac = Messages.getString("BoardView1.Tooltip.UnjammingRAC");
                     f += msg_unjammingrac;
                     if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
@@ -904,21 +914,22 @@ public final class UnitToolTip {
         if (entity.isAero()) {
             // Velocity, Altitude, Elevation, Fuel
             IAero aero = (IAero) entity;
-            f += addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getFuel()).toString();
+            i = addToTT("AeroVelAltFuel", BR, aero.getCurrentVelocity(), aero.getAltitude(), aero.getFuel()).toString();
         } else if (entity.getElevation() != 0) {
             // Elevation only
-            f += addToTT("Elev", BR, entity.getElevation()).toString();
+            i = addToTT("Elev", BR, entity.getElevation()).toString();
         }
-
+        f = "</I>" + i + "</I>";
         s += guiScaledFontHTML(uiLightViolet()) + f + "</FONT>";
 
         s += "<BR>";
         String msg_facing = Messages.getString("BoardView1.Tooltip.Facing");
-        s += "&nbsp;&nbsp;" + msg_facing + ":&nbsp;" + PlanetaryConditions.getWindDirDisplayableName(entity.getFacing());
+        f = "&nbsp;&nbsp;" + msg_facing + ":&nbsp;" + PlanetaryConditions.getWindDirDisplayableName(entity.getFacing());
         if (entity.getFacing() != entity.getSecondaryFacing()) {
             String msg_twist = Messages.getString("BoardView1.Tooltip.Twist");
-            s += "&nbsp;&nbsp;" + msg_twist + ":&nbsp;" + PlanetaryConditions.getWindDirDisplayableName(entity.getSecondaryFacing());
+            f = "&nbsp;&nbsp;" + msg_twist + ":&nbsp;" + PlanetaryConditions.getWindDirDisplayableName(entity.getSecondaryFacing());
         }
+        s += guiScaledFontHTML() + f + "</FONT>";
 
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
@@ -937,7 +948,8 @@ public final class UnitToolTip {
         if (isGunEmplacement) {
             GunEmplacement emp = (GunEmplacement) entity; 
             if (emp.isTurret() && emp.isTurretLocked(emp.getLocTurret())) {
-                f = addToTT("TurretLocked", BR).toString();
+                i = addToTT("TurretLocked", BR).toString();
+                f = "</I>" + i + "</I>";
                 s += guiScaledFontHTML(GUIP.getWarningColor()) + f + "</FONT>";
             }
         }
@@ -976,7 +988,8 @@ public final class UnitToolTip {
             }
             String msg_error = Messages.getString("ERROR");
             String sa = (swarmAttacker == null) ? msg_error : swarmAttacker.getDisplayName();
-            s += addToTT("Swarmed", BR, sa).toString();
+            f = addToTT("Swarmed", BR, sa).toString();
+            s += "<FONT COLOR=#FF0000>" + f + "</FONT>";
         }
 
         // Spotting
@@ -1021,7 +1034,8 @@ public final class UnitToolTip {
             }
             if (tempList.length() > 1) {
                 tempList.delete(tempList.length() - 2, tempList.length());
-                s += addToTT("SeenBy", BR, tempList.toString()).toString();
+                f = addToTT("SeenBy", BR, tempList.toString()).toString();
+                s += guiScaledFontHTML() + f + "</FONT>";
             }            
         }
 

@@ -126,7 +126,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
     /** A list of information on hexes with roads or bridges. */
     private final List<int[]> roadHexes = new ArrayList<>();
     private int zoom = GUIP.getMinimapZoom();
-    private int heightDisplayMode = SHOW_NO_HEIGHT;
+    private int heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
     
     private Coords firstLOS;
     private Coords secondLOS;
@@ -220,8 +220,6 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             client = clientGui.getClient();
         }
         initializeColors();
-        zoom = GUIP.getMinimapZoom();
-        heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
         if (dialog != null) {
             initializeDialog();
             initializeListeners();

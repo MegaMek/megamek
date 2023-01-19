@@ -51,10 +51,10 @@ public final class PilotToolTip {
     // PRIVATE
 
     private static StringBuilder getPilotTip(final Entity entity, boolean detailed, boolean showPortrait, boolean showDefaultPortrait) {
-        String s = "";
+        String result = "";
         
         if (!detailed) {
-            s += "<HR STYLE=WIDTH:90% />";
+            result += "<HR STYLE=WIDTH:90% />";
         }
 
         // The crew info (names etc.) and portraits, if shown, are placed
@@ -66,26 +66,26 @@ public final class PilotToolTip {
 
         cols += crewInfoCell(entity).toString();
         String row = "<TR>" + cols + "</TR>";
-        s += "<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " >" + row + "</TABLE>";
-        s = "<DIV BGCOLOR=" + BG_COLOR + "  width=100% >" + s + "</DIV>";
+        String table = "<TABLE BORDER=0 BGCOLOR=" + BG_COLOR + " >" + row + "</TABLE>";
+        result += "<DIV BGCOLOR=" + BG_COLOR + "  width=100% >" + table + "</DIV>";
 
         if (!detailed) {
-            s += "<HR STYLE=WIDTH:90% />";
+            result += "<HR STYLE=WIDTH:90% />";
         } else {
-            s += scaledHTMLSpacer(3);
+            result += scaledHTMLSpacer(3);
         }
-        return new StringBuilder().append(s);
+        return new StringBuilder().append(result);
     }
 
     /** The crew advantages and MD */
     public static StringBuilder getCrewAdvs(Entity entity, boolean detailed) {
-        String s = "";
+        String result = "";
         String f = "";
 
         f = crewAdvs(entity, detailed).toString();
-        s = scaledHTMLSpacer(3) + f +  "</FONT>";
+        result = scaledHTMLSpacer(3) + f +  "</FONT>";
 
-        return new StringBuilder().append(s);
+        return new StringBuilder().append(result);
     }
     
     /** Returns a tooltip part with names and skills of the crew. */
@@ -93,7 +93,7 @@ public final class PilotToolTip {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
         String f = "";
-        String s = "";
+        String result = "";
         
         // Name / Callsign and Status for each crew member
         for (int i = 0; i < crew.getSlotCount(); i++) {
@@ -103,30 +103,30 @@ public final class PilotToolTip {
 
             if ((crew.getNickname(i) != null) && !crew.getNickname(i).isBlank()) {
                 f = "<B>'" + crew.getNickname(i).toUpperCase() + "'</B>";
-                s += guiScaledFontHTML(UIUtil.uiNickColor()) + f + "</FONT>";
+                result += guiScaledFontHTML(UIUtil.uiNickColor()) + f + "</FONT>";
             } else if ((crew.getName(i) != null) && !crew.getName(i).isBlank()) {
-                s += crew.getName(i);
+                result += crew.getName(i);
             } else {
-                s += Messages.getString("BoardView1.Tooltip.Pilot");
+                result += Messages.getString("BoardView1.Tooltip.Pilot");
             }
 
             if (crew.getSlotCount() > 1) {
-                s += " \u2B1D " + crew.getCrewType().getRoleName(i);
+                result += " \u2B1D " + crew.getCrewType().getRoleName(i);
             }
             
             if (!crew.getStatusDesc(i).isEmpty()) {
-                s += guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
+                result += guiScaledFontHTML(GUIPreferences.getInstance().getWarningColor()) + " (" + crew.getStatusDesc(i) + ")</FONT>";
             }
-            s += "<BR>";
+            result += "<BR>";
         }
         
         // Effective entity skill for the whole crew
         boolean rpg_skills = game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
-        s += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
-        
-        s = guiScaledFontHTML() + s + "</FONT>";
+        result += CrewSkillSummaryUtil.getSkillNames(entity) + ": " + crew.getSkillsAsString(rpg_skills);
 
-        String col = "<TD>" + s + "</TD>";
+        result = guiScaledFontHTML() + result + "</FONT>";
+
+        String col = "<TD>" + result + "</TD>";
         return new StringBuilder().append(col);
     }
     
@@ -170,12 +170,12 @@ public final class PilotToolTip {
      * groups and number of advantages per group are given.
      */
     private static StringBuilder crewAdvs(final Entity entity, boolean detailed) {
-        String s = "";
+        String result = "";
         String f = "";
         Crew crew = entity.getCrew();
         f = getOptionList(crew.getOptions().getGroups(), crew::countOptions, detailed).toString();
-        s = guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA) + f + "</FONT>";
-        return new StringBuilder().append(s);
+        result = guiScaledFontHTML(uiQuirksColor(), UnitToolTip.TT_SMALLFONT_DELTA) + f + "</FONT>";
+        return new StringBuilder().append(result);
     }
     
 }

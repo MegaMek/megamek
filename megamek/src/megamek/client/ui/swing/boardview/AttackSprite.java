@@ -374,18 +374,18 @@ class AttackSprite extends Sprite {
     @Override
     public StringBuffer getTooltip() {
         GamePhase phase = this.boardView1.game.getPhase();
-        String s = "";
+        String result = "";
         String f = "";
 
         f = attackerDesc + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc;
-        s = guiScaledFontHTML(attackColor) + f + "</FONT>";
+        result = guiScaledFontHTML(attackColor) + f + "</FONT>";
         f = "";
         if ((phase.isFiring()) || (phase.isPhysical())) {
             for (String wpD : weaponDescs) {
                 f += "<BR>" + wpD;
             }
-            s += guiScaledFontHTML(uiBlack()) + f + "</FONT>";
+            result += guiScaledFontHTML(uiBlack()) + f + "</FONT>";
         }
-        return new StringBuffer().append(s);
+        return new StringBuffer().append(result);
     }
 }

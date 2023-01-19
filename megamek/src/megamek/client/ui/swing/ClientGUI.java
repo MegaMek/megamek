@@ -723,9 +723,25 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         }
     }
 
+    private boolean resetMiniMapZoom(Container c) {
+        for (Component comp: c.getComponents()) {
+            if (comp instanceof Minimap) {
+                Minimap mm = (Minimap) comp;
+                mm.resetZoom();
+                return true;
+            } else {
+                if (resetMiniMapZoom((Container) comp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void resetWindowPositions() {
         if (getMiniMapDialog() != null) {
             getMiniMapDialog().setBounds(0, 0, getMiniMapDialog().getWidth(), getMiniMapDialog().getHeight());
+            resetMiniMapZoom(getMiniMapDialog());
         }
         if (getUnitDisplayDialog() != null) {
             getUnitDisplayDialog().setBounds(0, 0, getUnitDisplay().getWidth(), getUnitDisplay().getHeight());

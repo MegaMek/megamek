@@ -219,6 +219,8 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
             client = clientGui.getClient();
         }
         initializeColors();
+        zoom = GUIP.getMinimapZoom();
+        heightDisplayMode = GUIP.getMinimapHeightDisplayMode();
         if (dialog != null) {
             initializeDialog();
             initializeListeners();
@@ -1297,6 +1299,7 @@ public final class Minimap extends JPanel implements IPreferenceChangeListener {
                     zoomOut();
                 } else if ((x < 2 * BUTTON_HEIGHT) && (zoom > 3)) {
                     heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                    GUIP.setMinimapHeightDisplayMode(heightDisplayMode);
                     initializeMap();
                 } else if (x > (getSize().width - BUTTON_HEIGHT)) {
                     zoomIn();

@@ -13,7 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView;
 import megamek.client.ui.swing.boardview.LabelDisplayStyle;
 import megamek.client.ui.swing.util.PlayerColour;
@@ -211,6 +210,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MINI_MAP_POS_X = "MinimapPosX";
     public static final String MINI_MAP_POS_Y = "MinimapPosY";
     public static final String MINI_MAP_ZOOM = "MinimapZoom";
+    public static final String MINI_MAP_HEIGHT_DISPLAY_MODE = "MinimapHeightDisplayMode";
     public static final String MINI_MAP_AUTO_DISPLAY_REPORT_PHASE = "MinimapAutoDiplayReportPhase";
     public static final String MINI_MAP_AUTO_DISPLAY_NONREPORT_PHASE = "MinimapAutoDiplayNonReportPhase";
     public static final String MINIMUM_SIZE_HEIGHT = "MinimumSizeHeight";
@@ -950,6 +950,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(MINI_MAP_ZOOM);
     }
 
+    public int getMinimapHeightDisplayMode() {
+        return store.getInt(MINI_MAP_HEIGHT_DISPLAY_MODE);
+    }
+
     public boolean getMiniReportEnabled() {
         return store.getBoolean(MINI_REPORT_ENABLED);
     }
@@ -1543,6 +1547,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setMinimapZoom(int zoom) {
         store.setValue(MINI_MAP_ZOOM, zoom);
+    }
+
+    public void setMinimapHeightDisplayMode(int zoom) {
+        store.setValue(MINI_MAP_HEIGHT_DISPLAY_MODE, zoom);
     }
 
     public void setMinimapAutoDisplayReportPhase(int i) {

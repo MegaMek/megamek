@@ -40,6 +40,9 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.*;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
 /**
  * This display is used for when hidden units are taking pointblank shots.
  * 
@@ -98,6 +101,34 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         public String toString() {
             return Messages.getString("FiringDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                case FIRE_TWIST:
+                    result = "Left: " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
+                    result += " Right: " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
+                    break;
+                case FIRE_FIRE:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.FIRE);
+                    break;
+                case FIRE_SKIP:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    break;
+                case FIRE_MODE:
+                    result = "Next: " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
+                    result += " Previous: " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
+                    break;
+                case FIRE_CANCEL:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -114,17 +145,14 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         for (FiringCommand cmd : FiringCommand.values()) {
             String title = Messages.getString("FiringDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
-            String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
             buttons.put(cmd, newButton);
         }
-        numButtonGroups =
-                (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+
+        setButtonsTooltips();
 
         setupButtonPanel();
 
@@ -144,7 +172,27 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                 }
             }
         });
+    }
 
+    private void setButtonsTooltips() {
+        for (FiringCommand cmd : FiringCommand.values()) {
+            String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("FiringDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
     }
 
     /**

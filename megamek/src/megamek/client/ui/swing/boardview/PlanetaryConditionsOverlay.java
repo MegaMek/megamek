@@ -193,10 +193,7 @@ public class PlanetaryConditionsOverlay implements IDisplayable, IPreferenceChan
         Color colorHot = GUIP.getPlanetaryConditionsColorHot();
         Color colorCold = GUIP.getPlanetaryConditionsColorCold();
 
-        KeyCommandBind kcb = KeyCommandBind.PLANETARY_CONDITIONS;
-        String mod = KeyEvent.getModifiersExText(kcb.modifiers);
-        String key = KeyEvent.getKeyText(kcb.key);
-        String toggleKey = (mod.isEmpty() ? "" : mod + "+") + key;
+        String toggleKey = KeyCommandBind.getDesc(KeyCommandBind.PLANETARY_CONDITIONS);
 
         String tmpStr = "";
         Boolean showHeading = GUIP.getAdvancedPlanetaryConditionsShowHeader();

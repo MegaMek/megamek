@@ -5543,11 +5543,7 @@ public class BoardView extends JPanel implements Scrollable, BoardListener, Mous
             }
 
             // Add a hint with keybind that the zones can be shown graphically
-            String keybindText = KeyEvent.getModifiersExText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
-            if (!keybindText.isEmpty()) {
-                keybindText += "+";
-            }
-            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
+            String keybindText = KeyCommandBind.getDesc(KeyCommandBind.getBindByCmd("autoArtyDeployZone"));
             txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint", keybindText));
 
             txt.append("</TD></TR></TABLE>");

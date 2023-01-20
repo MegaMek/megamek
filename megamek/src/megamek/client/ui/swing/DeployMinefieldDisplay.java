@@ -15,6 +15,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
@@ -24,6 +25,9 @@ import megamek.common.event.GameTurnChangeEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -1243277953037374936L;
@@ -102,6 +106,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         numButtonGroups = (int) Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
         
         butDone.setText(Messages.getString("DeployMinefieldDisplay.Done"));
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
         
         setupButtonPanel();

@@ -14,6 +14,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.enums.GamePhase;
@@ -24,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class ReportDisplay extends StatusBarPhaseDisplay  {
     private static final long serialVersionUID = 6185643976857892270L;
@@ -63,6 +67,20 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         public String toString() {
             return Messages.getString("ReportDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                case REPORT_REPORT:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.ROUND_REPORT);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -90,10 +108,6 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
             String title = Messages.getString(RD_REPORTDIPLAY + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = RD_REPORTDIPLAY + cmd.getCmd() + RD_TOOLTIP;
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -101,7 +115,11 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
+        setButtonTooltips();
+
         butDone.setText(Messages.getString("ReportDisplay.Done"));
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
@@ -109,6 +127,27 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
         clientgui.getBoardView().addKeyListener(this);
+    }
+
+    private void setButtonTooltips() {
+        for (ReportCommand cmd : ReportCommand.values()) {
+            String ttKey = RD_REPORTDIPLAY + cmd.getCmd() + RD_TOOLTIP;
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString(RD_REPORTDIPLAY + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
     }
 
     @Override

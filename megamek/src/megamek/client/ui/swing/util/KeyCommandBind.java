@@ -20,6 +20,9 @@
  */
 package megamek.client.ui.swing.util;
 
+import megamek.client.ui.Messages;
+
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -201,5 +204,12 @@ public enum KeyCommandBind {
     /** Returns a KeyStroke for a given KeyCommandBind. */
     public static KeyStroke keyStroke(KeyCommandBind bind) {
         return KeyStroke.getKeyStroke(bind.key, bind.modifiers);
+    }
+
+    /** returns formatted mod + key for display*/
+    public static String getDesc(KeyCommandBind k) {
+        String mod = getModifiersExText(k.modifiers);
+        String key = getKeyText(k.key);
+        return (mod.isEmpty() ? "" : mod + "+") + key;
     }
 }

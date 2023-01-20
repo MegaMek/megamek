@@ -56,6 +56,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
 public class MovementDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -7246715124042905688L;
     
@@ -216,6 +219,30 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return Messages.getString("MovementDisplay." + getCmd());
         }
 
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                case MOVE_NEXT:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    break;
+                case MOVE_WALK:
+                    result = "Toggle Move / Jump: " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
+                    break;
+                case MOVE_JUMP:
+                    result = "Toggle Move / Jump: " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
+                    break;
+                case MOVE_TURN:
+                    result = "Left: " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
+                    result += " Right: " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
         /**
          * Return a list of valid commands for the given parameters.
          *
@@ -321,18 +348,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 title += Messages.getString("BoardView1.Tooltip.AndAC");
             }
             MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(clientgui == null);
             buttons.put(cmd, newButton);
         }
 
-        butDone.setText("<html><b>"
-                        + Messages.getString("MovementDisplay.butDone") + "</b></html>");
+        setButtonsTooltips();
+
+        butDone.setText("<html><body>" + Messages.getString("MovementDisplay.butDone") + "</body></html>");
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
@@ -341,6 +367,27 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         shiftheld = false;
         
         registerKeyCommands();
+    }
+
+    private void setButtonsTooltips() {
+        for (MoveCommand cmd : MoveCommand.values()) {
+            String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("MovementDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
     }
 
     /**

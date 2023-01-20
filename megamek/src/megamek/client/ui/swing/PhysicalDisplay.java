@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -30,6 +31,9 @@ import org.apache.logging.log4j.LogManager;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class PhysicalDisplay extends StatusBarPhaseDisplay {
     private static final long serialVersionUID = -3274750006768636001L;
@@ -91,6 +95,20 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         public String toString() {
             return Messages.getString("PhysicalDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                case PHYSICAL_NEXT:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -124,10 +142,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             String title = Messages.getString("PhysicalDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "PhysicalDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -135,11 +149,36 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
-        butDone.setText("<html><b>" + Messages.getString("PhysicalDisplay.Done") + "</b></html>");
+        setButtonsTooltips();
+
+        butDone.setText("<html><body>" + Messages.getString("PhysicalDisplay.Done") + "</body></html>");
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
 
+    }
+
+    private void setButtonsTooltips() {
+        for (PhysicalCommand cmd : PhysicalCommand.values()) {
+            String ttKey = "PhysicalDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("PhysicalDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
     }
 
     @Override

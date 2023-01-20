@@ -44,6 +44,9 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.*;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
 /**
  * Targeting Phase Display. Breaks naming convention because TargetingDisplay is too easy to confuse
  * with something else
@@ -101,6 +104,33 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         public String toString() {
             return Messages.getString("TargetingPhaseDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                case FIRE_NEXT:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    break;
+                case FIRE_FIRE:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.FIRE);
+                    break;
+                case FIRE_SKIP:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    break;
+                case FIRE_MODE:
+                    result = "Next: " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
+                    result += " Previous: " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
+                    break;
+                case FIRE_CANCEL:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -143,10 +173,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             String title = Messages.getString("TargetingPhaseDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "TargetingPhaseDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -154,11 +180,43 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
+        setButtonsTooltips();
+
         butDone.setText(Messages.getString("TargetingPhaseDisplay.Done"));
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();
-        
+
+        registerKeyCommands();
+    }
+
+    private void setButtonsTooltips() {
+        for (TargetingCommand cmd : TargetingCommand.values()) {
+            String ttKey = "TargetingPhaseDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("TargetingPhaseDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
+    }
+
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
         // Register the action for UNDO
@@ -403,7 +461,6 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                         clear();
                     }
                 });
-        
     }
 
     /**

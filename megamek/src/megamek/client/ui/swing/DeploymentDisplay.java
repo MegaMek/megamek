@@ -23,6 +23,9 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
@@ -36,6 +39,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.util.*;
+
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
@@ -84,6 +90,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         public String toString() {
             return Messages.getString("DeploymentDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                case DEPLOY_NEXT:
+                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     protected Map<DeployCommand,MegamekButton> buttons;
@@ -106,10 +126,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         for (DeployCommand cmd : DeployCommand.values()) {
             String title = Messages.getString("DeploymentDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "DeploymentDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -117,9 +133,34 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }          
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
-        butDone.setText("<html><b>" + Messages.getString("DeploymentDisplay.Deploy") + "</b></html>");
+        setButtonsTooltips();
+
+        butDone.setText("<html><body>" + Messages.getString("DeploymentDisplay.Deploy") + "</body></html>");
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
-        setupButtonPanel();        
+        setupButtonPanel();
+    }
+
+    private void setButtonsTooltips() {
+        for (DeployCommand cmd : DeployCommand.values()) {
+            String ttKey = "DeploymentDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("DeploymentDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
     }
     
     @Override

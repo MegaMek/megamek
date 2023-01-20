@@ -33,6 +33,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static megamek.client.ui.swing.util.UIUtil.guiScaledFontHTML;
+import static megamek.client.ui.swing.util.UIUtil.uiLightViolet;
+
 public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
     private static final long serialVersionUID = -4948184589134809323L;
@@ -120,6 +123,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
 
         butDone.setText(Messages.getString("SelectArtyAutoHitHexDisplay.Done"));
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
         butDone.setEnabled(false);
 
         setupButtonPanel();

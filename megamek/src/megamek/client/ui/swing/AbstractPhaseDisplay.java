@@ -105,8 +105,9 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
                         @Override
                         public boolean shouldPerformAction() {
-                            if ((!clientgui.getClient().isMyTurn() && (clientgui
-                                    .getClient().getGame().getTurn() != null))
+                            if (((!clientgui.getClient().isMyTurn()
+                                    && (clientgui.getClient().getGame().getTurn() != null)
+                                    && (!clientgui.getClient().getGame().getPhase().isReport())))
                                     || clientgui.getBoardView().getChatterBoxActive()
                                     || display.isIgnoringEvents()
                                     || !display.isVisible()

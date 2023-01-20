@@ -137,18 +137,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         attacks = new Vector<>();
 
-        buttons = new HashMap<>((int) (PhysicalCommand.values().length * 1.25 + 0.5));
-        for (PhysicalCommand cmd : PhysicalCommand.values()) {
-            String title = Messages.getString("PhysicalDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
-
+        setButtons();
         setButtonsTooltips();
 
         butDone.setText("<html><body>" + Messages.getString("PhysicalDisplay.Done") + "</body></html>");
@@ -160,7 +149,23 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
     }
 
-    private void setButtonsTooltips() {
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (PhysicalCommand.values().length * 1.25 + 0.5));
+        for (PhysicalCommand cmd : PhysicalCommand.values()) {
+            String title = Messages.getString("PhysicalDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
         for (PhysicalCommand cmd : PhysicalCommand.values()) {
             String ttKey = "PhysicalDisplay." + cmd.getCmd() + ".tooltip";
             String tt = cmd.getHotKeyDesc();

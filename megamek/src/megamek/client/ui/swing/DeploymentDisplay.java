@@ -120,19 +120,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         super(clientgui);
         clientgui.getClient().getGame().addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
-        setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); 
-        
-        buttons = new HashMap<>((int) (DeployCommand.values().length * 1.25 + 0.5));
-        for (DeployCommand cmd : DeployCommand.values()) {
-            String title = Messages.getString("DeploymentDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }          
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+        setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase"));
 
+        setButtons();
         setButtonsTooltips();
 
         butDone.setText("<html><body>" + Messages.getString("DeploymentDisplay.Deploy") + "</body></html>");
@@ -142,7 +132,21 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setupButtonPanel();
     }
 
-    private void setButtonsTooltips() {
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (DeployCommand.values().length * 1.25 + 0.5));
+        for (DeployCommand cmd : DeployCommand.values()) {
+            String title = Messages.getString("DeploymentDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+    @Override
+    protected void setButtonsTooltips() {
         for (DeployCommand cmd : DeployCommand.values()) {
             String ttKey = "DeploymentDisplay." + cmd.getCmd() + ".tooltip";
             String tt = cmd.getHotKeyDesc();

@@ -60,6 +60,17 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         public String toString() {
             return cmd;
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -88,6 +99,19 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         p = clientgui.getClient().getLocalPlayer();
 
+        setButtons();
+        setButtonsTooltips();
+
+        butDone.setText(Messages.getString("DeployMinefieldDisplay.Done"));
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
+        butDone.setEnabled(false);
+
+        setupButtonPanel();
+    }
+
+    @Override
+    protected void setButtons() {
         buttons = new HashMap<>((int) (Command.values().length * 1.25 + 0.5));
         for (Command cmd : Command.values()) {
             String title = Messages.getString("DeployMinefieldDisplay."
@@ -102,15 +126,30 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
             buttons.put(cmd, newButton);
-        }          
+        }
         numButtonGroups = (int) Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
-        
-        butDone.setText(Messages.getString("DeployMinefieldDisplay.Done"));
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
-        
-        setupButtonPanel();
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (Command cmd : Command.values()) {
+            String ttKey = "DeployMinefieldDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("DeployMinefieldDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
     }
 
     @Override

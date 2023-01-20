@@ -101,6 +101,17 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         public String toString() {
             return Messages.getString("PrephaseDisplay." + getCmd());
         }
+
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                default:
+                    break;
+            }
+
+            return result;
+        }
     }
 
     // buttons
@@ -122,16 +133,27 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         super(clientgui);
         this.phase = phase;
 
-        setupStatusBar(Messages
-                .getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
+        setupStatusBar(Messages.getFormattedString("PrephaseDisplay.waitingForPrephasePhase", phase.toString()));
 
-        buttons = new HashMap<>(
-                (int) (PrephaseCommand.values().length * 1.25 + 0.5));
+        setButtons();
+        setButtonsTooltips();
+
+        butDone.setText(Messages.getString("PrephaseDisplay.Done"));
+        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
+        butDone.setToolTipText("<html><body>" + f + "</body></html>");
+        butDone.setEnabled(false);
+
+        setupButtonPanel();
+
+        registerKeyCommands();
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (PrephaseCommand.values().length * 1.25 + 0.5));
         for (PrephaseCommand cmd : PrephaseCommand.values()) {
-            String title = Messages.getString("PrephaseDisplay."
-                    + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String title = Messages.getString("PrephaseDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             String ttKey = "PrephaseDisplay." + cmd.getCmd() + ".tooltip";
             if (Messages.keyExists(ttKey)) {
                 newButton.setToolTipText(Messages.getString(ttKey));
@@ -142,16 +164,35 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
 
             buttons.put(cmd, newButton);
         }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0)
-                / buttonsPerGroup);
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
 
-        butDone.setText(Messages.getString("PrephaseDisplay.Done"));
-        String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
-        butDone.setToolTipText("<html><body>" + f + "</body></html>");
-        butDone.setEnabled(false);
+    @Override
+    protected void setButtonsTooltips() {
+        for (PrephaseCommand cmd : PrephaseCommand.values()) {
+            String ttKey = "PrephaseDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("PrephaseDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
+    }
 
-        setupButtonPanel();
-
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
 

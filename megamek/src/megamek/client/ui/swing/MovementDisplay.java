@@ -338,22 +338,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase"));
 
-        // Create all of the buttons
-        buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
-        for (MoveCommand cmd : MoveCommand.values()) {
-            String title = Messages.getString("MovementDisplay." + cmd.getCmd());
-            if ((clientgui != null) &&
-                    (cmd == MoveCommand.MOVE_UNJAM) &&
-                    (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
-                title += Messages.getString("BoardView1.Tooltip.AndAC");
-            }
-            MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(clientgui == null);
-            buttons.put(cmd, newButton);
-        }
-
+        setButtons();
         setButtonsTooltips();
 
         butDone.setText("<html><body>" + Messages.getString("MovementDisplay.butDone") + "</body></html>");
@@ -369,7 +354,27 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         registerKeyCommands();
     }
 
-    private void setButtonsTooltips() {
+    @Override
+    protected void setButtons() {
+        // Create all of the buttons
+        buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
+        for (MoveCommand cmd : MoveCommand.values()) {
+            String title = Messages.getString("MovementDisplay." + cmd.getCmd());
+            if ((clientgui != null) &&
+                    (cmd == MoveCommand.MOVE_UNJAM) &&
+                    (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
+                title += Messages.getString("BoardView1.Tooltip.AndAC");
+            }
+            MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(clientgui == null);
+            buttons.put(cmd, newButton);
+        }
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
         for (MoveCommand cmd : MoveCommand.values()) {
             String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
             String tt = cmd.getHotKeyDesc();

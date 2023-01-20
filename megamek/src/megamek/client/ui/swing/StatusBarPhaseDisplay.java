@@ -29,6 +29,7 @@ import javax.swing.*;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.common.KeyBindParser;
 import megamek.common.preference.*;
 
 /**
@@ -119,12 +120,19 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         add(panStatus);
         
         GUIP.addPreferenceChangeListener(this);
+        KeyBindParser.addPreferenceChangeListener(this);
         ToolTipManager.sharedInstance().registerComponent(this);
     }
     
     
     /** Returns the list of buttons that should be displayed. */
     protected abstract ArrayList<MegamekButton> getButtonList();
+
+    /** set button that should be displayed. */
+    protected abstract void setButtons();
+
+    /** set button tool tips that should be displayed. */
+    protected abstract void setButtonsTooltips();
 
     /**
      * Adds buttons to the button panel.  The buttons to be added are retrieved
@@ -209,6 +217,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             setupButtonPanel();
         } else if (e.getName().equals(GUIPreferences.GUI_SCALE)) {
             adaptToGUIScale();
+        } else if (e.getName().equals(KeyBindParser.KEYBINDS_CHANGED)) {
+            setButtonsTooltips();
         }
     }
 

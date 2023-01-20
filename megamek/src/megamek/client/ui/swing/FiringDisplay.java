@@ -121,7 +121,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     result = KeyCommandBind.getDesc(KeyCommandBind.FIRE);
                     break;
                 case FIRE_SKIP:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result = "Next: " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += " Previous: " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
                     break;
                 case FIRE_MODE:
                     result = "Next: " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
@@ -187,18 +188,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
 
         setupStatusBar(Messages.getString("FiringDisplay.waitingForFiringPhase"));
 
-        buttons = new HashMap<>((int) (FiringCommand.values().length * 1.25 + 0.5));
-        for (FiringCommand cmd : FiringCommand.values()) {
-            String title = Messages.getString("FiringDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
-
+        setButtons();
         setButtonsTooltips();
 
         butDone.setText("<html><body>" + Messages.getString("FiringDisplay.Done") + "</body></html>");
@@ -219,7 +209,22 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         registerKeyCommands();
     }
 
-    private void setButtonsTooltips() {
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (FiringCommand.values().length * 1.25 + 0.5));
+        for (FiringCommand cmd : FiringCommand.values()) {
+            String title = Messages.getString("FiringDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
         for (FiringCommand cmd : FiringCommand.values()) {
             String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
             String tt = cmd.getHotKeyDesc();

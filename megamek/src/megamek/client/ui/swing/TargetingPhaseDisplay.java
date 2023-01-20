@@ -116,7 +116,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     result = KeyCommandBind.getDesc(KeyCommandBind.FIRE);
                     break;
                 case FIRE_SKIP:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result = "Next: " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += " Previous: " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
                     break;
                 case FIRE_MODE:
                     result = "Next: " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
@@ -167,19 +168,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         setupStatusBar(Messages.getString("TargetingPhaseDisplay.waitingForTargetingPhase"));
 
-        buttons = new HashMap<>(
-                (int) (TargetingCommand.values().length * 1.25 + 0.5));
-        for (TargetingCommand cmd : TargetingCommand.values()) {
-            String title = Messages.getString("TargetingPhaseDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
-
+        setButtons();
         setButtonsTooltips();
 
         butDone.setText(Messages.getString("TargetingPhaseDisplay.Done"));
@@ -192,7 +181,24 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         registerKeyCommands();
     }
 
-    private void setButtonsTooltips() {
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>(
+                (int) (TargetingCommand.values().length * 1.25 + 0.5));
+        for (TargetingCommand cmd : TargetingCommand.values()) {
+            String title = Messages.getString("TargetingPhaseDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
         for (TargetingCommand cmd : TargetingCommand.values()) {
             String ttKey = "TargetingPhaseDisplay." + cmd.getCmd() + ".tooltip";
             String tt = cmd.getHotKeyDesc();

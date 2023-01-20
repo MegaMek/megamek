@@ -103,19 +103,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
 
         setupStatusBar("");
 
-        buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
-        for (ReportCommand cmd : ReportCommand.values()) {
-            String title = Messages.getString(RD_REPORTDIPLAY + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
-
-        setButtonTooltips();
+        setButtons();
+        setButtonsTooltips();
 
         butDone.setText(Messages.getString("ReportDisplay.Done"));
         String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
@@ -129,7 +118,23 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
         clientgui.getBoardView().addKeyListener(this);
     }
 
-    private void setButtonTooltips() {
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
+        for (ReportCommand cmd : ReportCommand.values()) {
+            String title = Messages.getString(RD_REPORTDIPLAY + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
         for (ReportCommand cmd : ReportCommand.values()) {
             String ttKey = RD_REPORTDIPLAY + cmd.getCmd() + RD_TOOLTIP;
             String tt = cmd.getHotKeyDesc();

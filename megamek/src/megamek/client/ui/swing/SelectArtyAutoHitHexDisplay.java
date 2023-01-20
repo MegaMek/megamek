@@ -76,6 +76,17 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             this.priority = priority;
         }
 
+        public String getHotKeyDesc() {
+            String result = "";
+
+            switch (this) {
+                default:
+                    break;
+            }
+
+            return result;
+        }
+
         @Override
         public String toString() {
             return Messages.getString("SelectArtyAutoHitHexDisplay." + getCmd());
@@ -106,21 +117,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
         artyAutoHitHexes.setPlayerID(p.getId());
 
-        buttons = new HashMap<>((int) (ArtyAutoHitCommand.values().length * 1.25 + 0.5));
-        for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
-            String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "SelectArtyAutoHitHexDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
-        }
-        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+        setButtons();
+        setButtonsTooltips();
 
         butDone.setText(Messages.getString("SelectArtyAutoHitHexDisplay.Done"));
         String f = guiScaledFontHTML(uiLightViolet()) +  KeyCommandBind.getDesc(KeyCommandBind.DONE)+ "</FONT>";
@@ -128,8 +126,45 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(false);
 
         setupButtonPanel();
-        
+
         registerKeyCommands();
+    }
+
+    @Override
+    protected void setButtons() {
+        buttons = new HashMap<>((int) (ArtyAutoHitCommand.values().length * 1.25 + 0.5));
+        for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
+            String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }
+        numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
+    }
+
+    @Override
+    protected void setButtonsTooltips() {
+        for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
+            String ttKey = "SelectArtyAutoHitHexDisplay." + cmd.getCmd() + ".tooltip";
+            String tt = cmd.getHotKeyDesc();
+            if (!tt.isEmpty()) {
+                String title = Messages.getString("SelectArtyAutoHitHexDisplay." + cmd.getCmd());
+                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
+                tt += "<BR>";
+            }
+            if (Messages.keyExists(ttKey)) {
+                String msg_key = Messages.getString(ttKey);
+                tt += guiScaledFontHTML() + msg_key + "</FONT>";
+            }
+            String b = "<BODY>" + tt + "</BODY>";
+            String h = "<HTML>" + b + "</HTML>";
+            if (!tt.isEmpty()) {
+                buttons.get(cmd).setToolTipText(h);
+            }
+        }
     }
 
     @Override

@@ -1,0 +1,162 @@
+Version:1.3
+Griffin
+GRF-6R
+mul id:9403
+Config:Biped
+techbase:Inner Sphere
+era:3085
+source:Rec Guide:ilClan #1 - Early Republic
+rules level:2
+
+mass:55
+engine:275 XL Engine(IS)
+structure:IS Endo-Composite
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:5
+
+armor:Stealth(Inner Sphere)
+LA armor:16
+RA armor:16
+LT armor:20
+RT armor:20
+CT armor:24
+HD armor:9
+LL armor:18
+RL armor:18
+RTL armor:6
+RTR armor:6
+RTC armor:7
+
+Weapons:3
+Rotary AC/2, Right Arm
+ER Small Laser, Left Torso
+Thunderbolt 10, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Endo-Composite
+IS Stealth
+IS Stealth
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISCASEII
+IS Stealth
+IS Stealth
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISERSmallLaser
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+IS Ammo Thunderbolt-10
+ISCASEII
+IS Stealth
+IS Stealth
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Thunderbolt 10
+Thunderbolt 10
+ISGuardianECMSuite
+ISGuardianECMSuite
+IS Stealth
+IS Stealth
+IS Endo-Composite
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Stealth
+IS Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:Built in 2492 the Griffin was originally classified as a heavy BattleMech, filling in the weight gap between mammoth machines like the Mackie and smaller recon 'Mechs like the Wasp, and intended for close assaults
+capabilities:The massive and efficient fusion engine of the Griffin, giving it a cruising speed of 57.1 km/h, combined with five jump jets occupying the rear torso areas for a total jumping distance of 150 meters, is what distinguishes it from other medium 'Mechs and has kept the Griffin in the game over the centuries. Unfortunately, like most other early 'Mechs, the Griffin suffers from insufficient heat capacity with only twelve heat sinks installed. The result is that Griffin pilots, lacking the ability to do both, must choose at the outset of a fight whether to engage or withdraw. Nine and a half tons of armor plating compares quite favorably to many other medium 'Mechs, although as is often the case the Griffin will find itself in combat with larger 'Mechs. For this reason, two pairs of false armor baffles were added to the 'Mech, one on its shoulders providing limited protection to the LRM launcher and cockpit, and a smaller pair on the legs protecting the knees joints.
+deployment:No Information on this variant
+history:Combining tremendous speed and firepower in one frame the Griffin briefly dominated in this role before being superseded by larger and better-equipped 'Mechs. However the Griffin was very popular among commanders and pilots alike and so Earthwerks Incorporated kept it in production, this time reclassified as a medium 'Mech and tasked with long-range fire support for medium lances. In this capacity the Griffin has excelled, combining good striking power, endurance and speed, with its only major weakness being a lack of close-range defensive weapons. During the Succession Wars the Griffin could be found in almost every unit of all the Great Houses, thanks in part to its diverse number of manufacturers. Besides being constructed from Earthwerks' factory on Keystone the Griffin was later acquired and built by Defiance Industries (Hesperus II), Kallon Industries (Talon), Brigadier Corporation (Oliver), and Norse BattleMech Works (later Victory Industries, Marduk). It was even manufactured in the Periphery by Vandenberg Mechanized Industries on Illiushin.Only the Capellan Confederation lacked a means of building the 'Mech, although they made up for it by purchasing a limited number from the Taurian Concordat. During the Fourth Succession War some of these manufacturers exchanged hands, with the Draconis Combine capturing Marduk from the Federated Suns and the Lyran Commonwealth taking Oliver from the Free Worlds League. This exchange also happened to coincide with several new variants being designed to exploit recently-recovered lostech. As such variants meant specifically for either Houses Kurita, Marik or the Federated Commonwealth found their way into the arsenals of all of them. During the Clan Invasion these manufacturers produced the new variants to meet the Clan threat while Vandenberg Industries continued to build original GRF-1N Griffins. When Vicore Industries began shopping around its "Project Phoenix" initiative, Defiance and Kallon Industries signed on to begin producing the completely redesigned GRF-6S Griffin. Victory Industries later signed up as well after the legal battle between Wolf's Dragoons and the Lyran Alliance saw the famous mercenary group selling its Light Fusion technology to both the Draconis Combine and Free Worlds League. The League designed a native update to the Griffin while ComStar had their own built as well which, ominously, soon began appearing in the ranks of the Word of Blake Militia. The Griffin would continue to remain a staple of the battlefields of the Inner Sphere during the maelstrom of the Jihad, the era of the Republic of the Sphere and the rise of the ilClan, with models still in production within the Free Worlds League and the Wolf Empire.
+manufacturer:Earthwerks-FWL, Inc.,Brigadier Corporation
+primaryfactory:Keystone,Oliver
+systemmanufacturer:CHASSIS:Earthwerks GRF
+systemmanufacturer:ENGINE:Hermes 275 XL
+systemmanufacturer:ARMOR:Starshield A
+systemmanufacturer:JUMPJET:Rawlings 55
+systemmanufacturer:COMMUNICATIONS:Neil 6000
+systemmanufacturer:TARGETING:Octagon Tartrac System C
+

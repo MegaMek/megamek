@@ -1,22 +1,22 @@
 Version:1.3
 Cricket
-RWN-01
-mul id:7523
+RWN-02
+mul id:9406
 Config:Biped
 techbase:Inner Sphere
-era:3132
+era:3142
 source:Rec Guide:ilClan #6 - Dark Age
 rules level:3
 
 mass:30
-engine:210 XXL Engine(IS)
+engine:270 XXL Engine(IS)
 structure:IS Composite
 myomer:Standard
 cockpit:Small Cockpit
 gyro:XL Gyro
 
 heat sinks:10 IS Double
-walk mp:7
+walk mp:9
 jump mp:6
 
 armor:Ballistic-Reinforced(Inner Sphere)
@@ -33,20 +33,20 @@ RTR armor:3
 RTC armor:3
 
 Weapons:2
-Light PPC, Left Torso
 Light PPC, Right Torso
+Light PPC, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
 IS Ballistic-Reinforced
 IS Ballistic-Reinforced
 IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -55,12 +55,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
 IS Ballistic-Reinforced
 IS Ballistic-Reinforced
 IS Ballistic-Reinforced
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -89,8 +89,8 @@ Jump Jet
 Jump Jet
 Light PPC
 Light PPC
-ISMASC
-ISMASC
+-Empty-
+-Empty-
 
 Center Torso:
 Fusion Engine

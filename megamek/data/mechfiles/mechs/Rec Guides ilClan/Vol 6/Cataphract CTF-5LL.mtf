@@ -1,10 +1,10 @@
 Version:1.3
 Cataphract
-CTF-5L
-mul id:7527
+CTF-5LL
+mul id:9407
 Config:Biped
 techbase:Inner Sphere
-era:3132
+era:3135
 source:Rec Guide:ilClan #6 - Dark Age
 rules level:3
 
@@ -15,9 +15,9 @@ myomer:Standard
 cockpit:Standard Cockpit
 gyro:XL Gyro
 
-heat sinks:12 IS Double
+heat sinks:10 IS Double
 walk mp:4
-jump mp:0
+jump mp:4
 
 armor:Reflective(Inner Sphere)
 LA armor:22
@@ -33,26 +33,26 @@ RTR armor:8
 RTC armor:11
 
 Weapons:6
-Small VSP Laser, Left Arm
-ER PPC, Right Arm
-Small VSP Laser, Right Arm
+Medium Laser, Left Arm
 Medium Laser, Left Torso
-Gauss Rifle, Right Torso
 Medium Laser, Right Torso
+Medium Laser, Right Arm
+ER PPC, Right Arm
+Gauss Rifle, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISSmallVSPLaser
-IS Endo Steel
+Medium Laser
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Reflective
 IS Reflective
+-Empty-
 
 Right Arm:
 Shoulder
@@ -61,7 +61,7 @@ Lower Arm Actuator
 ISERPPC
 ISERPPC
 ISERPPC
-ISSmallVSPLaser
+Medium Laser
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -69,9 +69,6 @@ IS Reflective
 IS Reflective
 
 Left Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
 Medium Laser (R)
 IS Gauss Ammo
 IS Gauss Ammo
@@ -80,7 +77,10 @@ IS Endo Steel
 IS Endo Steel
 IS Reflective
 IS Reflective
--Empty-
+IS Reflective
+IS Reflective
+IS Reflective
+IS Reflective
 
 Right Torso:
 ISGaussRifle
@@ -94,7 +94,7 @@ Medium Laser (R)
 ISCASE
 IS Endo Steel
 IS Endo Steel
--Empty-
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Reflective
-IS Reflective
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Reflective
-IS Reflective
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -156,12 +156,12 @@ overview:The Cataphract is a heavy BattleMech and one of the first original desi
 
 capabilities:The Cataphract, with its armor layers, can easily absorb damage, but it can also deal it. The CeresArms Smasher PPC (taken from the Vindicator) and the SarLon MaxiCannon combine to deliver a brutal punch at greater ranges. A quartet of CeresArms medium lasers close in to give short-range firepower to both the front and rear.
 
-deployment:Introduced after the Thunderbolt-12R was created, the Cataphract-5L uses several components from that design to create an evolution of the Cataphract-4L. The stealth armor and ECM suite have been replaced by reflective armor and a pair of small variable speed pulse lasers add to its close in firepower. The medium lasers have been flipped to cover the rear arc. The main armament remains the same as the 4L.
+deployment:No information on this variant
 
 history:Desperate for a heavy 'Mech design that could be produced and maintained sustainably by their deteriorating infrastructure, the Capellan Confederation built the Cataphract in 3025 to be assembled from pieces they could still manufacture. The Cataphract, dubbed a FrankenMech for its appearance and built with parts from the Marauder, Shadow Hawk, and Phoenix Hawk, was destined to become the Confederation's new standard heavy 'Mech. It entered service just before the Fourth Succession War, when the Tikonov production line was taken over by the Federated Suns. This humiliating defeat was exacerbated when numerous Davion troops, especially the Crucis Lancers, adopted the Cataphract as their own. Tikonov's product quality, on the other hand, left the Federated Suns wanting (at least in part due to deliberate obstruction by workers still loyal to the Confederation). The Confederation finally restored the lost plant with one on Betelgeuse in 3032, building their own Cataphracts in time for the Andurien Crisis. Shortly after seizing Tikonov, the Federated Commonwealth began development of the CTF-3D, which was designed to compete with an attack 'Mech while being as adaptable as feasible. Despite the modifications, the CTF-3D was only used sparingly by the Armed Forces of the Federated Commonwealth before being consigned to the Crucis March Militia as an affront to the Capellans. When the Clan Invasion began, everything that was still in production, including the Cataphract, was rushed to the front lines. The Capellans, for their part, were able to manufacture the CTF-3D from stolen schematics and went on to create their own variant, the CTF-3L, which would go on to account for 25% of all newly acquired heavy 'Mechs during the 3050s. The design's popularity would decrease in the years that followed, while a few new varieties would continue to be created as new technologies and demands arose.
 
-manufacturer:Earthwerks Ltd. 
-primaryfactory:Tikonov 
+manufacturer:Earthwerks Ltd.
+primaryfactory:Grand Base
 systemmanufacturer:CHASSIS:Earthwerks eCTF
 systemmanufacturer:ENGINE:VOX 280
 systemmanufacturer:ARMOR:Kallon Reflective

@@ -1,35 +1,34 @@
-Version:1.0
+Version:1.3
 Cataphract
 CTF-3LL
 mul id:471
-
 Config:Biped
-TechBase:Inner Sphere
-Era:3068
-Source:TRO 3050 - Jihad
-Rules Level:2
+techbase:Inner Sphere
+era:3068
+source:TRO 3050 - Jihad
+rules level:2
 
-Mass:70
-Engine:280 XL Engine(IS)
-Structure:IS Standard
-Myomer:Standard
+mass:70
+engine:280 XL Engine(IS)
+structure:IS Standard
+myomer:Standard
 
-Heat Sinks:16 Double
-Walk MP:4
-Jump MP:0
+heat sinks:16 IS Double
+walk mp:4
+jump mp:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:22
-RA Armor:22
-LT Armor:16
-RT Armor:16
-CT Armor:26
-HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:9
-RTR Armor:9
-RTC Armor:9
+armor:Standard(Inner Sphere)
+LA armor:22
+RA armor:22
+LT armor:16
+RT armor:16
+CT armor:26
+HD armor:9
+LL armor:19
+RL armor:19
+RTL armor:9
+RTR armor:9
+RTC armor:9
 
 Weapons:6
 ER Medium Laser, Left Arm
@@ -150,3 +149,21 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+overview:The Cataphract is a heavy BattleMech and one of the first original designs since the start of the Succession Wars.
+
+capabilities:The Cataphract, with its armor layers, can easily absorb damage, but it can also deal it. The CeresArms Smasher PPC (taken from the Vindicator) and the SarLon MaxiCannon combine to deliver a brutal punch at greater ranges. A quartet of CeresArms medium lasers close in to give short-range firepower to both the front and rear.
+
+deployment:This basic refit of the 3L replaced the PPC with a plasma rifle. Tonnage was freed up for its three tons of ammunition by swapping out the two forward-facing pulse lasers for ER medium lasers. The reduced heat load gives the 3LL the luxury of not building heat before it is damaged.
+
+history:Desperate for a heavy 'Mech design that could be produced and maintained sustainably by their deteriorating infrastructure, the Capellan Confederation built the Cataphract in 3025 to be assembled from pieces they could still manufacture. The Cataphract, dubbed a FrankenMech for its appearance and built with parts from the Marauder, Shadow Hawk, and Phoenix Hawk, was destined to become the Confederation's new standard heavy 'Mech. It entered service just before the Fourth Succession War, when the Tikonov production line was taken over by the Federated Suns. This humiliating defeat was exacerbated when numerous Davion troops, especially the Crucis Lancers, adopted the Cataphract as their own. Tikonov's product quality, on the other hand, left the Federated Suns wanting (at least in part due to deliberate obstruction by workers still loyal to the Confederation). The Confederation finally restored the lost plant with one on Betelgeuse in 3032, building their own Cataphracts in time for the Andurien Crisis. Shortly after seizing Tikonov, the Federated Commonwealth began development of the CTF-3D, which was designed to compete with an attack 'Mech while being as adaptable as feasible. Despite the modifications, the CTF-3D was only used sparingly by the Armed Forces of the Federated Commonwealth before being consigned to the Crucis March Militia as an affront to the Capellans. When the Clan Invasion began, everything that was still in production, including the Cataphract, was rushed to the front lines. The Capellans, for their part, were able to manufacture the CTF-3D from stolen schematics and went on to create their own variant, the CTF-3L, which would go on to account for 25% of all newly acquired heavy 'Mechs during the 3050s. The design's popularity would decrease in the years that followed, while a few new varieties would continue to be created as new technologies and demands arose.
+
+mmanufacturer:Earthwerks Ltd.
+primaryfactory:Grand Base
+systemmanufacturer:CHASSIS:Earthwerks CTF
+systemmanufacturer:ENGINE:280 GM XL
+systemmanufacturer:ARMOR:Kallon Royalstar with CASE
+systemmanufacturer:JUMPJET:HildCo Model 12
+systemmanufacturer:COMMUNICATIONS:CommuTech Multi-Channel 10
+systemmanufacturer:TARGETING:BlazeFire Sightlock
+

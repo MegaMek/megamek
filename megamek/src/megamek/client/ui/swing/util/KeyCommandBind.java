@@ -20,9 +20,6 @@
  */
 package megamek.client.ui.swing.util;
 
-import megamek.client.ui.Messages;
-
-import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

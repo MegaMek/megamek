@@ -106,6 +106,11 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
             String result = "";
 
             switch (this) {
+                case PREPHASE_NEXT:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    break;
                 default:
                     break;
             }

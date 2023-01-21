@@ -101,7 +101,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
             switch (this) {
                 case PHYSICAL_NEXT:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                     break;
                 default:
                     break;

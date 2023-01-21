@@ -107,23 +107,27 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
 
             switch (this) {
                 case FIRE_TWIST:
-                    result = "Left: " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
-                    result += " Right: " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + "Left" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
+                    result += "&nbsp;&nbsp;" + "Right" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
                     break;
                 case FIRE_FIRE:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.FIRE);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.FIRE);
                     break;
                 case FIRE_SKIP:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result = "<BR>";
+                    result +=  "&nbsp;&nbsp;" +"Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += "&nbsp;&nbsp;" +"Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
                     break;
                 case FIRE_MODE:
-                    result = "Next: " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
-                    result += " Previous: " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" +"Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
+                    result += "&nbsp;&nbsp;" +"Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
                     break;
                 case FIRE_CANCEL:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
-                    break;
-                default:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
                     break;
             }
 

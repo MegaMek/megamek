@@ -224,17 +224,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
             switch (this) {
                 case MOVE_NEXT:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                     break;
                 case MOVE_WALK:
-                    result = "Toggle Move / Jump: " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + "Toggle Move / Jump" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
                     break;
                 case MOVE_JUMP:
-                    result = "Toggle Move / Jump: " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + "Toggle Move / Jump" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
                     break;
                 case MOVE_TURN:
-                    result = "Left: " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
-                    result += " Right: " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + "Left" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
+                    result += "&nbsp;&nbsp;" + "Right" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
                     break;
                 default:
                     break;

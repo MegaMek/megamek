@@ -76,6 +76,11 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             this.priority = priority;
         }
 
+        @Override
+        public String toString() {
+            return Messages.getString("SelectArtyAutoHitHexDisplay." + getCmd());
+        }
+
         public String getHotKeyDesc() {
             String result = "";
 
@@ -85,11 +90,6 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             }
 
             return result;
-        }
-
-        @Override
-        public String toString() {
-            return Messages.getString("SelectArtyAutoHitHexDisplay." + getCmd());
         }
     }
     

@@ -73,7 +73,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
 
             switch (this) {
                 case REPORT_REPORT:
-                    result = KeyCommandBind.getDesc(KeyCommandBind.ROUND_REPORT);
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.ROUND_REPORT);
                     break;
                 default:
                     break;

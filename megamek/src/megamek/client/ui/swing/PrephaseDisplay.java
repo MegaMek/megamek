@@ -105,11 +105,14 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
         public String getHotKeyDesc() {
             String result = "";
 
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+
             switch (this) {
                 case PREPHASE_NEXT:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                     break;
                 default:
                     break;

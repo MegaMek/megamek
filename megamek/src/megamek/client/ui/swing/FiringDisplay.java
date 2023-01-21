@@ -109,16 +109,24 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         public String getHotKeyDesc() {
             String result = "";
 
+            String msg_left = Messages.getString("Left");
+            String msg_right = Messages.getString("Right");
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+            String msg_valid = Messages.getString("FiringDisplay.FireNextTarget.tooltip.Valid");
+            String msg_noallies = Messages.getString("FiringDisplay.FireNextTarget.tooltip.NoAllies");
+
+
             switch (this) {
                 case FIRE_NEXT:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                     break;
                 case FIRE_TWIST:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Left" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
-                    result += "&nbsp;&nbsp;" + "Right" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
+                    result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
+                    result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
                     break;
                 case FIRE_FIRE:
                     result = "<BR>";
@@ -126,27 +134,27 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                     break;
                 case FIRE_NEXT_TARG:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET);
                     result += "<BR>";
-                    result += "&nbsp;&nbsp;" + "Valid" + " " + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID);
+                    result += "&nbsp;&nbsp;" + msg_valid + " " + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID);
                     result += "<BR>";
-                    result += "&nbsp;&nbsp;" + "No Allies" + " " + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_NOALLIES);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_NOALLIES);
+                    result += "&nbsp;&nbsp;" + msg_noallies + " " + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_NOALLIES);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_NOALLIES);
                     result += "<BR>";
-                    result += "&nbsp;&nbsp;" + "Valid No Allies" + " " + "Next " + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES);
+                    result += "&nbsp;&nbsp;" + msg_valid + " (" + msg_noallies + ") " + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES);
                     break;
                 case FIRE_SKIP:
                     result = "<BR>";
-                    result +=  "&nbsp;&nbsp;" +"Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
-                    result += "&nbsp;&nbsp;" +"Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
+                    result +=  "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
                     break;
                 case FIRE_MODE:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" +"Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
-                    result += "&nbsp;&nbsp;" +"Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
                     break;
                 case FIRE_CANCEL:
                     result = "<BR>";

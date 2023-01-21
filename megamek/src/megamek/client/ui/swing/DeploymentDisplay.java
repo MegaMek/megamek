@@ -92,10 +92,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         public String getHotKeyDesc() {
             String result = "";
 
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+
             switch (this) {
                 case DEPLOY_NEXT:
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                     break;
                 default:
                     break;

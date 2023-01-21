@@ -222,24 +222,30 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         public String getHotKeyDesc() {
             String result = "";
 
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+            String msg_left = Messages.getString("Left");
+            String msg_right = Messages.getString("Right");
+            String msg_togglemovejump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
+
             switch (this) {
                 case MOVE_NEXT:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
-                    result += "&nbsp;&nbsp;" + "Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_UNIT);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_UNIT);
                     break;
                 case MOVE_WALK:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Toggle Move / Jump" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
+                    result += "&nbsp;&nbsp;" + msg_togglemovejump + ": " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
                     break;
                 case MOVE_JUMP:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Toggle Move / Jump" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
+                    result += "&nbsp;&nbsp;" + msg_togglemovejump + ": " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_MOVEMODE);
                     break;
                 case MOVE_TURN:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Left" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
-                    result += "&nbsp;&nbsp;" + "Right" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
+                    result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
+                    result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
                     break;
                 default:
                     break;

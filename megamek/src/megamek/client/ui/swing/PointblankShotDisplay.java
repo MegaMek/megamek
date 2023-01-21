@@ -105,11 +105,17 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
         public String getHotKeyDesc() {
             String result = "";
 
+            String msg_left = Messages.getString("Left");
+            String msg_right = Messages.getString("Right");
+            String msg_next= Messages.getString("Next");
+            String msg_previous = Messages.getString("Previous");
+
+
             switch (this) {
                 case FIRE_TWIST:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" + "Left" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
-                    result += "&nbsp;&nbsp;" + "Right" + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
+                    result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_LEFT);
+                    result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TWIST_RIGHT);
                     break;
                 case FIRE_FIRE:
                     result = "<BR>";
@@ -117,13 +123,13 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     break;
                 case FIRE_SKIP:
                     result = "<BR>";
-                    result +=  "&nbsp;&nbsp;" +"Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
-                    result += "&nbsp;&nbsp;" +"Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
+                    result +=  "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_WEAPON);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_WEAPON);
                     break;
                 case FIRE_MODE:
                     result = "<BR>";
-                    result += "&nbsp;&nbsp;" +"Next" + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
-                    result += "&nbsp;&nbsp;" +"Previous" + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
+                    result += "&nbsp;&nbsp;" + msg_next + ": " + KeyCommandBind.getDesc(KeyCommandBind.NEXT_MODE);
+                    result += "&nbsp;&nbsp;" + msg_previous + ": " + KeyCommandBind.getDesc(KeyCommandBind.PREV_MODE);
                     break;
                 case FIRE_CANCEL:
                     result = "<BR>";

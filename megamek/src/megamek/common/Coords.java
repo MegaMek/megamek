@@ -520,4 +520,12 @@ public class Coords implements Serializable {
     public int getY() {
         return y;
     }
+
+    /**
+     * return true if this is between s and e
+     * based on distance
+     */
+    public boolean between(Coords s, Coords e) {
+        return (s.distance(e) == s.distance(this) + this.distance(e));
+    }
 }

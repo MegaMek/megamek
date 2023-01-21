@@ -227,6 +227,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String msg_left = Messages.getString("Left");
             String msg_right = Messages.getString("Right");
             String msg_togglemovejump = Messages.getString("MovementDisplay.tooltip.ToggleMoveJump");
+            String msg_togglemode = Messages.getString("MovementDisplay.tooltip.ToggleMode");
 
             switch (this) {
                 case MOVE_NEXT:
@@ -246,6 +247,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     result = "<BR>";
                     result += "&nbsp;&nbsp;" + msg_left + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_LEFT);
                     result += "&nbsp;&nbsp;" + msg_right + ": " + KeyCommandBind.getDesc(KeyCommandBind.TURN_RIGHT);
+                    break;
+                case MOVE_MODE_AIR:
+                case MOVE_MODE_CONVERT:
+                case MOVE_MODE_LEG:
+                case MOVE_MODE_VEE:
+                    result = "<BR>";
+                    result += "&nbsp;&nbsp;" + msg_togglemode + ": " + KeyCommandBind.getDesc(KeyCommandBind.TOGGLE_CONVERSIONMODE);
                     break;
                 default:
                     break;

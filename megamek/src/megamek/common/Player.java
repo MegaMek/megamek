@@ -683,6 +683,8 @@ public final class Player extends TurnOrdered {
         copy.singleBlind = singleBlind;
 
         copy.startingPos = startingPos;
+        copy.startOffset = startOffset;
+        copy.startWidth = startWidth;
 
         copy.numMfConv = numMfConv;
         copy.numMfCmd = numMfCmd;

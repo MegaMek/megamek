@@ -9253,7 +9253,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         if (getOriginalJumpMP() > 0) {
             str += " Jump: " + getJumpMP();
         }
-        str += " Owner: " + owner.getName() + " Armor: " + getTotalArmor()
+        str += " Owner: " + getOwner().getName() + " Armor: " + getTotalArmor()
               + "/" + getTotalOArmor() + " Internal Structure: "
               + getTotalInternal() + "/" + getTotalOInternal();
 
@@ -12958,7 +12958,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public int getStartingPos(boolean inheritFromOwner) {
         if (inheritFromOwner && startingPos == Board.START_NONE) {
-            return owner.getStartingPos();
+            return getOwner().getStartingPos();
         }
         return startingPos;
     }
@@ -14313,11 +14313,11 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
 
     public void damageSystem(int type, int slot, int hits) {
         for (int loc = 0; loc < locations(); loc++) {
-            damageSystem(type, slot, loc, hits);
+            hits -= damageSystem(type, slot, loc, hits);
         }
     }
 
-    public void damageSystem(int type, int slot, int loc, int hits) {
+    public int damageSystem(int type, int slot, int loc, int hits) {
         int nhits = 0;
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
             CriticalSlot cs = getCritical(loc, i);
@@ -14343,6 +14343,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
                 }
             }
         }
+        return nhits;
     }
 
     // Most units cannot eject.
@@ -15346,7 +15347,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            return owner.getStartOffset();
+            return getOwner().getStartOffset();
         }
         
         return startingOffset;
@@ -15364,7 +15365,7 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
         // if we are given permission to use the owner's settings
         // and have specified entity-specific settings, use the owner's settings
         if (inheritFromOwner && (startingPos == Board.START_NONE)) {
-            return owner.getStartWidth();
+            return getOwner().getStartWidth();
         }
         
         return startingWidth;

@@ -56,7 +56,8 @@ class PlayerTable extends JTable {
         getTableHeader().setReorderingAllowed(false);
         setDefaultRenderer(Player.class, new PlayerRenderer());
         TableColumn column = getColumnModel().getColumn(0);
-        column.setHeaderValue("Players");
+        String msg_players = Messages.getString("ChatLounge.Players");
+        column.setHeaderValue(msg_players);
     }
 
     void rescale() {
@@ -77,24 +78,30 @@ class PlayerTable extends JTable {
 
         result.append(guiScaledFontHTML());
         if ((lobby.client() instanceof BotClient) && player.equals(lobby.localPlayer())) {
-            result.append(" (" + UIUtil.BOT_MARKER + " This Bot)");
+            String msg_thisbot = Messages.getString("ChatLounge.ThisBot");
+            result.append(" (" + UIUtil.BOT_MARKER + " " + msg_thisbot + ")");
         } else if (lobby.client().bots.containsKey(player.getName())) {
-            result.append(" (" + UIUtil.BOT_MARKER + " Your Bot)");
+            String msg_yourbot = Messages.getString("ChatLounge.YourBot");
+            result.append(" (" + UIUtil.BOT_MARKER + " " + msg_yourbot + ")");
         } else if (lobby.localPlayer().equals(player)) {
-            result.append(" (You)");
+            String msg_you = Messages.getString("ChatLounge.You");
+            result.append(" (" + msg_you + ")");
         }
         result.append("<BR>");
         if (player.getConstantInitBonus() != 0) {
             String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
-            result.append("Initiative Modifier: ").append(sign);
+            String msg_initiativemodifier = Messages.getString("ChatLounge.InitiativeModifier");
+            result.append(msg_initiativemodifier + ": ").append(sign);
             result.append(player.getConstantInitBonus());
         } else {
-            result.append("No Initiative Modifier");
+            String msg_noinitiativemodifier = Messages.getString("ChatLounge.NoInitiativeModifier");
+            result.append(msg_noinitiativemodifier);
         }
         if (lobby.game().getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
             int mines = player.getNbrMFConventional() + player.getNbrMFActive() 
             + player.getNbrMFInferno() + player.getNbrMFVibra();
-            result.append("<BR>Total Minefields: ").append(mines);
+            String msg_totalminefields = Messages.getString("ChatLounge.TotalMinefields");
+            result.append("<BR>" + msg_totalminefields + ": ").append(mines);
         }
         return result.toString();
     }
@@ -186,10 +193,19 @@ class PlayerTable extends JTable {
             // Deployment Position
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
+
+            String msg_start = Messages.getString("ChatLounge.Start");
             if ((player.getStartingPos() >= 0) && (player.getStartingPos() <= IStartingPositions.START_LOCATION_NAMES.length)) {
-                result.append("Start: " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+                result.append(msg_start + ": " + IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
+                int so = player.getStartOffset();
+                int sw = player.getStartWidth();
+                if ((so != 0) || (sw != 3)) {
+                    result.append(", " + so);
+                    result.append(", " + sw);
+                }
             } else {
-                result.append("Start: None");
+                String msg_none = Messages.getString("ChatLounge.None");
+                result.append(msg_start + ": " + msg_none);
             }
             result.append("</FONT>");
             
@@ -201,7 +217,8 @@ class PlayerTable extends JTable {
             // Player BV
             result.append(UIUtil.DOT_SPACER);
             result.append(guiScaledFontHTML());
-            result.append("BV: ");
+            String msg_bvplain = Messages.getString("ChatLounge.BVplain");
+            result.append(msg_bvplain + ": ");
             NumberFormat formatter = NumberFormat.getIntegerInstance(MegaMek.getMMOptions().getLocale());
             result.append((player.getBV() != 0) ? formatter.format(player.getBV()) : "--");
             result.append("</FONT>");
@@ -211,8 +228,16 @@ class PlayerTable extends JTable {
                 result.append(UIUtil.DOT_SPACER);
                 result.append(guiScaledFontHTML());
                 String sign = (player.getConstantInitBonus() > 0) ? "+" : "";
-                result.append("Init: ").append(sign);
+                String msg_init = Messages.getString("ChatLounge.Init");
+                result.append(msg_init + ": ").append(sign);
                 result.append(player.getConstantInitBonus());
+                result.append("</FONT>");
+            }
+
+            if (player.getSingleBlind()) {
+                result.append(UIUtil.DOT_SPACER);
+                result.append(guiScaledFontHTML(uiGreen()));
+                result.append("\uD83D\uDC41");
                 result.append("</FONT>");
             }
 
@@ -250,5 +275,4 @@ class PlayerTable extends JTable {
             return this;
         }
     }
-
 }

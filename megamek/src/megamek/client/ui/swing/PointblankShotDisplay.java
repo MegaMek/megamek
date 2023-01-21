@@ -129,6 +129,8 @@ public class PointblankShotDisplay extends FiringDisplay implements ItemListener
                     result = "<BR>";
                     result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
                     break;
+                default:
+                    break;
             }
 
             return result;

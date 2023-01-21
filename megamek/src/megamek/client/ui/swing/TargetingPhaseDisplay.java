@@ -146,6 +146,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     result = "<BR>";
                     result += "&nbsp;&nbsp;" + KeyCommandBind.getDesc(KeyCommandBind.CANCEL);
                     break;
+                default:
+                    break;
             }
 
             return result;

@@ -1112,7 +1112,7 @@ public final class UnitToolTip {
 
             result.append(DOT_SPACER + entity.getMovementModeAsString());
 
-            if ((entity instanceof IBomber) && (!(entity instanceof LandAirMech))) {
+            if (entity instanceof IBomber) {
                 int bombMod = 0;
                 bombMod = ((IBomber) entity).reduceMPByBombLoad(walkMP);
                 if (bombMod != walkMP) {

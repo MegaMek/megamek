@@ -115,6 +115,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION = "AdvancedUnitToolTipSeenByResolution";
     public static final String ADVANCED_DOCK_ON_LEFT = "AdvancedDockOnLeft";
     public static final String ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS = "AdvancedDockMultipleOnYAxis";
+    public static final String ADVANCED_PLAYERS_REMAINING_TO_SHOW = "AdvancedPlayersRemainingToShow";
 
     /* --End advanced settings-- */
 
@@ -432,6 +433,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_UNITTOOLTIP_SEENBYRESOLUTION, 3);
         setDefault(ADVANCED_DOCK_ON_LEFT, true);
         setDefault(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, true);
+        setDefault(ADVANCED_PLAYERS_REMAINING_TO_SHOW, 3);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -1966,6 +1968,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS);
     }
 
+    public int getAdvancedPlayersRemainingToShow() {
+        return getInt(ADVANCED_PLAYERS_REMAINING_TO_SHOW);
+    }
+
     public void setReportLinkColor(Color color) {
         store.setValue(ADVANCED_REPORT_COLOR_LINK, getColorString(color));
     }
@@ -2060,6 +2066,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setAdvancedDockMultipleOnYAxis(Boolean state) {
         store.setValue(ADVANCED_DOCK_MULTIPLE_ON_Y_AXIS, state);
+    }
+
+    public void setAdvancedPlayersRemainingToShow(Boolean state) {
+        store.setValue(ADVANCED_PLAYERS_REMAINING_TO_SHOW, state);
     }
 
     /**

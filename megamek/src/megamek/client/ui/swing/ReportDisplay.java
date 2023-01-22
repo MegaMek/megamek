@@ -223,7 +223,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
             case END_REPORT:
             case VICTORY:
                 resetButtons();
-                setStatusBarText(phase.toString());
+                setStatusBarWithNotDonePlayers();
                 break;
             default:
                 setStatusBarText(phase.toString());

@@ -2126,6 +2126,10 @@ public class ClientGUI extends JPanel implements BoardViewListener,
         public void gamePlayerChange(GamePlayerChangeEvent evt) {
              if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
+
+                 if (currPhaseDisplay != null) {
+                     currPhaseDisplay.setStatusBarWithNotDonePlayers();
+                 }
              }
         }
 

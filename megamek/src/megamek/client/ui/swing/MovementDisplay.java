@@ -720,7 +720,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.getBoardView().centerOnHex(ce.getPosition());
         }
 
-        String yourTurnMsg = Messages.getString("MovementDisplay.its_your_turn");
+        String s = getRemainingPlayerWithTurns();
+
+        String yourTurnMsg = Messages.getString("MovementDisplay.its_your_turn") + s;
         if (ce.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE)) {
             String poorPerfMsg;
             if (ce.getMpUsedLastRound() < ce.getWalkMP()) {
@@ -929,7 +931,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        setStatusBarText(Messages.getString("MovementDisplay.its_your_turn"));
         butDone.setText("<html><b>" + Messages.getString("MovementDisplay.Done") + "</b></html>");
         butDone.setEnabled(true);
         setNextEnabled(true);
@@ -4082,9 +4083,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    private void setStatusBarTextOthersTurn(@Nullable Player player) {
+    private void setStatusBarTextOthersTurn(@Nullable Player player, String s) {
         String playerName = (player != null) ? player.getName() : "Unknown";
-        setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName));
+        setStatusBarText(Messages.getString("MovementDisplay.its_others_turn", playerName) + s);
     }
 
     //
@@ -4104,11 +4105,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && (clientgui.getClient().getGame().getTurnIndex() != 0)) {
             return;
         }
-        
+
+        String s = getRemainingPlayerWithTurns();
+
         // if all our entities are actually done, don't start up the turn.
         if (clientgui.getClient().getGame().getPlayerEntities(clientgui.getClient().getLocalPlayer(), false)
                 .stream().allMatch(Entity::isDone)) {
-            setStatusBarTextOthersTurn(e.getPlayer());
+            setStatusBarTextOthersTurn(e.getPlayer(), s);
             return;
         }
 
@@ -4122,15 +4125,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
             } else if (cen == Entity.NONE) {
+                setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
                 beginMyTurn();
             }
         } else {
             endMyTurn();
             if ((e.getPlayer() == null)
                     && (clientgui.getClient().getGame().getTurn() instanceof UnloadStrandedTurn)) {
-                setStatusBarText(Messages.getString("MovementDisplay.waitForAnother"));
+                setStatusBarText(Messages.getString("MovementDisplay.waitForAnother") + s);
             } else {
-                setStatusBarTextOthersTurn(e.getPlayer());
+                setStatusBarTextOthersTurn(e.getPlayer(), s);
             }
         }
     }

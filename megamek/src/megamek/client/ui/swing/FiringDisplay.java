@@ -34,12 +34,14 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 import megamek.common.weapons.mortars.VehicularGrenadeLauncherWeapon;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.util.Strings;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener, ListSelectionListener {
     private static final long serialVersionUID = -5586388490027013723L;
@@ -2118,11 +2120,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
         }
 
         if (clientgui.getClient().getGame().getPhase().isFiring()) {
+            String s = getRemainingPlayerWithTurns();
             if (clientgui.getClient().isMyTurn()) {
                 if (cen == Entity.NONE) {
                     beginMyTurn();
                 }
-                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn"));
+                setStatusBarText(Messages.getString("FiringDisplay.its_your_turn") + s);
             } else {
                 endMyTurn();
                 String playerName;
@@ -2131,7 +2134,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
                 } else {
                     playerName = "Unknown";
                 }
-                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName));
+                setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", playerName) + s);
             }
         }
     }

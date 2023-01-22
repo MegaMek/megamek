@@ -23,12 +23,16 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.*;
 
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
+import megamek.common.GameTurn;
+import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.common.preference.*;
 
 /**
@@ -249,6 +253,53 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         if (tt != null) {
             tt.stopTimer();
             tt = null;
+        }
+    }
+
+    public String getRemainingPlayerWithTurns() {
+        String s = "";
+        int r = GUIP.getAdvancedPlayersRemainingToShow();
+        if (r > 0) {
+            int gti = clientgui.getClient().getGame().getTurnIndex();
+            List<GameTurn> gtv = clientgui.getClient().getGame().getTurnVector();
+            int j = 0;
+            for (int i = gti + 1; i < gtv.size(); i++) {
+                GameTurn nt = gtv.get(i);
+                Player p = clientgui.getClient().getGame().getPlayer(nt.getPlayerNum());
+                if (!p.isBot()) {
+                    s += p.getName() + ", ";
+                    j++;
+                    if (j >= r) {
+                        break;
+                    }
+                }
+            }
+            if (!s.isEmpty()) {
+                s = "     [" + s.substring(0, s.length() - 2) + "]";
+            }
+        }
+        return s;
+    }
+
+    public void setStatusBarWithNotDonePlayers() {
+        GamePhase phase = clientgui.getClient().getGame().getPhase();
+        if (phase.isReport()) {
+            int r = GUIP.getAdvancedPlayersRemainingToShow();
+            List<Player> playerList = clientgui.getClient().getGame().getPlayersList().stream().filter(p -> ((!p.isBot()) && (!p.isObserver()) && (!p.isDone()))).collect(Collectors.toList());
+            playerList.sort(Comparator.comparingInt(Player::getId));
+            String s = "";
+            int j = 0;
+            for (Player player : playerList) {
+                s += player.getName() + ", ";
+                j++;
+                if (j >= r) {
+                    break;
+                }
+            }
+            if (!s.isEmpty()) {
+                s = "     [" + s.substring(0, s.length() - 2) + "]";
+            }
+            setStatusBarText(phase.toString() + s);
         }
     }
 }

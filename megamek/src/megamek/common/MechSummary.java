@@ -577,7 +577,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
                 if ((option != null) && option.booleanValue()) {
-                    quirkNames += option.getDisplayableNameWithValue() + ";";
+                    if (!quirkNames.contains(option.getDisplayableNameWithValue())) {
+                        quirkNames += option.getDisplayableNameWithValue() + ";";
+                    }
                 }
             }
         }
@@ -604,10 +606,11 @@ public class MechSummary implements Serializable, ASCardDisplayable {
                 IOptionGroup group = i.nextElement();
                 for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
                     IOption option = j.nextElement();
-                    if (!WeaponQuirks.isQuirkLegalFor(option, entity, m.getType())) {
-                        continue;
+                    if ((option != null) && option.booleanValue()) {
+                        if (!weaponQuirkNames.contains(option.getDisplayableNameWithValue())) {
+                            weaponQuirkNames += option.getDisplayableNameWithValue() + ";";
+                        }
                     }
-                    weaponQuirkNames += option.getDisplayableNameWithValue() + ";";
                 }
             }
         }

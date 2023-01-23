@@ -27,6 +27,7 @@ import megamek.common.*;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
+import megamek.common.options.WeaponQuirks;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -185,9 +186,18 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         lblArmorType.setEnabled(false);
 
         Quirks quirks = new Quirks();
-
         List<String> qs = new ArrayList<>();
         for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+            final IOptionGroup group = optionGroups.nextElement();
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                final IOption option = options.nextElement();
+                if (option != null) {
+                    qs.add(option.getDisplayableNameWithValue());
+                }
+            }
+        }
+        WeaponQuirks weaponquirks = new WeaponQuirks();
+        for (final Enumeration<IOptionGroup> optionGroups = weaponquirks.getGroups(); optionGroups.hasMoreElements();) {
             final IOptionGroup group = optionGroups.nextElement();
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();

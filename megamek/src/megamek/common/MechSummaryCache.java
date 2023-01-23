@@ -18,7 +18,6 @@ package megamek.common;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.common.verifier.*;
 import org.apache.logging.log4j.LogManager;
@@ -381,6 +380,7 @@ public class MechSummaryCache {
         ms.setMulId(e.getMulId());
         ms.setUnitType(UnitType.getTypeName(e.getUnitType()));
         ms.setFullAccurateUnitType(Entity.getEntityTypeName(e.getEntityType()));
+        ms.setEntityType(e.getEntityType());
         ms.setSourceFile(f);
         ms.setEntryName(entry);
         ms.setYear(e.getYear());

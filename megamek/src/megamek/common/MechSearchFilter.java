@@ -54,6 +54,17 @@ public class MechSearchFilter {
     public int cockpitType;
 
     public boolean checkEquipment;
+
+    public boolean filterLAM;
+    public boolean filterQuad;
+    public boolean filterTripod;
+    public boolean filterQuadVee;
+    public boolean filterSupportVTOL;
+    public boolean filterFixedWingSupport;
+    public boolean filterSuperHeavyTank;
+    public boolean filterSupportTank;
+    public boolean filterLargeSupportTank;
+
     public ExpressionTree equipmentCriteria;
 
 
@@ -62,6 +73,7 @@ public class MechSearchFilter {
         isDisabled = true;
         checkArmorType = checkInternalsType = checkCockpitType = false;
         checkEquipment = false;
+        filterLAM = filterQuad = filterTripod = filterQuadVee = filterSuperHeavyTank = false;
         equipmentCriteria = new ExpressionTree();
     }
 
@@ -347,6 +359,39 @@ public class MechSearchFilter {
         }
 
         if ((mech.getYear() < startYear) || (mech.getYear() > endYear)) {
+            return false;
+        }
+
+        long l = 0;
+        if (f.filterLAM) {
+            l = l | Entity.ETYPE_LAND_AIR_MECH;
+        }
+        if (f.filterQuad) {
+            l = l | Entity.ETYPE_QUAD_MECH;
+        }
+        if (f.filterTripod) {
+            l = l | Entity.ETYPE_TRIPOD_MECH;
+        }
+        if (f.filterQuadVee) {
+            l = l | Entity.ETYPE_QUADVEE;
+        }
+        if (f.filterSupportVTOL) {
+            l = l | Entity.ETYPE_SUPPORT_VTOL;
+        }
+        if (f.filterFixedWingSupport) {
+            l = l | Entity.ETYPE_FIXED_WING_SUPPORT;
+        }
+        if (f.filterSuperHeavyTank) {
+            l = l | Entity.ETYPE_SUPER_HEAVY_TANK;
+        }
+        if (f.filterSupportTank) {
+            l = l | Entity.ETYPE_SUPPORT_TANK;
+        }
+        if (f.filterLargeSupportTank) {
+            l = l | Entity.ETYPE_LARGE_SUPPORT_TANK;
+        }
+
+        if ((!((mech.getEntityType() & l) > 0)) && (l != 0)) {
             return false;
         }
 

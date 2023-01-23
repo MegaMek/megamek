@@ -119,6 +119,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
     private JComboBox<String> cboArmorType = new JComboBox<>();
 
+    private JCheckBox cbxFilterLAM = new JCheckBox(Messages.getString("MechSelectorDialog.Search.LAM"));
+    private JCheckBox cbxfilterQuad= new JCheckBox(Messages.getString("MechSelectorDialog.Search.Quad"));
+    private JCheckBox cbxFilterTripod = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Tripod"));
+    private JCheckBox cbxfilterQuadVee = new JCheckBox(Messages.getString("MechSelectorDialog.Search.QuadVee"));
+    private JCheckBox cbxfilterSupportVTOL = new JCheckBox(Messages.getString("MechSelectorDialog.Search.SupportVTOL"));
+    private JCheckBox cbxfilterFixedWingSupport = new JCheckBox(Messages.getString("MechSelectorDialog.Search.FixedWingSupport"));
+    private JCheckBox cbxFilterSuperHeavyTank = new JCheckBox(Messages.getString("MechSelectorDialog.Search.SuperHeavyTank"));
+    private JCheckBox cbxFilterSupportTank = new JCheckBox(Messages.getString("MechSelectorDialog.Search.SupportTank"));
+    private JCheckBox cbxFilterLargeSupportTank = new JCheckBox(Messages.getString("MechSelectorDialog.Search.LargeSupportTank"));
+
     private JComboBox<String> cboQty = new JComboBox<>();
 
     /** The game's current year. */
@@ -188,6 +198,25 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             cboQty.addItem(Integer.toString(i));
         }
         cboQty.setSelectedIndex(0);
+
+        cbxFilterLAM.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxFilterLAM.addItemListener(this);
+        cbxfilterQuad.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxfilterQuad.addItemListener(this);
+        cbxFilterTripod.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxFilterTripod.addItemListener(this);
+        cbxfilterQuadVee.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxfilterQuadVee.addItemListener(this);
+        cbxfilterSupportVTOL.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxfilterSupportVTOL.addItemListener(this);
+        cbxfilterFixedWingSupport.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxfilterFixedWingSupport.addItemListener(this);
+        cbxFilterSuperHeavyTank.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxFilterSuperHeavyTank.addItemListener(this);
+        cbxFilterSupportTank.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxFilterSupportTank.addItemListener(this);
+        cbxFilterLargeSupportTank.setHorizontalTextPosition(SwingConstants.RIGHT);
+        cbxFilterLargeSupportTank.addItemListener(this);
 
         // Setup table filter combo boxes
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
@@ -357,6 +386,22 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         armorPanel.add(lblArmorType);
         armorPanel.add(cboArmorType,BorderLayout.EAST);
         this.add(armorPanel, c);
+
+        c.anchor = GridBagConstraints.WEST;
+        c.gridx = 0; c.gridy++;
+        c.gridwidth = 4;
+        c.insets = new Insets(0, 10, 0, 0);
+        JPanel filterEntityPanel = new JPanel();
+        filterEntityPanel.add(cbxFilterLAM);
+        filterEntityPanel.add(cbxFilterTripod);
+        filterEntityPanel.add(cbxfilterQuad);
+        filterEntityPanel.add(cbxfilterQuadVee);
+        filterEntityPanel.add(cbxfilterSupportVTOL);
+        filterEntityPanel.add(cbxfilterFixedWingSupport);
+        filterEntityPanel.add(cbxFilterSupportTank);
+        filterEntityPanel.add(cbxFilterLargeSupportTank);
+        filterEntityPanel.add(cbxFilterSuperHeavyTank);
+        this.add(filterEntityPanel, c);
 
         c.anchor = GridBagConstraints.CENTER;
         c.insets = new Insets(16, 0, 0, 0);
@@ -833,6 +878,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cbxEnableCockpitSearch.setSelected(false);
         cbxEnableInternalsSearch.setSelected(false);
         cboArmorType.setSelectedIndex(0);
+        cbxFilterLAM.setSelected(false);
+        cbxfilterQuad.setSelected(false);
+        cbxFilterTripod.setSelected(false);
+        cbxfilterQuadVee.setSelected(false);
+        cbxfilterSupportVTOL.setSelected(false);
+        cbxfilterFixedWingSupport.setSelected(false);
+        cbxFilterSuperHeavyTank.setSelected(false);
+        cbxFilterSupportTank.setSelected(false);
+        cbxFilterLargeSupportTank.setSelected(false);
         cboCockpitType.setSelectedIndex(0);
         cboInternalsType.setSelectedIndex(0);
         mechFilter = null;
@@ -901,6 +955,16 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         if (cbxEnableCockpitSearch.isSelected()) {
             mechFilter.cockpitType = cboCockpitType.getSelectedIndex();
         }
+
+        mechFilter.filterLAM = cbxFilterLAM.isSelected();
+        mechFilter.filterQuad = cbxfilterQuad.isSelected();
+        mechFilter.filterTripod = cbxFilterTripod.isSelected();
+        mechFilter.filterQuadVee = cbxfilterQuadVee.isSelected();
+        mechFilter.filterSupportVTOL = cbxfilterSupportVTOL.isSelected();
+        mechFilter.filterFixedWingSupport = cbxfilterFixedWingSupport.isSelected();
+        mechFilter.filterSuperHeavyTank = cbxFilterSuperHeavyTank.isSelected();
+        mechFilter.filterSupportTank = cbxFilterSupportTank.isSelected();
+        mechFilter.filterLargeSupportTank = cbxFilterLargeSupportTank.isSelected();
     }
 
     public class WeaponClassTableModel extends AbstractTableModel {

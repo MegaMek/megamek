@@ -35,6 +35,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String unitType;
     private String unitSubType;
     private String fullAccurateUnitType;
+    private Long entityType;
     private File sourceFile;
     private String entryName; // for files in zips
     private int year;
@@ -225,6 +226,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return fullAccurateUnitType;
     }
 
+    public long getEntityType() {
+        return entityType;
+    }
+
     public double getTons() {
         return tons;
     }
@@ -378,6 +383,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setFullAccurateUnitType(String type) {
         fullAccurateUnitType = type;
+    }
+
+    public void setEntityType(long type) {
+        entityType = type;
     }
 
     public void setName(String sName) {

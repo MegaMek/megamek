@@ -39,7 +39,9 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * Panel that allows the user to create a unit filter.
@@ -183,15 +185,23 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         lblArmorType.setEnabled(false);
 
         Quirks quirks = new Quirks();
+
+        List<String> qs = new ArrayList<>();
         for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
             final IOptionGroup group = optionGroups.nextElement();
             for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
                 final IOption option = options.nextElement();
                 if (option != null) {
-                    cboQuirkType.addItem(option.getDisplayableNameWithValue());
+                    qs.add(option.getDisplayableNameWithValue());
                 }
             }
         }
+        qs = qs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
+
+        for (String q : qs) {
+            cboQuirkType.addItem(q);
+        }
+
         cboQuirkType.setEnabled(false);
         lblQuirkType.setEnabled(false);
 

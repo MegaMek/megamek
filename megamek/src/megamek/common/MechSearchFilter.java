@@ -15,6 +15,7 @@
 */
 package megamek.common;
 
+import com.sun.source.tree.ExpressionTree;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import org.apache.logging.log4j.LogManager;
 
@@ -48,6 +49,9 @@ public class MechSearchFilter {
 
     public boolean checkArmorType;
     public int armorType;
+
+    public boolean checkQuirkType;
+    public String quirkType;
     public boolean checkInternalsType;
     public int internalsType;
     public boolean checkCockpitType;
@@ -394,6 +398,12 @@ public class MechSearchFilter {
 
         if ((!((mech.getEntityType() & l) > 0)) && (l != 0)) {
             return false;
+        }
+
+        if (f.checkQuirkType) {
+            if ((!mech.getQuirkNames().contains(f.quirkType)) && (!mech.getWeaponQuirkNames().contains(f.quirkType))) {
+                return false;
+            }
         }
 
         return true;

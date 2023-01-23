@@ -14,11 +14,17 @@
  */
 package megamek.common;
 
+import megamek.client.ui.GBC;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
 import megamek.common.alphaStrike.ASUnitType;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.Quirks;
+import megamek.common.options.WeaponQuirks;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
@@ -94,6 +100,9 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     /** The number of times the piece of equipment in the corresponding equipmentNames list appears. */
     private Vector<Integer> equipmentQuantities;
+
+    private String quirkNames;
+    private String weaponQuirkNames;
 
     // AlphaStrike values
     private int pointValue = 0;
@@ -559,6 +568,53 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     
     public Vector<Integer> getEquipmentQuantities() {
         return equipmentQuantities;
+    }
+
+    public void setQuirkNames(Quirks quirks) {
+        quirkNames = "";
+        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+            final IOptionGroup group = optionGroups.nextElement();
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                final IOption option = options.nextElement();
+                if ((option != null) && option.booleanValue()) {
+                    quirkNames += option.getDisplayableNameWithValue() + ";";
+                }
+            }
+        }
+    }
+
+    public String getQuirkNames() {
+        return quirkNames;
+    }
+
+    public void setWeaponQuirkNames(Entity entity) {
+        HashMap<Integer, WeaponQuirks> wpnQks = new HashMap<>();
+        weaponQuirkNames = "";
+        for (Mounted m : entity.getWeaponList()) {
+            wpnQks.put(entity.getEquipmentNum(m), m.getQuirks());
+        }
+        Set<Integer> set = wpnQks.keySet();
+
+        Iterator<Integer> iter = set.iterator();
+        while (iter.hasNext()) {
+            int key = iter.next();
+            Mounted m = entity.getEquipment(key);
+            WeaponQuirks wpnQuirks = wpnQks.get(key);
+            for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
+                IOptionGroup group = i.nextElement();
+                for (Enumeration<IOption> j = group.getSortedOptions(); j.hasMoreElements(); ) {
+                    IOption option = j.nextElement();
+                    if (!WeaponQuirks.isQuirkLegalFor(option, entity, m.getType())) {
+                        continue;
+                    }
+                    weaponQuirkNames += option.getDisplayableNameWithValue() + ";";
+                }
+            }
+        }
+    }
+
+    public String getWeaponQuirkNames() {
+        return weaponQuirkNames;
     }
 
     public void setTotalArmor(int totalArmor) {

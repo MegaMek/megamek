@@ -96,6 +96,7 @@ public class MechSummaryCache {
         instance.initialized = false;
         interrupted = false;
         disposeInstance = false;
+
         File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         long lastModified = unit_cache_path.exists() ? unit_cache_path.lastModified() : 0L;
 
@@ -145,6 +146,12 @@ public class MechSummaryCache {
     private MechSummaryCache() {
         nameMap = new HashMap<>();
         fileNameMap = new HashMap<>();
+
+        try {
+            QuirksHandler.initQuirksList();
+        } catch (Exception e) {
+            LogManager.getLogger().error("Error initializing quirks", e);
+        }
     }
 
     public MechSummary[] getAllMechs() {
@@ -433,6 +440,8 @@ public class MechSummaryCache {
             ms.setUnitSubType(e.getMovementModeAsString());
         }
         ms.setEquipment(e.getEquipment());
+        ms.setQuirkNames(e.getQuirks());
+        ms.setWeaponQuirkNames(e);
         ms.setTotalArmor(e.getTotalArmor());
         ms.setTotalInternal(e.getTotalInternal());
         ms.setInternalsType(e.getStructureType());

@@ -24,6 +24,9 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.table.MegamekTable;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
+import megamek.common.options.IOption;
+import megamek.common.options.IOptionGroup;
+import megamek.common.options.Quirks;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -119,6 +122,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
     private JComboBox<String> cboArmorType = new JComboBox<>();
 
+    private JCheckBox cbxEnableQuirkSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
+    private JLabel lblQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.Quirk"));
+    private JComboBox<String> cboQuirkType = new JComboBox<>();
+
     private JCheckBox cbxFilterLAM = new JCheckBox(Messages.getString("MechSelectorDialog.Search.LAM"));
     private JCheckBox cbxfilterQuad= new JCheckBox(Messages.getString("MechSelectorDialog.Search.Quad"));
     private JCheckBox cbxFilterTripod = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Tripod"));
@@ -175,6 +182,19 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboArmorType.setEnabled(false);
         lblArmorType.setEnabled(false);
 
+        Quirks quirks = new Quirks();
+        for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements();) {
+            final IOptionGroup group = optionGroups.nextElement();
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                final IOption option = options.nextElement();
+                if (option != null) {
+                    cboQuirkType.addItem(option.getDisplayableNameWithValue());
+                }
+            }
+        }
+        cboQuirkType.setEnabled(false);
+        lblQuirkType.setEnabled(false);
+
         for (int i = 0; i < EquipmentType.structureNames.length; i++) {
             cboInternalsType.addItem(EquipmentType.structureNames[i]);
         }
@@ -193,6 +213,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cbxEnableInternalsSearch.addItemListener(this);
         cbxEnableArmorSearch.setHorizontalTextPosition(SwingConstants.LEFT);
         cbxEnableArmorSearch.addItemListener(this);
+        cbxEnableQuirkSearch.setHorizontalTextPosition(SwingConstants.LEFT);
+        cbxEnableQuirkSearch.addItemListener(this);
 
         for (int i = 1; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
@@ -333,59 +355,48 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy = 0;
-        this.add(lblWalk, c);
-        c.gridx = 1; c.gridy = 0;
-        c.insets = new Insets(0, 0, 0, 0);
-        c.anchor = GridBagConstraints.EAST;
-        JPanel panWalk = new JPanel();
-        panWalk.add(cWalk);
-        panWalk.add(tWalk);
-        this.add(panWalk, c);
-        c.gridx = 3; c.gridy = 0;
-        c.insets = new Insets(0, 40, 0, 0);
+        c.gridwidth = 4;
+        c.insets = new Insets(0, 10, 0, 0);
+        JPanel p1Panel = new JPanel();
+        p1Panel.add(lblWalk);
+        p1Panel.add(cWalk);
+        p1Panel.add(tWalk);
+        p1Panel.add(lblJump);
+        p1Panel.add(cJump);
+        p1Panel.add(tJump);
+        p1Panel.add(lblArmor);
+        p1Panel.add(cArmor);
+        this.add(p1Panel, c);
+
+        c.gridx = 0; c.gridy++;;
+        c.gridwidth = 1;
+        c.insets = new Insets(0, 10, 0, 0);
         c.anchor = GridBagConstraints.WEST;
         JPanel cockpitPanel = new JPanel();
         cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
         this.add(cockpitPanel, c);
-
-        c.gridx = 0; c.gridy = 1;
-        c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(0, 10, 0, 0);
-        this.add(lblJump, c);
-        c.insets = new Insets(0, 0, 0, 0);
-        c.gridx = 1; c.gridy = 1;
-        c.anchor = GridBagConstraints.EAST;
-        JPanel panJump = new JPanel();
-        panJump.add(cJump);
-        panJump.add(tJump);
-        this.add(panJump, c);
-        c.anchor = GridBagConstraints.WEST;
-        c.gridx = 3; c.gridy = 1;
-        c.insets = new Insets(0, 40, 0, 0);
+        c.gridx = 1;
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
         internalsPanel.add(cboInternalsType,BorderLayout.EAST);
         this.add(internalsPanel, c);
 
-        c.anchor = GridBagConstraints.WEST;
-        c.gridx = 0; c.gridy++;
-        c.insets = new Insets(0, 10, 0, 0);
-        this.add(lblArmor, c);
-        c.insets = new Insets(0, 0, 0, 0);
-        c.gridx = 1;
-        this.add(cArmor, c);
-        c.gridx = 3;
-        c.insets = new Insets(0, 40, 0, 0);
+        c.gridx = 0; c.gridy++;;
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);
         armorPanel.add(cboArmorType,BorderLayout.EAST);
         this.add(armorPanel, c);
+        c.gridx = 1;
+        JPanel quirkPanel = new JPanel();
+        quirkPanel.add(cbxEnableQuirkSearch);
+        quirkPanel.add(lblQuirkType);
+        quirkPanel.add(cboQuirkType,BorderLayout.EAST);
+        this.add(quirkPanel, c);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
@@ -503,6 +514,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         } else if (e.getSource().equals(cbxEnableArmorSearch)) {
             cboArmorType.setEnabled(!cboArmorType.isEnabled());
             lblArmorType.setEnabled(!lblArmorType.isEnabled());
+        } else if (e.getSource().equals(cbxEnableQuirkSearch)) {
+            cboQuirkType.setEnabled(!cboQuirkType.isEnabled());
+            lblQuirkType.setEnabled(!lblQuirkType.isEnabled());
         }
     }
 
@@ -875,9 +889,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tblEquipment.clearSelection();
         txtEqExp.setText("");
         cbxEnableArmorSearch.setSelected(false);
+        cbxEnableQuirkSearch.setSelected(false);
         cbxEnableCockpitSearch.setSelected(false);
         cbxEnableInternalsSearch.setSelected(false);
         cboArmorType.setSelectedIndex(0);
+        cboQuirkType.setSelectedIndex(0);
         cbxFilterLAM.setSelected(false);
         cbxfilterQuad.setSelected(false);
         cbxFilterTripod.setSelected(false);
@@ -944,6 +960,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.checkArmorType = cbxEnableArmorSearch.isSelected();
         if (cbxEnableArmorSearch.isSelected()) {
             mechFilter.armorType = cboArmorType.getSelectedIndex();
+        }
+
+        mechFilter.checkQuirkType = cbxEnableQuirkSearch.isSelected();
+        if (cbxEnableQuirkSearch.isSelected()) {
+            mechFilter.quirkType = cboQuirkType.getSelectedItem().toString();
         }
 
         mechFilter.checkInternalsType = cbxEnableInternalsSearch.isSelected();

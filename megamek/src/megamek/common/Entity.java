@@ -6802,6 +6802,8 @@ public abstract class Entity extends TurnOrdered implements Transporter, Targeta
             case BIPED:
             case BIPED_SWIM:
                 return "Biped";
+            case TRIPOD:
+                return "Tripod";
             case QUAD:
             case QUAD_SWIM:
                 return "Quad";

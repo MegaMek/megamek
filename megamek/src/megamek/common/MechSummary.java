@@ -600,7 +600,6 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         Iterator<Integer> iter = set.iterator();
         while (iter.hasNext()) {
             int key = iter.next();
-            Mounted m = entity.getEquipment(key);
             WeaponQuirks wpnQuirks = wpnQks.get(key);
             for (Enumeration<IOptionGroup> i = wpnQuirks.getGroups(); i.hasMoreElements(); ) {
                 IOptionGroup group = i.nextElement();

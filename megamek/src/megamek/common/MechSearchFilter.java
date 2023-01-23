@@ -73,7 +73,8 @@ public class MechSearchFilter {
         isDisabled = true;
         checkArmorType = checkInternalsType = checkCockpitType = false;
         checkEquipment = false;
-        filterLAM = filterQuad = filterTripod = filterQuadVee = filterSuperHeavyTank = false;
+        filterLAM = filterQuad = filterTripod = filterQuadVee = filterSupportVTOL = false;
+        filterFixedWingSupport = filterSuperHeavyTank = filterSupportTank = filterLargeSupportTank = false;
         equipmentCriteria = new ExpressionTree();
     }
 

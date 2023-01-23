@@ -43,6 +43,7 @@ public class MechSearchFilter {
     public int iWalk;
     public int iJump;
     public int iArmor;
+    public int iOmni;
     public String sStartYear;
     public String sEndYear;
     public boolean isDisabled;
@@ -403,6 +404,19 @@ public class MechSearchFilter {
         if (f.checkQuirkType) {
             if ((!mech.getQuirkNames().contains(f.quirkType)) && (!mech.getWeaponQuirkNames().contains(f.quirkType))) {
                 return false;
+            }
+        }
+
+        if (f.iOmni > 0) {
+            if (f.iOmni == 1) {
+                if (!mech.getOmni()) {
+                    return false;
+                }
+            }
+            if (f.iOmni == 2) {
+                if (mech.getOmni()) {
+                    return false;
+                }
             }
         }
 

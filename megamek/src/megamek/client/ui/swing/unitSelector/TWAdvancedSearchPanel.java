@@ -83,6 +83,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
 
+
+
+    private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
+    private JComboBox<String> cOmni = new JComboBox<>();
+
     private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
     private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
     private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
@@ -178,6 +183,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor50"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
+
+        cOmni.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        cOmni.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
+        cOmni.addItem(Messages.getString("MechSelectorDialog.Search.No"));
 
         for (int i = 0; i < EquipmentType.armorNames.length; i++) {
             cboArmorType.addItem(EquipmentType.armorNames[i]);
@@ -387,6 +396,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p1Panel.add(tJump);
         p1Panel.add(lblArmor);
         p1Panel.add(cArmor);
+        p1Panel.add(lblOmni);
+        p1Panel.add(cOmni);
         this.add(p1Panel, c);
 
         c.gridx = 0; c.gridy++;;
@@ -905,6 +916,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cJump.setSelectedIndex(0);
         tJump.setText("");
         cArmor.setSelectedIndex(0);
+        cOmni.setSelectedIndex(0);
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
@@ -973,6 +985,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iJump = cJump.getSelectedIndex();
 
         mechFilter.iArmor = cArmor.getSelectedIndex();
+        mechFilter.iOmni = cOmni.getSelectedIndex();
 
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();

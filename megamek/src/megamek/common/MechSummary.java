@@ -14,7 +14,6 @@
  */
 package megamek.common;
 
-import megamek.client.ui.GBC;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.ASSpecialAbilityCollection;
@@ -24,7 +23,6 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.*;
@@ -42,6 +40,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String unitSubType;
     private String fullAccurateUnitType;
     private Long entityType;
+    private boolean omni;
     private File sourceFile;
     private String entryName; // for files in zips
     private int year;
@@ -239,6 +238,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return entityType;
     }
 
+    public boolean getOmni() {
+        return omni;
+    }
+
     public double getTons() {
         return tons;
     }
@@ -396,6 +399,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setEntityType(long type) {
         entityType = type;
+    }
+
+    public void setOmni(boolean b) {
+        omni = b;
     }
 
     public void setName(String sName) {

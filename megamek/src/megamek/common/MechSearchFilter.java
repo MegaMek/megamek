@@ -54,19 +54,17 @@ public class MechSearchFilter {
     public String sStartBV;
     public String sEndBV;
     public boolean isDisabled;
-
     public boolean checkArmorType;
     public int armorType;
-
     public boolean checkQuirkType;
     public String quirkType;
+    public boolean checkWeaponQuirkType;
+    public String weaponQuirkType;
     public boolean checkInternalsType;
     public int internalsType;
     public boolean checkCockpitType;
     public int cockpitType;
-
     public boolean checkEquipment;
-
     public boolean filterLAM;
     public boolean filterQuad;
     public boolean filterTripod;
@@ -87,7 +85,7 @@ public class MechSearchFilter {
         checkEquipment = false;
         filterLAM = filterQuad = filterTripod = filterQuadVee = filterSupportVTOL = false;
         filterFixedWingSupport = filterSuperHeavyTank = filterSupportTank = filterLargeSupportTank = false;
-        checkQuirkType = checkEngineType = false;
+        checkQuirkType = checkWeaponQuirkType = checkEngineType = false;
         equipmentCriteria = new ExpressionTree();
     }
 
@@ -436,7 +434,13 @@ public class MechSearchFilter {
         }
 
         if (f.checkQuirkType) {
-            if ((!mech.getQuirkNames().contains(f.quirkType)) && (!mech.getWeaponQuirkNames().contains(f.quirkType))) {
+            if (!mech.getQuirkNames().contains(f.quirkType)) {
+                return false;
+            }
+        }
+
+        if (f.checkWeaponQuirkType) {
+            if (!mech.getWeaponQuirkNames().contains(f.weaponQuirkType)) {
                 return false;
             }
         }

@@ -143,6 +143,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.Quirk"));
     private JComboBox<String> cboQuirkType = new JComboBox<>();
 
+    private JCheckBox cbxEnableWeaponQuirkSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
+    private JLabel lblWeaponQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponQuirk"));
+    private JComboBox<String> cboWeaponQuirkType = new JComboBox<>();
+
     private JCheckBox cbxEnableEngineSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
     private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
     private JComboBox<String> cboEngineType = new JComboBox<>();
@@ -226,24 +230,33 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 }
             }
         }
-        WeaponQuirks weaponquirks = new WeaponQuirks();
-        for (final Enumeration<IOptionGroup> optionGroups = weaponquirks.getGroups(); optionGroups.hasMoreElements();) {
-            final IOptionGroup group = optionGroups.nextElement();
-            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
-                final IOption option = options.nextElement();
-                if (option != null) {
-                    qs.add(option.getDisplayableNameWithValue());
-                }
-            }
-        }
         qs = qs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
-
         for (String q : qs) {
             cboQuirkType.addItem(q);
         }
 
         cboQuirkType.setEnabled(false);
         lblQuirkType.setEnabled(false);
+
+        WeaponQuirks weaponquirks = new WeaponQuirks();
+        List<String> wqs = new ArrayList<>();
+
+        for (final Enumeration<IOptionGroup> optionGroups = weaponquirks.getGroups(); optionGroups.hasMoreElements();) {
+            final IOptionGroup group = optionGroups.nextElement();
+            for (final Enumeration<IOption> options = group.getOptions(); options.hasMoreElements(); ) {
+                final IOption option = options.nextElement();
+                if (option != null) {
+                    wqs.add(option.getDisplayableNameWithValue());
+                }
+            }
+        }
+        wqs = wqs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
+        for (String q : wqs) {
+            cboWeaponQuirkType.addItem(q);
+        }
+
+        cboWeaponQuirkType.setEnabled(false);
+        lblWeaponQuirkType.setEnabled(false);
 
         for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
             cboEngineType.addItem(Engine.getEngineType(i));
@@ -272,6 +285,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cbxEnableArmorSearch.addItemListener(this);
         cbxEnableQuirkSearch.setHorizontalTextPosition(SwingConstants.LEFT);
         cbxEnableQuirkSearch.addItemListener(this);
+        cbxEnableWeaponQuirkSearch.setHorizontalTextPosition(SwingConstants.LEFT);
+        cbxEnableWeaponQuirkSearch.addItemListener(this);
         cbxEnableEngineSearch.setHorizontalTextPosition(SwingConstants.LEFT);
         cbxEnableEngineSearch.addItemListener(this);
 
@@ -488,6 +503,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         quirkPanel.add(lblQuirkType);
         quirkPanel.add(cboQuirkType,BorderLayout.EAST);
         this.add(quirkPanel, c);
+        c.gridx = 1;
+        JPanel weaponQuirkPanel = new JPanel();
+        weaponQuirkPanel.add(cbxEnableWeaponQuirkSearch);
+        weaponQuirkPanel.add(lblWeaponQuirkType);
+        weaponQuirkPanel.add(cboWeaponQuirkType,BorderLayout.EAST);
+        this.add(weaponQuirkPanel, c);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
@@ -601,6 +622,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         } else if (e.getSource().equals(cbxEnableQuirkSearch)) {
             cboQuirkType.setEnabled(!cboQuirkType.isEnabled());
             lblQuirkType.setEnabled(!lblQuirkType.isEnabled());
+        } else if (e.getSource().equals(cbxEnableWeaponQuirkSearch)) {
+            cboWeaponQuirkType.setEnabled(!cboWeaponQuirkType.isEnabled());
+            lblWeaponQuirkType.setEnabled(!lblWeaponQuirkType.isEnabled());
         } else if (e.getSource().equals(cbxEnableEngineSearch)) {
             cboEngineType.setEnabled(!cboEngineType.isEnabled());
             lblEngineType.setEnabled(!lblEngineType.isEnabled());
@@ -980,6 +1004,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         txtEqExp.setText("");
         cbxEnableArmorSearch.setSelected(false);
         cbxEnableQuirkSearch.setSelected(false);
+        cbxEnableWeaponQuirkSearch.setSelected(false);
         cbxEnableEngineSearch.setSelected(false);
         cbxEnableCockpitSearch.setSelected(false);
         cbxEnableInternalsSearch.setSelected(false);
@@ -1072,6 +1097,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.checkQuirkType = cbxEnableQuirkSearch.isSelected();
         if (cbxEnableQuirkSearch.isSelected()) {
             mechFilter.quirkType = cboQuirkType.getSelectedItem().toString();
+        }
+
+        mechFilter.checkWeaponQuirkType = cbxEnableWeaponQuirkSearch.isSelected();
+        if (cbxEnableWeaponQuirkSearch.isSelected()) {
+            mechFilter.weaponQuirkType = cboWeaponQuirkType.getSelectedItem().toString();
         }
 
         mechFilter.checkEngineType = cbxEnableEngineSearch.isSelected();

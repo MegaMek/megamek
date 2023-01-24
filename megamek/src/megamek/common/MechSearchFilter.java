@@ -47,6 +47,10 @@ public class MechSearchFilter {
     public int iOfficial;
     public String sStartYear;
     public String sEndYear;
+    public String sStartTons;
+    public String sEndTons;
+    public String sStartBV;
+    public String sEndBV;
     public boolean isDisabled;
 
     public boolean checkArmorType;
@@ -356,16 +360,42 @@ public class MechSearchFilter {
         try {
             startYear = Integer.parseInt(f.sStartYear);
         } catch (Exception ignored) {
-
         }
-
         try {
             endYear = Integer.parseInt(f.sEndYear);
         } catch (Exception ignored) {
-
+        }
+        if ((mech.getYear() < startYear) || (mech.getYear() > endYear)) {
+            return false;
         }
 
-        if ((mech.getYear() < startYear) || (mech.getYear() > endYear)) {
+        // Check Tonnage criteria
+        int startTons = Integer.MIN_VALUE;
+        int endTons = Integer.MAX_VALUE;
+        try {
+            startTons = Integer.parseInt(f.sStartTons);
+        } catch (Exception ignored) {
+        }
+        try {
+            endTons = Integer.parseInt(f.sEndTons);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getTons() < startTons) || (mech.getTons() > endTons)) {
+            return false;
+        }
+
+        // Check BV criteria
+        int startBV = Integer.MIN_VALUE;
+        int endBV = Integer.MAX_VALUE;
+        try {
+            startBV = Integer.parseInt(f.sStartBV);
+        } catch (Exception ignored) {
+        }
+        try {
+            endBV = Integer.parseInt(f.sEndBV);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getBV() < startBV) || (mech.getBV() > endBV)) {
             return false;
         }
 

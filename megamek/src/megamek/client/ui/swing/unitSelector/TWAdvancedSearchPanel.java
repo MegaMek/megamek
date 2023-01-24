@@ -121,6 +121,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
 
+    private JLabel lblTons = new JLabel(Messages.getString("MechSelectorDialog.Search.Tons"));
+    private JTextField tStartTons = new JTextField(4);
+    private JTextField tEndTons = new JTextField(4);
+
+    private JLabel lblBV = new JLabel(Messages.getString("MechSelectorDialog.Search.BV"));
+    private JTextField tStartBV = new JTextField(4);
+    private JTextField tEndBV = new JTextField(4);
+
     private JCheckBox cbxEnableCockpitSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
     private JLabel lblCockpitType = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
     private JComboBox<String> cboCockpitType = new JComboBox<>();
@@ -404,6 +412,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p0Panel.add(tStartYear);
         p0Panel.add(new Label("-"));
         p0Panel.add(tEndYear);
+        p0Panel.add(lblTons);
+        p0Panel.add(tStartTons);
+        p0Panel.add(new Label("-"));
+        p0Panel.add(tEndTons);
+        p0Panel.add(lblBV);
+        p0Panel.add(tStartBV);
+        p0Panel.add(new Label("-"));
+        p0Panel.add(tEndBV);
         this.add(p0Panel, c);
 
         c.gridx = 0; c.gridy++;
@@ -951,6 +967,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cbxFilterLargeSupportTank.setSelected(false);
         cboCockpitType.setSelectedIndex(0);
         cboInternalsType.setSelectedIndex(0);
+        tStartYear.setText("");
+        tEndYear.setText("");
+        tStartTons.setText("");
+        tEndTons.setText("");
+        tStartBV.setText("");
+        tEndBV.setText("");
         mechFilter = null;
         filterToks.clear();
         btnBack.setEnabled(false);
@@ -1004,6 +1026,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();
+
+        mechFilter.sStartTons = tStartTons.getText();
+        mechFilter.sEndTons = tEndTons.getText();
+
+        mechFilter.sStartBV = tStartBV.getText();
+        mechFilter.sEndBV = tEndBV.getText();
 
         mechFilter.checkArmorType = cbxEnableArmorSearch.isSelected();
         if (cbxEnableArmorSearch.isSelected()) {

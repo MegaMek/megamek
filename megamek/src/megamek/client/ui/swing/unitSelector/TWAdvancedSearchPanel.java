@@ -88,6 +88,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
     private JComboBox<String> cOmni = new JComboBox<>();
 
+    private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
+    private JComboBox<String> cOfficial = new JComboBox<>();
+
     private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
     private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
     private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
@@ -187,6 +190,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cOmni.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cOmni.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
         cOmni.addItem(Messages.getString("MechSelectorDialog.Search.No"));
+
+        cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
+        cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.No"));
 
         for (int i = 0; i < EquipmentType.armorNames.length; i++) {
             cboArmorType.addItem(EquipmentType.armorNames[i]);
@@ -381,12 +388,25 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         GridBagConstraints c = new GridBagConstraints();
         setLayout(new GridBagLayout());
 
+
+
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy = 0;
-        c.gridwidth = 4;
         c.insets = new Insets(0, 10, 0, 0);
+
+        c.gridwidth  = 4;
+        JPanel p0Panel = new JPanel();
+        p0Panel.add(lblOfficial);
+        p0Panel.add(cOfficial);
+        p0Panel.add(lblYear);
+        p0Panel.add(tStartYear);
+        p0Panel.add(new Label("-"));
+        p0Panel.add(tEndYear);
+        this.add(p0Panel, c);
+
+        c.gridx = 0; c.gridy++;
         JPanel p1Panel = new JPanel();
         p1Panel.add(lblWalk);
         p1Panel.add(cWalk);
@@ -445,13 +465,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterEntityPanel.add(cbxFilterSuperHeavyTank);
         this.add(filterEntityPanel, c);
 
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(16, 0, 0, 0);
-        c.gridx = 0; c.gridy++;
-        this.add(lblTableFilters, c);
+        // table
+        c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
+        this.add(lblTableFilters, c);
+        c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
+        c.anchor = GridBagConstraints.CENTER;
         JPanel cboPanel = new JPanel();
         cboPanel.add(lblUnitType);
         cboPanel.add(cboUnitType);
@@ -462,40 +483,41 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         this.add(cboPanel, c);
         c.gridwidth = 1;
 
-        c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
+        c.anchor = GridBagConstraints.WEST;
         this.add(lblWeaponClass, c);
 
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeaponType, c);
         c.gridwidth = 1;
 
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
+        c.anchor = GridBagConstraints.WEST;
         this.add(lblWeapons, c);
 
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableWeapons, c);
 
         c.fill = GridBagConstraints.NONE;
         c.gridwidth = 1;
-        c.insets = new Insets(16, 0, 0, 0);
         c.gridx = 0; c.gridy++;
+        c.anchor = GridBagConstraints.WEST;
         this.add(lblEquipment, c);
 
         c.fill = GridBagConstraints.BOTH;
-        c.insets = new Insets(0, 0, 0, 0);
+        c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
         this.add(scrTableEquipment, c);
 
+        c.insets = new Insets(0, 50, 0, 0);
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
@@ -508,27 +530,18 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnPanel.add(btnBack, c);
         btnPanel.add(btnClear, c);
         this.add(btnPanel, c);
-        c.gridwidth = 1;
 
         // Filter Expression
-        c.gridx = 0; c.gridy++;
-        this.add(lblEqExpTxt, c);
-        c.gridwidth = 4;
-        c.gridx = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        this.add(expScroller, c);
-        c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
-
-        c.gridwidth  = 1;
         c.gridx = 0; c.gridy++;
-        this.add(lblYear, c);
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.WEST;
+        c.fill = GridBagConstraints.NONE;
+        this.add(lblEqExpTxt, c);
+        c.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
-        JPanel designYearPanel = new JPanel();
-        designYearPanel.add(tStartYear);
-        designYearPanel.add(new Label("-"));
-        designYearPanel.add(tEndYear);
-        add(designYearPanel, c);
+        this.add(expScroller, c);
     }
 
     /**
@@ -916,6 +929,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cJump.setSelectedIndex(0);
         tJump.setText("");
         cArmor.setSelectedIndex(0);
+        cOfficial.setSelectedIndex(0);
         cOmni.setSelectedIndex(0);
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
@@ -986,6 +1000,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         mechFilter.iArmor = cArmor.getSelectedIndex();
         mechFilter.iOmni = cOmni.getSelectedIndex();
+        mechFilter.iOfficial = cOfficial.getSelectedIndex();
 
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();

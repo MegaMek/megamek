@@ -44,6 +44,7 @@ public class MechSearchFilter {
     public int iJump;
     public int iArmor;
     public int iOmni;
+    public int iOfficial;
     public String sStartYear;
     public String sEndYear;
     public boolean isDisabled;
@@ -415,6 +416,19 @@ public class MechSearchFilter {
             }
             if (f.iOmni == 2) {
                 if (mech.getOmni()) {
+                    return false;
+                }
+            }
+        }
+
+        if (f.iOfficial > 0) {
+            if (f.iOfficial == 1) {
+                if ((mech.getMulId() == -1)) {
+                    return false;
+                }
+            }
+            if (f.iOfficial == 2) {
+                if (mech.getMulId() != -1) {
                     return false;
                 }
             }

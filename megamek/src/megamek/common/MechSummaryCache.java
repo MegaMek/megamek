@@ -390,6 +390,7 @@ public class MechSummaryCache {
         ms.setEntityType(e.getEntityType());
         ms.setOmni(e.isOmni());
         ms.setSourceFile(f);
+        ms.setSource(e.getSource());
         ms.setEntryName(entry);
         ms.setYear(e.getYear());
         ms.setType(e.getTechLevel());

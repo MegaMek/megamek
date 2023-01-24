@@ -47,6 +47,7 @@ public class MechSearchFilter {
     public int iOfficial;
     public boolean checkEngineType;
     public String engineType;
+    public String source;
     public String sStartYear;
     public String sEndYear;
     public String sStartTons;
@@ -488,6 +489,12 @@ public class MechSearchFilter {
                 if (mech.getEngineName().contains(msg_clan)) {
                     return false;
                 }
+            }
+        }
+
+        if (!f.source.isEmpty()) {
+            if (!mech.getSource().contains(f.source)) {
+                return false;
             }
         }
 

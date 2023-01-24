@@ -115,6 +115,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private EquipmentTableModel equipmentModel;
     private TableRowSorter<EquipmentTableModel> equipmentSorter;
 
+    private JLabel lblSource = new JLabel(Messages.getString("MechSelectorDialog.Search.Source"));
+    private JTextField tSource = new JTextField(4);
+
     private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
@@ -450,6 +453,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p0Panel.add(tStartBV);
         p0Panel.add(new Label("-"));
         p0Panel.add(tEndBV);
+        p0Panel.add(lblSource);
+        p0Panel.add(tSource);
         this.add(p0Panel, c);
 
         c.gridx = 0; c.gridy++;
@@ -1028,6 +1033,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tEndTons.setText("");
         tStartBV.setText("");
         tEndBV.setText("");
+        tSource.setText("");
         mechFilter = null;
         filterToks.clear();
         btnBack.setEnabled(false);
@@ -1079,6 +1085,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iOmni = cOmni.getSelectedIndex();
         mechFilter.iOfficial = cOfficial.getSelectedIndex();
         mechFilter.iClanEngine = cClanEngine.getSelectedIndex();
+
+        mechFilter.source = tSource.getText();
 
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();

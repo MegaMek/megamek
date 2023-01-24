@@ -42,6 +42,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private Long entityType;
     private boolean omni;
     private File sourceFile;
+    private String source;
     private String entryName; // for files in zips
     private int year;
     private int type;
@@ -202,6 +203,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public File getSourceFile() {
         return sourceFile;
+    }
+
+    public String getSource() {
+        return source;
     }
 
     public String getEntryName() {
@@ -427,6 +432,10 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setSourceFile(File sSourceFile) {
         this.sourceFile = sSourceFile;
+    }
+
+    public void setSource(String sSource) {
+        this.source = sSource;
     }
 
     public void setEntryName(String sEntryName) {

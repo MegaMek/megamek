@@ -62,7 +62,7 @@ public class Engine implements Serializable, ITechnology {
     public static final int BATTERY = 11;
     public static final int SOLAR = 12;
     public static final int EXTERNAL = 13;
-    private static final int NUM_ENGINE_TYPES = 14;
+    public static final int NUM_ENGINE_TYPES = 14;
 
     /** Keys for retrieving engine name from {@link Messages} */
     private static final String[] TYPE_KEYS = {
@@ -445,6 +445,14 @@ public class Engine implements Serializable, ITechnology {
     public String getShortEngineName() {
         if (engineType < TYPE_KEYS.length) {
             return String.format("%d%s", engineRating, Messages.getString("Engine." + TYPE_KEYS[engineType]));
+        } else {
+            return Messages.getString("Engine.invalid");
+        }
+    }
+
+    public static String getEngineType(int t) {
+        if ((t >= 0) && (t < TYPE_KEYS.length)) {
+            return Messages.getString("Engine." + TYPE_KEYS[t]);
         } else {
             return Messages.getString("Engine.invalid");
         }

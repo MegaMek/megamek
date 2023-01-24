@@ -82,15 +82,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
-
-
-
     private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
     private JComboBox<String> cOmni = new JComboBox<>();
 
     private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
     private JComboBox<String> cOfficial = new JComboBox<>();
-
+    private JLabel lblClanEngine = new JLabel(Messages.getString("MechSelectorDialog.Search.ClanEngine"));
+    private JComboBox<String> cClanEngine = new JComboBox<>();
     private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
     private JLabel lblUnitType = new JLabel(Messages.getString("MechSelectorDialog.Search.UnitType"));
     private JLabel lblTechClass = new JLabel(Messages.getString("MechSelectorDialog.Search.TechClass"));
@@ -144,6 +142,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JCheckBox cbxEnableQuirkSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
     private JLabel lblQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.Quirk"));
     private JComboBox<String> cboQuirkType = new JComboBox<>();
+
+    private JCheckBox cbxEnableEngineSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
+    private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
+    private JComboBox<String> cboEngineType = new JComboBox<>();
 
     private JCheckBox cbxFilterLAM = new JCheckBox(Messages.getString("MechSelectorDialog.Search.LAM"));
     private JCheckBox cbxfilterQuad= new JCheckBox(Messages.getString("MechSelectorDialog.Search.Quad"));
@@ -203,6 +205,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.No"));
 
+        cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
+        cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.No"));
+
         for (int i = 0; i < EquipmentType.armorNames.length; i++) {
             cboArmorType.addItem(EquipmentType.armorNames[i]);
         }
@@ -239,6 +245,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboQuirkType.setEnabled(false);
         lblQuirkType.setEnabled(false);
 
+        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
+            cboEngineType.addItem(Engine.getEngineType(i));
+        }
+
+        cboEngineType.setEnabled(false);
+        lblEngineType.setEnabled(false);
+
         for (int i = 0; i < EquipmentType.structureNames.length; i++) {
             cboInternalsType.addItem(EquipmentType.structureNames[i]);
         }
@@ -259,6 +272,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cbxEnableArmorSearch.addItemListener(this);
         cbxEnableQuirkSearch.setHorizontalTextPosition(SwingConstants.LEFT);
         cbxEnableQuirkSearch.addItemListener(this);
+        cbxEnableEngineSearch.setHorizontalTextPosition(SwingConstants.LEFT);
+        cbxEnableEngineSearch.addItemListener(this);
 
         for (int i = 1; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
@@ -459,6 +474,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         armorPanel.add(cboArmorType,BorderLayout.EAST);
         this.add(armorPanel, c);
         c.gridx = 1;
+        JPanel enginePanel = new JPanel();
+        enginePanel.add(cbxEnableEngineSearch);
+        enginePanel.add(lblEngineType);
+        enginePanel.add(cboEngineType,BorderLayout.EAST);
+        enginePanel.add(lblClanEngine);
+        enginePanel.add(cClanEngine);
+        this.add(enginePanel, c);
+
+        c.gridx = 0; c.gridy++;;
         JPanel quirkPanel = new JPanel();
         quirkPanel.add(cbxEnableQuirkSearch);
         quirkPanel.add(lblQuirkType);
@@ -577,6 +601,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         } else if (e.getSource().equals(cbxEnableQuirkSearch)) {
             cboQuirkType.setEnabled(!cboQuirkType.isEnabled());
             lblQuirkType.setEnabled(!lblQuirkType.isEnabled());
+        } else if (e.getSource().equals(cbxEnableEngineSearch)) {
+            cboEngineType.setEnabled(!cboEngineType.isEnabled());
+            lblEngineType.setEnabled(!lblEngineType.isEnabled());
         }
     }
 
@@ -946,16 +973,19 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tJump.setText("");
         cArmor.setSelectedIndex(0);
         cOfficial.setSelectedIndex(0);
+        cClanEngine.setSelectedIndex(0);
         cOmni.setSelectedIndex(0);
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
         cbxEnableArmorSearch.setSelected(false);
         cbxEnableQuirkSearch.setSelected(false);
+        cbxEnableEngineSearch.setSelected(false);
         cbxEnableCockpitSearch.setSelected(false);
         cbxEnableInternalsSearch.setSelected(false);
         cboArmorType.setSelectedIndex(0);
         cboQuirkType.setSelectedIndex(0);
+        cboEngineType.setSelectedIndex(0);
         cbxFilterLAM.setSelected(false);
         cbxfilterQuad.setSelected(false);
         cbxFilterTripod.setSelected(false);
@@ -1023,6 +1053,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iArmor = cArmor.getSelectedIndex();
         mechFilter.iOmni = cOmni.getSelectedIndex();
         mechFilter.iOfficial = cOfficial.getSelectedIndex();
+        mechFilter.iClanEngine = cClanEngine.getSelectedIndex();
 
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();
@@ -1041,6 +1072,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.checkQuirkType = cbxEnableQuirkSearch.isSelected();
         if (cbxEnableQuirkSearch.isSelected()) {
             mechFilter.quirkType = cboQuirkType.getSelectedItem().toString();
+        }
+
+        mechFilter.checkEngineType = cbxEnableEngineSearch.isSelected();
+        if (cbxEnableEngineSearch.isSelected()) {
+            mechFilter.engineType = cboEngineType.getSelectedItem().toString();
         }
 
         mechFilter.checkInternalsType = cbxEnableInternalsSearch.isSelected();

@@ -15,7 +15,6 @@
 */
 package megamek.common;
 
-import com.sun.source.tree.ExpressionTree;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import org.apache.logging.log4j.LogManager;
 
@@ -44,7 +43,10 @@ public class MechSearchFilter {
     public int iJump;
     public int iArmor;
     public int iOmni;
+    public int iClanEngine;
     public int iOfficial;
+    public boolean checkEngineType;
+    public String engineType;
     public String sStartYear;
     public String sEndYear;
     public String sStartTons;
@@ -85,6 +87,7 @@ public class MechSearchFilter {
         checkEquipment = false;
         filterLAM = filterQuad = filterTripod = filterQuadVee = filterSupportVTOL = false;
         filterFixedWingSupport = filterSuperHeavyTank = filterSupportTank = filterLargeSupportTank = false;
+        checkQuirkType = checkEngineType = false;
         equipmentCriteria = new ExpressionTree();
     }
 
@@ -459,6 +462,26 @@ public class MechSearchFilter {
             }
             if (f.iOfficial == 2) {
                 if (mech.getMulId() != -1) {
+                    return false;
+                }
+            }
+        }
+
+        if (f.checkEngineType) {
+            if (!mech.getEngineName().contains(f.engineType)) {
+                return false;
+            }
+        }
+
+        if (f.iClanEngine > 0) {
+            String msg_clan = Messages.getString("Engine.Clan");
+            if (f.iClanEngine == 1) {
+                if (!mech.getEngineName().contains(msg_clan)) {
+                    return false;
+                }
+            }
+            if (f.iClanEngine == 2) {
+                if (mech.getEngineName().contains(msg_clan)) {
                     return false;
                 }
             }

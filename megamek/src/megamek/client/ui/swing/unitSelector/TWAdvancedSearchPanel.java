@@ -201,6 +201,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterFixedWingSupport = new JButton("\u2610");
     private JLabel lblFilterConvFighter = new JLabel(Messages.getString("MechSelectorDialog.Search.ConvFighter"));
     private JButton btnFilterConvFighter = new JButton("\u2610");
+    private JLabel lblFilterSmallCraft = new JLabel(Messages.getString("MechSelectorDialog.Search.SmallCraft"));
+    private JButton btnFilterSmallCraft = new JButton("\u2610");
     private JLabel lblFilterJumpship = new JLabel(Messages.getString("MechSelectorDialog.Search.Jumpship"));
     private JButton btnFilterJumpship = new JButton("\u2610");
     private JLabel lblFilterWarship = new JLabel(Messages.getString("MechSelectorDialog.Search.Warship"));
@@ -387,6 +389,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterConvFighter.setBorder(emptyBorder);
         btnFilterConvFighter.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterConvFighter.addActionListener(this);
+        btnFilterSmallCraft.setBorder(emptyBorder);
+        btnFilterSmallCraft.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterSmallCraft.addActionListener(this);
         btnFilterJumpship.setBorder(emptyBorder);
         btnFilterJumpship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterJumpship.addActionListener(this);
@@ -531,17 +536,20 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         JTabbedPane twSearchPane = new JTabbedPane();
         JPanel miscPanel = new JPanel();
-        JPanel weaponEq = new JPanel();
+        JPanel weaponEqPanel = new JPanel();
+        JPanel unitTypePanel = new JPanel();
         String msg_misc = Messages.getString("MechSelectorDialog.Search.Misc");
         String msg_weaponEq = Messages.getString("MechSelectorDialog.Search.WeaponEq");
+        String msg_unitType = Messages.getString("MechSelectorDialog.Search.unitType");
         twSearchPane.addTab(msg_misc, miscPanel);
-        twSearchPane.addTab(msg_weaponEq, weaponEq);
+        twSearchPane.addTab(msg_weaponEq, weaponEqPanel);
+        twSearchPane.addTab(msg_unitType, unitTypePanel);
 
         // Layout
         setLayout(new BorderLayout());
         GridBagConstraints c = new GridBagConstraints();
         miscPanel.setLayout(new GridBagLayout());
-        weaponEq.setLayout(new GridBagLayout());
+        weaponEqPanel.setLayout(new GridBagLayout());
 
         this.add(twSearchPane, BorderLayout.CENTER);
 
@@ -687,72 +695,139 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponQuirkPanel.add(lblWeaponQuirkType);
         weaponQuirkPanel.add(cboWeaponQuirkType);
         miscPanel.add(weaponQuirkPanel, c);
-        c.insets = new Insets(0, 10, 0, 0);
-        c.gridx = 0; c.gridy++;
+
+        unitTypePanel.setLayout(new GridBagLayout());
+        GridBagConstraints c1 = new GridBagConstraints();
+        c1.fill = GridBagConstraints.NONE;
+        c1.anchor = GridBagConstraints.WEST;
+        c1.insets = new Insets(0, 10, 0, 0);
+        c1.gridwidth  = 1;
+        c1.gridx = 0; c1.gridy = 0;
         JPanel filterProtoMechPanel = new JPanel();
         filterProtoMechPanel.add(btnFilterProtoMech);
         filterProtoMechPanel.add(lblFilterProtoMech);
-        miscPanel.add(filterProtoMechPanel, c);
-        c.gridx = 0; c.gridy++;
+        unitTypePanel.add(filterProtoMechPanel, c1);
+        c1.gridx = 0; c1.gridy++;
         JPanel filterMechPanel = new JPanel();
         filterMechPanel.add(btnFilterMech);
         filterMechPanel.add(lblFilterMech);
-        filterMechPanel.add(btnFilterBipedMech);
-        filterMechPanel.add(lblFilterBipedMech);
-        filterMechPanel.add(btnFilterLAM);
-        filterMechPanel.add(lblFilterLAM);
-        filterMechPanel.add(btnFilterQuad);
-        filterMechPanel.add(lblFilterQuad);
-        filterMechPanel.add(btnFilterTripod);
-        filterMechPanel.add(lblFilterTripod);
-        filterMechPanel.add(btnFilterQuadVee);
-        filterMechPanel.add(lblFilterQuadVee);
-        miscPanel.add(filterMechPanel, c);
-        c.gridx = 0; c.gridy++;
+        unitTypePanel.add(filterMechPanel, c1);
+        c1.gridx = 1;
+        JPanel filterBipedMechPanel = new JPanel();
+        filterBipedMechPanel.add(btnFilterBipedMech);
+        filterBipedMechPanel.add(lblFilterBipedMech);
+        unitTypePanel.add(filterBipedMechPanel, c1);
+        c1.gridx = 2;
+        JPanel filterLAMMechPanel = new JPanel();
+        filterLAMMechPanel.add(btnFilterLAM);
+        filterLAMMechPanel.add(lblFilterLAM);
+        unitTypePanel.add(filterLAMMechPanel, c1);
+        c1.gridy++;
+        c1.gridx = 1;
+        JPanel filterTripodPanel = new JPanel();
+        filterTripodPanel.add(btnFilterTripod);
+        filterTripodPanel.add(lblFilterTripod);
+        unitTypePanel.add(filterTripodPanel, c1);
+        c1.gridy++;
+        JPanel filterQuadPanel = new JPanel();
+        filterQuadPanel.add(btnFilterQuad);
+        filterQuadPanel.add(lblFilterQuad);
+        unitTypePanel.add(filterQuadPanel, c1);
+        c1.gridx = 2;
+        JPanel filterQuadVeePanel = new JPanel();
+        filterQuadVeePanel.add(btnFilterQuadVee);
+        filterQuadVeePanel.add(lblFilterQuadVee);
+        unitTypePanel.add(filterQuadVeePanel, c1);
+        c1.gridx = 0; c1.gridy++;
         JPanel filterAeroPanel = new JPanel();
         filterAeroPanel.add(btnFilterAero);
         filterAeroPanel.add(lblFilterAero);
-        filterAeroPanel.add(btnFilterConvFighter);
-        filterAeroPanel.add(lblFilterConvFighter);
-        filterAeroPanel.add(btnFilterFixedWingSupport);
-        filterAeroPanel.add(lblFilterFixedWingSupport);
-        filterAeroPanel.add(btnFilterJumpship);
-        filterAeroPanel.add(lblFilterJumpship);
-        filterAeroPanel.add(btnFilterWarship);
-        filterAeroPanel.add(lblFilterWarship);
-        filterAeroPanel.add(btnFilterSpaceStation);
-        filterAeroPanel.add(lblFilterSpaceStation);
-        miscPanel.add(filterAeroPanel, c);
-        c.gridx = 0; c.gridy++;
+        unitTypePanel.add(filterAeroPanel, c1);
+        c1.gridx = 1;
+        JPanel filterConvFighterPanel = new JPanel();
+        filterConvFighterPanel.add(btnFilterConvFighter);
+        filterConvFighterPanel.add(lblFilterConvFighter);
+        unitTypePanel.add(filterConvFighterPanel, c1);
+        c1.gridx = 2;
+        JPanel filterFixedWingSupportPanel = new JPanel();
+        filterFixedWingSupportPanel.add(btnFilterFixedWingSupport);
+        filterFixedWingSupportPanel.add(lblFilterFixedWingSupport);
+        unitTypePanel.add(filterFixedWingSupportPanel, c1);
+        c1.gridy++;
+        c1.gridx = 1;
+        JPanel filterSmallCraftPanel = new JPanel();
+        filterSmallCraftPanel.add(btnFilterSmallCraft);
+        filterSmallCraftPanel.add(lblFilterSmallCraft);
+        unitTypePanel.add(filterSmallCraftPanel, c1);
+        c1.gridy++;
+        c1.gridx = 1;
+        JPanel filterJumpshipPanel = new JPanel();
+        filterJumpshipPanel.add(btnFilterJumpship);
+        filterJumpshipPanel.add(lblFilterJumpship);
+        unitTypePanel.add(filterJumpshipPanel, c1);
+        c1.gridx = 2;
+        JPanel filterrWarshipPanel = new JPanel();
+        filterrWarshipPanel.add(btnFilterWarship);
+        filterrWarshipPanel.add(lblFilterWarship);
+        unitTypePanel.add(filterrWarshipPanel, c1);
+        c1.gridy++;
+        JPanel filterrSpaceStationPanel = new JPanel();
+        filterrSpaceStationPanel.add(btnFilterSpaceStation);
+        filterrSpaceStationPanel.add(lblFilterSpaceStation);
+        unitTypePanel.add(filterrSpaceStationPanel, c1);
+        c1.gridx = 0; c1.gridy++;
         JPanel filterInfantryPanel = new JPanel();
         filterInfantryPanel.add(btnFilterInfantry);
         filterInfantryPanel.add(lblFilterInfantry);
-        filterInfantryPanel.add(btnFilterBattleArmor);
-        filterInfantryPanel.add(lblFilterBattleArmor);
-        miscPanel.add(filterInfantryPanel, c);
-        c.gridx = 0; c.gridy++;
+        unitTypePanel.add(filterInfantryPanel, c1);
+        c1.gridx = 1;
+        JPanel filterBattleArmorPanel = new JPanel();
+        filterBattleArmorPanel.add(btnFilterBattleArmor);
+        filterBattleArmorPanel.add(lblFilterBattleArmor);
+        unitTypePanel.add(filterBattleArmorPanel, c1);
+        c1.gridx = 0; c1.gridy++;
         JPanel filterTankPanel = new JPanel();
         filterTankPanel.add(btnFilterTank);
         filterTankPanel.add(lblFilterTank);
-        filterTankPanel.add(btnFilterVTOL);
-        filterTankPanel.add(lblFilterVTOL);
-        filterTankPanel.add(btnFilterSupportVTOL);
-        filterTankPanel.add(lblFilterSupportVTOL);
-        filterTankPanel.add(btnFilterGunEmplacement);
-        filterTankPanel.add(lblFilterGunEmplacement);
-        filterTankPanel.add(btnFilterSupportTank);
-        filterTankPanel.add(lblFilterSupportTank);
-        filterTankPanel.add(btnFilterLargeSupportTank);
-        filterTankPanel.add(lblFilterLargeSupportTank);
-        filterTankPanel.add(btnFilterSuperHeavyTank);
-        filterTankPanel.add(lblFilterSuperHeavyTank);
-        miscPanel.add(filterTankPanel, c);
+        unitTypePanel.add(filterTankPanel, c1);
+        c1.gridx = 1;
+        JPanel filterVTOLPanel = new JPanel();
+        filterVTOLPanel.add(btnFilterVTOL);
+        filterVTOLPanel.add(lblFilterVTOL);
+        unitTypePanel.add(filterVTOLPanel, c1);
+        c1.gridx = 2;
+        JPanel filterrSupportVTOLPanel = new JPanel();
+        filterrSupportVTOLPanel.add(btnFilterSupportVTOL);
+        filterrSupportVTOLPanel.add(lblFilterSupportVTOL);
+        unitTypePanel.add(filterrSupportVTOLPanel, c1);
+        c1.gridy++;
+        c1.gridx = 1;
+        JPanel filterGunEmplacementPanel = new JPanel();
+        filterGunEmplacementPanel.add(btnFilterGunEmplacement);
+        filterGunEmplacementPanel.add(lblFilterGunEmplacement);
+        unitTypePanel.add(filterGunEmplacementPanel, c1);
+        c1.gridy++;
+        JPanel filterSupportTankPanel = new JPanel();
+        filterSupportTankPanel.add(btnFilterSupportTank);
+        filterSupportTankPanel.add(lblFilterSupportTank);
+        unitTypePanel.add(filterSupportTankPanel, c1);
+        c1.gridx = 2;
+        JPanel filterrLargeSupportTankPanel = new JPanel();
+        filterrLargeSupportTankPanel.add(btnFilterLargeSupportTank);
+        filterrLargeSupportTankPanel.add(lblFilterLargeSupportTank);
+        unitTypePanel.add(filterrLargeSupportTankPanel, c1);
+        c1.gridy++;
+        c1.gridx = 1;
+        JPanel filterSuperHeavyTankPanel = new JPanel();
+        filterSuperHeavyTankPanel.add(btnFilterSuperHeavyTank);
+        filterSuperHeavyTankPanel.add(lblFilterSuperHeavyTank);
+        unitTypePanel.add(filterSuperHeavyTankPanel, c1);
 
         // table
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
-        weaponEq.add(lblTableFilters, c);
+        weaponEqPanel.add(lblTableFilters, c);
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
         c.anchor = GridBagConstraints.CENTER;
@@ -764,43 +839,43 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboPanel.add(cboTechClass);
         cboPanel.add(lblTechLevel, c);
         cboPanel.add(cboTechLevel, c);
-        weaponEq.add(cboPanel, c);
+        weaponEqPanel.add(cboPanel, c);
         c.gridwidth = 1;
 
         c.gridx = 0; c.gridy++;
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 0, 0, 0);
-        weaponEq.add(lblWeaponClass, c);
+        weaponEqPanel.add(lblWeaponClass, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
-        weaponEq.add(scrTableWeaponType, c);
+        weaponEqPanel.add(scrTableWeaponType, c);
         c.gridwidth = 1;
 
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy++;
         c.anchor = GridBagConstraints.WEST;
-        weaponEq.add(lblWeapons, c);
+        weaponEqPanel.add(lblWeapons, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
-        weaponEq.add(scrTableWeapons, c);
+        weaponEqPanel.add(scrTableWeapons, c);
 
         c.fill = GridBagConstraints.NONE;
         c.gridwidth = 1;
         c.gridx = 0; c.gridy++;
         c.anchor = GridBagConstraints.WEST;
-        weaponEq.add(lblEquipment, c);
+        weaponEqPanel.add(lblEquipment, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
-        weaponEq.add(scrTableEquipment, c);
+        weaponEqPanel.add(scrTableEquipment, c);
 
         c.insets = new Insets(0, 50, 0, 0);
         c.fill = GridBagConstraints.NONE;
@@ -814,7 +889,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnPanel.add(btnOr, c);
         btnPanel.add(btnBack, c);
         btnPanel.add(btnClear, c);
-        weaponEq.add(btnPanel, c);
+        weaponEqPanel.add(btnPanel, c);
 
         // Filter Expression
         c.insets = new Insets(0, 0, 0, 0);
@@ -822,12 +897,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.NONE;
-        weaponEq.add(lblEqExpTxt, c);
+        weaponEqPanel.add(lblEqExpTxt, c);
         c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
         c.gridwidth = 3;
-        weaponEq.add(expScroller, c);
+        weaponEqPanel.add(expScroller, c);
     }
 
     /**
@@ -1070,6 +1145,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterFixedWingSupport);
         } else if (ev.getSource().equals(btnFilterConvFighter)) {
             toggleText(btnFilterConvFighter);
+        } else if (ev.getSource().equals(btnFilterSmallCraft)) {
+            toggleText(btnFilterSmallCraft);
         } else if (ev.getSource().equals(btnFilterJumpship)) {
             toggleText(btnFilterJumpship);
         } else if (ev.getSource().equals(btnFilterWarship)) {
@@ -1317,6 +1394,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterAero.setText("\u2610");
         btnFilterFixedWingSupport.setText("\u2610");
         btnFilterConvFighter.setText("\u2610");
+        btnFilterSmallCraft.setText("\u2610");
         btnFilterJumpship.setText("\u2610");
         btnFilterWarship.setText("\u2610");
         btnFilterSpaceStation.setText("\u2610");
@@ -1461,6 +1539,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.filterAero = getValue(btnFilterAero);
         mechFilter.filterFixedWingSupport = getValue(btnFilterFixedWingSupport);
         mechFilter.filterConvFighter = getValue(btnFilterConvFighter);
+        mechFilter.filterSmallCraft = getValue(btnFilterSmallCraft);
         mechFilter.filterJumpship = getValue(btnFilterJumpship);
         mechFilter.filterWarship = getValue(btnFilterWarship);
         mechFilter.filterSpaceStation = getValue(btnFilterSpaceStation);

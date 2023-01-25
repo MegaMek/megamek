@@ -111,6 +111,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
     private JComboBox<String> cOfficial = new JComboBox<>();
+    private JLabel lblCanon = new JLabel(Messages.getString("MechSelectorDialog.Search.Canon"));
+    private JComboBox<String> cCanon = new JComboBox<>();
     private JLabel lblClanEngine = new JLabel(Messages.getString("MechSelectorDialog.Search.ClanEngine"));
     private JComboBox<String> cClanEngine = new JComboBox<>();
     private JLabel lblTableFilters = new JLabel(Messages.getString("MechSelectorDialog.Search.TableFilters"));
@@ -227,6 +229,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
         cOfficial.addItem(Messages.getString("MechSelectorDialog.Search.No"));
+
+        cCanon.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
+        cCanon.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
+        cCanon.addItem(Messages.getString("MechSelectorDialog.Search.No"));
 
         cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
@@ -464,6 +470,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         JPanel p0Panel = new JPanel();
         p0Panel.add(lblOfficial);
         p0Panel.add(cOfficial);
+        p0Panel.add(lblCanon);
+        p0Panel.add(cCanon);
         p0Panel.add(lblSource);
         p0Panel.add(tSource);
         p0Panel.add(lblOmni);
@@ -1100,6 +1108,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tEndBattleArmorHandles.setText("");
         cArmor.setSelectedIndex(0);
         cOfficial.setSelectedIndex(0);
+        cCanon.setSelectedIndex(0);
         cClanEngine.setSelectedIndex(0);
         cOmni.setSelectedIndex(0);
         tblWeapons.clearSelection();
@@ -1201,6 +1210,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.iArmor = cArmor.getSelectedIndex();
         mechFilter.iOmni = cOmni.getSelectedIndex();
         mechFilter.iOfficial = cOfficial.getSelectedIndex();
+        mechFilter.iCanon = cCanon.getSelectedIndex();
         mechFilter.iClanEngine = cClanEngine.getSelectedIndex();
 
         mechFilter.source = tSource.getText();

@@ -45,6 +45,7 @@ public class MechSearchFilter {
     public int iOmni;
     public int iClanEngine;
     public int iOfficial;
+    public int iCanon;
     public boolean checkEngineType;
     public String engineType;
     public String source;
@@ -464,6 +465,19 @@ public class MechSearchFilter {
             }
             if (f.iOfficial == 2) {
                 if (mech.getMulId() != -1) {
+                    return false;
+                }
+            }
+        }
+
+        if (f.iCanon > 0) {
+            if (f.iCanon == 1) {
+                if (!mech.isCanon()) {
+                    return false;
+                }
+            }
+            if (f.iCanon == 2) {
+                if (mech.isCanon()) {
                     return false;
                 }
             }

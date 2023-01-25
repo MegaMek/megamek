@@ -81,15 +81,32 @@ public class MechSearchFilter {
     public boolean checkCockpitType;
     public int cockpitType;
     public boolean checkEquipment;
-    public boolean filterLAM;
-    public boolean filterQuad;
-    public boolean filterTripod;
-    public boolean filterQuadVee;
-    public boolean filterSupportVTOL;
-    public boolean filterFixedWingSupport;
-    public boolean filterSuperHeavyTank;
-    public boolean filterSupportTank;
-    public boolean filterLargeSupportTank;
+    public int filterMech;
+    public int filterBipedMech;
+    public int filterProtomech;
+    public int filterLAM;
+    public int filterTripod;
+    public int filterQuad;
+    public int filterQuadVee;
+
+    public int filterAero;
+    public int filterFixedWingSupport;
+    public int filterConvFighter;
+    public int filterSmallCraft;
+    public int filterJumpship;
+    public int filterWarship;
+    public int filterSpaceStation;
+
+    public int filterInfantry;
+    public int filterBattleArmor;
+
+    public int filterTank;
+    public int filterVTOL;
+    public int filterSupportVTOL;
+    public int filterGunEmplacement;
+    public int filterSupportTank;
+    public int filterLargeSupportTank;
+    public int filterSuperHeavyTank;
 
     public ExpressionTree equipmentCriteria;
 
@@ -99,8 +116,6 @@ public class MechSearchFilter {
         isDisabled = true;
         checkArmorType = checkInternalsType = checkCockpitType = false;
         checkEquipment = false;
-        filterLAM = filterQuad = filterTripod = filterQuadVee = filterSupportVTOL = false;
-        filterFixedWingSupport = filterSuperHeavyTank = filterSupportTank = filterLargeSupportTank = false;
         checkQuirkType = checkWeaponQuirkType = checkEngineType = false;
         equipmentCriteria = new ExpressionTree();
     }
@@ -400,35 +415,146 @@ public class MechSearchFilter {
         }
 
         long l = 0;
-        if (f.filterLAM) {
+        if (f.filterMech == 1) {
+            l = l | Entity.ETYPE_MECH;
+        }
+        if (f.filterBipedMech == 1) {
+            l = l | Entity.ETYPE_BIPED_MECH;
+        }
+        if (f.filterProtomech == 1) {
+            l = l | Entity.ETYPE_PROTOMECH;
+        }
+        if (f.filterLAM == 1) {
             l = l | Entity.ETYPE_LAND_AIR_MECH;
         }
-        if (f.filterQuad) {
-            l = l | Entity.ETYPE_QUAD_MECH;
-        }
-        if (f.filterTripod) {
+        if (f.filterTripod == 1) {
             l = l | Entity.ETYPE_TRIPOD_MECH;
         }
-        if (f.filterQuadVee) {
-            l = l | Entity.ETYPE_QUADVEE;
+        if (f.filterQuad == 1) {
+            l = l | Entity.ETYPE_QUAD_MECH;
         }
-        if (f.filterSupportVTOL) {
-            l = l | Entity.ETYPE_SUPPORT_VTOL;
+        if (f.filterAero == 1) {
+            l = l | Entity.ETYPE_AERO;
         }
-        if (f.filterFixedWingSupport) {
+        if (f.filterFixedWingSupport == 1) {
             l = l | Entity.ETYPE_FIXED_WING_SUPPORT;
         }
-        if (f.filterSuperHeavyTank) {
-            l = l | Entity.ETYPE_SUPER_HEAVY_TANK;
+        if (f.filterConvFighter == 1) {
+            l = l | Entity.ETYPE_CONV_FIGHTER;
         }
-        if (f.filterSupportTank) {
+        if (f.filterSmallCraft == 1) {
+            l = l | Entity.ETYPE_SMALL_CRAFT;
+        }
+        if (f.filterJumpship == 1) {
+            l = l | Entity.ETYPE_JUMPSHIP;
+        }
+        if (f.filterWarship == 1) {
+            l = l | Entity.ETYPE_WARSHIP;
+        }
+        if (f.filterSpaceStation == 1) {
+            l = l | Entity.ETYPE_SPACE_STATION;
+        }
+        if (f.filterInfantry == 1) {
+            l = l | Entity.ETYPE_INFANTRY;
+        }
+        if (f.filterBattleArmor == 1) {
+            l = l | Entity.ETYPE_BATTLEARMOR;
+        }
+        if (f.filterTank == 1) {
+            l = l | Entity.ETYPE_TANK;
+        }
+        if (f.filterVTOL == 1) {
+            l = l | Entity.ETYPE_VTOL;
+        }
+        if (f.filterSupportVTOL == 1) {
+            l = l | Entity.ETYPE_SUPPORT_VTOL;
+        }
+        if (f.filterGunEmplacement == 1) {
+            l = l | Entity.ETYPE_GUN_EMPLACEMENT;
+        }
+        if (f.filterSupportTank == 1) {
             l = l | Entity.ETYPE_SUPPORT_TANK;
         }
-        if (f.filterLargeSupportTank) {
+        if (f.filterLargeSupportTank == 1) {
             l = l | Entity.ETYPE_LARGE_SUPPORT_TANK;
+        }
+        if (f.filterSuperHeavyTank == 1) {
+            l = l | Entity.ETYPE_SUPER_HEAVY_TANK;
         }
 
         if ((!((mech.getEntityType() & l) > 0)) && (l != 0)) {
+            return false;
+        }
+
+        l = 0;
+        if (f.filterMech == 2) {
+            l = l | Entity.ETYPE_MECH;
+        }
+        if (f.filterBipedMech == 2) {
+            l = l | Entity.ETYPE_BIPED_MECH;
+        }
+        if (f.filterProtomech == 2) {
+            l = l | Entity.ETYPE_PROTOMECH;
+        }
+        if (f.filterLAM == 2) {
+            l = l | Entity.ETYPE_LAND_AIR_MECH;
+        }
+        if (f.filterTripod == 2) {
+            l = l | Entity.ETYPE_TRIPOD_MECH;
+        }
+        if (f.filterQuad == 2) {
+            l = l | Entity.ETYPE_QUAD_MECH;
+        }
+        if (f.filterAero == 2) {
+            l = l | Entity.ETYPE_AERO;
+        }
+        if (f.filterFixedWingSupport == 2) {
+            l = l | Entity.ETYPE_FIXED_WING_SUPPORT;
+        }
+        if (f.filterConvFighter == 2) {
+            l = l | Entity.ETYPE_CONV_FIGHTER;
+        }
+        if (f.filterSmallCraft == 2) {
+            l = l | Entity.ETYPE_SMALL_CRAFT;
+        }
+        if (f.filterJumpship == 2) {
+            l = l | Entity.ETYPE_JUMPSHIP;
+        }
+        if (f.filterWarship == 2) {
+            l = l | Entity.ETYPE_WARSHIP;
+        }
+        if (f.filterSpaceStation == 2) {
+            l = l | Entity.ETYPE_SPACE_STATION;
+        }
+        if (f.filterInfantry == 2) {
+            l = l | Entity.ETYPE_INFANTRY;
+        }
+        if (f.filterBattleArmor == 2) {
+            l = l | Entity.ETYPE_BATTLEARMOR;
+        }
+        if (f.filterTank == 2) {
+            l = l | Entity.ETYPE_TANK;
+        }
+        if (f.filterVTOL == 2) {
+            l = l | Entity.ETYPE_VTOL;
+        }
+        if (f.filterSupportVTOL == 2) {
+            l = l | Entity.ETYPE_SUPPORT_VTOL;
+        }
+        if (f.filterGunEmplacement == 2) {
+            l = l | Entity.ETYPE_GUN_EMPLACEMENT;
+        }
+        if (f.filterSupportTank == 2) {
+            l = l | Entity.ETYPE_SUPPORT_TANK;
+        }
+        if (f.filterLargeSupportTank == 2) {
+            l = l | Entity.ETYPE_LARGE_SUPPORT_TANK;
+        }
+        if (f.filterSuperHeavyTank == 2) {
+            l = l | Entity.ETYPE_SUPER_HEAVY_TANK;
+        }
+
+        if (((mech.getEntityType() & l) > 0) && (l != 0)) {
             return false;
         }
 

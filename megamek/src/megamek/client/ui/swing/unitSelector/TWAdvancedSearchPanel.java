@@ -30,6 +30,7 @@ import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -180,15 +181,50 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
     private JComboBox<String> cboEngineType = new JComboBox<>();
 
-    private JCheckBox cbxFilterLAM = new JCheckBox(Messages.getString("MechSelectorDialog.Search.LAM"));
-    private JCheckBox cbxfilterQuad= new JCheckBox(Messages.getString("MechSelectorDialog.Search.Quad"));
-    private JCheckBox cbxFilterTripod = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Tripod"));
-    private JCheckBox cbxfilterQuadVee = new JCheckBox(Messages.getString("MechSelectorDialog.Search.QuadVee"));
-    private JCheckBox cbxfilterSupportVTOL = new JCheckBox(Messages.getString("MechSelectorDialog.Search.SupportVTOL"));
-    private JCheckBox cbxfilterFixedWingSupport = new JCheckBox(Messages.getString("MechSelectorDialog.Search.FixedWingSupport"));
-    private JCheckBox cbxFilterSuperHeavyTank = new JCheckBox(Messages.getString("MechSelectorDialog.Search.SuperHeavyTank"));
-    private JCheckBox cbxFilterSupportTank = new JCheckBox(Messages.getString("MechSelectorDialog.Search.SupportTank"));
-    private JCheckBox cbxFilterLargeSupportTank = new JCheckBox(Messages.getString("MechSelectorDialog.Search.LargeSupportTank"));
+    private JLabel lblFilterMech= new JLabel(Messages.getString("MechSelectorDialog.Search.Mech"));
+    private JButton btnFilterMech = new JButton("\u2610");
+    private JLabel lblFilterBipedMech= new JLabel(Messages.getString("MechSelectorDialog.Search.BipedMech"));
+    private JButton btnFilterBipedMech = new JButton("\u2610");
+    private JLabel lblFilterProtoMech= new JLabel(Messages.getString("MechSelectorDialog.Search.ProtoMech"));
+    private JButton btnFilterProtoMech = new JButton("\u2610");
+    private JLabel lblFilterLAM = new JLabel(Messages.getString("MechSelectorDialog.Search.LAM"));
+    private JButton btnFilterLAM = new JButton("\u2610");
+    private JLabel lblFilterTripod = new JLabel(Messages.getString("MechSelectorDialog.Search.Tripod"));
+    private JButton btnFilterTripod = new JButton("\u2610");
+    private JLabel lblFilterQuad = new JLabel(Messages.getString("MechSelectorDialog.Search.Quad"));
+    private JButton btnFilterQuad= new JButton("\u2610");
+    private JLabel lblFilterQuadVee = new JLabel(Messages.getString("MechSelectorDialog.Search.QuadVee"));
+    private JButton btnFilterQuadVee = new JButton("\u2610");
+    private JLabel lblFilterAero = new JLabel(Messages.getString("MechSelectorDialog.Search.Aero"));
+    private JButton btnFilterAero = new JButton("\u2610");
+    private JLabel lblFilterFixedWingSupport = new JLabel(Messages.getString("MechSelectorDialog.Search.FixedWingSupport"));
+    private JButton btnFilterFixedWingSupport = new JButton("\u2610");
+    private JLabel lblFilterConvFighter = new JLabel(Messages.getString("MechSelectorDialog.Search.ConvFighter"));
+    private JButton btnFilterConvFighter = new JButton("\u2610");
+    private JLabel lblFilterJumpship = new JLabel(Messages.getString("MechSelectorDialog.Search.Jumpship"));
+    private JButton btnFilterJumpship = new JButton("\u2610");
+    private JLabel lblFilterWarship = new JLabel(Messages.getString("MechSelectorDialog.Search.Warship"));
+    private JButton btnFilterWarship = new JButton("\u2610");
+    private JLabel lblFilterSpaceStation = new JLabel(Messages.getString("MechSelectorDialog.Search.SpaceStation"));
+    private JButton btnFilterSpaceStation = new JButton("\u2610");
+    private JLabel lblFilterInfantry = new JLabel(Messages.getString("MechSelectorDialog.Search.Infantry"));
+    private JButton btnFilterInfantry = new JButton("\u2610");
+    private JLabel lblFilterBattleArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.BattleArmor"));
+    private JButton btnFilterBattleArmor = new JButton("\u2610");
+    private JLabel lblFilterTank = new JLabel(Messages.getString("MechSelectorDialog.Search.Tank"));
+    private JButton btnFilterTank = new JButton("\u2610");
+    private JLabel lblFilterVTOL = new JLabel(Messages.getString("MechSelectorDialog.Search.VTOL"));
+    private JButton btnFilterVTOL = new JButton("\u2610");
+    private JLabel lblFilterSupportVTOL = new JLabel(Messages.getString("MechSelectorDialog.Search.SupportVTOL"));
+    private JButton btnFilterSupportVTOL = new JButton("\u2610");
+    private JLabel lblFilterGunEmplacement = new JLabel(Messages.getString("MechSelectorDialog.Search.GunEmplacement"));
+    private JButton btnFilterGunEmplacement = new JButton("\u2610");
+    private JLabel lblFilterSupportTank = new JLabel(Messages.getString("MechSelectorDialog.Search.SupportTank"));
+    private JButton btnFilterSupportTank= new JButton("\u2610");
+    private JLabel lblFilterLargeSupportTank = new JLabel(Messages.getString("MechSelectorDialog.Search.LargeSupportTank"));
+    private JButton btnFilterLargeSupportTank= new JButton("\u2610");
+    private JLabel lblFilterSuperHeavyTank = new JLabel(Messages.getString("MechSelectorDialog.Search.SuperHeavyTank"));
+    private JButton btnFilterSuperHeavyTank = new JButton("\u2610");
 
     private JComboBox<String> cboQty = new JComboBox<>();
 
@@ -320,24 +356,73 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
         cboQty.setSelectedIndex(0);
 
-        cbxFilterLAM.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxFilterLAM.addItemListener(this);
-        cbxfilterQuad.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxfilterQuad.addItemListener(this);
-        cbxFilterTripod.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxFilterTripod.addItemListener(this);
-        cbxfilterQuadVee.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxfilterQuadVee.addItemListener(this);
-        cbxfilterSupportVTOL.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxfilterSupportVTOL.addItemListener(this);
-        cbxfilterFixedWingSupport.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxfilterFixedWingSupport.addItemListener(this);
-        cbxFilterSuperHeavyTank.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxFilterSuperHeavyTank.addItemListener(this);
-        cbxFilterSupportTank.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxFilterSupportTank.addItemListener(this);
-        cbxFilterLargeSupportTank.setHorizontalTextPosition(SwingConstants.RIGHT);
-        cbxFilterLargeSupportTank.addItemListener(this);
+        Border emptyBorder = BorderFactory.createEmptyBorder();
+        btnFilterMech.setBorder(emptyBorder);
+        btnFilterMech.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterMech.addActionListener(this);
+        btnFilterBipedMech.setBorder(emptyBorder);
+        btnFilterBipedMech.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterBipedMech.addActionListener(this);
+        btnFilterProtoMech.setBorder(emptyBorder);
+        btnFilterProtoMech.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterProtoMech.addActionListener(this);
+        btnFilterLAM.setBorder(emptyBorder);
+        btnFilterLAM.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterLAM.addActionListener(this);
+        btnFilterTripod.setBorder(emptyBorder);
+        btnFilterTripod.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterTripod.addActionListener(this);
+        btnFilterQuad.setBorder(emptyBorder);
+        btnFilterQuad.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterQuad.addActionListener(this);
+        btnFilterQuadVee.setBorder(emptyBorder);
+        btnFilterQuadVee.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterQuadVee.addActionListener(this);
+        btnFilterAero.setBorder(emptyBorder);
+        btnFilterAero.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterAero.addActionListener(this);
+        btnFilterFixedWingSupport.setBorder(emptyBorder);
+        btnFilterFixedWingSupport.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterFixedWingSupport.addActionListener(this);
+        btnFilterConvFighter.setBorder(emptyBorder);
+        btnFilterConvFighter.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterConvFighter.addActionListener(this);
+        btnFilterJumpship.setBorder(emptyBorder);
+        btnFilterJumpship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterJumpship.addActionListener(this);
+        btnFilterWarship.setBorder(emptyBorder);
+        btnFilterWarship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterWarship.addActionListener(this);
+        btnFilterSpaceStation.setBorder(emptyBorder);
+        btnFilterSpaceStation.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterSpaceStation.addActionListener(this);
+        btnFilterInfantry.setBorder(emptyBorder);
+        btnFilterInfantry.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterInfantry.addActionListener(this);
+        btnFilterBattleArmor.setBorder(emptyBorder);
+        btnFilterBattleArmor.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterBattleArmor.addActionListener(this);
+        btnFilterTank.setBorder(emptyBorder);
+        btnFilterTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterTank.addActionListener(this);
+        btnFilterVTOL.setBorder(emptyBorder);
+        btnFilterVTOL.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterVTOL.addActionListener(this);
+        btnFilterSupportVTOL.setBorder(emptyBorder);
+        btnFilterSupportVTOL.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterSupportVTOL.addActionListener(this);
+        btnFilterGunEmplacement.setBorder(emptyBorder);
+        btnFilterGunEmplacement.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterGunEmplacement.addActionListener(this);
+        btnFilterSupportTank.setBorder(emptyBorder);
+        btnFilterSupportTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterSupportTank.addActionListener(this);
+        btnFilterLargeSupportTank.setBorder(emptyBorder);
+        btnFilterLargeSupportTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterLargeSupportTank.addActionListener(this);
+        btnFilterSuperHeavyTank.setBorder(emptyBorder);
+        btnFilterSuperHeavyTank.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterSuperHeavyTank.addActionListener(this);
 
         // Setup table filter combo boxes
         DefaultComboBoxModel<String> unitTypeModel = new DefaultComboBoxModel<>();
@@ -602,25 +687,66 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponQuirkPanel.add(lblWeaponQuirkType);
         weaponQuirkPanel.add(cboWeaponQuirkType);
         miscPanel.add(weaponQuirkPanel, c);
-        c.gridx = 0; c.gridy++;
         c.insets = new Insets(0, 10, 0, 0);
-        JPanel filterEntity1Panel = new JPanel();
-        filterEntity1Panel.add(cbxFilterLAM);
-        filterEntity1Panel.add(cbxFilterTripod);
-        filterEntity1Panel.add(cbxfilterQuad);
-        filterEntity1Panel.add(cbxfilterQuadVee);
-        miscPanel.add(filterEntity1Panel, c);
         c.gridx = 0; c.gridy++;
-        JPanel filterEntity2Panel = new JPanel();
-        filterEntity2Panel.add(cbxfilterSupportVTOL);
-        filterEntity2Panel.add(cbxfilterFixedWingSupport);
-        miscPanel.add(filterEntity2Panel, c);
+        JPanel filterProtoMechPanel = new JPanel();
+        filterProtoMechPanel.add(btnFilterProtoMech);
+        filterProtoMechPanel.add(lblFilterProtoMech);
+        miscPanel.add(filterProtoMechPanel, c);
         c.gridx = 0; c.gridy++;
-        JPanel filterEntity3Panel = new JPanel();
-        filterEntity3Panel.add(cbxFilterSupportTank);
-        filterEntity3Panel.add(cbxFilterLargeSupportTank);
-        filterEntity3Panel.add(cbxFilterSuperHeavyTank);
-        miscPanel.add(filterEntity3Panel, c);
+        JPanel filterMechPanel = new JPanel();
+        filterMechPanel.add(btnFilterMech);
+        filterMechPanel.add(lblFilterMech);
+        filterMechPanel.add(btnFilterBipedMech);
+        filterMechPanel.add(lblFilterBipedMech);
+        filterMechPanel.add(btnFilterLAM);
+        filterMechPanel.add(lblFilterLAM);
+        filterMechPanel.add(btnFilterQuad);
+        filterMechPanel.add(lblFilterQuad);
+        filterMechPanel.add(btnFilterTripod);
+        filterMechPanel.add(lblFilterTripod);
+        filterMechPanel.add(btnFilterQuadVee);
+        filterMechPanel.add(lblFilterQuadVee);
+        miscPanel.add(filterMechPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel filterAeroPanel = new JPanel();
+        filterAeroPanel.add(btnFilterAero);
+        filterAeroPanel.add(lblFilterAero);
+        filterAeroPanel.add(btnFilterConvFighter);
+        filterAeroPanel.add(lblFilterConvFighter);
+        filterAeroPanel.add(btnFilterFixedWingSupport);
+        filterAeroPanel.add(lblFilterFixedWingSupport);
+        filterAeroPanel.add(btnFilterJumpship);
+        filterAeroPanel.add(lblFilterJumpship);
+        filterAeroPanel.add(btnFilterWarship);
+        filterAeroPanel.add(lblFilterWarship);
+        filterAeroPanel.add(btnFilterSpaceStation);
+        filterAeroPanel.add(lblFilterSpaceStation);
+        miscPanel.add(filterAeroPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel filterInfantryPanel = new JPanel();
+        filterInfantryPanel.add(btnFilterInfantry);
+        filterInfantryPanel.add(lblFilterInfantry);
+        filterInfantryPanel.add(btnFilterBattleArmor);
+        filterInfantryPanel.add(lblFilterBattleArmor);
+        miscPanel.add(filterInfantryPanel, c);
+        c.gridx = 0; c.gridy++;
+        JPanel filterTankPanel = new JPanel();
+        filterTankPanel.add(btnFilterTank);
+        filterTankPanel.add(lblFilterTank);
+        filterTankPanel.add(btnFilterVTOL);
+        filterTankPanel.add(lblFilterVTOL);
+        filterTankPanel.add(btnFilterSupportVTOL);
+        filterTankPanel.add(lblFilterSupportVTOL);
+        filterTankPanel.add(btnFilterGunEmplacement);
+        filterTankPanel.add(lblFilterGunEmplacement);
+        filterTankPanel.add(btnFilterSupportTank);
+        filterTankPanel.add(lblFilterSupportTank);
+        filterTankPanel.add(btnFilterLargeSupportTank);
+        filterTankPanel.add(lblFilterLargeSupportTank);
+        filterTankPanel.add(btnFilterSuperHeavyTank);
+        filterTankPanel.add(lblFilterSuperHeavyTank);
+        miscPanel.add(filterTankPanel, c);
 
         // table
         c.anchor = GridBagConstraints.WEST;
@@ -924,6 +1050,64 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             btnBack.setEnabled(false);
             disableOperationButtons();
             enableSelectionButtons();
+        } else if (ev.getSource().equals(btnFilterMech)) {
+            toggleText(btnFilterMech);
+        } else if (ev.getSource().equals(btnFilterBipedMech)) {
+            toggleText(btnFilterBipedMech);
+        } else if (ev.getSource().equals(btnFilterProtoMech)) {
+            toggleText(btnFilterProtoMech);
+        } else if (ev.getSource().equals(btnFilterLAM)) {
+            toggleText(btnFilterLAM);
+        } else if (ev.getSource().equals(btnFilterTripod)) {
+            toggleText(btnFilterTripod);
+        } else if (ev.getSource().equals(btnFilterQuad)) {
+            toggleText(btnFilterQuad);
+        } else if (ev.getSource().equals(btnFilterQuadVee)) {
+            toggleText(btnFilterQuadVee);
+        } else if (ev.getSource().equals(btnFilterAero)) {
+            toggleText(btnFilterAero);
+        } else if (ev.getSource().equals(btnFilterFixedWingSupport)) {
+            toggleText(btnFilterFixedWingSupport);
+        } else if (ev.getSource().equals(btnFilterConvFighter)) {
+            toggleText(btnFilterConvFighter);
+        } else if (ev.getSource().equals(btnFilterJumpship)) {
+            toggleText(btnFilterJumpship);
+        } else if (ev.getSource().equals(btnFilterWarship)) {
+            toggleText(btnFilterWarship);
+        } else if (ev.getSource().equals(btnFilterSpaceStation)) {
+            toggleText(btnFilterSpaceStation);
+        } else if (ev.getSource().equals(btnFilterInfantry)) {
+            toggleText(btnFilterInfantry);
+        } else if (ev.getSource().equals(btnFilterBattleArmor)) {
+            toggleText(btnFilterBattleArmor);
+        } else if (ev.getSource().equals(btnFilterTank)) {
+            toggleText(btnFilterTank);
+        } else if (ev.getSource().equals(btnFilterVTOL)) {
+            toggleText(btnFilterVTOL);
+        } else if (ev.getSource().equals(btnFilterSupportVTOL)) {
+            toggleText(btnFilterSupportVTOL);
+        } else if (ev.getSource().equals(btnFilterGunEmplacement)) {
+            toggleText(btnFilterGunEmplacement);
+        } else if (ev.getSource().equals(btnFilterFixedWingSupport)) {
+            toggleText(btnFilterFixedWingSupport);
+        } else if (ev.getSource().equals(btnFilterSuperHeavyTank)) {
+            toggleText(btnFilterSuperHeavyTank);
+        } else if (ev.getSource().equals(btnFilterSupportTank)) {
+            toggleText(btnFilterSupportTank);
+        } else if (ev.getSource().equals(btnFilterLargeSupportTank)) {
+            toggleText(btnFilterLargeSupportTank);
+        }
+    }
+
+    private void toggleText(JButton b) {
+        if (b.getText().equals("\u2610")) {
+            b.setText("\u2611");
+        } else if (b.getText().equals("\u2611")) {
+            b.setText("\u2612");
+        } else if (b.getText().equals("\u2612")) {
+            b.setText("\u2610");
+        } else {
+            b.setText("\u2610");
         }
     }
 
@@ -1123,15 +1307,28 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboArmorType.setSelectedIndex(0);
         cboQuirkType.setSelectedIndex(0);
         cboEngineType.setSelectedIndex(0);
-        cbxFilterLAM.setSelected(false);
-        cbxfilterQuad.setSelected(false);
-        cbxFilterTripod.setSelected(false);
-        cbxfilterQuadVee.setSelected(false);
-        cbxfilterSupportVTOL.setSelected(false);
-        cbxfilterFixedWingSupport.setSelected(false);
-        cbxFilterSuperHeavyTank.setSelected(false);
-        cbxFilterSupportTank.setSelected(false);
-        cbxFilterLargeSupportTank.setSelected(false);
+        btnFilterMech.setText("\u2610");
+        btnFilterBipedMech.setText("\u2610");
+        btnFilterProtoMech.setText("\u2610");
+        btnFilterLAM.setText("\u2610");
+        btnFilterTripod.setText("\u2610");
+        btnFilterQuad.setText("\u2610");
+        btnFilterQuadVee.setText("\u2610");
+        btnFilterAero.setText("\u2610");
+        btnFilterFixedWingSupport.setText("\u2610");
+        btnFilterConvFighter.setText("\u2610");
+        btnFilterJumpship.setText("\u2610");
+        btnFilterWarship.setText("\u2610");
+        btnFilterSpaceStation.setText("\u2610");
+        btnFilterInfantry.setText("\u2610");
+        btnFilterBattleArmor.setText("\u2610");
+        btnFilterTank.setText("\u2610");
+        btnFilterVTOL.setText("\u2610");
+        btnFilterSupportVTOL.setText("\u2610");
+        btnFilterGunEmplacement.setText("\u2610");
+        btnFilterSupportTank.setText("\u2610");
+        btnFilterLargeSupportTank.setText("\u2610");
+        btnFilterSuperHeavyTank.setText("\u2610");
         cboCockpitType.setSelectedIndex(0);
         cboInternalsType.setSelectedIndex(0);
         tStartYear.setText("");
@@ -1254,15 +1451,40 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             mechFilter.cockpitType = cboCockpitType.getSelectedIndex();
         }
 
-        mechFilter.filterLAM = cbxFilterLAM.isSelected();
-        mechFilter.filterQuad = cbxfilterQuad.isSelected();
-        mechFilter.filterTripod = cbxFilterTripod.isSelected();
-        mechFilter.filterQuadVee = cbxfilterQuadVee.isSelected();
-        mechFilter.filterSupportVTOL = cbxfilterSupportVTOL.isSelected();
-        mechFilter.filterFixedWingSupport = cbxfilterFixedWingSupport.isSelected();
-        mechFilter.filterSuperHeavyTank = cbxFilterSuperHeavyTank.isSelected();
-        mechFilter.filterSupportTank = cbxFilterSupportTank.isSelected();
-        mechFilter.filterLargeSupportTank = cbxFilterLargeSupportTank.isSelected();
+        mechFilter.filterMech = getValue(btnFilterMech);
+        mechFilter.filterBipedMech = getValue(btnFilterBipedMech);
+        mechFilter.filterProtomech = getValue(btnFilterProtoMech);
+        mechFilter.filterLAM = getValue(btnFilterLAM);
+        mechFilter.filterTripod = getValue(btnFilterTripod);
+        mechFilter.filterQuad = getValue(btnFilterQuad);
+        mechFilter.filterQuadVee = getValue(btnFilterQuadVee);
+        mechFilter.filterAero = getValue(btnFilterAero);
+        mechFilter.filterFixedWingSupport = getValue(btnFilterFixedWingSupport);
+        mechFilter.filterConvFighter = getValue(btnFilterConvFighter);
+        mechFilter.filterJumpship = getValue(btnFilterJumpship);
+        mechFilter.filterWarship = getValue(btnFilterWarship);
+        mechFilter.filterSpaceStation = getValue(btnFilterSpaceStation);
+        mechFilter.filterInfantry = getValue(btnFilterInfantry);
+        mechFilter.filterBattleArmor = getValue(btnFilterBattleArmor);
+        mechFilter.filterTank = getValue(btnFilterTank);
+        mechFilter.filterVTOL = getValue(btnFilterVTOL);
+        mechFilter.filterSupportVTOL = getValue(btnFilterSupportVTOL);
+        mechFilter.filterGunEmplacement = getValue(btnFilterGunEmplacement);
+        mechFilter.filterSupportTank = getValue(btnFilterSupportTank);
+        mechFilter.filterLargeSupportTank = getValue(btnFilterLargeSupportTank);
+        mechFilter.filterSuperHeavyTank = getValue(btnFilterSuperHeavyTank);
+    }
+
+    public int getValue(JButton b) {
+        if (b.getText().equals("\u2610")) {
+            return 0;
+        } else if (b.getText().equals("\u2611")) {
+            return 1;
+        } else if (b.getText().equals("\u2612")) {
+            return 2;
+        } else {
+            return -1;
+        }
     }
 
     public class WeaponClassTableModel extends AbstractTableModel {

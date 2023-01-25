@@ -516,6 +516,39 @@ public class MechSummaryCache {
             ms.setMyomerName("None");
         }
 
+        double ts = e.getTroopCarryingSpace();
+        ts += e.getPodMountedTroopCarryingSpace();
+        ms.setTroopCarryingSpace(ts);
+
+        int ab = 0;
+        int scb = 0;
+        int dc = 0;
+        int mb = 0;
+        int bah = 0;
+        Vector<Transporter>  trs = e.getTransports();
+        for (Transporter t : trs) {
+            if (t instanceof ASFBay) {
+                ab++;
+            }
+            if (t instanceof SmallCraftBay) {
+                scb++;
+            }
+            if (t instanceof DockingCollar) {
+                dc++;
+            }
+            if (t instanceof MechBay) {
+                mb++;
+            }
+            if (t instanceof BattleArmorHandles) {
+                bah++;
+            }
+        }
+        ms.setASFBays(ab);
+        ms.setSmallCraftBays(scb);
+        ms.setDockingCollars(dc);
+        ms.setMechBays(mb);
+        ms.setBattleArmorHandles(bah);
+
         if (ASConverter.canConvert(e)) {
             AlphaStrikeElement element = ASConverter.convertForMechCache(e);
             ms.setAsUnitType(element.getASUnitType());

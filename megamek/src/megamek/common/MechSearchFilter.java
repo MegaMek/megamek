@@ -48,6 +48,20 @@ public class MechSearchFilter {
     public boolean checkEngineType;
     public String engineType;
     public String source;
+    public String sTroupSpace;
+    public int iTroupSpace;
+    public String sASFBays;
+    public int iASFBays;
+    public String sSmallCraftBays;
+    public int iSmallCraftBays;
+    public String sMechBays;
+    public int iMechBays;
+    public String sDockingCollars;
+    public int iDockingCollars;
+    public String sBattleArmorHandles;
+    public int iBattleArmorHandles;
+    public String sTankTrailerHitches;
+    public int iTankTrailerHitches;
     public String sStartYear;
     public String sEndYear;
     public String sStartTons;
@@ -495,6 +509,132 @@ public class MechSearchFilter {
         if (!f.source.isEmpty()) {
             if (!mech.getSource().contains(f.source)) {
                 return false;
+            }
+        }
+
+        double ts = -1;
+        try {
+            ts = Double.parseDouble(f.sTroupSpace);
+        } catch (Exception ignored) {
+        }
+        if (ts > -1) {
+            if (f.iTroupSpace == 0) { // at least
+                if (mech.getTroopCarryingSpace() < ts) {
+                    return false;
+                }
+            } else if (f.iTroupSpace == 1) { // equal to
+                if (ts != mech.getTroopCarryingSpace()) {
+                    return false;
+                }
+            } else if (f.iTroupSpace == 2) { // not more than
+                if (mech.getTroopCarryingSpace() > ts) {
+                    return false;
+                }
+            }
+        }
+
+        double ab = -1;
+        try {
+            ab = Double.parseDouble(f.sASFBays);
+        } catch (Exception ignored) {
+        }
+        if (ab > -1) {
+            if (f.iASFBays == 0) { // at least
+                if (mech.getASFBays() < ab) {
+                    return false;
+                }
+            } else if (f.iASFBays == 1) { // equal to
+                if (ab != mech.getASFBays()) {
+                    return false;
+                }
+            } else if (f.iASFBays == 2) { // not more than
+                if (mech.getASFBays() > ab) {
+                    return false;
+                }
+            }
+        }
+
+        double scb = -1;
+        try {
+            scb = Double.parseDouble(f.sSmallCraftBays);
+        } catch (Exception ignored) {
+        }
+        if (scb > -1) {
+            if (f.iSmallCraftBays == 0) { // at least
+                if (mech.getSmallCraftBays() < scb) {
+                    return false;
+                }
+            } else if (f.iSmallCraftBays == 1) { // equal to
+                if (scb != mech.getSmallCraftBays()) {
+                    return false;
+                }
+            } else if (f.iSmallCraftBays == 2) { // not more than
+                if (mech.getSmallCraftBays() > scb) {
+                    return false;
+                }
+            }
+        }
+
+        double dsb = -1;
+        try {
+            dsb = Double.parseDouble(f.sMechBays);
+        } catch (Exception ignored) {
+        }
+        if (dsb > -1) {
+            if (f.iMechBays == 0) { // at least
+                if (mech.getMechBays() < dsb) {
+                    return false;
+                }
+        } else if (f.iMechBays == 1) { // equal to
+                if (dsb != mech.getMechBays()) {
+                    return false;
+                }
+            } else if (f.iMechBays == 2) { // not more than
+            if (mech.getMechBays() > dsb) {
+                    return false;
+                }
+            }
+        }
+
+        double dc = -1;
+        try {
+            dc = Double.parseDouble(f.sDockingCollars);
+        } catch (Exception ignored) {
+        }
+        if (dc > -1) {
+            if (f.iDockingCollars == 0) { // at least
+                if (mech.getDockingCollars() < dc) {
+                    return false;
+                }
+            } else if (f.iDockingCollars == 1) { // equal to
+                if (dc != mech.getDockingCollars()) {
+                    return false;
+                }
+            } else if (f.iDockingCollars == 2) { // not more than
+                if (mech.getDockingCollars() > dc) {
+                    return false;
+                }
+            }
+        }
+
+        double bah = -1;
+        try {
+            bah = Double.parseDouble(f.sBattleArmorHandles);
+        } catch (Exception ignored) {
+        }
+        if (bah > -1) {
+            if (f.iBattleArmorHandles == 0) { // at least
+                if (mech.getBattleArmorHandles() < bah) {
+                    return false;
+                }
+            } else if (f.iBattleArmorHandles == 1) { // equal to
+                if (bah != mech.getBattleArmorHandles()) {
+                    return false;
+                }
+            } else if (f.iBattleArmorHandles == 2) { // not more than
+                if (mech.getBattleArmorHandles() > bah) {
+                    return false;
+                }
             }
         }
 

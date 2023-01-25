@@ -74,6 +74,12 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private String engineName;
     private int gyroType;
     private String myomerName;
+    private double troopCarryingSpace;
+    private int aSFBays;
+    private int smallCraftBays;
+    private int dockingCollars;
+    private int mechBays;
+    private int battleArmorHandles;
 
     /** For BattleArmor, we want to know the weight of an individual suit. */
     private double twSuitTons;
@@ -247,6 +253,30 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         return omni;
     }
 
+    public double getTroopCarryingSpace() {
+        return troopCarryingSpace;
+    }
+
+    public int getASFBays() {
+        return aSFBays;
+    }
+
+    public int getSmallCraftBays() {
+        return smallCraftBays;
+    }
+
+    public int getDockingCollars() {
+        return dockingCollars;
+    }
+
+    public int getMechBays() {
+        return mechBays;
+    }
+
+    public int getBattleArmorHandles() {
+        return battleArmorHandles;
+    }
+
     public double getTons() {
         return tons;
     }
@@ -408,6 +438,30 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setOmni(boolean b) {
         omni = b;
+    }
+
+    public void setTroopCarryingSpace(double d) {
+        troopCarryingSpace = d;
+    }
+
+    public void setASFBays(int i) {
+        aSFBays = i;
+    }
+
+    public void setSmallCraftBays(int i) {
+        smallCraftBays = i;
+    }
+
+    public void setDockingCollars(int i) {
+        dockingCollars = i;
+    }
+
+    public void setMechBays(int i) {
+        mechBays = i;
+    }
+
+    public void setBattleArmorHandles(int i) {
+        battleArmorHandles = i;
     }
 
     public void setName(String sName) {

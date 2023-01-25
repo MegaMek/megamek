@@ -80,6 +80,30 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JComboBox<String> cJump = new JComboBox<>();
     private JTextField tJump = new JTextField(2);
 
+    private JLabel lblTroupSpace = new JLabel(Messages.getString("MechSelectorDialog.Search.TroupCarringSpace"));
+    private JComboBox<String> cTroupSpace = new JComboBox<>();
+    private JTextField tTroupSpace = new JTextField(2);
+
+    private JLabel lblASFBays = new JLabel(Messages.getString("MechSelectorDialog.Search.ASFBays"));
+    private JComboBox<String> cASFBays = new JComboBox<>();
+    private JTextField tASFBays = new JTextField(2);
+
+    private JLabel lblSmallCraftBays = new JLabel(Messages.getString("MechSelectorDialog.Search.SmallCraftBays"));
+    private JComboBox<String> cSmallCraftBays = new JComboBox<>();
+    private JTextField tSmallCraftBays = new JTextField(2);
+
+    private JLabel lblMechBays = new JLabel(Messages.getString("MechSelectorDialog.Search.MechBays"));
+    private JComboBox<String> cMechBays = new JComboBox<>();
+    private JTextField tMechBays = new JTextField(2);
+
+    private JLabel lblDockingCollars = new JLabel(Messages.getString("MechSelectorDialog.Search.DockingCollars"));
+    private JComboBox<String> cDockingCollars = new JComboBox<>();
+    private JTextField tDockingCollars = new JTextField(2);
+
+    private JLabel lblBattleArmorHandles = new JLabel(Messages.getString("MechSelectorDialog.Search.BattleArmorHandles"));
+    private JComboBox<String> cBattleArmorHandles = new JComboBox<>();
+    private JTextField tBattleArmorHandles = new JTextField(2);
+
     private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
     private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
@@ -197,6 +221,30 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cJump.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
         cJump.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
         cJump.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+
+        cTroupSpace.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cTroupSpace.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cTroupSpace.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+
+        cASFBays.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cASFBays.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cASFBays.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+
+        cSmallCraftBays.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cSmallCraftBays.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cSmallCraftBays.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+
+        cMechBays.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cMechBays.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cMechBays.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+
+        cDockingCollars.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cDockingCollars.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cDockingCollars.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
+
+        cBattleArmorHandles.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
+        cBattleArmorHandles.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
+        cBattleArmorHandles.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
 
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
@@ -420,16 +468,32 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         tWalk.setText("");
         tJump.setText("");
+        tTroupSpace.setText("");
+        tASFBays.setText("");
+        tSmallCraftBays.setText("");
+        tMechBays.setText("");
+        tDockingCollars.setText("");
+        tBattleArmorHandles.setText("");
 
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
 
+        JTabbedPane twSearchPane = new JTabbedPane();
+        JPanel miscPanel = new JPanel();
+        JPanel weaponEq = new JPanel();
+        String msg_misc = Messages.getString("MechSelectorDialog.Search.Misc");
+        String msg_weaponEq = Messages.getString("MechSelectorDialog.Search.WeaponEq");
+        twSearchPane.addTab(msg_misc, miscPanel);
+        twSearchPane.addTab(msg_weaponEq, weaponEq);
+
         // Layout
+        setLayout(new BorderLayout());
         GridBagConstraints c = new GridBagConstraints();
-        setLayout(new GridBagLayout());
+        miscPanel.setLayout(new GridBagLayout());
+        weaponEq.setLayout(new GridBagLayout());
 
-
+        this.add(twSearchPane, BorderLayout.CENTER);
 
         c.weighty = 0;
         c.fill = GridBagConstraints.NONE;
@@ -441,6 +505,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         JPanel p0Panel = new JPanel();
         p0Panel.add(lblOfficial);
         p0Panel.add(cOfficial);
+        p0Panel.add(lblSource);
+        p0Panel.add(tSource);
         p0Panel.add(lblYear);
         p0Panel.add(tStartYear);
         p0Panel.add(new Label("-"));
@@ -453,9 +519,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p0Panel.add(tStartBV);
         p0Panel.add(new Label("-"));
         p0Panel.add(tEndBV);
-        p0Panel.add(lblSource);
-        p0Panel.add(tSource);
-        this.add(p0Panel, c);
+        miscPanel.add(p0Panel, c);
 
         c.gridx = 0; c.gridy++;
         JPanel p1Panel = new JPanel();
@@ -469,7 +533,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p1Panel.add(cArmor);
         p1Panel.add(lblOmni);
         p1Panel.add(cOmni);
-        this.add(p1Panel, c);
+        miscPanel.add(p1Panel, c);
 
         c.gridx = 0; c.gridy++;;
         c.gridwidth = 1;
@@ -479,20 +543,20 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
         cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
         cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
-        this.add(cockpitPanel, c);
+        miscPanel.add(cockpitPanel, c);
         c.gridx = 1;
         JPanel internalsPanel = new JPanel();
         internalsPanel.add(cbxEnableInternalsSearch);
         internalsPanel.add(lblInternalsType);
         internalsPanel.add(cboInternalsType,BorderLayout.EAST);
-        this.add(internalsPanel, c);
+        miscPanel.add(internalsPanel, c);
 
         c.gridx = 0; c.gridy++;;
         JPanel armorPanel = new JPanel();
         armorPanel.add(cbxEnableArmorSearch);
         armorPanel.add(lblArmorType);
         armorPanel.add(cboArmorType,BorderLayout.EAST);
-        this.add(armorPanel, c);
+        miscPanel.add(armorPanel, c);
         c.gridx = 1;
         JPanel enginePanel = new JPanel();
         enginePanel.add(cbxEnableEngineSearch);
@@ -500,20 +564,20 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         enginePanel.add(cboEngineType,BorderLayout.EAST);
         enginePanel.add(lblClanEngine);
         enginePanel.add(cClanEngine);
-        this.add(enginePanel, c);
+        miscPanel.add(enginePanel, c);
 
         c.gridx = 0; c.gridy++;;
         JPanel quirkPanel = new JPanel();
         quirkPanel.add(cbxEnableQuirkSearch);
         quirkPanel.add(lblQuirkType);
         quirkPanel.add(cboQuirkType,BorderLayout.EAST);
-        this.add(quirkPanel, c);
+        miscPanel.add(quirkPanel, c);
         c.gridx = 1;
         JPanel weaponQuirkPanel = new JPanel();
         weaponQuirkPanel.add(cbxEnableWeaponQuirkSearch);
         weaponQuirkPanel.add(lblWeaponQuirkType);
         weaponQuirkPanel.add(cboWeaponQuirkType,BorderLayout.EAST);
-        this.add(weaponQuirkPanel, c);
+        miscPanel.add(weaponQuirkPanel, c);
 
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 0; c.gridy++;
@@ -529,16 +593,47 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterEntityPanel.add(cbxFilterSupportTank);
         filterEntityPanel.add(cbxFilterLargeSupportTank);
         filterEntityPanel.add(cbxFilterSuperHeavyTank);
-        this.add(filterEntityPanel, c);
+        miscPanel.add(filterEntityPanel, c);
+
+        c.gridx = 0; c.gridy++;
+        JPanel p3Panel = new JPanel();
+        p3Panel.add(lblMechBays);
+        p3Panel.add(cMechBays);
+        p3Panel.add(tMechBays);
+        p3Panel.add(lblASFBays);
+        p3Panel.add(cASFBays);
+        p3Panel.add(tASFBays);
+        miscPanel.add(p3Panel, c);
+
+        c.gridx = 0; c.gridy++;
+        JPanel p4Panel = new JPanel();
+        p4Panel.add(lblSmallCraftBays);
+        p4Panel.add(cSmallCraftBays);
+        p4Panel.add(tSmallCraftBays);
+        p4Panel.add(lblDockingCollars);
+        p4Panel.add(cDockingCollars);
+        p4Panel.add(tDockingCollars);
+        miscPanel.add(p4Panel, c);
+
+        c.gridx = 0; c.gridy++;
+        JPanel p5Panel = new JPanel();
+        p5Panel.add(lblBattleArmorHandles);
+        p5Panel.add(cBattleArmorHandles);
+        p5Panel.add(tBattleArmorHandles);
+        p5Panel.add(lblTroupSpace);
+        p5Panel.add(cTroupSpace);
+        p5Panel.add(tTroupSpace);
+        miscPanel.add(p5Panel, c);
 
         // table
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
-        this.add(lblTableFilters, c);
+        weaponEq.add(lblTableFilters, c);
         c.gridx = 0; c.gridy++;
         c.gridwidth = 4;
         c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(0, 40, 0, 0);
         JPanel cboPanel = new JPanel();
         cboPanel.add(lblUnitType);
         cboPanel.add(cboUnitType);
@@ -546,42 +641,43 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cboPanel.add(cboTechClass);
         cboPanel.add(lblTechLevel, c);
         cboPanel.add(cboTechLevel, c);
-        this.add(cboPanel, c);
+        weaponEq.add(cboPanel, c);
         c.gridwidth = 1;
 
         c.gridx = 0; c.gridy++;
         c.anchor = GridBagConstraints.WEST;
-        this.add(lblWeaponClass, c);
+        c.insets = new Insets(0, 0, 0, 0);
+        weaponEq.add(lblWeaponClass, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
-        this.add(scrTableWeaponType, c);
+        weaponEq.add(scrTableWeaponType, c);
         c.gridwidth = 1;
 
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy++;
         c.anchor = GridBagConstraints.WEST;
-        this.add(lblWeapons, c);
+        weaponEq.add(lblWeapons, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
-        this.add(scrTableWeapons, c);
+        weaponEq.add(scrTableWeapons, c);
 
         c.fill = GridBagConstraints.NONE;
         c.gridwidth = 1;
         c.gridx = 0; c.gridy++;
         c.anchor = GridBagConstraints.WEST;
-        this.add(lblEquipment, c);
+        weaponEq.add(lblEquipment, c);
 
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
-        this.add(scrTableEquipment, c);
+        weaponEq.add(scrTableEquipment, c);
 
         c.insets = new Insets(0, 50, 0, 0);
         c.fill = GridBagConstraints.NONE;
@@ -595,7 +691,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnPanel.add(btnOr, c);
         btnPanel.add(btnBack, c);
         btnPanel.add(btnClear, c);
-        this.add(btnPanel, c);
+        weaponEq.add(btnPanel, c);
 
         // Filter Expression
         c.insets = new Insets(0, 0, 0, 0);
@@ -603,11 +699,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.NONE;
-        this.add(lblEqExpTxt, c);
+        weaponEq.add(lblEqExpTxt, c);
         c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 1;
-        this.add(expScroller, c);
+        c.gridwidth = 3;
+        weaponEq.add(expScroller, c);
     }
 
     /**
@@ -1000,6 +1097,18 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tWalk.setText("");
         cJump.setSelectedIndex(0);
         tJump.setText("");
+        cTroupSpace.setSelectedIndex(0);
+        tTroupSpace.setText("");
+        cASFBays.setSelectedIndex(0);
+        tASFBays.setText("");
+        cSmallCraftBays.setSelectedIndex(0);
+        tSmallCraftBays.setText("");
+        cMechBays.setSelectedIndex(0);
+        tMechBays.setText("");
+        cDockingCollars.setSelectedIndex(0);
+        tDockingCollars.setText("");
+        cBattleArmorHandles.setSelectedIndex(0);
+        tBattleArmorHandles.setText("");
         cArmor.setSelectedIndex(0);
         cOfficial.setSelectedIndex(0);
         cClanEngine.setSelectedIndex(0);
@@ -1080,6 +1189,24 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
         mechFilter.sJump = tJump.getText();
         mechFilter.iJump = cJump.getSelectedIndex();
+
+        mechFilter.sTroupSpace = tTroupSpace.getText();
+        mechFilter.iTroupSpace = cTroupSpace.getSelectedIndex();
+
+        mechFilter.sASFBays = tASFBays.getText();
+        mechFilter.iASFBays = cASFBays.getSelectedIndex();
+
+        mechFilter.sSmallCraftBays = tSmallCraftBays.getText();
+        mechFilter.iSmallCraftBays = cSmallCraftBays.getSelectedIndex();
+
+        mechFilter.sMechBays = tMechBays.getText();
+        mechFilter.iMechBays = cMechBays.getSelectedIndex();
+
+        mechFilter.sDockingCollars = tDockingCollars.getText();
+        mechFilter.iDockingCollars = cDockingCollars.getSelectedIndex();
+
+        mechFilter.sBattleArmorHandles = tBattleArmorHandles.getText();
+        mechFilter.iBattleArmorHandles = cBattleArmorHandles.getSelectedIndex();
 
         mechFilter.iArmor = cArmor.getSelectedIndex();
         mechFilter.iOmni = cOmni.getSelectedIndex();
@@ -1828,9 +1955,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     public void adaptToGUIScale() {
         scrTableWeaponType.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
         scrTableWeaponType.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
-        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(350)));
-        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
-        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(350)));
-        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(150)));
+        scrTableWeapons.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
+        scrTableWeapons.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
+        scrTableEquipment.setMinimumSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
+        scrTableEquipment.setPreferredSize(new Dimension(UIUtil.scaleForGUI(650), UIUtil.scaleForGUI(250)));
     }
 }

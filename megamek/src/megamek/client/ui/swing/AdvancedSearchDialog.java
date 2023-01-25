@@ -64,12 +64,12 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
     private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
-    private JComboBox<String> cWalk = new JComboBox<>();
-    private JTextField tWalk = new JTextField(2);
+    private JTextField tStartWalk = new JTextField(4);
+    private JTextField tEndWalk = new JTextField(4);
 
     private JLabel lblJump = new JLabel(Messages.getString("MechSelectorDialog.Search.Jump"));
-    private JComboBox<String> cJump = new JComboBox<>();
-    private JTextField tJump = new JTextField(2);
+    private JTextField tStartJump = new JTextField(4);
+    private JTextField tEndJump = new JTextField(4);
 
     private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
@@ -142,14 +142,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
 
         btnBack.setEnabled(false);
         btnAdd.setEnabled(false);
-
-        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
-        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
-        cWalk.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
-
-        cJump.addItem(Messages.getString("MechSelectorDialog.Search.AtLeast"));
-        cJump.addItem(Messages.getString("MechSelectorDialog.Search.EqualTo"));
-        cJump.addItem(Messages.getString("MechSelectorDialog.Search.NoMoreThan"));
 
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Any"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor25"));
@@ -272,9 +264,6 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         ((DefaultRowSorter<?, ?>) tblEquipment.getRowSorter()).sort();
         tblEquipment.invalidate(); // force re-layout of window
 
-        tWalk.setText("");
-        tJump.setText("");
-
         txtEqExp.setEditable(false);
         txtEqExp.setLineWrap(true);
         txtEqExp.setWrapStyleWord(true);
@@ -293,8 +282,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.insets = new Insets(0, 0, 0, 0);
         c.anchor = GridBagConstraints.EAST;
         JPanel panWalk = new JPanel();
-        panWalk.add(cWalk);
-        panWalk.add(tWalk);
+        panWalk.add(tStartWalk);
+        panWalk.add(new Label("-"));
+        panWalk.add(tEndWalk);
         mainPanel.add(panWalk, c);
         c.gridx = 3; c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
@@ -313,8 +303,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridx = 1; c.gridy = 1;
         c.anchor = GridBagConstraints.EAST;
         JPanel panJump = new JPanel();
-        panJump.add(cJump);
-        panJump.add(tJump);
+        panJump.add(tStartJump);
+        panJump.add(new Label("-"));
+        panJump.add(tEndJump);
         mainPanel.add(panJump, c);
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
@@ -810,10 +801,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      *  Clear the filter.
      */
     public void clearValues() {
-        cWalk.setSelectedIndex(0);
-        tWalk.setText("");
-        cJump.setSelectedIndex(0);
-        tJump.setText("");
+        tStartWalk.setText("");
+        tEndWalk.setText("");
+        tStartJump.setText("");
+        tEndJump.setText("");
         cArmor.setSelectedIndex(0);
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
@@ -868,11 +859,11 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      */
     protected void updateMechSearchFilter() {
         mechFilter.isDisabled = false;
-        mechFilter.sWalk = tWalk.getText();
-        mechFilter.iWalk = cWalk.getSelectedIndex();
+        mechFilter.sStartWalk = tStartWalk.getText();
+        mechFilter.sEndWalk = tEndWalk.getText();
 
-        mechFilter.sJump = tJump.getText();
-        mechFilter.iJump = cJump.getSelectedIndex();
+        mechFilter.sStartJump = tStartJump.getText();
+        mechFilter.sEndJump = tEndJump.getText();
 
         mechFilter.iArmor = cArmor.getSelectedIndex();
 

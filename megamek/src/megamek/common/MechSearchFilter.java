@@ -37,10 +37,10 @@ import java.util.stream.IntStream;
 public class MechSearchFilter {
 
     public enum BoolOp { AND, OR, NOP }
-    public String sWalk;
-    public String sJump;
-    public int iWalk;
-    public int iJump;
+    public String sStartWalk;
+    public String sEndWalk;
+    public String sStartJump;
+    public String sEndJump;
     public int iArmor;
     public int iOmni;
     public int iClanEngine;
@@ -48,20 +48,20 @@ public class MechSearchFilter {
     public boolean checkEngineType;
     public String engineType;
     public String source;
-    public String sTroupSpace;
-    public int iTroupSpace;
-    public String sASFBays;
-    public int iASFBays;
-    public String sSmallCraftBays;
-    public int iSmallCraftBays;
-    public String sMechBays;
-    public int iMechBays;
-    public String sDockingCollars;
-    public int iDockingCollars;
-    public String sBattleArmorHandles;
-    public int iBattleArmorHandles;
-    public String sTankTrailerHitches;
-    public int iTankTrailerHitches;
+    public String sStartTroopSpace;
+    public String sEndTroopSpace;
+    public String sStartASFBays;
+    public String sEndASFBays;
+    public String sStartSmallCraftBays;
+    public String sEndSmallCraftBays;
+    public String sStartMechBays;
+    public String sEndMechBays;
+    public String sStartDockingCollars;
+    public String sEndDockingCollars;
+    public String sStartBattleArmorHandles;
+    public String sEndBattleArmorHandles;
+    public String sStartTankTrailerHitches;
+    public String sEndTankTrailerHitches;
     public String sStartYear;
     public String sEndYear;
     public String sStartTons;
@@ -274,50 +274,33 @@ public class MechSearchFilter {
         }
 
         //Check walk criteria
-        int walk = -1;
+        int startWalk = Integer.MIN_VALUE;
+        int endWalk = Integer.MAX_VALUE;
         try {
-            walk = Integer.parseInt(f.sWalk);
-        } catch (NumberFormatException ne) {
-            //ignore
+            startWalk = Integer.parseInt(f.sStartWalk);
+        } catch (Exception ignored) {
         }
-        if (walk > -1) {
-            if (f.iWalk == 0) { // at least
-                if (mech.getWalkMp() < walk) {
-                    return false;
-                }
-            } else if (f.iWalk == 1) { // equal to
-                if (walk != mech.getWalkMp()) {
-                    return false;
-                }
-            } else if (f.iWalk == 2) { // not more than
-                if (mech.getWalkMp() > walk) {
-                    return false;
-                }
-            }
+        try {
+            endWalk = Integer.parseInt(f.sEndWalk);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getWalkMp() < startWalk) || (mech.getWalkMp() > endWalk)) {
+            return false;
         }
 
         // Check jump criteria
-        int jump = -1;
+        int startJump = Integer.MIN_VALUE;
+        int endJump = Integer.MAX_VALUE;
         try {
-            jump = Integer.parseInt(f.sJump);
+            startJump = Integer.parseInt(f.sStartJump);
         } catch (Exception ignored) {
-
         }
-
-        if (jump > -1) {
-            if (f.iJump == 0) { // at least
-                if (mech.getJumpMp() < jump) {
-                    return false;
-                }
-            } else if (f.iJump == 1) { // equal to
-                if (jump != mech.getJumpMp()) {
-                    return false;
-                }
-            } else if (f.iJump == 2) { // not more than
-                if (mech.getJumpMp() > jump) {
-                    return false;
-                }
-            }
+        try {
+            endJump = Integer.parseInt(f.sEndJump);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getJumpMp() < startJump) || (mech.getJumpMp() > endJump)) {
+            return false;
         }
 
         if (f.checkInternalsType) {
@@ -506,136 +489,94 @@ public class MechSearchFilter {
             }
         }
 
-        if (!f.source.isEmpty()) {
+        if ((f.source != null) && (!f.source.isEmpty())) {
             if (!mech.getSource().contains(f.source)) {
                 return false;
             }
         }
 
-        double ts = -1;
+        int startTroopSpace = Integer.MIN_VALUE;
+        int endTroopSpace = Integer.MAX_VALUE;
         try {
-            ts = Double.parseDouble(f.sTroupSpace);
+            startTroopSpace = Integer.parseInt(f.sStartTroopSpace);
         } catch (Exception ignored) {
         }
-        if (ts > -1) {
-            if (f.iTroupSpace == 0) { // at least
-                if (mech.getTroopCarryingSpace() < ts) {
-                    return false;
-                }
-            } else if (f.iTroupSpace == 1) { // equal to
-                if (ts != mech.getTroopCarryingSpace()) {
-                    return false;
-                }
-            } else if (f.iTroupSpace == 2) { // not more than
-                if (mech.getTroopCarryingSpace() > ts) {
-                    return false;
-                }
-            }
+        try {
+            endTroopSpace = Integer.parseInt(f.sEndTroopSpace);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getTroopCarryingSpace() < startTroopSpace) || (mech.getTroopCarryingSpace() > endTroopSpace)) {
+            return false;
         }
 
-        double ab = -1;
+        int startASFBays = Integer.MIN_VALUE;
+        int endASFBays = Integer.MAX_VALUE;
         try {
-            ab = Double.parseDouble(f.sASFBays);
+            startASFBays = Integer.parseInt(f.sStartASFBays);
         } catch (Exception ignored) {
         }
-        if (ab > -1) {
-            if (f.iASFBays == 0) { // at least
-                if (mech.getASFBays() < ab) {
-                    return false;
-                }
-            } else if (f.iASFBays == 1) { // equal to
-                if (ab != mech.getASFBays()) {
-                    return false;
-                }
-            } else if (f.iASFBays == 2) { // not more than
-                if (mech.getASFBays() > ab) {
-                    return false;
-                }
-            }
+        try {
+            endASFBays = Integer.parseInt(f.sEndASFBays);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getASFBays() < startASFBays) || (mech.getASFBays() > endASFBays)) {
+            return false;
         }
 
-        double scb = -1;
+        int startSmallCraftBays = Integer.MIN_VALUE;
+        int endSmallCraftBays = Integer.MAX_VALUE;
         try {
-            scb = Double.parseDouble(f.sSmallCraftBays);
+            startSmallCraftBays = Integer.parseInt(f.sStartSmallCraftBays);
         } catch (Exception ignored) {
         }
-        if (scb > -1) {
-            if (f.iSmallCraftBays == 0) { // at least
-                if (mech.getSmallCraftBays() < scb) {
-                    return false;
-                }
-            } else if (f.iSmallCraftBays == 1) { // equal to
-                if (scb != mech.getSmallCraftBays()) {
-                    return false;
-                }
-            } else if (f.iSmallCraftBays == 2) { // not more than
-                if (mech.getSmallCraftBays() > scb) {
-                    return false;
-                }
-            }
+        try {
+            endSmallCraftBays = Integer.parseInt(f.sEndSmallCraftBays);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getSmallCraftBays() < startSmallCraftBays) || (mech.getSmallCraftBays() > endSmallCraftBays)) {
+            return false;
         }
 
-        double dsb = -1;
+        int startMechBays = Integer.MIN_VALUE;
+        int endMechBays = Integer.MAX_VALUE;
         try {
-            dsb = Double.parseDouble(f.sMechBays);
+            startMechBays = Integer.parseInt(f.sStartMechBays);
         } catch (Exception ignored) {
         }
-        if (dsb > -1) {
-            if (f.iMechBays == 0) { // at least
-                if (mech.getMechBays() < dsb) {
-                    return false;
-                }
-        } else if (f.iMechBays == 1) { // equal to
-                if (dsb != mech.getMechBays()) {
-                    return false;
-                }
-            } else if (f.iMechBays == 2) { // not more than
-            if (mech.getMechBays() > dsb) {
-                    return false;
-                }
-            }
+        try {
+            endMechBays = Integer.parseInt(f.sEndMechBays);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getMechBays() < startMechBays) || (mech.getMechBays() > endMechBays)) {
+            return false;
         }
 
-        double dc = -1;
+        int startDockingCollars = Integer.MIN_VALUE;
+        int endMDockingCollars = Integer.MAX_VALUE;
         try {
-            dc = Double.parseDouble(f.sDockingCollars);
+            startDockingCollars = Integer.parseInt(f.sStartDockingCollars);
         } catch (Exception ignored) {
         }
-        if (dc > -1) {
-            if (f.iDockingCollars == 0) { // at least
-                if (mech.getDockingCollars() < dc) {
-                    return false;
-                }
-            } else if (f.iDockingCollars == 1) { // equal to
-                if (dc != mech.getDockingCollars()) {
-                    return false;
-                }
-            } else if (f.iDockingCollars == 2) { // not more than
-                if (mech.getDockingCollars() > dc) {
-                    return false;
-                }
-            }
+        try {
+            endMDockingCollars = Integer.parseInt(f.sEndDockingCollars);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getDockingCollars() < startDockingCollars) || (mech.getDockingCollars() > endMDockingCollars)) {
+            return false;
         }
 
-        double bah = -1;
+        int startBattleArmorHandles = Integer.MIN_VALUE;
+        int endBattleArmorHandles = Integer.MAX_VALUE;
         try {
-            bah = Double.parseDouble(f.sBattleArmorHandles);
+            startBattleArmorHandles = Integer.parseInt(f.sStartBattleArmorHandles);
         } catch (Exception ignored) {
         }
-        if (bah > -1) {
-            if (f.iBattleArmorHandles == 0) { // at least
-                if (mech.getBattleArmorHandles() < bah) {
-                    return false;
-                }
-            } else if (f.iBattleArmorHandles == 1) { // equal to
-                if (bah != mech.getBattleArmorHandles()) {
-                    return false;
-                }
-            } else if (f.iBattleArmorHandles == 2) { // not more than
-                if (mech.getBattleArmorHandles() > bah) {
-                    return false;
-                }
-            }
+        try {
+            endBattleArmorHandles = Integer.parseInt(f.sEndBattleArmorHandles);
+        } catch (Exception ignored) {
+        }
+        if ((mech.getBattleArmorHandles() < startBattleArmorHandles) || (mech.getBattleArmorHandles() > endBattleArmorHandles)) {
+            return false;
         }
 
         return true;

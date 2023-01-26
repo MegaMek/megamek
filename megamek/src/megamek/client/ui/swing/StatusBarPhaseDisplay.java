@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.*;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.TurnTimer;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.client.ui.swing.widget.*;
@@ -260,6 +261,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         String s = "";
         int r = GUIP.getAdvancedPlayersRemainingToShow();
         if (r > 0) {
+            String m = "";
             int gti = clientgui.getClient().getGame().getTurnIndex();
             List<GameTurn> gtv = clientgui.getClient().getGame().getTurnVector();
             int j = 0;
@@ -270,12 +272,16 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                     s += p.getName() + ", ";
                     j++;
                     if (j >= r) {
+                        if (gtv.size() > r) {
+                            m = ",...";
+                        }
                         break;
                     }
                 }
             }
             if (!s.isEmpty()) {
-                s = "     [" + s.substring(0, s.length() - 2) + "]";
+                String msg_turns = Messages.getString("StatusBarPhaseDisplay.nextPlayerTurns");
+                s = "  " + msg_turns + " [" + s.substring(0, s.length() - 2) + m + "]";
             }
         }
         return s;
@@ -285,21 +291,28 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         GamePhase phase = clientgui.getClient().getGame().getPhase();
         if (phase.isReport()) {
             int r = GUIP.getAdvancedPlayersRemainingToShow();
-            List<Player> playerList = clientgui.getClient().getGame().getPlayersList().stream().filter(p -> ((!p.isBot()) && (!p.isObserver()) && (!p.isDone()))).collect(Collectors.toList());
-            playerList.sort(Comparator.comparingInt(Player::getId));
-            String s = "";
-            int j = 0;
-            for (Player player : playerList) {
-                s += player.getName() + ", ";
-                j++;
-                if (j >= r) {
-                    break;
+            if (r > 0) {
+                List<Player> playerList = clientgui.getClient().getGame().getPlayersList().stream().filter(p -> ((!p.isBot()) && (!p.isObserver()) && (!p.isDone()))).collect(Collectors.toList());
+                playerList.sort(Comparator.comparingInt(Player::getId));
+                String s = "";
+                String m = "";
+                int j = 0;
+                for (Player player : playerList) {
+                    s += player.getName() + ", ";
+                    j++;
+                    if (j >= r) {
+                        if (playerList.size() > r) {
+                            m = ",...";
+                        }
+                        break;
+                    }
                 }
+                if (!s.isEmpty()) {
+                    String msg_notdone = Messages.getString("StatusBarPhaseDisplay.notDone");
+                    s = "  " + msg_notdone + " [" + s.substring(0, s.length() - 2) + m + "]";
+                }
+                setStatusBarText(phase.toString() + s);
             }
-            if (!s.isEmpty()) {
-                s = "     [" + s.substring(0, s.length() - 2) + "]";
-            }
-            setStatusBarText(phase.toString() + s);
         }
     }
 }

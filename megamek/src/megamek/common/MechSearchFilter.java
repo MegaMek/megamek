@@ -539,7 +539,7 @@ public class MechSearchFilter {
                 break;
             }
         }
-        if ((!f.engineType.isEmpty()) && (!eMatch)) {
+        if (((!f.engineType.isEmpty()) && (!eMatch)) || (mech.getEngineName().isEmpty())) {
             return false;
         }
 
@@ -580,7 +580,7 @@ public class MechSearchFilter {
                 break;
             }
         }
-        if ((!f.armorType.isEmpty()) && (!aMatch)) {
+        if (((!f.armorType.isEmpty()) && (!aMatch)) || (mech.getArmorType().isEmpty())) {
             return false;
         }
 
@@ -607,7 +607,7 @@ public class MechSearchFilter {
                 break;
             }
         }
-        if ((!f.quirkType.isEmpty()) && (!qMatch)) {
+        if (((!f.quirkType.isEmpty()) && (!qMatch)) || (mech.getQuirkNames().isEmpty())) {
             return false;
         }
 
@@ -619,12 +619,12 @@ public class MechSearchFilter {
 
         boolean wMatch = false;
         for (String s : f.weaponQuirkType) {
-            if (!mech.getWeaponQuirkNames().contains(s)) {
+            if (mech.getWeaponQuirkNames().contains(s)) {
                 wMatch = true;
                 break;
             }
         }
-        if ((!f.weaponQuirkType.isEmpty()) && (!wMatch)) {
+        if (((!f.weaponQuirkType.isEmpty()) && (!wMatch)) || (mech.getWeaponQuirkNames().isEmpty())) {
             return false;
         }
 

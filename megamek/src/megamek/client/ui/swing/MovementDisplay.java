@@ -2646,7 +2646,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // we will say that it is not possible to unload units in such a situation.
         if (finalCoordinatesOnBoard) {
             for (Entity en : loadedUnits) {
-                if (en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0)) {
+                if (ce.isSupportVehicle() || en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0)) {
                     canUnloadHere = true;
                     break;
                 }
@@ -4650,7 +4650,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Ask the user if we're carrying multiple units.
             Entity other = getUnloadedUnit();
             if (other != null) {
-                if (ce() instanceof SmallCraft 
+                if (ce() instanceof SmallCraft || ce().isSupportVehicle()
                         || !ce().getAllTowedUnits().isEmpty()
                         || ce().getTowedBy() != Entity.NONE) {
                     Coords pos = getUnloadPosition(other);

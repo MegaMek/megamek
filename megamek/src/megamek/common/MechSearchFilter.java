@@ -573,7 +573,6 @@ public class MechSearchFilter {
             }
         }
 
-        // FIX
         boolean aMatch = false;
         for (int i : f.armorType) {
             if (mech.getArmorType().contains(i)) {
@@ -601,10 +600,15 @@ public class MechSearchFilter {
             }
         }
 
+        boolean qMatch = false;
         for (String s : f.quirkType) {
-            if (!mech.getQuirkNames().contains(s)) {
-                return false;
+            if (mech.getQuirkNames().contains(s)) {
+                qMatch = true;
+                break;
             }
+        }
+        if ((!f.quirkType.isEmpty()) && (!qMatch)) {
+            return false;
         }
 
         for (String s : f.quirkTypeExclude) {
@@ -613,10 +617,15 @@ public class MechSearchFilter {
             }
         }
 
+        boolean wMatch = false;
         for (String s : f.weaponQuirkType) {
             if (!mech.getWeaponQuirkNames().contains(s)) {
-                return false;
+                wMatch = true;
+                break;
             }
+        }
+        if ((!f.weaponQuirkType.isEmpty()) && (!wMatch)) {
+            return false;
         }
 
         for (String s : f.weaponQuirkTypeExclude) {

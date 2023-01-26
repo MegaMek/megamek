@@ -1496,6 +1496,28 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter = null;
         filterToks.clear();
         btnBack.setEnabled(false);
+
+        ListModel<String> m = listQuirkType.getModel();
+        DefaultListModel dlm  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlm.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listQuirkType.setModel(dlm);
+
+        m = listWeaponQuirkType.getModel();
+
+        DefaultListModel dlmw  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmw.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listWeaponQuirkType.setModel(dlmw);
+
         disableOperationButtons();
         enableSelectionButtons();
     }

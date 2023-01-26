@@ -18,11 +18,7 @@ package megamek.common;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -61,8 +57,6 @@ public class MechSearchFilter {
     public String sEndDockingCollars;
     public String sStartBattleArmorHandles;
     public String sEndBattleArmorHandles;
-    public String sStartTankTrailerHitches;
-    public String sEndTankTrailerHitches;
     public String sStartYear;
     public String sEndYear;
     public String sStartTons;
@@ -72,10 +66,10 @@ public class MechSearchFilter {
     public boolean isDisabled;
     public boolean checkArmorType;
     public int armorType;
-    public boolean checkQuirkType;
-    public String quirkType;
-    public boolean checkWeaponQuirkType;
-    public String weaponQuirkType;
+    public List<String> quirkType = new ArrayList<>();
+    public List<String> quirkTypeExclude = new ArrayList<>();
+    public List<String> weaponQuirkType = new ArrayList<>();
+    public List<String> weaponQuirkTypeExclude = new ArrayList<>();
     public boolean checkInternalsType;
     public int internalsType;
     public boolean checkCockpitType;
@@ -116,7 +110,7 @@ public class MechSearchFilter {
         isDisabled = true;
         checkArmorType = checkInternalsType = checkCockpitType = false;
         checkEquipment = false;
-        checkQuirkType = checkWeaponQuirkType = checkEngineType = false;
+        checkEngineType = false;
         equipmentCriteria = new ExpressionTree();
     }
 
@@ -558,14 +552,26 @@ public class MechSearchFilter {
             return false;
         }
 
-        if (f.checkQuirkType) {
-            if (!mech.getQuirkNames().contains(f.quirkType)) {
+        for (String s : f.quirkType) {
+            if (!mech.getQuirkNames().contains(s)) {
                 return false;
             }
         }
 
-        if (f.checkWeaponQuirkType) {
-            if (!mech.getWeaponQuirkNames().contains(f.weaponQuirkType)) {
+        for (String s : f.weaponQuirkType) {
+            if (!mech.getWeaponQuirkNames().contains(s)) {
+                return false;
+            }
+        }
+
+        for (String s : f.quirkTypeExclude) {
+            if (mech.getQuirkNames().contains(s)) {
+                return false;
+            }
+        }
+
+        for (String s : f.weaponQuirkTypeExclude) {
+            if (mech.getWeaponQuirkNames().contains(s)) {
                 return false;
             }
         }

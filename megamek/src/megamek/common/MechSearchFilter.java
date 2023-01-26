@@ -532,10 +532,15 @@ public class MechSearchFilter {
             return false;
         }
 
+        boolean eMatch = false;
         for (String s : f.engineType) {
-            if (!mech.getEngineName().contains(s)) {
-                return false;
+            if (mech.getEngineName().contains(s)) {
+                eMatch = true;
+                break;
             }
+        }
+        if ((!f.engineType.isEmpty()) && (!eMatch)) {
+            return false;
         }
 
         for (String s : f.engineTypeExclude) {
@@ -558,10 +563,8 @@ public class MechSearchFilter {
             }
         }
 
-        for (int i : f.internalsType) {
-            if (mech.getInternalsType() != i) {
-                return false;
-            }
+        if ((!f.internalsType.isEmpty()) && (!f.internalsType.contains(mech.getInternalsType()))) {
+            return false;
         }
 
         for (int i : f.internalsTypeExclude) {
@@ -570,10 +573,16 @@ public class MechSearchFilter {
             }
         }
 
+        // FIX
+        boolean aMatch = false;
         for (int i : f.armorType) {
-            if (!(mech.getArmorType().contains(i))) {
-                return false;
+            if (mech.getArmorType().contains(i)) {
+                aMatch = true;
+                break;
             }
+        }
+        if ((!f.armorType.isEmpty()) && (!aMatch)) {
+            return false;
         }
 
         for (int i : f.armorTypeExclude) {
@@ -582,10 +591,8 @@ public class MechSearchFilter {
             }
         }
 
-        for (int i : f.cockpitType) {
-            if (mech.getCockpitType() != i) {
-                return false;
-            }
+        if ((!f.cockpitType.isEmpty()) && (!f.cockpitType.contains(mech.getCockpitType()))) {
+            return false;
         }
 
         for (int i : f.cockpitTypeExclude) {

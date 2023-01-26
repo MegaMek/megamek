@@ -239,15 +239,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         setLayout(new BorderLayout());
 
         JTabbedPane twSearchPane = new JTabbedPane();
-        JPanel miscPanel = createMiscPanel();
+        JPanel basePanel = createBasePanel();
         JPanel weaponEqPanel = createWeaponEqPanel();
         JPanel unitTypePanel = createUnitTypePanel();
         JPanel quirkPanel = createQuirkPanel();
-        String msg_misc = Messages.getString("MechSelectorDialog.Search.Misc");
+        String msg_base = Messages.getString("MechSelectorDialog.Search.Base");
         String msg_weaponEq = Messages.getString("MechSelectorDialog.Search.WeaponEq");
         String msg_unitType = Messages.getString("MechSelectorDialog.Search.unitType");
         String msg_quirkType = Messages.getString("MechSelectorDialog.Search.Quirks");
-        twSearchPane.addTab(msg_misc, miscPanel);
+        twSearchPane.addTab(msg_base, basePanel);
         twSearchPane.addTab(msg_weaponEq, weaponEqPanel);
         twSearchPane.addTab(msg_unitType, unitTypePanel);
         twSearchPane.addTab(msg_quirkType, quirkPanel);
@@ -268,7 +268,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         public void setSelectionInterval(final int index0, final int index1) {}
     }
 
-    private JPanel createMiscPanel() {
+    private JPanel createBasePanel() {
         // Initialize Items
         btnAnd.addActionListener(this);
         btnAdd.addActionListener(this);
@@ -400,9 +400,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
         cboQty.setSelectedIndex(0);
 
-        JPanel miscPanel = new JPanel();
+        JPanel basePanel = new JPanel();
         GridBagConstraints c = new GridBagConstraints();
-        miscPanel.setLayout(new GridBagLayout());
+        basePanel.setLayout(new GridBagLayout());
 
         c.weighty = 0;
         c.anchor = GridBagConstraints.WEST;
@@ -420,7 +420,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p0Panel.add(tSource);
         p0Panel.add(lblOmni);
         p0Panel.add(cOmni);
-        miscPanel.add(p0Panel, c);
+        basePanel.add(p0Panel, c);
         c.gridwidth  = 1;
         c.gridx = 0; c.gridy++;
         JPanel yearPanel = new JPanel();
@@ -428,82 +428,82 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         yearPanel.add(tStartYear);
         yearPanel.add(new Label("-"));
         yearPanel.add(tEndYear);
-        miscPanel.add(yearPanel, c);
+        basePanel.add(yearPanel, c);
         c.gridx = 1;
         JPanel armorPanel = new JPanel();
         armorPanel.add(lblArmor);
         armorPanel.add(cArmor);
-        miscPanel.add(armorPanel, c);
+        basePanel.add(armorPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel bvPanel = new JPanel();
         bvPanel.add(lblBV);
         bvPanel.add(tStartBV);
         bvPanel.add(new Label("-"));
         bvPanel.add(tEndBV);
-        miscPanel.add(bvPanel, c);
+        basePanel.add(bvPanel, c);
         c.gridx = 1;
         JPanel tonsPanel = new JPanel();
         tonsPanel.add(lblTons);
         tonsPanel.add(tStartTons);
         tonsPanel.add(new Label("-"));
         tonsPanel.add(tEndTons);
-        miscPanel.add(tonsPanel, c);
+        basePanel.add(tonsPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel walkPanel = new JPanel();
         walkPanel.add(lblWalk);
         walkPanel.add(tStartWalk);
         walkPanel.add(new Label("-"));
         walkPanel.add(tEndWalk);
-        miscPanel.add(walkPanel, c);
+        basePanel.add(walkPanel, c);
         c.gridx = 1;
         JPanel jumpPanel = new JPanel();
         jumpPanel.add(lblJump);
         jumpPanel.add(tStartJump);
         jumpPanel.add(new Label("-"));
         jumpPanel.add(tEndJump);
-        miscPanel.add(jumpPanel, c);
+        basePanel.add(jumpPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel mbPanel = new JPanel();
         mbPanel.add(lblMechBays);
         mbPanel.add(tStartMechBays);
         mbPanel.add(new Label("-"));
         mbPanel.add(tEndMechBays);
-        miscPanel.add(mbPanel, c);
+        basePanel.add(mbPanel, c);
         c.gridx = 1;
         JPanel abPanel = new JPanel();
         abPanel.add(lblASFBays);
         abPanel.add(tStartASFBays);
         abPanel.add(new Label("-"));
         abPanel.add(tEndASFBays);
-        miscPanel.add(abPanel, c);
+        basePanel.add(abPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel scbPanel = new JPanel();
         scbPanel.add(lblSmallCraftBays);
         scbPanel.add(tStartSmallCraftBays);
         scbPanel.add(new Label("-"));
         scbPanel.add(tEndSmallCraftBays);
-        miscPanel.add(scbPanel, c);
+        basePanel.add(scbPanel, c);
         c.gridx = 1;
         JPanel dcPanel = new JPanel();
         dcPanel.add(lblDockingCollars);
         dcPanel.add(tStartDockingCollars);
         dcPanel.add(new Label("-"));
         dcPanel.add(tEndDockingCollars);
-        miscPanel.add(dcPanel, c);
+        basePanel.add(dcPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel tsPanel = new JPanel();
         tsPanel.add(lblTroopSpace);
         tsPanel.add(tStartTroopSpace);
         tsPanel.add(new Label("-"));
         tsPanel.add(tEndTroopSpace);
-        miscPanel.add(tsPanel, c);
+        basePanel.add(tsPanel, c);
         c.gridx = 1;
         JPanel bahPanel = new JPanel();
         bahPanel.add(lblBattleArmorHandles);
         bahPanel.add(tStartBattleArmorHandles);
         bahPanel.add(new Label("-"));
         bahPanel.add(tEndBattleArmorHandles);
-        miscPanel.add(bahPanel, c);
+        basePanel.add(bahPanel, c);
 
         c.gridx = 0; c.gridy++;;
         c.gridwidth  = 4;
@@ -511,17 +511,17 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         JPanel cockpitPanel = new JPanel(new BorderLayout());
         cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
         cockpitPanel.add(spCockpitType, BorderLayout.CENTER);
-        miscPanel.add(cockpitPanel, c);
+        basePanel.add(cockpitPanel, c);
         c.gridx = 1;
         JPanel internalsPanel = new JPanel(new BorderLayout());
         internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
         internalsPanel.add(spInternalsType, BorderLayout.CENTER);
-        miscPanel.add(internalsPanel, c);
+        basePanel.add(internalsPanel, c);
         c.gridx = 0; c.gridy++;;
         JPanel armorTypePanel = new JPanel(new BorderLayout());
         armorTypePanel.add(lblArmorType, BorderLayout.NORTH);
         armorTypePanel.add(spArmorType, BorderLayout.CENTER);
-        miscPanel.add(armorTypePanel, c);
+        basePanel.add(armorTypePanel, c);
         c.gridx = 1;
         JPanel enginePanel = new JPanel(new BorderLayout());
         enginePanel.add(lblEngineType, BorderLayout.NORTH);
@@ -530,9 +530,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         clanEnginePanel.add(lblClanEngine);
         clanEnginePanel.add(cClanEngine);
         enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
-        miscPanel.add(enginePanel, c);
+        basePanel.add(enginePanel, c);
 
-        return miscPanel;
+        return basePanel;
     }
 
     private JPanel createQuirkPanel() {

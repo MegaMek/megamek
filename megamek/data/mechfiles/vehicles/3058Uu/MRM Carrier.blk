@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 MRM Carrier
 </Name>
+
 <Model>
 (Standard)
 </Model>
@@ -19,47 +23,111 @@ MRM Carrier
 <mul id:>
 2243
 </mul id:>
-<Tonnage>
-60
-</Tonnage>
+
+<year>
+3063
+</year>
+
+<originalBuildYear>
+3063
+</originalBuildYear>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 14
 14
 14
 11
-</Armor>
-<Front Equipment>
-ISMRM30
-ISMRM30
-ISMRM30
-</Front Equipment>
+</armor>
+
 <Body Equipment>
-ISMRM30 Ammo
-ISMRM30 Ammo
-ISMRM30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
 ISC3SlaveUnit
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3063
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+MRM 30
+MRM 30
+MRM 30
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<capabilities>
+The chassis for missile carriers vary in basic design, but they are all essentially military transport vehicles, tracked being the most common, adapted to carry the huge missile launchers and loading equipment. Those adaptations generally consist of reinforcing the suspension systems and armoring the crew and critical components areas enough to survive the back blast from so many missiles. With an average top speed of 54 km/h and armor unable to survive counterbattery fire, if forced to engage in direct combat a carrier's life expectancy is measured in seconds.
+</capabilities>
+
+<overview>
+Ever since the development of the first rocket centuries ago, military units have used mobile missile systems to provide cheap and effective fire support. Along with its LRM counterpart, the SRM Carrier serves in every military action across the Inner Sphere in a variety of shapes and forms.
+</overview>
+
+<deployment>
+A radical Draconis Combine flavored variant of the SRM carrier, Quikscell dropped the SRM launchers for three MRM-30s. A C3 slave improves coordination, but reduced top speed and a mere eight reloads for each launcher limits its effectiveness.
+</deployment>
+
+<history>
+Manufactured by almost every major military supplier, the modern SRM Carrier is derived from those developed in the Age of War by Quik Products Inc, the future Quikscell Company. In many cases derived a little too closely; during the Succession Wars era many manufacturers were producing little more than shoddy direct copies that fell below even Quikscell's low quality standards. After the end of the Fourth Succession War Quikscell lodged lawsuits against those manufacturing clones of Quik based carriers, resulting the closure of many smaller manufacturers and larger manufacturers ending production. While those who produced their own designs were not affected, Quikscell's elimination of much of its competitors and its offer to exchange any missile carrier not produced by them for legitimate Quikscell versions and parts made it the number one player of the missile carrier market.
+</history>
+
+<manufacturer>
+Quikscell Company
+</manufacturer>
+
+<primaryFactory>
+Oliver
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:InterComBust 180 ICE
+ARMOR:Lexington Ltd. High Grade FF
+COMMUNICATIONS:Communicator with C3
+TARGETING:FireScan with IndirecTrack
+</systemManufacturers>
+
 <source>
-Civil War
+TRO 3058 - Civil War
 </source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<fuelType>
+PETROCHEMICALS
+</fuelType>
+

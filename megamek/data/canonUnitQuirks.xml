@@ -7373,11 +7373,25 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<unitType>Mech</unitType>
 		<quirk>difficult_maintain</quirk>
 	</unit>
+		
+	<unit>
+		<chassis>Hellcat (Hellhound II)</chassis>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
 
 	<unit>
 		<chassis>Hellhound (Conjurer)</chassis>
 		<unitType>Mech</unitType>
 		<quirk>ext_twist</quirk>
+	</unit>
+			
+	<unit>
+		<chassis>Hellhound II-P (Hellcat-P)</chassis>
+		<unitType>Mech</unitType>
+		<quirk>ext_twist</quirk>
+		<quirk>difficult_maintain</quirk>
 	</unit>
 
 	<unit>

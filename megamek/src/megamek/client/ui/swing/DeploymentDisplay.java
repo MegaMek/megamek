@@ -25,7 +25,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -138,34 +137,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     protected void setButtons() {
         buttons = new HashMap<>((int) (DeployCommand.values().length * 1.25 + 0.5));
         for (DeployCommand cmd : DeployCommand.values()) {
-            String title = Messages.getString("DeploymentDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
+            buttons.put(cmd, createButton(cmd.getCmd(), "DeploymentDisplay."));
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
     @Override
     protected void setButtonsTooltips() {
         for (DeployCommand cmd : DeployCommand.values()) {
-            String ttKey = "DeploymentDisplay." + cmd.getCmd() + ".tooltip";
-            String tt = cmd.getHotKeyDesc();
-            if (!tt.isEmpty()) {
-                String title = Messages.getString("DeploymentDisplay." + cmd.getCmd());
-                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
-                tt += "<BR>";
-            }
-            if (Messages.keyExists(ttKey)) {
-                String msg_key = Messages.getString(ttKey);
-                tt += guiScaledFontHTML() + msg_key + "</FONT>";
-            }
-            String b = "<BODY>" + tt + "</BODY>";
-            String h = "<HTML>" + b + "</HTML>";
-            if (!tt.isEmpty()) {
-                buttons.get(cmd).setToolTipText(h);
-            }
+            String tt = createToolTip(cmd.getCmd(), "DeploymentDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
         }
     }
     

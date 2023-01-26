@@ -26,7 +26,6 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.*;
 import megamek.common.GameTurn.UnloadStrandedTurn;
 import megamek.common.MovePath.MoveStepType;
@@ -378,39 +377,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Create all of the buttons
         buttons = new HashMap<>((int) (MoveCommand.values().length * 1.25 + 0.5));
         for (MoveCommand cmd : MoveCommand.values()) {
-            String title = Messages.getString("MovementDisplay." + cmd.getCmd());
-            if ((clientgui != null) &&
-                    (cmd == MoveCommand.MOVE_UNJAM) &&
-                    (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC))) {
-                title += Messages.getString("BoardView1.Tooltip.AndAC");
-            }
-            MegamekButton newButton = new MegamekButton(title, UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(clientgui == null);
-            buttons.put(cmd, newButton);
+            buttons.put(cmd, createButton(cmd.getCmd(), "MovementDisplay."));
         }
     }
 
     @Override
     protected void setButtonsTooltips() {
         for (MoveCommand cmd : MoveCommand.values()) {
-            String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
-            String tt = cmd.getHotKeyDesc();
-            if (!tt.isEmpty()) {
-                String title = Messages.getString("MovementDisplay." + cmd.getCmd());
-                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
-                tt += "<BR>";
-            }
-            if (Messages.keyExists(ttKey)) {
-                String msg_key = Messages.getString(ttKey);
-                tt += guiScaledFontHTML() + msg_key + "</FONT>";
-            }
-            String b = "<BODY>" + tt + "</BODY>";
-            String h = "<HTML>" + b + "</HTML>";
-            if (!tt.isEmpty()) {
-                buttons.get(cmd).setToolTipText(h);
-            }
+            String tt = createToolTip(cmd.getCmd(), "MovementDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
         }
     }
 

@@ -16,7 +16,6 @@ package megamek.client.ui.swing;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GamePhaseChangeEvent;
 
@@ -123,13 +122,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     protected void setButtons() {
         buttons = new HashMap<>((int) (ReportCommand.values().length * 1.25 + 0.5));
         for (ReportCommand cmd : ReportCommand.values()) {
-            String title = Messages.getString(RD_REPORTDIPLAY + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
+            buttons.put(cmd, createButton(cmd.getCmd(), RD_REPORTDIPLAY));
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
@@ -137,22 +130,8 @@ public class ReportDisplay extends StatusBarPhaseDisplay  {
     @Override
     protected void setButtonsTooltips() {
         for (ReportCommand cmd : ReportCommand.values()) {
-            String ttKey = RD_REPORTDIPLAY + cmd.getCmd() + RD_TOOLTIP;
-            String tt = cmd.getHotKeyDesc();
-            if (!tt.isEmpty()) {
-                String title = Messages.getString(RD_REPORTDIPLAY + cmd.getCmd());
-                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
-                tt += "<BR>";
-            }
-            if (Messages.keyExists(ttKey)) {
-                String msg_key = Messages.getString(ttKey);
-                tt += guiScaledFontHTML() + msg_key + "</FONT>";
-            }
-            String b = "<BODY>" + tt + "</BODY>";
-            String h = "<HTML>" + b + "</HTML>";
-            if (!tt.isEmpty()) {
-                buttons.get(cmd).setToolTipText(h);
-            }
+            String tt = createToolTip(cmd.getCmd(), RD_REPORTDIPLAY, cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
         }
     }
 

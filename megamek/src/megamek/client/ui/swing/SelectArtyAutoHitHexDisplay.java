@@ -159,9 +159,9 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                 String msg_key = Messages.getString(ttKey);
                 tt += guiScaledFontHTML() + msg_key + "</FONT>";
             }
-            String b = "<BODY>" + tt + "</BODY>";
-            String h = "<HTML>" + b + "</HTML>";
             if (!tt.isEmpty()) {
+                String b = "<BODY>" + tt + "</BODY>";
+                String h = "<HTML>" + b + "</HTML>";
                 buttons.get(cmd).setToolTipText(h);
             }
         }

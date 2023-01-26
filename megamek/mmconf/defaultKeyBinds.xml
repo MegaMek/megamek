@@ -330,9 +330,9 @@
     </KeyBind>
 
     <KeyBind>
-         <command>viewLosSetting</command> <!-- Ctrl+Shift-L -->
+         <command>viewLosSetting</command> <!-- Ctrl+Alt-L -->
         <keyCode>76</keyCode>
-        <modifier>192</modifier>
+        <modifier>640</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
@@ -407,16 +407,16 @@
     </KeyBind>
 
     <KeyBind>
-         <command>quickLoad</command> <!-- Shift-L -->
+         <command>quickLoad</command> <!-- Ctrl+Shift-L -->
         <keyCode>76</keyCode>
-        <modifier>64</modifier>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 
     <KeyBind>
-         <command>quickSave</command> <!-- Shift-S -->
+         <command>quickSave</command> <!-- Ctrl+Shift-S -->
         <keyCode>83</keyCode>
-        <modifier>64</modifier>
+        <modifier>192</modifier>
         <isRepeatable>false</isRepeatable>
     </KeyBind>
 

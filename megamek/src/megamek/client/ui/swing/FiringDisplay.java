@@ -22,7 +22,6 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.actions.*;
 import megamek.common.enums.AimingMode;
@@ -242,12 +241,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     protected void setButtons() {
         buttons = new HashMap<>((int) (FiringCommand.values().length * 1.25 + 0.5));
         for (FiringCommand cmd : FiringCommand.values()) {
-            String title = Messages.getString("FiringDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-            buttons.put(cmd, newButton);
+            buttons.put(cmd, createButton(cmd.getCmd(), "FiringDisplay."));
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
@@ -255,22 +249,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements ItemListener
     @Override
     protected void setButtonsTooltips() {
         for (FiringCommand cmd : FiringCommand.values()) {
-            String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
-            String tt = cmd.getHotKeyDesc();
-            if (!tt.isEmpty()) {
-                String title = Messages.getString("FiringDisplay." + cmd.getCmd());
-                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
-                tt += "<BR>";
-            }
-            if (Messages.keyExists(ttKey)) {
-                String msg_key = Messages.getString(ttKey);
-                tt += guiScaledFontHTML() + msg_key + "</FONT>";
-            }
-            String b = "<BODY>" + tt + "</BODY>";
-            String h = "<HTML>" + b + "</HTML>";
-            if (!tt.isEmpty()) {
-                buttons.get(cmd).setToolTipText(h);
-            }
+            String tt = createToolTip(cmd.getCmd(), "FiringDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
         }
     }
 

@@ -39,7 +39,6 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
-import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.*;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameEntityChangeEvent;
@@ -160,17 +159,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     protected void setButtons() {
         buttons = new HashMap<>((int) (PrephaseCommand.values().length * 1.25 + 0.5));
         for (PrephaseCommand cmd : PrephaseCommand.values()) {
-            String title = Messages.getString("PrephaseDisplay." + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
-            String ttKey = "PrephaseDisplay." + cmd.getCmd() + ".tooltip";
-            if (Messages.keyExists(ttKey)) {
-                newButton.setToolTipText(Messages.getString(ttKey));
-            }
-            newButton.addActionListener(this);
-            newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
-
-            buttons.put(cmd, newButton);
+            buttons.put(cmd, createButton(cmd.getCmd(), "PrephaseDisplay."));
         }
         numButtonGroups = (int) Math.ceil((buttons.size() + 0.0) / buttonsPerGroup);
     }
@@ -178,22 +167,8 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements
     @Override
     protected void setButtonsTooltips() {
         for (PrephaseCommand cmd : PrephaseCommand.values()) {
-            String ttKey = "PrephaseDisplay." + cmd.getCmd() + ".tooltip";
-            String tt = cmd.getHotKeyDesc();
-            if (!tt.isEmpty()) {
-                String title = Messages.getString("PrephaseDisplay." + cmd.getCmd());
-                tt = guiScaledFontHTML(uiLightViolet()) + title + ": " + tt + "</FONT>";
-                tt += "<BR>";
-            }
-            if (Messages.keyExists(ttKey)) {
-                String msg_key = Messages.getString(ttKey);
-                tt += guiScaledFontHTML() + msg_key + "</FONT>";
-            }
-            String b = "<BODY>" + tt + "</BODY>";
-            String h = "<HTML>" + b + "</HTML>";
-            if (!tt.isEmpty()) {
-                buttons.get(cmd).setToolTipText(h);
-            }
+            String tt = createToolTip(cmd.getCmd(), "PrephaseDisplay.", cmd.getHotKeyDesc());
+            buttons.get(cmd).setToolTipText(tt);
         }
     }
 

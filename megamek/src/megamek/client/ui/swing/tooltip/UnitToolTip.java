@@ -1110,9 +1110,7 @@ public final class UnitToolTip {
                 }
             }
 
-            if (entity instanceof Tank) {
-                result.append(DOT_SPACER + entity.getMovementModeAsString());
-            }
+            result.append(DOT_SPACER + entity.getMovementModeAsString());
 
             if (entity instanceof IBomber) {
                 int bombMod = 0;

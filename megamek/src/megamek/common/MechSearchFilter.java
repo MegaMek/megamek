@@ -15,6 +15,7 @@
 */
 package megamek.common;
 
+import com.sun.source.tree.ExpressionTree;
 import megamek.client.ui.swing.unitSelector.TWAdvancedSearchPanel;
 import org.apache.logging.log4j.LogManager;
 
@@ -42,8 +43,7 @@ public class MechSearchFilter {
     public int iClanEngine;
     public int iOfficial;
     public int iCanon;
-    public boolean checkEngineType;
-    public String engineType;
+
     public String source;
     public String sStartTroopSpace;
     public String sEndTroopSpace;
@@ -64,16 +64,19 @@ public class MechSearchFilter {
     public String sStartBV;
     public String sEndBV;
     public boolean isDisabled;
-    public boolean checkArmorType;
-    public int armorType;
+    public List<String> engineType = new ArrayList<>();
+    public List<String> engineTypeExclude = new ArrayList<>();
+    public List<Integer> armorType = new ArrayList<>();
+    public List<Integer> armorTypeExclude = new ArrayList<>();
+    public List<Integer> internalsType = new ArrayList<>();
+    public List<Integer> internalsTypeExclude = new ArrayList<>();
+
+    public List<Integer> cockpitType = new ArrayList<>();
+    public List<Integer> cockpitTypeExclude = new ArrayList<>();
     public List<String> quirkType = new ArrayList<>();
     public List<String> quirkTypeExclude = new ArrayList<>();
     public List<String> weaponQuirkType = new ArrayList<>();
     public List<String> weaponQuirkTypeExclude = new ArrayList<>();
-    public boolean checkInternalsType;
-    public int internalsType;
-    public boolean checkCockpitType;
-    public int cockpitType;
     public boolean checkEquipment;
     public int filterMech;
     public int filterBipedMech;
@@ -82,7 +85,6 @@ public class MechSearchFilter {
     public int filterTripod;
     public int filterQuad;
     public int filterQuadVee;
-
     public int filterAero;
     public int filterFixedWingSupport;
     public int filterConvFighter;
@@ -90,10 +92,8 @@ public class MechSearchFilter {
     public int filterJumpship;
     public int filterWarship;
     public int filterSpaceStation;
-
     public int filterInfantry;
     public int filterBattleArmor;
-
     public int filterTank;
     public int filterVTOL;
     public int filterSupportVTOL;
@@ -108,9 +108,7 @@ public class MechSearchFilter {
     public MechSearchFilter()
     {
         isDisabled = true;
-        checkArmorType = checkInternalsType = checkCockpitType = false;
         checkEquipment = false;
-        checkEngineType = false;
         equipmentCriteria = new ExpressionTree();
     }
 
@@ -311,24 +309,6 @@ public class MechSearchFilter {
         }
         if ((mech.getJumpMp() < startJump) || (mech.getJumpMp() > endJump)) {
             return false;
-        }
-
-        if (f.checkInternalsType) {
-            if (f.internalsType != mech.getInternalsType()) {
-                return false;
-            }
-        }
-
-        if (f.checkArmorType) {
-            if (!mech.getArmorType().contains(f.armorType)) {
-                return false;
-            }
-        }
-
-        if (f.checkCockpitType) {
-            if (f.cockpitType != mech.getCockpitType()) {
-                return false;
-            }
         }
 
         // Check armor criteria
@@ -552,20 +532,82 @@ public class MechSearchFilter {
             return false;
         }
 
+        for (String s : f.engineType) {
+            if (!mech.getEngineName().contains(s)) {
+                return false;
+            }
+        }
+
+        for (String s : f.engineTypeExclude) {
+            if (mech.getEngineName().contains(s)) {
+                return false;
+            }
+        }
+
+        if (f.iClanEngine > 0) {
+            String msg_clan = Messages.getString("Engine.Clan");
+            if (f.iClanEngine == 1) {
+                if (!mech.getEngineName().contains(msg_clan)) {
+                    return false;
+                }
+            }
+            if (f.iClanEngine == 2) {
+                if (mech.getEngineName().contains(msg_clan)) {
+                    return false;
+                }
+            }
+        }
+
+        for (int i : f.internalsType) {
+            if (mech.getInternalsType() != i) {
+                return false;
+            }
+        }
+
+        for (int i : f.internalsTypeExclude) {
+            if (mech.getInternalsType() == i) {
+                return false;
+            }
+        }
+
+        for (int i : f.armorType) {
+            if (!(mech.getArmorType().contains(i))) {
+                return false;
+            }
+        }
+
+        for (int i : f.armorTypeExclude) {
+            if (mech.getArmorType().contains(i)) {
+                return false;
+            }
+        }
+
+        for (int i : f.cockpitType) {
+            if (mech.getCockpitType() != i) {
+                return false;
+            }
+        }
+
+        for (int i : f.cockpitTypeExclude) {
+            if (mech.getCockpitType() == i) {
+                return false;
+            }
+        }
+
         for (String s : f.quirkType) {
             if (!mech.getQuirkNames().contains(s)) {
                 return false;
             }
         }
 
-        for (String s : f.weaponQuirkType) {
-            if (!mech.getWeaponQuirkNames().contains(s)) {
+        for (String s : f.quirkTypeExclude) {
+            if (mech.getQuirkNames().contains(s)) {
                 return false;
             }
         }
 
-        for (String s : f.quirkTypeExclude) {
-            if (mech.getQuirkNames().contains(s)) {
+        for (String s : f.weaponQuirkType) {
+            if (!mech.getWeaponQuirkNames().contains(s)) {
                 return false;
             }
         }
@@ -610,26 +652,6 @@ public class MechSearchFilter {
             }
             if (f.iCanon == 2) {
                 if (mech.isCanon()) {
-                    return false;
-                }
-            }
-        }
-
-        if (f.checkEngineType) {
-            if (!mech.getEngineName().contains(f.engineType)) {
-                return false;
-            }
-        }
-
-        if (f.iClanEngine > 0) {
-            String msg_clan = Messages.getString("Engine.Clan");
-            if (f.iClanEngine == 1) {
-                if (!mech.getEngineName().contains(msg_clan)) {
-                    return false;
-                }
-            }
-            if (f.iClanEngine == 2) {
-                if (mech.getEngineName().contains(msg_clan)) {
                     return false;
                 }
             }

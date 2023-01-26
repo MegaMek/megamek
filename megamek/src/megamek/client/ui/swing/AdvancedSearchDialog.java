@@ -870,6 +870,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();
 
+        /*
         mechFilter.checkArmorType = cbxEnableArmorSearch.isSelected();
         if (cbxEnableArmorSearch.isSelected()) {
             mechFilter.armorType = cboArmorType.getSelectedIndex();
@@ -884,6 +885,8 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         if (cbxEnableCockpitSearch.isSelected()) {
             mechFilter.cockpitType = cboCockpitType.getSelectedIndex();
         }
+
+         */
     }
 
     /**

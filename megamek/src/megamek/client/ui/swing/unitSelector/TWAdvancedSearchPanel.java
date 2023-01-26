@@ -156,30 +156,24 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblBV = new JLabel(Messages.getString("MechSelectorDialog.Search.BV"));
     private JTextField tStartBV = new JTextField(4);
     private JTextField tEndBV = new JTextField(4);
-
-    private JCheckBox cbxEnableCockpitSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
-    private JLabel lblCockpitType = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
-    private JComboBox<String> cboCockpitType = new JComboBox<>();
-
-    private JCheckBox cbxEnableInternalsSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
-    private JLabel lblInternalsType = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
-    private JComboBox<String> cboInternalsType = new JComboBox<>();
-
-    private JCheckBox cbxEnableArmorSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
-    private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
-    private JComboBox<String> cboArmorType = new JComboBox<>();
+    private JLabel lblCockpitType  = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
+    private JList<String> listCockpitType  = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spCockpitType = new JScrollPane(listCockpitType);
+    private JLabel lblArmorType  = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
+    private JList<String> listArmorType  = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spArmorType = new JScrollPane(listArmorType);
+    private JLabel lblInternalsType  = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
+    private JList<String> listInternalsType  = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spInternalsType = new JScrollPane(listInternalsType);
+    private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
+    private JList<String> listEngineType = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spEngineType = new JScrollPane(listEngineType);
     private JLabel lblQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.Quirk"));
-    private DefaultListModel<String> dlmQuirkType = new DefaultListModel<String>();
-    private JList<String> listQuirkType = new JList<>(dlmQuirkType);
+    private JList<String> listQuirkType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spQuirkType = new JScrollPane(listQuirkType);
     private JLabel lblWeaponQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponQuirk"));
-    private DefaultListModel<String> dlmeWeaponQuirkType = new DefaultListModel<String>();
-    private JList<String> listWeaponQuirkType = new JList<>(dlmeWeaponQuirkType);
+    private JList<String> listWeaponQuirkType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spWeaponQuirkType = new JScrollPane(listWeaponQuirkType);
-    private JCheckBox cbxEnableEngineSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
-    private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
-    private JComboBox<String> cboEngineType = new JComboBox<>();
-
     private JLabel lblFilterMech= new JLabel(Messages.getString("MechSelectorDialog.Search.Mech"));
     private JButton btnFilterMech = new JButton("\u2610");
     private JLabel lblFilterBipedMech= new JLabel(Messages.getString("MechSelectorDialog.Search.BipedMech"));
@@ -309,39 +303,97 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.Yes"));
         cClanEngine.addItem(Messages.getString("MechSelectorDialog.Search.No"));
 
+        DefaultListModel dlma  = new DefaultListModel();
+
         for (int i = 0; i < EquipmentType.armorNames.length; i++) {
-            cboArmorType.addItem(EquipmentType.armorNames[i]);
-        }
-        cboArmorType.setEnabled(false);
-        lblArmorType.setEnabled(false);
-
-        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
-            cboEngineType.addItem(Engine.getEngineType(i));
+            dlma.addElement("\u2610 " + EquipmentType.armorNames[i]);
         }
 
-        cboEngineType.setEnabled(false);
-        lblEngineType.setEnabled(false);
+        listArmorType.setModel(dlma);
 
-        for (int i = 0; i < EquipmentType.structureNames.length; i++) {
-            cboInternalsType.addItem(EquipmentType.structureNames[i]);
-        }
-        cboInternalsType.setEnabled(false);
-        lblInternalsType.setEnabled(false);
+        listArmorType.setVisibleRowCount(7);
+        listArmorType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listArmorType.setSelectionModel(new NoSelectionModel());
+        listArmorType.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
+
+        DefaultListModel dlmc  = new DefaultListModel();
 
         for (int i = 0; i < Mech.COCKPIT_STRING.length; i++) {
-            cboCockpitType.addItem(Mech.COCKPIT_STRING[i]);
+            dlmc.addElement("\u2610 " + Mech.COCKPIT_STRING[i]);
         }
-        cboCockpitType.setEnabled(false);
-        lblCockpitType.setEnabled(false);
 
-        cbxEnableCockpitSearch.setHorizontalTextPosition(SwingConstants.LEFT);
-        cbxEnableCockpitSearch.addItemListener(this);
-        cbxEnableInternalsSearch.setHorizontalTextPosition(SwingConstants.LEFT);
-        cbxEnableInternalsSearch.addItemListener(this);
-        cbxEnableArmorSearch.setHorizontalTextPosition(SwingConstants.LEFT);
-        cbxEnableArmorSearch.addItemListener(this);
-        cbxEnableEngineSearch.setHorizontalTextPosition(SwingConstants.LEFT);
-        cbxEnableEngineSearch.addItemListener(this);
+        listCockpitType.setModel(dlmc);
+
+        listCockpitType.setVisibleRowCount(5);
+        listCockpitType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listCockpitType.setSelectionModel(new NoSelectionModel());
+        listCockpitType.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
+
+        DefaultListModel dlme  = new DefaultListModel();
+
+        for (int i = 0; i < Engine.NUM_ENGINE_TYPES; i++) {
+            dlme.addElement("\u2610 " + Engine.getEngineType(i));
+        }
+
+        listEngineType.setModel(dlme);
+
+        listEngineType.setVisibleRowCount(5);
+        listEngineType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listEngineType.setSelectionModel(new NoSelectionModel());
+        listEngineType.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
+
+        DefaultListModel dlmi  = new DefaultListModel();
+
+        for (int i = 0; i < EquipmentType.structureNames.length; i++) {
+            dlmi.addElement("\u2610 " + EquipmentType.structureNames[i]);
+        }
+
+        listInternalsType.setModel(dlmi);
+
+        listInternalsType.setVisibleRowCount(5);
+        listInternalsType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listInternalsType.setSelectionModel(new NoSelectionModel());
+        listInternalsType.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
 
         for (int i = 1; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
@@ -456,30 +508,28 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 0; c.gridy++;;
         c.gridwidth  = 4;
         c.insets = new Insets(0, 10, 0, 0);
-        JPanel cockpitPanel = new JPanel();
-        cockpitPanel.add(cbxEnableCockpitSearch);
-        cockpitPanel.add(lblCockpitType);
-        cockpitPanel.add(cboCockpitType);
+        JPanel cockpitPanel = new JPanel(new BorderLayout());
+        cockpitPanel.add(lblCockpitType, BorderLayout.NORTH);
+        cockpitPanel.add(spCockpitType, BorderLayout.CENTER);
         miscPanel.add(cockpitPanel, c);
-        c.gridx = 0; c.gridy++;;
-        JPanel internalsPanel = new JPanel();
-        internalsPanel.add(cbxEnableInternalsSearch);
-        internalsPanel.add(lblInternalsType);
-        internalsPanel.add(cboInternalsType);
+        c.gridx = 1;
+        JPanel internalsPanel = new JPanel(new BorderLayout());
+        internalsPanel.add(lblInternalsType, BorderLayout.NORTH);
+        internalsPanel.add(spInternalsType, BorderLayout.CENTER);
         miscPanel.add(internalsPanel, c);
         c.gridx = 0; c.gridy++;;
-        JPanel armorTypePanel = new JPanel();
-        armorTypePanel.add(cbxEnableArmorSearch);
-        armorTypePanel.add(lblArmorType);
-        armorTypePanel.add(cboArmorType);
+        JPanel armorTypePanel = new JPanel(new BorderLayout());
+        armorTypePanel.add(lblArmorType, BorderLayout.NORTH);
+        armorTypePanel.add(spArmorType, BorderLayout.CENTER);
         miscPanel.add(armorTypePanel, c);
-        c.gridx = 0; c.gridy++;;
-        JPanel enginePanel = new JPanel();
-        enginePanel.add(cbxEnableEngineSearch);
-        enginePanel.add(lblEngineType);
-        enginePanel.add(cboEngineType);
-        enginePanel.add(lblClanEngine);
-        enginePanel.add(cClanEngine);
+        c.gridx = 1;
+        JPanel enginePanel = new JPanel(new BorderLayout());
+        enginePanel.add(lblEngineType, BorderLayout.NORTH);
+        enginePanel.add(spEngineType, BorderLayout.CENTER);
+        JPanel clanEnginePanel = new JPanel();
+        clanEnginePanel.add(lblClanEngine);
+        clanEnginePanel.add(cClanEngine);
+        enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
         miscPanel.add(enginePanel, c);
 
         return miscPanel;
@@ -499,9 +549,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
         qs = qs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
 
+        DefaultListModel dlmq  = new DefaultListModel();
+
         for (String q : qs) {
-            dlmQuirkType.addElement("\u2610 " + q);
+            dlmq.addElement("\u2610 " + q);
         }
+
+        listQuirkType.setModel(dlmq);
 
         listQuirkType.setVisibleRowCount(25);
         listQuirkType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -532,9 +586,13 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
         wqs = wqs.stream().sorted(String.CASE_INSENSITIVE_ORDER).collect(Collectors.toList());
 
+        DefaultListModel dlmw  = new DefaultListModel();
+
         for (String q : wqs) {
-            dlmeWeaponQuirkType.addElement("\u2610 " + q);
+            dlmw.addElement("\u2610 " + q);
         }
+
+        listWeaponQuirkType.setModel(dlmw);
 
         listWeaponQuirkType.setVisibleRowCount(25);
         listWeaponQuirkType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -973,19 +1031,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
      */
     @Override
     public void itemStateChanged(ItemEvent e) {
-        if (e.getSource().equals(cbxEnableCockpitSearch)) {
-            cboCockpitType.setEnabled(!cboCockpitType.isEnabled());
-            lblCockpitType.setEnabled(!lblCockpitType.isEnabled());
-        } else if (e.getSource().equals(cbxEnableInternalsSearch)) {
-            cboInternalsType.setEnabled(!cboInternalsType.isEnabled());
-            lblInternalsType.setEnabled(!lblInternalsType.isEnabled());
-        } else if (e.getSource().equals(cbxEnableArmorSearch)) {
-            cboArmorType.setEnabled(!cboArmorType.isEnabled());
-            lblArmorType.setEnabled(!lblArmorType.isEnabled());
-        } else if (e.getSource().equals(cbxEnableEngineSearch)) {
-            cboEngineType.setEnabled(!cboEngineType.isEnabled());
-            lblEngineType.setEnabled(!lblEngineType.isEnabled());
-        }
+
     }
 
     /**
@@ -1455,12 +1501,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
-        cbxEnableArmorSearch.setSelected(false);
-        cbxEnableEngineSearch.setSelected(false);
-        cbxEnableCockpitSearch.setSelected(false);
-        cbxEnableInternalsSearch.setSelected(false);
-        cboArmorType.setSelectedIndex(0);
-        cboEngineType.setSelectedIndex(0);
         btnFilterMech.setText("\u2610");
         btnFilterBipedMech.setText("\u2610");
         btnFilterProtoMech.setText("\u2610");
@@ -1484,8 +1524,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterSupportTank.setText("\u2610");
         btnFilterLargeSupportTank.setText("\u2610");
         btnFilterSuperHeavyTank.setText("\u2610");
-        cboCockpitType.setSelectedIndex(0);
-        cboInternalsType.setSelectedIndex(0);
         tStartYear.setText("");
         tEndYear.setText("");
         tStartTons.setText("");
@@ -1498,14 +1536,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnBack.setEnabled(false);
 
         ListModel<String> m = listQuirkType.getModel();
-        DefaultListModel dlm  = new DefaultListModel();
+        DefaultListModel dlmq  = new DefaultListModel();
 
         for (int i = 0; i < m.getSize(); i++) {
             String ms = m.getElementAt(i);
-            dlm.addElement("\u2610 " + ms.substring(2, ms.length()));
+            dlmq.addElement("\u2610 " + ms.substring(2, ms.length()));
         }
 
-        listQuirkType.setModel(dlm);
+        listQuirkType.setModel(dlmq);
 
         m = listWeaponQuirkType.getModel();
 
@@ -1517,6 +1555,50 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
 
         listWeaponQuirkType.setModel(dlmw);
+
+        m = listArmorType.getModel();
+
+        DefaultListModel dlmwa  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmwa.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listArmorType.setModel(dlmwa);
+
+        m = listCockpitType.getModel();
+
+        DefaultListModel dlmc  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmc.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listCockpitType.setModel(dlmc);
+
+        m = listEngineType.getModel();
+
+        DefaultListModel dlme  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlme.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listEngineType.setModel(dlme);
+
+        m = listInternalsType.getModel();
+
+        DefaultListModel dlmi  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmi.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listInternalsType.setModel(dlmi);
 
         disableOperationButtons();
         enableSelectionButtons();
@@ -1598,11 +1680,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.sStartBV = tStartBV.getText();
         mechFilter.sEndBV = tEndBV.getText();
 
-        mechFilter.checkArmorType = cbxEnableArmorSearch.isSelected();
-        if (cbxEnableArmorSearch.isSelected()) {
-            mechFilter.armorType = cboArmorType.getSelectedIndex();
-        }
-
         ListModel<String> m = listQuirkType.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
@@ -1625,19 +1702,48 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             }
         }
 
-        mechFilter.checkEngineType = cbxEnableEngineSearch.isSelected();
-        if (cbxEnableEngineSearch.isSelected()) {
-            mechFilter.engineType = cboEngineType.getSelectedItem().toString();
+        m = listArmorType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.armorType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.armorTypeExclude.add(i);
+            }
         }
 
-        mechFilter.checkInternalsType = cbxEnableInternalsSearch.isSelected();
-        if (cbxEnableInternalsSearch.isSelected()) {
-            mechFilter.internalsType = cboInternalsType.getSelectedIndex();
+        m = listCockpitType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.cockpitType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.cockpitTypeExclude.add(i);
+            }
         }
 
-        mechFilter.checkCockpitType = cbxEnableCockpitSearch.isSelected();
-        if (cbxEnableCockpitSearch.isSelected()) {
-            mechFilter.cockpitType = cboCockpitType.getSelectedIndex();
+        m = listEngineType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.engineType.add(ms.substring(2, ms.length()));
+            } else if (ms.contains("\u2612")) {
+                mechFilter.engineTypeExclude.add(ms.substring(2, ms.length()));
+            }
+        }
+
+        m = listInternalsType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.internalsType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.internalsTypeExclude.add(i);
+            }
         }
 
         mechFilter.filterMech = getValue(btnFilterMech);

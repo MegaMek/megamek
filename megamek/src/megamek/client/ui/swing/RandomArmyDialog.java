@@ -22,6 +22,7 @@ import megamek.client.generator.RandomUnitGenerator.RatTreeNode;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.dialog.AdvancedSearchDialog2;
 import megamek.client.ui.swing.util.UIUtil;
 import megamek.common.*;
 import megamek.common.enums.Gender;
@@ -58,7 +59,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
     
     private ClientGUI m_clientgui;
     private Client m_client;
-    AdvancedSearchDialog asd;
+    AdvancedSearchDialog2 asd;
 
     private MechSearchFilter searchFilter;
 
@@ -152,7 +153,7 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
             m_ratStatus = new JLabel(Messages.getString("RandomArmyDialog.ratStatusLoading"));
         }
         updatePlayerChoice();
-        asd = new AdvancedSearchDialog(m_clientgui.frame,
+        asd = new AdvancedSearchDialog2(m_clientgui.frame,
                 m_client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
         
         GUIPreferences guip = GUIPreferences.getInstance();
@@ -610,9 +611,11 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                 armyModel.addUnit(m);
             }
         } else if (ev.getSource().equals(m_bAdvSearch)) {
-            searchFilter=asd.showDialog();
+            asd.showDialog();
+            searchFilter=asd.getTWAdvancedSearch().getMechSearchFilter();
             m_bAdvSearchClear.setEnabled(searchFilter!=null);
         } else if (ev.getSource().equals(m_bAdvSearchClear)) {
+            asd.clearSearches();
             searchFilter=null;
             m_bAdvSearchClear.setEnabled(false);
         } else if (ev.getSource().equals(m_bRoll)) {
@@ -707,7 +710,8 @@ public class RandomArmyDialog extends JDialog implements ActionListener, TreeSel
                     m_pFormationOptions.updateGeneratedUnits(unitList);
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
-                    p.advancedSearchFilter=searchFilter;
+                    p.advancedSearchFilter = searchFilter;
+                    p.asPanel = asd.getASAdvancedSearch();
                     p.mechs = Integer.parseInt(m_tMechs.getText());
                     p.tanks = Integer.parseInt(m_tVees.getText());
                     p.ba = Integer.parseInt(m_tBA.getText());

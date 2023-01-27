@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import megamek.client.ui.swing.unitSelector.ASAdvancedSearchPanel;
 import megamek.common.Compute;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -91,6 +92,7 @@ public class RandomArmyCreator {
          * Advanced options for search
          */
         public MechSearchFilter advancedSearchFilter = null;
+        public ASAdvancedSearchPanel asPanel = null;
     }
 
     /**
@@ -251,11 +253,11 @@ public class RandomArmyCreator {
             if (((!m.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY)))
                     && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.PROTOMEK)))
                     && (!m.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))))
-                    && (p.advancedSearchFilter != null && !MechSearchFilter.isMatch(m, p.advancedSearchFilter)))
+                    && (p.advancedSearchFilter != null && !MechSearchFilter.isMatch(m, p.advancedSearchFilter))
+                    && p.asPanel.matches(m))
             {
                 continue;
             }
-
 
             // Unit accepted, add to the appropriate list
             if (m.getUnitType().equals(UnitType.getTypeName(UnitType.MEK))) {

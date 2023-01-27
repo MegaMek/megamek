@@ -97,25 +97,58 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
     private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
-
-    private JCheckBox cbxEnableCockpitSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
-    private JLabel lblCockpitType = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
-    private JComboBox<String> cboCockpitType = new JComboBox<>();
-
-    private JCheckBox cbxEnableInternalsSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
-    private JLabel lblInternalsType = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
-    private JComboBox<String> cboInternalsType = new JComboBox<>();
-
-    private JCheckBox cbxEnableArmorSearch = new JCheckBox(Messages.getString("MechSelectorDialog.Search.Enable"));
-    private JLabel lblArmorType = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
-    private JComboBox<String> cboArmorType = new JComboBox<>();
-
+    private JLabel lblCockpitType  = new JLabel(Messages.getString("MechSelectorDialog.Search.CockpitType"));
+    private JList<String> listCockpitType  = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spCockpitType = new JScrollPane(listCockpitType);
+    private JLabel lblArmorType  = new JLabel(Messages.getString("MechSelectorDialog.Search.ArmorType"));
+    private JList<String> listArmorType  = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spArmorType = new JScrollPane(listArmorType);
+    private JLabel lblInternalsType  = new JLabel(Messages.getString("MechSelectorDialog.Search.InternalsType"));
+    private JList<String> listInternalsType  = new JList<>(new DefaultListModel<String>());
+    private JScrollPane spInternalsType = new JScrollPane(listInternalsType);
     private JComboBox<String> cboQty = new JComboBox<>();
 
     /**
      * Stores the games current year.
      */
     private int gameYear;
+
+    private static class NoSelectionModel extends DefaultListSelectionModel {
+        @Override
+        public void setAnchorSelectionIndex(final int anchorIndex) {}
+
+        @Override
+        public void setLeadAnchorNotificationEnabled(final boolean flag) {}
+
+        @Override
+        public void setLeadSelectionIndex(final int leadIndex) {}
+
+        @Override
+        public void setSelectionInterval(final int index0, final int index1) {}
+    }
+
+    private void toggleText(JList list, int index) {
+        ListModel<String> m = list.getModel();
+        DefaultListModel dlm  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+
+            if (index == i) {
+                if (ms.contains("\u2610")) {
+                    dlm.addElement("\u2611" + ms.substring(1, ms.length()));
+                } else if (ms.contains("\u2611")) {
+                    dlm.addElement("\u2612" + ms.substring(1, ms.length()));
+                } else if (ms.contains("\u2612")) {
+                    dlm.addElement("\u2610" + ms.substring(1, ms.length()));
+                }
+            } else {
+                dlm.addElement(ms);
+            }
+        }
+
+        list.setModel(dlm);
+    }
 
     /**
      * Constructs a new AdvancedSearchDialog.
@@ -149,31 +182,74 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor75"));
         cArmor.addItem(Messages.getString("MechSelectorDialog.Search.Armor90"));
 
-        for (int i = 0; i < EquipmentType.armorNames.length; i++) {
-            cboArmorType.addItem(EquipmentType.armorNames[i]);
-        }
-        cboArmorType.setEnabled(false);
-        lblArmorType.setEnabled(false);
+        DefaultListModel dlma  = new DefaultListModel();
 
-        for (int i = 0; i < EquipmentType.structureNames.length; i++) {
-            cboInternalsType.addItem(EquipmentType.structureNames[i]);
+        for (int i = 0; i < EquipmentType.armorNames.length; i++) {
+            dlma.addElement("\u2610 " + EquipmentType.armorNames[i]);
         }
-        cboInternalsType.setEnabled(false);
-        lblInternalsType.setEnabled(false);
+
+        listArmorType.setModel(dlma);
+
+        listArmorType.setVisibleRowCount(7);
+        listArmorType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listArmorType.setSelectionModel(new NoSelectionModel());
+        listArmorType.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
+
+        DefaultListModel dlmc  = new DefaultListModel();
 
         for (int i = 0; i < Mech.COCKPIT_STRING.length; i++) {
-            cboCockpitType.addItem(Mech.COCKPIT_STRING[i]);
+            dlmc.addElement("\u2610 " + Mech.COCKPIT_STRING[i]);
         }
-        cboCockpitType.setEnabled(false);
-        lblCockpitType.setEnabled(false);
 
-        cbxEnableCockpitSearch.setHorizontalTextPosition(SwingConstants.LEFT);
-        cbxEnableCockpitSearch.addItemListener(this);
-        cbxEnableInternalsSearch.setHorizontalTextPosition(SwingConstants.LEFT);
-        cbxEnableInternalsSearch.addItemListener(this);
-        cbxEnableArmorSearch.setHorizontalTextPosition(SwingConstants.LEFT);
-        cbxEnableArmorSearch.addItemListener(this);
+        listCockpitType.setModel(dlmc);
 
+        listCockpitType.setVisibleRowCount(5);
+        listCockpitType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listCockpitType.setSelectionModel(new NoSelectionModel());
+        listCockpitType.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
+
+        DefaultListModel dlmi  = new DefaultListModel();
+
+        for (int i = 0; i < EquipmentType.structureNames.length; i++) {
+            dlmi.addElement("\u2610 " + EquipmentType.structureNames[i]);
+        }
+
+        listInternalsType.setModel(dlmi);
+
+        listInternalsType.setVisibleRowCount(5);
+        listInternalsType.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listInternalsType.setSelectionModel(new NoSelectionModel());
+        listInternalsType.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    JList list = (JList) e.getSource();
+                    int index = list.locationToIndex(e.getPoint());
+                    toggleText(list, index);
+                }
+            }
+        });
 
         for (int i = 0; i <= 20; i++) {
             cboQty.addItem(Integer.toString(i));
@@ -289,10 +365,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.gridx = 3; c.gridy = 0;
         c.insets = new Insets(0, 40, 0, 0);
         c.anchor = GridBagConstraints.WEST;
-        JPanel cockpitPanel = new JPanel();
-        cockpitPanel.add(cbxEnableCockpitSearch,BorderLayout.WEST);
-        cockpitPanel.add(lblCockpitType,BorderLayout.WEST);
-        cockpitPanel.add(cboCockpitType,BorderLayout.EAST);
+        JPanel cockpitPanel = new JPanel(new BorderLayout());
+        cockpitPanel.add(lblCockpitType,BorderLayout.NORTH);
+        cockpitPanel.add(spCockpitType,BorderLayout.SOUTH);
         mainPanel.add(cockpitPanel, c);
 
         c.gridx = 0; c.gridy = 1;
@@ -310,10 +385,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         c.gridx = 3; c.gridy = 1;
         c.insets = new Insets(0, 40, 0, 0);
-        JPanel internalsPanel = new JPanel();
-        internalsPanel.add(cbxEnableInternalsSearch);
-        internalsPanel.add(lblInternalsType);
-        internalsPanel.add(cboInternalsType,BorderLayout.EAST);
+        JPanel internalsPanel = new JPanel(new BorderLayout());
+        internalsPanel.add(lblInternalsType,BorderLayout.NORTH);
+        internalsPanel.add(spInternalsType,BorderLayout.EAST);
         mainPanel.add(internalsPanel, c);
 
         c.anchor = GridBagConstraints.WEST;
@@ -325,10 +399,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mainPanel.add(cArmor, c);
         c.gridx = 3;
         c.insets = new Insets(0, 40, 0, 0);
-        JPanel armorPanel = new JPanel();
-        armorPanel.add(cbxEnableArmorSearch);
-        armorPanel.add(lblArmorType);
-        armorPanel.add(cboArmorType,BorderLayout.EAST);
+        JPanel armorPanel = new JPanel(new BorderLayout());
+        armorPanel.add(lblArmorType,BorderLayout.NORTH);
+        armorPanel.add(spArmorType,BorderLayout.EAST);
         mainPanel.add(armorPanel, c);
 
         c.anchor = GridBagConstraints.CENTER;
@@ -445,16 +518,7 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
      */
     @Override
     public void itemStateChanged(ItemEvent e) {
-        if (e.getSource().equals(cbxEnableCockpitSearch)) {
-            cboCockpitType.setEnabled(!cboCockpitType.isEnabled());
-            lblCockpitType.setEnabled(!lblCockpitType.isEnabled());
-        } else if (e.getSource().equals(cbxEnableInternalsSearch)) {
-            cboInternalsType.setEnabled(!cboInternalsType.isEnabled());
-            lblInternalsType.setEnabled(!lblInternalsType.isEnabled());
-        } else if (e.getSource().equals(cbxEnableArmorSearch)) {
-            cboArmorType.setEnabled(!cboArmorType.isEnabled());
-            lblArmorType.setEnabled(!lblArmorType.isEnabled());
-        }
+
     }
 
     /**
@@ -809,15 +873,42 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         tblWeapons.clearSelection();
         tblEquipment.clearSelection();
         txtEqExp.setText("");
-        cbxEnableArmorSearch.setSelected(false);
-        cbxEnableCockpitSearch.setSelected(false);
-        cbxEnableInternalsSearch.setSelected(false);
-        cboArmorType.setSelectedIndex(0);
-        cboCockpitType.setSelectedIndex(0);
-        cboInternalsType.setSelectedIndex(0);
         mechFilter = null;
         filterToks.clear();
         btnBack.setEnabled(false);
+
+        DefaultListModel dlmwa  = new DefaultListModel();
+        ListModel<String> m = listArmorType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmwa.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listArmorType.setModel(dlmwa);
+
+        m = listCockpitType.getModel();
+
+        DefaultListModel dlmc  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmc.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listCockpitType.setModel(dlmc);
+
+        m = listInternalsType.getModel();
+
+        DefaultListModel dlmi  = new DefaultListModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            dlmi.addElement("\u2610 " + ms.substring(2, ms.length()));
+        }
+
+        listInternalsType.setModel(dlmi);
+
         disableOperationButtons();
         enableSelectionButtons();
     }
@@ -870,23 +961,39 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener, Ite
         mechFilter.sStartYear = tStartYear.getText();
         mechFilter.sEndYear = tEndYear.getText();
 
-        /*
-        mechFilter.checkArmorType = cbxEnableArmorSearch.isSelected();
-        if (cbxEnableArmorSearch.isSelected()) {
-            mechFilter.armorType = cboArmorType.getSelectedIndex();
+
+        ListModel<String> m = listArmorType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.armorType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.armorTypeExclude.add(i);
+            }
         }
 
-        mechFilter.checkInternalsType = cbxEnableInternalsSearch.isSelected();
-        if (cbxEnableInternalsSearch.isSelected()) {
-            mechFilter.internalsType = cboInternalsType.getSelectedIndex();
+        m = listCockpitType.getModel();
+
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.cockpitType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.cockpitTypeExclude.add(i);
+            }
         }
 
-        mechFilter.checkCockpitType = cbxEnableCockpitSearch.isSelected();
-        if (cbxEnableCockpitSearch.isSelected()) {
-            mechFilter.cockpitType = cboCockpitType.getSelectedIndex();
-        }
+        m = listInternalsType.getModel();
 
-         */
+        for (int i = 0; i < m.getSize(); i++) {
+            String ms = m.getElementAt(i);
+            if (ms.contains("\u2611")) {
+                mechFilter.internalsType.add(i);
+            } else if (ms.contains("\u2612")) {
+                mechFilter.internalsTypeExclude.add(i);
+            }
+        }
     }
 
     /**

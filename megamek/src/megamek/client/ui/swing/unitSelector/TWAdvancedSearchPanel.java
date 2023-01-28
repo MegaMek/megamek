@@ -33,7 +33,6 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
@@ -67,51 +66,39 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnOr = new JButton(Messages.getString("MechSelectorDialog.Search.or"));
     private JButton btnClear = new JButton(Messages.getString("MechSelectorDialog.Reset"));
     private JButton btnBack = new JButton("Back");
-
     private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
     private JTextArea  txtEqExp = new JTextArea("");
-
     private JScrollPane expScroller = new JScrollPane(txtEqExp,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-
     private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
     private JTextField tStartWalk = new JTextField(4);
     private JTextField tEndWalk = new JTextField(4);
-
     private JLabel lblJump = new JLabel(Messages.getString("MechSelectorDialog.Search.Jump"));
     private JTextField tStartJump = new JTextField(4);
     private JTextField tEndJump = new JTextField(4);
-
     private JLabel lblTroopSpace = new JLabel(Messages.getString("MechSelectorDialog.Search.TroopSpace"));
     private JTextField tStartTroopSpace  = new JTextField(4);
     private JTextField tEndTroopSpace  = new JTextField(4);
-
     private JLabel lblASFBays = new JLabel(Messages.getString("MechSelectorDialog.Search.ASFBays"));
     private JTextField tStartASFBays = new JTextField(4);
     private JTextField tEndASFBays  = new JTextField(4);
-
     private JLabel lblSmallCraftBays = new JLabel(Messages.getString("MechSelectorDialog.Search.SmallCraftBays"));
     private JTextField tStartSmallCraftBays = new JTextField(4);
     private JTextField tEndSmallCraftBays  = new JTextField(4);
-
     private JLabel lblMechBays = new JLabel(Messages.getString("MechSelectorDialog.Search.MechBays"));
     private JTextField tStartMechBays = new JTextField(4);
     private JTextField tEndMechBays  = new JTextField(4);
-
     private JLabel lblDockingCollars = new JLabel(Messages.getString("MechSelectorDialog.Search.DockingCollars"));
     private JTextField tStartDockingCollars = new JTextField(4);
     private JTextField tEndDockingCollars  = new JTextField(4);
-
     private JLabel lblBattleArmorHandles = new JLabel(Messages.getString("MechSelectorDialog.Search.BattleArmorHandles"));
     private JTextField tStartBattleArmorHandles = new JTextField(4);
     private JTextField tEndBattleArmorHandles  = new JTextField(4);
-
     private JLabel lblArmor = new JLabel(Messages.getString("MechSelectorDialog.Search.Armor"));
     private JComboBox<String> cArmor = new JComboBox<>();
     private JLabel lblOmni = new JLabel(Messages.getString("MechSelectorDialog.Search.Omni"));
     private JComboBox<String> cOmni = new JComboBox<>();
-
     private JLabel lblOfficial = new JLabel(Messages.getString("MechSelectorDialog.Search.Official"));
     private JComboBox<String> cOfficial = new JComboBox<>();
     private JLabel lblCanon = new JLabel(Messages.getString("MechSelectorDialog.Search.Canon"));
@@ -125,36 +112,29 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JComboBox<String> cboUnitType = new JComboBox<>();
     private JComboBox<String> cboTechClass = new JComboBox<>();
     private JComboBox<String> cboTechLevel = new JComboBox<>();
-
     private JLabel lblWeaponClass = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponClass"));
     private JScrollPane scrTableWeaponType = new JScrollPane();
     private MegamekTable tblWeaponType;
     private WeaponClassTableModel weaponTypesModel;
     private TableRowSorter<WeaponClassTableModel> weaponTypesSorter;
-
     private JLabel lblWeapons = new JLabel(Messages.getString("MechSelectorDialog.Search.Weapons"));
     private JScrollPane scrTableWeapons = new JScrollPane();
     private MegamekTable tblWeapons;
     private WeaponsTableModel weaponsModel;
     private TableRowSorter<WeaponsTableModel> weaponsSorter;
-
     private JLabel lblEquipment = new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment"));
     private JScrollPane scrTableEquipment = new JScrollPane();
     private MegamekTable tblEquipment;
     private EquipmentTableModel equipmentModel;
     private TableRowSorter<EquipmentTableModel> equipmentSorter;
-
     private JLabel lblSource = new JLabel(Messages.getString("MechSelectorDialog.Search.Source"));
     private JTextField tSource = new JTextField(4);
-
     private JLabel lblYear = new JLabel(Messages.getString("MechSelectorDialog.Search.Year"));
     private JTextField tStartYear = new JTextField(4);
     private JTextField tEndYear = new JTextField(4);
-
     private JLabel lblTons = new JLabel(Messages.getString("MechSelectorDialog.Search.Tons"));
     private JTextField tStartTons = new JTextField(4);
     private JTextField tEndTons = new JTextField(4);
-
     private JLabel lblBV = new JLabel(Messages.getString("MechSelectorDialog.Search.BV"));
     private JTextField tStartBV = new JTextField(4);
     private JTextField tEndBV = new JTextField(4);
@@ -170,9 +150,17 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel lblEngineType = new JLabel(Messages.getString("MechSelectorDialog.Search.Engine"));
     private JList<String> listEngineType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spEngineType = new JScrollPane(listEngineType);
+    private JLabel lblQuirkInclude = new JLabel("\u2611");
+    private JComboBox<String> cQuirkInclue = new JComboBox<>();
+    private JLabel lblQuirkExclude = new JLabel("\u2612");
+    private JComboBox<String> cQuirkExclude = new JComboBox<>();
     private JLabel lblQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.Quirk"));
     private JList<String> listQuirkType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spQuirkType = new JScrollPane(listQuirkType);
+    private JLabel lblWeaponQuirkInclude = new JLabel("\u2611");
+    private JComboBox<String> cWeaponQuirkInclue = new JComboBox<>();
+    private JLabel lblWeaponQuirkExclude = new JLabel("\u2612");
+    private JComboBox<String> cWeaponQuirkExclude = new JComboBox<>();
     private JLabel lblWeaponQuirkType = new JLabel(Messages.getString("MechSelectorDialog.Search.WeaponQuirk"));
     private JList<String> listWeaponQuirkType = new JList<>(new DefaultListModel<String>());
     private JScrollPane spWeaponQuirkType = new JScrollPane(listWeaponQuirkType);
@@ -542,6 +530,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     }
 
     private JPanel createQuirkPanel() {
+        cQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.and"));
+        cQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.or"));
+        cQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.and"));
+        cQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.or"));
+        cQuirkExclude.setSelectedIndex(1);
+
         Quirks quirks = new Quirks();
         List<String> qs = new ArrayList<>();
         for (final Enumeration<IOptionGroup> optionGroups = quirks.getGroups(); optionGroups.hasMoreElements(); ) {
@@ -577,6 +571,12 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 }
             }
         });
+
+        cWeaponQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.and"));
+        cWeaponQuirkInclue.addItem(Messages.getString("MechSelectorDialog.Search.or"));
+        cWeaponQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.and"));
+        cWeaponQuirkExclude.addItem(Messages.getString("MechSelectorDialog.Search.or"));
+        cWeaponQuirkExclude.setSelectedIndex(1);
 
         WeaponQuirks weaponquirks = new WeaponQuirks();
         List<String> wqs = new ArrayList<>();
@@ -625,12 +625,26 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.insets = new Insets(50, 10, 0, 0);
         c.gridx = 0; c.gridy++;;
         JPanel quirkPanel = new JPanel(new BorderLayout());
-        quirkPanel.add(lblQuirkType, BorderLayout.NORTH);
+        JPanel quirkIEPanel = new JPanel(new FlowLayout());
+        quirkIEPanel.add(lblQuirkType);
+        quirkIEPanel.add(Box.createHorizontalStrut(15));
+        quirkIEPanel.add(lblQuirkInclude);
+        quirkIEPanel.add(cQuirkInclue);
+        quirkIEPanel.add(lblQuirkExclude);
+        quirkIEPanel.add(cQuirkExclude);
+        quirkPanel.add(quirkIEPanel, BorderLayout.NORTH);
         quirkPanel.add(spQuirkType, BorderLayout.CENTER);
         quirksPanel.add(quirkPanel, c);
         c.gridx = 1;
         JPanel weaponQuirkPanel = new JPanel(new BorderLayout());
-        weaponQuirkPanel.add(lblWeaponQuirkType, BorderLayout.NORTH);
+        JPanel weaponQuirkIEPanel = new JPanel(new FlowLayout());
+        weaponQuirkIEPanel.add(lblWeaponQuirkType);
+        weaponQuirkIEPanel.add(Box.createHorizontalStrut(15));
+        weaponQuirkIEPanel.add(lblWeaponQuirkInclude);
+        weaponQuirkIEPanel.add(cWeaponQuirkInclue);
+        weaponQuirkIEPanel.add(lblWeaponQuirkExclude);
+        weaponQuirkIEPanel.add(cWeaponQuirkExclude);
+        weaponQuirkPanel.add(weaponQuirkIEPanel, BorderLayout.NORTH);
         weaponQuirkPanel.add(spWeaponQuirkType, BorderLayout.CENTER);
         quirksPanel.add(weaponQuirkPanel, c);
         c.weighty = 1;
@@ -1035,6 +1049,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.gridx = 1;
         c.gridwidth = 3;
         weaponEqPanel.add(expScroller, c);
+        c.weighty = 1;
+        JPanel blankPanel = new JPanel();
+        weaponEqPanel.add(blankPanel, c);
 
         return weaponEqPanel;
     }
@@ -1548,6 +1565,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterToks.clear();
         btnBack.setEnabled(false);
 
+        cQuirkInclue.setSelectedIndex(0);
+        cQuirkExclude.setSelectedIndex(1);
         ListModel<String> m = listQuirkType.getModel();
         DefaultListModel dlmq  = new DefaultListModel();
 
@@ -1557,6 +1576,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         }
 
         listQuirkType.setModel(dlmq);
+
+        cWeaponQuirkInclue.setSelectedIndex(0);
+        cWeaponQuirkExclude.setSelectedIndex(1);
 
         m = listWeaponQuirkType.getModel();
 
@@ -1693,6 +1715,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.sStartBV = tStartBV.getText();
         mechFilter.sEndBV = tEndBV.getText();
 
+        mechFilter.quirkInclude = cQuirkInclue.getSelectedIndex();
+        mechFilter.quirkExclude = cQuirkExclude.getSelectedIndex();
+
         ListModel<String> m = listQuirkType.getModel();
 
         for (int i = 0; i < m.getSize(); i++) {
@@ -1703,6 +1728,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
                 mechFilter.quirkTypeExclude.add(ms.substring(2, ms.length()));
             }
         }
+
+        mechFilter.weaponQuirkInclude = cWeaponQuirkInclue.getSelectedIndex();
+        mechFilter.weaponQuirkExclude = cWeaponQuirkExclude.getSelectedIndex();
 
         m = listWeaponQuirkType.getModel();
 

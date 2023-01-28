@@ -73,8 +73,12 @@ public class MechSearchFilter {
 
     public List<Integer> cockpitType = new ArrayList<>();
     public List<Integer> cockpitTypeExclude = new ArrayList<>();
+    public int quirkInclude;
+    public int quirkExclude;
     public List<String> quirkType = new ArrayList<>();
     public List<String> quirkTypeExclude = new ArrayList<>();
+    public int weaponQuirkInclude;
+    public int weaponQuirkExclude;
     public List<String> weaponQuirkType = new ArrayList<>();
     public List<String> weaponQuirkTypeExclude = new ArrayList<>();
     public boolean checkEquipment;
@@ -600,37 +604,87 @@ public class MechSearchFilter {
             }
         }
 
-        boolean qMatch = false;
-        for (String s : f.quirkType) {
-            if (mech.getQuirkNames().contains(s)) {
-                qMatch = true;
-                break;
+        if (f.quirkInclude == 0) {
+            // AND
+            for (String s : f.quirkType) {
+                if (!mech.getQuirkNames().contains(s)) {
+                    return false;
+                }
             }
-        }
-        if ((!f.quirkType.isEmpty()) && ((!qMatch) || (mech.getQuirkNames().isEmpty()))) {
-            return false;
-        }
-
-        for (String s : f.quirkTypeExclude) {
-            if (mech.getQuirkNames().contains(s)) {
+        } else {
+            // OR
+            boolean qMatch = false;
+            for (String s : f.quirkType) {
+                if (mech.getQuirkNames().contains(s)) {
+                    qMatch = true;
+                    break;
+                }
+            }
+            if ((!f.quirkType.isEmpty()) && ((!qMatch) || (mech.getQuirkNames().isEmpty()))) {
                 return false;
             }
         }
 
-        boolean wMatch = false;
-        for (String s : f.weaponQuirkType) {
-            if (mech.getWeaponQuirkNames().contains(s)) {
-                wMatch = true;
-                break;
+        if (f.quirkExclude == 0) {
+            // AND
+            boolean qMatch = false;
+            for (String s : f.quirkTypeExclude) {
+                if (!mech.getQuirkNames().contains(s)) {
+                    qMatch = true;
+                    break;
+                }
+            }
+            if ((!f.quirkTypeExclude.isEmpty()) && ((!qMatch) || (mech.getQuirkNames().isEmpty()))) {
+                return false;
+            }
+        } else {
+            // OR
+            for (String s : f.quirkTypeExclude) {
+                if (mech.getQuirkNames().contains(s)) {
+                    return false;
+                }
             }
         }
-        if ((!f.weaponQuirkType.isEmpty()) && ((!wMatch) || (mech.getWeaponQuirkNames().isEmpty()))) {
-            return false;
+
+        if (f.weaponQuirkInclude == 0) {
+            // AND
+            for (String s : f.weaponQuirkType) {
+                if (!mech.getWeaponQuirkNames().contains(s)) {
+                    return false;
+                }
+            }
+        } else {
+            // OR
+            boolean wqMatch = false;
+            for (String s : f.weaponQuirkType) {
+                if (mech.getWeaponQuirkNames().contains(s)) {
+                    wqMatch = true;
+                    break;
+                }
+            }
+            if ((!f.weaponQuirkType.isEmpty()) && ((!wqMatch) || (mech.getWeaponQuirkNames().isEmpty()))) {
+                return false;
+            }
         }
 
-        for (String s : f.weaponQuirkTypeExclude) {
-            if (mech.getWeaponQuirkNames().contains(s)) {
+        if (f.weaponQuirkExclude == 0) {
+            // AND
+            boolean wqMatch = false;
+            for (String s : f.weaponQuirkTypeExclude) {
+                if (!mech.getWeaponQuirkNames().contains(s)) {
+                    wqMatch = true;
+                    break;
+                }
+            }
+            if ((!f.weaponQuirkTypeExclude.isEmpty()) && ((!wqMatch) || (mech.getWeaponQuirkNames().isEmpty()))) {
                 return false;
+            }
+        } else {
+            // OR
+            for (String s : f.weaponQuirkTypeExclude) {
+                if (mech.getWeaponQuirkNames().contains(s)) {
+                    return false;
+                }
             }
         }
 

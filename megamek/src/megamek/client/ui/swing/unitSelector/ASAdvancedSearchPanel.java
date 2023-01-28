@@ -738,22 +738,22 @@ public class ASAdvancedSearchPanel extends JPanel {
             unitTypeAF.setSelected(unitTypeSelected.contains(ASUnitType.AF));
 
             useUnitRole.setSelected(unitRoleUse);
-            unitRoleUndetermined.setSelected(unitTypeSelected.contains(UnitRole.UNDETERMINED));
-            unitRoleAmbusher.setSelected(unitTypeSelected.contains(UnitRole.AMBUSHER));
-            unitRoleBrawler.setSelected(unitTypeSelected.contains(UnitRole.BRAWLER));
-            unitRoleJuggernaut.setSelected(unitTypeSelected.contains(UnitRole.JUGGERNAUT));
-            unitRoleMissileBoat.setSelected(unitTypeSelected.contains(UnitRole.MISSILE_BOAT));
-            unitRoleScout.setSelected(unitTypeSelected.contains(UnitRole.SCOUT));
-            unitRoleSkirmisher.setSelected(unitTypeSelected.contains(UnitRole.SKIRMISHER));
-            unitRoleSniper.setSelected(unitTypeSelected.contains(UnitRole.SNIPER));
-            unitRoleStriker.setSelected(unitTypeSelected.contains(UnitRole.STRIKER));
-            unitRoleAttackFighter.setSelected(unitTypeSelected.contains(UnitRole.ATTACK_FIGHTER));
-            unitRoleDogfighter.setSelected(unitTypeSelected.contains(UnitRole.DOGFIGHTER));
-            unitRoleFastDogfighter.setSelected(unitTypeSelected.contains(UnitRole.FAST_DOGFIGHTER));
-            unitRoleFireSupport.setSelected(unitTypeSelected.contains(UnitRole.FIRE_SUPPORT));
-            unitRoleInterceptor.setSelected(unitTypeSelected.contains(UnitRole.INTERCEPTOR));
-            unitRoleTransport.setSelected(unitTypeSelected.contains(UnitRole.TRANSPORT));
-            unitRoleNone.setSelected(unitTypeSelected.contains(UnitRole.NONE));
+            unitRoleUndetermined.setSelected(unitRoleSelected.contains(UnitRole.UNDETERMINED));
+            unitRoleAmbusher.setSelected(unitRoleSelected.contains(UnitRole.AMBUSHER));
+            unitRoleBrawler.setSelected(unitRoleSelected.contains(UnitRole.BRAWLER));
+            unitRoleJuggernaut.setSelected(unitRoleSelected.contains(UnitRole.JUGGERNAUT));
+            unitRoleMissileBoat.setSelected(unitRoleSelected.contains(UnitRole.MISSILE_BOAT));
+            unitRoleScout.setSelected(unitRoleSelected.contains(UnitRole.SCOUT));
+            unitRoleSkirmisher.setSelected(unitRoleSelected.contains(UnitRole.SKIRMISHER));
+            unitRoleSniper.setSelected(unitRoleSelected.contains(UnitRole.SNIPER));
+            unitRoleStriker.setSelected(unitRoleSelected.contains(UnitRole.STRIKER));
+            unitRoleAttackFighter.setSelected(unitRoleSelected.contains(UnitRole.ATTACK_FIGHTER));
+            unitRoleDogfighter.setSelected(unitRoleSelected.contains(UnitRole.DOGFIGHTER));
+            unitRoleFastDogfighter.setSelected(unitRoleSelected.contains(UnitRole.FAST_DOGFIGHTER));
+            unitRoleFireSupport.setSelected(unitRoleSelected.contains(UnitRole.FIRE_SUPPORT));
+            unitRoleInterceptor.setSelected(unitRoleSelected.contains(UnitRole.INTERCEPTOR));
+            unitRoleTransport.setSelected(unitRoleSelected.contains(UnitRole.TRANSPORT));
+            unitRoleNone.setSelected(unitRoleSelected.contains(UnitRole.NONE));
 
             useSize.setSelected(sizeUse);
             size1.setSelected(sizeSelected.contains(1));

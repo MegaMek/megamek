@@ -70,6 +70,10 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
     private JTextArea  txtEqExp = new JTextArea("");
 
+    private JScrollPane expScroller = new JScrollPane(txtEqExp,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
     private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
     private JTextField tStartWalk = new JTextField(4);
     private JTextField tEndWalk = new JTextField(4);
@@ -1014,6 +1018,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.NONE;
         weaponEqPanel.add(lblEqExpTxt, c);
+        c.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridwidth = 3;
+        weaponEqPanel.add(expScroller, c);
 
         return weaponEqPanel;
     }

@@ -69,9 +69,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
 
     private JLabel  lblEqExpTxt = new JLabel(Messages.getString("MechSelectorDialog.Search.FilterExpression"));
     private JTextArea  txtEqExp = new JTextArea("");
-    private JScrollPane expScroller = new JScrollPane(txtEqExp,
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
     private JLabel lblWalk = new JLabel(Messages.getString("MechSelectorDialog.Search.Walk"));
     private JTextField tStartWalk = new JTextField(4);
@@ -251,7 +248,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         twSearchPane.addTab(msg_weaponEq, weaponEqPanel);
         twSearchPane.addTab(msg_unitType, unitTypePanel);
         twSearchPane.addTab(msg_quirkType, quirkPanel);
-        this.add(twSearchPane, BorderLayout.CENTER);
+        this.add(twSearchPane, BorderLayout.NORTH);
     }
 
     private static class NoSelectionModel extends DefaultListSelectionModel {
@@ -405,7 +402,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         basePanel.setLayout(new GridBagLayout());
 
         c.weighty = 0;
-        c.anchor = GridBagConstraints.WEST;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy = 0;
         c.insets = new Insets(0, 10, 0, 0);
@@ -614,7 +611,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         quirksPanel.setLayout(new GridBagLayout());
 
         c.weighty = 0;
-        c.anchor = GridBagConstraints.WEST;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy++;;
@@ -707,7 +704,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         unitTypePanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.weighty = 0;
-        c.anchor = GridBagConstraints.WEST;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 10, 0, 0);
         c.gridwidth  = 1;
@@ -942,7 +939,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponEqPanel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.weighty = 0;
-        c.anchor = GridBagConstraints.WEST;
+        c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 0);
         c.gridx = 0; c.gridy++;
@@ -966,7 +963,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.insets = new Insets(0, 0, 0, 0);
         weaponEqPanel.add(lblWeaponClass, c);
 
-        c.fill = GridBagConstraints.BOTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
@@ -978,7 +975,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         weaponEqPanel.add(lblWeapons, c);
 
-        c.fill = GridBagConstraints.BOTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
@@ -990,7 +987,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         weaponEqPanel.add(lblEquipment, c);
 
-        c.fill = GridBagConstraints.BOTH;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.CENTER;
         c.gridwidth = 5;
         c.gridx = 0; c.gridy++;
@@ -1017,11 +1014,6 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.anchor = GridBagConstraints.WEST;
         c.fill = GridBagConstraints.NONE;
         weaponEqPanel.add(lblEqExpTxt, c);
-        c.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 1;
-        c.gridwidth = 3;
-        weaponEqPanel.add(expScroller, c);
 
         return weaponEqPanel;
     }

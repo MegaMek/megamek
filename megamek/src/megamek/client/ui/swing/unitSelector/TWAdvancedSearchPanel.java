@@ -33,6 +33,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
@@ -409,7 +410,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
         c.gridx = 0; c.gridy = 0;
-        c.insets = new Insets(0, 10, 0, 0);
+        c.insets = new Insets(50, 10, 0, 0);
 
         c.gridwidth  = 4;
         JPanel p0Panel = new JPanel();
@@ -422,6 +423,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         p0Panel.add(lblOmni);
         p0Panel.add(cOmni);
         basePanel.add(p0Panel, c);
+        c.insets = new Insets(0, 10, 0, 0);
         c.gridwidth  = 1;
         c.gridx = 0; c.gridy++;
         JPanel yearPanel = new JPanel();
@@ -532,6 +534,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         clanEnginePanel.add(cClanEngine);
         enginePanel.add(clanEnginePanel, BorderLayout.SOUTH);
         basePanel.add(enginePanel, c);
+        c.weighty = 1;
+        JPanel blankPanel = new JPanel();
+        basePanel.add(blankPanel, c);
 
         return basePanel;
     }
@@ -617,7 +622,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(0, 10, 0, 0);
+        c.insets = new Insets(50, 10, 0, 0);
         c.gridx = 0; c.gridy++;;
         JPanel quirkPanel = new JPanel(new BorderLayout());
         quirkPanel.add(lblQuirkType, BorderLayout.NORTH);
@@ -628,6 +633,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         weaponQuirkPanel.add(lblWeaponQuirkType, BorderLayout.NORTH);
         weaponQuirkPanel.add(spWeaponQuirkType, BorderLayout.CENTER);
         quirksPanel.add(weaponQuirkPanel, c);
+        c.weighty = 1;
+        JPanel blankPanel = new JPanel();
+        quirksPanel.add(blankPanel, c);
 
         return quirksPanel;
     }
@@ -710,13 +718,14 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         c.weighty = 0;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(0, 10, 0, 0);
+        c.insets = new Insets(50, 10, 0, 0);
         c.gridwidth  = 1;
         c.gridx = 0; c.gridy = 0;
         JPanel filterProtoMechPanel = new JPanel();
         filterProtoMechPanel.add(btnFilterProtoMech);
         filterProtoMechPanel.add(lblFilterProtoMech);
         unitTypePanel.add(filterProtoMechPanel, c);
+        c.insets = new Insets(0, 10, 0, 0);
         c.gridx = 0; c.gridy++;
         JPanel filterMechPanel = new JPanel();
         filterMechPanel.add(btnFilterMech);
@@ -832,6 +841,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterSuperHeavyTankPanel.add(btnFilterSuperHeavyTank);
         filterSuperHeavyTankPanel.add(lblFilterSuperHeavyTank);
         unitTypePanel.add(filterSuperHeavyTankPanel, c);
+        c.weighty = 1;
+        JPanel blankPanel = new JPanel();
+        unitTypePanel.add(blankPanel, c);
 
         return unitTypePanel;
     }

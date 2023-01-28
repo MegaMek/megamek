@@ -38,6 +38,7 @@ import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.client.ui.swing.widget.SkinnedJPanel;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.annotations.Nullable;
@@ -94,8 +95,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
 
     private MegaMekController controller;
 
-    BufferedImage backgroundIcon = null;
-
     public void start(boolean show) {
         createGUI(show);
     }
@@ -133,30 +132,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
             }
         });
 
-        frame.setContentPane(new JPanel() {
-            private static final long serialVersionUID = 5174313603291016012L;
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                if (backgroundIcon == null) {
-                    super.paintComponent(g);
-                    return;
-                }
-                int w = getWidth();
-                int h = getHeight();
-                int iW = backgroundIcon.getWidth();
-                int iH = backgroundIcon.getHeight();
-                // If the image isn't loaded, prevent an infinite loop
-                if ((iW < 1) || (iH < 1)) {
-                    return;
-                }
-                for (int x = 0; x < w; x += iW) {
-                    for (int y = 0; y < h; y += iH) {
-                        g.drawImage(backgroundIcon, x, y, null);
-                    }
-                }
-            }
-        });
+        frame.setContentPane(new SkinnedJPanel(UIComponents.MainMenuBorder, 1));
 
         List<Image> iconList = new ArrayList<>();
         iconList.add(frame.getToolkit().getImage(
@@ -254,21 +230,6 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 UIComponents.MainMenuButton.getComp(), true);
         quitB.setActionCommand(ClientGUI.MAIN_QUIT);
         quitB.addActionListener(actionListener);
-
-        if (skinSpec.hasBackgrounds()) {
-            if (skinSpec.backgrounds.size() > 1) {
-                File file = new MegaMekFile(Configuration.widgetsDir(),
-                        skinSpec.backgrounds.get(1)).getFile();
-                if (!file.exists()) {
-                    LogManager.getLogger().error("MainMenu Error: background icon doesn't exist: "
-                            + file.getAbsolutePath());
-                } else {
-                    backgroundIcon = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
-                }
-            }
-        } else {
-            backgroundIcon = null;
-        }
 
         // Use the current monitor, so we don't "overflow" computers whose primary
         // displays aren't as large as their secondary displays.

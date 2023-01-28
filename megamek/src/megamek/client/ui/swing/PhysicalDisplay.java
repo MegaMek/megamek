@@ -61,8 +61,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         String cmd;
 
-        private static final GUIPreferences GUIP = GUIPreferences.getInstance();
-
         /**
          * Priority that determines this buttons order
          */
@@ -1353,7 +1351,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             boolean enemy2 = o2.isEnemyOf(ce());
             if (enemy1 && enemy2) {
                 return 0;
-            } else if (enemy1 && !enemy2) {
+            } else if (enemy1) {
                 return -1;
             } else {
                 return 1;

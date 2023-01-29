@@ -77,14 +77,14 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     private double troopCarryingSpace;
     private int aSFBays;
     private int aSFDoors;
-    private int aSFUnits;
+    private double aSFUnits;
     private int smallCraftBays;
     private int smallCraftDoors;
-    private int smallCraftUnits;
+    private double smallCraftUnits;
     private int dockingCollars;
     private int mechBays;
     private int mechDoors;
-    private int mechUnits;
+    private double mechUnits;
     private int battleArmorHandles;
 
     /** For BattleArmor, we want to know the weight of an individual suit. */
@@ -269,7 +269,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getASFDoors() {
         return aSFDoors;
     }
-    public int getASFUnits() {
+    public double getASFUnits() {
         return aSFUnits;
     }
 
@@ -279,7 +279,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
     public int getSmallCraftDoors() {
         return smallCraftDoors;
     }
-    public int getSmallCraftUnits() {
+    public double getSmallCraftUnits() {
         return smallCraftUnits;
     }
 
@@ -291,7 +291,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public int getMechDoors() { return mechDoors; }
 
-    public int getMechUnits() { return mechUnits; }
+    public double getMechUnits() { return mechUnits; }
 
     public int getBattleArmorHandles() {
         return battleArmorHandles;
@@ -468,7 +468,7 @@ public class MechSummary implements Serializable, ASCardDisplayable {
 
     public void setASFDoors(int i) { aSFDoors = i; }
 
-    public void setASFUnits(int i) { aSFUnits = i; }
+    public void setASFUnits(double d) { aSFUnits = d; }
 
     public void setSmallCraftBays(int i) {
         smallCraftBays = i;
@@ -478,8 +478,8 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         smallCraftDoors = i;
     }
 
-    public void setSmallCraftUnits(int i) {
-        smallCraftUnits = i;
+    public void setSmallCraftUnits(double d) {
+        smallCraftUnits = d;
     }
 
     public void setDockingCollars(int i) {
@@ -494,8 +494,8 @@ public class MechSummary implements Serializable, ASCardDisplayable {
         mechDoors = i;
     }
 
-    public void setMechUnits(int i) {
-        mechUnits = i;
+    public void setMechUnits(double d) {
+        mechUnits = d;
     }
 
     public void setBattleArmorHandles(int i) {

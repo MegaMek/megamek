@@ -293,38 +293,36 @@ public class MechSearchFilter {
 
     }
 
+    private static boolean isBetween(double value, String sStart, String sEnd) {
+        int iStart = Integer.MIN_VALUE;
+        int iEnd = Integer.MAX_VALUE;
+        try {
+            iStart = Integer.parseInt(sStart);
+        } catch (Exception ignored) {
+        }
+        try {
+            iEnd = Integer.parseInt(sEnd);
+        } catch (Exception ignored) {
+        }
+        if ((value < iStart) || (value > iEnd)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static boolean isMatch(MechSummary mech, MechSearchFilter f) {
         if (f == null || f.isDisabled) {
             return true;
         }
 
         //Check walk criteria
-        int startWalk = Integer.MIN_VALUE;
-        int endWalk = Integer.MAX_VALUE;
-        try {
-            startWalk = Integer.parseInt(f.sStartWalk);
-        } catch (Exception ignored) {
-        }
-        try {
-            endWalk = Integer.parseInt(f.sEndWalk);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getWalkMp() < startWalk) || (mech.getWalkMp() > endWalk)) {
+        if (!isBetween(mech.getWalkMp(), f.sStartWalk, f.sEndWalk)) {
             return false;
         }
 
         // Check jump criteria
-        int startJump = Integer.MIN_VALUE;
-        int endJump = Integer.MAX_VALUE;
-        try {
-            startJump = Integer.parseInt(f.sStartJump);
-        } catch (Exception ignored) {
-        }
-        try {
-            endJump = Integer.parseInt(f.sEndJump);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getJumpMp() < startJump) || (mech.getJumpMp() > endJump)) {
+        if (!isBetween(mech.getJumpMp(), f.sStartJump, f.sEndJump)) {
             return false;
         }
 
@@ -352,7 +350,6 @@ public class MechSearchFilter {
             }
         }
 
-
         List<String> eqNames = mech.getEquipmentNames();
         List<Integer> qty = mech.getEquipmentQuantities();
         //Evaluate the expression tree, if there's not a match, return false
@@ -361,47 +358,17 @@ public class MechSearchFilter {
         }
 
         // Check year criteria
-        int startYear = Integer.MIN_VALUE;
-        int endYear = Integer.MAX_VALUE;
-        try {
-            startYear = Integer.parseInt(f.sStartYear);
-        } catch (Exception ignored) {
-        }
-        try {
-            endYear = Integer.parseInt(f.sEndYear);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getYear() < startYear) || (mech.getYear() > endYear)) {
+        if (!isBetween(mech.getYear(), f.sStartYear, f.sEndYear)) {
             return false;
         }
 
         // Check Tonnage criteria
-        int startTons = Integer.MIN_VALUE;
-        int endTons = Integer.MAX_VALUE;
-        try {
-            startTons = Integer.parseInt(f.sStartTons);
-        } catch (Exception ignored) {
-        }
-        try {
-            endTons = Integer.parseInt(f.sEndTons);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getTons() < startTons) || (mech.getTons() > endTons)) {
+        if (!isBetween((int) mech.getTons(), f.sStartTons, f.sEndTons)) {
             return false;
         }
 
         // Check BV criteria
-        int startBV = Integer.MIN_VALUE;
-        int endBV = Integer.MAX_VALUE;
-        try {
-            startBV = Integer.parseInt(f.sStartBV);
-        } catch (Exception ignored) {
-        }
-        try {
-            endBV = Integer.parseInt(f.sEndBV);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getBV() < startBV) || (mech.getBV() > endBV)) {
+        if (!isBetween(mech.getBV(), f.sStartBV, f.sEndBV)) {
             return false;
         }
 
@@ -752,171 +719,51 @@ public class MechSearchFilter {
             }
         }
 
-        int startTroopSpace = Integer.MIN_VALUE;
-        int endTroopSpace = Integer.MAX_VALUE;
-        try {
-            startTroopSpace = Integer.parseInt(f.sStartTroopSpace);
-        } catch (Exception ignored) {
-        }
-        try {
-            endTroopSpace = Integer.parseInt(f.sEndTroopSpace);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getTroopCarryingSpace() < startTroopSpace) || (mech.getTroopCarryingSpace() > endTroopSpace)) {
+        if (!isBetween(mech.getTroopCarryingSpace(), f.sStartTroopSpace, f.sEndTroopSpace)) {
             return false;
         }
 
-        int startASFBays = Integer.MIN_VALUE;
-        int endASFBays = Integer.MAX_VALUE;
-        try {
-            startASFBays = Integer.parseInt(f.sStartASFBays);
-        } catch (Exception ignored) {
-        }
-        try {
-            endASFBays = Integer.parseInt(f.sEndASFBays);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getASFBays() < startASFBays) || (mech.getASFBays() > endASFBays)) {
+        if (!isBetween(mech.getASFBays(), f.sStartASFBays, f.sEndASFBays)) {
             return false;
         }
 
-        int startASFDoors = Integer.MIN_VALUE;
-        int endASFDoors = Integer.MAX_VALUE;
-        try {
-            startASFDoors = Integer.parseInt(f.sStartASFDoors);
-        } catch (Exception ignored) {
-        }
-        try {
-            endASFDoors = Integer.parseInt(f.sEndASFDoors);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getASFDoors() < startASFDoors) || (mech.getASFDoors() > endASFDoors)) {
+        if (!isBetween(mech.getASFDoors(), f.sStartASFDoors, f.sEndASFDoors)) {
             return false;
         }
 
-        int startASFUnits = Integer.MIN_VALUE;
-        int endASFUnits = Integer.MAX_VALUE;
-        try {
-            startASFUnits = Integer.parseInt(f.sStartASFUnits);
-        } catch (Exception ignored) {
-        }
-        try {
-            endASFUnits = Integer.parseInt(f.sEndASFUnits);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getASFUnits() < startASFUnits) || (mech.getASFUnits() > endASFUnits)) {
+        if (!isBetween(mech.getASFUnits(), f.sStartASFUnits, f.sEndASFUnits)) {
             return false;
         }
 
-        int startSmallCraftBays = Integer.MIN_VALUE;
-        int endSmallCraftBays = Integer.MAX_VALUE;
-        try {
-            startSmallCraftBays = Integer.parseInt(f.sStartSmallCraftBays);
-        } catch (Exception ignored) {
-        }
-        try {
-            endSmallCraftBays = Integer.parseInt(f.sEndSmallCraftBays);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getSmallCraftBays() < startSmallCraftBays) || (mech.getSmallCraftBays() > endSmallCraftBays)) {
+        if (!isBetween(mech.getSmallCraftBays(), f.sStartSmallCraftBays, f.sEndSmallCraftBays)) {
             return false;
         }
 
-        int startSmallCraftDoors = Integer.MIN_VALUE;
-        int endSmallCraftDoors = Integer.MAX_VALUE;
-        try {
-            startSmallCraftDoors = Integer.parseInt(f.sStartSmallCraftDoors);
-        } catch (Exception ignored) {
-        }
-        try {
-            endSmallCraftDoors = Integer.parseInt(f.sEndSmallCraftDoors);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getSmallCraftDoors() < startSmallCraftDoors) || (mech.getSmallCraftDoors() > endSmallCraftDoors)) {
+        if (!isBetween(mech.getSmallCraftDoors(), f.sStartSmallCraftDoors, f.sEndSmallCraftDoors)) {
             return false;
         }
 
-        int startSmallCraftUnits = Integer.MIN_VALUE;
-        int endSmallCraftUnits = Integer.MAX_VALUE;
-        try {
-            startSmallCraftUnits = Integer.parseInt(f.sStartSmallCraftUnits);
-        } catch (Exception ignored) {
-        }
-        try {
-            endSmallCraftUnits = Integer.parseInt(f.sEndSmallCraftUnits);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getSmallCraftUnits() < startSmallCraftUnits) || (mech.getSmallCraftUnits() > endSmallCraftUnits)) {
+        if (!isBetween(mech.getSmallCraftUnits(), f.sStartSmallCraftUnits, f.sEndSmallCraftUnits)) {
             return false;
         }
 
-        int startMechBays = Integer.MIN_VALUE;
-        int endMechBays = Integer.MAX_VALUE;
-        try {
-            startMechBays = Integer.parseInt(f.sStartMechBays);
-        } catch (Exception ignored) {
-        }
-        try {
-            endMechBays = Integer.parseInt(f.sEndMechBays);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getMechBays() < startMechBays) || (mech.getMechBays() > endMechBays)) {
+        if (!isBetween(mech.getMechBays(), f.sStartMechBays, f.sEndMechBays)) {
             return false;
         }
 
-        int startMechDoors = Integer.MIN_VALUE;
-        int endMechDoors = Integer.MAX_VALUE;
-        try {
-            startMechDoors = Integer.parseInt(f.sStartMechDoors);
-        } catch (Exception ignored) {
-        }
-        try {
-            endMechDoors = Integer.parseInt(f.sEndMechDoors);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getMechDoors() < startMechDoors) || (mech.getMechDoors() > endMechDoors)) {
+        if (!isBetween(mech.getMechDoors(), f.sStartMechDoors, f.sEndMechDoors)) {
             return false;
         }
 
-        int startMechUnits = Integer.MIN_VALUE;
-        int endMechUnits = Integer.MAX_VALUE;
-        try {
-            startMechUnits = Integer.parseInt(f.sStartMechUnits);
-        } catch (Exception ignored) {
-        }
-        try {
-        endMechUnits = Integer.parseInt(f.sEndMechUnits);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getMechUnits() < startMechUnits) || (mech.getMechUnits() > endMechUnits)) {
+        if (!isBetween(mech.getMechUnits(), f.sStartMechUnits, f.sEndMechUnits)) {
             return false;
         }
 
-        int startDockingCollars = Integer.MIN_VALUE;
-        int endMDockingCollars = Integer.MAX_VALUE;
-        try {
-            startDockingCollars = Integer.parseInt(f.sStartDockingCollars);
-        } catch (Exception ignored) {
-        }
-        try {
-            endMDockingCollars = Integer.parseInt(f.sEndDockingCollars);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getDockingCollars() < startDockingCollars) || (mech.getDockingCollars() > endMDockingCollars)) {
+        if (!isBetween(mech.getDockingCollars(), f.sStartDockingCollars, f.sEndDockingCollars)) {
             return false;
         }
 
-        int startBattleArmorHandles = Integer.MIN_VALUE;
-        int endBattleArmorHandles = Integer.MAX_VALUE;
-        try {
-            startBattleArmorHandles = Integer.parseInt(f.sStartBattleArmorHandles);
-        } catch (Exception ignored) {
-        }
-        try {
-            endBattleArmorHandles = Integer.parseInt(f.sEndBattleArmorHandles);
-        } catch (Exception ignored) {
-        }
-        if ((mech.getBattleArmorHandles() < startBattleArmorHandles) || (mech.getBattleArmorHandles() > endBattleArmorHandles)) {
+        if (!isBetween(mech.getBattleArmorHandles(), f.sStartBattleArmorHandles, f.sEndBattleArmorHandles)) {
             return false;
         }
 

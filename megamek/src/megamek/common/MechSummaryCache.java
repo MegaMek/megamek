@@ -522,14 +522,14 @@ public class MechSummaryCache {
 
         int aBays = 0;
         int aDoors = 0;
-        int aUnits = 0;
+        double aUnits = 0;
         int scBays = 0;
         int scDoors = 0;
-        int scUnits = 0;
+        double scUnits = 0;
         int dc = 0;
         int mBays = 0;
         int mDoors = 0;
-        int mUnits = 0;
+        double mUnits = 0;
         int bah = 0;
         Vector<Transporter>  trs = e.getTransports();
         for (Transporter t : trs) {

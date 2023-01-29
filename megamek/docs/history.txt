@@ -31,6 +31,7 @@ VERSION HISTORY:
 + PR #4112: BaseComponents: Adding Nag Dialog Setup
 + PR #4130: show movement for all entity types on unit tool tip
 + PR #4132: Fixing Tripod Movement and Mini Crit Display
++ Issue #4143: Fixing Advanced Search Dialog Panels Expanding on Reload
 + Updating XStream to 1.4.19 from 1.4.14
  
 0.49.11 (2022-12-22 1500 UTC)

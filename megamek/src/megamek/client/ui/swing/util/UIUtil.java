@@ -416,10 +416,10 @@ public final class UIUtil {
                 setTitledBorder(border, sf);
                 if ((border instanceof EmptyBorder)) {
                     Insets i = ((EmptyBorder) border).getBorderInsets();
-                    int top = scaleForGUI(i.top);
-                    int bottom = scaleForGUI(i.bottom);
-                    int left = scaleForGUI(i.left);
-                    int right = scaleForGUI(i.right);
+                    int top = i.top;
+                    int bottom = i.bottom;
+                    int left = i.left;
+                    int right = i.right;
                     panel.setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
                 }
                 adjustContainer(panel, fontSize);

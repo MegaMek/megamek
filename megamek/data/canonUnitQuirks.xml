@@ -6029,33 +6029,409 @@ Example: You can define quirks that affect all units of a given chassis and then
 		<quirk>no_arms</quirk>
 	</unit>
 
+	
 	<unit>
 		<chassis>Firestarter</chassis>
+		<model>FS9-S3</model>
 		<unitType>Mech</unitType>
-		<quirk>cowl</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-C</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>3</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
 		<chassis>Firestarter</chassis>
-		<model>FS9-M2</model>
+		<model>FS9-S</model>
 		<unitType>Mech</unitType>
-		<quirk>imp_life_support</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>3</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
 		<chassis>Firestarter</chassis>
-		<model>FS9-M3</model>
+		<model>FS9-K</model>
 		<unitType>Mech</unitType>
-		<quirk>imp_life_support</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-M 'Mirage II'</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
 	</unit>
 
 	<unit>
 		<chassis>Firestarter</chassis>
 		<model>FS9-M4</model>
 		<unitType>Mech</unitType>
-		<quirk>imp_life_support</quirk>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>6</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>8</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
 	</unit>
 
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-M2</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>6</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>8</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>6</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>8</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-A</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-M 'Mirage'</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-P</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>6</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>6</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-S2</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-H</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-S1</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>3</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-B</model>
+		<unitType>Mech</unitType>
+		<quirk>ubiquitous_clan</quirk>
+		<quirk>ubiquitous_is</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>4</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-M3</model>
+		<unitType>Mech</unitType>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>6</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>8</slot>
+			<weaponName>Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+ 
+ 
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OR</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-O</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OA</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OG</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OB</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OF</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OE</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OC</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OX</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OU</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OH</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
+	<unit>
+		<chassis>Firestarter</chassis>
+		<model>FS9-OD</model>
+		<unitType>Mech</unitType>
+		<quirk>cowl</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
 	<unit>
 		<chassis>Firestorm</chassis>
 		<unitType>Mech</unitType>

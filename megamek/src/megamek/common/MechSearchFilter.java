@@ -93,6 +93,7 @@ public class MechSearchFilter {
     public int filterFixedWingSupport;
     public int filterConvFighter;
     public int filterSmallCraft;
+    public int filterDropship;
     public int filterJumpship;
     public int filterWarship;
     public int filterSpaceStation;
@@ -423,6 +424,9 @@ public class MechSearchFilter {
         if (f.filterSmallCraft == 1) {
             l = l | Entity.ETYPE_SMALL_CRAFT;
         }
+        if (f.filterDropship == 1) {
+            l = l | Entity.ETYPE_DROPSHIP;
+        }
         if (f.filterJumpship == 1) {
             l = l | Entity.ETYPE_JUMPSHIP;
         }
@@ -494,6 +498,9 @@ public class MechSearchFilter {
         }
         if (f.filterSmallCraft == 2) {
             l = l | Entity.ETYPE_SMALL_CRAFT;
+        }
+        if (f.filterDropship == 2) {
+            l = l | Entity.ETYPE_DROPSHIP;
         }
         if (f.filterJumpship == 2) {
             l = l | Entity.ETYPE_JUMPSHIP;

@@ -186,6 +186,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
     private JButton btnFilterConvFighter = new JButton("\u2610");
     private JLabel lblFilterSmallCraft = new JLabel(Messages.getString("MechSelectorDialog.Search.SmallCraft"));
     private JButton btnFilterSmallCraft = new JButton("\u2610");
+    private JLabel lblFilterDropship = new JLabel(Messages.getString("MechSelectorDialog.Search.Dropship"));
+    private JButton btnFilterDropship = new JButton("\u2610");
     private JLabel lblFilterJumpship = new JLabel(Messages.getString("MechSelectorDialog.Search.Jumpship"));
     private JButton btnFilterJumpship = new JButton("\u2610");
     private JLabel lblFilterWarship = new JLabel(Messages.getString("MechSelectorDialog.Search.Warship"));
@@ -689,6 +691,9 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterSmallCraft.setBorder(emptyBorder);
         btnFilterSmallCraft.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterSmallCraft.addActionListener(this);
+        btnFilterDropship.setBorder(emptyBorder);
+        btnFilterDropship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnFilterDropship.addActionListener(this);
         btnFilterJumpship.setBorder(emptyBorder);
         btnFilterJumpship.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnFilterJumpship.addActionListener(this);
@@ -792,6 +797,11 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterSmallCraftPanel.add(btnFilterSmallCraft);
         filterSmallCraftPanel.add(lblFilterSmallCraft);
         unitTypePanel.add(filterSmallCraftPanel, c);
+        c.gridx = 2;
+        JPanel filterDropship = new JPanel();
+        filterDropship.add(btnFilterDropship);
+        filterDropship.add(lblFilterDropship);
+        unitTypePanel.add(filterDropship, c);
         c.gridy++;
         c.gridx = 1;
         JPanel filterJumpshipPanel = new JPanel();
@@ -799,15 +809,15 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         filterJumpshipPanel.add(lblFilterJumpship);
         unitTypePanel.add(filterJumpshipPanel, c);
         c.gridx = 2;
-        JPanel filterrWarshipPanel = new JPanel();
-        filterrWarshipPanel.add(btnFilterWarship);
-        filterrWarshipPanel.add(lblFilterWarship);
-        unitTypePanel.add(filterrWarshipPanel, c);
+        JPanel filterWarshipPanel = new JPanel();
+        filterWarshipPanel.add(btnFilterWarship);
+        filterWarshipPanel.add(lblFilterWarship);
+        unitTypePanel.add(filterWarshipPanel, c);
         c.gridy++;
-        JPanel filterrSpaceStationPanel = new JPanel();
-        filterrSpaceStationPanel.add(btnFilterSpaceStation);
-        filterrSpaceStationPanel.add(lblFilterSpaceStation);
-        unitTypePanel.add(filterrSpaceStationPanel, c);
+        JPanel filterSpaceStationPanel = new JPanel();
+        filterSpaceStationPanel.add(btnFilterSpaceStation);
+        filterSpaceStationPanel.add(lblFilterSpaceStation);
+        unitTypePanel.add(filterSpaceStationPanel, c);
         c.gridx = 0; c.gridy++;
         JPanel filterInfantryPanel = new JPanel();
         filterInfantryPanel.add(btnFilterInfantry);
@@ -1280,6 +1290,8 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
             toggleText(btnFilterConvFighter);
         } else if (ev.getSource().equals(btnFilterSmallCraft)) {
             toggleText(btnFilterSmallCraft);
+        } else if (ev.getSource().equals(btnFilterDropship)) {
+            toggleText(btnFilterDropship);
         } else if (ev.getSource().equals(btnFilterJumpship)) {
             toggleText(btnFilterJumpship);
         } else if (ev.getSource().equals(btnFilterWarship)) {
@@ -1542,6 +1554,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         btnFilterFixedWingSupport.setText("\u2610");
         btnFilterConvFighter.setText("\u2610");
         btnFilterSmallCraft.setText("\u2610");
+        btnFilterDropship.setText("\u2610");
         btnFilterJumpship.setText("\u2610");
         btnFilterWarship.setText("\u2610");
         btnFilterSpaceStation.setText("\u2610");
@@ -1798,6 +1811,7 @@ public class TWAdvancedSearchPanel extends JPanel implements ActionListener, Ite
         mechFilter.filterFixedWingSupport = getValue(btnFilterFixedWingSupport);
         mechFilter.filterConvFighter = getValue(btnFilterConvFighter);
         mechFilter.filterSmallCraft = getValue(btnFilterSmallCraft);
+        mechFilter.filterDropship = getValue(btnFilterDropship);
         mechFilter.filterJumpship = getValue(btnFilterJumpship);
         mechFilter.filterWarship = getValue(btnFilterWarship);
         mechFilter.filterSpaceStation = getValue(btnFilterSpaceStation);

@@ -914,19 +914,12 @@ public class SharedUtility {
         return retVal;
     }
 
-    public static @Nullable Targetable getTargetPicked(List<? extends Targetable> targets,
-                                                       String input) {
-        if (input == null) {
+    public static @Nullable Targetable getTargetPicked(@Nullable List<? extends Targetable> targets,
+                                                       @Nullable String chosenDisplayName) {
+        if ((chosenDisplayName == null) || (targets == null)) {
             return null;
+        } else {
+            return targets.stream().filter(t -> chosenDisplayName.equals(t.getDisplayName())).findAny().orElseGet(null);
         }
-
-        for (Targetable ent : targets) {
-            if (input.equals(ent.getDisplayName())) {
-                return ent;
-            }
-        }
-
-        // Should never get here!
-        return null;
     }
 }

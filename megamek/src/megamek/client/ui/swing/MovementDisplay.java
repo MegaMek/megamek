@@ -2599,7 +2599,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setBombEnabled(true);
         }
     }
-    
+
+    /** Updates the status of the Load, Unload, Mount, Tow and Disconnect buttons. */
     private synchronized void updateLoadButtons() {
         final Game game = clientgui.getClient().getGame();
         final Entity ce = ce();
@@ -2660,8 +2661,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
         
-        // Disable the "Unload" button if we're in the wrong
-        // gear or if the entity is not transporting units.
+        // Disable the "Unload" button if we're in the wrong gear or if the entity is not transporting units.
         setUnloadEnabled(legalGear && canUnloadHere && !loadedUnits.isEmpty());
 
         boolean canDropTrailerHere = false;
@@ -2681,38 +2681,38 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // If the current entity has moved, disable "Load" and "Tow" buttons.
         setLoadEnabled(false);
         setTowEnabled(false);
-        if (cen != Entity.NONE) {
-            Coords currentPathEndpoint = cmd.getFinalCoords();
-            
-            // Check the other entities in the current hex for friendly units.
-            for (Entity other : game.getEntitiesVector(currentPathEndpoint)) {
-                // If the other unit is friendly and not the current entity
-                // and the current entity has at least 1 MP, if it can
-                // transport the other unit, and if the other hasn't moved
-                // then enable the "Load" button. Towing gets handled later,
-                // and we don't want both buttons enabled.
-                if ((ce.getWalkMP() > 0) && ce.canLoad(other)
+
+        Coords currentPathEndpoint = cmd.getFinalCoords();
+
+        // Check the other entities in the current hex for friendly units.
+        // If the other unit is friendly and not the current entity
+        // and the current entity has at least 1 MP, if it can
+        // transport the other unit, and if the other hasn't moved
+        // then enable the "Load" button. Towing gets handled later,
+        // and we don't want both buttons enabled.
+        if (ce.getWalkMP() > 0)
+        for (Entity other : game.getEntitiesVector(currentPathEndpoint)) {
+            if ((ce.getWalkMP() > 0) && ce.canLoad(other)
                     && other.isLoadableThisTurn() && !ce.canTow(other.getId())) {
-                    setLoadEnabled(true);
-                    break;
-                }
-            } // Check the next entity in this position.
-            
-            // Now check all eligible hexes for towable trailers            
-            if (cmd.length() == 0) {
-                for (Coords c : ce.getHitchLocations()) {
-                    for (Entity other : game.getEntitiesVector(c)) {
-                        // If the other unit is friendly and not the current entity
-                        // if it can tow the other unit, and if the other hasn't moved
-                        // then enable the "Tow" button.
-                        if (ce.canTow(other.getId())) {
-                            setTowEnabled(true);
-                            break;
-                        }
-                    } // Check the next entity.
+                setLoadEnabled(true);
+                break;
+            }
+        }
+
+        // Now check all eligible hexes for towable trailers
+        if (cmd.length() == 0) {
+            for (Coords c : ce.getHitchLocations()) {
+                for (Entity other : game.getEntitiesVector(c)) {
+                    // If the other unit is friendly and not the current entity
+                    // if it can tow the other unit, and if the other hasn't moved
+                    // then enable the "Tow" button.
+                    if (ce.canTow(other.getId())) {
+                        setTowEnabled(true);
+                        break;
+                    }
                 }
             }
-        } // End ce-hasn't-moved
+        }
     } // private void updateLoadButtons
 
     private void updateLayMineButton() {
@@ -3104,15 +3104,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             LogManager.getLogger().error("MovementDisplay#getUnloadedUnit() called without loaded units.");
         } else if (loadedUnits.size() > 1) {
             // If we have multiple choices, display a selection dialog.
-            String input = (String) JOptionPane
-                    .showInputDialog(
-                            clientgui,
-                            Messages.getString(
-                                    "MovementDisplay.UnloadUnitDialog.message", new Object[]{
-                                                                                             ce.getShortName(), ce.getUnusedString()}),
-                            Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
-                            JOptionPane.QUESTION_MESSAGE, null, SharedUtility
-                                    .getDisplayArray(loadedUnits), null);
+            String input = (String) JOptionPane.showInputDialog(
+                    clientgui,
+                    Messages.getString("MovementDisplay.UnloadUnitDialog.message", ce.getShortName(), ce.getUnusedString()),
+                    Messages.getString("MovementDisplay.UnloadUnitDialog.title"),
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    SharedUtility.getDisplayArray(loadedUnits), null);
             choice = (Entity) SharedUtility.getTargetPicked(loadedUnits, input);
         } else {
             // Only one choice.

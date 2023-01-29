@@ -724,7 +724,7 @@ public class ClientGUI extends JPanel implements BoardViewListener,
     }
 
     private boolean resetMiniMapZoom(Container c) {
-        for (Component comp: c.getComponents()) {
+        for (Component comp : c.getComponents()) {
             if (comp instanceof Minimap) {
                 Minimap mm = (Minimap) comp;
                 mm.resetZoom();

@@ -25,8 +25,7 @@ public class SkinnedJPanel extends JPanel {
             if (file.exists()) {
                 backgroundIcon = ImageUtil.loadImageFromFile(file.toString());
             } else {
-                LogManager.getLogger().error("MainMenu Error: background icon doesn't exist: "
-                        + file.getAbsolutePath());
+                LogManager.getLogger().error("Background icon doesn't exist: " + file.getPath());
                 backgroundIcon = null;
             }
         } else {

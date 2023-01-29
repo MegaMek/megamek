@@ -120,3 +120,34 @@ ARMOR:StarSlab/9
 COMMUNICATIONS:Magestrix Alpha
 TARGETING:Magestrix Gamma
 </systemManufacturers>
+
+<capabilities>
+The principal weaponry of the vehicle is its long-range Autocannons. The vehicle was outfitted with a variety of short-range missile packs for close-in defense. StarSlab Armor was applied to the vehicle's hull to defend it from damage. Its engine can propel the Pike to speeds of up to 54 km/h.
+</capabilities>
+
+<overview>
+The Pike is a direct-fire alternative to artillery.
+</overview>
+
+<deployment>
+This 3004 version replaces the three Autocannon/2s with two Autocannon/5s and seven tons of ammunition. 
+</deployment>
+
+<history>
+The Pike was created at the direction of Magestrix Kyalla Centrella of the Magistracy of Canopus during the later part of the Third Succession War. Her plan was to produce an inexpensive combat vehicle so the Great Houses would wear down their BattleMech armies through attrition, and the Pike would be the tool she envisioned for the task. However, sending vehicles to market in the Inner Sphere was to be more costly than anticipated. With the Great Houses' shrinking numbers of ships in their JumpShip fleets, the vehicle did not make the impact she had hoped it would. It became a favorite of ComStar's growing garrison forces for their HPG complexes.
+</history>
+
+<manufacturer>
+Field Refit
+</manufacturer>
+
+<primaryFactory>
+Various
+</primaryFactory>
+
+<systemManufacturers>
+ENGINE:Jones 180 with EmissionKill ICE
+ARMOR:StarSlab/9
+COMMUNICATIONS:Magestrix Alpha
+TARGETING:Magestrix Gamma
+</systemManufacturers>

@@ -7675,24 +7675,28 @@ Hellhound II-P (Hellcat-P):SKIRMISHER
 Hoplite HOP-5C:BRAWLER
 Grizzly 3:SKIRMISHER
 Highlander IIC 4:MISSILE_BOAT
-Javelin JVN-12N:SCOUT
-Clint CLNT-3-4T::STRIKER
-Shogun C 3:SNIPER
-Pillager PLG-6Z:JUGGERNAUT
-Manticore Heavy Tank (XL): Brawler
-J. Edgar Light Hover Tank (Kurita):STRIKER
-J. Edgar Light Hover Tank (TAG):SCOUT
-J. Edgar Light Hover Tank (Light PPC):SNIPER
-J. Edgar Light Hover Tank (Chemical):STRIKER
-J. Edgar Light Hover Tank (LAC):STRIKER
-Harrier Hover Tank (Original):STRIKER
-Harrier Hover Tank (PPC):STRIKER
-Harrier Hover Tank (Re-Laser):STRIKER
+Behemoth Heavy Tank (Davion):JUGGERNAUT
 Behemoth Heavy Tank (Kurita Upgrade):JUGGERNAUT
 Behemoth Heavy Tank (Liao):JUGGERNAUT
 Behemoth Heavy Tank (Refit):JUGGERNAUT
 Callisto A [Bearhunter]:AMBUSHER
 Callisto A [ER Laser]:AMBUSHER
 Callisto A [HMG]:AMBUSHER
-Callisto B [SRM]:AMBUSHER
 Callisto B [MRR]:AMBUSHER
+Callisto B [SRM]:AMBUSHER
+Clint CLNT-3-4T::STRIKER
+Harrier Hover Tank (Original):STRIKER
+Harrier Hover Tank (PPC):STRIKER
+Harrier Hover Tank (Re-Laser):STRIKER
+J. Edgar Light Hover Tank (Chemical):STRIKER
+J. Edgar Light Hover Tank (Kurita):STRIKER
+J. Edgar Light Hover Tank (LAC):STRIKER
+J. Edgar Light Hover Tank (Light PPC):SNIPER
+J. Edgar Light Hover Tank (TAG):SCOUT
+Javelin JVN-12N:SCOUT
+Manticore Heavy Tank (XL): Brawler
+Pillager PLG-6Z:JUGGERNAUT
+Savannah Master Hovercraft (Reflective):SCOUT
+Shogun C 3:SNIPER
+Skimmer:SCOUT
+
